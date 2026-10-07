@@ -76,6 +76,8 @@
     .demo-card h2 { color: #fff; }
     .demo-card p { color: #c9d6df; margin: 0 0 24px; font-size: 17px; }
     .demo-card .btn-primary { background: #fff; color: var(--brand-deep); }
+    .btn-outline-light { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.55); }
+    .btn-outline-light:hover { background: rgba(255,255,255,.08); }
     .demo-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
     .demo-steps li {
       background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
@@ -178,7 +180,10 @@
         <div>
           <h2>לראות לפני שמחליטים</h2>
           <p>בניתי דף לעסק בדוי של טכנאי מזגנים. ממלאים את הטופס עם השם שלכם, ורואים בדיוק מה הלקוח שלכם יקבל בוואטסאפ, ומה קורה מאחורי הקלעים.</p>
-          <a class="btn btn-primary" href="leads-demo/">לפתוח את הדמו</a>
+          <div class="cta-row" style="justify-content:flex-start">
+            <a class="btn btn-primary" href="leads-demo/">דמו מערכת לידים</a>
+            <a class="btn btn-outline-light" href="ai-agent/">דמו נציג AI</a>
+          </div>
         </div>
         <ul class="demo-steps">
           <li><b>00:00</b>הלקוח משאיר פרטים בדף</li>
@@ -256,6 +261,7 @@
             <li>סינון פניות לפי מה שחשוב לכם</li>
             <li>סיכום של כל שיחה ישירות לוואטסאפ</li>
           </ul>
+          <a class="btn btn-ghost" href="ai-agent/" style="margin-bottom:10px">לראות את הנציג בפעולה</a>
           <a class="btn btn-ghost" data-wa data-plan="נציג AI" href="#contact">לפרטים</a>
         </div>
       </div>

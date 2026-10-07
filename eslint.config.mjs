@@ -10,7 +10,12 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "node_modules/**", "next-env.d.ts", "demos/**"],
+    // CommonJS scripts use require() by definition.
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
+    ignores:[".next/**", "node_modules/**", "next-env.d.ts", "demos/**", "clients/**"],
   },
 ];
 
