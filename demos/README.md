@@ -10,13 +10,13 @@
 
 ## העלאה ל-Vercel (מומלץ)
 
-1. vercel.com ← Add New ← Project ← Import את `kfischi/growth-os`.
-2. **Root Directory:** `demos`. זה הצעד החשוב. בלעדיו Vercel יבנה את אפליקציית ה-Next.js שבשורש הריפו.
-3. Framework Preset: **Other**. אין פקודת בנייה ואין Output Directory.
-4. Deploy. הכתובת תהיה בסגנון `<project>.vercel.app`, ואפשר לשנות אותה ב-Settings ← Domains.
-5. כל push לענף הראשי מעדכן את האתר. כל PR מקבל כתובת תצוגה מקדימה משלו.
+כל ההגדרות נמצאות ב-`vercel.json` שבשורש הריפו: בלי בנייה, ומגישים את התיקייה `demos` כמו שהיא.
 
-ההגדרות (כותרות אבטחה ו-noindex לדמואים) נמצאות ב-`vercel.json`.
+1. vercel.com ← Add New ← Project ← Import את `kfischi/growth-os`.
+2. לא משנים שום הגדרה. Root Directory נשאר ריק.
+3. Deploy.
+
+כל push לענף הראשי מעדכן את האתר, וכל PR מקבל כתובת תצוגה מקדימה משלו.
 
 ## העלאה ל-Netlify (חלופה)
 
