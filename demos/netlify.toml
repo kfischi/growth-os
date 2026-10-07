@@ -1,0 +1,10 @@
+# One Netlify site for the portfolio page and its demos (base directory: demos).
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/leads-demo/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
