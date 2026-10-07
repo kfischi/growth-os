@@ -15,11 +15,9 @@
 
 ## העלאה לאוויר (Netlify)
 
-1. ב-Netlify: Add new site, ואז Import from GitHub ובחירת הריפו `growth-os`.
-2. Base directory: `demos/leads-demo`. אין פקודת בנייה.
-3. אפשר להשאיר את הכתובת של Netlify, או לחבר תת-דומיין כמו `demo.multibrawn.co.il`.
+הדמו עולה כחלק מהאתר שבתיקייה `demos`, בכתובת `/leads-demo/`. ההוראות נמצאות ב-`demos/README.md`.
 
-הדף מסומן `noindex`, כדי שגוגל לא יאנדקס עסק בדוי.
+הדמו מסומן `noindex` (ב-`demos/netlify.toml` וב-`<head>`), כדי שגוגל לא יאנדקס עסק בדוי.
 
 ---
 
@@ -76,4 +74,4 @@ Webhook (POST /lead)
 2. הכותרת, השירותים, השאלות הנפוצות ואזורי השירות.
 3. ב-`CONFIG`: `webhookUrl`, `whatsappNumber` ו-`businessName`.
 4. מוחקים את פס הדמו העליון ואת שכבת "מאחורי הקלעים". אצל לקוח אמיתי מוצגת הודעת תודה פשוטה.
-5. מסירים את `noindex` מה-`<head>` ומ-`netlify.toml`.
+5. מסירים את `noindex` מה-`<head>`.

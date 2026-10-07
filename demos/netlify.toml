@@ -1,9 +1,9 @@
-# Deploy this folder as its own Netlify site (base directory: demos/leads-demo).
+# One Netlify site for the portfolio page and its demos (base directory: demos).
 [build]
   publish = "."
 
 [[headers]]
-  for = "/*"
+  for = "/leads-demo/*"
   [headers.values]
     X-Robots-Tag = "noindex"
     Referrer-Policy = "strict-origin-when-cross-origin"
