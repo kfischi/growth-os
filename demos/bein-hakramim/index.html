@@ -3,229 +3,235 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>בין הכרמים · בקתות בגליל העליון</title>
+  <title>בין הכרמים</title>
   <meta name="description" content="שלוש בקתות עץ בין כרמים בגליל העליון. הזמנה ישירה, בלי עמלות.">
   <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&family=Rubik:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    /* Object: a wine label. Detail: vintage, vine rows, elevation. Bold move: giant condensed Karantina on an oxblood field. */
     :root {
-      --cream: #f6f1ea;
-      --paper: #fbf8f3;
-      --sand: #e7dccd;
-      --line: #dacdbb;
-      --ink: #1f231c;
-      --ink-soft: #5c5a4f;
-      --olive: #3f4a36;
-      --olive-deep: #273021;
-      --clay: #a9512f;
-      --clay-deep: #8a3f23;
-      --clay-tint: #f3e3da;
-      --dusk: #2a2135;
-      --radius: 14px;
-      --serif: "Frank Ruhl Libre", "David Libre", serif;
-      --sans: "Assistant", "Heebo", system-ui, sans-serif;
+      --field: #34101a;      /* oxblood, the colour of the wine */
+      --field-2: #431522;
+      --field-3: #52192a;
+      --bloom: #cdb6e3;      /* the pale bloom on a grape skin */
+      --skin: #6c3a7a;       /* grape skin, used on label paper */
+      --chalk: #f5f1f6;      /* label paper, cool */
+      --paper-line: #dccfdc;
+      --must: #a88d9c;       /* muted text on the field */
+      --ink: #2a0d15;        /* text on label paper */
+      --ink-soft: #6e5562;
+      --rule: rgba(205, 182, 227, .2);
+      --display: "Karantina", "Rubik", system-ui, sans-serif;
+      --body: "Rubik", system-ui, sans-serif;
+      color-scheme: dark;
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--cream); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    body { margin: 0; background: var(--field); color: var(--chalk); font-family: var(--body); font-weight: 300; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
     a { color: inherit; }
     button, input, select { font: inherit; color: inherit; }
-    .wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
-    .eyebrow { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--clay); }
-    h1, h2, h3 { font-family: var(--serif); font-weight: 700; line-height: 1.1; margin: 0; }
+    :focus-visible { outline: 2px solid var(--bloom); outline-offset: 3px; }
+    .wrap { width: min(1200px, 100% - 32px); margin-inline: auto; }
+    h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .9; margin: 0; letter-spacing: .005em; text-wrap: balance; }
+    .eyebrow { font-size: 12px; letter-spacing: .28em; font-weight: 500; color: var(--must); }
+    section { padding-block: 100px; }
 
-    /* ---------- Demo ribbon ---------- */
-    .ribbon {
-      position: fixed; bottom: 22px; left: 16px; z-index: 40; background: rgba(31,35,28,.82); color: var(--cream);
-      font-size: 13px; padding: 7px 14px; border-radius: 999px; text-decoration: none; backdrop-filter: blur(6px);
-      border: 1px solid rgba(246,241,234,.18);
-    }
-    .ribbon b { color: #f0c2a8; font-weight: 600; }
+    /* ---------- Ribbon ---------- */
+    .ribbon { position: fixed; bottom: 20px; left: 16px; z-index: 40; background: var(--chalk); color: var(--ink); font-size: 12px; letter-spacing: .12em; padding: 8px 12px; text-decoration: none; }
+    .ribbon b { font-weight: 500; color: var(--skin); }
 
     /* ---------- Hero ---------- */
-    .hero { position: relative; min-height: 100vh; min-height: 100svh; color: var(--cream); display: flex; flex-direction: column; overflow: hidden; background: var(--dusk); }
-    .hero svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 26px 0; }
-    .mark { font-family: var(--serif); font-size: 24px; font-weight: 700; letter-spacing: .01em; }
-    .mark small { display: block; font-family: var(--sans); font-size: 12px; letter-spacing: .2em; opacity: .75; font-weight: 500; }
+    .nav { display: flex; justify-content: space-between; align-items: baseline; padding-block: 24px; border-bottom: 1px solid var(--rule); }
+    .mark { font-family: var(--display); font-weight: 700; font-size: 36px; line-height: 1; }
     .nav nav { display: flex; gap: 28px; font-size: 15px; }
-    .nav nav a { text-decoration: none; opacity: .85; }
-    .nav nav a:hover { opacity: 1; }
-    .hero-copy { position: relative; z-index: 2; margin-top: auto; padding-bottom: 150px; max-width: 640px; }
-    .hero-copy .eyebrow { color: #f0c2a8; }
-    .hero h1 { font-size: clamp(48px, 8vw, 104px); font-weight: 900; margin: 16px 0 18px; letter-spacing: -.01em; }
-    .hero p { font-size: 20px; max-width: 30ch; opacity: .9; margin: 0; }
+    .nav nav a { text-decoration: none; color: var(--must); }
+    .nav nav a:hover { color: var(--chalk); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding-block: 56px 60px; }
+    .hero h1 { font-weight: 300; font-size: clamp(84px, 12.5vw, 200px); line-height: .8; margin-top: 18px; }
+    .hero h1 b { display: block; font-weight: 700; color: var(--bloom); }
+    .lede-row { display: flex; gap: 28px; margin-top: 34px; align-items: flex-start; flex-wrap: wrap; }
+    .lede-row p { margin: 0; max-width: 36ch; color: var(--must); font-size: 18px; }
+    .vint { font-family: var(--display); font-size: 28px; color: var(--bloom); letter-spacing: .06em; white-space: nowrap; }
 
-    .bookbar {
-      position: relative; z-index: 3; margin-top: -86px; background: var(--paper); color: var(--ink);
-      border-radius: 18px; box-shadow: 0 30px 60px -20px rgba(20, 16, 24, .45);
-      display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; align-items: stretch; overflow: hidden;
-    }
-    .bookbar > div { padding: 18px 22px; border-inline-start: 1px solid var(--line); }
+    .label { background: var(--chalk); color: var(--ink); padding: 14px; transform: rotate(-2deg); box-shadow: 0 40px 60px -30px rgba(0, 0, 0, .6); width: min(340px, 100%); justify-self: center; animation: settle 1s cubic-bezier(.2, .8, .2, 1) both; }
+    .label .in { border: 2px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -8px; padding: 30px 22px 24px; text-align: center; }
+    .label small { display: block; font-size: 11px; letter-spacing: .32em; color: var(--skin); font-weight: 500; }
+    .label .name { font-family: var(--display); font-weight: 700; font-size: 64px; line-height: .88; margin: 12px 0 4px; }
+    .label svg { width: 60px; height: 60px; margin: 8px auto; display: block; }
+    .label hr { border: 0; border-top: 1px solid var(--ink); margin: 14px 18px; }
+    .label .row { display: flex; justify-content: space-between; font-size: 13px; padding-inline: 8px; }
+    .label .row b { font-weight: 500; }
+    .label .no { font-family: var(--display); font-size: 22px; margin-top: 10px; letter-spacing: .1em; }
+    @keyframes settle { from { transform: rotate(3deg) translateY(24px); } to { transform: rotate(-2deg); } }
+
+    .bookbar { display: grid; grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr)) auto; border: 1px solid var(--rule); margin-bottom: 20px; }
+    .bookbar > div { padding: 14px 20px; border-inline-start: 1px solid var(--rule); min-width: 0; }
     .bookbar > div:first-child { border-inline-start: 0; }
-    .bookbar label { display: block; font-size: 12px; letter-spacing: .14em; color: var(--ink-soft); font-weight: 600; }
-    .bookbar .val { font-family: var(--serif); font-size: 20px; font-weight: 700; margin-top: 2px; }
-    .bookbar select { border: 0; background: none; font-family: var(--serif); font-size: 20px; font-weight: 700; padding: 0; margin-top: 2px; width: 100%; cursor: pointer; }
-    .bookbar .go { border: 0; background: var(--clay); color: #fff; font-weight: 700; padding: 0 34px; cursor: pointer; font-size: 17px; transition: background .2s; }
-    .bookbar .go:hover { background: var(--clay-deep); }
+    .bookbar label { display: block; font-size: 11px; letter-spacing: .24em; color: var(--must); }
+    .bookbar .val, .bookbar select { font-family: var(--display); font-size: 30px; font-weight: 400; line-height: 1.1; }
+    .bookbar select { border: 0; background: none; padding: 0; width: 100%; cursor: pointer; color: var(--chalk); }
+    .bookbar select option { color: var(--ink); }
+    .bookbar .go { border: 0; background: var(--bloom); color: var(--field); font-weight: 500; padding: 0 34px; cursor: pointer; font-size: 17px; }
+    .bookbar .go:hover { background: var(--chalk); }
 
-    /* ---------- Sections ---------- */
-    section { padding: 110px 0; }
-    .lede { display: grid; grid-template-columns: 1fr 1.1fr; gap: 72px; align-items: end; }
-    .lede h2 { font-size: clamp(36px, 5vw, 60px); }
-    .lede p { font-size: 19px; color: var(--ink-soft); margin: 0; }
-    .facts { display: flex; gap: 40px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-    .facts div { min-width: 120px; }
-    .facts b { display: block; font-family: var(--serif); font-size: 40px; line-height: 1; color: var(--olive); }
-    .facts span { font-size: 15px; color: var(--ink-soft); }
+    /* ---------- Place ---------- */
+    .lede { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 72px; align-items: end; }
+    .lede h2 { font-size: clamp(52px, 7vw, 96px); margin-top: 14px; }
+    .lede p { font-size: 19px; color: var(--must); margin: 0; max-width: 46ch; }
+    .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 60px; border-top: 1px solid var(--rule); }
+    .facts div { padding: 22px 0 0; }
+    .facts b { display: block; font-family: var(--display); font-weight: 400; font-size: 72px; line-height: .9; color: var(--bloom); }
+    .facts span { font-size: 14px; color: var(--must); letter-spacing: .04em; }
 
-    .cabins { background: var(--paper); border-block: 1px solid var(--line); }
-    .head-row { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 44px; flex-wrap: wrap; }
-    .head-row h2 { font-size: clamp(32px, 4vw, 48px); margin-top: 10px; }
-    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
-    .card { background: var(--cream); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -24px rgba(39,48,33,.35); }
-    .card svg { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; }
-    .card-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
-    .card h3 { font-size: 28px; }
-    .card .tag { font-size: 14px; color: var(--ink-soft); margin: 4px 0 14px; }
-    .card ul { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-    .card li { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--sand); }
-    .card .from { margin-top: auto; display: flex; align-items: baseline; justify-content: space-between; }
-    .card .from b { font-family: var(--serif); font-size: 26px; }
-    .card .from small { color: var(--ink-soft); font-size: 14px; }
-    .card .pick { border: 1.5px solid var(--olive); background: none; color: var(--olive); border-radius: 999px; padding: 7px 16px; font-weight: 700; cursor: pointer; font-size: 14px; }
-    .card .pick:hover, .card.selected .pick { background: var(--olive); color: var(--cream); }
-    .card.selected { border-color: var(--olive); box-shadow: 0 0 0 2px var(--olive); }
+    /* ---------- Cabins: three labels ---------- */
+    .cabins { background: var(--field-2); }
+    .head-row { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 48px; flex-wrap: wrap; }
+    .head-row h2 { font-size: clamp(48px, 6vw, 84px); margin-top: 12px; }
+    .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 3vw, 40px); }
+    .card { background: var(--chalk); color: var(--ink); padding: 12px; display: flex; flex-direction: column; transition: transform .3s; }
+    .card:hover { transform: translateY(-4px); }
+    .card.selected { box-shadow: 0 0 0 3px var(--bloom); }
+    .card .art { border: 2px solid var(--ink); border-bottom: 0; padding: 26px 18px 18px; text-align: center; }
+    .card .art small { font-size: 10px; letter-spacing: .32em; color: var(--skin); font-weight: 500; }
+    .card .art .nm { font-family: var(--display); font-weight: 700; font-size: 84px; line-height: .85; margin: 8px 0 6px; }
+    .card .art span { font-family: var(--display); font-size: 20px; letter-spacing: .14em; color: var(--ink-soft); }
+    .card-body { border: 2px solid var(--ink); border-top: 1px solid var(--ink); padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+    .card h3 { display: none; }
+    .card .tag { font-size: 15px; color: var(--ink-soft); margin-bottom: 12px; }
+    .card ul { list-style: none; padding: 0; margin: 0 0 18px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; }
+    .card li::before { content: "· "; color: var(--skin); font-weight: 700; }
+    .card .from { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid var(--paper-line); padding-top: 12px; }
+    .card .from b { font-family: var(--display); font-size: 34px; font-weight: 400; }
+    .card .from small { color: var(--ink-soft); font-size: 13px; }
+    .card .pick { border: 1.5px solid var(--ink); background: none; color: var(--ink); padding: 7px 16px; font-weight: 500; cursor: pointer; font-size: 14px; }
+    .card .pick:hover, .card.selected .pick { background: var(--ink); color: var(--chalk); }
 
-    /* ---------- Booking ---------- */
-    .booking .grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 36px; align-items: start; }
-    .cal { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
-    .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-    .cal-top button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--cream); cursor: pointer; font-size: 18px; }
-    .cal-top button:disabled { opacity: .35; cursor: default; }
-    .cal-hint { font-size: 15px; color: var(--ink-soft); }
-    .months { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-    .month h4 { font-family: var(--serif); font-size: 21px; margin: 0 0 12px; text-align: center; }
-    .dow, .days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
-    .dow span { font-size: 12px; color: var(--ink-soft); font-weight: 600; padding-bottom: 6px; }
-    .days button {
-      aspect-ratio: 1; border: 0; background: none; cursor: pointer; font-size: 15px; font-weight: 600; position: relative;
-      border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
-    }
-    .days button small { font-size: 10px; font-weight: 500; color: var(--ink-soft); }
-    .days button:hover:not(:disabled) { background: var(--sand); }
-    .days button:disabled { color: #b8ad9d; cursor: default; text-decoration: line-through; text-decoration-color: #cfc3b1; }
+    /* ---------- Booking: on label paper ---------- */
+    .booking { background: var(--chalk); color: var(--ink); }
+    .booking .eyebrow { color: var(--skin); }
+    .booking .grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 36px; align-items: start; }
+    .cal { border: 2px solid var(--ink); padding: 24px; background: #fff; }
+    .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+    .cal-top button { width: 40px; height: 40px; border: 1.5px solid var(--ink); background: none; cursor: pointer; font-size: 18px; color: var(--ink); }
+    .cal-top button:disabled { opacity: .3; cursor: default; }
+    .cal-hint { font-size: 15px; color: var(--ink-soft); text-align: center; }
+    .months { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+    .month h4 { font-family: var(--display); font-weight: 700; font-size: 30px; margin: 0 0 10px; text-align: center; }
+    .dow, .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); text-align: center; }
+    .dow span { font-size: 12px; color: var(--ink-soft); font-weight: 500; padding-bottom: 6px; }
+    .days button { aspect-ratio: 1; border: 0; background: none; cursor: pointer; font-size: 15px; font-weight: 500; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+    .days button small { font-size: 10px; font-weight: 400; color: var(--ink-soft); }
+    .days button:hover:not(:disabled) { background: #efe7f3; }
+    .days button:disabled { color: #c4b6c0; cursor: default; text-decoration: line-through; }
     .days button:disabled small { visibility: hidden; }
-    .days button.in-range { background: var(--clay-tint); border-radius: 0; }
-    .days button.edge { background: var(--clay); color: #fff; }
-    .days button.edge small { color: #fbe3d6; }
+    .days button.in-range { background: #e7d9f1; }
+    .days button.edge { background: var(--field); color: var(--chalk); }
+    .days button.edge small { color: var(--bloom); }
     .legend { display: flex; gap: 18px; margin-top: 16px; font-size: 13px; color: var(--ink-soft); flex-wrap: wrap; }
-    .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-inline-end: 6px; vertical-align: -1px; }
+    .legend i { display: inline-block; width: 12px; height: 12px; margin-inline-end: 6px; vertical-align: -1px; }
+    .lg-sel { background: var(--field); } .lg-free { background: #fff; border: 1px solid var(--ink); } .lg-taken { background: #efe7ec; border: 1px dashed #c4b6c0; }
 
-    .summary { position: sticky; top: 24px; background: var(--olive-deep); color: var(--cream); border-radius: 18px; padding: 28px; }
-    .summary h3 { font-size: 26px; }
-    .summary .cabin-name { opacity: .75; font-size: 15px; margin-top: 4px; }
+    .summary { position: sticky; top: 24px; background: var(--field); color: var(--chalk); padding: 28px; }
+    .summary h3 { font-size: 44px; font-weight: 700; }
+    .summary .cabin-name { color: var(--must); font-size: 15px; margin-top: 6px; }
     .rows { margin: 22px 0; display: grid; gap: 10px; font-size: 15px; }
     .rows div { display: flex; justify-content: space-between; gap: 12px; }
-    .rows .muted { opacity: .65; }
-    .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid rgba(246,241,234,.2); padding-top: 16px; }
-    .total b { font-family: var(--serif); font-size: 36px; }
-    .compare { margin-top: 10px; font-size: 14px; display: flex; justify-content: space-between; color: #f0c2a8; }
-    .compare s { opacity: .7; }
+    .rows .muted { color: var(--must); }
+    .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 14px; }
+    .total b { font-family: var(--display); font-size: 60px; font-weight: 400; line-height: 1; color: var(--bloom); }
+    .compare { margin-top: 6px; font-size: 14px; display: flex; justify-content: space-between; color: var(--must); }
     .guest-row { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 15px; }
     .stepper { display: flex; align-items: center; gap: 12px; }
-    .stepper button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(246,241,234,.35); background: none; color: var(--cream); cursor: pointer; font-size: 18px; }
-    .stepper output { min-width: 18px; text-align: center; font-weight: 700; }
-    .reserve { width: 100%; margin-top: 22px; border: 0; border-radius: 12px; padding: 16px; background: var(--clay); color: #fff; font-weight: 700; font-size: 17px; cursor: pointer; }
-    .reserve:hover:not(:disabled) { background: #b85d3a; }
-    .reserve:disabled { opacity: .45; cursor: default; }
-    .note { font-size: 13px; opacity: .7; margin: 12px 0 0; text-align: center; }
-    .err { color: #ffb59a; font-size: 14px; margin-top: 10px; min-height: 1em; }
+    .stepper button { width: 34px; height: 34px; border: 1px solid var(--rule); background: none; color: var(--chalk); cursor: pointer; font-size: 18px; }
+    .stepper output { min-width: 18px; text-align: center; font-weight: 500; }
+    .reserve { width: 100%; margin-top: 22px; border: 0; padding: 16px; background: var(--bloom); color: var(--field); font-weight: 500; font-size: 17px; cursor: pointer; }
+    .reserve:hover:not(:disabled) { background: var(--chalk); }
+    .reserve:disabled { opacity: .35; cursor: default; }
+    .note { font-size: 13px; color: var(--must); margin: 12px 0 0; text-align: center; }
+    .err { color: #f4a7b7; font-size: 14px; margin-top: 10px; min-height: 1em; }
 
     /* ---------- Experience ---------- */
-    .exp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-    .exp div { background: var(--cream); padding: 30px 26px; }
-    .exp b { font-family: var(--serif); font-size: 22px; display: block; margin: 12px 0 6px; }
-    .exp p { margin: 0; color: var(--ink-soft); font-size: 15px; }
-    .exp svg { width: 34px; height: 34px; stroke: var(--clay); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    #experience { padding-top: 100px; }
+    .exp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule); }
+    .exp div { padding: 28px 24px 0 0; border-inline-start: 1px solid var(--rule); padding-inline: 22px; }
+    .exp div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+    .exp b { font-family: var(--display); font-size: 40px; font-weight: 700; display: block; margin: 14px 0 6px; line-height: .9; }
+    .exp p { margin: 0; color: var(--must); font-size: 15px; }
+    .exp svg { width: 32px; height: 32px; stroke: var(--bloom); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-    .quote { background: var(--olive); color: var(--cream); text-align: center; }
-    .quote p { font-family: var(--serif); font-size: clamp(26px, 3.4vw, 40px); max-width: 26ch; margin: 0 auto 18px; line-height: 1.3; }
-    .quote small { opacity: .7; }
+    .quote { background: var(--bloom); color: var(--field); text-align: center; }
+    .quote p { font-family: var(--display); font-weight: 700; font-size: clamp(48px, 6.5vw, 96px); line-height: .9; max-width: 16ch; margin: 0 auto 20px; text-wrap: balance; }
+    .quote small { color: var(--skin); font-size: 14px; }
 
-    footer { padding: 60px 0 48px; color: var(--ink-soft); font-size: 15px; }
-    footer .row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 28px; }
-    footer .mark { color: var(--ink); }
+    footer { padding-block: 48px 64px; color: var(--must); font-size: 15px; }
+    footer .row { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 26px; }
+    footer .mark { color: var(--chalk); font-size: 30px; }
 
-    /* ---------- Confirmation ---------- */
-    .sheet-bg { position: fixed; inset: 0; background: rgba(23, 20, 28, .6); backdrop-filter: blur(3px); display: none; z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+    /* ---------- Hold sheet ---------- */
+    .sheet-bg { position: fixed; inset: 0; background: rgba(20, 6, 10, .7); backdrop-filter: blur(3px); display: none; z-index: 50; align-items: center; justify-content: center; padding: 16px; }
     .sheet-bg.open { display: flex; }
-    .sheet { background: var(--paper); border-radius: 20px; width: min(760px, 100%); max-height: calc(100vh - 32px); overflow: auto; display: grid; grid-template-columns: 1fr 1fr; position: relative; animation: rise .35s ease-out; }
-    .sheet .x { position: absolute; top: 12px; left: 12px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--sand); cursor: pointer; font-size: 20px; }
+    .sheet { background: var(--chalk); color: var(--ink); width: min(760px, 100%); max-height: calc(100vh - 32px); overflow: auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); position: relative; animation: rise .35s ease-out; }
+    .sheet .x { position: absolute; top: 12px; left: 12px; width: 36px; height: 36px; border: 1px solid var(--rule); background: var(--field-2); color: var(--chalk); cursor: pointer; font-size: 20px; z-index: 1; }
     .sheet .side { padding: 34px 30px; }
-    .sheet .side.dark { background: var(--olive-deep); color: var(--cream); border-radius: 0 20px 20px 0; }
-    .sheet h3 { font-size: 30px; margin-bottom: 8px; }
+    .sheet .side.dark { background: var(--field); color: var(--chalk); }
+    .sheet .eyebrow { color: var(--skin); }
+    .sheet h3 { font-size: 52px; margin: 8px 0 10px; }
     .sheet .sub { color: var(--ink-soft); margin: 0 0 22px; }
     .sheet dl { margin: 0; display: grid; gap: 8px; font-size: 15px; }
-    .sheet dl div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+    .sheet dl div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--paper-line); padding-bottom: 8px; }
     .sheet dt { color: var(--ink-soft); }
-    .sheet dd { margin: 0; font-weight: 600; }
-    .pay { display: block; text-align: center; margin-top: 22px; background: var(--clay); color: #fff; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 700; }
-    .wa-head { font-size: 13px; letter-spacing: .14em; opacity: .7; margin-bottom: 12px; }
-    .wa { background: #0e2a22; border-radius: 14px; padding: 14px; font-size: 14px; white-space: pre-line; line-height: 1.55; border: 1px solid #1f4a3d; }
+    .sheet dd { margin: 0; font-weight: 500; }
+    .pay { display: block; text-align: center; margin-top: 22px; background: var(--field); color: var(--chalk); text-decoration: none; padding: 14px; font-weight: 500; }
+    .wa-head { font-size: 12px; letter-spacing: .24em; color: var(--must); margin-bottom: 12px; }
+    .wa { background: #0e2a22; padding: 14px; font-size: 14px; white-space: pre-line; line-height: 1.55; border: 1px solid #1f4a3d; color: #e6f2ec; }
     .wa time { display: block; text-align: left; font-size: 11px; opacity: .6; margin-top: 6px; }
-    .after { margin-top: 18px; font-size: 14px; opacity: .8; display: grid; gap: 8px; }
-    .after span::before { content: "◦ "; color: #f0c2a8; }
+    .after { margin-top: 18px; font-size: 14px; color: var(--must); display: grid; gap: 8px; }
+    .after span::before { content: "· "; color: var(--bloom); }
 
-    /* ---------- Concierge ---------- */
-    .concierge-btn {
-      position: fixed; bottom: 20px; right: 20px; z-index: 30; display: flex; align-items: center; gap: 10px;
-      background: var(--ink); color: var(--cream); border: 0; border-radius: 999px; padding: 12px 18px 12px 14px; cursor: pointer;
-      box-shadow: 0 14px 30px -12px rgba(0,0,0,.5); font-weight: 600;
-    }
-    .concierge-btn .dot { width: 30px; height: 30px; border-radius: 50%; background: var(--clay); display: grid; place-items: center; font-family: var(--serif); font-weight: 700; }
-    .concierge { position: fixed; bottom: 84px; right: 20px; z-index: 30; width: min(360px, calc(100% - 40px)); background: var(--paper); border-radius: 18px; border: 1px solid var(--line); box-shadow: 0 30px 60px -20px rgba(0,0,0,.35); display: none; flex-direction: column; overflow: hidden; }
+    /* ---------- Host ---------- */
+    .concierge-btn { position: fixed; bottom: 20px; right: 16px; z-index: 30; display: flex; align-items: center; gap: 10px; background: var(--chalk); color: var(--ink); border: 0; padding: 10px 18px 10px 10px; cursor: pointer; font-weight: 500; box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .6); }
+    .concierge-btn .dot { width: 32px; height: 32px; background: var(--field); color: var(--bloom); display: grid; place-items: center; font-family: var(--display); font-size: 22px; }
+    .concierge { position: fixed; bottom: 82px; right: 16px; z-index: 30; width: min(360px, calc(100% - 32px)); background: var(--chalk); color: var(--ink); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .55); display: none; flex-direction: column; overflow: hidden; }
     .concierge.open { display: flex; animation: rise .25s ease-out; }
-    .c-head { background: var(--olive-deep); color: var(--cream); padding: 16px 18px; }
-    .c-head b { font-family: var(--serif); font-size: 19px; display: block; }
-    .c-head small { opacity: .7; }
+    .c-head { background: var(--field); color: var(--chalk); padding: 16px 18px; }
+    .c-head b { font-family: var(--display); font-size: 30px; font-weight: 700; display: block; line-height: 1; }
+    .c-head small { color: var(--must); }
     .c-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
-    .c-msg { background: var(--cream); border-radius: 12px; padding: 10px 12px; font-size: 15px; align-self: flex-start; max-width: 90%; border: 1px solid var(--line); }
-    .c-msg.me { align-self: flex-end; background: var(--olive); color: var(--cream); border-color: var(--olive); }
+    .c-msg { background: #fff; border: 1px solid var(--paper-line); padding: 10px 12px; font-size: 15px; align-self: flex-start; max-width: 90%; }
+    .c-msg.me { align-self: flex-end; background: var(--field); color: var(--chalk); border-color: var(--field); }
     .c-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 16px; }
-    .c-chips button { border: 1px solid var(--olive); color: var(--olive); background: none; border-radius: 999px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
-    .c-chips button:hover { background: var(--olive); color: var(--cream); }
+    .c-chips button { border: 1px solid var(--ink); color: var(--ink); background: none; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+    .c-chips button:hover { background: var(--ink); color: var(--chalk); }
     .c-foot { font-size: 12px; color: var(--ink-soft); padding: 0 16px 14px; }
 
     @keyframes rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
 
     @media (max-width: 960px) {
-      .lede, .booking .grid { grid-template-columns: 1fr; gap: 32px; }
-      .cards { grid-template-columns: 1fr; }
-      .exp { grid-template-columns: 1fr 1fr; }
-      .months { grid-template-columns: 1fr; }
+      .hero-grid, .lede, .booking .grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+      .cards { grid-template-columns: minmax(0, 1fr); }
+      .exp { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+      .exp div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+      .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .months { grid-template-columns: minmax(0, 1fr); }
       .months .month:nth-child(2) { display: none; }
       .summary { position: static; }
-      .bookbar { grid-template-columns: 1fr 1fr; }
-      .bookbar > div:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
-      .bookbar > div:nth-child(2) { border-inline-start: 1px solid var(--line); }
+      .bookbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .bookbar > div:nth-child(1) { grid-column: 1 / -1; border-bottom: 1px solid var(--rule); }
+      .bookbar > div:nth-child(2) { border-inline-start: 0; }
       .bookbar .go { grid-column: 1 / -1; padding: 16px; }
-      .bookbar > div:nth-child(1) { border-bottom: 0; }
       .nav nav { display: none; }
     }
     @media (max-width: 560px) {
-      section { padding: 76px 0; }
-      .exp { grid-template-columns: 1fr; }
-      .sheet { grid-template-columns: 1fr; }
-      .sheet .side.dark { border-radius: 0 0 20px 20px; }
-      .hero-copy { padding-bottom: 130px; }
-      .cal { padding: 18px 14px; }
-      .bookbar > div { padding: 14px 16px; }
+      section { padding-block: 72px; }
+      .exp { grid-template-columns: minmax(0, 1fr); }
+      .exp div { border-inline-start: 0; padding-inline: 0; }
+      .sheet { grid-template-columns: minmax(0, 1fr); }
+      .cal { padding: 16px 10px; }
       .concierge-btn .label { display: none; }
-      .concierge-btn { padding: 10px; }
+      .concierge-btn { padding: 8px; }
+      .ribbon { bottom: 24px; }
     }
     @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
   </style>
@@ -235,89 +241,33 @@
   <a class="ribbon" href="../">דמו · <b>מערכת הזמנות ישירות לצימרים</b></a>
 
   <!-- ================= HERO ================= -->
-  <header class="hero">
-    <svg class="scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#1d1828"/>
-          <stop offset=".38" stop-color="#4a2c44"/>
-          <stop offset=".62" stop-color="#9a4a46"/>
-          <stop offset=".8" stop-color="#d9805f"/>
-          <stop offset="1" stop-color="#eeb193"/>
-        </linearGradient>
-        <radialGradient id="sun" cx=".5" cy=".5" r=".5">
-          <stop offset="0" stop-color="#fbe2d0"/>
-          <stop offset=".35" stop-color="#f3b896" stop-opacity=".9"/>
-          <stop offset="1" stop-color="#e8946f" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="glow" cx=".5" cy=".5" r=".5">
-          <stop offset="0" stop-color="#ffcfa8" stop-opacity=".9"/>
-          <stop offset="1" stop-color="#ffcfa8" stop-opacity="0"/>
-        </radialGradient>
-        <pattern id="rows" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)">
-          <rect width="22" height="22" fill="#2b3226"/>
-          <rect width="22" height="7" fill="#353e2f"/>
-        </pattern>
-        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#14120f" stop-opacity="0"/>
-          <stop offset="1" stop-color="#14120f" stop-opacity=".55"/>
-        </linearGradient>
-      </defs>
-      <rect width="1440" height="900" fill="url(#sky)"/>
-      <g fill="#fff6ee" id="stars">
-        <circle cx="140" cy="90" r="1.4" opacity=".8"/><circle cx="310" cy="160" r="1" opacity=".6"/><circle cx="520" cy="70" r="1.6" opacity=".9"/>
-        <circle cx="690" cy="140" r="1" opacity=".5"/><circle cx="860" cy="60" r="1.3" opacity=".8"/><circle cx="1010" cy="120" r="1" opacity=".6"/>
-        <circle cx="1180" cy="80" r="1.5" opacity=".85"/><circle cx="1330" cy="150" r="1.1" opacity=".6"/><circle cx="420" cy="230" r=".9" opacity=".4"/>
-        <circle cx="960" cy="220" r=".9" opacity=".4"/><circle cx="1260" cy="250" r=".8" opacity=".35"/><circle cx="230" cy="260" r=".8" opacity=".35"/>
-      </g>
-      <circle cx="470" cy="560" r="230" fill="url(#sun)"/>
-      <circle cx="470" cy="560" r="62" fill="#fbe6d6" opacity=".95"/>
-      <path d="M0 560 C 180 500 330 520 480 548 S 820 470 1010 500 S 1300 540 1440 500 L1440 900 L0 900Z" fill="#7b4553" opacity=".75"/>
-      <path d="M0 610 C 220 560 380 600 560 610 S 900 540 1120 580 S 1360 600 1440 590 L1440 900 L0 900Z" fill="#553646"/>
-      <path d="M0 670 C 260 610 520 660 760 650 S 1180 600 1440 640 L1440 900 L0 900Z" fill="url(#rows)"/>
-      <path d="M0 670 C 260 610 520 660 760 650 S 1180 600 1440 640" fill="none" stroke="#4a5640" stroke-width="2" opacity=".6"/>
-      <path d="M0 760 C 300 720 600 760 900 740 S 1300 720 1440 735 L1440 900 L0 900Z" fill="#1b2018"/>
-      <!-- cabin -->
-      <g transform="translate(150 640)">
-        <circle cx="62" cy="58" r="95" fill="url(#glow)" opacity=".55"/>
-        <path d="M0 110 L0 52 L62 0 L124 52 L124 110Z" fill="#14180f"/>
-        <path d="M-10 58 L62 -6 L134 58" fill="none" stroke="#14180f" stroke-width="10" stroke-linejoin="round"/>
-        <rect x="24" y="62" width="26" height="30" rx="2" fill="#ffc79e"/>
-        <rect x="74" y="62" width="26" height="30" rx="2" fill="#f7b78c"/>
-        <rect x="56" y="28" width="12" height="16" rx="2" fill="#ffd3b2" opacity=".8"/>
-      </g>
-      <!-- cypresses -->
-      <g fill="#11150e">
-        <ellipse cx="90" cy="690" rx="13" ry="70"/><ellipse cx="116" cy="705" rx="10" ry="52"/>
-        <ellipse cx="320" cy="690" rx="12" ry="66"/><ellipse cx="344" cy="708" rx="9" ry="46"/>
-        <ellipse cx="1300" cy="740" rx="12" ry="60"/><ellipse cx="1324" cy="752" rx="9" ry="44"/>
-      </g>
-      <rect width="1440" height="900" fill="url(#fade)"/>
-    </svg>
-
-    <div class="wrap nav">
-      <div class="mark">בין הכרמים<small>גליל עליון · 3 בקתות</small></div>
-      <nav aria-label="ניווט">
-        <a href="#cabins">הבקתות</a><a href="#book">זמינות ומחירים</a><a href="#experience">החוויה</a>
-      </nav>
+  <header class="hero wrap">
+    <div class="nav">
+      <div class="mark">בין הכרמים</div>
+      <nav aria-label="ניווט"><a href="#cabins">הבקתות</a><a href="#book">זמינות ומחירים</a><a href="#experience">החוויה</a></nav>
     </div>
-    <div class="wrap hero-copy">
-      <div class="eyebrow">בקתות עץ לזוגות</div>
-      <h1>שקט, כרמים,<br>ואתם.</h1>
-      <p>שלוש בקתות בקצה כרם, עם ג׳קוזי פרטי, אח מבוערת וארוחת בוקר מהחווה.</p>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <form class="bookbar" id="bookbar" aria-label="בדיקת זמינות">
-      <div><label>בקתה</label>
-        <select id="bar-cabin" aria-label="בקתה"></select>
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">יקב ובקתות · גליל עליון</div>
+        <h1>שלושה לילות.<b>בציר אחד.</b></h1>
+        <div class="lede-row"><span class="vint">בציר 2026</span>
+          <p>שלוש בקתות בתוך כרם פעיל. ג׳קוזי, אח מבוערת, ובקבוק מהחבית שלנו מחכה על השולחן. מזמינים ישירות מהיקב.</p></div>
       </div>
+      <div class="label" aria-hidden="true"><div class="in">
+        <small>יקב ובקתות</small>
+        <div class="name">בין<br>הכרמים</div>
+        <svg viewBox="0 0 64 64"><g fill="#2a0d15"><circle cx="24" cy="26" r="7"/><circle cx="38" cy="26" r="7"/><circle cx="31" cy="37" r="7"/><circle cx="17" cy="37" r="6"/><circle cx="45" cy="37" r="6"/><circle cx="24" cy="48" r="6"/><circle cx="38" cy="48" r="6"/><circle cx="31" cy="58" r="5"/></g><path d="M31 19 C31 12 36 8 42 7" stroke="#2a0d15" stroke-width="2.5" fill="none"/></svg>
+        <hr><div class="row"><span>כרם</span><b>8 דונם</b></div><div class="row"><span>גובה</span><b>420 מ׳</b></div><div class="row"><span>בקתות</span><b>3</b></div>
+        <div class="no">בקבוק 0417</div>
+      </div></div>
+    </div>
+    <form class="bookbar" id="bookbar" aria-label="בדיקת זמינות">
+      <div><label for="bar-cabin">בקתה</label><select id="bar-cabin"></select></div>
       <div><label>הגעה</label><div class="val" id="bar-in">בחרו תאריך</div></div>
       <div><label>עזיבה</label><div class="val" id="bar-out">—</div></div>
       <button class="go" type="submit">לבדוק זמינות</button>
     </form>
-  </div>
+  </header>
 
   <!-- ================= LEDE ================= -->
   <section>
@@ -325,7 +275,7 @@
       <div class="lede">
         <div>
           <div class="eyebrow">המקום</div>
-          <h2>בנינו את זה לאט, בשביל אנשים שרוצים לעצור.</h2>
+          <h2>בנינו את זה לאט, בשביל מי שרוצה לעצור.</h2>
         </div>
         <p>שמונה דונם של כרם, שלוש בקתות במרחק נדיב זו מזו, ונוף לעמק החולה. בבוקר מגיעה סלסלה לדלת, ובערב האח כבר מוכנה. אין לובי ואין קבלה. יש אותנו, בהודעה אחת.</p>
       </div>
@@ -333,7 +283,7 @@
         <div><b>3</b><span>בקתות בלבד</span></div>
         <div><b>8</b><span>דונם של כרם</span></div>
         <div><b>40</b><span>מטר בין בקתה לבקתה</span></div>
-        <div><b>24/7</b><span>מענה לאורחים</span></div>
+        <div><b>420</b><span>מטר מעל פני הים</span></div>
       </div>
     </div>
   </section>
@@ -342,7 +292,7 @@
   <section class="cabins" id="cabins">
     <div class="wrap">
       <div class="head-row">
-        <div><div class="eyebrow">הבקתות</div><h2>שלוש, וכל אחת אחרת.</h2></div>
+        <div><div class="eyebrow">הבקתות</div><h2>שלוש תוויות. שלוש בקתות.</h2></div>
       </div>
       <div class="cards" id="cards"></div>
     </div>
@@ -363,9 +313,9 @@
           </div>
           <div class="months" id="months"></div>
           <div class="legend">
-            <span><i style="background:var(--clay)"></i>התאריכים שלכם</span>
-            <span><i style="background:var(--sand)"></i>פנוי</span>
-            <span><i style="background:#e9e2d7;border:1px dashed #c9bca8"></i>תפוס</span>
+            <span><i class="lg-sel"></i>התאריכים שלכם</span>
+            <span><i class="lg-free"></i>פנוי</span>
+            <span><i class="lg-taken"></i>תפוס</span>
           </div>
         </div>
 
@@ -387,7 +337,7 @@
   </section>
 
   <!-- ================= EXPERIENCE ================= -->
-  <section id="experience" style="padding-top:0">
+  <section id="experience">
     <div class="wrap">
       <div class="exp">
         <div><svg viewBox="0 0 24 24"><path d="M4 14h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M6 14V6a2 2 0 0 1 4 0"/><path d="M9 4.5c.8.8.8 1.7 0 2.5M13 4.5c.8.8.8 1.7 0 2.5"/></svg><b>ג׳קוזי פרטי</b><p>במרפסת, מול הכרם. מחומם כל השנה.</p></div>
@@ -400,7 +350,7 @@
 
   <section class="quote">
     <div class="wrap">
-      <p>״הגענו בשביל סופ״ש, ואנחנו כבר מתכננים את הבא.״</p>
+      <p>״הגענו לסופ״ש. כבר הזמנו את הבציר הבא.״</p>
       <small>טקסט לדוגמה. אצלכם יופיעו ביקורות אמיתיות של אורחים.</small>
     </div>
   </section>
@@ -451,9 +401,9 @@
   <script>
     // ---------- Data ----------
     const CABINS = [
-      { id: "gefen", name: "בקתת גפן", tag: "הכי מבוקשת · נוף פתוח לעמק", weekday: 1050, weekend: 1450, feats: ["ג׳קוזי", "אח", "מיטת קינג"], hue: ["#9a4a46", "#d9805f", "#3f4a36"] },
-      { id: "zayit", name: "בקתת זית", tag: "הכי שקטה · בקצה הכרם", weekday: 950, weekend: 1300, feats: ["ג׳קוזי", "אח", "מקלחת חוץ"], hue: ["#4a2c44", "#9a6a7a", "#2f3a2b"] },
-      { id: "teena", name: "בקתת תאנה", tag: "הכי מרווחת · עד 4 אורחים", weekday: 1150, weekend: 1550, feats: ["ג׳קוזי", "חדר נוסף", "מטבח מלא"], hue: ["#6b3a4a", "#c4674a", "#344030"], max: 4 },
+      { id: "gefen", name: "בקתת גפן", tag: "הכי מבוקשת · נוף פתוח לעמק", weekday: 1050, weekend: 1450, feats: ["ג׳קוזי", "אח", "מיטת קינג"] },
+      { id: "zayit", name: "בקתת זית", tag: "הכי שקטה · בקצה הכרם", weekday: 950, weekend: 1300, feats: ["ג׳קוזי", "אח", "מקלחת חוץ"] },
+      { id: "teena", name: "בקתת תאנה", tag: "הכי מרווחת · עד 4 אורחים", weekday: 1150, weekend: 1550, feats: ["ג׳קוזי", "חדר נוסף", "מטבח מלא"], max: 4 },
     ];
     const OTA_MARKUP = 0.12;   // shown as "price on booking sites"
     const EXTRA_GUEST = 180;   // per night, above 2 guests
@@ -486,20 +436,9 @@
     function nightPrice(d) { return isWeekendNight(d) ? cabin.weekend : cabin.weekday; }
 
     // ---------- Cabin cards ----------
+    const ROWS = { gefen: 1, zayit: 7, teena: 12 };
     function cabinArt(c) {
-      const [sky, sun, land] = c.hue;
-      return `<svg viewBox="0 0 400 300" aria-hidden="true">
-        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="${sun}"/></linearGradient>
-        <pattern id="p-${c.id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-20)"><rect width="12" height="12" fill="${land}"/><rect width="12" height="4" fill="#000" opacity=".12"/></pattern></defs>
-        <rect width="400" height="300" fill="url(#g-${c.id})"/>
-        <circle cx="${c.id === "zayit" ? 300 : 110}" cy="170" r="36" fill="#fbe6d6" opacity=".9"/>
-        <path d="M0 190 C 90 165 170 180 260 175 S 360 160 400 170 L400 300 L0 300Z" fill="#000" opacity=".18"/>
-        <path d="M0 215 C 110 190 230 215 400 200 L400 300 L0 300Z" fill="url(#p-${c.id})"/>
-        <g transform="translate(${c.id === "zayit" ? 70 : 230} 168)" fill="#14180f">
-          <path d="M0 64 L0 30 L40 0 L80 30 L80 64Z"/><rect x="14" y="36" width="16" height="18" fill="#ffc79e"/><rect x="48" y="36" width="16" height="18" fill="#f7b78c"/>
-        </g>
-        <path d="M0 255 C 140 240 260 260 400 248 L400 300 L0 300Z" fill="#14180f" opacity=".9"/>
-      </svg>`;
+      return `<div class="art"><small>יקב ובקתות · בין הכרמים</small><div class="nm">${c.name.replace("בקתת ", "")}</div><span>שורה ${ROWS[c.id]}</span></div>`;
     }
     function renderCards() {
       $("cards").innerHTML = "";
@@ -508,7 +447,7 @@
         el.className = "card" + (c === cabin ? " selected" : "");
         el.innerHTML = cabinArt(c) + `<div class="card-body"><h3>${c.name}</h3><div class="tag">${c.tag}</div>
           <ul>${c.feats.map((f) => `<li>${f}</li>`).join("")}</ul>
-          <div class="from"><div><small>מ-</small><b>${fmt(c.weekday)}</b><small> ללילה</small></div><button type="button" class="pick">${c === cabin ? "נבחרה" : "לבחור"}</button></div></div>`;
+          <div class="from"><div><small>מלילה </small><b>${fmt(c.weekday)}</b></div><button type="button" class="pick">${c === cabin ? "נבחרה" : "לבחור"}</button></div></div>`;
         el.querySelector(".pick").addEventListener("click", () => { selectCabin(c); $("book").scrollIntoView({ behavior: "smooth" }); });
         $("cards").appendChild(el);
       });
