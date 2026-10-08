@@ -5,7 +5,7 @@
 Two things live here:
 
 1. **Growth OS** (`src/`, `supabase/`): a multi-tenant Next.js app. One deployment serves many business sites, keyed on domain, with AI-proposed copy that the owner approves. See `README.md`.
-2. **Kfir's side-income channel** (`demos/`, `clients/`, `docs/side-income/`): lead systems for small local businesses. A landing page, an instant WhatsApp reply, follow-up reminders and a monthly report, sold as a setup fee plus a monthly retainer.
+2. **Kfir's side-income channel** (`demos/`, `clients/`, `docs/side-income/`): **ישיר**, a direct-booking subscription for צימרים. See "The product" below.
 
 Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put Multibrawn branding on its pages, and never mix it with other projects.
 
@@ -23,21 +23,26 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 ## House rules for anything a client or prospect sees
 
 - **Hebrew:** correct, short and plain. No spelling mistakes. Address the reader in plural (`אתם`) unless you know who it is.
-- **No overpromising.** Never promise "double your clients". The promise is "no enquiry gets lost".
+- **No overpromising.** Never promise more bookings or "double your clients". The promise is "direct bookings pay no commission".
 - **No yellow** in any palette. Aim for modern and premium, not cheap.
 - **Mobile first and RTL.** Every page passes `node scripts/qa-page.cjs <dir> [page]` before it ships.
 - **The client owns their assets.** Domain and hosting accounts are registered in the client's name.
 - **Paid clients use the official WhatsApp Cloud API.** Unofficial gateways such as Evolution API are for demos and internal use only, because they risk getting the number banned.
 
-## Prices (source of truth: `demos/index.html`)
+## The product: ישיר (source of truth: `demos/index.html`)
 
-| Package | Setup | Monthly |
-| --- | --- | --- |
-| נוכחות | 1,500 ₪ | 150 ₪ |
-| לידים | 2,800 ₪ | 700 ₪ |
-| נציג AI | 4,500 ₪ | 1,200 ₪ |
+One product, one niche: a direct-booking system for צימרים and holiday cabins. The pitch is money, not features: every direct booking keeps the platform commission with the owner. One subscription per cabin business, with no percentage of bookings.
 
-The first 3 clients get the pilot price for לידים: 1,900 ₪ setup and 450 ₪ a month.
+| | Price |
+| --- | --- |
+| Setup | 2,500 ₪ |
+| Monthly | 490 ₪ |
+| Founding offer (first 5 cabins) | 1,200 ₪ setup, 490 ₪ locked for 12 months, in exchange for a testimonial and permission to show the numbers |
+
+- **Demo cabin site:** `demos/bein-hakramim/` (a fictional place). It has a live availability calendar, the final price, a 24-hour hold with a deposit link, and a digital host.
+- **Sales page:** `demos/index.html`. It includes a commission calculator. The commission rate is an input; never state a platform's rate as fact.
+- **Don't promise** extra bookings or occupancy. The claims are: direct bookings pay no commission, and calendar sync prevents double bookings.
+- The older generic pages (`leads-demo/`, `ai-agent/`) stay online but are not the offer.
 
 ## Checks
 

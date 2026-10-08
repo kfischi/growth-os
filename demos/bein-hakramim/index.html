@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>בין הכרמים · בקתות בגליל העליון</title>
+  <meta name="description" content="שלוש בקתות עץ בין כרמים בגליל העליון. הזמנה ישירה, בלי עמלות.">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f6f1ea;
+      --paper: #fbf8f3;
+      --sand: #e7dccd;
+      --line: #dacdbb;
+      --ink: #1f231c;
+      --ink-soft: #5c5a4f;
+      --olive: #3f4a36;
+      --olive-deep: #273021;
+      --clay: #a9512f;
+      --clay-deep: #8a3f23;
+      --clay-tint: #f3e3da;
+      --dusk: #2a2135;
+      --radius: 14px;
+      --serif: "Frank Ruhl Libre", "David Libre", serif;
+      --sans: "Assistant", "Heebo", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--cream); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    button, input, select { font: inherit; color: inherit; }
+    .wrap { width: min(1180px, 100% - 40px); margin-inline: auto; }
+    .eyebrow { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--clay); }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 700; line-height: 1.1; margin: 0; }
+
+    /* ---------- Demo ribbon ---------- */
+    .ribbon {
+      position: fixed; bottom: 22px; left: 16px; z-index: 40; background: rgba(31,35,28,.82); color: var(--cream);
+      font-size: 13px; padding: 7px 14px; border-radius: 999px; text-decoration: none; backdrop-filter: blur(6px);
+      border: 1px solid rgba(246,241,234,.18);
+    }
+    .ribbon b { color: #f0c2a8; font-weight: 600; }
+
+    /* ---------- Hero ---------- */
+    .hero { position: relative; min-height: 100vh; min-height: 100svh; color: var(--cream); display: flex; flex-direction: column; overflow: hidden; background: var(--dusk); }
+    .hero svg.scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 26px 0; }
+    .mark { font-family: var(--serif); font-size: 24px; font-weight: 700; letter-spacing: .01em; }
+    .mark small { display: block; font-family: var(--sans); font-size: 12px; letter-spacing: .2em; opacity: .75; font-weight: 500; }
+    .nav nav { display: flex; gap: 28px; font-size: 15px; }
+    .nav nav a { text-decoration: none; opacity: .85; }
+    .nav nav a:hover { opacity: 1; }
+    .hero-copy { position: relative; z-index: 2; margin-top: auto; padding-bottom: 150px; max-width: 640px; }
+    .hero-copy .eyebrow { color: #f0c2a8; }
+    .hero h1 { font-size: clamp(48px, 8vw, 104px); font-weight: 900; margin: 16px 0 18px; letter-spacing: -.01em; }
+    .hero p { font-size: 20px; max-width: 30ch; opacity: .9; margin: 0; }
+
+    .bookbar {
+      position: relative; z-index: 3; margin-top: -86px; background: var(--paper); color: var(--ink);
+      border-radius: 18px; box-shadow: 0 30px 60px -20px rgba(20, 16, 24, .45);
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; align-items: stretch; overflow: hidden;
+    }
+    .bookbar > div { padding: 18px 22px; border-inline-start: 1px solid var(--line); }
+    .bookbar > div:first-child { border-inline-start: 0; }
+    .bookbar label { display: block; font-size: 12px; letter-spacing: .14em; color: var(--ink-soft); font-weight: 600; }
+    .bookbar .val { font-family: var(--serif); font-size: 20px; font-weight: 700; margin-top: 2px; }
+    .bookbar select { border: 0; background: none; font-family: var(--serif); font-size: 20px; font-weight: 700; padding: 0; margin-top: 2px; width: 100%; cursor: pointer; }
+    .bookbar .go { border: 0; background: var(--clay); color: #fff; font-weight: 700; padding: 0 34px; cursor: pointer; font-size: 17px; transition: background .2s; }
+    .bookbar .go:hover { background: var(--clay-deep); }
+
+    /* ---------- Sections ---------- */
+    section { padding: 110px 0; }
+    .lede { display: grid; grid-template-columns: 1fr 1.1fr; gap: 72px; align-items: end; }
+    .lede h2 { font-size: clamp(36px, 5vw, 60px); }
+    .lede p { font-size: 19px; color: var(--ink-soft); margin: 0; }
+    .facts { display: flex; gap: 40px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+    .facts div { min-width: 120px; }
+    .facts b { display: block; font-family: var(--serif); font-size: 40px; line-height: 1; color: var(--olive); }
+    .facts span { font-size: 15px; color: var(--ink-soft); }
+
+    .cabins { background: var(--paper); border-block: 1px solid var(--line); }
+    .head-row { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 44px; flex-wrap: wrap; }
+    .head-row h2 { font-size: clamp(32px, 4vw, 48px); margin-top: 10px; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+    .card { background: var(--cream); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; transition: transform .25s, box-shadow .25s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -24px rgba(39,48,33,.35); }
+    .card svg { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; }
+    .card-body { padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+    .card h3 { font-size: 28px; }
+    .card .tag { font-size: 14px; color: var(--ink-soft); margin: 4px 0 14px; }
+    .card ul { list-style: none; padding: 0; margin: 0 0 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .card li { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--sand); }
+    .card .from { margin-top: auto; display: flex; align-items: baseline; justify-content: space-between; }
+    .card .from b { font-family: var(--serif); font-size: 26px; }
+    .card .from small { color: var(--ink-soft); font-size: 14px; }
+    .card .pick { border: 1.5px solid var(--olive); background: none; color: var(--olive); border-radius: 999px; padding: 7px 16px; font-weight: 700; cursor: pointer; font-size: 14px; }
+    .card .pick:hover, .card.selected .pick { background: var(--olive); color: var(--cream); }
+    .card.selected { border-color: var(--olive); box-shadow: 0 0 0 2px var(--olive); }
+
+    /* ---------- Booking ---------- */
+    .booking .grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 36px; align-items: start; }
+    .cal { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+    .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .cal-top button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: var(--cream); cursor: pointer; font-size: 18px; }
+    .cal-top button:disabled { opacity: .35; cursor: default; }
+    .cal-hint { font-size: 15px; color: var(--ink-soft); }
+    .months { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .month h4 { font-family: var(--serif); font-size: 21px; margin: 0 0 12px; text-align: center; }
+    .dow, .days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+    .dow span { font-size: 12px; color: var(--ink-soft); font-weight: 600; padding-bottom: 6px; }
+    .days button {
+      aspect-ratio: 1; border: 0; background: none; cursor: pointer; font-size: 15px; font-weight: 600; position: relative;
+      border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;
+    }
+    .days button small { font-size: 10px; font-weight: 500; color: var(--ink-soft); }
+    .days button:hover:not(:disabled) { background: var(--sand); }
+    .days button:disabled { color: #b8ad9d; cursor: default; text-decoration: line-through; text-decoration-color: #cfc3b1; }
+    .days button:disabled small { visibility: hidden; }
+    .days button.in-range { background: var(--clay-tint); border-radius: 0; }
+    .days button.edge { background: var(--clay); color: #fff; }
+    .days button.edge small { color: #fbe3d6; }
+    .legend { display: flex; gap: 18px; margin-top: 16px; font-size: 13px; color: var(--ink-soft); flex-wrap: wrap; }
+    .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-inline-end: 6px; vertical-align: -1px; }
+
+    .summary { position: sticky; top: 24px; background: var(--olive-deep); color: var(--cream); border-radius: 18px; padding: 28px; }
+    .summary h3 { font-size: 26px; }
+    .summary .cabin-name { opacity: .75; font-size: 15px; margin-top: 4px; }
+    .rows { margin: 22px 0; display: grid; gap: 10px; font-size: 15px; }
+    .rows div { display: flex; justify-content: space-between; gap: 12px; }
+    .rows .muted { opacity: .65; }
+    .total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid rgba(246,241,234,.2); padding-top: 16px; }
+    .total b { font-family: var(--serif); font-size: 36px; }
+    .compare { margin-top: 10px; font-size: 14px; display: flex; justify-content: space-between; color: #f0c2a8; }
+    .compare s { opacity: .7; }
+    .guest-row { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 15px; }
+    .stepper { display: flex; align-items: center; gap: 12px; }
+    .stepper button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(246,241,234,.35); background: none; color: var(--cream); cursor: pointer; font-size: 18px; }
+    .stepper output { min-width: 18px; text-align: center; font-weight: 700; }
+    .reserve { width: 100%; margin-top: 22px; border: 0; border-radius: 12px; padding: 16px; background: var(--clay); color: #fff; font-weight: 700; font-size: 17px; cursor: pointer; }
+    .reserve:hover:not(:disabled) { background: #b85d3a; }
+    .reserve:disabled { opacity: .45; cursor: default; }
+    .note { font-size: 13px; opacity: .7; margin: 12px 0 0; text-align: center; }
+    .err { color: #ffb59a; font-size: 14px; margin-top: 10px; min-height: 1em; }
+
+    /* ---------- Experience ---------- */
+    .exp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+    .exp div { background: var(--cream); padding: 30px 26px; }
+    .exp b { font-family: var(--serif); font-size: 22px; display: block; margin: 12px 0 6px; }
+    .exp p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+    .exp svg { width: 34px; height: 34px; stroke: var(--clay); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+    .quote { background: var(--olive); color: var(--cream); text-align: center; }
+    .quote p { font-family: var(--serif); font-size: clamp(26px, 3.4vw, 40px); max-width: 26ch; margin: 0 auto 18px; line-height: 1.3; }
+    .quote small { opacity: .7; }
+
+    footer { padding: 60px 0 48px; color: var(--ink-soft); font-size: 15px; }
+    footer .row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 28px; }
+    footer .mark { color: var(--ink); }
+
+    /* ---------- Confirmation ---------- */
+    .sheet-bg { position: fixed; inset: 0; background: rgba(23, 20, 28, .6); backdrop-filter: blur(3px); display: none; z-index: 50; align-items: center; justify-content: center; padding: 16px; }
+    .sheet-bg.open { display: flex; }
+    .sheet { background: var(--paper); border-radius: 20px; width: min(760px, 100%); max-height: calc(100vh - 32px); overflow: auto; display: grid; grid-template-columns: 1fr 1fr; position: relative; animation: rise .35s ease-out; }
+    .sheet .x { position: absolute; top: 12px; left: 12px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--sand); cursor: pointer; font-size: 20px; }
+    .sheet .side { padding: 34px 30px; }
+    .sheet .side.dark { background: var(--olive-deep); color: var(--cream); border-radius: 0 20px 20px 0; }
+    .sheet h3 { font-size: 30px; margin-bottom: 8px; }
+    .sheet .sub { color: var(--ink-soft); margin: 0 0 22px; }
+    .sheet dl { margin: 0; display: grid; gap: 8px; font-size: 15px; }
+    .sheet dl div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+    .sheet dt { color: var(--ink-soft); }
+    .sheet dd { margin: 0; font-weight: 600; }
+    .pay { display: block; text-align: center; margin-top: 22px; background: var(--clay); color: #fff; text-decoration: none; padding: 14px; border-radius: 12px; font-weight: 700; }
+    .wa-head { font-size: 13px; letter-spacing: .14em; opacity: .7; margin-bottom: 12px; }
+    .wa { background: #0e2a22; border-radius: 14px; padding: 14px; font-size: 14px; white-space: pre-line; line-height: 1.55; border: 1px solid #1f4a3d; }
+    .wa time { display: block; text-align: left; font-size: 11px; opacity: .6; margin-top: 6px; }
+    .after { margin-top: 18px; font-size: 14px; opacity: .8; display: grid; gap: 8px; }
+    .after span::before { content: "◦ "; color: #f0c2a8; }
+
+    /* ---------- Concierge ---------- */
+    .concierge-btn {
+      position: fixed; bottom: 20px; right: 20px; z-index: 30; display: flex; align-items: center; gap: 10px;
+      background: var(--ink); color: var(--cream); border: 0; border-radius: 999px; padding: 12px 18px 12px 14px; cursor: pointer;
+      box-shadow: 0 14px 30px -12px rgba(0,0,0,.5); font-weight: 600;
+    }
+    .concierge-btn .dot { width: 30px; height: 30px; border-radius: 50%; background: var(--clay); display: grid; place-items: center; font-family: var(--serif); font-weight: 700; }
+    .concierge { position: fixed; bottom: 84px; right: 20px; z-index: 30; width: min(360px, calc(100% - 40px)); background: var(--paper); border-radius: 18px; border: 1px solid var(--line); box-shadow: 0 30px 60px -20px rgba(0,0,0,.35); display: none; flex-direction: column; overflow: hidden; }
+    .concierge.open { display: flex; animation: rise .25s ease-out; }
+    .c-head { background: var(--olive-deep); color: var(--cream); padding: 16px 18px; }
+    .c-head b { font-family: var(--serif); font-size: 19px; display: block; }
+    .c-head small { opacity: .7; }
+    .c-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; }
+    .c-msg { background: var(--cream); border-radius: 12px; padding: 10px 12px; font-size: 15px; align-self: flex-start; max-width: 90%; border: 1px solid var(--line); }
+    .c-msg.me { align-self: flex-end; background: var(--olive); color: var(--cream); border-color: var(--olive); }
+    .c-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 16px; }
+    .c-chips button { border: 1px solid var(--olive); color: var(--olive); background: none; border-radius: 999px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+    .c-chips button:hover { background: var(--olive); color: var(--cream); }
+    .c-foot { font-size: 12px; color: var(--ink-soft); padding: 0 16px 14px; }
+
+    @keyframes rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    @media (max-width: 960px) {
+      .lede, .booking .grid { grid-template-columns: 1fr; gap: 32px; }
+      .cards { grid-template-columns: 1fr; }
+      .exp { grid-template-columns: 1fr 1fr; }
+      .months { grid-template-columns: 1fr; }
+      .months .month:nth-child(2) { display: none; }
+      .summary { position: static; }
+      .bookbar { grid-template-columns: 1fr 1fr; }
+      .bookbar > div:nth-child(3) { border-inline-start: 0; border-top: 1px solid var(--line); }
+      .bookbar > div:nth-child(2) { border-inline-start: 1px solid var(--line); }
+      .bookbar .go { grid-column: 1 / -1; padding: 16px; }
+      .bookbar > div:nth-child(1) { border-bottom: 0; }
+      .nav nav { display: none; }
+    }
+    @media (max-width: 560px) {
+      section { padding: 76px 0; }
+      .exp { grid-template-columns: 1fr; }
+      .sheet { grid-template-columns: 1fr; }
+      .sheet .side.dark { border-radius: 0 0 20px 20px; }
+      .hero-copy { padding-bottom: 130px; }
+      .cal { padding: 18px 14px; }
+      .bookbar > div { padding: 14px 16px; }
+      .concierge-btn .label { display: none; }
+      .concierge-btn { padding: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+
+  <a class="ribbon" href="../">דמו · <b>מערכת הזמנות ישירות לצימרים</b></a>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <svg class="scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#1d1828"/>
+          <stop offset=".38" stop-color="#4a2c44"/>
+          <stop offset=".62" stop-color="#9a4a46"/>
+          <stop offset=".8" stop-color="#d9805f"/>
+          <stop offset="1" stop-color="#eeb193"/>
+        </linearGradient>
+        <radialGradient id="sun" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#fbe2d0"/>
+          <stop offset=".35" stop-color="#f3b896" stop-opacity=".9"/>
+          <stop offset="1" stop-color="#e8946f" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#ffcfa8" stop-opacity=".9"/>
+          <stop offset="1" stop-color="#ffcfa8" stop-opacity="0"/>
+        </radialGradient>
+        <pattern id="rows" width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)">
+          <rect width="22" height="22" fill="#2b3226"/>
+          <rect width="22" height="7" fill="#353e2f"/>
+        </pattern>
+        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#14120f" stop-opacity="0"/>
+          <stop offset="1" stop-color="#14120f" stop-opacity=".55"/>
+        </linearGradient>
+      </defs>
+      <rect width="1440" height="900" fill="url(#sky)"/>
+      <g fill="#fff6ee" id="stars">
+        <circle cx="140" cy="90" r="1.4" opacity=".8"/><circle cx="310" cy="160" r="1" opacity=".6"/><circle cx="520" cy="70" r="1.6" opacity=".9"/>
+        <circle cx="690" cy="140" r="1" opacity=".5"/><circle cx="860" cy="60" r="1.3" opacity=".8"/><circle cx="1010" cy="120" r="1" opacity=".6"/>
+        <circle cx="1180" cy="80" r="1.5" opacity=".85"/><circle cx="1330" cy="150" r="1.1" opacity=".6"/><circle cx="420" cy="230" r=".9" opacity=".4"/>
+        <circle cx="960" cy="220" r=".9" opacity=".4"/><circle cx="1260" cy="250" r=".8" opacity=".35"/><circle cx="230" cy="260" r=".8" opacity=".35"/>
+      </g>
+      <circle cx="470" cy="560" r="230" fill="url(#sun)"/>
+      <circle cx="470" cy="560" r="62" fill="#fbe6d6" opacity=".95"/>
+      <path d="M0 560 C 180 500 330 520 480 548 S 820 470 1010 500 S 1300 540 1440 500 L1440 900 L0 900Z" fill="#7b4553" opacity=".75"/>
+      <path d="M0 610 C 220 560 380 600 560 610 S 900 540 1120 580 S 1360 600 1440 590 L1440 900 L0 900Z" fill="#553646"/>
+      <path d="M0 670 C 260 610 520 660 760 650 S 1180 600 1440 640 L1440 900 L0 900Z" fill="url(#rows)"/>
+      <path d="M0 670 C 260 610 520 660 760 650 S 1180 600 1440 640" fill="none" stroke="#4a5640" stroke-width="2" opacity=".6"/>
+      <path d="M0 760 C 300 720 600 760 900 740 S 1300 720 1440 735 L1440 900 L0 900Z" fill="#1b2018"/>
+      <!-- cabin -->
+      <g transform="translate(150 640)">
+        <circle cx="62" cy="58" r="95" fill="url(#glow)" opacity=".55"/>
+        <path d="M0 110 L0 52 L62 0 L124 52 L124 110Z" fill="#14180f"/>
+        <path d="M-10 58 L62 -6 L134 58" fill="none" stroke="#14180f" stroke-width="10" stroke-linejoin="round"/>
+        <rect x="24" y="62" width="26" height="30" rx="2" fill="#ffc79e"/>
+        <rect x="74" y="62" width="26" height="30" rx="2" fill="#f7b78c"/>
+        <rect x="56" y="28" width="12" height="16" rx="2" fill="#ffd3b2" opacity=".8"/>
+      </g>
+      <!-- cypresses -->
+      <g fill="#11150e">
+        <ellipse cx="90" cy="690" rx="13" ry="70"/><ellipse cx="116" cy="705" rx="10" ry="52"/>
+        <ellipse cx="320" cy="690" rx="12" ry="66"/><ellipse cx="344" cy="708" rx="9" ry="46"/>
+        <ellipse cx="1300" cy="740" rx="12" ry="60"/><ellipse cx="1324" cy="752" rx="9" ry="44"/>
+      </g>
+      <rect width="1440" height="900" fill="url(#fade)"/>
+    </svg>
+
+    <div class="wrap nav">
+      <div class="mark">בין הכרמים<small>גליל עליון · 3 בקתות</small></div>
+      <nav aria-label="ניווט">
+        <a href="#cabins">הבקתות</a><a href="#book">זמינות ומחירים</a><a href="#experience">החוויה</a>
+      </nav>
+    </div>
+    <div class="wrap hero-copy">
+      <div class="eyebrow">בקתות עץ לזוגות</div>
+      <h1>שקט, כרמים,<br>ואתם.</h1>
+      <p>שלוש בקתות בקצה כרם, עם ג׳קוזי פרטי, אח מבוערת וארוחת בוקר מהחווה.</p>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <form class="bookbar" id="bookbar" aria-label="בדיקת זמינות">
+      <div><label>בקתה</label>
+        <select id="bar-cabin" aria-label="בקתה"></select>
+      </div>
+      <div><label>הגעה</label><div class="val" id="bar-in">בחרו תאריך</div></div>
+      <div><label>עזיבה</label><div class="val" id="bar-out">—</div></div>
+      <button class="go" type="submit">לבדוק זמינות</button>
+    </form>
+  </div>
+
+  <!-- ================= LEDE ================= -->
+  <section>
+    <div class="wrap">
+      <div class="lede">
+        <div>
+          <div class="eyebrow">המקום</div>
+          <h2>בנינו את זה לאט, בשביל אנשים שרוצים לעצור.</h2>
+        </div>
+        <p>שמונה דונם של כרם, שלוש בקתות במרחק נדיב זו מזו, ונוף לעמק החולה. בבוקר מגיעה סלסלה לדלת, ובערב האח כבר מוכנה. אין לובי ואין קבלה. יש אותנו, בהודעה אחת.</p>
+      </div>
+      <div class="facts">
+        <div><b>3</b><span>בקתות בלבד</span></div>
+        <div><b>8</b><span>דונם של כרם</span></div>
+        <div><b>40</b><span>מטר בין בקתה לבקתה</span></div>
+        <div><b>24/7</b><span>מענה לאורחים</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CABINS ================= -->
+  <section class="cabins" id="cabins">
+    <div class="wrap">
+      <div class="head-row">
+        <div><div class="eyebrow">הבקתות</div><h2>שלוש, וכל אחת אחרת.</h2></div>
+      </div>
+      <div class="cards" id="cards"></div>
+    </div>
+  </section>
+
+  <!-- ================= BOOKING ================= -->
+  <section class="booking" id="book">
+    <div class="wrap">
+      <div class="head-row">
+        <div><div class="eyebrow">זמינות ומחירים</div><h2>בוחרים תאריכים, ורואים מחיר סופי.</h2></div>
+      </div>
+      <div class="grid">
+        <div class="cal">
+          <div class="cal-top">
+            <button type="button" id="prev" aria-label="החודש הקודם">›</button>
+            <span class="cal-hint" id="hint">בחרו תאריך הגעה</span>
+            <button type="button" id="next" aria-label="החודש הבא">‹</button>
+          </div>
+          <div class="months" id="months"></div>
+          <div class="legend">
+            <span><i style="background:var(--clay)"></i>התאריכים שלכם</span>
+            <span><i style="background:var(--sand)"></i>פנוי</span>
+            <span><i style="background:#e9e2d7;border:1px dashed #c9bca8"></i>תפוס</span>
+          </div>
+        </div>
+
+        <aside class="summary" aria-live="polite">
+          <h3>ההזמנה שלכם</h3>
+          <div class="cabin-name" id="s-cabin"></div>
+          <div class="rows" id="s-rows"><div class="muted">בחרו תאריכי הגעה ועזיבה ביומן</div></div>
+          <div class="total"><span>סה״כ</span><b id="s-total">—</b></div>
+          <div class="compare" id="s-compare" hidden><span>באתרי הזמנות</span><s id="s-ota"></s></div>
+          <div class="guest-row"><span>אורחים</span>
+            <div class="stepper"><button type="button" id="g-minus" aria-label="פחות אורחים">−</button><output id="g-count">2</output><button type="button" id="g-plus" aria-label="יותר אורחים">+</button></div>
+          </div>
+          <div class="err" id="s-err"></div>
+          <button class="reserve" id="reserve" type="button" disabled>לשריון ל-24 שעות</button>
+          <p class="note">בלי תשלום עכשיו. מקדמה של 30% בקישור מאובטח.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section id="experience" style="padding-top:0">
+    <div class="wrap">
+      <div class="exp">
+        <div><svg viewBox="0 0 24 24"><path d="M4 14h16v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M6 14V6a2 2 0 0 1 4 0"/><path d="M9 4.5c.8.8.8 1.7 0 2.5M13 4.5c.8.8.8 1.7 0 2.5"/></svg><b>ג׳קוזי פרטי</b><p>במרפסת, מול הכרם. מחומם כל השנה.</p></div>
+        <div><svg viewBox="0 0 24 24"><path d="M12 3c2 3 5 4.5 5 9a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.5 1.5 1.5 2 2 2 0-2 .5-4.5 1-6.5z"/><path d="M5 21h14"/></svg><b>אח מבוערת</b><p>עצים מוכנים בכל ערב, בלי שתצטרכו לבקש.</p></div>
+        <div><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-16 0z"/><path d="M8 7c0-1.5 1-2 1-3M12 7c0-1.5 1-2 1-3M16 7c0-1.5 1-2 1-3"/></svg><b>ארוחת בוקר</b><p>סלסלה מהחווה ליד הדלת, בשעה שתבחרו.</p></div>
+        <div><svg viewBox="0 0 24 24"><path d="M8 3c-1 4 0 6 2 8M16 3c1 4 0 6-2 8"/><path d="M7 21c0-5 2-8 5-10 3 2 5 5 5 10"/><circle cx="12" cy="15" r="1.4"/></svg><b>יין מהכרם</b><p>בקבוק מהבציר שלנו מחכה במקרר.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote">
+    <div class="wrap">
+      <p>״הגענו בשביל סופ״ש, ואנחנו כבר מתכננים את הבא.״</p>
+      <small>טקסט לדוגמה. אצלכם יופיעו ביקורות אמיתיות של אורחים.</small>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="row">
+        <div class="mark">בין הכרמים</div>
+        <div>אתר לדוגמה של מערכת הזמנות ישירות. המקום בדוי.</div>
+        <a href="../">רוצים אתר כזה לצימר שלכם?</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= CONFIRMATION ================= -->
+  <div class="sheet-bg" id="sheet-bg" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet">
+      <button class="x" id="sheet-x" aria-label="סגירה">×</button>
+      <div class="side">
+        <div class="eyebrow">שריון ל-24 שעות</div>
+        <h3 id="sheet-title">התאריכים שמורים לכם.</h3>
+        <p class="sub">כדי לסגור את ההזמנה, משלמים מקדמה. אם לא, השריון משתחרר אוטומטית מחר באותה שעה.</p>
+        <dl id="sheet-dl"></dl>
+        <a class="pay" href="#" id="pay">לתשלום מקדמה מאובטח</a>
+      </div>
+      <div class="side dark">
+        <div class="wa-head">במקביל, בוואטסאפ של האורח</div>
+        <div class="wa" id="sheet-wa"></div>
+        <div class="after">
+          <span>בעל המקום מקבל התראה עם כל הפרטים</span>
+          <span>היומן ננעל גם ב-Booking וב-Airbnb</span>
+          <span>יומיים לפני ההגעה: הוראות הגעה וקוד לדלת</span>
+          <span>יום אחרי: בקשה לביקורת בגוגל</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CONCIERGE ================= -->
+  <button class="concierge-btn" id="c-btn" type="button" aria-expanded="false" aria-controls="concierge"><span class="dot">מ</span><span class="label">שאלו את המארחת</span></button>
+  <div class="concierge" id="concierge" role="dialog" aria-label="המארחת הדיגיטלית">
+    <div class="c-head"><b>מיכל, המארחת הדיגיטלית</b><small>עונה מיד, גם בשתיים בלילה</small></div>
+    <div class="c-body" id="c-body"><div class="c-msg">היי! אני כאן לכל שאלה על הבקתות, המחירים והאזור. במה לעזור?</div></div>
+    <div class="c-chips" id="c-chips"></div>
+    <div class="c-foot">הדגמה. אצלכם המארחת מבוססת AI ולומדת את המידע של המקום.</div>
+  </div>
+
+  <script>
+    // ---------- Data ----------
+    const CABINS = [
+      { id: "gefen", name: "בקתת גפן", tag: "הכי מבוקשת · נוף פתוח לעמק", weekday: 1050, weekend: 1450, feats: ["ג׳קוזי", "אח", "מיטת קינג"], hue: ["#9a4a46", "#d9805f", "#3f4a36"] },
+      { id: "zayit", name: "בקתת זית", tag: "הכי שקטה · בקצה הכרם", weekday: 950, weekend: 1300, feats: ["ג׳קוזי", "אח", "מקלחת חוץ"], hue: ["#4a2c44", "#9a6a7a", "#2f3a2b"] },
+      { id: "teena", name: "בקתת תאנה", tag: "הכי מרווחת · עד 4 אורחים", weekday: 1150, weekend: 1550, feats: ["ג׳קוזי", "חדר נוסף", "מטבח מלא"], hue: ["#6b3a4a", "#c4674a", "#344030"], max: 4 },
+    ];
+    const OTA_MARKUP = 0.12;   // shown as "price on booking sites"
+    const EXTRA_GUEST = 180;   // per night, above 2 guests
+    const MONTHS = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+    const DOW = ["א׳","ב׳","ג׳","ד׳","ה׳","ו׳","ש׳"];
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n) => "₪" + Math.round(n).toLocaleString("he-IL");
+    const day0 = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+    const key = (d) => d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    const isWeekendNight = (d) => d.getDay() === 4 || d.getDay() === 5; // Thu and Fri nights
+    const shortDate = (d) => d.getDate() + " ב" + MONTHS[d.getMonth()];
+
+    const today = day0(new Date());
+    let cabin = CABINS[0], checkIn = null, checkOut = null, guests = 2, offset = 0;
+
+    // Deterministic "booked" nights per cabin, so the calendar looks lived-in.
+    function isBooked(d) {
+      if (d < today) return true;
+      const n = d.getFullYear() * 400 + d.getMonth() * 31 + d.getDate() + cabin.id.length * 7;
+      const r = Math.abs(Math.sin(n * 12.9898) * 43758.5453) % 1;
+      const weekendBias = isWeekendNight(d) ? 0.33 : 0.14;
+      return r < weekendBias;
+    }
+    function rangeFree(a, b) {
+      for (let d = a; d < b; d = addDays(d, 1)) if (isBooked(d)) return false;
+      return true;
+    }
+    function nightPrice(d) { return isWeekendNight(d) ? cabin.weekend : cabin.weekday; }
+
+    // ---------- Cabin cards ----------
+    function cabinArt(c) {
+      const [sky, sun, land] = c.hue;
+      return `<svg viewBox="0 0 400 300" aria-hidden="true">
+        <defs><linearGradient id="g-${c.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky}"/><stop offset="1" stop-color="${sun}"/></linearGradient>
+        <pattern id="p-${c.id}" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-20)"><rect width="12" height="12" fill="${land}"/><rect width="12" height="4" fill="#000" opacity=".12"/></pattern></defs>
+        <rect width="400" height="300" fill="url(#g-${c.id})"/>
+        <circle cx="${c.id === "zayit" ? 300 : 110}" cy="170" r="36" fill="#fbe6d6" opacity=".9"/>
+        <path d="M0 190 C 90 165 170 180 260 175 S 360 160 400 170 L400 300 L0 300Z" fill="#000" opacity=".18"/>
+        <path d="M0 215 C 110 190 230 215 400 200 L400 300 L0 300Z" fill="url(#p-${c.id})"/>
+        <g transform="translate(${c.id === "zayit" ? 70 : 230} 168)" fill="#14180f">
+          <path d="M0 64 L0 30 L40 0 L80 30 L80 64Z"/><rect x="14" y="36" width="16" height="18" fill="#ffc79e"/><rect x="48" y="36" width="16" height="18" fill="#f7b78c"/>
+        </g>
+        <path d="M0 255 C 140 240 260 260 400 248 L400 300 L0 300Z" fill="#14180f" opacity=".9"/>
+      </svg>`;
+    }
+    function renderCards() {
+      $("cards").innerHTML = "";
+      CABINS.forEach((c) => {
+        const el = document.createElement("article");
+        el.className = "card" + (c === cabin ? " selected" : "");
+        el.innerHTML = cabinArt(c) + `<div class="card-body"><h3>${c.name}</h3><div class="tag">${c.tag}</div>
+          <ul>${c.feats.map((f) => `<li>${f}</li>`).join("")}</ul>
+          <div class="from"><div><small>מ-</small><b>${fmt(c.weekday)}</b><small> ללילה</small></div><button type="button" class="pick">${c === cabin ? "נבחרה" : "לבחור"}</button></div></div>`;
+        el.querySelector(".pick").addEventListener("click", () => { selectCabin(c); $("book").scrollIntoView({ behavior: "smooth" }); });
+        $("cards").appendChild(el);
+      });
+      const sel = $("bar-cabin");
+      sel.innerHTML = CABINS.map((c) => `<option value="${c.id}" ${c === cabin ? "selected" : ""}>${c.name}</option>`).join("");
+    }
+    function selectCabin(c) {
+      cabin = c;
+      if (guests > (c.max || 2)) guests = c.max || 2;
+      if (checkIn && checkOut && !rangeFree(checkIn, checkOut)) { checkIn = checkOut = null; }
+      renderCards(); renderCal(); renderSummary();
+    }
+
+    // ---------- Calendar ----------
+    function renderMonth(year, month) {
+      const first = new Date(year, month, 1);
+      const daysIn = new Date(year, month + 1, 0).getDate();
+      let html = `<div class="month"><h4>${MONTHS[month]} ${year}</h4><div class="dow">${DOW.map((d) => `<span>${d}</span>`).join("")}</div><div class="days">`;
+      for (let i = 0; i < first.getDay(); i++) html += "<span></span>";
+      for (let n = 1; n <= daysIn; n++) {
+        const d = new Date(year, month, n);
+        const booked = isBooked(d);
+        // A booked night can still be a check-out day if the night before is free.
+        const canCheckout = checkIn && !checkOut && d > checkIn && rangeFree(checkIn, d);
+        const disabled = booked && !canCheckout;
+        let cls = "";
+        if (checkIn && key(d) === key(checkIn)) cls = "edge";
+        else if (checkOut && key(d) === key(checkOut)) cls = "edge";
+        else if (checkIn && checkOut && d > checkIn && d < checkOut) cls = "in-range";
+        const price = booked ? "" : nightPrice(d).toLocaleString("he-IL");
+        html += `<button type="button" class="${cls}" data-k="${key(d)}" ${disabled ? "disabled" : ""} aria-label="${shortDate(d)}${booked ? ", תפוס" : ""}">${n}<small>${price}</small></button>`;
+      }
+      return html + "</div></div>";
+    }
+    function renderCal() {
+      const base = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+      const next = new Date(base.getFullYear(), base.getMonth() + 1, 1);
+      $("months").innerHTML = renderMonth(base.getFullYear(), base.getMonth()) + renderMonth(next.getFullYear(), next.getMonth());
+      $("prev").disabled = offset === 0;
+      $("next").disabled = offset >= 10;
+      $("months").querySelectorAll("button[data-k]").forEach((b) => b.addEventListener("click", () => pick(b.dataset.k)));
+      $("hint").textContent = !checkIn ? "בחרו תאריך הגעה" : !checkOut ? "ועכשיו תאריך עזיבה" : "אפשר לשנות בלחיצה על תאריך אחר";
+    }
+    function pick(k) {
+      const [y, m, d] = k.split("-").map(Number);
+      const date = new Date(y, m - 1, d);
+      $("s-err").textContent = "";
+      if (!checkIn || checkOut || date <= checkIn) {
+        if (isBooked(date)) return;
+        checkIn = date; checkOut = null;
+      } else {
+        if (!rangeFree(checkIn, date)) { $("s-err").textContent = "יש לילה תפוס באמצע. נסו טווח אחר."; return; }
+        checkOut = date;
+      }
+      renderCal(); renderSummary();
+    }
+
+    // ---------- Summary ----------
+    function quote() {
+      if (!checkIn || !checkOut) return null;
+      const nights = [];
+      for (let d = checkIn; d < checkOut; d = addDays(d, 1)) nights.push(d);
+      const wk = nights.filter(isWeekendNight).length;
+      const base = nights.reduce((s, d) => s + nightPrice(d), 0);
+      const extra = Math.max(0, guests - 2) * EXTRA_GUEST * nights.length;
+      return { nights: nights.length, weekendNights: wk, base, extra, total: base + extra };
+    }
+    function renderSummary() {
+      $("s-cabin").textContent = cabin.name + (checkIn ? " · " + shortDate(checkIn) + (checkOut ? " עד " + shortDate(checkOut) : "") : "");
+      $("g-count").textContent = guests;
+      $("bar-in").textContent = checkIn ? shortDate(checkIn) : "בחרו תאריך";
+      $("bar-out").textContent = checkOut ? shortDate(checkOut) : "—";
+      const q = quote();
+      const rows = $("s-rows");
+      if (!q) {
+        rows.innerHTML = '<div class="muted">' + (checkIn ? "בחרו תאריך עזיבה" : "בחרו תאריכי הגעה ועזיבה ביומן") + "</div>";
+        $("s-total").textContent = "—"; $("s-compare").hidden = true; $("reserve").disabled = true;
+        return;
+      }
+      const mid = q.nights - q.weekendNights;
+      let html = "";
+      if (mid) html += `<div><span>${mid} ${mid === 1 ? "לילה" : "לילות"} באמצע שבוע</span><span>${fmt(mid * cabin.weekday)}</span></div>`;
+      if (q.weekendNights) html += `<div><span>${q.weekendNights} ${q.weekendNights === 1 ? "לילה" : "לילות"} בסוף שבוע</span><span>${fmt(q.weekendNights * cabin.weekend)}</span></div>`;
+      if (q.extra) html += `<div><span>אורחים נוספים</span><span>${fmt(q.extra)}</span></div>`;
+      html += `<div class="muted"><span>ארוחת בוקר ויין</span><span>כלולים</span></div>`;
+      rows.innerHTML = html;
+      $("s-total").textContent = fmt(q.total);
+      $("s-ota").textContent = fmt(q.total * (1 + OTA_MARKUP));
+      $("s-compare").hidden = false;
+      const fridayOnly = q.nights === 1 && checkIn.getDay() === 5;
+      $("s-err").textContent = fridayOnly ? "בסופי שבוע מינימום שני לילות." : "";
+      $("reserve").disabled = fridayOnly;
+    }
+    $("g-minus").addEventListener("click", () => { guests = Math.max(1, guests - 1); renderSummary(); });
+    $("g-plus").addEventListener("click", () => {
+      const max = cabin.max || 2;
+      if (guests >= max) { $("s-err").textContent = `${cabin.name} מתאימה עד ${max} אורחים.`; return; }
+      guests++; renderSummary();
+    });
+    $("prev").addEventListener("click", () => { offset = Math.max(0, offset - 1); renderCal(); });
+    $("next").addEventListener("click", () => { offset++; renderCal(); });
+    $("bar-cabin").addEventListener("change", (e) => selectCabin(CABINS.find((c) => c.id === e.target.value)));
+    $("bookbar").addEventListener("submit", (e) => { e.preventDefault(); $("book").scrollIntoView({ behavior: "smooth" }); });
+
+    // ---------- Reserve ----------
+    let lastFocus = null;
+    $("reserve").addEventListener("click", () => {
+      const q = quote(); if (!q) return;
+      const deposit = Math.round(q.total * 0.3);
+      $("sheet-dl").innerHTML = [
+        ["בקתה", cabin.name], ["הגעה", shortDate(checkIn) + ", מ-15:00"], ["עזיבה", shortDate(checkOut) + ", עד 12:00"],
+        ["לילות", q.nights], ["אורחים", guests], ["סה״כ", fmt(q.total)], ["מקדמה (30%)", fmt(deposit)],
+      ].map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
+      const now = new Date();
+      $("sheet-wa").innerHTML = "";
+      $("sheet-wa").append(
+        `היי! כאן מיכל מבין הכרמים 🍇\nשמרנו לכם את ${cabin.name}, ${shortDate(checkIn)} עד ${shortDate(checkOut)}.\nלאישור ההזמנה: מקדמה של ${fmt(deposit)} בקישור המאובטח.\nהשריון בתוקף עד מחר באותה שעה.\nיש שאלה? פשוט כתבו כאן.`
+      );
+      const t = document.createElement("time");
+      t.textContent = now.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+      $("sheet-wa").appendChild(t);
+      lastFocus = document.activeElement;
+      $("sheet-bg").classList.add("open");
+      $("sheet-x").focus();
+    });
+    function closeSheet() { $("sheet-bg").classList.remove("open"); if (lastFocus) lastFocus.focus(); }
+    $("sheet-x").addEventListener("click", closeSheet);
+    $("sheet-bg").addEventListener("click", (e) => { if (e.target.id === "sheet-bg") closeSheet(); });
+    $("pay").addEventListener("click", (e) => { e.preventDefault(); $("pay").textContent = "בדמו אין תשלום. אצלכם: קישור סליקה מאובטח"; });
+
+    // ---------- Concierge ----------
+    const QA = [
+      ["יש מקום בסופ״ש הקרוב?", () => {
+        let d = addDays(today, 1); while (d.getDay() !== 4) d = addDays(d, 1);
+        const free = CABINS.filter((c) => { const prev = cabin; cabin = c; const ok = rangeFree(d, addDays(d, 2)); cabin = prev; return ok; });
+        return free.length
+          ? `כן! מחמישי ${shortDate(d)} פנויות: ${free.map((c) => c.name).join(", ")}. רוצים שאסמן לכם ביומן?`
+          : `הסופ״ש הקרוב מלא, אבל הסופ״ש שאחריו עוד פתוח. לבדוק לכם?`;
+      }],
+      ["אפשר להגיע עם תינוק?", () => "בשמחה. בבקתת תאנה יש עריסה ומקום לאורח שלישי, בלי תוספת לתינוק עד גיל שנתיים."],
+      ["מה יש לעשות באזור?", () => "יקב במרחק 5 דקות, שמורת החולה בבוקר, ומסלול נחל קצר שמתחיל ליד השער. אשלח לכם מפה עם ההמלצות שלנו."],
+      ["מה מדיניות הביטול?", () => "ביטול עד 14 יום לפני ההגעה: החזר מלא של המקדמה. אחרי זה אפשר לדחות לתאריך אחר בתוך חצי שנה."],
+    ];
+    function renderChips() {
+      $("c-chips").innerHTML = "";
+      QA.forEach(([q, a]) => {
+        const b = document.createElement("button"); b.type = "button"; b.textContent = q;
+        b.addEventListener("click", () => {
+          addMsg(q, true);
+          setTimeout(() => addMsg(a(), false), 450);
+        });
+        $("c-chips").appendChild(b);
+      });
+    }
+    function addMsg(text, me) {
+      const m = document.createElement("div"); m.className = "c-msg" + (me ? " me" : ""); m.textContent = text;
+      $("c-body").appendChild(m); $("c-body").scrollTop = $("c-body").scrollHeight;
+    }
+    $("c-btn").addEventListener("click", () => {
+      const open = $("concierge").classList.toggle("open");
+      $("c-btn").setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if ($("sheet-bg").classList.contains("open")) closeSheet();
+      else if ($("concierge").classList.contains("open")) { $("concierge").classList.remove("open"); $("c-btn").setAttribute("aria-expanded", "false"); }
+    });
+
+    renderCards(); renderCal(); renderSummary(); renderChips();
+  </script>
+</body>
+</html>

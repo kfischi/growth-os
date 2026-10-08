@@ -13,3 +13,8 @@
   for = "/ai-agent/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/bein-hakramim/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
