@@ -53,7 +53,7 @@ Live at https://service-pro-web.netlify.app (Netlify, publishing the `demos/` fo
 
 ## Home page and AI chat
 
-The home page `demos/index.html` is the "נחיתה רכה" sales page: scroll animations with GSAP (vendored in `demos/shared/vendor/`) on the browser's native scrolling, with no smooth-scroll library and no custom cursor, the two packages in `#plans`, the 15 demos and a form that opens WhatsApp. `demos/all/` lists every demo with a short description. The old address `/start/` redirects to `/`.
+The home page `demos/index.html` is the "נחיתה רכה" sales page: the two acts of the working day ("without a site" and "with a site") play on their own like short films once they are on screen, with a progress line and a pause/replay button, and pause when scrolled away. Nothing is pinned to the scroll except the horizontal demo strip on wide screens. GSAP is vendored in `demos/shared/vendor/`; no smooth-scroll library, no custom cursor, the two packages in `#plans`, the 15 demos and a form that opens WhatsApp. `demos/all/` lists every demo with a short description. The old address `/start/` redirects to `/`.
 
 
 `demos/shared/aibot.js` (UI) calls `demos/netlify/functions/chat.mjs` (`/api/chat`, Claude via the official SDK, `claude-opus-5-5`, effort low, server-side fallbacks). It runs on the home page and on `/all/`. The system prompt in that file and the scripted price answer in `aibot.js` hold the prices: keep both in sync with `#plans` in `demos/index.html`. Without `ANTHROPIC_API_KEY` in Netlify the chat falls back to scripted answers.

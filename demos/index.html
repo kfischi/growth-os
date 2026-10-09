@@ -178,6 +178,13 @@ bdi { white-space: nowrap; }
 :root:not(.is-live) .bar { position: absolute; }
 
 /* with motion */
+/* the acts play like short films: a thin progress line and one button */
+.film { position: absolute; inset-inline-start: var(--gut); inline-size: min(480px, 40%); bottom: 4svh; z-index: 3; display: flex; align-items: center; gap: 14px; }
+.film-btn { flex: none; inline-size: 40px; block-size: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line);
+  background: transparent; color: var(--fg); font: 600 .8rem/1 var(--f-text); cursor: pointer; transition: border-color .2s, color .2s; }
+.film-btn:hover, .film-btn:focus-visible { border-color: var(--accent); color: var(--accent); outline: 0; }
+.film-bar { flex: 1; block-size: 2px; background: var(--line); overflow: hidden; }
+.film-bar i { display: block; block-size: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; }
 .is-live .verdict { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; padding: var(--gut); visibility: hidden; }
 .is-live .bigclock { display: grid; position: absolute; inset: 0; place-content: center; pointer-events: none; direction: ltr;
   font: 400 clamp(5rem, 25vw, 25rem)/1 var(--f-clock); letter-spacing: -.02em; }
@@ -198,6 +205,10 @@ bdi { white-space: nowrap; }
   .entry p { grid-column: 1 / -1; grid-row: 2; font-size: 1.04rem; }
   .entry .status { justify-self: end; font-size: .9rem; }
   .verdict-big { font-size: 25vw; }
+  .film { position: fixed; inline-size: auto; inset-inline-end: var(--gut); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); padding: 6px 6px 6px 14px; border-radius: 999px;
+    background: color-mix(in oklab, var(--bg) 88%, transparent); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  .film.on { opacity: 1; visibility: visible; }
+  :root.filming .dock.on { display: none; }
   .plan { grid-template-columns: minmax(0, 1fr); }
   .plan-name { font-size: 22vw; }
   .plan-price { text-align: start; gap: .4em; }
@@ -415,89 +426,103 @@ bdi { white-space: nowrap; }
     root.style.setProperty('--lost', css(mix(SKY.lost[0], SKY.lost[1], k)));
     state.fg = rgb(fg); state.accent = rgb(accent); };
 
-  /* ---- the score: every global value is a function of scroll position ---- */
-  const track = (pts) => (y) => { if (y <= pts[0][0]) return pts[0][1];
-    for (let i = 1; i < pts.length; i++) if (y <= pts[i][0]) { const [y0, v0] = pts[i - 1], [y1, v1] = pts[i]; return y1 === y0 ? v1 : v0 + (v1 - v0) * (y - y0) / (y1 - y0); }
-    return pts[pts.length - 1][1]; };
-  let score = null;
+  /* ---- the day: the acts play like short films. One state drives the light, the clock and the dots ---- */
+  const S = { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 };
   const clocks = $$('[data-clock]'); let lastMin = -1;
   const setClock = (m) => { m = Math.round(m); if (m === lastMin) return; lastMin = m;
     const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); };
   const frame = () => { const y = window.scrollY, max = document.documentElement.scrollHeight - innerHeight;
     root.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
-    if (!score) return;
-    applySky(score.sky(y)); setClock(score.clock(y));
-    state.order = score.order(y); state.lost = score.lost(y); state.answered = score.answered(y); state.fade = score.fade(y); };
+    applySky(S.sky); setClock(S.clock);
+    state.order = S.order; state.lost = S.lost; state.answered = S.answered; state.fade = S.fade; };
 
   /* ---- motion ---- */
   if (live) {
     root.classList.add('is-live');
     gsap.registerPlugin(ScrollTrigger);
+    const MOOD = { morning: { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 },
+      evening: { sky: 1, clock: 1170, order: 1, lost: 0, answered: 1, fade: .5 },
+      night: { sky: 3, clock: 1367, order: .3, lost: 0, answered: 0, fade: 1 } };
+    let playing = null;
+    let dusk = null;
+    // outside the films the light follows the page: morning above them, evening after them, night from the dusk on.
+    // Checked when scrolling stops, so a film that was only scrolled past does not leave its light behind.
+    const zone = () => { const mid = scrollY + innerHeight / 2, top = (sel) => $(sel).getBoundingClientRect().top + scrollY;
+      return mid < top('#without') ? 'morning' : mid >= top('.sunset') ? 'night' : mid >= top('#plans') ? 'evening' : null; };
+    const settle = () => { if ((playing && playing.isActive()) || (dusk && dusk.isActive())) return; const m = zone();
+      if (m) gsap.to(S, { ...MOOD[m], duration: 1.2, ease: 'power2.inOut', overwrite: 'auto' }); };
 
-    const buildScore = () => { const A = ScrollTrigger.getById('without'), B = ScrollTrigger.getById('with'), S = ScrollTrigger.getById('sunset');
-      if (!A || !B || !S) return; const at = (st, p) => st.start + (st.end - st.start) * p;
-      score = {
-        sky: track([[0, 0], [at(A, 0), 0], [at(A, .66), 1], [at(A, .79), 1], [at(A, .87), 2], [at(B, .06), 2], [at(B, .17), 0], [at(B, .26), 0], [at(B, .86), 1], [at(S, .1), 1], [at(S, .82), 3]]),
-        clock: track([[0, 478], [at(A, 0), 480], [at(A, .66), 1170], [at(B, 0), 1170], [at(B, .11), 480], [at(B, .24), 480], [at(B, .8), 1170], [at(S, 0), 1170], [at(S, .9), 1367]]),
-        order: track([[0, 0], [at(B, .24), 0], [at(B, .84), 1], [at(S, 0), 1], [at(S, 1), .3]]),
-        lost: track([[0, 0], [at(A, .05), 0], [at(A, .7), .85], [at(B, 0), .85], [at(B, .12), 0]]),
-        answered: track([[0, 0], [at(B, .26), 0], [at(B, .86), 1]]),
-        fade: track([[0, 1], [at(B, 1), 1], [at(B, 1) + innerHeight * .7, .5], [at(S, 0), .5], [at(S, .6), 1]]) }; };
+    // a film: a paused timeline, a progress line and one button. It plays while its stage is on screen.
+    const film = (sec, tl, secs) => {
+      tl.timeScale(1 / secs).pause();
+      const ctl = document.createElement('div'); ctl.className = 'film';
+      ctl.innerHTML = '<button type="button" class="film-btn" aria-label="השהיה"><span aria-hidden="true">❚❚</span></button><span class="film-bar"><i></i></span>';
+      $('.stage', sec).appendChild(ctl);
+      const btn = $('button', ctl), bar = $('i', ctl), icon = $('span', btn);
+      let onScreen = false, held = false;
+      const show = () => { const done = tl.progress() === 1, run = !tl.paused() && !done;
+        icon.textContent = done ? '↺' : run ? '❚❚' : '▶'; btn.setAttribute('aria-label', done ? 'לצפות שוב' : run ? 'השהיה' : 'המשך'); };
+      tl.eventCallback('onUpdate', () => { bar.style.transform = `scaleX(${tl.progress()})`; });
+      tl.eventCallback('onComplete', () => { if (playing === tl) playing = null; show(); });
+      const go = () => { if (held || tl.progress() === 1) return show(); if (playing && playing !== tl) playing.pause(); playing = tl; tl.play(); show(); };
+      const stop = () => { tl.pause(); if (playing === tl) playing = null; show(); };
+      btn.addEventListener('click', () => { if (tl.progress() === 1) { held = false; playing = tl; tl.restart(); }
+        else if (tl.paused()) { held = false; go(); } else { held = true; stop(); } show(); });
+      ScrollTrigger.create({ trigger: $('.stage', sec), start: 'top 45%', end: 'bottom 55%',
+        onToggle: (st) => { onScreen = st.isActive; ctl.classList.toggle('on', onScreen); root.classList.toggle('filming', !!$('.film.on')); onScreen ? go() : stop(); } });
+      show();
+    };
 
-    gsap.matchMedia().add({ desktop: '(min-width: 900px)', phone: '(max-width: 899px)' }, (ctx) => {
-      const { desktop } = ctx.conditions, vh = () => innerHeight;
+    // act one: the day without (about 9 seconds)
+    const A = $('#without'), tA = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tA.fromTo(S, { ...MOOD.morning, clock: 480 }, { sky: 1, clock: 1170, lost: .85, duration: .66, ease: 'none', immediateRender: false }, 0)
+      .to(S, { sky: 2, duration: .21, ease: 'none' }, .66);
+    $$('.entry', A).forEach((e) => { const p = .66 * (e.dataset.t - 480) / 690;
+      tA.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, duration: .03 }, p + .045);
+      if (e.dataset.state === 'lost') tA.to($$('time, p', e), { opacity: .36, duration: .05 }, p + .06); });
+    tA.to($$('.act-title, .log', A), { autoAlpha: 0, duration: .04 }, .76)
+      .fromTo($('.verdict', A), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .86)
+      .from($$('.verdict .ln-i', A), { yPercent: 115, duration: .08, stagger: .02, ease: 'expo.out' }, .86).set({}, {}, 1);
+    film(A, tA, 9);
 
-      // act one: the day without
-      const A = $('#without'), tA = gsap.timeline({ defaults: { ease: 'power2.out' },
-        scrollTrigger: { id: 'without', trigger: $('.stage', A), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 1.4 : 1.5), invalidateOnRefresh: true } });
-      $$('.entry', A).forEach((e) => { const p = .66 * (e.dataset.t - 480) / 690;
-        tA.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, duration: .03 }, p + .045);
-        if (e.dataset.state === 'lost') tA.to($$('time, p', e), { opacity: .36, duration: .05 }, p + .06); });
-      tA.to($$('.act-title, .log', A), { autoAlpha: 0, duration: .04 }, .76)
-        .fromTo($('.verdict', A), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .86)
-        .from($$('.verdict .ln-i', A), { yPercent: 115, duration: .08, stagger: .02, ease: 'expo.out' }, .86).set({}, {}, 1);
+    // act two: the clock runs back, then the same day with the site (about 11 seconds)
+    const B = $('#with'), tB = gsap.timeline({ defaults: { ease: 'power2.out' } });
+    tB.fromTo(S, { sky: 2, clock: 1170, order: 0, lost: .85, answered: 0, fade: 1 }, { clock: 480, lost: 0, duration: .11, ease: 'power2.inOut', immediateRender: false }, 0)
+      .to(S, { sky: 0, duration: .17, ease: 'power1.inOut' }, 0)
+      .to(S, { clock: 1170, sky: 1, order: 1, answered: 1, duration: .62, ease: 'none' }, .24)
+      .to($('.bigclock', B), { autoAlpha: 0, scale: .9, duration: .05 }, .12)
+      .from($$('.act-title .ln-i', B), { yPercent: 115, duration: .06, stagger: .02, ease: 'expo.out' }, .185);
+    $$('.entry', B).forEach((e) => { const p = .24 + .56 * (e.dataset.t - 480) / 690;
+      tB.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, x: 14, duration: .035 }, p + .04); });
+    tB.to($$('.act-title, .log', B), { autoAlpha: 0, duration: .04 }, .87)
+      .fromTo($('.verdict', B), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .91)
+      .from($$('.verdict .ln-i', B), { yPercent: 115, duration: .07, stagger: .02, ease: 'expo.out' }, .91).set({}, {}, 1);
+    film(B, tB, 11);
 
-      // act two: the clock runs back, then the same day with the site
-      const B = $('#with'), tB = gsap.timeline({ defaults: { ease: 'power2.out' },
-        scrollTrigger: { id: 'with', trigger: $('.stage', B), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 1.6 : 1.7), invalidateOnRefresh: true } });
-      tB.to($('.bigclock', B), { autoAlpha: 0, scale: .9, duration: .05 }, .12)
-        .from($$('.act-title .ln-i', B), { yPercent: 115, duration: .06, stagger: .02, ease: 'expo.out' }, .185);
-      $$('.entry', B).forEach((e) => { const p = .24 + .56 * (e.dataset.t - 480) / 690;
-        tB.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, x: 14, duration: .035 }, p + .04); });
-      tB.to($$('.act-title, .log', B), { autoAlpha: 0, duration: .04 }, .87)
-        .fromTo($('.verdict', B), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .91)
-        .from($$('.verdict .ln-i', B), { yPercent: 115, duration: .07, stagger: .02, ease: 'expo.out' }, .91).set({}, {}, 1);
+    ScrollTrigger.addEventListener('scrollEnd', settle);
 
-      // section headings: one masked rise each
-      const reveal = (h) => gsap.from($$('.ln-i', h), { yPercent: 115, duration: 1.1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
-      reveal($('#t-plans'));
+    // dusk interlude: plays once it is on screen, no pinning
+    dusk = gsap.timeline({ paused: true }).to(S, { ...MOOD.night, duration: 2.4, ease: 'power1.inOut' }, 0)
+      .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: 1, ease: 'expo.out' }, 1.6);
+    ScrollTrigger.create({ trigger: '.sunset', start: 'top 55%', onEnter: () => { if (playing) playing.pause(), (playing = null); dusk.restart(); } });
 
-      // demos: a horizontal scene on wide screens. In RTL the track travels toward positive x.
-      reveal($('#t-demos'));
-      if (desktop) { const tr = $('.track'), dist = () => Math.max(0, tr.scrollWidth - innerWidth);
-        gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist() * .6, invalidateOnRefresh: true } }); }
+    // section headings: one masked rise each
+    const reveal = (h) => gsap.from($$('.ln-i', h), { yPercent: 115, duration: 1.1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
+    ['#t-plans', '#t-demos', '#t-faces', '#t-process', '#t-contact'].forEach((h) => reveal($(h)));
 
-      reveal($('#t-faces'));
-      reveal($('#t-process'));
-
-      // dusk interlude: the stage is empty except the clock while the light changes
-      gsap.timeline({ scrollTrigger: { id: 'sunset', trigger: $('.sunset'), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? .5 : .6), invalidateOnRefresh: true } })
-        .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: .12, ease: 'expo.out' }, .84).set({}, {}, 1);
-      reveal($('#t-contact'));
-
+    // demos: a horizontal scene on wide screens. In RTL the track travels toward positive x.
+    gsap.matchMedia().add('(min-width: 900px)', () => {
+      const tr = $('.track'), dist = () => Math.max(0, tr.scrollWidth - innerWidth);
+      gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist() * .6, invalidateOnRefresh: true } });
       // magnetic buttons, fine pointers only
-      if (desktop && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      if (matchMedia('(hover: hover) and (pointer: fine)').matches)
         $$('[data-magnetic]').forEach((el) => { const x = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3' }), y = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
           el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); x((e.clientX - r.left - r.width / 2) * .3); y((e.clientY - r.top - r.height / 2) * .3); });
           el.addEventListener('pointerleave', () => { x(0); y(0); }); });
-      }
     });
 
-    ScrollTrigger.addEventListener('refresh', buildScore);
-    buildScore();
     gsap.ticker.add(frame);
     document.fonts.ready.then(() => ScrollTrigger.refresh());
-
     // the one load sequence
     root.classList.remove('pre');
     gsap.from('.hero .ln-i', { yPercent: 115, duration: 1.25, ease: 'expo.out', stagger: .11, delay: .15 });
