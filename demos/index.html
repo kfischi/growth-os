@@ -67,32 +67,68 @@ bdi { white-space: nowrap; }
 .btn:hover, .btn:focus-visible { background: var(--accent); }
 
 /* hero */
-.hero { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; gap: 4svh; padding: clamp(88px, 13svh, 130px) var(--gut) clamp(28px, 5svh, 56px); }
-.hero-head { align-self: center; }
-.hero h1 { font: 700 var(--hero)/.84 var(--f-display); }
-.hero-sub { margin-top: clamp(.7rem, 2.2svh, 1.3rem); font: 500 clamp(1.2rem, 1.9vw, 1.75rem)/1.3 var(--f-text); }
-.hero h1 .ln:nth-child(2) { text-align: end; }
-.hero-foot { display: flex; justify-content: space-between; align-items: end; gap: 24px 40px; flex-wrap: wrap; }
+/* the hero: one working day on two phones, split screen like a film */
+.hero { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); align-items: center; gap: 28px clamp(32px, 5vw, 96px);
+  padding: clamp(84px, 11svh, 112px) var(--gut) clamp(20px, 3svh, 36px); }
+.hero-text { min-width: 0; display: grid; justify-items: start; gap: clamp(.8rem, 2svh, 1.3rem); }
+.hero h1 { font: 700 clamp(3.8rem, 7.6vw, 8.4rem)/.86 var(--f-display); }
+.hero h1 .ln { display: block; }
+.hero-sub { font: 600 clamp(1.25rem, 1.8vw, 1.7rem)/1.3 var(--f-text); }
 .lede { text-wrap: pretty; max-width: 36ch; font-size: clamp(1.06rem, 1.4vw, 1.32rem); line-height: 1.5; }
-.pre .hero h1, .pre .hero-sub, .pre .hero-foot { opacity: 0; }
+.hero .lede { font-size: clamp(1.02rem, 1.25vw, 1.18rem); line-height: 1.55; color: var(--dim); }
+.pre .hero-text > *, .pre .day { opacity: 0; }
+.day { min-width: 0; display: grid; gap: 12px; }
+.day-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(14px, 2.6vw, 40px); }
+.ph { margin: 0; min-width: 0; display: grid; gap: 10px; }
+.ph-label { font: 700 clamp(1.7rem, 2.5vw, 2.5rem)/1 var(--f-display); }
+.ph-today .ph-label { color: var(--lost); }
+.ph-site .ph-label { color: var(--accent); }
+.ph-body { position: relative; block-size: min(54svh, 476px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  border: 1.5px solid color-mix(in oklab, var(--fg) 26%, var(--bg)); border-radius: clamp(24px, 2.8vw, 40px); padding: clamp(26px, 3svh, 36px) clamp(10px, 1.2vw, 16px) clamp(12px, 1.6svh, 18px);
+  background: color-mix(in oklab, var(--fg) 5%, var(--bg));
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--fg) 7%, var(--bg)), 0 34px 60px -34px color-mix(in oklab, var(--fg) 55%, transparent); }
+.ph-body::before { content: ""; position: absolute; top: 10px; inset-inline: 0; margin-inline: auto; inline-size: 30%; block-size: 6px; border-radius: 6px; background: color-mix(in oklab, var(--fg) 22%, var(--bg)); }
+.ph-top { display: grid; justify-items: center; gap: 2px; }
+.ph-time { font: 400 clamp(2rem, 3.6vw, 3.4rem)/1 var(--f-clock); direction: ltr; letter-spacing: -.01em; }
+.ph-date { font-size: .78rem; color: var(--dim); }
+.ph-notes { list-style: none; padding: 0; margin: clamp(10px, 1.8svh, 18px) 0 0; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.n { display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(-6px); transition: grid-template-rows .55s cubic-bezier(.2, .8, .2, 1), opacity .45s, transform .55s cubic-bezier(.2, .8, .2, 1); }
+.n.in { grid-template-rows: 1fr; opacity: 1; transform: none; }
+.n.in .n-card { animation: arrive 1.4s ease-out; }
+.ph-today .n.done:not([data-i="3"]) .n-card { animation: miss 1.2s ease-out; }
+@keyframes arrive { from { background: color-mix(in oklab, var(--fg) 22%, var(--bg)); } }
+@keyframes miss { from { background: color-mix(in oklab, var(--lost) 30%, var(--bg)); } }
+.n-in { overflow: hidden; min-height: 0; }
+.n-card { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 8px 10px; border-radius: 13px;
+  background: color-mix(in oklab, var(--fg) 9%, var(--bg)); }
+.n[data-ghost] .n-card { background: transparent; outline: 1px dashed color-mix(in oklab, var(--lost) 70%, var(--bg)); outline-offset: -1px; }
+.n-ic { inline-size: 26px; block-size: 26px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--fg) 14%, var(--bg)); }
+.n-ic svg { inline-size: 14px; block-size: 14px; fill: currentColor; }
+.n.done .n-ic { color: var(--bg); background: var(--accent); }
+.ph-today .n.done:not([data-i="3"]) .n-ic { background: var(--lost); }
+.n p { min-width: 0; display: grid; line-height: 1.25; }
+.n b { font-size: .82rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.n p span { font-size: .74rem; }
+.n .post, .n.done .pre { display: none; }
+.n.done .post { display: grid; }
+.n .lost { color: var(--lost); } .n .ok { color: var(--accent); } .n .dim { color: var(--dim); }
+.ph-today .n.in:not(.done)[data-kind="call"] .n-ic { animation: ring .4s ease-in-out infinite; color: var(--lost); }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+.ph-tally { margin-top: 8px; display: flex; align-items: baseline; justify-content: center; gap: .4em; font-size: .8rem; color: var(--dim); }
+.ph-tally b { font: 700 clamp(2rem, 3vw, 2.8rem)/1 var(--f-display); }
+.ph-today .ph-tally b { color: var(--lost); }
+.ph-site .ph-tally b { color: var(--accent); }
+.day-sub { min-height: 2.7em; text-align: center; font: 600 clamp(1.05rem, 1.45vw, 1.3rem)/1.35 var(--f-text); text-wrap: balance; transition: opacity .3s; }
+.day-sub.swap { opacity: 0; }
+.day-ctl { display: flex; align-items: center; gap: 12px; }
+.day-btn { flex: none; inline-size: 36px; block-size: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line);
+  background: transparent; color: var(--fg); font: 600 .72rem/1 var(--f-text); cursor: pointer; transition: border-color .2s, color .2s; }
+.day-btn:hover, .day-btn:focus-visible { border-color: var(--accent); color: var(--accent); outline: 0; }
+.day-bar { flex: 1; block-size: 2px; background: var(--line); overflow: hidden; }
+.day-bar i { display: block; block-size: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; }
+.day-note { flex: none; font-size: .74rem; color: var(--dim); }
+@media (prefers-reduced-motion: reduce) { .n, .day-sub { transition: none; } .ph-today .n-ic, .n-card { animation: none !important; } }
 
-/* the two acts */
-.stage { position: relative; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center;
-  gap: clamp(24px, 5vw, 80px); padding: clamp(88px, 13svh, 130px) var(--gut) clamp(24px, 5svh, 48px); }
-.act-title { font: 700 clamp(3.6rem, 9vw, 9.5rem)/.84 var(--f-display); }
-.log { list-style: none; padding: 0; display: grid; }
-.entry { display: grid; grid-template-columns: 5.4ch minmax(0, 1fr) auto; align-items: baseline; gap: .2em 1.4em; padding: clamp(.8rem, 2.3svh, 1.45rem) 0; border-top: 1px solid var(--line); }
-.entry:last-child { border-bottom: 1px solid var(--line); }
-.entry time { font: 400 1.02rem/1 var(--f-clock); direction: ltr; unicode-bidi: isolate; }
-.entry p { font-size: clamp(1.05rem, 1.5vw, 1.4rem); line-height: 1.35; }
-.status { display: inline-flex; align-items: center; gap: .5em; font-weight: 500; font-size: .96rem; line-height: 1.2; }
-.status::before { content: ""; inline-size: .55em; block-size: .55em; border-radius: 50%; background: currentColor; flex: none; }
-.entry[data-state="lost"] .status { color: var(--lost); }
-.entry[data-state="ok"] .status { color: var(--accent); }
-.verdict { grid-column: 1 / -1; padding-block: 8svh 2svh; }
-.verdict-big { font: 700 clamp(4.4rem, 15vw, 15rem)/.84 var(--f-display); }
-.note { margin-top: 1.4em; font-size: .95rem; color: var(--dim); }
-.bigclock { display: none; }
 
 /* sections in normal flow */
 .sec { padding: clamp(96px, 17svh, 190px) var(--gut); }
@@ -171,21 +207,12 @@ bdi { white-space: nowrap; }
 
 
 /* without motion: sections carry their own light */
-:root:not(.is-live) #without .verdict, :root:not(.is-live) .contact {
+:root:not(.is-live) .contact {
   --bg: var(--d-bg); --fg: var(--d-fg); --accent: var(--d-accent); --lost: var(--d-lost); background: var(--bg); color: var(--fg); }
 :root:not(.is-live) .contact { --bg: var(--n-bg); }
-:root:not(.is-live) #without .verdict { margin-inline: calc(var(--gut) * -1); padding: 12svh var(--gut); }
 :root:not(.is-live) .bar { position: absolute; }
 
 /* with motion */
-/* the acts play like short films: a thin progress line and one button */
-.film { position: absolute; inset-inline-start: var(--gut); inline-size: min(480px, 40%); bottom: 4svh; z-index: 3; display: flex; align-items: center; gap: 14px; }
-.film-btn { flex: none; inline-size: 40px; block-size: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line);
-  background: transparent; color: var(--fg); font: 600 .8rem/1 var(--f-text); cursor: pointer; transition: border-color .2s, color .2s; }
-.film-btn:hover, .film-btn:focus-visible { border-color: var(--accent); color: var(--accent); outline: 0; }
-.film-bar { flex: 1; block-size: 2px; background: var(--line); overflow: hidden; }
-.film-bar i { display: block; block-size: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; }
-.is-live .verdict { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; padding: var(--gut); visibility: hidden; }
 .is-live .bigclock { display: grid; position: absolute; inset: 0; place-content: center; pointer-events: none; direction: ltr;
   font: 400 clamp(5rem, 25vw, 25rem)/1 var(--f-clock); letter-spacing: -.02em; }
 .is-live .sunset { display: grid; position: relative; min-height: 100svh; }
@@ -194,21 +221,21 @@ bdi { white-space: nowrap; }
 .is-live .demos-pin { min-height: 100svh; display: grid; align-content: center; gap: 2svh; }
 
 @media (max-width: 899px) {
-  :root { --hero: 35vw; }
-  .hero h1 .w { display: block; }
   .bar-cta { display: none; }
   .bar { grid-template-columns: 1fr auto; }
   .brand .long { display: none; }
-  .stage { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.6rem; }
-  .act-title { font-size: clamp(3.4rem, 17vw, 6rem); }
-  .entry { grid-template-columns: auto minmax(0, 1fr); gap: .25em 1em; padding: .62rem 0; }
-  .entry p { grid-column: 1 / -1; grid-row: 2; font-size: 1.04rem; }
-  .entry .status { justify-self: end; font-size: .9rem; }
-  .verdict-big { font-size: 25vw; }
-  .film { position: fixed; inline-size: auto; inset-inline-end: var(--gut); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); padding: 6px 6px 6px 14px; border-radius: 999px;
-    background: color-mix(in oklab, var(--bg) 88%, transparent); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
-  .film.on { opacity: 1; visibility: visible; }
-  :root.filming .dock.on { display: none; }
+  .hero { grid-template-columns: minmax(0, 1fr); align-items: start; gap: 22px; padding-top: 76px; }
+  .hero h1 { font-size: 17vw; }
+  .day-split { gap: 10px; }
+  .ph-label { font-size: 1.55rem; }
+  .ph-body { block-size: auto; min-block-size: 372px; border-radius: 24px; padding: 24px 7px 10px; }
+  .ph-time { font-size: 1.9rem; }
+  .n-card { gap: 6px; padding: 7px 7px; border-radius: 11px; }
+  .n-ic { inline-size: 22px; block-size: 22px; } .n-ic svg { inline-size: 12px; block-size: 12px; }
+  .n b { font-size: .74rem; } .n p span { font-size: .68rem; }
+  .ph-tally { flex-direction: column; align-items: center; gap: 0; font-size: .7rem; }
+  .day-note, .hero .lede { display: none; }
+  :root.in-hero .ab-launch { opacity: 0; pointer-events: none; }
   .plan { grid-template-columns: minmax(0, 1fr); }
   .plan-name { font-size: 22vw; }
   .plan-price { text-align: start; gap: .4em; }
@@ -247,53 +274,22 @@ bdi { white-space: nowrap; }
 
   <main>
     <section class="hero" id="hero">
-      <div class="hero-head">
-        <h1>
-          <span class="ln"><span class="ln-i"><span class="w">הראש</span> <span class="w">בעסק.</span></span></span>
-          <span class="ln"><span class="ln-i"><span class="w">האתר</span> <span class="w">עונה.</span></span></span>
-        </h1>
-        <p class="hero-sub">כדי שלא תפספסו אף אחד.</p>
-      </div>
-      <div class="hero-foot">
-        <p class="lede">אתרים ודפי נחיתה לעסקים קטנים.<br>מטפלים בפניות גם כשהעסק ישן.</p>
+      <div class="hero-text">
+        <h1><span class="ln"><span class="ln-i">אותו עסק.</span></span> <span class="ln"><span class="ln-i">אותו יום.</span></span></h1>
+        <p class="hero-sub">ההבדל: אתר שעונה כשאתם עסוקים.</p>
+        <p class="lede">אתרים ודפי נחיתה לעסקים קטנים, עם מענה אוטומטי בוואטסאפ. צפו ביום עבודה אחד משני הצדדים.</p>
         <a class="btn" href="#contact" data-magnetic>לשיחת היכרות של 5 דקות</a>
       </div>
-    </section>
-
-    <section class="act" id="without" aria-labelledby="t-without">
-      <div class="stage">
-        <h2 class="act-title" id="t-without"><span class="ln"><span class="ln-i">יום עבודה.</span></span><span class="ln"><span class="ln-i">בלי אתר.</span></span></h2>
-        <ol class="log">
-          <li class="entry" data-t="552" data-state="lost"><time>09:12</time><p>שיחה נכנסת. אתם באמצע עבודה.</p><span class="status">לא נענתה</span></li>
-          <li class="entry" data-t="700" data-state="lost"><time>11:40</time><p>הודעת וואטסאפ: ״כמה זה עולה?״</p><span class="status">נקראה רק בערב</span></li>
-          <li class="entry" data-t="785" data-state="lost"><time>13:05</time><p>שיחה נכנסת. אתם על הסולם.</p><span class="status">לא נענתה</span></li>
-          <li class="entry" data-t="990" data-state="ok"><time>16:30</time><p>לקוח קבוע מתקשר.</p><span class="status">נענתה</span></li>
-          <li class="entry" data-t="1160" data-state="lost"><time>19:20</time><p>מישהו מחפש אתכם בגוגל. סגור.</p><span class="status">לא השאיר פרטים</span></li>
-        </ol>
-        <div class="verdict">
-          <p class="verdict-big"><span class="ln"><span class="ln-i">חמש פניות.</span></span><span class="ln"><span class="ln-i">אחת נענתה.</span></span></p>
-          <p class="note">המחשה של יום עבודה אחד, לא נתון סטטיסטי.</p>
+      <div class="day" id="day" role="group" aria-label="יום עבודה אחד: העסק היום מול אותו עסק עם אתר">
+        <div class="day-split">
+          <figure class="ph ph-today"><figcaption class="ph-label">העסק היום</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="search" data-ghost><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"/></svg></span><p class="pre"><b></b><span class="dim"></span></p><p class="post"><b>חיפשו אתכם בגוגל</b><span class="lost">אין איך לפנות. הלך הלאה</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">13:05. אתם על הסולם</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>וואטסאפ</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="lost">לא נקרא עד הערב</span></p></div></div></li><li class="n" data-i="0" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">09:12. אתם באמצע עבודה</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
+          <figure class="ph ph-site"><figcaption class="ph-label">עם אתר שעונה</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">העסק סגור</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">השאיר פרטים. מחכה לבוקר</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">אתם על הסולם</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">בטבלה, עם תזכורת לחזור</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>צ׳אט באתר</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="ok">קיבל טווח מחיר ✓✓</span></p></div></div></li><li class="n" data-i="0" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">שם, טלפון ומה צריך</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">מענה בוואטסאפ תוך שניות ✓✓</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
         </div>
+        <p class="day-sub" aria-live="polite">יום עבודה אחד. אותן חמש פניות.</p>
+        <div class="day-ctl"><button type="button" class="day-btn" aria-label="השהיה"><span aria-hidden="true">❚❚</span></button><span class="day-bar"><i></i></span><span class="day-note">המחשה, לא נתון סטטיסטי</span></div>
       </div>
     </section>
 
-    <section class="act" id="with" aria-labelledby="t-with">
-      <div class="stage">
-        <div class="bigclock" data-clock aria-hidden="true">19:30</div>
-        <h2 class="act-title" id="t-with"><span class="ln"><span class="ln-i">אותו יום.</span></span><span class="ln"><span class="ln-i">עם אתר שעונה.</span></span></h2>
-        <ol class="log">
-          <li class="entry" data-t="552" data-state="ok"><time>09:12</time><p>פנייה מהדף. אתם באמצע עבודה.</p><span class="status">מענה בוואטסאפ תוך שניות</span></li>
-          <li class="entry" data-t="700" data-state="ok"><time>11:40</time><p>״כמה זה עולה?״</p><span class="status">מענה אוטומטי, והתראה אצלכם</span></li>
-          <li class="entry" data-t="785" data-state="ok"><time>13:05</time><p>פנייה מהדף. אתם על הסולם.</p><span class="status">בטבלה. תזכורת אחרי 3 שעות</span></li>
-          <li class="entry" data-t="990" data-state="ok"><time>16:30</time><p>לקוח קבוע מתקשר.</p><span class="status">עניתם בעצמכם</span></li>
-          <li class="entry" data-t="1160" data-state="ok"><time>19:20</time><p>מישהו מוצא אתכם בגוגל. סגור.</p><span class="status">השאיר פרטים. מחכה לכם בבוקר</span></li>
-        </ol>
-        <div class="verdict">
-          <p class="verdict-big"><span class="ln"><span class="ln-i">חמש פניות.</span></span><span class="ln"><span class="ln-i">אף אחת לא אבדה.</span></span></p>
-          <p class="note">כך עובדת חבילת נציג AI.</p>
-        </div>
-      </div>
-    </section>
 
     <section class="sec" id="plans" aria-labelledby="t-plans">
       <h2 class="sec-title" id="t-plans" data-reveal><span class="ln"><span class="ln-i">שתי חבילות.</span></span></h2>
@@ -426,15 +422,52 @@ bdi { white-space: nowrap; }
     root.style.setProperty('--lost', css(mix(SKY.lost[0], SKY.lost[1], k)));
     state.fg = rgb(fg); state.accent = rgb(accent); };
 
-  /* ---- the day: the acts play like short films. One state drives the light, the clock and the dots ---- */
+  /* ---- one state drives the light, the clocks and the dots ---- */
   const S = { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 };
-  const clocks = $$('[data-clock]'); let lastMin = -1;
+  const clocks = $$('[data-clock], [data-day-clock]'); let lastMin = -1;
   const setClock = (m) => { m = Math.round(m); if (m === lastMin) return; lastMin = m;
     const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); };
   const frame = () => { const y = window.scrollY, max = document.documentElement.scrollHeight - innerHeight;
     root.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
     applySky(S.sky); setClock(S.clock);
     state.order = S.order; state.lost = S.lost; state.answered = S.answered; state.fade = S.fade; };
+
+  /* ---- the hero film: one working day on two phones, side by side ----
+     Plays on its own and loops: morning light to dusk, five enquiries, the score, a new day. */
+  const day = (() => {
+    const box = $('#day'); if (!box) return null;
+    const RUN = 13600, HOLD = 5200, TOTAL = RUN + HOLD, T0 = 478, T1 = 1170, LEAD = 900, SPAN = 11500, RES = 1150;
+    const at = [552, 700, 785, 990, 1160], tIn = at.map((m) => LEAD + (m - T0) / (T1 - T0) * SPAN);
+    const subs = ['09:12. אתם באמצע עבודה, והטלפון מצלצל.', '11:40. לקוח שואל בוואטסאפ כמה זה עולה.', '13:05. אתם על הסולם. עוד שיחה.',
+      '16:30. לקוח קבוע מתקשר. את זה תפסתם.', '19:20. העסק סגור. מישהו מחפש אתכם בגוגל.'];
+    const SUB0 = 'יום עבודה אחד. אותן חמש פניות.', SUB_END = 'חמש פניות. בלי אתר: אחת נענתה. עם אתר: אף אחת לא אבדה.';
+    const sides = $$('.ph', box).map((ph) => ({ notes: [0, 1, 2, 3, 4].map((i) => $(`.n[data-i="${i}"]`, ph)), tally: $('[data-tally]', ph), site: ph.classList.contains('ph-site') }));
+    const sub = $('.day-sub', box), bar = $('.day-bar i', box), btn = $('.day-btn', box), icon = $('span', btn);
+    let t = 0, last = 0, run = false, held = false, seen = false, subNow = SUB0, raf = 0;
+    const setSub = (txt) => { if (txt === subNow) return; subNow = txt; sub.classList.add('swap');
+      setTimeout(() => { sub.textContent = txt; sub.classList.remove('swap'); }, 260); };
+    const render = (t) => {
+      const k = Math.min(1, Math.max(0, (t - LEAD) / SPAN)), clock = T0 + k * (T1 - T0);
+      let sky = clock <= 990 ? (clock - T0) / (990 - T0) : 1 + (clock - 990) / (T1 - 990);
+      if (t > TOTAL - 1300) sky *= Math.max(0, (TOTAL - t) / 1300);          // a new day: back to morning light
+      let beat = -1, missed = 0, answered = [0, 0];
+      tIn.forEach((ti, i) => { const isIn = t >= ti, done = t >= ti + RES; if (isIn) beat = i;
+        sides.forEach((sd, j) => { sd.notes[i].classList.toggle('in', isIn); sd.notes[i].classList.toggle('done', done);
+          if (done && (sd.site || i === 3)) answered[j]++; if (done && !sd.site && i !== 3) missed++; }); });
+      sides.forEach((sd, j) => { sd.tally.textContent = answered[j]; });
+      Object.assign(S, { sky, clock: t > TOTAL - 1300 ? T0 : clock, order: .3 + .7 * answered[1] / 5, lost: .17 * missed, answered: answered[1] / 5 * .9, fade: 1 });
+      setSub(t >= RUN ? SUB_END : beat < 0 ? SUB0 : subs[beat]);
+      bar.style.transform = `scaleX(${(t / TOTAL).toFixed(4)})`; };
+    const show = () => { icon.textContent = run ? '❚❚' : '▶'; btn.setAttribute('aria-label', run ? 'השהיה' : 'המשך'); };
+    const loop = (now) => { if (!run) return; t += Math.min(64, now - last); last = now; if (t >= TOTAL) t = 0; render(t); if (!live) frame(); raf = requestAnimationFrame(loop); };
+    const play = () => { if (run || held || reduce) return; run = true; last = performance.now(); raf = requestAnimationFrame(loop); show(); };
+    const pause = () => { run = false; cancelAnimationFrame(raf); show(); };
+    btn.addEventListener('click', () => { if (run) { held = true; pause(); } else { held = false; play(); } });
+    if (reduce) { render(RUN); $('.day-ctl', box).hidden = true; Object.assign(S, { sky: 0, clock: T0 }); }
+    else { render(0); new IntersectionObserver(([e]) => { seen = e.isIntersecting; root.classList.toggle('in-hero', seen); seen ? play() : pause(); }, { threshold: .3 }).observe(box); }
+    show();
+    return { owns: () => seen };
+  })();
 
   /* ---- motion ---- */
   if (live) {
@@ -443,68 +476,20 @@ bdi { white-space: nowrap; }
     const MOOD = { morning: { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 },
       evening: { sky: 1, clock: 1170, order: 1, lost: 0, answered: 1, fade: .5 },
       night: { sky: 3, clock: 1367, order: .3, lost: 0, answered: 0, fade: 1 } };
-    let playing = null;
+    // outside the hero film the light follows the page: evening after it, night from the dusk on.
+    // Checked when scrolling stops, so the film that was only scrolled past does not leave its light behind.
     let dusk = null;
-    // outside the films the light follows the page: morning above them, evening after them, night from the dusk on.
-    // Checked when scrolling stops, so a film that was only scrolled past does not leave its light behind.
     const zone = () => { const mid = scrollY + innerHeight / 2, top = (sel) => $(sel).getBoundingClientRect().top + scrollY;
-      return mid < top('#without') ? 'morning' : mid >= top('.sunset') ? 'night' : mid >= top('#plans') ? 'evening' : null; };
-    const settle = () => { if ((playing && playing.isActive()) || (dusk && dusk.isActive())) return; const m = zone();
+      return mid < top('#plans') ? (day && day.owns() ? null : 'morning') : mid >= top('.sunset') ? 'night' : 'evening'; };
+    const settle = () => { if (dusk && dusk.isActive()) return; const m = zone();
       if (m) gsap.to(S, { ...MOOD[m], duration: 1.2, ease: 'power2.inOut', overwrite: 'auto' }); };
-
-    // a film: a paused timeline, a progress line and one button. It plays while its stage is on screen.
-    const film = (sec, tl, secs) => {
-      tl.timeScale(1 / secs).pause();
-      const ctl = document.createElement('div'); ctl.className = 'film';
-      ctl.innerHTML = '<button type="button" class="film-btn" aria-label="השהיה"><span aria-hidden="true">❚❚</span></button><span class="film-bar"><i></i></span>';
-      $('.stage', sec).appendChild(ctl);
-      const btn = $('button', ctl), bar = $('i', ctl), icon = $('span', btn);
-      let onScreen = false, held = false;
-      const show = () => { const done = tl.progress() === 1, run = !tl.paused() && !done;
-        icon.textContent = done ? '↺' : run ? '❚❚' : '▶'; btn.setAttribute('aria-label', done ? 'לצפות שוב' : run ? 'השהיה' : 'המשך'); };
-      tl.eventCallback('onUpdate', () => { bar.style.transform = `scaleX(${tl.progress()})`; });
-      tl.eventCallback('onComplete', () => { if (playing === tl) playing = null; show(); });
-      const go = () => { if (held || tl.progress() === 1) return show(); if (playing && playing !== tl) playing.pause(); playing = tl; tl.play(); show(); };
-      const stop = () => { tl.pause(); if (playing === tl) playing = null; show(); };
-      btn.addEventListener('click', () => { if (tl.progress() === 1) { held = false; playing = tl; tl.restart(); }
-        else if (tl.paused()) { held = false; go(); } else { held = true; stop(); } show(); });
-      ScrollTrigger.create({ trigger: $('.stage', sec), start: 'top 45%', end: 'bottom 55%',
-        onToggle: (st) => { onScreen = st.isActive; ctl.classList.toggle('on', onScreen); root.classList.toggle('filming', !!$('.film.on')); onScreen ? go() : stop(); } });
-      show();
-    };
-
-    // act one: the day without (about 9 seconds)
-    const A = $('#without'), tA = gsap.timeline({ defaults: { ease: 'power2.out' } });
-    tA.fromTo(S, { ...MOOD.morning, clock: 480 }, { sky: 1, clock: 1170, lost: .85, duration: .66, ease: 'none', immediateRender: false }, 0)
-      .to(S, { sky: 2, duration: .21, ease: 'none' }, .66);
-    $$('.entry', A).forEach((e) => { const p = .66 * (e.dataset.t - 480) / 690;
-      tA.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, duration: .03 }, p + .045);
-      if (e.dataset.state === 'lost') tA.to($$('time, p', e), { opacity: .36, duration: .05 }, p + .06); });
-    tA.to($$('.act-title, .log', A), { autoAlpha: 0, duration: .04 }, .76)
-      .fromTo($('.verdict', A), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .86)
-      .from($$('.verdict .ln-i', A), { yPercent: 115, duration: .08, stagger: .02, ease: 'expo.out' }, .86).set({}, {}, 1);
-    film(A, tA, 9);
-
-    // act two: the clock runs back, then the same day with the site (about 11 seconds)
-    const B = $('#with'), tB = gsap.timeline({ defaults: { ease: 'power2.out' } });
-    tB.fromTo(S, { sky: 2, clock: 1170, order: 0, lost: .85, answered: 0, fade: 1 }, { clock: 480, lost: 0, duration: .11, ease: 'power2.inOut', immediateRender: false }, 0)
-      .to(S, { sky: 0, duration: .17, ease: 'power1.inOut' }, 0)
-      .to(S, { clock: 1170, sky: 1, order: 1, answered: 1, duration: .62, ease: 'none' }, .24)
-      .to($('.bigclock', B), { autoAlpha: 0, scale: .9, duration: .05 }, .12)
-      .from($$('.act-title .ln-i', B), { yPercent: 115, duration: .06, stagger: .02, ease: 'expo.out' }, .185);
-    $$('.entry', B).forEach((e) => { const p = .24 + .56 * (e.dataset.t - 480) / 690;
-      tB.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, x: 14, duration: .035 }, p + .04); });
-    tB.to($$('.act-title, .log', B), { autoAlpha: 0, duration: .04 }, .87)
-      .fromTo($('.verdict', B), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .91)
-      .from($$('.verdict .ln-i', B), { yPercent: 115, duration: .07, stagger: .02, ease: 'expo.out' }, .91).set({}, {}, 1);
-    film(B, tB, 11);
 
     ScrollTrigger.addEventListener('scrollEnd', settle);
 
     // dusk interlude: plays once it is on screen, no pinning
     dusk = gsap.timeline({ paused: true }).to(S, { ...MOOD.night, duration: 2.4, ease: 'power1.inOut' }, 0)
       .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: 1, ease: 'expo.out' }, 1.6);
-    ScrollTrigger.create({ trigger: '.sunset', start: 'top 55%', onEnter: () => { if (playing) playing.pause(), (playing = null); dusk.restart(); } });
+    ScrollTrigger.create({ trigger: '.sunset', start: 'top 55%', onEnter: () => dusk.restart() });
 
     // section headings: one masked rise each
     const reveal = (h) => gsap.from($$('.ln-i', h), { yPercent: 115, duration: 1.1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
@@ -526,7 +511,8 @@ bdi { white-space: nowrap; }
     // the one load sequence
     root.classList.remove('pre');
     gsap.from('.hero .ln-i', { yPercent: 115, duration: 1.25, ease: 'expo.out', stagger: .11, delay: .15 });
-    gsap.from('.hero-sub, .hero-foot > *', { autoAlpha: 0, y: 18, duration: .9, ease: 'power3.out', stagger: .1, delay: .75 });
+    gsap.from('.hero-sub, .hero .lede, .hero-text .btn', { autoAlpha: 0, y: 18, duration: .9, ease: 'power3.out', stagger: .1, delay: .6 });
+    gsap.from('.day', { autoAlpha: 0, y: 24, duration: 1.1, ease: 'power3.out', delay: .4 });
   } else {
     root.classList.remove('pre');
     addEventListener('scroll', frame, { passive: true }); frame();
