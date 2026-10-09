@@ -38,7 +38,7 @@
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       text-decoration: none; font-weight: 700; border-radius: 12px; padding: 14px 24px;
-      font-size: 17px; transition: filter .15s, transform .1s; border: 0; cursor: pointer;
+      font-size: 17px; font-family: inherit; transition: filter .15s, transform .1s; border: 0; cursor: pointer;
     }
     .btn:active { transform: scale(.99); }
     .btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-deep)); color: #fff; }
@@ -172,6 +172,7 @@
       <p>דף נחיתה שמביא פניות, מענה אוטומטי בוואטסאפ תוך שניות, ותזכורת כשמישהו עוד מחכה לתשובה.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="leads-demo/">לנסות דמו חי</a>
+        <button class="btn btn-ghost" type="button" data-open-ai>לשאול את הנציג החכם</button>
         <a class="btn btn-ghost" href="#pricing">למחירון</a>
       </div>
     </section>
@@ -198,6 +199,7 @@
           <div class="cta-row" style="justify-content:flex-start">
             <a class="btn btn-primary" href="leads-demo/">דמו מערכת לידים</a>
             <a class="btn btn-outline-light" href="ai-agent/">דמו נציג AI</a>
+            <button class="btn btn-outline-light" type="button" data-open-ai>נציג חכם, עכשיו</button>
           </div>
         </div>
         <ul class="demo-steps">
@@ -297,7 +299,7 @@
         </div>
       </div>
 
-      <p class="fine">תשלום שנתי מראש: 10 חודשים במחיר של 12. הדומיין והאחסון רשומים על שמכם.</p>
+      <p class="fine">תשלום שנתי מראש: 12 חודשים במחיר של 10. הדומיין והאחסון רשומים על שמכם.</p>
     </div>
   </section>
 
@@ -346,5 +348,7 @@
       });
     }
   </script>
+  <script src="shared/aibot.js"></script>
+  <script>AiBot.init({ whatsapp: CONFIG.whatsappNumber });</script>
 </body>
 </html>

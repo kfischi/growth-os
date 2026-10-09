@@ -1,0 +1,8 @@
+{
+  "name": "service-pro-web",
+  "private": true,
+  "description": "Static demo site plus one Netlify Function (netlify/functions/chat.mjs) for the AI chat.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1"
+  }
+}
