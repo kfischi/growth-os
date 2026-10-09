@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>רועי שטרן · תיקון מכשירי חשמל</title>
+<meta name="description" content="תיקון מכונות כביסה, מקררים, מדיחים, תנורים ומייבשים בחדרה, עמק חפר והשרון. מתארים את התקלה בצ׳אט, והפרטים מגיעים לטכנאי בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the front of a washing machine: the program dial, the porthole door and the little display that shows the error code.
+     Detail: error codes (E21, F05, OE, IE), brands as text, ביקור ואבחון, the replaced part and the warranty on it, a job ticket.
+     Bold move: a giant drawn program dial. Each position is an appliance; turning the knob to it opens the chat. */
+  :root {
+    --enamel: #f3f5f9;         /* white enamel of the machine front */
+    --console: #e3e8f1;        /* the control panel strip */
+    --cobalt: #1b39b8;         /* the one accent: program ring, buttons */
+    --ink: #0d1531;            /* text, display glass */
+    --ink-soft: #4b5776;
+    --chrome: #b9c1d1;         /* knob and porthole ring */
+    --led: #9cbcff;            /* digits on the display */
+    --display: "Secular One", "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: #d9dfeb; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--cobalt); --bot-accent-fg: #fff; --bot-them: #edf1f8; --bot-me: var(--ink); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px;
+    --ps-a: #c9d4ee; --ps-b: #4a62c4; --ps-ui: var(--ink); --ps-edit: var(--cobalt);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--enamel); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--body); font-weight: 500; font-size: 13.5px; letter-spacing: 0; }
+  .code { font-family: var(--mono); font-weight: 600; unicode-bidi: isolate; direction: ltr; display: inline-block; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -.01em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 12px; }
+  .btn-cobalt { background: var(--cobalt); color: #fff; }
+  .btn-cobalt:hover { background: #142c94; }
+  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+
+  .demo { background: var(--ink); color: #b6c0da; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the control panel ---------- */
+  .hero { background: linear-gradient(180deg, var(--console), var(--enamel) 46%); border-bottom: 1px solid #d5dce8; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 25px; letter-spacing: -.01em; display: flex; gap: 6px; align-items: baseline; }
+  .logo span:last-child { color: var(--cobalt); }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--cobalt); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 540px); gap: 48px; align-items: center; padding: 18px 0 64px; }
+  .hero-copy { min-width: 0; }
+  .kicker { color: var(--ink-soft); margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(42px, 6vw, 84px); margin-bottom: 18px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--cobalt); display: block; }
+  .hero p { font-size: 19px; max-width: 38ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .areas { margin-top: 26px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .areas span { border: 1px solid #c9d1e1; border-radius: 999px; padding: 4px 12px; font-size: 14px; color: var(--ink-soft); background: #fff; }
+
+  /* The dial */
+  .dial-box { min-width: 0; }
+  .dial { position: relative; width: 100%; aspect-ratio: 1; }
+  .dial > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .knob { position: absolute; left: 28%; top: 28%; width: 44%; height: 44%; border-radius: 50%;
+    background: radial-gradient(circle at 38% 30%, #fff 0 14%, #e6eaf2 40%, var(--chrome) 72%, #98a2b8 100%);
+    box-shadow: 0 26px 40px -18px rgba(13,21,49,.55), 0 0 0 8px #fff, 0 0 0 9px #cfd6e3; transform: rotate(var(--rot, 120deg)); transition: transform .6s cubic-bezier(.3,1.4,.5,1); }
+  .knob::before { content: ""; position: absolute; inset: 9%; border-radius: 50%;
+    background: repeating-conic-gradient(rgba(13,21,49,.10) 0 2deg, transparent 2deg 9deg); -webkit-mask: radial-gradient(circle, transparent 74%, #000 75%); mask: radial-gradient(circle, transparent 74%, #000 75%); }
+  .grip { position: absolute; left: 50%; top: 4%; width: 24%; height: 92%; margin-left: -12%; border-radius: 999px;
+    background: linear-gradient(90deg, #aab3c6, #fff 45%, #dfe4ee 60%, #aab3c6); box-shadow: 0 6px 12px -4px rgba(13,21,49,.45), inset 0 0 0 1px rgba(13,21,49,.08); }
+  .grip::after { content: ""; position: absolute; left: 50%; top: 8%; width: 26%; height: 26%; margin-left: -13%; border-radius: 999px; background: var(--cobalt); box-shadow: inset 0 2px 3px rgba(0,0,0,.35); }
+  .pos { all: unset; box-sizing: border-box; position: absolute; transform: translate(-50%, -50%); cursor: pointer; text-align: center; width: 27%;
+    font-family: var(--display); font-size: clamp(15px, 1.9vw, 21px); line-height: 1.1; color: var(--ink); padding: 6px 4px; border-radius: 10px; }
+  .pos small { display: block; font-family: var(--body); font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+  .pos:hover, .pos[aria-pressed="true"] { color: var(--cobalt); }
+  .pos:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 2px; }
+  .lcd { position: absolute; left: 50%; top: 86%; transform: translate(-50%, -50%); background: var(--ink); border-radius: 10px; padding: 6px 14px 5px; text-align: center; box-shadow: inset 0 2px 8px rgba(0,0,0,.6), 0 0 0 4px #fff, 0 0 0 5px #cfd6e3; }
+  .lcd b { display: block; font-family: var(--mono); font-weight: 600; font-size: clamp(22px, 2.6vw, 30px); line-height: 1.1; color: var(--led); text-shadow: 0 0 10px rgba(156,188,255,.6); direction: ltr; }
+  .dial-cap { text-align: center; color: var(--ink-soft); font-size: 15px; margin-top: 6px; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(36px, 5vw, 60px); }
+  .head .mono { color: var(--ink-soft); }
+
+  /* Prices, printed like the program legend on the panel */
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 330px); gap: 48px; align-items: start; }
+  .rows { border-top: 2px solid var(--ink); }
+  .row { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 18px 6px; border-bottom: 1px solid #cdd4e2; min-width: 0; }
+  .row:hover { background: #fff; }
+  .row:hover .go { background: var(--cobalt); color: #fff; }
+  .row:focus-visible { outline: 3px solid var(--cobalt); outline-offset: -3px; }
+  .row svg { width: 52px; height: 52px; color: var(--cobalt); }
+  .row .t { min-width: 0; }
+  .row b { display: block; font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.2; }
+  .row .t span { color: var(--ink-soft); font-size: 15px; }
+  .row .pr { text-align: left; white-space: nowrap; font-weight: 700; font-size: 17px; }
+  .row .go { display: inline-block; margin-inline-start: 10px; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--cobalt); color: var(--cobalt); text-align: center; line-height: 27px; font-size: 16px; vertical-align: middle; }
+  .visit { background: var(--ink); color: #e7ecf8; border-radius: 18px; padding: 24px; }
+  .visit .mono { color: var(--led); }
+  .visit h3 { font-size: 30px; margin: 6px 0 4px; }
+  .visit .big { font-size: 22px; font-weight: 700; }
+  .visit p { color: #aab5d2; font-size: 15px; margin: 10px 0 0; }
+  .brands { margin-top: 22px; padding: 20px 22px; border: 1.5px dashed #b9c3d8; border-radius: 18px; }
+  .brands b { display: block; font-size: 15px; margin-bottom: 6px; }
+  .brands p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+
+  /* Error codes on the display */
+  .codes { background: var(--ink); color: #e7ecf8; }
+  .codes .head .mono { color: #8f9bbd; }
+  .codes h2 { color: #fff; }
+  .code-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .tile { background: #070c1e; border: 1px solid #23305a; border-radius: 16px; padding: 18px; min-width: 0; }
+  .tile .code { font-size: 40px; color: var(--led); text-shadow: 0 0 14px rgba(156,188,255,.55); line-height: 1; }
+  .tile small { display: block; font-family: var(--mono); color: #7c89ad; font-size: 12px; margin-top: 8px; }
+  .tile p { margin: 8px 0 0; font-size: 16px; color: #dfe5f4; }
+  .codes .note { color: #aab5d2; margin: 24px 0 0; font-size: 16px; max-width: 60ch; }
+
+  /* ---------- The technician: porthole, job ticket, part tags (photo slots) ---------- */
+  .tech-grid { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr) minmax(0, 220px); gap: 40px; align-items: start; }
+  .porthole { position: relative; width: 100%; aspect-ratio: 1; border-radius: 50%; padding: 9%;
+    background: radial-gradient(circle at 35% 28%, #fff 0 10%, #e3e8f1 38%, var(--chrome) 70%, #8e99b0 100%);
+    box-shadow: 0 30px 50px -26px rgba(13,21,49,.6); }
+  .porthole::before { content: ""; position: absolute; inset: 6.5%; border-radius: 50%; border: 3px solid #fff; opacity: .8; pointer-events: none; }
+  .porthole .ps { width: 100%; height: 100%; border-radius: 50%; box-shadow: inset 0 0 0 6px #2a3560, 0 0 0 4px #5d6884; }
+  .porthole .glare { position: absolute; inset: 9%; border-radius: 50%; pointer-events: none; z-index: 3;
+    background: linear-gradient(135deg, rgba(255,255,255,.38) 0 18%, transparent 34% 100%); }
+  .porthole .hinge { position: absolute; top: 40%; right: -3%; width: 9%; height: 20%; border-radius: 8px; background: var(--chrome); box-shadow: inset 0 -3px 0 rgba(0,0,0,.12); }
+  .porthole .ps-chip { display: none; }
+  .tech-name { text-align: center; margin-top: 18px; }
+  .tech-name b { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; }
+  .tech-name span { color: var(--ink-soft); font-size: 15px; }
+
+  .ticket { background: #fff; border: 1px solid #d3daea; border-radius: 6px; padding: 22px 24px 20px; position: relative; min-width: 0;
+    box-shadow: 0 24px 40px -30px rgba(13,21,49,.45); background-image: linear-gradient(var(--cobalt), var(--cobalt)); background-size: 100% 6px; background-repeat: no-repeat; }
+  .ticket-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; flex-wrap: wrap; }
+  .ticket-top h3 { font-size: 26px; }
+  .ticket dl { margin: 14px 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 22px; }
+  .ticket dl div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; padding: 7px 0; border-bottom: 1px dotted #b8c1d6; font-size: 15px; min-width: 0; }
+  .ticket dt { color: var(--ink-soft); }
+  .ticket dd { margin: 0; font-weight: 500; min-width: 0; }
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .shots figure.ps { aspect-ratio: 4 / 3; border-radius: 4px; }
+  .shots p { margin: 6px 0 0; font-size: 14.5px; font-weight: 500; }
+  .shots p span.mono { display: block; color: var(--ink-soft); font-size: 11.5px; }
+  .sign { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-top: 16px; font-size: 13.5px; color: var(--ink-soft); }
+  .sign svg { width: 110px; height: 34px; color: var(--cobalt); }
+  .sign .line { flex: 1; border-bottom: 1px solid #b8c1d6; display: flex; justify-content: flex-end; }
+
+  .tags { display: grid; gap: 22px; }
+  .tag { position: relative; background: #fff; border: 1px solid #d3daea; padding: 30px 12px 12px; min-width: 0;
+    clip-path: polygon(16% 0, 84% 0, 100% 9%, 100% 100%, 0 100%, 0 9%); }
+  .tag:nth-child(1) { transform: rotate(-2.5deg); }
+  .tag:nth-child(2) { transform: rotate(2deg); }
+  .tag::before { content: ""; position: absolute; top: 9px; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--enamel); box-shadow: inset 0 0 0 3px var(--chrome); }
+  .tag .ps { aspect-ratio: 1; border-radius: 4px; }
+  .tag b { display: block; margin-top: 8px; font-size: 15.5px; line-height: 1.3; }
+  .tag > span { display: block; font-size: 13px; color: var(--cobalt); font-weight: 700; margin-top: 2px; }
+  .tech-note { color: var(--ink-soft); font-size: 15px; margin: 22px 0 0; }
+
+  /* Owner + phone */
+  .owner { background: var(--cobalt); color: #eef2ff; }
+  .owner h2 { color: #fff; }
+  .owner .head .mono { color: #c3cdf5; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 46px; height: 46px; border-radius: 50%; background: #fff; color: var(--cobalt); display: grid; place-items: center; font-family: var(--display); font-size: 21px; box-shadow: inset 0 -4px 0 rgba(13,21,49,.18); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #cdd6fb; font-size: 15.5px; }
+  .owner .ph-cap { color: #cdd6fb; }
+
+  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .row-f { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cdd4e2; padding-top: 18px; }
+
+  @media (max-width: 1000px) {
+    .tech-grid { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
+    .tags { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 220px)); justify-content: center; gap: 28px; }
+  }
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 26px; padding-bottom: 48px; }
+    .dial-box { max-width: 520px; width: 100%; margin-inline: auto; }
+    .price-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .code-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner .phone { margin-inline: auto; }
+    .tech-grid { grid-template-columns: minmax(0, 1fr); }
+    .porthole-wrap { max-width: 260px; width: 100%; margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    section { padding-block: 64px; }
+    .hero h1 { font-size: 44px; }
+    .hero p { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .pos { font-size: 15px; width: 28%; }
+    .pos small { display: none; }
+    .row { grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; padding: 16px 2px; }
+    .row svg { width: 40px; height: 40px; grid-row: span 2; }
+    .row b { font-size: 20px; }
+    .row .pr { grid-column: 2; text-align: right; font-size: 16px; }
+    .ticket { padding: 20px 16px 16px; }
+    .ticket dl { grid-template-columns: minmax(0, 1fr); }
+    .tags { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .tile { padding: 14px; }
+    .tile .code { font-size: 32px; }
+    .tile p { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .knob { transition: none; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name1">רועי</span><span data-edit="name2">שטרן</span></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על מכשיר חשמלי">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="mono kicker">כביסה · מקררים · מדיחים · תנורים · מייבשים</div>
+        <h1><span data-edit="h1a">המכונה מציגה קוד שגיאה?</span> <em data-edit="h1b">כתבו לי, ואני חוזר.</em></h1>
+        <p>בוחרים מכשיר על החוגה ומתארים את התקלה בצ׳אט. הפרטים מגיעים אליי לוואטסאפ, ואני חוזר אליכם לקבוע ביקור.</p>
+        <div class="ctas">
+          <button class="btn btn-cobalt" data-open-bot>לתאר את התקלה</button>
+          <a class="btn btn-line" href="#" data-wa="היי, אשמח לקבוע טכנאי למכשיר חשמלי">וואטסאפ ישיר</a>
+        </div>
+        <div class="areas"><span>חדרה</span><span>עמק חפר</span><span>השרון</span></div>
+      </div>
+
+      <div class="dial-box">
+        <div class="dial" id="dial">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="48" fill="#fff" stroke="#d3daea" stroke-width=".5"/>
+            <circle cx="50" cy="50" r="31" fill="none" stroke="#dfe4ee" stroke-width="5"/>
+            <!-- program ring: 240 degrees, from -120 to 120 -->
+            <path d="M23.15 65.5 A31 31 0 1 1 76.85 65.5" fill="none" stroke="#1b39b8" stroke-width="1.2" stroke-linecap="round"/>
+            <g fill="#1b39b8">
+              <circle cx="76.85" cy="65.5" r="1.8"/><circle cx="76.85" cy="34.5" r="1.8"/><circle cx="50" cy="19" r="1.8"/><circle cx="23.15" cy="34.5" r="1.8"/><circle cx="23.15" cy="65.5" r="1.8"/>
+            </g>
+            <g fill="#9aa5bd">
+              <circle cx="65.5" cy="23.15" r=".8"/><circle cx="34.5" cy="23.15" r=".8"/><circle cx="81" cy="50" r=".8"/><circle cx="19" cy="50" r=".8"/>
+            </g>
+          </svg>
+          <div class="knob" id="knob" aria-hidden="true"><span class="grip"></span></div>
+          <button class="pos" style="left:85.5%;top:70.5%" data-appliance="מכונת כביסה" data-a="120">מכונת כביסה<small>250 עד 600 ₪</small></button>
+          <button class="pos" style="left:85.5%;top:29.5%" data-appliance="מקרר" data-a="60">מקרר<small>300 עד 800 ₪</small></button>
+          <button class="pos" style="left:50%;top:8%" data-appliance="מדיח כלים" data-a="0">מדיח כלים<small>250 עד 550 ₪</small></button>
+          <button class="pos" style="left:14.5%;top:29.5%" data-appliance="תנור" data-a="-60">תנור<small>250 עד 500 ₪</small></button>
+          <button class="pos" style="left:14.5%;top:70.5%" data-appliance="מייבש" data-a="-120">מייבש<small>250 עד 550 ₪</small></button>
+          <div class="lcd" aria-hidden="true"><b id="lcd">E21</b></div>
+        </div>
+        <div class="dial-cap">סובבו את החוגה: בחירה במכשיר פותחת את הצ׳אט</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>כמה זה עולה</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="price-grid">
+        <div class="rows">
+          <button class="row" data-appliance="מכונת כביסה">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="5" width="34" height="38" rx="4"/><path d="M7 13h34"/><circle cx="24" cy="28" r="9"/><circle cx="34" cy="9" r="1.5"/></svg>
+            <span class="t"><b>מכונת כביסה</b><span>לא מסחטת, דולפת, לא מתרוקנת, קוד על הצג</span></span>
+            <span class="pr">250 עד 600 ₪<span class="go" aria-hidden="true">←</span></span>
+          </button>
+          <button class="row" data-appliance="מקרר">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="11" y="3" width="26" height="42" rx="4"/><path d="M11 18h26 M16 9v5 M16 23v8"/></svg>
+            <span class="t"><b>מקרר</b><span>לא מקרר, קרח במקפיא, מים מתחת למגירות</span></span>
+            <span class="pr">300 עד 800 ₪<span class="go" aria-hidden="true">←</span></span>
+          </button>
+          <button class="row" data-appliance="מדיח כלים">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="5" width="34" height="38" rx="4"/><path d="M7 13h34 M13 22h22 M13 30h22 M17 22v8 M24 22v8 M31 22v8"/></svg>
+            <span class="t"><b>מדיח כלים</b><span>נשארים מים בתחתית, לא שוטף, לא מחמם</span></span>
+            <span class="pr">250 עד 550 ₪<span class="go" aria-hidden="true">←</span></span>
+          </button>
+          <button class="row" data-appliance="תנור">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="5" width="34" height="38" rx="4"/><path d="M7 14h34"/><rect x="13" y="20" width="22" height="16" rx="2"/><circle cx="14" cy="9.5" r="1.5"/><circle cx="20" cy="9.5" r="1.5"/></svg>
+            <span class="t"><b>תנור</b><span>לא מחמם, גוף חימום, טרמוסטט, מאוורר</span></span>
+            <span class="pr">250 עד 500 ₪<span class="go" aria-hidden="true">←</span></span>
+          </button>
+          <button class="row" data-appliance="מייבש">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="5" width="34" height="38" rx="4"/><path d="M7 13h34"/><circle cx="24" cy="28" r="9"/><path d="M20 26c2-2 6 2 8 0 M20 31c2-2 6 2 8 0"/></svg>
+            <span class="t"><b>מייבש</b><span>מסתובב ולא מייבש, רעש, חיישן לחות</span></span>
+            <span class="pr">250 עד 550 ₪<span class="go" aria-hidden="true">←</span></span>
+          </button>
+        </div>
+        <aside>
+          <div class="visit">
+            <span class="mono">לפני כל תיקון</span>
+            <h3>ביקור ואבחון</h3>
+            <div class="big">150 עד 250 ₪</div>
+            <p>לדוגמה: אם ממשיכים לתיקון, מחיר הביקור מתקזז ממנו. המחיר הסופי נקבע אחרי אבחון, לפני שמתחילים.</p>
+          </div>
+          <div class="brands">
+            <b>מותגים שאני מתקן</b>
+            <p>בוש, סמסונג, LG, אלקטרולוקס, וירלפול, אריסטון, בלומברג, AEG ועוד.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="codes">
+    <div class="wrap">
+      <div class="head"><h2>מה כתוב על הצג?</h2><span class="mono">דוגמאות ממכונות כביסה של LG</span></div>
+      <div class="code-grid">
+        <div class="tile"><span class="code">OE</span><small>LG</small><p>המים לא מתרוקנים</p></div>
+        <div class="tile"><span class="code">IE</span><small>LG</small><p>מים לא נכנסים למכונה</p></div>
+        <div class="tile"><span class="code">dE</span><small>LG</small><p>הדלת לא ננעלת</p></div>
+        <div class="tile"><span class="code">UE</span><small>LG</small><p>הכביסה לא מאוזנת בתוף</p></div>
+      </div>
+      <p class="note">יש קוד אחר, כמו <span class="code">E21</span> או <span class="code">F05</span>? כתבו אותו בצ׳אט. עם הקוד והדגם אני מגיע עם החלק הנכון.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="tech-grid">
+        <div class="porthole-wrap">
+          <div class="porthole">
+            <figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure>
+            <span class="glare"></span><span class="hinge"></span>
+          </div>
+          <div class="tech-name"><b data-edit="tech-name">רועי שטרן</b><span data-edit="tech-role">טכנאי מכשירי חשמל · 14 שנה בשטח</span></div>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top"><h3>כרטיס עבודה</h3><span class="mono" data-edit="t-no">מס׳ 2417 · יום שלישי</span></div>
+          <dl>
+            <div><dt>ישוב</dt><dd data-edit="t-city">פרדס חנה</dd></div>
+            <div><dt>מכשיר</dt><dd data-edit="t-unit">מכונת כביסה, בוש</dd></div>
+            <div><dt>על הצג</dt><dd><span class="code" data-edit="t-code">E21</span></dd></div>
+            <div><dt>אבחון</dt><dd data-edit="t-diag">משאבת ניקוז תקועה</dd></div>
+            <div><dt>הוחלף</dt><dd data-edit="t-part">משאבת ניקוז מקורית</dd></div>
+            <div><dt>אחריות</dt><dd data-edit="t-warranty">6 חודשים על החלק</dd></div>
+          </dl>
+          <div class="shots">
+            <div><figure class="ps" data-slot="fault" data-icon="camera" data-label="התקלה"></figure><p><span class="mono">לפני</span><span data-edit="fault-cap">מים עומדים בתוף</span></p></div>
+            <div><figure class="ps" data-slot="part" data-icon="wrench" data-label="החלק החדש"></figure><p><span class="mono">אחרי</span><span data-edit="part-cap">משאבה חדשה במקום</span></p></div>
+          </div>
+          <div class="sign"><span>חתימת הלקוח</span><span class="line"><svg viewBox="0 0 110 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 24c8-14 14-16 12-4s6 6 12-4 6 10 12 2 8-8 14 0 12-6 18-2 10 4 24-4"/></svg></span></div>
+        </div>
+
+        <div class="tags">
+          <div class="tag"><figure class="ps" data-slot="tag1" data-icon="box" data-label="החלק"></figure><b data-edit="tag1">גומיית דלת למכונת כביסה</b><span data-edit="tag1w">אחריות על החלק</span></div>
+          <div class="tag"><figure class="ps" data-slot="tag2" data-icon="snow" data-label="החלק"></figure><b data-edit="tag2">טרמוסטט למקרר</b><span data-edit="tag2w">חלק מקורי, באחריות</span></div>
+        </div>
+      </div>
+      <p class="tech-note">פותחים את הדלת למי שמכירים מהתמונה. כרטיס עבודה אמיתי, עם תמונה של התקלה ושל החלק שהוחלף, שווה יותר מכל סלוגן.</p>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה הטכנאי רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על שש שאלות קצרות</b><span>מכשיר, תקלה, קוד על הצג, ישוב, שם וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>עם הקוד כבר יודעים איזה חלק לקחת לרכב.</span></div></li>
+          <li><div><b>חוזרים ללקוח וקובעים ביקור</b><span>הצ׳אט עובד גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">נ</span><div><b>נועה פרץ</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו טכנאי מכשירי חשמל)
+מכשיר: מקרר
+תקלה: לא מקרר או לא מחמם
+קוד שגיאה: אין
+ישוב: אור עקיבא
+שם: נועה פרץ
+טלפון: 054-7654321<time>20:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הקריאה מגיעה לטכנאי</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row-f">
+    <span>רועי שטרן · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "appliance" });
+  const RANGES = { "מכונת כביסה": "250 עד 600", "מקרר": "300 עד 800", "מדיח כלים": "250 עד 550", "תנור": "250 עד 500", "מייבש": "250 עד 550" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "רועי · מכשירי חשמל", subtitle: "חוזר אליכם לקבוע ביקור", initial: "ר", launcher: "תקלה במכשיר?",
+    greet: "היי, כאן רועי.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
+    steps: [
+      { key: "appliance", label: "מכשיר", ask: "איזה מכשיר עושה בעיות?", chips: Object.keys(RANGES) },
+      { key: "fault", label: "תקלה", ask: (d) => `מה קורה עם ה${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"] },
+      { key: "code", label: "קוד שגיאה", ask: "יש קוד על הצג? כתבו אותו, למשל E21.\nאם אין, כתבו ״אין״.", input: "text", placeholder: "E21 או אין" },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.appliance}, ${d.fault}${d.code && d.code !== "אין" ? ", קוד " + d.code : ""}, ב${d.city}. תיקון כזה עולה בדרך כלל ${RANGES[d.appliance]} ₪. המחיר הסופי אחרי אבחון.\nלחצו למטה, ואחזור אליכם לקבוע.`,
+    summary: (d) => `קריאה מהאתר (דמו טכנאי מכשירי חשמל)\nמכשיר: ${d.appliance}\nתקלה: ${d.fault}\nקוד שגיאה: ${d.code}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+
+  const knob = document.getElementById("knob");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll(".pos").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(".pos").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    knob.style.setProperty("--rot", b.dataset.a + "deg");
+    setTimeout(() => bot.open({ appliance: b.dataset.appliance }), still ? 0 : 550);
+  }));
+  document.querySelectorAll(".row[data-appliance]").forEach((b) => b.addEventListener("click", () => bot.open({ appliance: b.dataset.appliance })));
+</script>
+</body>
+</html>
