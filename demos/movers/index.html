@@ -98,6 +98,37 @@
   footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
 
+
+  /* ---------- On the road: truck + polaroids (photo slots) ---------- */
+  :root { --ps-a: #b98e62; --ps-b: #5e4129; --ps-ui: var(--ink); --ps-edit: var(--stamp); }
+  .road { background: var(--kraft); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px); overflow: hidden; }
+  .road .head .mono { color: #4a3b2c; }
+  .truck { position: relative; display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); align-items: end; direction: ltr; max-width: 860px; margin: 10px auto 0; padding-bottom: 46px; }
+  .truck .cab { height: 150px; background: var(--ink); border-radius: 26px 6px 0 10px; position: relative; }
+  .truck .cab::before { content: ""; position: absolute; top: 18px; left: 18px; width: 70px; height: 52px; background: #b9d3e0; border-radius: 14px 4px 4px 4px; }
+  .truck .cab::after { content: ""; position: absolute; bottom: 22px; left: 0; width: 18px; height: 12px; background: #f6e7c8; border-radius: 0 4px 4px 0; }
+  .truck .box { aspect-ratio: 2.3 / 1; border-radius: 6px; border: 6px solid var(--label); box-shadow: 0 24px 40px -24px rgba(0,0,0,.6); }
+  .truck .box .brand { position: absolute; top: 12px; right: 14px; z-index: 2; background: var(--label); color: var(--ink); font-family: var(--display); font-size: 22px; padding: 2px 12px; direction: rtl; }
+  .truck .wheel { position: absolute; bottom: 0; width: 76px; height: 76px; border-radius: 50%; background: radial-gradient(circle, #8b8178 0 22%, #2b2622 23% 60%, #181512 61%); box-shadow: 0 0 0 6px var(--kraft); }
+  .truck .w1 { left: 54px; } .truck .w2 { right: 90px; } .truck .w3 { right: 180px; }
+  .truck .chassis { position: absolute; left: 10px; right: 10px; bottom: 34px; height: 14px; background: #2b2622; border-radius: 6px; z-index: -1; }
+  .polas { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; margin-top: 40px; }
+  .pola { background: var(--label); padding: 12px 12px 14px; width: min(270px, 100%); box-shadow: 0 22px 40px -24px rgba(40,25,10,.8); position: relative; }
+  .pola:nth-child(1) { transform: rotate(-3deg); } .pola:nth-child(2) { transform: rotate(2deg) translateY(14px); } .pola:nth-child(3) { transform: rotate(-1deg); }
+  .pola::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 26px; margin-left: -45px; background: var(--tape); transform: rotate(-3deg); z-index: 1; }
+  .pola .ps { aspect-ratio: 1; }
+  .pola p { margin: 10px 4px 0; font-family: var(--display); font-size: 20px; line-height: 1.2; }
+  .road-note { text-align: center; color: #4a3b2c; font-size: 15px; margin: 34px 0 0; }
+  @media (max-width: 620px) {
+    .truck { grid-template-columns: minmax(0, 90px) minmax(0, 1fr); padding-bottom: 32px; }
+    .truck .cab { height: 92px; border-radius: 18px 4px 0 8px; } .truck .cab::before { top: 12px; left: 10px; width: 40px; height: 32px; }
+    .truck .box .brand { font-size: 15px; top: 8px; right: 8px; padding: 1px 8px; }
+    .truck .wheel { width: 48px; height: 48px; box-shadow: 0 0 0 4px var(--kraft); } .truck .w1 { left: 26px; } .truck .w2 { right: 40px; } .truck .w3 { right: 96px; }
+    .truck .chassis { bottom: 22px; height: 10px; }
+    .polas { gap: 14px; } .pola { width: calc(50% - 7px); padding: 8px 8px 10px; } .pola p { font-size: 16px; margin-top: 8px; }
+    .pola:nth-child(1) { transform: rotate(-2deg); } .pola:nth-child(2) { transform: rotate(2deg); } .pola:nth-child(3) { transform: rotate(-1deg); }
+  }
+
   @media (max-width: 900px) {
     .hero-grid { grid-template-columns: minmax(0, 1fr); }
     .label { max-width: 440px; }
@@ -112,11 +143,11 @@
 <div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
 
 <header class="hero">
-  <div class="wrap bar"><div class="logo">דרור הובלות</div><a href="#" data-wa="היי דרור, אני צריך הצעת מחיר להובלה.">וואטסאפ</a></div>
+  <div class="wrap bar"><div class="logo" data-edit="name">דרור הובלות</div><a href="#" data-wa="היי דרור, אני צריך הצעת מחיר להובלה.">וואטסאפ</a></div>
   <div class="wrap hero-grid">
     <div>
       <div class="mono">הובלות דירות ומשרדים · מהשרון לכל הארץ</div>
-      <h1>עוברים דירה? הצעת מחיר תוך דקה.</h1>
+      <h1 data-edit="h1">עוברים דירה? הצעת מחיר תוך דקה.</h1>
       <p>עונים על חמש שאלות בצ׳אט, רואים מחיר משוער, והפרטים נשלחים אליי בוואטסאפ. בלי לחכות שמישהו יחזור אליכם.</p>
       <div class="ctas">
         <button class="btn btn-ink" type="button" data-open-bot>לקבל הצעת מחיר</button>
@@ -146,6 +177,24 @@
   </div>
 </section>
 
+<section class="road">
+  <div class="wrap">
+    <div class="head"><h2>בדרך</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+    <div class="truck" aria-label="משאית עם תמונה של העסק">
+      <div class="cab" aria-hidden="true"></div>
+      <figure class="ps box" data-slot="truck" data-icon="truck" data-label="תמונה או לוגו על המשאית"><span class="brand" data-edit="truck-brand">דרור הובלות</span></figure>
+      <span class="chassis" aria-hidden="true"></span>
+      <span class="wheel w1" aria-hidden="true"></span><span class="wheel w2" aria-hidden="true"></span><span class="wheel w3" aria-hidden="true"></span>
+    </div>
+    <div class="polas">
+      <div class="pola"><figure class="ps" data-slot="p1" data-icon="person" data-label="הצוות שלכם"></figure><p data-edit="p1">הצוות, לפני הובלה בחיפה</p></div>
+      <div class="pola"><figure class="ps" data-slot="p2" data-icon="box" data-label="תמונה מהובלה"></figure><p data-edit="p2">פסנתר, קומה רביעית</p></div>
+      <div class="pola"><figure class="ps" data-slot="p3" data-icon="home" data-label="תמונה מהובלה"></figure><p data-edit="p3">מטבח ארוז ומוכן</p></div>
+    </div>
+    <p class="road-note">לקוחות רוצים לראות מי ייכנס להם הביתה. תמונה של הצוות והמשאית שלכם בונה אמון מהר.</p>
+  </div>
+</section>
+
 <section class="included">
   <div class="wrap">
     <div class="head"><h2>מה בתוך ההובלה</h2><span class="mono">רשימת תכולה</span></div>
@@ -161,10 +210,12 @@
 <footer class="wrap"><div class="row"><span>דרור הובלות · דף לדוגמה, העסק בדוי</span><a href="../">רוצים דף כזה לעסק שלכם?</a></div></footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
 <script>
   const EST = { "סטודיו או חדר": [1200, 1900], "2 עד 3 חדרים": [2500, 4200], "4 חדרים ומעלה": [4500, 7800] };
   const EXTRA = { "קרקע או יש מעלית": 0, "קומה בלי מעלית": 400, "צריך מנוף": 900 };
   const fmt = (n) => n.toLocaleString("he-IL");
+  PhotoSlots.init({ page: "movers" });
   LeadBot.init({
     whatsapp: "972526359513",
     name: "דרור · הובלות", subtitle: "הצעת מחיר בדקה", initial: "ד", launcher: "הצעת מחיר",

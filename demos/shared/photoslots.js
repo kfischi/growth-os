@@ -184,7 +184,7 @@
         tools.addEventListener("pointerdown", (e) => e.stopPropagation());
 
         slot.addEventListener("click", (e) => {
-          if (!document.body.classList.contains("ps-edit") || st.src) return;
+          if (!document.body.classList.contains("ps-edit") || st.src || e.target.closest("[data-edit]")) return;
           e.preventDefault(); pickFor = slot; picker.value = ""; picker.click();
         });
         slot.addEventListener("wheel", (e) => {
@@ -193,7 +193,7 @@
         }, { passive: false });
         // drag to pan
         slot.addEventListener("pointerdown", (e) => {
-          if (!document.body.classList.contains("ps-edit") || !st.src) return;
+          if (!document.body.classList.contains("ps-edit") || !st.src || e.target.closest("[data-edit]")) return;
           e.preventDefault(); slot.setPointerCapture(e.pointerId); slot.classList.add("dragging");
           const r = slot.getBoundingClientRect(), sx = e.clientX, sy = e.clientY, ox = st.x, oy = st.y;
           const move = (m) => { st.x = clamp(ox - ((m.clientX - sx) / r.width) * 100 / st.z * 1.6, 0, 100); st.y = clamp(oy - ((m.clientY - sy) / r.height) * 100 / st.z * 1.6, 0, 100); apply(); };
