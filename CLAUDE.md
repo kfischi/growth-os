@@ -57,6 +57,20 @@ The home page `demos/index.html` is the sales page, built as one story with a to
 
 `demos/shared/aibot.js` (UI) calls `demos/netlify/functions/chat.mjs` (`/api/chat`, Claude via the official SDK, `claude-opus-5-5`, effort low, server-side fallbacks). It runs on the home page and on `/all/`. The system prompt in that file and the scripted price answer in `aibot.js` hold the prices: keep both in sync with `#plans` in `demos/index.html`. Without `ANTHROPIC_API_KEY` in Netlify the chat falls back to scripted answers.
 
+## The lead system (the real backend)
+
+Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same site, Supabase for storage (its own project, tables `ls_*` from `supabase/lead-system/0001_lead_system.sql`, not Growth OS), and the official WhatsApp Cloud API. No n8n.
+
+- `POST /api/lead/<slug>` (`lead.mjs`): stores the enquiry, answers the lead from the business's number, alerts the owner with a "טיפלתי" button. Any answer but `{ ok: true }` means the page falls back to opening WhatsApp.
+- `/api/wa-webhook`: delivery statuses, the owner's "טיפלתי", replies from leads. Verified with `WA_APP_SECRET`.
+- `reminders.mjs` (every 15 minutes) and `monthly-report.mjs` (the 1st of the month): scheduled.
+- `/panel/` with `/api/leads`: the owner's panel. Owners log in with a key made by `scripts/lead-system/new-client.mjs`; only its hash is stored.
+- `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
+- Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.
+- The home page form also sends to `/api/lead/kfir` and still opens WhatsApp.
+- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `ANTHROPIC_API_KEY`. Never in the repo or the chat.
+- `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
+
 ## Checks
 
 - Hebrew copy: `node scripts/hebrew-copy-lint.cjs <file-or-dir>` flags AI-sounding and bureaucratic Hebrew.

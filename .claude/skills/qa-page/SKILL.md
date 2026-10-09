@@ -41,7 +41,7 @@ Open `desktop.png` and `mobile.png` and check:
 - Submit the form with an invalid phone number. An error must appear.
 - Submit it with a valid number. The confirmation must appear and the page must not reload or break.
 - Every WhatsApp button must open `wa.me/<number>` with the right prefilled text.
-- On a client site: `CONFIG.webhookUrl` points at production n8n, and one test lead arrives in the sheet and on WhatsApp.
+- On a client site: `CONFIG.webhookUrl` points at `/api/lead/<slug>` on the lead system, and one test lead arrives in the panel and on WhatsApp.
 
 ## 5. Report
 

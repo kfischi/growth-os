@@ -383,7 +383,7 @@
     // Deployment settings. Leave webhookUrl empty to run as a pure demo:
     // the WhatsApp conversation is then only simulated on screen.
     const CONFIG = {
-      webhookUrl: "",      // n8n production webhook URL, e.g. https://n8n.example.com/webhook/lead
+      webhookUrl: "",      // the lead system, e.g. https://service-pro-web.netlify.app/api/lead/<slug> (docs/side-income/LEAD_SYSTEM.md)
       whatsappNumber: "",  // business number in international format, e.g. 972500000000
       businessName: "אוויר נקי",
     };
@@ -486,17 +486,20 @@
     overlay.addEventListener("click", (e) => { if (e.target === overlay) closeDemo(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && overlay.classList.contains("open")) closeDemo(); });
 
+    // true when the lead system stored the enquiry (or in pure demo mode).
     async function sendLead(lead) {
-      if (!CONFIG.webhookUrl) return;
+      if (!CONFIG.webhookUrl) return true;
       try {
-        await fetch(CONFIG.webhookUrl, {
+        const res = await fetch(CONFIG.webhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(lead),
         });
+        const out = await res.json().catch(() => ({}));
+        return res.ok && out.ok === true;
       } catch (err) {
-        // The visitor still sees the confirmation; n8n failures are monitored there.
-        console.error("Lead webhook failed", err);
+        console.error("Lead system failed", err);
+        return false;
       }
     }
 
@@ -523,11 +526,18 @@
         campaign: params.get("utm_campaign") || "",
         page: location.href,
         submitted_at: new Date().toISOString(),
+        company: form.company.value,
       };
 
       submitBtn.disabled = true;
-      await sendLead(lead);
+      const stored = await sendLead(lead);
       submitBtn.disabled = false;
+      // The system is down: the enquiry goes to the business on WhatsApp instead, so it is never lost.
+      if (!stored && CONFIG.whatsappNumber) {
+        location.href = "https://wa.me/" + CONFIG.whatsappNumber + "?text=" +
+          encodeURIComponent(`היי, אני ${name}. אשמח שתחזרו אליי בנושא: ${lead.service}. הטלפון שלי: ${phone}`);
+        return;
+      }
       form.reset();
       playDemo(lead);
     });
