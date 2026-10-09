@@ -166,6 +166,12 @@ img, svg { display: block; }
 .demo .tx b { font-size: .95rem; font-weight: 600; }
 .demo .tx small { font-size: .8rem; color: var(--slate); white-space: nowrap; }
 .demos-more { margin-top: 20px; }
+.demo .sw { position: relative; overflow: hidden; }
+.sw.has-photo img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; transition: transform .4s; }
+.sw.has-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgb(0 0 0 / .62), rgb(0 0 0 / 0) 58%); }
+.sw.has-photo { color: #fff !important; box-shadow: none !important; }
+.sw-name { position: relative; z-index: 1; font: inherit; text-shadow: 0 1px 8px rgb(0 0 0 / .35); }
+.demo:hover .sw.has-photo img { transform: scale(1.04); }
 .sw.plumber { background: #123a8c; background-image: linear-gradient(rgb(255 255 255 / .08) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .08) 1px, transparent 1px); background-size: 18px 18px; }
 .sw.movers { background: #c69c6d; color: #181512; background-image: repeating-linear-gradient(90deg, rgb(0 0 0 / .05) 0 2px, transparent 2px 9px); }
 .sw.trainer { background: #24352f; color: #f1efe8; }
@@ -314,30 +320,30 @@ img, svg { display: block; }
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="kicker">מה מקבלים</p>
-        <h2 id="t-what">מה שראיתם בטלפון השני. שלושה חלקים שעובדים יחד.</h2>
-        <p class="sec-sub">לא צריך להבין בטכנולוגיה. אני מקים, מחבר ובודק, ואתם ממשיכים לעבוד.</p>
+        <h2 id="t-what">אתר, מענה אוטומטי בוואטסאפ, ומעקב אחרי כל פנייה.</h2>
+        <p class="sec-sub">לקוח פונה, מקבל תשובה מיד, ואתם יודעים בדיוק למי לחזור. אני מקים ומחבר הכול, ואתם ממשיכים לעבוד.</p>
       </div>
       <ol class="parts">
         <li class="part reveal">
           <span class="part-n">1</span>
-          <h3>דף לעסק</h3>
-          <p>דף מעוצב לנייד, עם השירותים, האזור, התמונות שלכם וכפתור וואטסאפ. אליו שולחים מגוגל, מפייסבוק ומהקבוצות.</p>
+          <h3>אתר לעסק שלכם</h3>
+          <p>דף אחד שמותאם לטלפון: מה אתם עושים, איפה, תמונות מהעבודה וכפתור וואטסאפ. זה הקישור ששמים בגוגל, בפייסבוק ובקבוצות.</p>
           <div class="part-fig" aria-hidden="true"><div class="mini-page"><i class="mp-bar"></i><b>אורן מים · אינסטלציה</b><span>חדרה והסביבה. חוזר אליכם היום.</span><i class="mp-btn">וואטסאפ</i></div></div>
         </li>
         <li class="part reveal">
           <span class="part-n">2</span>
-          <h3>מענה תוך שניות</h3>
-          <p>מי שמשאיר פרטים מקבל הודעה בוואטסאפ מהמספר העסקי שלכם, מיד. אתם מקבלים התראה עם כל הפרטים.</p>
+          <h3>מענה אוטומטי בוואטסאפ</h3>
+          <p>לקוח השאיר פרטים? תוך שניות הוא מקבל הודעה מהמספר העסקי שלכם. אתם מקבלים התראה: שם, טלפון ומה הוא צריך.</p>
           <div class="part-fig" aria-hidden="true"><div class="n-card"><span class="n-ic ok-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p><b>נשלח ללקוח</b><span>״קיבלנו את הפנייה. חוזרים אליכם היום.״ ✓✓</span></p></div></div>
         </li>
         <li class="part reveal">
           <span class="part-n">3</span>
-          <h3>אף פנייה לא נשכחת</h3>
-          <p>כל הפניות בטבלה אחת. לא חזרתם ללקוח? מגיעה תזכורת. פעם בחודש דוח קצר: כמה פניות נכנסו ומאיפה.</p>
+          <h3>מעקב אחרי כל פנייה</h3>
+          <p>כל הפניות נשמרות בטבלה אחת. לא חזרתם ללקוח? מגיעה תזכורת. בסוף החודש דוח קצר: כמה פניות נכנסו ומאיפה.</p>
           <div class="part-fig" aria-hidden="true"><div class="mini-table"><span><b>09:12</b> דנה · נזילה במטבח <em>חזרתם</em></span><span><b>13:05</b> אבי · דוד שמש <em class="due">תזכורת 16:00</em></span><span><b>19:20</b> מיכל · סתימה <em>מחר בבוקר</em></span></div></div>
         </li>
       </ol>
-      <p class="what-ai reveal">בחבילת נציג AI יש גם צ׳אט באתר שעונה על שאלות של לקוחות, כמו זה שבפינה.</p>
+      <p class="what-ai reveal">חבילת נוכחות כוללת את האתר. חבילת נציג AI כוללת את שלושתם, ועוד צ׳אט באתר שעונה ללקוחות על שאלות, כמו זה שבפינה למטה.</p>
     </div>
   </section>
 
@@ -363,19 +369,19 @@ img, svg { display: block; }
         <p class="sec-sub">15 עסקים לדוגמה, כל אחד בסגנון משלו. נכנסים, משאירים פנייה ורואים מה הלקוח מקבל.</p>
       </div>
       <div class="demo-grid">
-        <a class="demo" href="plumber/"><span class="sw plumber">אורן מים</span><span class="tx"><b>אינסטלטור</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="movers/"><span class="sw movers">דרור הובלות</span><span class="tx"><b>הובלות</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="trainer/"><span class="sw trainer">יעל ברק</span><span class="tx"><b>מאמנת כושר</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="plumber/"><span class="sw plumber has-photo"><img src="shared/photos/plumber-portrait.webp" alt="" loading="lazy" style="object-position:50% 40%"><b class="sw-name">אורן מים</b></span><span class="tx"><b>אינסטלטור</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="movers/"><span class="sw movers has-photo"><img src="shared/photos/movers-truck.webp" alt="" loading="lazy" style="object-position:45% 50%"><b class="sw-name">דרור הובלות</b></span><span class="tx"><b>הובלות</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="trainer/"><span class="sw trainer has-photo"><img src="shared/photos/trainer-cover.webp" alt="" loading="lazy" style="object-position:50% 30%"><b class="sw-name">יעל ברק</b></span><span class="tx"><b>מאמנת כושר</b><small>לדמו ←</small></span></a>
         <a class="demo" href="ac/"><span class="sw ac">אלון קור</span><span class="tx"><b>טכנאי מזגנים</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="electrician/"><span class="sw electrician">רז שגב</span><span class="tx"><b>חשמלאי</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="cleaning/"><span class="sw cleaning">שקד</span><span class="tx"><b>ניקיון</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="renovation/"><span class="sw renovation">נתן אדלר</span><span class="tx"><b>שיפוצים</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="electrician/"><span class="sw electrician has-photo"><img src="shared/photos/electrician-portrait.webp" alt="" loading="lazy" style="object-position:50% 35%"><b class="sw-name">רז שגב</b></span><span class="tx"><b>חשמלאי</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="cleaning/"><span class="sw cleaning has-photo"><img src="shared/photos/cleaning-portrait.webp" alt="" loading="lazy" style="object-position:60% 40%"><b class="sw-name">שקד</b></span><span class="tx"><b>ניקיון</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="renovation/"><span class="sw renovation has-photo"><img src="shared/photos/renovation-drywall.webp" alt="" loading="lazy" style="object-position:50% 35%"><b class="sw-name">נתן אדלר</b></span><span class="tx"><b>שיפוצים</b><small>לדמו ←</small></span></a>
         <a class="demo" href="locksmith/"><span class="sw locksmith">עידו מפתח</span><span class="tx"><b>מנעולן</b><small>לדמו ←</small></span></a>
         <a class="demo" href="pest/"><span class="sw pest">שקט</span><span class="tx"><b>הדברה</b><small>לדמו ←</small></span></a>
         <a class="demo" href="appliance/"><span class="sw appliance">רועי שטרן</span><span class="tx"><b>מכשירי חשמל</b><small>לדמו ←</small></span></a>
         <a class="demo" href="handyman/"><span class="sw handyman">דורון</span><span class="tx"><b>הנדימן</b><small>לדמו ←</small></span></a>
         <a class="demo" href="garden/"><span class="sw garden">עומר גנים</span><span class="tx"><b>גינון</b><small>לדמו ←</small></span></a>
-        <a class="demo" href="tutor/"><span class="sw tutor">נועה שגיא</span><span class="tx"><b>מורה פרטית</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="tutor/"><span class="sw tutor has-photo"><img src="shared/photos/tutor-portrait.webp" alt="" loading="lazy" style="object-position:50% 35%"><b class="sw-name">נועה שגיא</b></span><span class="tx"><b>מורה פרטית</b><small>לדמו ←</small></span></a>
         <a class="demo" href="psychologist/"><span class="sw psychologist">תמר גלעד</span><span class="tx"><b>פסיכולוגית</b><small>לדמו ←</small></span></a>
         <a class="demo" href="social-worker/"><span class="sw social-worker">יעל שחר</span><span class="tx"><b>עובדת סוציאלית</b><small>לדמו ←</small></span></a>
       </div>
