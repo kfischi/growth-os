@@ -7,7 +7,7 @@ description: Weekly check-in for Kfir's side-income channel — update docs/side
 
 ## 1. Collect (ask only for what's missing)
 
-- Messages sent, replies, demos shown, pilots or clients closed this week
+- Messages sent, replies, demos shown, clients closed this week
 - Active retainers and invoiced amount this month
 - Hours spent (the budget is 5 a week)
 - Anything blocked (trustee, invoicing company, WhatsApp API approval, a client waiting)
@@ -33,7 +33,7 @@ Pick the single biggest bottleneck from the funnel: messages → replies → dem
 | Few messages sent | Time and habit | A fixed 20-minute slot, 3 times a week |
 | Messages sent, no replies | Opening or targeting | Rewrite the opening with `outreach-message`, switch trade |
 | Replies, no demos | Asking too much too early | Offer a sketch, not a meeting |
-| Demos, no closes | Price, trust or timing | The pilot offer, a sketch with their name, one follow-up |
+| Demos, no closes | Price, trust or timing | The three-payment setup, a sketch with their name, one follow-up |
 | Hours over 5 a week | Building instead of selling | Freeze new building until the next close |
 
 ## 5. Output

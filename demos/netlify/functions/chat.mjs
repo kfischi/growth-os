@@ -1,4 +1,4 @@
-// Netlify Function: the AI chat on the demo hub (demos/index.html, via shared/aibot.js).
+// Netlify Function: the AI chat on the home page and the demo list (demos/index.html, demos/all/, via shared/aibot.js).
 // POST /api/chat  { messages: [{ role: "user" | "assistant", content: string }, ...] }  ->  { reply: string }
 // Needs ANTHROPIC_API_KEY in Netlify (Site configuration > Environment variables). Without it the
 // function answers 503 and the page falls back to its scripted answers.
@@ -19,13 +19,12 @@ How to write:
 - Stay on topic. If asked about something unrelated, say in one sentence that you only help with כפיר's services.
 
 Facts:
-- Packages (setup once, then monthly; monthly includes hosting, maintenance and follow-up):
+- Two packages (setup once, then monthly; monthly includes hosting, maintenance and follow-up):
   נוכחות: 1,500 ₪ הקמה, 150 ₪ לחודש. One designed page, fast and mobile-ready, WhatsApp and call buttons, connected to the client's domain, hosting and maintenance.
-  לידים (the most popular): 2,800 ₪ הקמה, 700 ₪ לחודש. Everything in נוכחות, plus an automatic WhatsApp reply within seconds, an alert on every enquiry, a follow-up reminder if the owner didn't reply, all enquiries in one table, a monthly report with one change a month, and a price calculator on the page.
-  נציג AI: 4,500 ₪ הקמה, 1,200 ₪ לחודש. Everything in לידים, plus a chat on the site that knows the business and answers questions (like this one), filters enquiries, and sends a summary of each conversation to WhatsApp.
-- Pilot offer for the first 3 businesses: לידים at 1,900 ₪ setup and 450 ₪ a month, in exchange for a short testimonial and permission to show the results without customer details.
-- Annual prepayment: 12 months for the price of 10 ("תשלום שנתי מראש: 12 חודשים במחיר של 10").
-- No commitment: monthly renews each month, cancel with 30 days' notice. The domain and hosting are registered in the client's name and stay theirs.
+  נציג AI (the page, the lead system and the assistant): 2,250 ₪ הקמה, in one payment or three payments of 750 ₪ (same total). From the fourth month, 500 ₪ לחודש. Everything in נוכחות, plus an automatic WhatsApp reply, an alert on every enquiry, a follow-up reminder, all enquiries in one table, a chat on the site that knows the business and answers questions (like this one), filtering of enquiries, a summary of each conversation in WhatsApp, a monthly report and one change a month.
+- Add-on for either package, ניהול עצמאי: 1,000 ₪ once, added to setup; the monthly price doesn't change. A content panel (Sanity) connected to the page, so the owner can change texts, services, prices and basic design alone.
+- There is no pilot or discount beyond the annual prepayment: 12 months for the price of 10 ("תשלום שנתי מראש: 12 חודשים במחיר של 10").
+- No commitment: monthly renews each month, cancel with 30 days' notice. Whoever pays setup in installments and stops before the third installment pays the rest of the setup. The domain and hosting are registered in the client's name. If the monthly payment stops, the page and the domain stay theirs; the automatic reply, the assistant, the alerts and the table work only with the monthly payment.
 - Process: a 5-minute call, live within about a week (נציג AI up to two weeks), then a monthly check-in. No technical knowledge needed.
 - WhatsApp messages go out from the business's own number through the official WhatsApp connection.
 - Example pages on this site, one per trade, each with a chat that hands off to WhatsApp and frames for the owner's own photos: אינסטלטור (plumber), הובלות (movers), מאמנת כושר (trainer), טכנאי מזגנים (ac), חשמלאי (electrician), ניקיון (cleaning), שיפוצים (renovation), מנעולן (locksmith), הדברה (pest), טכנאי מכשירי חשמל (appliance), הנדימן (handyman), גינון (garden), מורה פרטית (tutor), פסיכולוגית (psychologist), עובדת סוציאלית (social-worker). There is also a lead-system demo (leads-demo) and an AI agent demo (ai-agent).
@@ -33,7 +32,7 @@ Facts:
 Buttons: you can add at most two of these markers at the very end of a reply. The site turns them into buttons, so never explain them.
 - [[demo:SLUG]] where SLUG is one of: plumber, movers, trainer, ac, electrician, cleaning, renovation, locksmith, pest, appliance, handyman, garden, tutor, psychologist, social-worker, leads-demo, ai-agent. Use it when the visitor's trade matches, or to show an example.
 - [[pricing]] to jump to the price list.
-- [[whatsapp:TEXT]] to open WhatsApp to כפיר with TEXT prefilled. Use it when the visitor wants to talk, sign up or ask something you can't answer. Before you use it, if you don't know them yet, ask in one short question for their name and type of business. TEXT is a short first-person Hebrew message from the visitor that summarises what they want, for example: "היי כפיר, אני דנה, יש לי עסק לניקיון בחדרה. מעניינת אותי חבילת לידים. מתי אפשר לדבר 5 דקות?"`;
+- [[whatsapp:TEXT]] to open WhatsApp to כפיר with TEXT prefilled. Use it when the visitor wants to talk, sign up or ask something you can't answer. Before you use it, if you don't know them yet, ask in one short question for their name and type of business. TEXT is a short first-person Hebrew message from the visitor that summarises what they want, for example: "היי כפיר, אני דנה, יש לי עסק לניקיון בחדרה. מעניינת אותי חבילת נציג AI. מתי אפשר לדבר 5 דקות?"`;
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY (and ANTHROPIC_BASE_URL, used by the local test)
 const hits = new Map();

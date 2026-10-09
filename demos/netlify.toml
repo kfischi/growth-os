@@ -7,11 +7,22 @@
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
-# The AI chat on the hub (demos/shared/aibot.js) calls this function at /api/chat.
+# The AI chat on the home page and /all/ (demos/shared/aibot.js) calls this function at /api/chat.
 # It needs ANTHROPIC_API_KEY in Site configuration > Environment variables; without it the chat runs in scripted demo mode.
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+
+# The sales page used to live at /start/. It is now the home page.
+[[redirects]]
+  from = "/start"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/start/*"
+  to = "/"
+  status = 301
 
 [[headers]]
   for = "/leads-demo/*"
