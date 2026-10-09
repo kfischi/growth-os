@@ -1,370 +1,586 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>פניות שלא הולכות לאיבוד · דפי נחיתה ואוטומציה לעסקים</title>
-  <meta name="description" content="דף נחיתה, מענה אוטומטי בוואטסאפ ומעקב פניות לעסקים קטנים בעמק חפר והסביבה.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink: #0d1b2a;
-      --ink-soft: #46586b;
-      --bg: #f5f7f9;
-      --surface: #ffffff;
-      --line: #dde4ea;
-      --brand: #0f6e7a;
-      --brand-deep: #0a4c55;
-      --brand-tint: #e3f1f2;
-      --wa: #1f9d55;
-      --radius: 18px;
-      --shadow: 0 14px 40px rgba(13, 27, 42, .09);
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0; font-family: "Heebo", "Noto Sans Hebrew", system-ui, sans-serif;
-      color: var(--ink); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; }
-    .wrap { width: min(1080px, 100% - 32px); margin-inline: auto; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>נחיתה רכה · האתר עונה</title>
+<meta name="description" content="אתרים ודפי נחיתה לעסקים קטנים, עם מענה אוטומטי בוואטסאפ. מטפלים בפניות גם כשהעסק ישן.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap">
+<script>
+(function (r) {
+  r.lang = 'he'; r.dir = 'rtl';
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { r.classList.add('pre'); setTimeout(function () { r.classList.remove('pre'); }, 3000); }
+})(document.documentElement);
+</script>
+<style>
+/* Layout: one workday told twice. The ground is the day's light, a fixed clock keeps the time,
+   poster type sits on a call-log grid, and a field of dots (each one an inquiry) runs behind everything. */
+:root {
+  --m-bg: oklch(94% .018 285);  --m-fg: oklch(24% .06 300);  --m-accent: oklch(47% .09 178);  --m-lost: oklch(52% .14 15);
+  --d-bg: oklch(34% .085 335);  --d-fg: oklch(94% .022 330); --d-accent: oklch(86% .08 172);  --d-lost: oklch(78% .1 15);
+  --n-bg: oklch(19% .04 265);
+  --bg: var(--m-bg); --fg: var(--m-fg); --accent: var(--m-accent); --lost: var(--m-lost);
+  --f-display: 'Karantina', 'Arial Narrow', Impact, sans-serif;
+  --f-text: 'IBM Plex Sans Hebrew', 'Assistant', system-ui, sans-serif;
+  --f-clock: 'Miriam Libre', 'Courier New', monospace;
+  --gut: clamp(16px, 4vw, 56px);
+  --hero: min(24vw, 36svh);
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.6 var(--f-text); overflow-x: clip; -webkit-font-smoothing: antialiased; }
+.page, .band, .bar, .dock { --dim: color-mix(in oklab, var(--fg) 64%, var(--bg)); --line: color-mix(in oklab, var(--fg) 20%, var(--bg)); }
+.page { position: relative; z-index: 1; }
+#field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+h1, h2, h3, p, ol { margin: 0; }
+bdi, time, .clock { font-variant-numeric: tabular-nums; }
+bdi { white-space: nowrap; }
 
-    header.top { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; gap: 12px; }
-    .brand { font-weight: 800; font-size: 19px; }
-    .brand small { display: block; font-weight: 500; font-size: 13px; color: var(--ink-soft); }
+/* masked line reveal */
+.ln { display: block; overflow: clip; padding-block: .12em .05em; margin-block: -.12em -.05em; }
+.ln-i { display: block; }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none; font-weight: 700; border-radius: 12px; padding: 14px 24px;
-      font-size: 17px; font-family: inherit; transition: filter .15s, transform .1s; border: 0; cursor: pointer;
-    }
-    .btn:active { transform: scale(.99); }
-    .btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-deep)); color: #fff; }
-    .btn-primary:hover { filter: brightness(1.08); }
-    .btn-ghost { background: var(--surface); color: var(--brand-deep); border: 1.5px solid var(--brand); }
-    .btn-wa { background: var(--wa); color: #fff; }
-    .btn-wa:hover { filter: brightness(1.06); }
-    .btn-sm { padding: 9px 16px; font-size: 15px; }
+/* top bar */
+.bar { position: fixed; inset-inline: 0; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--gut) 26px; pointer-events: none;
+  background: linear-gradient(to bottom, var(--bg) 30%, color-mix(in srgb, var(--bg) 0%, transparent)); }
+.bar > * { pointer-events: auto; }
+.brand { display: inline-flex; align-items: center; gap: .6em; text-decoration: none; font-weight: 500; font-size: .95rem; justify-self: start; min-height: 44px; }
+.brand i { inline-size: .62em; block-size: .62em; border-radius: 50%; background: var(--fg); flex: none; }
+.brand b { font-weight: 600; font-size: 1.05rem; }
+.brand .long { font-weight: 400; color: var(--dim); margin-inline-start: .8em; }
+.clock { font: 400 1.05rem/1 var(--f-clock); direction: ltr; letter-spacing: .04em; }
+.bar-cta { justify-self: end; font-weight: 600; font-size: .95rem; text-decoration: none; padding: .7em 0; border-bottom: 2px solid var(--fg); }
+.bar-cta:hover { border-color: var(--accent); color: var(--accent); }
+.dayline { position: fixed; inset-inline: 0; top: 0; height: 3px; z-index: 21; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: 100% 50%; }
 
-    .hero { padding: 48px 0 72px; text-align: center; }
-    .eyebrow {
-      display: inline-block; background: var(--brand-tint); color: var(--brand-deep);
-      font-weight: 700; font-size: 14px; padding: 6px 14px; border-radius: 999px;
-    }
-    h1 { font-size: clamp(36px, 6vw, 60px); line-height: 1.1; margin: 18px 0 16px; font-weight: 800; letter-spacing: -.5px; }
-    h1 em { font-style: normal; color: var(--brand); }
-    .hero p { font-size: 19px; color: var(--ink-soft); max-width: 40ch; margin: 0 auto 30px; }
-    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .7em; min-height: 56px; padding: 1em 1.7em; background: var(--fg); color: var(--bg);
+  font: 600 1.06rem/1 var(--f-text); text-decoration: none; border: 0; cursor: pointer; transition: background-color .25s, color .25s; }
+.btn::before { content: ""; inline-size: .56em; block-size: .56em; border-radius: 50%; background: currentColor; }
+.btn:hover, .btn:focus-visible { background: var(--accent); }
 
-    .niches { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; margin-top: 26px; }
-    .niche { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; }
-    .niche:hover { border-color: var(--brand); }
-    .niche .sw { height: 120px; display: flex; align-items: flex-end; padding: 14px 18px; color: #fff; font-size: 26px; font-weight: 800; }
-    .niche .sw.plumber { background: #123a8c; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 22px 22px; }
-    .niche .sw.movers { background: #c69c6d; color: #181512; background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.04) 0 2px, transparent 2px 9px); }
-    .niche .sw.trainer { background: #24352f; color: #f1efe8; }
-    .niche .sw.ac { background: #e6f1f6; color: #0d2235; }
-    .niche .sw.electrician { background: #202427; color: #fff; border-bottom: 6px solid #ff5a1f; }
-    .niche .sw.cleaning { background: #dceeec; color: #0f3b3a; }
-    .niche .sw.renovation { background: #2f5d4e; color: #fff; }
-    .niche .sw.locksmith { background: linear-gradient(135deg, #d9dde1, #9aa3ab); color: #6e1b24; }
-    .niche .sw.pest { background: #e6efe8; color: #1d4a35; background-image: linear-gradient(rgba(29,74,53,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(29,74,53,.08) 1px, transparent 1px); background-size: 18px 18px; }
-    .niche .sw.appliance { background: #eef1f8; color: #1d3bb3; }
-    .niche .sw.handyman { background: #b98d63; color: #1f2225; background-image: radial-gradient(rgba(70,50,35,.28) 2px, transparent 2.5px); background-size: 18px 18px; text-shadow: 0 1px 0 rgba(255,255,255,.35); }
-    .niche .sw.garden { background: #1f4d36; color: #f3efe6; }
-    .niche .sw.tutor { background: #fbfcff; color: #1b2a55; background-image: linear-gradient(#cfdcf3 1px, transparent 1px), linear-gradient(90deg, #cfdcf3 1px, transparent 1px); background-size: 16px 16px; border-bottom: 3px solid #d93a3a; }
-    .niche .sw.psychologist { background: linear-gradient(135deg, #e3ebe6, #b9cbc2); color: #1f3d36; }
-    .niche .sw.social-worker { background: #f3f5f2; color: #134e4a; border-bottom: 3px solid #d99a96; }
-    .niche .tx { padding: 16px 18px 20px; min-width: 0; }
-    .niche .tx b { display: block; font-size: 17px; margin-bottom: 4px; }
-    .niche .tx span { color: var(--ink-soft); font-size: 15px; }
-    .niche .go { margin-top: auto; padding: 0 18px 18px; color: var(--brand); font-weight: 700; }
-    section.block { padding: 72px 0; }
-    section.alt { background: var(--surface); border-block: 1px solid var(--line); }
-    h2 { font-size: clamp(26px, 3.6vw, 36px); margin: 0 0 8px; font-weight: 800; }
-    .sub { color: var(--ink-soft); margin: 0 0 36px; font-size: 17px; }
+/* hero */
+.hero { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; gap: 4svh; padding: clamp(88px, 13svh, 130px) var(--gut) clamp(28px, 5svh, 56px); }
+.hero-head { align-self: center; }
+.hero h1 { font: 700 var(--hero)/.84 var(--f-display); }
+.hero-sub { margin-top: clamp(.7rem, 2.2svh, 1.3rem); font: 500 clamp(1.2rem, 1.9vw, 1.75rem)/1.3 var(--f-text); }
+.hero h1 .ln:nth-child(2) { text-align: end; }
+.hero-foot { display: flex; justify-content: space-between; align-items: end; gap: 24px 40px; flex-wrap: wrap; }
+.lede { text-wrap: pretty; max-width: 36ch; font-size: clamp(1.06rem, 1.4vw, 1.32rem); line-height: 1.5; }
+.pre .hero h1, .pre .hero-sub, .pre .hero-foot { opacity: 0; }
 
-    .pains { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .pain { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-    .pain strong { display: block; font-size: 18px; margin-bottom: 6px; }
-    .pain span { color: var(--ink-soft); font-size: 15px; }
+/* the two acts */
+.stage { position: relative; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center;
+  gap: clamp(24px, 5vw, 80px); padding: clamp(88px, 13svh, 130px) var(--gut) clamp(24px, 5svh, 48px); }
+.act-title { font: 700 clamp(3.6rem, 9vw, 9.5rem)/.84 var(--f-display); }
+.log { list-style: none; padding: 0; display: grid; }
+.entry { display: grid; grid-template-columns: 5.4ch minmax(0, 1fr) auto; align-items: baseline; gap: .2em 1.4em; padding: clamp(.8rem, 2.3svh, 1.45rem) 0; border-top: 1px solid var(--line); }
+.entry:last-child { border-bottom: 1px solid var(--line); }
+.entry time { font: 400 1.02rem/1 var(--f-clock); direction: ltr; unicode-bidi: isolate; }
+.entry p { font-size: clamp(1.05rem, 1.5vw, 1.4rem); line-height: 1.35; }
+.status { display: inline-flex; align-items: center; gap: .5em; font-weight: 500; font-size: .96rem; line-height: 1.2; }
+.status::before { content: ""; inline-size: .55em; block-size: .55em; border-radius: 50%; background: currentColor; flex: none; }
+.entry[data-state="lost"] .status { color: var(--lost); }
+.entry[data-state="ok"] .status { color: var(--accent); }
+.verdict { grid-column: 1 / -1; padding-block: 8svh 2svh; }
+.verdict-big { font: 700 clamp(4.4rem, 15vw, 15rem)/.84 var(--f-display); }
+.note { margin-top: 1.4em; font-size: .95rem; color: var(--dim); }
+.bigclock { display: none; }
 
-    .demo-card {
-      display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center;
-      background: linear-gradient(135deg, var(--brand-deep), var(--ink)); color: #fff;
-      border-radius: 24px; padding: 40px;
-    }
-    .demo-card h2 { color: #fff; }
-    .demo-card p { color: #c9d6df; margin: 0 0 24px; font-size: 17px; }
-    .demo-card .btn-primary { background: #fff; color: var(--brand-deep); }
-    .btn-outline-light { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.55); }
-    .btn-outline-light:hover { background: rgba(255,255,255,.08); }
-    .demo-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-    .demo-steps li {
-      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
-      border-radius: 12px; padding: 12px 16px; font-size: 15px;
-    }
-    .demo-steps b { color: #9fe0d3; margin-left: 6px; }
+/* sections in normal flow */
+.sec { padding: clamp(96px, 17svh, 190px) var(--gut); }
+.sec-title { font: 700 clamp(3.6rem, 10.5vw, 11rem)/.84 var(--f-display); margin-bottom: clamp(2rem, 7svh, 5rem); }
+.sec-sub { text-wrap: balance; max-width: 44ch; color: var(--dim); margin-top: -1.5rem; margin-bottom: clamp(2rem, 6svh, 4rem); }
 
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; counter-reset: s; }
-    .step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-    .step::before {
-      counter-increment: s; content: counter(s);
-      width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff;
-      display: grid; place-items: center; font-weight: 800; margin-bottom: 12px;
-    }
-    .step h3 { margin: 0 0 6px; font-size: 19px; }
-    .step p { margin: 0; color: var(--ink-soft); font-size: 15px; }
+.plan { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 3fr); align-items: start; gap: 1rem clamp(20px, 4vw, 64px);
+  padding: clamp(1.6rem, 4.5svh, 3rem) 0; border-top: 1px solid var(--line); }
+.plan:last-of-type { border-bottom: 1px solid var(--line); }
+.plan-name { font: 700 clamp(3.2rem, 7.4vw, 7.5rem)/.84 var(--f-display); }
+.plan-tag { display: block; margin-top: .8em; font: 500 .95rem/1.3 var(--f-text); color: var(--accent); }
+.plan-what { font-weight: 500; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1.3; margin-bottom: .55em; }
+.plan-inc { color: var(--dim); max-width: 50ch; }
+.plan-links { display: flex; flex-wrap: wrap; gap: .3em 1.6em; margin-top: 1em; }
+.plan-link { display: inline-block; font-weight: 600; text-underline-offset: .3em; }
+.plan-add .plan-name { font-size: clamp(2.6rem, 5.2vw, 5.2rem); }
+.plan-link:hover { color: var(--accent); }
+.plan-price { font-family: var(--f-clock); text-align: end; display: grid; gap: .5em; }
+.plan-price b { font-weight: 400; font-size: clamp(1.9rem, 3.1vw, 3rem); line-height: 1; }
+.plan-price span { font-family: var(--f-text); font-size: .95rem; color: var(--dim); }
+.offers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem clamp(20px, 4vw, 64px); margin-top: clamp(2rem, 6svh, 4rem); }
+.offers p { max-width: 46ch; }
+.offers strong { font-weight: 600; }
+.slots { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 5fr); align-items: end; gap: clamp(14px, 2.5vw, 36px); }
+.slot { margin: 0; max-width: 100%; aspect-ratio: 4 / 3; display: grid; align-content: end; padding: clamp(.9rem, 2vw, 1.4rem); border: 1px dashed var(--dim);
+  background: color-mix(in oklab, var(--fg) 5%, transparent); color: var(--dim); font-size: .98rem; line-height: 1.4; }
+.slot.tall { aspect-ratio: 3 / 4; }
+.slot b { display: block; margin-bottom: .45em; font: 400 .85rem/1 var(--f-clock); color: var(--fg); }
 
-    .pilot {
-      display: flex; gap: 14px; align-items: flex-start;
-      background: var(--brand-tint); border: 1px solid #b9dcdf; border-radius: 14px;
-      padding: 16px 20px; margin-bottom: 28px; color: var(--brand-deep);
-    }
-    .pilot b { color: var(--ink); }
-    .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
-    .plan {
-      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-      padding: 28px 24px; display: flex; flex-direction: column; position: relative;
-    }
-    .plan.featured { border: 2px solid var(--brand); box-shadow: var(--shadow); }
-    .tag {
-      position: absolute; top: -13px; right: 24px; background: var(--brand); color: #fff;
-      font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px;
-    }
-    .plan h3 { margin: 0; font-size: 22px; }
-    .plan .for { color: var(--ink-soft); font-size: 15px; margin: 4px 0 18px; min-height: 48px; }
-    .price { font-size: 34px; font-weight: 800; line-height: 1; }
-    .price small { font-size: 15px; font-weight: 500; color: var(--ink-soft); }
-    .monthly { margin: 8px 0 20px; font-weight: 700; color: var(--brand-deep); }
-    .plan ul { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 10px; flex: 1; }
-    .plan li { display: flex; gap: 10px; font-size: 15px; }
-    .plan li::before { content: "✓"; color: var(--brand); font-weight: 800; flex: none; }
-    .plan .btn { width: 100%; }
-    .fine { color: var(--ink-soft); font-size: 14px; margin: 20px 0 0; text-align: center; }
+/* demos */
+.demos { padding-block: clamp(96px, 17svh, 190px); overflow: clip; }
+.demos-head { padding-inline: var(--gut); }
+.track-wrap { overflow-x: auto; }
+.track { display: flex; align-items: end; gap: clamp(36px, 6vw, 120px); width: max-content; padding-inline: var(--gut); }
+.demo { flex: none; display: grid; gap: .5rem; text-decoration: none; }
+.demo b { font: 700 clamp(5rem, 17vw, 17rem)/.84 var(--f-display); transition: color .3s; -webkit-text-stroke: 0 transparent; }
+.demo small { font-size: 1rem; color: var(--dim); }
+@media (hover: hover) {
+  .track:hover .demo:not(:hover) b { color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
+  .demo:hover b { color: var(--accent); }
+}
 
-    details {
-      background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-      padding: 16px 20px; margin-bottom: 12px;
-    }
-    summary { cursor: pointer; font-weight: 700; font-size: 17px; }
-    details p { margin: 10px 0 0; color: var(--ink-soft); }
+/* process */
+.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px); }
+.step { border-top: 1px solid var(--line); padding-top: 1.1rem; }
+.step .n { display: block; font: 700 clamp(4.4rem, 9vw, 9rem)/.8 var(--f-display); }
+.step h3 { font: 600 1.35rem/1.25 var(--f-text); margin: .5em 0 .35em; }
+.step p { color: var(--dim); max-width: 34ch; }
+.terms { list-style: none; padding: 0; margin-top: clamp(2.4rem, 8svh, 5rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem clamp(24px, 4vw, 64px); font-weight: 500; }
 
-    .final { text-align: center; }
-    .final p { color: var(--ink-soft); margin: 0 0 24px; font-size: 17px; }
-    footer { padding: 32px 0 48px; text-align: center; color: var(--ink-soft); font-size: 14px; }
+/* dusk interlude and night */
+.sunset { display: none; }
+.contact { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); align-content: end; gap: clamp(1.5rem, 4svh, 2.8rem);
+  padding: clamp(96px, 15svh, 150px) var(--gut) calc(clamp(28px, 5svh, 56px) + env(safe-area-inset-bottom, 0px)); }
+.contact h2 { font: 700 min(14.5vw, 29svh)/.84 var(--f-display); }
+.contact h2 .ln:nth-child(2) { text-align: end; }
+.contact .lede { margin-top: clamp(1.2rem, 3svh, 2rem); max-width: 46ch; }
+.form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 1.2rem clamp(16px, 2.5vw, 40px); }
+.field { display: grid; gap: .35rem; }
+.field label { font-size: .92rem; color: var(--dim); }
+.field input { font: 500 1.3rem/1.3 var(--f-text); color: var(--fg); background: transparent; border: 0; border-bottom: 1px solid var(--dim); border-radius: 0;
+  padding: .45em 0; min-height: 48px; width: 100%; transition: border-color .25s; }
+.field input:focus { outline: 0; border-bottom: 2px solid var(--accent); }
+.field input::placeholder { color: color-mix(in oklab, var(--fg) 34%, var(--bg)); }
+.form-foot { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+.fdots { display: inline-flex; gap: .5rem; }
+.fdots i { inline-size: .62rem; block-size: .62rem; border-radius: 50%; border: 1px solid var(--dim); transition: background-color .3s, border-color .3s, transform .3s; }
+.fdots i.on { background: var(--accent); border-color: var(--accent); transform: scale(1.25); }
+.form-msg { grid-column: 1 / -1; min-height: 1.6em; font-weight: 500; color: var(--accent); }
+.foot { display: flex; justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap; padding-top: 1.4rem; border-top: 1px solid var(--line); font-size: .9rem; color: var(--dim); }
 
-    @media (max-width: 860px) {
-      .pains, .steps, .plans { grid-template-columns: 1fr; }
-      .plan .for { min-height: 0; }
-      .demo-card { grid-template-columns: 1fr; padding: 28px 20px; }
-      .hero { padding-top: 24px; }
-      .plans { gap: 26px; }
-    }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
-  </style>
+/* phone dock */
+.dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 26px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, var(--bg) 55%, color-mix(in srgb, var(--bg) 0%, transparent)); }
+.dock .btn { width: 100%; }
+
+/* cursor */
+.cursor { position: fixed; top: 0; left: 0; z-index: 40; inline-size: 14px; block-size: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--accent);
+  pointer-events: none; opacity: 0; display: grid; place-items: center; font: 600 3.4px/1 var(--f-text); color: transparent; }
+.cursor.big { color: var(--bg); }
+
+/* without motion: sections carry their own light */
+:root:not(.is-live) #without .verdict, :root:not(.is-live) .contact {
+  --bg: var(--d-bg); --fg: var(--d-fg); --accent: var(--d-accent); --lost: var(--d-lost); background: var(--bg); color: var(--fg); }
+:root:not(.is-live) .contact { --bg: var(--n-bg); }
+:root:not(.is-live) #without .verdict { margin-inline: calc(var(--gut) * -1); padding: 12svh var(--gut); }
+:root:not(.is-live) .bar { position: absolute; }
+
+/* with motion */
+.is-live .verdict { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; padding: var(--gut); visibility: hidden; }
+.is-live .bigclock { display: grid; position: absolute; inset: 0; place-content: center; pointer-events: none; direction: ltr;
+  font: 400 clamp(5rem, 25vw, 25rem)/1 var(--f-clock); letter-spacing: -.02em; }
+.is-live .sunset { display: grid; position: relative; min-height: 100svh; }
+.is-live .sunset .cap { position: absolute; inset-inline: 0; bottom: 12svh; text-align: center; font: 700 clamp(2.6rem, 6vw, 6rem)/.9 var(--f-display); }
+.is-live .track-wrap { overflow: visible; }
+.is-live .demos-pin { min-height: 100svh; display: grid; align-content: center; gap: 2svh; }
+
+@media (max-width: 899px) {
+  :root { --hero: 35vw; }
+  .hero h1 .w { display: block; }
+  .bar-cta { display: none; }
+  .bar { grid-template-columns: 1fr auto; }
+  .brand .long { display: none; }
+  .stage { grid-template-columns: minmax(0, 1fr); align-content: center; gap: 1.6rem; }
+  .act-title { font-size: clamp(3.4rem, 17vw, 6rem); }
+  .entry { grid-template-columns: auto minmax(0, 1fr); gap: .25em 1em; padding: .62rem 0; }
+  .entry p { grid-column: 1 / -1; grid-row: 2; font-size: 1.04rem; }
+  .entry .status { justify-self: end; font-size: .9rem; }
+  .verdict-big { font-size: 25vw; }
+  .plan { grid-template-columns: minmax(0, 1fr); }
+  .plan-name { font-size: 22vw; }
+  .plan-price { text-align: start; gap: .4em; }
+  .plan-add .plan-name { font-size: 15vw; }
+  .slots { grid-template-columns: minmax(0, 1fr); }
+  .slot.tall { aspect-ratio: 4 / 5; }
+  .offers, .steps, .terms { grid-template-columns: minmax(0, 1fr); }
+  .track-wrap { overflow: visible; }
+  .track { flex-direction: column; align-items: stretch; width: auto; gap: 0; }
+  .demo { grid-template-columns: minmax(0, 1fr) auto; align-items: end; padding: .9rem 0 .7rem; border-top: 1px solid var(--line); }
+  .demo:last-child { border-bottom: 1px solid var(--line); }
+  .demo b { font-size: 21vw; }
+  .demo small { padding-bottom: .5em; }
+  .is-live .demos-pin { min-height: 0; display: block; }
+  .contact { gap: 2rem; }
+  .contact h2 { font-size: 30vw; }
+  .form { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+  .dock.on { display: block; }
+  .cursor { display: none; }
+}
+@media (hover: none) { .cursor { display: none; } }
+/* AI chat (shared/aibot.js): page colours, and above the phone dock */
+:root { --ab-accent: oklch(47% .09 178); --ab-font: var(--f-text); }
+@media (max-width: 899px) { body .ab-launch { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } body .ab-panel { bottom: calc(176px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 200px)); } }
+</style>
+
 </head>
 <body>
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="dayline" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true">דמו</div>
 
-  <div class="wrap">
-    <header class="top">
-      <div class="brand" data-owner-name>כפיר<small>דפי נחיתה ואוטומציה לעסקים</small></div>
-      <a class="btn btn-wa btn-sm" data-wa href="#contact">וואטסאפ</a>
-    </header>
+<div class="page" id="top" dir="rtl" lang="he">
+  <header class="bar">
+    <a class="brand" href="#top"><i></i><span><b>נחיתה רכה</b><span class="long">אתרים שבונים עסקים</span></span></a>
+    <span class="clock" data-clock aria-hidden="true">07:58</span>
+    <a class="bar-cta" href="#contact">שיחת היכרות</a>
+  </header>
 
-    <section class="hero">
-      <span class="eyebrow">לעסקים בעמק חפר והסביבה</span>
-      <h1>אף פנייה<br><em>לא הולכת לאיבוד.</em></h1>
-      <p>דף נחיתה שמביא פניות, מענה אוטומטי בוואטסאפ תוך שניות, ותזכורת כשמישהו עוד מחכה לתשובה.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="leads-demo/">לנסות דמו חי</a>
-        <button class="btn btn-ghost" type="button" data-open-ai>לשאול את הנציג החכם</button>
-        <a class="btn btn-ghost" href="#pricing">למחירון</a>
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-head">
+        <h1>
+          <span class="ln"><span class="ln-i"><span class="w">הראש</span> <span class="w">בעסק.</span></span></span>
+          <span class="ln"><span class="ln-i"><span class="w">האתר</span> <span class="w">עונה.</span></span></span>
+        </h1>
+        <p class="hero-sub">כדי שלא תפספסו אף אחד.</p>
+      </div>
+      <div class="hero-foot">
+        <p class="lede">אתרים ודפי נחיתה לעסקים קטנים.<br>מטפלים בפניות גם כשהעסק ישן.</p>
+        <a class="btn" href="#contact" data-magnetic>לשיחת היכרות של 5 דקות</a>
       </div>
     </section>
-  </div>
 
-  <section class="block alt">
-    <div class="wrap">
-      <h2>נשמע מוכר?</h2>
-      <p class="sub">שלושה דברים ששומעים כמעט מכל בעל עסק קטן.</p>
-      <div class="pains">
-        <div class="pain"><strong>"ראיתי את ההודעה מאוחר"</strong><span>הלקוח כתב בצהריים, קיבל תשובה בערב, ובינתיים כבר סגר עם מישהו אחר.</span></div>
-        <div class="pain"><strong>"אין לי אתר"</strong><span>יש רק עמוד פייסבוק ומספר טלפון. קשה להבין מה העסק עושה ולמה לבחור דווקא בו.</span></div>
-        <div class="pain"><strong>"לא יודע כמה פניות היו"</strong><span>הפניות מפוזרות בין וואטסאפ, טלפון והודעות. אין מעקב, ואין דרך לדעת מה עובד.</span></div>
+    <section class="act" id="without" aria-labelledby="t-without">
+      <div class="stage">
+        <h2 class="act-title" id="t-without"><span class="ln"><span class="ln-i">יום עבודה.</span></span><span class="ln"><span class="ln-i">בלי אתר.</span></span></h2>
+        <ol class="log">
+          <li class="entry" data-t="552" data-state="lost"><time>09:12</time><p>שיחה נכנסת. אתם באמצע עבודה.</p><span class="status">לא נענתה</span></li>
+          <li class="entry" data-t="700" data-state="lost"><time>11:40</time><p>הודעת וואטסאפ: ״כמה זה עולה?״</p><span class="status">נקראה רק בערב</span></li>
+          <li class="entry" data-t="785" data-state="lost"><time>13:05</time><p>שיחה נכנסת. אתם על הסולם.</p><span class="status">לא נענתה</span></li>
+          <li class="entry" data-t="990" data-state="ok"><time>16:30</time><p>לקוח קבוע מתקשר.</p><span class="status">נענתה</span></li>
+          <li class="entry" data-t="1160" data-state="lost"><time>19:20</time><p>מישהו מחפש אתכם בגוגל. סגור.</p><span class="status">לא השאיר פרטים</span></li>
+        </ol>
+        <div class="verdict">
+          <p class="verdict-big"><span class="ln"><span class="ln-i">חמש פניות.</span></span><span class="ln"><span class="ln-i">אחת נענתה.</span></span></p>
+          <p class="note">המחשה של יום עבודה אחד, לא נתון סטטיסטי.</p>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="block">
-    <div class="wrap">
-      <div class="demo-card">
-        <div>
-          <h2>לראות לפני שמחליטים</h2>
-          <p>בניתי דף לעסק בדוי של טכנאי מזגנים. ממלאים את הטופס עם השם שלכם, ורואים בדיוק מה הלקוח שלכם יקבל בוואטסאפ, ומה קורה מאחורי הקלעים.</p>
-          <div class="cta-row" style="justify-content:flex-start">
-            <a class="btn btn-primary" href="leads-demo/">דמו מערכת לידים</a>
-            <a class="btn btn-outline-light" href="ai-agent/">דמו נציג AI</a>
-            <button class="btn btn-outline-light" type="button" data-open-ai>נציג חכם, עכשיו</button>
+    <section class="act" id="with" aria-labelledby="t-with">
+      <div class="stage">
+        <div class="bigclock" data-clock aria-hidden="true">19:30</div>
+        <h2 class="act-title" id="t-with"><span class="ln"><span class="ln-i">אותו יום.</span></span><span class="ln"><span class="ln-i">עם אתר שעונה.</span></span></h2>
+        <ol class="log">
+          <li class="entry" data-t="552" data-state="ok"><time>09:12</time><p>פנייה מהדף. אתם באמצע עבודה.</p><span class="status">מענה בוואטסאפ תוך שניות</span></li>
+          <li class="entry" data-t="700" data-state="ok"><time>11:40</time><p>״כמה זה עולה?״</p><span class="status">מענה אוטומטי, והתראה אצלכם</span></li>
+          <li class="entry" data-t="785" data-state="ok"><time>13:05</time><p>פנייה מהדף. אתם על הסולם.</p><span class="status">בטבלה. תזכורת אחרי 3 שעות</span></li>
+          <li class="entry" data-t="990" data-state="ok"><time>16:30</time><p>לקוח קבוע מתקשר.</p><span class="status">עניתם בעצמכם</span></li>
+          <li class="entry" data-t="1160" data-state="ok"><time>19:20</time><p>מישהו מוצא אתכם בגוגל. סגור.</p><span class="status">השאיר פרטים. מחכה לכם בבוקר</span></li>
+        </ol>
+        <div class="verdict">
+          <p class="verdict-big"><span class="ln"><span class="ln-i">חמש פניות.</span></span><span class="ln"><span class="ln-i">אף אחת לא אבדה.</span></span></p>
+          <p class="note">כך עובדת חבילת נציג AI.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="plans" aria-labelledby="t-plans">
+      <h2 class="sec-title" id="t-plans" data-reveal><span class="ln"><span class="ln-i">שתי חבילות.</span></span></h2>
+      <article class="plan">
+        <h3 class="plan-name">נוכחות</h3>
+        <div><p class="plan-what">דף אחד, מעוצב, שמייצג אתכם.</p><p class="plan-inc">דף מעוצב ומותאם לנייד, כפתור וואטסאפ וחיוג, חיבור לדומיין שלכם, אחסון ותחזוקה.</p></div>
+        <p class="plan-price"><b><bdi>1,500 ₪</bdi></b><span>הקמה, ועוד <bdi>150 ₪</bdi> לחודש</span></p>
+      </article>
+      <article class="plan">
+        <h3 class="plan-name">נציג AI<span class="plan-tag">הדף, מערכת הלידים והנציג</span></h3>
+        <div><p class="plan-what">דף שעונה ללקוחות במקומכם.</p><p class="plan-inc">כל מה שבנוכחות, מענה אוטומטי בוואטסאפ, התראה על כל פנייה, תזכורת מעקב, טבלה אחת לכל הפניות, צ'אט באתר, סינון פניות וסיכום שיחות בוואטסאפ, דוח חודשי ושינוי אחד בחודש.</p>
+          <p class="plan-links"><a class="plan-link" href="ai-agent/" target="_blank" rel="noopener">לראות את הנציג בפעולה</a><a class="plan-link" href="leads-demo/" target="_blank" rel="noopener">לנסות את מערכת הלידים</a></p></div>
+        <p class="plan-price"><b><bdi>2,250 ₪</bdi></b><span>הקמה: בתשלום אחד, או בשלושה תשלומים של <bdi>750 ₪</bdi>. אותו סכום.</span><span>מהחודש הרביעי: <bdi>500 ₪</bdi> לחודש</span></p>
+      </article>
+      <article class="plan plan-add">
+        <h3 class="plan-name">ניהול עצמאי<span class="plan-tag">תוספת לכל חבילה</span></h3>
+        <div><p class="plan-what">משנים תכנים בסיסיים ועיצוב לבד, בלי לחכות לאף אחד.</p><p class="plan-inc">פאנל ניהול תוכן (Sanity) שמחובר לדף. לעסקים שמעדכנים שירותים, מחירים וטקסטים לעיתים קרובות.</p></div>
+        <p class="plan-price"><b><bdi>1,000 ₪</bdi></b><span>תוספת חד-פעמית להקמה. התשלום החודשי לא משתנה.</span></p>
+      </article>
+      <div class="offers">
+        <p><strong>מפסיקים את התשלום החודשי?</strong> הדף והדומיין נשארים שלכם. המענה האוטומטי, הנציג, ההתראות והטבלה פועלים רק עם התשלום החודשי.</p>
+        <p><strong>משלמים שנה מראש?</strong> 12 חודשים במחיר של 10.</p>
+      </div>
+    </section>
+
+    <section class="demos" id="demos" aria-labelledby="t-demos">
+      <div class="demos-pin">
+        <div class="demos-head">
+          <h2 class="sec-title" id="t-demos" data-reveal><span class="ln"><span class="ln-i">ככה זה נראה.</span></span></h2>
+          <p class="sec-sub">15 עסקים לדוגמה. בוחרים תחום ונכנסים לדמו חי. <a class="plan-link" href="all/">כל הדמואים עם הסבר</a></p>
+        </div>
+        <div class="track-wrap">
+          <div class="track">
+            <a class="demo" data-cursor href="plumber/"><b>אינסטלטור</b><small>דמו: אורן מים</small></a>
+            <a class="demo" data-cursor href="movers/"><b>הובלות</b><small>דמו: דרור הובלות</small></a>
+            <a class="demo" data-cursor href="trainer/"><b>מאמנת כושר</b><small>דמו: יעל ברק</small></a>
+            <a class="demo" data-cursor href="ac/"><b>מזגנים</b><small>דמו: אלון קור</small></a>
+            <a class="demo" data-cursor href="electrician/"><b>חשמלאי</b><small>דמו: רז שגב</small></a>
+            <a class="demo" data-cursor href="cleaning/"><b>ניקיון</b><small>דמו: שקד</small></a>
+            <a class="demo" data-cursor href="renovation/"><b>שיפוצים</b><small>דמו: נתן אדלר</small></a>
+            <a class="demo" data-cursor href="locksmith/"><b>מנעולן</b><small>דמו: עידו מפתח</small></a>
+            <a class="demo" data-cursor href="pest/"><b>הדברה</b><small>דמו: שקט</small></a>
+            <a class="demo" data-cursor href="appliance/"><b>מכשירי חשמל</b><small>דמו: רועי שטרן</small></a>
+            <a class="demo" data-cursor href="handyman/"><b>הנדימן</b><small>דמו: דורון</small></a>
+            <a class="demo" data-cursor href="garden/"><b>גינון</b><small>דמו: עומר גנים</small></a>
+            <a class="demo" data-cursor href="tutor/"><b>מורה פרטית</b><small>דמו: נועה שגיא</small></a>
+            <a class="demo" data-cursor href="psychologist/"><b>פסיכולוגית</b><small>דמו: תמר גלעד</small></a>
+            <a class="demo" data-cursor href="social-worker/"><b>עובדת סוציאלית</b><small>דמו: יעל שחר</small></a>
           </div>
         </div>
-        <ul class="demo-steps">
-          <li><b>00:00</b>הלקוח משאיר פרטים בדף</li>
-          <li><b>00:03</b>הוא מקבל הודעת וואטסאפ בשמו</li>
-          <li><b>00:03</b>אתם מקבלים התראה עם כל הפרטים</li>
-          <li><b>אחרי 3 שע׳</b>תזכורת, אם עוד לא חזרתם אליו</li>
-        </ul>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="block" id="niches">
-    <div class="wrap">
-      <h2>דף נחיתה לכל סוג עסק</h2>
-      <p class="sub">15 עסקים בדויים, 15 עיצובים שונים. בכל אחד יש צ'אט שעונה מיד ומעביר את הפנייה לוואטסאפ, עם כל הפרטים.</p>
-      <div class="niches">
-        <a class="niche" href="plumber/"><div class="sw plumber">אורן מים</div><div class="tx"><b>אינסטלטור</b><span>הצ'אט שואל מה התקלה, כמה דחוף ואיפה, ונותן טווח מחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="movers/"><div class="sw movers">דרור הובלות</div><div class="tx"><b>הובלות</b><span>מאיפה, לאן, גודל הדירה וקומה, ומחיר משוער תוך דקה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="trainer/"><div class="sw trainer">יעל ברק</div><div class="tx"><b>מאמנת כושר אישית</b><span>מטרה, ניסיון, מקום ושעות, ותיאום אימון היכרות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="ac/"><div class="sw ac">אלון קור</div><div class="tx"><b>טכנאי מזגנים</b><span>סוג המזגן והתקלה, וטווח מחיר. בטלפון רואים את הפנייה מגיעה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="electrician/"><div class="sw electrician">רז שגב</div><div class="tx"><b>חשמלאי</b><span>לוח חשמל שאפשר ללחוץ עליו, ושאלה על דחיפות ובטיחות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="cleaning/"><div class="sw cleaning">שקד</div><div class="tx"><b>ניקיון</b><span>תמונת לפני ואחרי שגוררים, והערכה של שעות ומחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="renovation/"><div class="sw renovation">נתן אדלר</div><div class="tx"><b>שיפוצים</b><span>לוח חומרים, לוח זמנים בשבועות, ותיאום סיור בבית.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="locksmith/"><div class="sw locksmith">עידו מפתח</div><div class="tx"><b>מנעולן</b><span>ננעלתם בחוץ, צילינדר, מנעול. מפתח ענק עם קוד השיניים, וצ׳אט שמגיע עם זמן הגעה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="pest/"><div class="sw pest">שקט · הדברה</div><div class="tx"><b>הדברה</b><span>תוכנית דירה עם נקודות טיפול, תעודת ביצוע, וצ׳אט ששואל גם על ילדים וחיות בבית.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="appliance/"><div class="sw appliance">רועי שטרן</div><div class="tx"><b>טכנאי מכשירי חשמל</b><span>חוגת תוכניות של מכונת כביסה: בוחרים מכשיר, מקלידים קוד שגיאה, ומקבלים טווח מחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="handyman/"><div class="sw handyman">דורון הנדימן</div><div class="tx"><b>הנדימן</b><span>לוח כלים שכל כלי בו הוא שירות, ורשימת סידורים לביקור אחד.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="garden/"><div class="sw garden">עומר גנים</div><div class="tx"><b>גינון</b><span>שקית זרעים עם הוראות שתילה, לוח עונות, וסיור בגינה לפני מחיר סגור.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="tutor/"><div class="sw tutor">נועה שגיא</div><div class="tx"><b>מורה פרטית</b><span>דף מחברת משבצות עם פרבולה, מחירון בצורת מבחן, ושיעור היכרות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="psychologist/"><div class="sw psychologist">תמר גלעד</div><div class="tx"><b>פסיכולוגית</b><span>חדר שקט וחלון אור. צ׳אט שאוסף רק את המינימום, וקו חירום גלוי.</span></div><div class="go">לפתוח את הדמו ←</div></a>
-        <a class="niche" href="social-worker/"><div class="sw social-worker">יעל שחר</div><div class="tx"><b>עובדת סוציאלית</b><span>מפת משפחה מצוירת, הדרכת הורים, ושיחת היכרות קצרה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+    <section class="sec" id="faces" aria-labelledby="t-faces">
+      <h2 class="sec-title" id="t-faces" data-reveal><span class="ln"><span class="ln-i">מי בונה לכם.</span></span></h2>
+      <div class="slots">
+        <figure class="slot tall"><figcaption><b>תמונה 1</b>מי שבונה את הדף, בזמן עבודה. צילום לאורך.</figcaption></figure>
+        <figure class="slot"><figcaption><b>תמונה 2</b>צילום מסך של דף אמיתי שנבנה ללקוח.</figcaption></figure>
+        <figure class="slot"><figcaption><b>תמונה 3</b>בעל עסק שעובד עם הדף, במקום העבודה שלו.</figcaption></figure>
       </div>
-    </div>
-  </section>
+      <p class="note">מסגרות לתמונות שיתווספו. בדף הסופי יופיעו כאן הצילומים עצמם.</p>
+    </section>
 
-  <section class="block alt">
-    <div class="wrap">
-      <h2>איך זה עובד</h2>
-      <p class="sub">אתם עוסקים בעסק. אני דואג לשאר.</p>
-      <div class="steps">
-        <div class="step"><h3>שיחה של 5 דקות</h3><p>מה העסק עושה, מי הלקוחות, ומה הם שואלים הכי הרבה.</p></div>
-        <div class="step"><h3>תוך שבוע באוויר</h3><p>דף, חיבור לוואטסאפ ובדיקה מלאה מהטלפון שלכם.</p></div>
-        <div class="step"><h3>מעקב כל חודש</h3><p>דוח קצר: כמה פניות נכנסו ומאיפה. שינוי אחד בחודש כלול.</p></div>
+    <section class="sec" id="process" aria-labelledby="t-process">
+      <h2 class="sec-title" id="t-process" data-reveal><span class="ln"><span class="ln-i">מהשיחה</span></span><span class="ln"><span class="ln-i">ועד הפנייה הראשונה.</span></span></h2>
+      <ol class="steps">
+        <li class="step"><span class="n">1</span><h3>שיחה של 5 דקות</h3><p>על העסק ועל הלקוחות שלכם.</p></li>
+        <li class="step"><span class="n">2</span><h3>הקמה, בדרך כלל עד שבוע</h3><p>כולל חיבור לוואטסאפ ובדיקה מהטלפון שלכם. חבילת נציג AI: עד שבועיים.</p></li>
+        <li class="step"><span class="n">3</span><h3>מעקב חודשי</h3><p>עם דוח קצר.</p></li>
+      </ol>
+      <ul class="terms">
+        <li>בלי התחייבות. ביטול בהודעה של 30 יום מראש.</li>
+        <li>בחרתם בתשלומים וביטלתם לפני התשלום השלישי? משלימים את יתרת ההקמה.</li>
+        <li>הדומיין והאחסון רשומים על שמכם, והדומיין נשאר אצלכם.</li>
+        <li>ההודעות יוצאות מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp.</li>
+      </ul>
+    </section>
+
+    <section class="sunset" aria-hidden="true">
+      <div class="bigclock" data-clock>19:30</div>
+      <p class="cap"><span class="ln"><span class="ln-i">היום נגמר. הפניות לא.</span></span></p>
+    </section>
+
+    <section class="contact band" id="contact" aria-labelledby="t-contact">
+      <div>
+        <h2 id="t-contact" data-reveal><span class="ln"><span class="ln-i">העסק סגור.</span></span><span class="ln"><span class="ln-i">האתר עובד.</span></span></h2>
+        <p class="lede">גם ב-<bdi>22:47</bdi>, מי שמשאיר פרטים מקבל מענה. משאירים שלושה פרטים, והם מגיעים אליי בוואטסאפ. אחזור אליכם לשיחה של 5 דקות.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="block" id="pricing">
-    <div class="wrap">
-      <h2>מחירון</h2>
-      <p class="sub">מחיר הקמה חד-פעמי, ותשלום חודשי שכולל אחסון, תחזוקה ומעקב.</p>
-
-      <div class="pilot">
-        <span aria-hidden="true">✦</span>
-        <div><b>מחיר פיילוט ל-3 העסקים הראשונים:</b> חבילת לידים ב-1,900 ₪ הקמה ו-450 ₪ לחודש. בתמורה אבקש המלצה קצרה ואישור להציג את התוצאות, בלי פרטי לקוחות.</div>
-      </div>
-
-      <div class="plans">
-        <div class="plan">
-          <h3>נוכחות</h3>
-          <p class="for">לעסק שעוד אין לו דף, וצריך מקום אחד לשלוח אליו לקוחות.</p>
-          <div class="price">1,500 ₪ <small>הקמה</small></div>
-          <div class="monthly">150 ₪ לחודש</div>
-          <ul>
-            <li>דף אחד מעוצב, מהיר ומותאם לנייד</li>
-            <li>כפתור וואטסאפ וחיוג ישיר</li>
-            <li>חיבור לדומיין שלכם</li>
-            <li>אחסון ותחזוקה</li>
-          </ul>
-          <a class="btn btn-ghost" data-wa data-plan="נוכחות" href="#contact">לפרטים</a>
+      <form class="form" id="lead" novalidate>
+        <div class="field"><label for="f-name">שם</label><input id="f-name" name="name" type="text" autocomplete="name" placeholder="איך קוראים לכם"></div>
+        <div class="field"><label for="f-phone">טלפון</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
+        <div class="field"><label for="f-trade">תחום העסק</label><input id="f-trade" name="trade" type="text" placeholder="אינסטלציה, הובלות, קליניקה"></div>
+        <div class="form-foot">
+          <button class="btn" type="submit" data-magnetic>לקבוע שיחת היכרות</button>
+          <span class="fdots" aria-hidden="true"><i></i><i></i><i></i></span>
         </div>
+        <p class="form-msg" id="lead-msg" role="status" aria-live="polite"></p>
+      </form>
+      <footer class="foot"><span>נחיתה רכה. אתרים שבונים עסקים.</span><span>העסקים בדמואים הם עסקים לדוגמה.</span></footer>
+    </section>
+  </main>
 
-        <div class="plan featured">
-          <span class="tag">הכי מבוקש</span>
-          <h3>לידים</h3>
-          <p class="for">לעסק שמקבל פניות ורוצה שאף אחת מהן לא תיפול בין הכיסאות.</p>
-          <div class="price">2,800 ₪ <small>הקמה</small></div>
-          <div class="monthly">700 ₪ לחודש</div>
-          <ul>
-            <li>כל מה שבחבילת נוכחות</li>
-            <li>מענה אוטומטי בוואטסאפ תוך שניות</li>
-            <li>התראה אליכם על כל פנייה</li>
-            <li>תזכורת מעקב אם לא חזרתם ללקוח</li>
-            <li>כל הפניות בטבלה אחת</li>
-            <li>דוח חודשי ושינוי אחד בחודש</li>
-            <li><span><b>בונוס:</b> מחשבון הצעת מחיר בדף</span></li>
-          </ul>
-          <a class="btn btn-primary" data-wa data-plan="לידים" href="#contact">אני רוצה את זה</a>
-        </div>
+  <div class="dock"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></div>
+</div>
 
-        <div class="plan">
-          <h3>נציג AI</h3>
-          <p class="for">לעסק עם הרבה שאלות חוזרות, שרוצה לקבל רק פניות רלוונטיות.</p>
-          <div class="price">4,500 ₪ <small>הקמה</small></div>
-          <div class="monthly">1,200 ₪ לחודש</div>
-          <ul>
-            <li>כל מה שבחבילת לידים</li>
-            <li>צ'אט באתר שמכיר את העסק ועונה על שאלות</li>
-            <li>סינון פניות לפי מה שחשוב לכם</li>
-            <li>סיכום של כל שיחה ישירות לוואטסאפ</li>
-          </ul>
-          <a class="btn btn-ghost" href="ai-agent/" style="margin-bottom:10px">לראות את הנציג בפעולה</a>
-          <a class="btn btn-ghost" data-wa data-plan="נציג AI" href="#contact">לפרטים</a>
-        </div>
-      </div>
+<script src="shared/vendor/gsap.min.js"></script>
+<script src="shared/vendor/ScrollTrigger.min.js"></script>
+<script src="shared/vendor/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement, $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const live = !!(window.gsap && window.ScrollTrigger) && !reduce;
 
-      <p class="fine">תשלום שנתי מראש: 12 חודשים במחיר של 10. הדומיין והאחסון רשומים על שמכם.</p>
-    </div>
-  </section>
+  /* ---- the day's light: four phases, interpolated in OKLCH ---- */
+  const SKY = { bg: [[.94, .018, 285], [.9, .02, 318], [.34, .085, 335], [.19, .04, 265]],
+    fg: [[.24, .06, 300], [.94, .022, 330]], accent: [[.47, .09, 178], [.86, .08, 172]], lost: [[.52, .14, 15], [.78, .1, 15]] };
+  const rgb = ([L, C, h]) => { const a = C * Math.cos(h * Math.PI / 180), b = C * Math.sin(h * Math.PI / 180);
+    const l = (L + .3963377774 * a + .2158037573 * b) ** 3, m = (L - .1055613458 * a - .0638541728 * b) ** 3, s = (L - .0894841775 * a - 1.291485548 * b) ** 3;
+    const f = (v) => { v = Math.min(1, Math.max(0, v)); return v <= .0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - .055; };
+    return [f(4.0767416621 * l - 3.3077115913 * m + .2309699292 * s), f(-1.2684380046 * l + 2.6097574011 * m - .3413193965 * s), f(-.0041960863 * l - .7034186147 * m + 1.707614701 * s)]; };
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t), css = (c) => `rgb(${rgb(c).map((v) => Math.round(v * 255)).join(' ')})`;
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const state = { order: .3, lost: 0, answered: 0, fade: 1, fg: rgb(SKY.fg[0]), accent: rgb(SKY.accent[0]) };
+  let lastSky = -1;
+  const applySky = (t) => { if (Math.abs(t - lastSky) < .002) return; lastSky = t;
+    const i = Math.min(2, Math.floor(t)), k = smooth(1.42, 1.58, t);
+    const fg = mix(SKY.fg[0], SKY.fg[1], k), accent = mix(SKY.accent[0], SKY.accent[1], k);
+    root.style.setProperty('--bg', css(mix(SKY.bg[i], SKY.bg[i + 1], t - i)));
+    root.style.setProperty('--fg', css(fg)); root.style.setProperty('--accent', css(accent));
+    root.style.setProperty('--lost', css(mix(SKY.lost[0], SKY.lost[1], k)));
+    state.fg = rgb(fg); state.accent = rgb(accent); };
 
-  <section class="block alt">
-    <div class="wrap">
-      <h2>שאלות נפוצות</h2>
-      <p class="sub">בקצרה.</p>
-      <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. אתם עונים על כמה שאלות בשיחה, ואני מקים, מחבר ובודק הכל.</p></details>
-      <details><summary>על שם מי הדומיין והדף?</summary><p>על שמכם. אם תחליטו להפסיק, הדומיין נשאר אצלכם.</p></details>
-      <details><summary>יש התחייבות?</summary><p>אין. התשלום החודשי מתחדש כל חודש, ואפשר להפסיק בהודעה מראש של 30 יום.</p></details>
-      <details><summary>ההודעות בוואטסאפ יוצאות מהמספר שלי?</summary><p>מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אנחנו כותבים יחד.</p></details>
-      <details><summary>כמה זמן לוקח עד שזה באוויר?</summary><p>בדרך כלל עד שבוע מהשיחה. חבילת נציג AI לוקחת עד שבועיים.</p></details>
-    </div>
-  </section>
+  /* ---- the score: every global value is a function of scroll position ---- */
+  const track = (pts) => (y) => { if (y <= pts[0][0]) return pts[0][1];
+    for (let i = 1; i < pts.length; i++) if (y <= pts[i][0]) { const [y0, v0] = pts[i - 1], [y1, v1] = pts[i]; return y1 === y0 ? v1 : v0 + (v1 - v0) * (y - y0) / (y1 - y0); }
+    return pts[pts.length - 1][1]; };
+  let score = null;
+  const clocks = $$('[data-clock]'); let lastMin = -1;
+  const setClock = (m) => { m = Math.round(m); if (m === lastMin) return; lastMin = m;
+    const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); };
+  const frame = () => { const y = window.scrollY, max = document.documentElement.scrollHeight - innerHeight;
+    root.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
+    if (!score) return;
+    applySky(score.sky(y)); setClock(score.clock(y));
+    state.order = score.order(y); state.lost = score.lost(y); state.answered = score.answered(y); state.fade = score.fade(y); };
 
-  <section class="block final" id="contact">
-    <div class="wrap">
-      <h2>רוצים לבדוק אם זה מתאים לעסק שלכם?</h2>
-      <p>שולחים הודעה, ונקבע שיחה קצרה. בלי התחייבות.</p>
-      <a class="btn btn-wa" data-wa href="#contact">לשלוח הודעה בוואטסאפ</a>
-    </div>
-  </section>
+  /* ---- motion ---- */
+  if (live) {
+    root.classList.add('is-live');
+    gsap.registerPlugin(ScrollTrigger);
+    let lenis = null;
+    if (window.Lenis) { lenis = new Lenis({ autoRaf: false, anchors: true }); lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
 
-  <footer class="wrap"><span data-owner-name-plain>כפיר</span> · דפי נחיתה ואוטומציה לעסקים</footer>
+    const buildScore = () => { const A = ScrollTrigger.getById('without'), B = ScrollTrigger.getById('with'), S = ScrollTrigger.getById('sunset');
+      if (!A || !B || !S) return; const at = (st, p) => st.start + (st.end - st.start) * p;
+      score = {
+        sky: track([[0, 0], [at(A, 0), 0], [at(A, .66), 1], [at(A, .79), 1], [at(A, .87), 2], [at(B, .06), 2], [at(B, .17), 0], [at(B, .26), 0], [at(B, .86), 1], [at(S, .1), 1], [at(S, .82), 3]]),
+        clock: track([[0, 478], [at(A, 0), 480], [at(A, .66), 1170], [at(B, 0), 1170], [at(B, .11), 480], [at(B, .24), 480], [at(B, .8), 1170], [at(S, 0), 1170], [at(S, .9), 1367]]),
+        order: track([[0, 0], [at(B, .24), 0], [at(B, .84), 1], [at(S, 0), 1], [at(S, 1), .3]]),
+        lost: track([[0, 0], [at(A, .05), 0], [at(A, .7), .85], [at(B, 0), .85], [at(B, .12), 0]]),
+        answered: track([[0, 0], [at(B, .26), 0], [at(B, .86), 1]]),
+        fade: track([[0, 1], [at(B, 1), 1], [at(B, 1) + innerHeight * .7, .5], [at(S, 0), .5], [at(S, .6), 1]]) }; };
 
-  <script>
-    // Contact settings. whatsappNumber in international format without "+", e.g. 972501234567.
-    const CONFIG = {
-      ownerName: "כפיר",
-      whatsappNumber: "972526359513",
-    };
+    gsap.matchMedia().add({ desktop: '(min-width: 900px)', phone: '(max-width: 899px)' }, (ctx) => {
+      const { desktop } = ctx.conditions, vh = () => innerHeight;
 
-    document.querySelectorAll("[data-owner-name-plain]").forEach((el) => { el.textContent = CONFIG.ownerName; });
-    const brand = document.querySelector("[data-owner-name]");
-    if (brand) brand.firstChild.textContent = CONFIG.ownerName;
+      // act one: the day without
+      const A = $('#without'), tA = gsap.timeline({ defaults: { ease: 'power2.out' },
+        scrollTrigger: { id: 'without', trigger: $('.stage', A), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 2.3 : 1.9), invalidateOnRefresh: true } });
+      $$('.entry', A).forEach((e) => { const p = .66 * (e.dataset.t - 480) / 690;
+        tA.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, duration: .03 }, p + .045);
+        if (e.dataset.state === 'lost') tA.to($$('time, p', e), { opacity: .36, duration: .05 }, p + .06); });
+      tA.to($$('.act-title, .log', A), { autoAlpha: 0, duration: .04 }, .76)
+        .fromTo($('.verdict', A), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .86)
+        .from($$('.verdict .ln-i', A), { yPercent: 115, duration: .08, stagger: .02, ease: 'expo.out' }, .86).set({}, {}, 1);
 
-    if (CONFIG.whatsappNumber) {
-      document.querySelectorAll("[data-wa]").forEach((a) => {
-        const plan = a.dataset.plan;
-        const text = plan
-          ? "היי " + CONFIG.ownerName + ", ראיתי את המחירון. אשמח לשמוע על חבילת " + plan + "."
-          : "היי " + CONFIG.ownerName + ", ראיתי את הדמו ואשמח לשמוע עוד.";
-        a.href = "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(text);
-        a.target = "_blank";
-        a.rel = "noopener";
-      });
-    }
-  </script>
-  <script src="shared/aibot.js"></script>
-  <script>AiBot.init({ whatsapp: CONFIG.whatsappNumber });</script>
-</body>
-</html>
+      // act two: the clock runs back, then the same day with the site
+      const B = $('#with'), tB = gsap.timeline({ defaults: { ease: 'power2.out' },
+        scrollTrigger: { id: 'with', trigger: $('.stage', B), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 2.7 : 2.2), invalidateOnRefresh: true } });
+      tB.to($('.bigclock', B), { autoAlpha: 0, scale: .9, duration: .05 }, .12)
+        .from($$('.act-title .ln-i', B), { yPercent: 115, duration: .06, stagger: .02, ease: 'expo.out' }, .185);
+      $$('.entry', B).forEach((e) => { const p = .24 + .56 * (e.dataset.t - 480) / 690;
+        tB.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, x: 14, duration: .035 }, p + .04); });
+      tB.to($$('.act-title, .log', B), { autoAlpha: 0, duration: .04 }, .87)
+        .fromTo($('.verdict', B), { autoAlpha: 0 }, { autoAlpha: 1, duration: .04 }, .91)
+        .from($$('.verdict .ln-i', B), { yPercent: 115, duration: .07, stagger: .02, ease: 'expo.out' }, .91).set({}, {}, 1);
+
+      // section headings: one masked rise each
+      const reveal = (h) => gsap.from($$('.ln-i', h), { yPercent: 115, duration: 1.1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
+      reveal($('#t-plans'));
+
+      // demos: a horizontal scene on wide screens. In RTL the track travels toward positive x.
+      reveal($('#t-demos'));
+      if (desktop) { const tr = $('.track'), dist = () => Math.max(0, tr.scrollWidth - innerWidth);
+        gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist(), invalidateOnRefresh: true } }); }
+
+      reveal($('#t-faces'));
+      reveal($('#t-process'));
+
+      // dusk interlude: the stage is empty except the clock while the light changes
+      gsap.timeline({ scrollTrigger: { id: 'sunset', trigger: $('.sunset'), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? .95 : .8), invalidateOnRefresh: true } })
+        .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: .12, ease: 'expo.out' }, .84).set({}, {}, 1);
+      reveal($('#t-contact'));
+
+      // magnetic buttons, fine pointers only
+      if (desktop && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        $$('[data-magnetic]').forEach((el) => { const x = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3' }), y = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
+          el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); x((e.clientX - r.left - r.width / 2) * .3); y((e.clientY - r.top - r.height / 2) * .3); });
+          el.addEventListener('pointerleave', () => { x(0); y(0); }); });
+        const cur = $('.cursor'), cx = gsap.quickTo(cur, 'x', { duration: .35, ease: 'power3' }), cy = gsap.quickTo(cur, 'y', { duration: .35, ease: 'power3' });
+        addEventListener('pointermove', (e) => { cx(e.clientX); cy(e.clientY); gsap.to(cur, { opacity: 1, duration: .3, overwrite: 'auto' }); }, { passive: true });
+        $$('[data-cursor]').forEach((a) => { a.addEventListener('pointerenter', () => { cur.classList.add('big'); gsap.to(cur, { scale: 5.2, duration: .35, ease: 'power3' }); });
+          a.addEventListener('pointerleave', () => { cur.classList.remove('big'); gsap.to(cur, { scale: 1, duration: .35, ease: 'power3' }); }); });
+      }
+    });
+
+    ScrollTrigger.addEventListener('refresh', buildScore);
+    buildScore();
+    gsap.ticker.add(frame);
+    document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+    // the one load sequence
+    root.classList.remove('pre');
+    gsap.from('.hero .ln-i', { yPercent: 115, duration: 1.25, ease: 'expo.out', stagger: .11, delay: .15 });
+    gsap.from('.hero-sub, .hero-foot > *', { autoAlpha: 0, y: 18, duration: .9, ease: 'power3.out', stagger: .1, delay: .75 });
+  } else {
+    root.classList.remove('pre');
+    addEventListener('scroll', frame, { passive: true }); frame();
+  }
+
+  /* ---- phone dock: after the first screen, until the form ---- */
+  if ('IntersectionObserver' in window) { const dock = $('.dock'), seen = { hero: true, contact: false };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (seen[e.target.id] = e.isIntersecting)); dock.classList.toggle('on', !seen.hero && !seen.contact); }, { threshold: .15 });
+    io.observe($('#hero')); io.observe($('#contact')); }
+
+  /* ---- the form: three details, three dots ---- */
+  const form = $('#lead'), dots = $$('.fdots i'), msg = $('#lead-msg');
+  const ok = [(v) => v.trim().length >= 2, (v) => /^[\d\s+\-]{9,14}$/.test(v.trim()), (v) => v.trim().length >= 2], inputs = $$('input', form);
+  const check = () => inputs.map((el, i) => { const good = ok[i](el.value); dots[i].classList.toggle('on', good); return good; });
+  inputs.forEach((el) => el.addEventListener('input', () => { check(); msg.textContent = ''; }));
+  form.addEventListener('submit', (e) => { e.preventDefault(); const res = check(), bad = res.indexOf(false);
+    if (bad > -1) { msg.textContent = ['חסר שם.', 'חסר מספר טלפון תקין.', 'חסר תחום העסק.'][bad]; inputs[bad].focus(); return; }
+    const text = `היי כפיר, הגעתי מהאתר ואשמח לשיחת היכרות של 5 דקות.\nשם: ${inputs[0].value.trim()}\nטלפון: ${inputs[1].value.trim()}\nתחום העסק: ${inputs[2].value.trim()}`;
+    msg.textContent = 'פותחים וואטסאפ עם הפרטים. לחצו שם על שליחה.';
+    window.open('https://wa.me/972526359513?text=' + encodeURIComponent(text), '_blank', 'noopener'); });
+
+  /* ---- the signature: a field of dots, each one an inquiry ---- */
+  const start = () => { const canvas = $('#field'), gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'high-performance' });
+    if (!gl) return;
+    const N = innerWidth < 900 ? 800 : 1700, seeds = new Float32Array(N * 4); for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random();
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }, prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, `attribute vec4 aSeed; uniform float uTime, uOrder, uLost, uAnswered, uDpr, uAspect, uFade; uniform vec2 uPointer; varying float vAlpha, vAcc;
+      void main(){
+        vec2 c = aSeed.xy * 2. - 1.;                                            // adrift
+        c += .07 * vec2(sin(uTime * .21 + aSeed.z * 6.283 + c.y * 3.), cos(uTime * .17 + aSeed.w * 6.283 + c.x * 3.));
+        float rows = 9., row = floor(aSeed.z * rows);                           // in rows, like a ledger, moving in reading direction
+        vec2 o = vec2((fract(aSeed.x - uTime * (.008 + .012 * aSeed.w)) * 2. - 1.) * 1.04, mix(-.8, .8, (row + .5) / rows) + (aSeed.y - .5) * .012);
+        float k = smoothstep(aSeed.w * .82, aSeed.w * .82 + .18, uOrder);         // each dot is caught in its own turn
+        vec2 p = mix(c, o, k);
+        float gone = smoothstep(aSeed.y, aSeed.y + .14, uLost * 1.14);           // lost: falls out of the day
+        p.y -= gone * (.5 + aSeed.z * .9); p.x += gone * (aSeed.x - .5) * .3;
+        vec2 d = p - uPointer; d.x *= uAspect; float r = length(d);              // the pointer parts the field
+        p += normalize(d + 1e-5) * vec2(1. / uAspect, 1.) * .07 * smoothstep(.26, 0., r);
+        vAcc = step(fract(aSeed.x * 7.13 + aSeed.z * 3.71), uAnswered * .6 - .0005);
+        vAlpha = (1. - gone) * (.22 + .5 * aSeed.z) * uFade;
+        gl_Position = vec4(p, 0., 1.);
+        gl_PointSize = uDpr * ((1.4 + 2.3 * aSeed.w * aSeed.w) * mix(1., .86, k) + vAcc * 1.1);
+      }`));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, `precision mediump float; uniform vec3 uFg, uAccent; varying float vAlpha, vAcc;
+      void main(){ float m = smoothstep(.5, .32, length(gl_PointCoord - .5)); gl_FragColor = vec4(mix(uFg, uAccent, vAcc), m * mix(vAlpha, min(1., vAlpha * 1.5 + .12), vAcc)); }`));
+    gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return; gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, seeds, gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'aSeed'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
+    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    const U = {}; ['uTime', 'uOrder', 'uLost', 'uAnswered', 'uDpr', 'uAspect', 'uFade', 'uPointer', 'uFg', 'uAccent'].forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
+    let dpr = 1; const ptr = [9, 9];
+    const resize = () => { dpr = Math.min(devicePixelRatio || 1, 1.75); canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(canvas.clientHeight * dpr); gl.viewport(0, 0, canvas.width, canvas.height); };
+    new ResizeObserver(resize).observe(canvas); resize();
+    addEventListener('pointermove', (e) => { if (e.pointerType !== 'touch') { ptr[0] = e.clientX / innerWidth * 2 - 1; ptr[1] = 1 - e.clientY / innerHeight * 2; } }, { passive: true });
+    const t0 = performance.now(), ease = { order: state.order, lost: 0, answered: 0, fade: 1 };
+    const draw = () => { if (document.hidden) return;
+      for (const k in ease) ease[k] += (state[k] - ease[k]) * .09;
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.uniform1f(U.uTime, reduce ? 12 : (performance.now() - t0) / 1000); gl.uniform1f(U.uOrder, ease.order); gl.uniform1f(U.uLost, ease.lost); gl.uniform1f(U.uAnswered, ease.answered); gl.uniform1f(U.uFade, ease.fade);
+      gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uAspect, canvas.width / canvas.height); gl.uniform2f(U.uPointer, ptr[0], ptr[1]);
+      gl.uniform3fv(U.uFg, state.fg); gl.uniform3fv(U.uAccent, state.accent); gl.drawArrays(gl.POINTS, 0, N); };
+    if (live) gsap.ticker.add(draw); else { draw(); addEventListener('scroll', draw, { passive: true }); addEventListener('resize', draw); } };
+  (window.requestIdleCallback || setTimeout)(start);
+})();
+</script>
+
+<script src="shared/aibot.js"></script>
+<script>AiBot.init({ whatsapp: "972526359513", pricingHref: "#plans" });</script>
+</body></html>

@@ -12,7 +12,7 @@ Collect it in one message to Kfir. Mark what's missing and don't guess.
 | Field | Example |
 | --- | --- |
 | Business name and one-line description | "אוויר נקי, טכנאי מיזוג" |
-| Package | נוכחות / לידים / נציג AI |
+| Package | נוכחות / נציג AI, and whether the ניהול עצמאי (Sanity) add-on was bought |
 | Area served | עמק חפר, חדרה, נתניה |
 | Services (3–6) | תיקון, התקנה, ניקוי |
 | The questions customers ask most (3–5) | for the FAQ |
@@ -39,7 +39,7 @@ If a sketch exists in `demos/sketch-<slug>/`, start from it.
 6. Add `clients/<slug>/netlify.toml` with `publish = "."` and the security headers, without noindex.
 7. Add `clients/<slug>/CLIENT.md` with the intake table, the package, the launch date, the retainer amount and the billing method (monthly or annual).
 
-## 3. Automation (לידים and נציג AI packages)
+## 3. Automation (נציג AI package)
 
 Follow `demos/leads-demo/README.md` → "חיבור n8n": Webhook → Sheet → WhatsApp to the lead → alert to the owner → a 3h check → a reminder. Use the WhatsApp Cloud API with an approved template. Set the webhook CORS to the client's domain only.
 

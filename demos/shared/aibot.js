@@ -2,7 +2,8 @@
    Sends the conversation to /api/chat (Netlify Function -> Claude). The reply may end with markers that become buttons:
      [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]
    If the function is missing, not configured or fails, it answers from a small scripted engine instead, so the page never breaks.
-   Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat" }) */
+   Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat", pricingHref: "#plans", base: "" })
+   pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down. */
 (function () {
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
@@ -61,13 +62,13 @@
     if (/כמה זמן|תהליך|איך זה עובד|מתי/.test(t))
       return "שיחה של 5 דקות, ותוך שבוע בערך הדף באוויר ומחובר לוואטסאפ שלכם. אחר כך מעקב קצר כל חודש. לא צריך להבין בטכנולוגיה.";
     if (/מחיר|עולה|עלות|תשלום|כמה/.test(t))
-      return "שלוש חבילות: נוכחות ב-1,500 ₪ הקמה ו-150 ₪ לחודש, לידים ב-2,800 ₪ ו-700 ₪ לחודש, ונציג AI ב-4,500 ₪ ו-1,200 ₪ לחודש. לשלושת העסקים הראשונים יש מחיר פיילוט על חבילת לידים. [[pricing]]";
+      return "שתי חבילות. נוכחות: 1,500 ₪ הקמה ו-150 ₪ לחודש. נציג AI: 2,250 ₪ הקמה, אפשר בשלושה תשלומים של 750 ₪, ומהחודש הרביעי 500 ₪ לחודש. [[pricing]]";
     if (/נציג|בוט|צאט|AI|בינה/i.test(t))
       return "נציג AI עונה על שאלות של לקוחות באתר, מסנן פניות ושולח לכם סיכום של כל שיחה לוואטסאפ. כמו הצ׳אט הזה, רק עם המידע של העסק שלכם. [[demo:ai-agent]]";
     if (/איך|זמן|שבוע/.test(t))
       return "שיחה של 5 דקות, ותוך שבוע בערך הדף באוויר ומחובר לוואטסאפ שלכם. אחר כך מעקב קצר כל חודש. לא צריך להבין בטכנולוגיה.";
     if (/התחייב|לבטל|דומיין|על שם/.test(t))
-      return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק בהודעה של 30 יום. הדומיין והאחסון רשומים על שמכם ונשארים שלכם.";
+      return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק בהודעה של 30 יום. הדומיין והאחסון רשומים על שמכם ונשארים שלכם, והמענה האוטומטי והנציג פועלים כל עוד יש תשלום חודשי.";
     if (/דבר|שיחה|כפיר|וואטסאפ|טלפון|רוצה|מעוניין|מעוניינת|להתחיל/.test(t))
       return "בשמחה. לחצו כאן, וההודעה תגיע לכפיר בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
     return "אני יכול לספר על החבילות והמחירים, להראות דף לדוגמה לתחום שלכם, או להעביר אתכם לכפיר בוואטסאפ. מה מעניין אתכם?";
@@ -114,8 +115,8 @@
         const row = el("div", "ab-acts");
         acts.slice(0, 2).forEach(([kind, arg]) => {
           let a;
-          if (kind === "demo" && DEMOS[arg]) { a = el("a", null, "לדמו: " + DEMOS[arg]); a.href = arg + "/"; }
-          else if (kind === "pricing") { a = el("a", null, "למחירון"); a.href = "#pricing"; a.addEventListener("click", close); }
+          if (kind === "demo" && DEMOS[arg]) { a = el("a", null, "לדמו: " + DEMOS[arg]); a.href = (cfg.base || "") + arg + "/"; }
+          else if (kind === "pricing") { a = el("a", null, "למחירון"); a.href = cfg.pricingHref || "#pricing"; a.addEventListener("click", close); }
           else if (kind === "whatsapp") { a = el("a", "wa", "לשלוח לכפיר בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
           if (a) row.appendChild(a);
         });
