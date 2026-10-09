@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תמר גלעד · פסיכולוגית קלינית</title>
+<meta name="description" content="פסיכולוגית קלינית בחדרה ואונליין. טיפול פרטני, זוגי ולמתבגרים. מתחילים בשיחת היכרות קצרה בטלפון.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the quiet therapy room, its arched window, and the appointment card (כרטיס תור) you take home.
+     Detail: 50 דקות, פעם בשבוע, באותה שעה; שיחת היכרות; פרטני, זוגי, מתבגרים; לבדוק מול הביטוח.
+     Bold move: the window's light falls across the hero as one large soft four-pane shape behind the headline. */
+  :root {
+    --plaster: #eef1ee;        /* cool wall paint, leans to sage */
+    --sage: #8ea597;           /* armchair fabric */
+    --sage-pale: #dbe5df;
+    --pine: #1d3b38;           /* text, door, deep blue-green */
+    --pine-soft: #50665f;
+    --lake: #5d7f88;           /* dusk through the window */
+    --light: #fbfdfb;          /* window light */
+    --display: "Bellefair", "Times New Roman", serif;
+    --body: "Alef", "Arial Hebrew", Arial, sans-serif;
+    --phone-frame: var(--pine);
+    --bot-bg: var(--light); --bot-fg: var(--pine); --bot-line: #d3ddd7; --bot-muted: var(--pine-soft);
+    --bot-accent: var(--pine); --bot-accent-fg: #fff; --bot-them: #e7eee9; --bot-me: var(--lake); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px;
+    --ps-a: #c9d8cf; --ps-b: #7f9a8c; --ps-ui: var(--pine); --ps-edit: var(--lake);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--plaster); color: var(--pine); font-family: var(--body); font-size: 17.5px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--lake); outline-offset: 3px; }
+  .wrap { width: min(1140px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.08; letter-spacing: -.01em; margin: 0; }
+  .small { font-size: 14px; color: var(--pine-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 999px; }
+  .btn-pine { background: var(--pine); color: #fff; }
+  .btn-pine:hover { background: #142b28; }
+  .btn-line { border: 1.5px solid var(--pine); color: var(--pine); background: transparent; }
+  .btn-line:hover { background: var(--sage-pale); }
+
+  .demo { background: var(--pine); color: #b8cac3; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the room, the window, the light ---------- */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(170deg, #d3ddd7 0%, #dbe3de 50%, #d5ded9 100%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 20px; position: relative; z-index: 3; }
+  .logo { font-family: var(--display); font-size: 27px; line-height: 1.1; }
+  .logo small { display: block; font-family: var(--body); font-size: 13px; color: var(--pine-soft); }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 1.5px solid var(--sage); white-space: nowrap; }
+
+  /* the light: four panes thrown across the wall, mullions as soft shadow */
+  .light { position: absolute; z-index: 0; top: 4%; left: 6%; width: 74%; height: 112%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 22px;
+    transform: perspective(900px) rotateY(-24deg) skewY(-9deg); transform-origin: left top; filter: blur(8px); opacity: 1; pointer-events: none; }
+  .light i { background: linear-gradient(200deg, rgba(255,255,255,.95), rgba(255,255,255,.55) 55%, rgba(255,255,255,0)); border-radius: 220px 220px 8px 8px / 120px 120px 8px 8px; }
+  .light i:nth-child(n+3) { border-radius: 8px; background: linear-gradient(200deg, rgba(255,255,255,.7), rgba(255,255,255,0) 85%); }
+
+  .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 56px; align-items: end; padding: 26px 0 72px; }
+  .cred { font-size: 14.5px; color: var(--pine-soft); margin: 0 0 16px; }
+  .hero h1 { font-size: clamp(46px, 6.6vw, 92px); max-width: 13ch; margin-bottom: 20px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--lake); display: block; }
+  .lead { font-size: 19.5px; max-width: 34ch; margin: 0 0 26px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .privacy { margin: 16px 0 0; font-size: 15px; color: var(--pine-soft); }
+
+  .crisis { margin-top: 28px; max-width: 520px; display: grid; grid-template-columns: 4px minmax(0, 1fr); gap: 14px; align-items: stretch;
+    background: rgba(255,255,255,.62); border-radius: 14px; padding: 13px 16px; font-size: 15.5px; line-height: 1.5; }
+  .crisis::before { content: ""; background: var(--lake); border-radius: 4px; }
+  .crisis a { font-weight: 700; text-decoration: none; border-bottom: 1.5px solid var(--lake); white-space: nowrap; }
+
+  /* arched window with the portrait inside */
+  .window { position: relative; width: 100%; max-width: 360px; justify-self: start; }
+  .arch { position: relative; aspect-ratio: 3 / 4.1; border-radius: 999px 999px 10px 10px; padding: 12px; background: var(--light);
+    box-shadow: 0 1px 0 #fff inset, 0 40px 70px -40px rgba(29,59,56,.55); }
+  .arch .ps { width: 100%; height: 100%; border-radius: 999px 999px 4px 4px; }
+  .sill { height: 16px; margin: 0 -18px; background: var(--light); border-radius: 4px; box-shadow: 0 16px 30px -18px rgba(29,59,56,.5); }
+  .who { margin-top: 18px; }
+  .who b { display: block; font-family: var(--display); font-weight: 400; font-size: 27px; line-height: 1.15; }
+  .who span { font-size: 14.5px; color: var(--pine-soft); }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head h2 { font-size: clamp(38px, 5vw, 60px); }
+
+  /* how it goes + the appointment card */
+  .card-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 64px; align-items: center; }
+  .steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px; padding: 20px 0; border-top: 1px solid #d2ddd6; }
+  .steps li:last-child { border-bottom: 1px solid #d2ddd6; }
+  .steps li::before { counter-increment: s; content: counter(s); font-family: var(--display); font-size: 40px; line-height: 1; color: var(--sage); }
+  .steps b { display: block; font-size: 20px; margin-bottom: 2px; }
+  .steps span { color: var(--pine-soft); font-size: 16px; }
+
+  .appt { position: relative; background: var(--light); border-radius: 6px; padding: 26px 28px 24px; transform: rotate(-2.2deg);
+    box-shadow: 0 2px 0 #dfe7e2, 0 30px 60px -34px rgba(29,59,56,.6); }
+  .appt::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 9px; background: var(--sage); border-radius: 6px 6px 0 0; }
+  .appt .ttl { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 1px solid #d2ddd6; padding-bottom: 12px; margin-bottom: 8px; }
+  .appt .ttl b { font-family: var(--display); font-weight: 400; font-size: 30px; }
+  .appt .ttl span { font-size: 13px; color: var(--pine-soft); }
+  .appt dl { margin: 0; display: grid; }
+  .appt dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed #c8d5cd; align-items: baseline; }
+  .appt dt { font-size: 14px; color: var(--pine-soft); }
+  .appt dd { margin: 0; font-size: 19px; }
+  .appt .hand { font-family: var(--display); font-size: 25px; color: var(--lake); }
+  .appt .foot { font-size: 13.5px; color: var(--pine-soft); margin: 14px 0 0; }
+
+  /* what I work with + prices */
+  .work { background: var(--sage-pale); }
+  .work-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid #b9cac0; }
+  .work-grid article { padding: 26px 0 8px; padding-inline-end: 28px; min-width: 0; }
+  .work-grid article + article { border-inline-start: 1px solid #b9cac0; padding-inline-start: 28px; }
+  .work-grid h3 { font-size: 32px; margin-bottom: 8px; }
+  .work-grid p { margin: 0; color: var(--pine-soft); font-size: 16px; }
+  .prices { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+  .price-list { margin: 0; padding: 0; list-style: none; }
+  .price-list li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #b9cac0; }
+  .price-list li span:last-child { white-space: nowrap; font-weight: 700; }
+  .price-list .lbl { font-size: 13.5px; color: var(--pine-soft); padding-bottom: 6px; border: 0; }
+  .ins { background: rgba(255,255,255,.55); border-radius: 14px; padding: 20px 22px; }
+  .ins b { display: block; font-size: 18px; margin-bottom: 4px; }
+  .ins p { margin: 0; color: var(--pine-soft); font-size: 16px; }
+
+  /* the clinic */
+  .rooms { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .room .ps { border-radius: 28px; aspect-ratio: 4 / 5; }
+  .room:first-child .ps { aspect-ratio: 5 / 5.4; border-radius: 140px 140px 28px 28px; }
+  .room { margin: 0; min-width: 0; }
+  .room figcaption { margin-top: 10px; }
+  .room figcaption b { display: block; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.2; }
+  .room figcaption span { font-size: 15px; color: var(--pine-soft); }
+  .where { margin-top: 28px; color: var(--pine-soft); font-size: 16px; max-width: 60ch; }
+
+  /* what the therapist sees */
+  .owner { background: var(--pine); color: #e7efeb; }
+  .owner .small { color: #9fb5ad; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #aac0b8; font-size: 16px; }
+  .owner .note { margin-top: 26px; padding-top: 18px; border-top: 1px solid #36534f; color: #c6d6d0; font-size: 15.5px; }
+  .owner .ph-cap { color: #9fb5ad; }
+
+  footer { padding-block: 34px 96px; color: var(--pine-soft); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid #d2ddd6; padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-top: 10px; }
+    .window { max-width: 300px; justify-self: center; }
+    .card-grid, .owner-grid, .prices { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+    .appt { max-width: 400px; width: 100%; margin-inline: auto; }
+    .owner .phone { margin-inline: auto; }
+    .work-grid { grid-template-columns: minmax(0, 1fr); }
+    .work-grid article, .work-grid article + article { padding: 20px 0; border-inline-start: 0; border-bottom: 1px solid #b9cac0; }
+    .rooms { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .room:first-child { grid-column: 1 / -1; }
+    .room:first-child .ps { aspect-ratio: 4 / 3.4; border-radius: 160px 160px 24px 24px; }
+  }
+  @media (max-width: 520px) {
+    body { font-size: 17px; }
+    section { padding-block: 64px; }
+    .light { left: -30%; width: 150%; top: 2%; height: 70%; gap: 16px; }
+    .hero h1 { font-size: 50px; }
+    .lead { font-size: 18px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .window { max-width: 250px; }
+    .rooms { gap: 12px; }
+    .room .ps { border-radius: 20px; }
+    .room figcaption b { font-size: 21px; }
+    .room figcaption span { font-size: 13.5px; }
+    .appt { padding: 22px 20px 20px; width: calc(100% - 12px); transform: rotate(-1.2deg); }
+    .appt dl div { grid-template-columns: 76px minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="light" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name1">תמר</span> <span data-edit="name2">גלעד</span><small data-edit="role">פסיכולוגית קלינית · חדרה ואונליין</small></div>
+      <a href="#" data-wa="שלום, הגעתי מהאתר ואשמח לתאם שיחת היכרות">וואטסאפ</a>
+    </div>
+  </div>
+  <div class="wrap hero-grid">
+    <div>
+      <p class="cred">פסיכולוגית קלינית, מס׳ רישיון לדוגמה</p>
+      <h1><span data-edit="h1a">מקום שקט</span> <em data-edit="h1b">לדבר על מה שקשה.</em></h1>
+      <p class="lead">טיפול פרטני, זוגי ולמתבגרים, בקליניקה בחדרה או אונליין. מתחילים בשיחת טלפון קצרה, כדי לראות אם זה מתאים.</p>
+      <div class="ctas">
+        <button class="btn btn-pine" data-open-bot>לתאם שיחת היכרות</button>
+        <a class="btn btn-line" href="#" data-wa="שלום, הגעתי מהאתר ואשמח לתאם שיחת היכרות">לכתוב בוואטסאפ</a>
+      </div>
+      <p class="privacy">אין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.</p>
+      <p class="crisis" role="note"><span>במצב חירום או מחשבות על פגיעה עצמית: ער״ן <a href="tel:1201">1201</a>, או מד״א <a href="tel:101">101</a>.</span></p>
+    </div>
+    <div class="window">
+      <div class="arch"><figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure></div>
+      <div class="sill" aria-hidden="true"></div>
+      <div class="who"><b data-edit="who-name">תמר גלעד</b><span data-edit="who-role">פסיכולוגית קלינית, מס׳ רישיון לדוגמה</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>איך מתחילים</h2><span class="small">שלושה שלבים, בלי התחייבות בשלב הראשון</span></div>
+      <div class="card-grid">
+        <ol class="steps">
+          <li><div><b>שיחת טלפון קצרה</b><span>רבע שעה בערך. מספרים בכמה מילים מה מביא אתכם, ושואלים כל מה שרוצים.</span></div></li>
+          <li><div><b>פגישת היכרות</b><span>בקליניקה או אונליין. מכירים, ומחליטים יחד אם להמשיך.</span></div></li>
+          <li><div><b>פגישות קבועות</b><span>50 דקות, פעם בשבוע, באותו יום ובאותה שעה. ואם אני לא הכתובת, אעזור למצוא מטפל אחר.</span></div></li>
+        </ol>
+        <div class="appt" aria-label="כרטיס תור לדוגמה">
+          <div class="ttl"><b>כרטיס תור</b><span>תמר גלעד · חדרה</span></div>
+          <dl>
+            <div><dt>שם</dt><dd class="hand">דנה</dd></div>
+            <div><dt>יום</dt><dd>שלישי, כל שבוע</dd></div>
+            <div><dt>שעה</dt><dd>18:00</dd></div>
+            <div><dt>משך</dt><dd>50 דקות</dd></div>
+            <div><dt>איפה</dt><dd>בקליניקה, או בזום מהבית</dd></div>
+          </dl>
+          <p class="foot">ביטול עד 24 שעות לפני, בלי חיוב.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="work">
+    <div class="wrap">
+      <div class="head"><h2>עם מי אני עובדת</h2><span class="small">מחירים לדוגמה</span></div>
+      <div class="work-grid">
+        <article><h3>טיפול פרטני</h3><p>למבוגרים. חרדה ולחץ, מצב רוח, מעברים בחיים, אובדן.</p></article>
+        <article><h3>טיפול זוגי</h3><p>שני בני הזוג בחדר. תקשורת, משברים, החלטות משותפות.</p></article>
+        <article><h3>ילדים ונוער</h3><p>גילאי 12 עד 18, ופגישות עם ההורים לפי הצורך.</p></article>
+      </div>
+      <div class="prices">
+        <ul class="price-list">
+          <li class="lbl"><span>מחירים לדוגמה, לפגישה של 50 דקות</span></li>
+          <li><span>פגישה פרטנית</span><span>450 עד 600 ₪</span></li>
+          <li><span>פגישה זוגית</span><span>550 עד 700 ₪</span></li>
+          <li><span>שיחת היכרות טלפונית קצרה</span><span>בלי עלות</span></li>
+        </ul>
+        <div class="ins">
+          <b>קופת חולים או ביטוח משלים</b>
+          <p>יש ביטוחים שמחזירים חלק מהעלות, וזה תלוי בתוכנית. כדאי לבדוק מול הביטוח שלכם לפני הפגישה הראשונה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>הקליניקה</h2><span class="small">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="rooms">
+        <figure class="room">
+          <div class="ps" data-slot="room" data-icon="camera" data-label="החדר">
+            <svg class="ps-ph" viewBox="0 0 400 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7e2db"/><stop offset="1" stop-color="#c3d2c9"/></linearGradient>
+                <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ece7"/></linearGradient>
+              </defs>
+              <rect width="400" height="340" fill="url(#wall)"/>
+              <rect y="250" width="400" height="90" fill="#a9bdb1"/>
+              <path d="M150 40 a50 50 0 0 1 100 0 V170 H150 Z" fill="url(#win)"/>
+              <path d="M200 0 V170 M150 105 H250" stroke="#c3d2c9" stroke-width="5"/>
+              <path d="M150 250 L120 340 H330 L250 250 Z" fill="#ffffff" opacity=".35"/>
+              <!-- two armchairs facing each other, a small table between -->
+              <g fill="#5d7f88"><rect x="58" y="196" width="92" height="64" rx="18"/><rect x="50" y="172" width="22" height="88" rx="11"/><rect x="66" y="252" width="8" height="26" rx="3" fill="#3f5f63"/><rect x="134" y="252" width="8" height="26" rx="3" fill="#3f5f63"/></g>
+              <g fill="#7f9a8c"><rect x="250" y="196" width="92" height="64" rx="18"/><rect x="328" y="172" width="22" height="88" rx="11"/><rect x="258" y="252" width="8" height="26" rx="3" fill="#5c7768"/><rect x="326" y="252" width="8" height="26" rx="3" fill="#5c7768"/></g>
+              <rect x="180" y="226" width="40" height="6" rx="3" fill="#1d3b38"/><rect x="197" y="232" width="6" height="44" fill="#1d3b38"/>
+              <rect x="190" y="212" width="20" height="14" rx="3" fill="#ffffff" opacity=".85"/>
+            </svg>
+          </div>
+          <figcaption><b data-edit="room-t">החדר</b><span data-edit="room-s">שתי כורסאות, חלון לגינה</span></figcaption>
+        </figure>
+        <figure class="room">
+          <div class="ps" data-slot="entry" data-icon="home" data-label="הכניסה"></div>
+          <figcaption><b data-edit="entry-t">הכניסה</b><span data-edit="entry-s">קומה ראשונה, בלי שלט על הדלת</span></figcaption>
+        </figure>
+        <figure class="room">
+          <div class="ps" data-slot="shelf" data-icon="camera" data-label="הספרייה"></div>
+          <figcaption><b data-edit="shelf-t">הספרייה</b><span data-edit="shelf-s">פינה לחכות בה בשקט</span></figcaption>
+        </figure>
+      </div>
+      <p class="where">בניין מגורים שקט במרכז חדרה, עשר דקות מהתחנה. חניה ברחוב. מי שמעדיפים מהבית, נפגשים בזום באותה שעה קבועה.</p>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה המטפלת רואה</h2><span class="small">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <div>
+          <ul>
+            <li><b>הפונה עונה על שש שאלות קצרות</b><span>בשביל מי, כיוון כללי, איפה ומתי נוח, שם פרטי וטלפון. בלי טופס ארוך.</span></li>
+            <li><b>הפנייה מגיעה לוואטסאפ, בלי פרטים רגישים</b><span>הצ׳אט לא שואל מה קרה. את זה מספרים בשיחה, למי שבחרו לספר.</span></li>
+            <li><b>חוזרים לשיחת היכרות</b><span>הצ׳אט פתוח גם בערב ובסוף השבוע, כשאין מי שיענה לטלפון באמצע פגישה.</span></li>
+          </ul>
+          <p class="note">אין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.</p>
+        </div>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רונית</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו פסיכולוגית)
+בשביל: לעצמי
+כיוון כללי: חרדה ולחץ
+מפגש: אונליין
+זמנים: ערב
+שם: רונית
+טלפון: 052-7654321<time>21:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למטפלת</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>תמר גלעד · דף לדוגמה, העסק בדוי</span>
+    <span>במצב חירום: ער״ן <a href="tel:1201">1201</a>, מד״א <a href="tel:101">101</a></span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "psychologist" });
+  const CRISIS = "במצב חירום או מחשבות על פגיעה עצמית: ער״ן 1201, או מד״א 101.";
+  LeadBot.init({
+    whatsapp: "972526359513",
+    name: "תמר גלעד · פסיכולוגית", subtitle: "חוזרת אליכם לשיחת היכרות", initial: "ת", launcher: "לתאם שיחה",
+    greet: "שלום, כאן תמר. כמה שאלות קצרות כדי לתאם שיחת היכרות.\nאין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.\n" + CRISIS,
+    steps: [
+      { key: "who", label: "בשביל", ask: "בשביל מי הפנייה?", chips: ["לעצמי", "לילד או נער", "טיפול זוגי"] },
+      { key: "topic", label: "כיוון כללי", ask: "על מה בערך? מספיק כיוון כללי.", chips: ["חרדה ולחץ", "מצב רוח", "מערכות יחסים", "משבר או אובדן", "אחר, מעדיפים לספר בשיחה"] },
+      { key: "format", label: "מפגש", ask: "איפה נוח לכם להיפגש?", chips: ["בקליניקה", "אונליין", "לא משנה"] },
+      { key: "times", label: "זמנים", ask: "באיזה זמן ביום נוח לכם?", chips: ["בוקר", "אחר הצהריים", "ערב"] },
+      { key: "name", label: "שם", ask: "איך לפנות אליכם? שם פרטי מספיק.", input: "text", placeholder: "שם פרטי" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: () => "תודה. אחזור אליכם לשיחת היכרות קצרה כדי לראות אם זה מתאים.\n" + CRISIS,
+    summary: (d) => `פנייה מהאתר (דמו פסיכולוגית)\nבשביל: ${d.who}\nכיוון כללי: ${d.topic}\nמפגש: ${d.format}\nזמנים: ${d.times}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לקליניקה שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>נועה שגיא · מורה פרטית למתמטיקה ואנגלית</title>
+<meta name="description" content="שיעורים פרטיים במתמטיקה ובאנגלית, מיסודי ועד הבגרות. בחדרה, עמק חפר והשרון, או בזום.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Hebrew:wght@400;600;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a squared math notebook page (מחברת משבצות) with handwritten working, a margin line and the teacher's red pen.
+     Detail: יח״ל 3/4/5, a parabola with its roots and vertex, 60 or 90 minute lessons, the homework notebook, Zoom.
+     Bold move: the whole hero is one notebook page; the H1 is handwritten into the squares next to a drawn graph and a red-pen correction. */
+  :root {
+    --paper: #fbfcfe;          /* notebook paper, cool white */
+    --grid: #cfe0f1;           /* the squares */
+    --grid-deep: #8fb1d6;
+    --ink: #17264a;            /* blue-black ballpoint */
+    --ink-soft: #52627f;
+    --redpen: #d23a3f;         /* the teacher's pen */
+    --sq: 28px;                /* one square */
+    --display: "Playpen Sans Hebrew", "Varela Round", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--grid); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--ink); --bot-accent-fg: #fff; --bot-them: #eef4fb; --bot-me: var(--ink); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 12px;
+    --ps-a: #d7e6f4; --ps-b: #7d9fc6; --ps-ui: var(--ink); --ps-edit: var(--redpen);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--redpen); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .hand { font-family: var(--display); }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .03em; }
+  h1, h2, h3 { margin: 0; }
+  h2 { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 4.6vw, 52px); line-height: 1.15; letter-spacing: -.01em; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 10px; }
+  .btn-ink { background: var(--ink); color: #fff; box-shadow: 0 3px 0 #0b1530; }
+  .btn-ink:hover { background: #0e1a38; }
+  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: var(--paper); }
+
+  .demo { background: var(--ink); color: #b8c6de; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* the squared paper, reused by the hero and the notebook spread */
+  .squares {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: var(--sq) var(--sq);
+  }
+
+  /* ---------- Hero: the notebook page ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--grid-deep); }
+  .hero::after { content: ""; position: absolute; top: 0; bottom: 0; inset-inline-start: calc(var(--sq) * 2); width: 2px; background: var(--redpen); opacity: .55; pointer-events: none; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; height: calc(var(--sq) * 3); position: relative; z-index: 2; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 24px; white-space: nowrap; }
+  .logo span + span { color: var(--redpen); margin-inline-start: .25em; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--redpen); }
+  .topic { display: flex; gap: 28px; flex-wrap: wrap; font-family: var(--display); color: var(--ink-soft); font-size: 15px; height: var(--sq); line-height: var(--sq); position: relative; z-index: 2; }
+  .topic b { font-weight: 600; color: var(--ink); border-bottom: 1.5px solid var(--ink-soft); padding-inline: 6px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 40px; align-items: center; padding: calc(var(--sq) * 1.5) 0 calc(var(--sq) * 2.5); position: relative; z-index: 2; }
+  .hero-copy { min-width: 0; }
+  .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(36px, 5.6vw, 70px); line-height: calc(var(--sq) * 3); letter-spacing: -.01em; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; display: inline; position: relative; white-space: nowrap; }
+  .hero h1 em::after { content: ""; position: absolute; inset-inline: -4px; bottom: .08em; height: 10px; background: no-repeat center / 100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 12' preserveAspectRatio='none'%3E%3Cpath d='M3 8 C 60 2, 120 11, 180 5 S 270 4, 297 7' fill='none' stroke='%23d23a3f' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E"); pointer-events: none; }
+  .hero p.lead { font-size: 19px; line-height: var(--sq); max-width: 36ch; margin: var(--sq) 0; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .margin-note { position: absolute; z-index: 3; font-family: var(--display); color: var(--redpen); font-size: 15px; line-height: 1.3; transform: rotate(-6deg); pointer-events: none; }
+
+  .work { position: relative; min-width: 0; }
+  .work svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .work .eq { font-family: var(--display); color: var(--ink); font-size: 21px; line-height: var(--sq); margin-top: 8px; }
+  .work .eq div { direction: ltr; text-align: left; }
+  .work .eq s { color: var(--ink-soft); text-decoration-color: var(--redpen); text-decoration-thickness: 2.5px; }
+  .work .eq .fix { color: var(--redpen); font-weight: 600; margin-left: 8px; }
+  .work .eq .why { color: var(--redpen); font-size: 15px; direction: rtl; display: inline-block; margin-left: 14px; transform: rotate(-3deg); }
+  .draw path.curve { stroke-dasharray: 520; stroke-dashoffset: 520; animation: draw 1.6s .3s ease-out forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  /* ---------- Exam paper: subjects and levels ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head .mono { color: var(--ink-soft); }
+  .exam { background: #fff; border: 1px solid #d5deea; box-shadow: 0 1px 0 #d5deea, 0 24px 50px -36px rgba(23,38,74,.45); padding: 34px 40px 18px; position: relative; }
+  .exam-top { display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: space-between; gap: 10px 24px; border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 6px; font-size: 14.5px; }
+  .exam-top span { white-space: nowrap; }
+  .exam-top i { font-style: normal; display: inline-block; min-width: 90px; border-bottom: 1px dotted var(--ink-soft); }
+  .exam-top .circ { font-family: var(--display); color: var(--redpen); border: 2px solid var(--redpen); border-radius: 50%; padding: 0 7px; }
+  .q { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 76px minmax(0, 1fr) 128px; gap: 18px; align-items: start; padding: 20px 6px; border-bottom: 1px solid #e3e9f2; width: 100%; }
+  .q:last-of-type { border-bottom: 0; }
+  .q:hover b { text-decoration: underline; text-decoration-color: var(--redpen); text-underline-offset: 5px; }
+  .q:focus-visible { outline: 3px solid var(--redpen); outline-offset: 2px; }
+  .q .n { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink-soft); padding-top: 4px; }
+  .q b { display: block; font-size: 20px; line-height: 1.35; }
+  .q .d { display: block; color: var(--ink-soft); font-size: 15.5px; margin-top: 4px; }
+  .q .score { border: 1.5px solid var(--ink); text-align: center; padding: 6px 4px 7px; font-size: 13px; color: var(--ink-soft); line-height: 1.3; }
+  .q .score strong { display: block; font-family: var(--display); color: var(--redpen); font-size: 17px; font-weight: 600; white-space: nowrap; }
+  .exam-foot { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 14px 6px 4px; border-top: 2px solid var(--ink); font-size: 15px; color: var(--ink-soft); }
+  .exam-foot b { color: var(--ink); }
+  .exam .stamp { position: absolute; top: -18px; inset-inline-end: 28px; font-family: var(--display); color: var(--redpen); font-size: 16px; background: var(--paper); padding: 2px 10px; transform: rotate(4deg); border: 1.5px solid var(--redpen); }
+
+  /* ---------- Notebook spread: the tutor, photos taped and clipped ---------- */
+  .spread { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border: 1px solid #c9d8ea; box-shadow: 0 30px 60px -40px rgba(23,38,74,.5); position: relative; }
+  .spread::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 40px; margin-left: -20px; background: linear-gradient(90deg, transparent, rgba(23,38,74,.10) 45%, rgba(23,38,74,.16) 50%, rgba(23,38,74,.10) 55%, transparent); pointer-events: none; z-index: 1; }
+  .page { padding: calc(var(--sq) * 1.5) calc(var(--sq) * 1.5) calc(var(--sq) * 2); min-width: 0; position: relative; }
+  .taped { position: relative; width: min(250px, 72%); margin: 10px auto 0; transform: rotate(-2.5deg); }
+  .taped .ps, .clipped .ps { border: 7px solid #fff; box-shadow: 0 10px 22px -12px rgba(23,38,74,.55); }
+  .taped .ps { aspect-ratio: 4 / 5; }
+  .tape { position: absolute; z-index: 3; width: 92px; height: 26px; background: rgba(214,228,243,.78); border-inline: 1px dashed rgba(23,38,74,.12); pointer-events: none; }
+  .tape.t1 { top: -12px; right: -22px; transform: rotate(32deg); }
+  .tape.t2 { bottom: -10px; left: -24px; transform: rotate(28deg); }
+  .who { text-align: center; margin-top: 22px; }
+  .who b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.2; }
+  .who span { color: var(--ink-soft); font-size: 15.5px; }
+  .facts { list-style: none; padding: 0; margin: calc(var(--sq) * 1) 0 0; display: grid; gap: 0; }
+  .facts li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 7px 0; line-height: 1.5; border-bottom: 1px dashed var(--grid-deep); }
+  .facts li > b { font-family: var(--display); font-weight: 600; color: var(--redpen); }
+  .clips { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 34px 22px; margin-top: 18px; }
+  .clipped { position: relative; min-width: 0; }
+  .clipped:nth-child(odd) { transform: rotate(1.8deg); }
+  .clipped:nth-child(even) { transform: rotate(-1.6deg); margin-top: 18px; }
+  .clipped.wide { grid-column: 1 / -1; transform: rotate(-.8deg); width: 86%; margin-inline: auto; }
+  .clipped .ps { aspect-ratio: 1; }
+  .clipped.wide .ps { aspect-ratio: 16 / 9; }
+  .clip { position: absolute; z-index: 3; top: -16px; inset-inline-start: 22px; width: 16px; height: 46px; border: 2.5px solid #8d99ad; border-radius: 9px; pointer-events: none; }
+  .clip::after { content: ""; position: absolute; inset: 5px 2px 9px; border: 2.5px solid #8d99ad; border-radius: 6px; border-bottom: 0; }
+  .clipped p { font-family: var(--display); font-size: 16px; margin: 10px 4px 0; line-height: 1.35; }
+  .steps { list-style: none; padding: 0; margin: calc(var(--sq) * 1.2) 0 0; counter-reset: s; display: grid; gap: 14px; }
+  .steps li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; align-items: start; line-height: 1.5; }
+  .steps li::before { counter-increment: s; content: counter(s); width: 32px; height: 32px; border: 2px solid var(--redpen); border-radius: 50%; display: grid; place-items: center; font-family: var(--display); color: var(--redpen); font-weight: 600; }
+  .steps b { display: block; }
+  .steps span { color: var(--ink-soft); font-size: 15.5px; }
+
+  /* ---------- What the tutor sees ---------- */
+  .owner { background: var(--ink); color: #e6edf8;
+    background-image: linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px); background-size: var(--sq) var(--sq); }
+  .owner .head .mono { color: #93a6c7; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f08a8d; display: grid; place-items: center; font-family: var(--display); font-weight: 600; color: #f08a8d; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #aebcd6; font-size: 15.5px; }
+  .owner .ph-cap { color: #93a6c7; }
+
+  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--grid-deep); padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .work { max-width: 460px; width: 100%; margin-inline: auto; }
+    .spread { grid-template-columns: minmax(0, 1fr); }
+    .spread::before { display: none; }
+    .page + .page { border-top: 1px dashed var(--grid-deep); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    :root { --sq: 24px; }
+    .topic { gap: 14px; font-size: 13.5px; }
+    .topic .t3 { display: none; }
+    .hero h1 { font-size: clamp(30px, 9.4vw, 42px); line-height: calc(var(--sq) * 2.25); }
+    .hero h1 em { white-space: normal; }
+    .hero p.lead { font-size: 17px; line-height: 1.55; }
+    .ctas .btn { flex: 1 1 auto; }
+    .margin-note.m1 { display: none; }
+    .work .eq { font-size: 18px; }
+    section { padding-block: 60px; }
+    .exam { padding: 24px 16px 12px; margin-inline: -4px; }
+    .exam-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); font-size: 13.5px; }
+    .exam-top span:first-child { grid-column: 1 / -1; }
+    .exam-top i { min-width: 0; width: 70px; }
+    .q { grid-template-columns: minmax(0, 1fr) 122px; gap: 6px 12px; padding: 16px 2px; }
+    .q .n { grid-column: 1 / -1; padding: 0; }
+    .q b { font-size: 18px; }
+    .q .score strong { font-size: 14.5px; }
+    .hero::after { inset-inline-start: 7px; }
+    .page { padding: 34px 18px 40px; }
+    .facts li { grid-template-columns: 92px minmax(0, 1fr); font-size: 15.5px; }
+    .clips { gap: 30px 14px; }
+    .clipped p { font-size: 14.5px; }
+    .clipped.wide { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .draw path.curve { animation: none; stroke-dashoffset: 0; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero squares">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name1">נועה</span><span data-edit="name2">שגיא</span></div>
+      <a href="#" data-wa="היי נועה, הגעתי מהאתר ויש לי שאלה על שיעורים פרטיים">וואטסאפ</a>
+    </div>
+    <div class="topic"><span>תאריך: <b>מתי שנוח לכם</b></span><span>נושא: <b>מתמטיקה ואנגלית</b></span><span class="t3">כיתה: <b>ד׳ עד י״ב</b></span></div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <h1><span data-edit="h1a">מתמטיקה ואנגלית,</span> <em data-edit="h1b">מכיתה ד׳ ועד הבגרות</em></h1>
+        <p class="lead">שיעורים פרטיים בחדרה, עמק חפר והשרון, או בזום. עונים על כמה שאלות בצ׳אט, ואני חוזרת אליכם לקבוע שיעור היכרות.</p>
+        <div class="ctas">
+          <button class="btn btn-ink" data-open-bot>לבדוק שיעור</button>
+          <a class="btn btn-line" href="#" data-wa="היי נועה, אשמח לשמוע על שיעורים פרטיים">וואטסאפ ישיר</a>
+        </div>
+      </div>
+      <div class="work" aria-hidden="true">
+        <svg viewBox="0 0 360 300" fill="none">
+          <defs>
+            <filter id="hand" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+          </defs>
+          <g filter="url(#hand)" stroke-linecap="round" stroke-linejoin="round">
+            <!-- axes -->
+            <path d="M18 210 H346 M338 204 L346 210 L338 216" stroke="#17264a" stroke-width="2"/>
+            <path d="M90 292 V14 M84 22 L90 14 L96 22" stroke="#17264a" stroke-width="2"/>
+            <path d="M120 205 V215 M150 205 V215 M180 205 V215 M210 205 V215 M240 205 V215 M85 180 H95 M85 150 H95 M85 120 H95 M85 240 H95" stroke="#17264a" stroke-width="1.6"/>
+            <!-- the parabola y = (x-2)^2 - 1 -->
+            <g class="draw"><path class="curve" d="M81 81.3 Q150 398.7 219 81.3" stroke="#17264a" stroke-width="2.8"/></g>
+            <!-- axis of symmetry -->
+            <path d="M150 60 V250" stroke="#52627f" stroke-width="1.4" stroke-dasharray="5 6"/>
+            <!-- roots -->
+            <circle cx="120" cy="210" r="4.5" fill="#17264a"/><circle cx="180" cy="210" r="4.5" fill="#17264a"/>
+            <!-- red pen: vertex circled -->
+            <ellipse cx="150" cy="241" rx="17" ry="12" stroke="#d23a3f" stroke-width="2.4" transform="rotate(-8 150 241)"/>
+            <path d="M168 248 C 200 262, 230 262, 252 252" stroke="#d23a3f" stroke-width="2"/>
+            <path d="M246 246 L253 252 L245 257" stroke="#d23a3f" stroke-width="2"/>
+            <!-- red tick in the corner -->
+            <path d="M286 64 L298 78 L326 40" stroke="#d23a3f" stroke-width="3.4"/>
+          </g>
+          <g font-family="Playpen Sans Hebrew, Varela Round, sans-serif" fill="#17264a">
+            <text x="352" y="232" font-size="16" direction="ltr" text-anchor="end">x</text>
+            <text x="100" y="22" font-size="16" direction="ltr">y</text>
+            <text x="120" y="232" font-size="15" direction="ltr" text-anchor="middle">1</text>
+            <text x="180" y="232" font-size="15" direction="ltr" text-anchor="middle">3</text>
+            <text x="226" y="96" font-size="15" direction="ltr">y = x² − 4x + 3</text>
+            <text x="258" y="257" font-size="15" fill="#d23a3f" direction="ltr" text-anchor="start">קודקוד</text>
+            <text x="262" y="278" font-size="14" fill="#d23a3f" direction="ltr">(2, −1)</text>
+          </g>
+        </svg>
+        <div class="eq">
+          <div>x² − 4x + 3 = 0</div>
+          <div>(x − 1)(x − 3) = 0</div>
+          <div>x₁ = 1 , x₂ = <s>−3</s><span class="fix">3</span><span class="why">לבדוק סימן</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="margin-note m1" style="bottom:34px; left:6%">שיעור ראשון: היכרות</div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה לומדים</h2><span class="mono">מחירים לדוגמה · לשיעור של 60 דקות · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="exam">
+        <span class="stamp">אונליין באותו מחיר</span>
+        <div class="exam-top"><span>שם התלמיד: <i>&nbsp;</i></span><span>כיתה: <i>&nbsp;</i></span><span>יח״ל: 3 / 4 / <span class="circ">5</span></span></div>
+        <button class="q" data-level="יסודי"><span class="n">שאלה 1</span><span><b>יסודי</b><span class="d">שברים, אחוזים, בעיות מילוליות. באנגלית: קריאה, אוצר מילים ושיעורי בית.</span></span><span class="score">שיעור<strong>140 עד 160 ₪</strong></span></button>
+        <button class="q" data-level="חטיבת ביניים"><span class="n">שאלה 2</span><span><b>חטיבת ביניים</b><span class="d">משוואות, אלגברה וגאומטריה. הכנה למבחן לפני ההקבצה.</span></span><span class="score">שיעור<strong>150 עד 180 ₪</strong></span></button>
+        <button class="q" data-level="תיכון: 3 יח״ל"><span class="n">שאלה 3</span><span><b>תיכון, 3 יח״ל</b><span class="d">תרגול שאלות מבגרויות קודמות, לפי השאלון שלכם.</span></span><span class="score">שיעור<strong>160 עד 190 ₪</strong></span></button>
+        <button class="q" data-level="תיכון: 4 או 5 יח״ל"><span class="n">שאלה 4</span><span><b>תיכון, 4 או 5 יח״ל</b><span class="d">חדו״א, טריגונומטריה, וקטורים והסתברות. שאלון אחרי שאלון.</span></span><span class="score">שיעור<strong>180 עד 220 ₪</strong></span></button>
+        <button class="q" data-subject="אנגלית"><span class="n">שאלה 5</span><span><b>אנגלית לבגרות</b><span class="d">הבנת הנקרא, כתיבה והכנה לבחינה בעל פה.</span></span><span class="score">שיעור<strong>160 עד 220 ₪</strong></span></button>
+        <div class="exam-foot"><span><b>הכנה לבגרות:</b> חבילת שיעורים, לפי מספר השיעורים עד הבחינה.</span><span><b>שיעור כפול:</b> 90 דקות, לפני מבחן.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מי מלמדת</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="spread">
+        <div class="page squares">
+          <div class="taped">
+            <span class="tape t1"></span>
+            <figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure>
+            <span class="tape t2"></span>
+          </div>
+          <div class="who"><b data-edit="tutor-name">נועה שגיא</b><span data-edit="tutor-role">מורה למתמטיקה ולאנגלית · 11 שנים</span></div>
+          <ul class="facts">
+            <li><b>שיעור</b><span data-edit="f1">60 או 90 דקות, פעם או פעמיים בשבוע</span></li>
+            <li><b>איפה</b><span data-edit="f2">אצלכם בבית, אצלי בחדרה, או בזום</span></li>
+            <li><b>אזור</b><span data-edit="f3">חדרה, עמק חפר והשרון</span></li>
+            <li><b>מחברת</b><span data-edit="f4">בסוף כל שיעור כותבת מה לתרגל עד הפעם הבאה</span></li>
+          </ul>
+        </div>
+        <div class="page squares">
+          <div class="clips">
+            <div class="clipped"><span class="clip"></span><figure class="ps" data-slot="desk" data-icon="home" data-label="פינת הלימוד"></figure><p data-edit="c1">פינת הלימוד בחדרה</p></div>
+            <div class="clipped"><span class="clip"></span><figure class="ps" data-slot="notebook" data-icon="sparkle" data-label="מחברת שיעורי בית"></figure><p data-edit="c2">מחברת שיעורי הבית</p></div>
+            <div class="clipped wide"><span class="clip"></span><figure class="ps" data-slot="zoom" data-icon="camera" data-label="שיעור בזום"></figure><p data-edit="c3">שיעור בזום, עם לוח משותף</p></div>
+          </div>
+          <ol class="steps">
+            <li><div><b>שיעור היכרות</b><span>בודקים מה חסר ואיך התלמיד לומד הכי טוב.</span></div></li>
+            <li><div><b>תוכנית עד המבחן</b><span>כמה שיעורים, באיזה קצב ועל אילו נושאים.</span></div></li>
+            <li><div><b>שיעורים ומחברת</b><span>אחרי כל שיעור, הורים מקבלים שורה בוואטסאפ: מה עשינו ומה לתרגל.</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה המורה רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>ההורה או התלמיד עונים על כמה שאלות</b><span>מקצוע, שכבה, מטרה ואיפה לומדים. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זה 3 או 5 יח״ל, ואם המבחן בעוד שבוע.</span></div></li>
+          <li><div><b>חוזרים וקובעים שיעור היכרות</b><span>הצ׳אט עונה גם בערב, כשאתם באמצע שיעור.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רותם לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מורה פרטית)
+מקצוע: מתמטיקה
+שכבה: תיכון: 4 או 5 יח״ל
+מטרה: בגרות
+איפה: בבית שלנו
+שם: רותם לוי
+טלפון: 052-7654321<time>20:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למורה</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>נועה שגיא · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "tutor" });
+  const RANGES = { "יסודי": "140 עד 160", "חטיבת ביניים": "150 עד 180", "תיכון: 3 יח״ל": "160 עד 190", "תיכון: 4 או 5 יח״ל": "180 עד 220" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "נועה · מורה פרטית", subtitle: "מתמטיקה ואנגלית", initial: "נ", launcher: "לבדוק שיעור",
+    greet: "היי, כאן נועה.\nכמה שאלות קצרות, ואחזור אליכם לקבוע שיעור היכרות.",
+    steps: [
+      { key: "subject", label: "מקצוע", ask: "מה לומדים?", chips: ["מתמטיקה", "אנגלית", "שתיהן"] },
+      { key: "level", label: "שכבה", ask: "באיזו שכבה?", chips: Object.keys(RANGES) },
+      { key: "goal", label: "מטרה", ask: "מה המטרה כרגע?", chips: ["חיזוק שוטף", "מבחן קרוב", "בגרות"] },
+      { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: ["בבית שלנו", "אצל המורה", "אונליין"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור של 60 דקות בשכבה הזאת עולה בדרך כלל ${RANGES[d.level] || "140 עד 220"} ₪. שיעור ראשון הוא היכרות: מה חסר ואיך עובדים.\nלחצו למטה, ואחזור אליכם לקבוע.`,
+    summary: (d) => `פנייה מהאתר (דמו מורה פרטית)\nמקצוע: ${d.subject}\nשכבה: ${d.level}\nמטרה: ${d.goal}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => bot.open({ level: b.dataset.level })));
+  document.querySelectorAll("[data-subject]").forEach((b) => b.addEventListener("click", () => bot.open({ subject: b.dataset.subject })));
+</script>
+</body>
+</html>

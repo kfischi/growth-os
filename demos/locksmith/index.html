@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>עידו מפתח · מנעולן</title>
+<meta name="description" content="פתיחת דלתות, החלפת צילינדרים ומנעולים בחדרה, פרדס חנה והשרון. מתארים בצ׳אט מה קרה, והפרטים מגיעים למנעולן בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a nickel key with its numbered key tag on a split ring, from the key-cutting bench.
+     Detail: the bitting (cut depths) as a key code, pin-tumbler cylinders, opening without damage, tag numbers.
+     Bold move: one huge drawn key across the hero whose teeth are the centerpiece, its code printed under each cut. */
+  :root {
+    --nickel: #eceeef;          /* bench and page */
+    --nickel-deep: #d6dadd;
+    --steel: #8f989f;           /* key metal, rings */
+    --gunmetal: #1d2328;        /* text, machine body */
+    --gunmetal-soft: #545e66;
+    --oxblood: #8b1d2c;         /* the plastic key tag */
+    --oxblood-deep: #5f1320;
+    --display: "Secular One", "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--gunmetal);
+    --bot-bg: #fff; --bot-fg: var(--gunmetal); --bot-line: #d9dde0; --bot-muted: var(--gunmetal-soft);
+    --bot-accent: var(--oxblood); --bot-accent-fg: #fff; --bot-them: #eef0f1; --bot-me: var(--gunmetal); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 12px; --bot-focus: var(--gunmetal);
+    --ps-a: #c9ced2; --ps-b: #6f7a83; --ps-ui: var(--gunmetal); --ps-edit: var(--oxblood);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--nickel); color: var(--gunmetal); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--oxblood); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--body); font-weight: 500; font-size: 13px; letter-spacing: .01em; }
+  .code { font-family: var(--mono); letter-spacing: .04em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -.01em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 10px; }
+  .btn-ox { background: var(--oxblood); color: #fff; }
+  .btn-ox:hover { background: var(--oxblood-deep); }
+  .btn-line { border: 2px solid var(--gunmetal); color: var(--gunmetal); background: transparent; }
+  .btn-line:hover { background: var(--gunmetal); color: #fff; }
+
+  .demo { background: var(--gunmetal); color: #b8c0c6; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the key ---------- */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(180deg, #f7f8f8, var(--nickel) 80%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 27px; line-height: 1; display: flex; align-items: baseline; gap: 6px; }
+  .logo .n2 { color: var(--oxblood); }
+  .logo small { font-family: var(--mono); font-size: 11.5px; color: var(--gunmetal-soft); border: 1px solid var(--steel); border-radius: 4px; padding: 2px 6px; margin-inline-start: 4px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--oxblood); }
+  .hero-copy { padding: 34px 0 0; max-width: 680px; }
+  .hero .kicker { color: var(--gunmetal-soft); margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(46px, 7vw, 92px); margin-bottom: 18px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--oxblood); display: block; font-size: .62em; line-height: 1.1; margin-top: 8px; }
+  .hero p { font-size: 19px; max-width: 44ch; margin: 0 0 26px; color: var(--gunmetal-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .key-wrap { position: relative; margin-top: 10px; }
+  .key-wrap svg { display: block; width: calc(100% + 10vw); height: auto; margin-inline-start: 0; margin-inline-end: -10vw; }
+  .key-cap { position: absolute; bottom: 18px; right: 0; color: var(--gunmetal-soft); }
+  .key-cap b { color: var(--oxblood); font-weight: 600; }
+  .swing { transform-box: view-box; animation: swing 2.4s ease-out 1 both; }
+  @keyframes swing { 0% { transform: rotate(14deg); } 35% { transform: rotate(-9deg); } 65% { transform: rotate(4deg); } 100% { transform: rotate(-3deg); } }
+
+  /* ---------- Sections ---------- */
+  main > section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head h2 { font-size: clamp(36px, 5vw, 60px); }
+  .head .mono { color: var(--gunmetal-soft); }
+
+  /* price rows as key tags laid sideways */
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 40px; align-items: start; }
+  .tags { display: grid; gap: 12px; }
+  .tagrow { all: unset; box-sizing: border-box; cursor: pointer; position: relative; min-width: 0;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 18px; align-items: center;
+    background: #fff; border: 1px solid var(--nickel-deep); border-radius: 44px 12px 12px 44px; padding: 16px 64px 16px 22px; }
+  .tagrow::before { content: ""; position: absolute; right: 20px; top: 50%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%;
+    background: var(--nickel); box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 0 0 4px #fff, 0 0 0 6px var(--steel); }
+  .tagrow:hover { border-color: var(--oxblood); }
+  .tagrow:hover::before { box-shadow: inset 0 1px 2px rgba(0,0,0,.25), 0 0 0 4px #fff, 0 0 0 6px var(--oxblood); }
+  .tagrow:focus-visible { outline: 3px solid var(--oxblood); outline-offset: 2px; }
+  .tagrow b { display: block; font-size: 19px; font-weight: 700; }
+  .tagrow .sub { color: var(--gunmetal-soft); font-size: 14.5px; }
+  .tagrow .pr { font-family: var(--body); font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; white-space: nowrap; text-align: left; }
+  .tagrow .pr small { font-family: var(--body); display: block; font-size: 11.5px; font-weight: 400; color: var(--gunmetal-soft); }
+  .tagrow.hot { background: var(--oxblood); border-color: var(--oxblood); color: #fff; }
+  .tagrow.hot .sub, .tagrow.hot .pr small { color: #f0c9ce; }
+  .tagrow.hot::before { background: var(--oxblood-deep); box-shadow: inset 0 1px 2px rgba(0,0,0,.35), 0 0 0 4px var(--oxblood), 0 0 0 6px #d9dde0; }
+  .tagrow.hot:hover { background: var(--oxblood-deep); }
+
+  .cyl { background: var(--gunmetal); color: #dfe4e7; border-radius: 18px; padding: 24px; position: sticky; top: 20px; }
+  .cyl svg { display: block; width: 100%; height: auto; }
+  .cyl h3 { font-size: 26px; color: #fff; margin: 14px 0 6px; }
+  .cyl p { margin: 0 0 14px; color: #aeb7bd; font-size: 15px; }
+  .cyl ul { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid #39434b; display: grid; gap: 8px; font-size: 15px; }
+  .cyl li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .cyl li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #e07b88; transform: translateY(1px); }
+
+  /* ---------- Who comes: van-door sticker + key ring with three tags ---------- */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .van { position: relative; border-radius: 22px 60px 18px 18px; padding: 26px 24px 30px;
+    background: linear-gradient(170deg, #ffffff, #e3e7ea 70%, #cfd5d9); border: 1px solid #c8ced3;
+    box-shadow: 0 30px 60px -34px rgba(29,35,40,.6); }
+  .van::before { content: ""; position: absolute; top: 18px; left: 18px; width: 42%; height: 58px; border-radius: 10px 40px 8px 8px; background: linear-gradient(160deg, #3a454e, #1d2328); opacity: .9; }
+  .van::after { content: ""; position: absolute; left: 22px; bottom: 34%; width: 54px; height: 12px; border-radius: 6px; background: linear-gradient(180deg, #b8c0c6, #7f8990); box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
+  .seal { position: relative; width: 210px; aspect-ratio: 1; margin: 64px auto 0; border-radius: 50%; padding: 10px; background: var(--oxblood);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--oxblood); }
+  .seal .ps { width: 100%; height: 100%; border-radius: 50%; }
+  .seal .ps-chip { display: none; }
+  .van-txt { position: relative; text-align: center; margin-top: 18px; }
+  .van-txt b { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.1; }
+  .van-txt span { display: block; color: var(--gunmetal-soft); font-size: 15px; }
+  .van-txt .mono { margin-top: 10px; color: var(--oxblood); font-weight: 600; }
+
+  .ringbox { position: relative; padding-top: 118px; }
+  .ring { position: absolute; top: 0; left: 50%; width: 120px; height: 120px; margin-left: -60px; border-radius: 50%;
+    border: 9px solid #a9b1b7; box-shadow: inset 0 2px 0 rgba(255,255,255,.7), 0 2px 0 rgba(0,0,0,.18), inset 0 -2px 3px rgba(0,0,0,.25); }
+  .strings { position: absolute; top: 108px; left: 0; width: 100%; height: 40px; overflow: visible; }
+  .keytags { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+  .ktag { position: relative; background: #fff; border-radius: 40px 40px 12px 12px; padding: 44px 12px 14px; border: 1px solid #d3d8dc; min-width: 0;
+    box-shadow: 0 22px 40px -30px rgba(29,35,40,.7); transform-origin: 50% 0; }
+  .ktag::before { content: ""; position: absolute; top: 12px; left: 50%; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%;
+    background: var(--nickel); box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 0 0 4px #fff, 0 0 0 6px var(--steel); }
+  .ktag:nth-child(1) { transform: rotate(5deg); }
+  .ktag:nth-child(2) { transform: rotate(-1deg); background: var(--oxblood); border-color: var(--oxblood); color: #fff; margin-top: 14px; }
+  .ktag:nth-child(2)::before { box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 0 0 4px var(--oxblood), 0 0 0 6px #d9dde0; }
+  .ktag:nth-child(3) { transform: rotate(-6deg); background: var(--gunmetal); border-color: var(--gunmetal); color: #fff; }
+  .ktag:nth-child(3)::before { box-shadow: inset 0 1px 2px rgba(0,0,0,.3), 0 0 0 4px var(--gunmetal), 0 0 0 6px var(--steel); }
+  .ktag .no { position: absolute; top: 10px; right: 16px; font-family: var(--mono); font-weight: 600; font-size: 13px; opacity: .7; }
+  .ktag .ps { aspect-ratio: 4 / 5; border-radius: 8px; }
+  .ktag p { margin: 10px 2px 0; font-weight: 700; font-size: 15.5px; line-height: 1.35; }
+  .ktag small { display: block; font-family: var(--body); font-size: 12px; opacity: .75; margin-top: 2px; }
+  .who-note { color: var(--gunmetal-soft); font-size: 15px; margin: 34px 0 0; max-width: 52ch; }
+
+  /* ---------- Owner ---------- */
+  .owner { background: var(--gunmetal); color: #e6eaed; }
+  .owner .head .mono { color: #95a0a8; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 46px; height: 46px; border-radius: 50% 50% 8px 8px; background: var(--oxblood); display: grid; place-items: center; font-family: var(--display); font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #a9b3ba; font-size: 15.5px; }
+  .owner .ph-cap { color: #95a0a8; }
+
+  footer { padding-block: 34px 90px; color: var(--gunmetal-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfd4d8; padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .price-grid, .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .cyl { position: static; }
+    .van { max-width: 360px; width: 100%; margin-inline: auto; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    main > section { padding-block: 64px; }
+    .hero-copy { padding-top: 16px; }
+    .hero h1 em { font-size: .66em; }
+    .hero p { font-size: 17px; }
+    .key-wrap { margin-top: 18px; }
+    .key-wrap svg { width: 175%; margin-inline-start: -75%; margin-inline-end: 0; }
+    .key-cap { position: static; margin-top: 6px; padding-bottom: 22px; }
+    .tagrow { grid-template-columns: minmax(0, 1fr); padding: 14px 56px 14px 18px; border-radius: 36px 12px 12px 36px; }
+    .tagrow::before { right: 17px; }
+    .tagrow .pr { text-align: right; }
+    .tagrow .pr small { display: inline; margin-inline-start: 6px; }
+    .ringbox { padding-top: 92px; }
+    .ring { width: 92px; height: 92px; margin-left: -46px; border-width: 7px; }
+    .strings { top: 84px; }
+    .keytags { gap: 8px; }
+    .ktag { padding: 36px 6px 10px; border-radius: 30px 30px 10px 10px; }
+    .ktag::before { top: 9px; width: 16px; height: 16px; margin-left: -8px; }
+    .ktag .no { display: none; }
+    .ktag:nth-child(1) { transform: rotate(4deg); }
+    .ktag:nth-child(3) { transform: rotate(-4deg); }
+    .ktag p { font-size: 13px; margin-top: 8px; }
+    .ktag small { font-size: 10.5px; }
+    .ktag .ps-chip { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .swing { animation: none; transform: rotate(-3deg); } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name1">עידו</span><span class="n2" data-edit="name2">מפתח</span><small>מנעולן</small></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על מנעול">וואטסאפ</a>
+    </div>
+    <div class="hero-copy">
+      <div class="mono kicker">פתיחת דלתות · צילינדרים · מנעולים · חדרה, פרדס חנה והשרון</div>
+      <h1><span data-edit="h1a">ננעלתם בחוץ?</span> <em data-edit="h1b">כתבו, ועידו חוזר עם זמן הגעה.</em></h1>
+      <p>כמה לחיצות בצ׳אט, והפרטים מגיעים לעידו בוואטסאפ. פותחים בלי נזק ברוב הדלתות, ואת המחיר סוגרים לפני שמתחילים.</p>
+      <div class="ctas">
+        <button class="btn btn-ox" data-open-bot>לתאר מה קרה</button>
+        <a class="btn btn-line" href="#" data-wa="היי, אני צריך מנעולן">וואטסאפ ישיר</a>
+      </div>
+    </div>
+    <div class="key-wrap" aria-hidden="true">
+      <svg viewBox="0 30 1400 490" fill="none">
+        <defs>
+          <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbfcfc"/><stop offset=".45" stop-color="#d2d7db"/><stop offset="1" stop-color="#8e979e"/></linearGradient>
+          <linearGradient id="ringm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9ecee"/><stop offset=".5" stop-color="#959ea5"/><stop offset="1" stop-color="#d7dbde"/></linearGradient>
+        </defs>
+        <!-- the key, drawn with the bow on the left and the blade running right -->
+        <g transform="translate(1400 0) scale(-1 1)">
+          <path d="M870 150 L870 262 L840 262 L819 262 L798 234 L782 234 L761 262 L725 262 L688 213 L672 213 L635 262 L589 262 L578 248 L562 248 L552 262 L500 262 L468 220 L452 220 L421 262 L374 262 L358 241 L342 241 L326 262 L274 262 L248 227 L232 227 L206 262 L150 262 L70 214 L70 176 L100 150 L870 150 Z" fill="url(#metal)" stroke="#7d868d" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M112 172 H862" stroke="#8a939a" stroke-width="6" stroke-linecap="round"/>
+          <path d="M112 172 H862" stroke="#f4f6f7" stroke-width="1.5" stroke-linecap="round" transform="translate(0 -3)"/>
+          <path d="M140 194 H862" stroke="#a3abb1" stroke-width="3" stroke-linecap="round"/>
+          <rect x="858" y="128" width="44" height="154" rx="6" fill="url(#metal)" stroke="#7d868d" stroke-width="2"/>
+          <rect x="898" y="166" width="70" height="76" fill="url(#metal)" stroke="#7d868d" stroke-width="2"/>
+          <circle cx="1100" cy="206" r="150" fill="url(#metal)" stroke="#7d868d" stroke-width="2"/>
+          <circle cx="1100" cy="206" r="124" stroke="#b6bdc2" stroke-width="2"/>
+          <circle cx="1180" cy="206" r="34" fill="#eceeef" stroke="#7d868d" stroke-width="3"/>
+        </g>
+        <!-- stamp on the bow (bow centre is x=300 after the mirror) -->
+        <text x="338" y="196" text-anchor="middle" direction="ltr" font-family="IBM Plex Mono, monospace" font-size="26" font-weight="600" fill="#5b656d" letter-spacing="4">IDO</text>
+        <text x="338" y="234" text-anchor="middle" direction="ltr" font-family="IBM Plex Mono, monospace" font-size="22" fill="#5b656d" letter-spacing="3">472635</text>
+        <!-- the code under each cut -->
+        <g font-family="IBM Plex Mono, monospace" font-size="24" font-weight="600" fill="#8b1d2c" text-anchor="middle">
+          <text x="610" y="304">4</text><text x="720" y="304">7</text><text x="830" y="304">2</text>
+          <text x="940" y="304">6</text><text x="1050" y="304">3</text><text x="1160" y="304">5</text>
+        </g>
+        <g stroke="#8b1d2c" stroke-width="1.5" stroke-dasharray="3 5" opacity=".55">
+          <path d="M610 240 V282"/><path d="M720 192 V282"/><path d="M830 254 V282"/><path d="M940 222 V282"/><path d="M1050 248 V282"/><path d="M1160 233 V282"/>
+        </g>
+        <!-- split ring through the bow hole, and the numbered tag -->
+        <circle cx="190" cy="270" r="70" stroke="url(#ringm)" stroke-width="9"/>
+        <g class="swing" style="transform-origin: 190px 340px">
+          <path d="M190 336 V362" stroke="#8f989f" stroke-width="4" stroke-linecap="round"/>
+          <path d="M120 372 Q190 338 260 372 L270 498 Q270 512 256 512 L124 512 Q110 512 110 498 Z" fill="#8b1d2c"/>
+          <circle cx="190" cy="372" r="15" fill="#5f1320"/>
+          <circle cx="190" cy="372" r="15" stroke="#c9ced2" stroke-width="4"/>
+          <text x="190" y="456" text-anchor="middle" font-family="Secular One, sans-serif" font-size="62" fill="#fff">17</text>
+          <text x="190" y="492" text-anchor="middle" font-family="IBM Plex Sans Hebrew, sans-serif" font-size="19" font-weight="700" fill="#f3d6da">דלת כניסה</text>
+        </g>
+      </svg>
+      <div class="key-cap mono">כל מפתח הוא קוד. עומק החריצים כאן: <b class="code" dir="ltr">4-7-2-6-3-5</b></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה קרה לדלת?</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="price-grid">
+        <div class="tags">
+          <button class="tagrow hot" data-issue="ננעלתי בחוץ"><span><b>פתיחת דלת נעולה</b><span class="sub">טרקתם את הדלת או שהמפתח בפנים. פותחים בלי נזק ברוב הדלתות</span></span><span class="pr">250 עד 450 ₪<small>לפי סוג הדלת</small></span></button>
+          <button class="tagrow" data-issue="החלפת צילינדר"><span><b>החלפת צילינדר</b><span class="sub">אחרי מעבר דירה, מפתח שאבד או צילינדר שנתקע</span></span><span class="pr">250 עד 550 ₪<small>כולל צילינדר</small></span></button>
+          <button class="tagrow" data-issue="החלפת מנעול"><span><b>החלפת מנעול</b><span class="sub">מנעול שבור, ידית רופפת או מנגנון שנשחק</span></span><span class="pr">350 עד 800 ₪<small>כולל מנעול</small></span></button>
+          <button class="tagrow" data-issue="מנעול נוסף או בריח"><span><b>מנעול נוסף או בריח</b><span class="sub">בדלת כניסה, דלת שירות או מחסן</span></span><span class="pr">400 עד 900 ₪<small>לפי הדלת</small></span></button>
+          <button class="tagrow" data-issue="מפתח נשבר במנעול"><span><b>מפתח נשבר במנעול</b><span class="sub">מוציאים את השבר, ובדרך כלל הצילינדר נשאר</span></span><span class="pr">200 עד 400 ₪<small>לפי המצב</small></span></button>
+          <button class="tagrow" data-issue="כספת או אחר"><span><b>כספות ועבודות אחרות</b><span class="sub">פתיחת כספת, תיבת דואר, שער חשמלי</span></span><span class="pr">לפי בדיקה<small>מתארים בצ׳אט</small></span></button>
+        </div>
+        <aside class="cyl" aria-label="על צילינדרים">
+          <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
+            <rect x="10" y="20" width="300" height="170" rx="14" fill="#2a3239" stroke="#4a555e" stroke-width="2"/>
+            <rect x="10" y="118" width="300" height="72" rx="0" fill="#323b43"/>
+            <path d="M10 118 H310" stroke="#e07b88" stroke-width="2" stroke-dasharray="6 6"/>
+            <text x="300" y="112" text-anchor="end" font-family="IBM Plex Sans Hebrew, sans-serif" font-size="12" fill="#e07b88">קו החיתוך</text>
+            <g>
+              <rect x="38" y="30" width="28" height="140" rx="5" fill="#1d2328"/><rect x="98" y="30" width="28" height="140" rx="5" fill="#1d2328"/><rect x="158" y="30" width="28" height="140" rx="5" fill="#1d2328"/><rect x="218" y="30" width="28" height="140" rx="5" fill="#1d2328"/>
+            </g>
+            <g stroke="#8f989f" stroke-width="2" fill="none">
+              <path d="M52 34 l-8 5 l16 5 l-16 5 l16 5 l-8 5"/><path d="M112 34 l-8 5 l16 5 l-16 5 l16 5 l-8 5"/><path d="M172 34 l-8 5 l16 5 l-16 5 l16 5 l-8 5"/><path d="M232 34 l-8 5 l16 5 l-16 5 l16 5 l-8 5"/>
+            </g>
+            <g fill="#8b1d2c"><rect x="42" y="66" width="20" height="52" rx="3"/><rect x="102" y="70" width="20" height="48" rx="3"/><rect x="162" y="62" width="20" height="56" rx="3"/><rect x="222" y="74" width="20" height="44" rx="3"/></g>
+            <g fill="#c9ced2"><rect x="42" y="119" width="20" height="30" rx="3"/><rect x="102" y="119" width="20" height="42" rx="3"/><rect x="162" y="119" width="20" height="22" rx="3"/><rect x="222" y="119" width="20" height="36" rx="3"/></g>
+            <path d="M10 176 L36 176 L52 150 L72 172 L112 162 L132 176 L172 142 L196 176 L232 156 L262 176 L310 176 V190 H10 Z" fill="#d6dadd"/>
+          </svg>
+          <h3>צילינדר רב-בריח</h3>
+          <p>הצילינדר הוא החלק שהמפתח נכנס אליו. כשמחליפים אותו, מקבלים מפתחות חדשים בלי להחליף את המנעול.</p>
+          <ul>
+            <li><span>פותחים בלי נזק ברוב הדלתות. אם צריך לקדוח, אומרים לפני</span></li>
+            <li><span>מחיר סגור לפני שמתחילים לעבוד</span></li>
+            <li><span>דלתות פלדלת, רב-בריח, עץ ודלתות שירות</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="who-grid">
+        <div class="van">
+          <div class="seal"><figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure></div>
+          <div class="van-txt">
+            <b data-edit="tech-name">עידו לוי</b>
+            <span data-edit="tech-role">מנעולן · 11 שנה בשטח</span>
+            <div class="mono" data-edit="tech-area">חדרה · פרדס חנה · השרון</div>
+          </div>
+        </div>
+        <div>
+          <div class="ringbox">
+            <span class="ring" aria-hidden="true"></span>
+            <svg class="strings" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M47 0 L16.7 40 M50 0 L50 40 M53 0 L83.3 40" stroke="#8f989f" stroke-width="2" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="keytags" style="margin-top:40px">
+              <div class="ktag"><span class="no">21</span><figure class="ps" data-slot="tag1" data-icon="home" data-label="תמונה מעבודה"></figure><p data-edit="tag1">צילינדר חדש בדלת כניסה</p><small data-edit="tag1b">חדרה</small></div>
+              <div class="ktag"><span class="no">22</span><figure class="ps" data-slot="tag2" data-icon="wrench" data-label="תמונה מעבודה"></figure><p data-edit="tag2">פתיחה בלי נזק בלילה</p><small data-edit="tag2b">פרדס חנה</small></div>
+              <div class="ktag"><span class="no">23</span><figure class="ps" data-slot="tag3" data-icon="box" data-label="תמונה מעבודה"></figure><p data-edit="tag3">בריח נוסף לדלת מחסן</p><small data-edit="tag3b">כפר יונה</small></div>
+            </div>
+          </div>
+          <p class="who-note">פותחים את הדלת למי שמכירים מהתמונה. פנים אמיתיות ועבודות אמיתיות שוות יותר מכל סלוגן.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, איפה, כמה דחוף, ישוב ומספר טלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם זו פתיחה דחופה או החלפת צילינדר, ומה לקחת לרכב.</span></div></li>
+          <li><div><b>חוזרים ללקוח עם זמן הגעה</b><span>הצ׳אט עובד גם כשאתם באמצע עבודה ולא יכולים לענות לטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רוני שמש</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו מנעולן)
+מה קרה: ננעלתי בחוץ
+איפה: דירה
+מתי: עכשיו
+ישוב: פרדס חנה
+שם: רוני שמש
+טלפון: 052-7654321<time>22:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הקריאה מגיעה למנעולן</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>עידו מפתח · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "locksmith" });
+  const ISSUES = ["ננעלתי בחוץ", "החלפת צילינדר", "החלפת מנעול", "מפתח נשבר במנעול", "כספת או אחר"];
+  const RANGES = { "ננעלתי בחוץ": "250 עד 450", "החלפת צילינדר": "250 עד 550", "החלפת מנעול": "350 עד 800", "מנעול נוסף או בריח": "400 עד 900", "מפתח נשבר במנעול": "200 עד 400" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "עידו · מנעולן", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ע", launcher: "ננעלתם בחוץ?",
+    greet: "היי, כאן עידו.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
+    steps: [
+      { key: "issue", label: "מה קרה", ask: "מה קרה?", chips: ISSUES },
+      { key: "place", label: "איפה", ask: "איזו דלת?", chips: ["דירה", "בית פרטי", "עסק"] },
+      { key: "when", label: "מתי", ask: (d) => (d.issue === "ננעלתי בחוץ" ? "אתם בחוץ עכשיו?" : "מתי צריך?"), chips: ["עכשיו", "היום", "השבוע"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const price = RANGES[d.issue] ? `בדרך כלל ${RANGES[d.issue]} ₪, ומחיר סופי לפני שמתחילים.` : "את המחיר נותנים אחרי בדיקה.";
+      const safe = d.issue === "ננעלתי בחוץ" && d.when === "עכשיו" ? "\nאם נשאר בפנים ילד, או שמשהו דולק על הגז, התקשרו עכשיו גם ל־102." : "";
+      return `תודה ${first}. רשמתי: ${d.issue}, ${d.place} ב${d.city}. ${price}${safe}\nלחצו למטה, ועידו חוזר עם זמן הגעה.`;
+    },
+    summary: (d) => `קריאה מהאתר (דמו מנעולן)\nמה קרה: ${d.issue}\nאיפה: ${d.place}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+</script>
+</body>
+</html>
