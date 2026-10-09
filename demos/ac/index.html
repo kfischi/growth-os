@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אלון קור · מיזוג אוויר</title>
+<meta name="description" content="תיקון, ניקוי והתקנת מזגנים. מתארים את התקלה בצ׳אט, והפרטים מגיעים לטכנאי בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the indoor unit on the wall and its remote, with the copper pipes running out of it.
+     Detail: set temperature, mode (קירור, ייבוש, מאוורר), BTU and horsepower, copper line sets.
+     Bold move: the hero is a drawn wall unit blowing cold air across the headline. */
+  :root {
+    --frost: #f2f7fa;          /* wall paint in a cooled room */
+    --ice: #8fd3ec;            /* airflow */
+    --ice-deep: #2f8fb8;
+    --night: #0d2235;          /* text, remote body */
+    --night-soft: #4c6475;
+    --copper: #c77a45;         /* line set */
+    --lcd: #cfe0d6;            /* remote screen */
+    --display: "Rubik", system-ui, sans-serif;
+    --body: "Rubik", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--night);
+    --bot-bg: #fff; --bot-fg: var(--night); --bot-line: #dbe6ec; --bot-muted: var(--night-soft);
+    --bot-accent: var(--night); --bot-accent-fg: #fff; --bot-them: #eaf3f7; --bot-me: var(--ice-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--frost); color: var(--night); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--copper); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: .98; letter-spacing: -.025em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 999px; }
+  .btn-night { background: var(--night); color: #fff; }
+  .btn-night:hover { background: #000; }
+  .btn-line { border: 2px solid var(--night); color: var(--night); background: transparent; }
+
+  .demo { background: var(--night); color: #b9cbd6; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(180deg, #e6f1f6, var(--frost) 70%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; position: relative; z-index: 2; }
+  .logo { font-weight: 900; font-size: 24px; letter-spacing: -.02em; }
+  .logo span { color: var(--ice-deep); }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--copper); }
+  .unit-wrap { position: relative; z-index: 1; margin-top: 6px; }
+  .unit-wrap svg { display: block; width: min(860px, 100%); height: auto; margin-inline: auto; }
+  .hero-copy { position: relative; z-index: 2; text-align: center; padding: 6px 0 70px; }
+  .hero h1 { font-size: clamp(46px, 7.2vw, 100px); margin: 0 auto 16px; max-width: 15ch; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--ice-deep); }
+  .hero p { font-size: 19px; max-width: 40ch; margin: 0 auto 26px; color: var(--night-soft); }
+  .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .air path { stroke-dasharray: 14 18; animation: blow 2.6s linear infinite; }
+  @keyframes blow { to { stroke-dashoffset: -64; } }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head h2 { font-size: clamp(38px, 5.4vw, 64px); }
+  .head .mono { color: var(--night-soft); }
+
+  .remote-list { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 40px; align-items: start; }
+  .lcd-rows { display: grid; gap: 10px; }
+  .lcd-row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center;
+    background: #fff; border: 1px solid #d9e5eb; border-radius: 18px; padding: 16px 18px; min-width: 0; }
+  .lcd-row:hover { border-color: var(--ice-deep); }
+  .lcd-row:focus-visible { outline: 3px solid var(--copper); outline-offset: 2px; }
+  .lcd-row .ic { width: 56px; height: 56px; border-radius: 14px; background: var(--lcd); display: grid; place-items: center; font-family: var(--mono); font-weight: 600; font-size: 13px; color: #2c4a3b; }
+  .lcd-row b { display: block; font-size: 19px; }
+  .lcd-row span { color: var(--night-soft); font-size: 14.5px; }
+  .lcd-row .pr { font-family: var(--mono); font-size: 14px; font-weight: 600; text-align: left; white-space: nowrap; }
+
+  .remote { background: linear-gradient(180deg, #fdfefe, #e9eff2); border-radius: 46px 46px 60px 60px; padding: 26px 24px 34px; box-shadow: 0 30px 60px -30px rgba(13,34,53,.55), inset 0 -6px 0 rgba(0,0,0,.05); position: sticky; top: 20px; }
+  .remote .screen { background: var(--lcd); border-radius: 14px; padding: 14px 16px; color: #23392d; box-shadow: inset 0 2px 6px rgba(0,0,0,.15); }
+  .remote .temp { font-weight: 300; font-size: 84px; line-height: 1; letter-spacing: -.04em; direction: ltr; text-align: left; }
+  .remote .temp sup { font-size: 30px; }
+  .remote .modes { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11.5px; margin-top: 6px; }
+  .remote .modes .on { font-weight: 700; text-decoration: underline; }
+  .remote .keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+  .remote .keys span { height: 38px; border-radius: 12px; background: #dfe7eb; box-shadow: inset 0 -3px 0 rgba(0,0,0,.08); display: grid; place-items: center; font-size: 12px; color: var(--night-soft); }
+  .remote .power { background: var(--night) !important; color: #fff !important; font-weight: 700; }
+  .remote .caption { text-align: center; color: var(--night-soft); font-size: 13.5px; margin-top: 16px; }
+
+  .owner { background: var(--night); color: #e8f1f6; }
+  .owner .head .mono { color: #86a2b5; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 20px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--ice); display: grid; place-items: center; font-weight: 700; color: var(--ice); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #a9bfcc; font-size: 15.5px; }
+  .owner .ph-cap { color: #86a2b5; }
+
+  footer { padding-block: 34px 90px; color: var(--night-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfdde5; padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .remote-list, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .remote { position: static; max-width: 340px; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 520px) {
+    .lcd-row { grid-template-columns: 44px minmax(0, 1fr); }
+    .lcd-row .ic { width: 44px; height: 44px; font-size: 11px; }
+    .lcd-row .pr { grid-column: 2; text-align: right; }
+    .hero-copy { padding-bottom: 54px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .air path { animation: none; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">אלון<span>קור</span></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על המזגן">וואטסאפ</a>
+    </div>
+  </div>
+  <div class="unit-wrap" aria-hidden="true">
+    <svg viewBox="0 0 860 250" fill="none">
+      <defs>
+        <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ebef"/></linearGradient>
+        <linearGradient id="cp" x1="0" x2="1"><stop offset="0" stop-color="#a95e2f"/><stop offset=".5" stop-color="#e0a070"/><stop offset="1" stop-color="#a95e2f"/></linearGradient>
+      </defs>
+      <!-- copper line set running down the wall -->
+      <path d="M690 92 H760 V250" stroke="url(#cp)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M690 104 H746 V250" stroke="url(#cp)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M690 116 H733 V250" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+      <!-- indoor unit -->
+      <rect x="170" y="24" width="520" height="132" rx="26" fill="url(#body)" stroke="#cfdbe2" stroke-width="2"/>
+      <rect x="170" y="24" width="520" height="132" rx="26" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/>
+      <path d="M196 120 H664" stroke="#cfdbe2" stroke-width="2"/>
+      <rect x="200" y="128" width="460" height="16" rx="8" fill="#d5e0e6"/>
+      <rect x="210" y="134" width="440" height="4" rx="2" fill="#b9c8d0"/>
+      <!-- display -->
+      <rect x="560" y="58" width="78" height="34" rx="8" fill="#0d2235"/>
+      <text x="599" y="82" direction="ltr" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="20" font-weight="600" fill="#8fd3ec">24°</text>
+      <circle cx="546" cy="75" r="4" fill="#4fd18b"/>
+      <text x="212" y="66" direction="ltr" font-family="Rubik, sans-serif" font-size="13" font-weight="700" fill="#9aaeb9" letter-spacing="2">INVERTER · 12,000 BTU</text>
+      <!-- cold air -->
+      <g class="air" stroke="#8fd3ec" stroke-width="4" stroke-linecap="round">
+        <path d="M250 160 C 270 190, 230 215, 250 245"/>
+        <path d="M340 160 C 360 192, 320 214, 340 246" opacity=".8"/>
+        <path d="M430 160 C 450 190, 410 216, 430 246"/>
+        <path d="M520 160 C 540 192, 500 214, 520 246" opacity=".8"/>
+        <path d="M610 160 C 630 190, 590 216, 610 246"/>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap hero-copy">
+    <div class="mono" style="color:var(--night-soft)">תיקון · ניקוי · התקנה · השרון והמרכז</div>
+    <h1>המזגן לא מקרר? <em>כותבים, ואנחנו חוזרים.</em></h1>
+    <p>מתארים את התקלה בארבע לחיצות בצ׳אט. הפרטים מגיעים לטכנאי בוואטסאפ, והוא חוזר אליכם לקבוע מועד.</p>
+    <div class="ctas">
+      <button class="btn btn-night" data-open-bot>לתאר את התקלה</button>
+      <a class="btn btn-line" href="#" data-wa="היי, אשמח לקבוע טכנאי מזגנים">וואטסאפ ישיר</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה צריך לעשות?</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="remote-list">
+        <div class="lcd-rows">
+          <button class="lcd-row" data-issue="לא מקרר או לא מחמם"><span class="ic">16°</span><span><b>לא מקרר או לא מחמם</b><span>בדיקת גז, מדחס וחיישנים</span></span><span class="pr">350 עד 550 ₪</span></button>
+          <button class="lcd-row" data-issue="מטפטף מים"><span class="ic">H₂O</span><span><b>מטפטף מים</b><span>ניקוי צינור ניקוז ומגש</span></span><span class="pr">250 עד 380 ₪</span></button>
+          <button class="lcd-row" data-issue="ניקוי תקופתי"><span class="ic">FAN</span><span><b>ניקוי ותחזוקה</b><span>פירוק, שטיפה וחיטוי של היחידה הפנימית</span></span><span class="pr">250 עד 350 ₪</span></button>
+          <button class="lcd-row" data-issue="התקנת מזגן חדש"><span class="ic">NEW</span><span><b>התקנה חדשה</b><span>כולל צנרת נחושת עד שלושה מטרים</span></span><span class="pr">850 עד 1,400 ₪</span></button>
+          <button class="lcd-row" data-issue="רעש או ריח"><span class="ic">dB</span><span><b>רעש או ריח</b><span>מאוורר, מיסבים ועובש בסוללה</span></span><span class="pr">280 עד 450 ₪</span></button>
+        </div>
+        <div class="remote" aria-hidden="true">
+          <div class="screen">
+            <div class="temp">24<sup>°C</sup></div>
+            <div class="modes"><span class="on">קירור</span><span>ייבוש</span><span>מאוורר</span><span>חימום</span></div>
+          </div>
+          <div class="keys"><span class="power">הפעלה</span><span>מצב</span><span>מאוורר</span><span>▲</span><span>שינה</span><span>▼</span></div>
+          <div class="caption">בצ׳אט שואלים גם איזה מזגן יש לכם</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה הטכנאי רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על ארבע שאלות</b><span>סוג המזגן, התקלה, ישוב ומספר טלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>אין צורך להתקשר ולשאול שוב. כבר יודעים מה לקחת לעבודה.</span></div></li>
+          <li><div><b>חוזרים ללקוח וקובעים</b><span>הצ׳אט עובד גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אברהם</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מזגנים)
+מזגן: עילי בסלון
+תקלה: לא מקרר או לא מחמם
+ישוב: כפר סבא
+שם: מיכל אברהם
+טלפון: 052-7654321<time>21:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לטכנאי</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>אלון קור · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script>
+  const RANGES = { "לא מקרר או לא מחמם": "350 עד 550", "מטפטף מים": "250 עד 380", "ניקוי תקופתי": "250 עד 350", "התקנת מזגן חדש": "850 עד 1,400", "רעש או ריח": "280 עד 450" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "אלון · מיזוג אוויר", subtitle: "חוזרים אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?",
+    greet: "היי, כאן אלון.\nארבע שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
+    steps: [
+      { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES) },
+      { key: "unit", label: "מזגן", ask: "איזה מזגן?", chips: ["עילי בחדר", "עילי בסלון", "מיני מרכזי", "מרכזי"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: כפר סבא" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.issue}, מזגן ${d.unit}, ב${d.city}. בדרך כלל זה עולה ${RANGES[d.issue]} ₪, ואת המחיר הסופי נותנים במקום.\nלחצו למטה, ונחזור אליכם לקבוע.`,
+    summary: (d) => `פנייה מהאתר (דמו מזגנים)\nמזגן: ${d.unit}\nתקלה: ${d.issue}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+</script>
+</body>
+</html>

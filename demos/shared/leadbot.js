@@ -174,6 +174,7 @@
           const again = el("button", "lb-restart", "להתחיל מחדש"); again.type = "button";
           again.addEventListener("click", restart);
           foot.append(wa, again);
+          if (cfg.onDone) cfg.onDone(data, cfg.summary(data));
         });
       }
 
@@ -208,3 +209,17 @@
 
   window.LeadBot = LeadBot;
 })();
+
+// Phone mockup helper: show the lead text in a .ph-msg after the chat ends.
+window.LeadPhone = function (selector) {
+  return function (data, text) {
+    const msg = document.querySelector(selector); if (!msg) return;
+    const top = msg.closest(".ph-screen").querySelector(".ph-top b");
+    if (top && data.name) top.textContent = data.name;
+    const av = msg.closest(".ph-screen").querySelector(".ph-av");
+    if (av && data.name) av.textContent = data.name.trim().charAt(0);
+    const t = new Date(); const hh = String(t.getHours()).padStart(2, "0") + ":" + String(t.getMinutes()).padStart(2, "0");
+    msg.textContent = text; const time = document.createElement("time"); time.textContent = hh; msg.appendChild(time);
+    msg.classList.remove("new"); void msg.offsetWidth; msg.classList.add("new");
+  };
+};

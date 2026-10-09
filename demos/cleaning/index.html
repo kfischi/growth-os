@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>שקד · ניקיון בית ומשרד</title>
+<meta name="description" content="ניקיון בתים, משרדים ואחרי שיפוץ. בוחרים בצ׳אט מה צריך ומקבלים הערכת זמן ומחיר.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the before and after photo every cleaner sends a happy client.
+     Detail: rooms, hours, the checklist per room (מטבח, שירותים, חלונות).
+     Bold move: a drag slider over a drawn living room, from dusty to fresh. Everything else stays quiet. */
+  :root {
+    --suds: #f6fafa;           /* page */
+    --mist: #dceeec;
+    --deep: #0f3b3a;           /* text */
+    --deep-soft: #4b6967;
+    --fresh: #24a593;          /* clean surfaces, ticks */
+    --sponge: #ff7a8a;         /* the pink sponge */
+    --display: "Bellefair", "Alef", serif;
+    --body: "Alef", system-ui, sans-serif;
+    --phone-frame: var(--deep);
+    --bot-bg: #fff; --bot-fg: var(--deep); --bot-line: #d7e6e4; --bot-muted: var(--deep-soft);
+    --bot-accent: var(--deep); --bot-accent-fg: #fff; --bot-them: #eaf4f3; --bot-me: var(--fresh); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--suds); color: var(--deep); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--sponge); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0; }
+  .eyebrow { font-size: 14px; letter-spacing: .02em; color: var(--deep-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 999px; }
+  .btn-deep { background: var(--deep); color: #fff; }
+  .btn-deep:hover { background: #082625; }
+  .btn-line { border: 1.5px solid var(--deep); color: var(--deep); background: transparent; }
+
+  .demo { background: var(--deep); color: #bcd3d1; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 20px; }
+  .logo { font-family: var(--display); font-size: 32px; line-height: 1; }
+  .logo small { font-family: var(--body); font-size: 14px; color: var(--deep-soft); margin-inline-start: 8px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--sponge); }
+  .hero-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: end; padding-block: 26px 30px; }
+  .hero h1 { font-size: clamp(52px, 7.4vw, 104px); }
+  .hero p { font-size: 20px; margin: 0 0 22px; color: var(--deep-soft); max-width: 34ch; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .ba { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 16 / 9; background: var(--mist); direction: ltr; user-select: none; touch-action: pan-y;
+    box-shadow: 0 40px 80px -45px rgba(15,59,58,.6); }
+  .ba svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .ba .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+  .ba .before svg { filter: saturate(.45) brightness(.86) sepia(.22); }
+  .ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 3px; margin-left: -1.5px; background: #fff; pointer-events: none; }
+  .ba .knob { position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    display: grid; place-items: center; color: var(--deep); font-size: 18px; font-weight: 700; }
+  .ba .tag { position: absolute; top: 18px; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; direction: rtl; }
+  .ba .tag.b { left: 18px; background: rgba(40,35,30,.65); color: #fff; }
+  .ba .tag.a { right: 18px; background: #fff; color: var(--deep); }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .ba input:focus-visible + .handle .knob { outline: 3px solid var(--sponge); outline-offset: 3px; }
+  .ba-cap { text-align: center; font-size: 14px; color: var(--deep-soft); margin: 12px 0 0; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(42px, 5.6vw, 68px); }
+
+  .rooms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .room { background: #fff; border-radius: 22px; padding: 24px; border: 1px solid #e1ecea; }
+  .room h3 { font-size: 34px; margin-bottom: 12px; }
+  .room ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 16.5px; }
+  .room li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .room li::before { content: ""; width: 20px; height: 20px; margin-top: 4px; border-radius: 6px; background: var(--fresh)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 7' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 20px no-repeat; }
+
+  .rates { background: var(--mist); }
+  .rate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; background: #fff; border-radius: 26px; overflow: hidden; }
+  .rate { padding: 28px; min-width: 0; }
+  .rate + .rate { border-inline-start: 1px solid #e1ecea; }
+  .rate h3 { font-size: 30px; }
+  .rate .num { font-family: var(--display); font-size: 54px; line-height: 1; margin: 14px 0 4px; }
+  .rate .num small { font-size: 22px; }
+  .rate p { margin: 0 0 18px; color: var(--deep-soft); font-size: 16px; }
+  .fine { font-size: 14px; color: var(--deep-soft); margin-top: 14px; }
+
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner h2 { font-size: clamp(42px, 5.6vw, 68px); margin-bottom: 16px; }
+  .owner p { color: var(--deep-soft); max-width: 44ch; margin: 0 0 12px; }
+  .ph-cap { color: var(--deep-soft); }
+
+  footer { padding-block: 34px 90px; color: var(--deep-soft); font-size: 15px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfe0de; padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-top, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .rooms, .rate-grid { grid-template-columns: minmax(0, 1fr); }
+    .rate + .rate { border-inline-start: 0; border-top: 1px solid #e1ecea; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 520px) {
+    .ba { aspect-ratio: 4 / 3.4; border-radius: 20px; }
+    .ba .tag { top: 12px; font-size: 13px; padding: 4px 10px; }
+    .ba .tag.b { left: 12px; } .ba .tag.a { right: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfeaf3"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <symbol id="room" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+      <rect width="1600" height="900" fill="#e9efec"/>
+      <rect y="640" width="1600" height="260" fill="#c9a983"/>
+      <g stroke="#b8956d" stroke-width="3" opacity=".6"><path d="M0 700 H1600 M0 770 H1600 M0 840 H1600"/><path d="M300 640 V700 M820 700 V770 M520 770 V840 M1240 640 V700 M1100 840 V900"/></g>
+      <rect y="628" width="1600" height="14" fill="#fff"/>
+      <!-- window -->
+      <rect x="980" y="110" width="420" height="400" rx="6" fill="#fff"/>
+      <rect x="996" y="126" width="388" height="368" fill="url(#sun)"/>
+      <path d="M1190 126 V494 M996 310 H1384" stroke="#fff" stroke-width="12"/>
+      <path d="M1000 494 L760 900 H1240 L1384 494 Z" fill="url(#beam)"/>
+      <!-- frame -->
+      <rect x="230" y="150" width="260" height="190" rx="4" fill="#fff"/>
+      <rect x="246" y="166" width="228" height="158" fill="#9fcfc6"/>
+      <path d="M246 324 L320 240 L370 290 L420 220 L474 324 Z" fill="#5fa797"/>
+      <circle cx="430" cy="200" r="16" fill="#fff" opacity=".8"/>
+      <!-- lamp -->
+      <path d="M560 630 V330" stroke="#0f3b3a" stroke-width="6"/>
+      <path d="M500 330 H620 L590 250 H530 Z" fill="#f2f2ee" stroke="#d8dcd6" stroke-width="3"/>
+      <!-- sofa -->
+      <rect x="160" y="430" width="680" height="170" rx="40" fill="#5c8f8a"/>
+      <rect x="200" y="380" width="600" height="130" rx="34" fill="#6fa39d"/>
+      <rect x="130" y="450" width="90" height="170" rx="36" fill="#56857f"/>
+      <rect x="780" y="450" width="90" height="170" rx="36" fill="#56857f"/>
+      <rect x="250" y="400" width="140" height="100" rx="24" fill="#f0e9dd"/>
+      <rect x="610" y="400" width="140" height="100" rx="24" fill="#ff9aa6"/>
+      <rect x="190" y="600" width="18" height="40" fill="#3b3a36"/><rect x="790" y="600" width="18" height="40" fill="#3b3a36"/>
+      <!-- rug and table -->
+      <ellipse cx="560" cy="780" rx="420" ry="80" fill="#efe8db"/>
+      <ellipse cx="560" cy="780" rx="360" ry="60" fill="none" stroke="#d9cdb8" stroke-width="6"/>
+      <rect x="380" y="690" width="360" height="26" rx="10" fill="#f6f6f2" stroke="#dcdcd4" stroke-width="3"/>
+      <path d="M410 716 V790 M710 716 V790" stroke="#0f3b3a" stroke-width="8" stroke-linecap="round"/>
+      <!-- plant -->
+      <path d="M1420 640 L1440 520 H1520 L1540 640 Z" fill="#f2f2ee" stroke="#d8dcd6" stroke-width="3"/>
+      <g fill="#3f8f6e"><ellipse cx="1450" cy="440" rx="30" ry="80" transform="rotate(-25 1450 440)"/><ellipse cx="1510" cy="420" rx="30" ry="95" transform="rotate(18 1510 420)"/><ellipse cx="1480" cy="400" rx="26" ry="110"/></g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">שקד<small>ניקיון בית ומשרד</small></div>
+      <a href="#" data-wa="היי שקד, הגעתי מהאתר ואשמח לשמוע על ניקיון">וואטסאפ</a>
+    </div>
+    <div class="hero-top">
+      <div>
+        <div class="eyebrow">בתים · משרדים · אחרי שיפוץ · חדרה והשרון</div>
+        <h1>חוזרים הביתה, והכול מבריק.</h1>
+      </div>
+      <div>
+        <p>בוחרים בצ׳אט מה צריך, ומקבלים הערכה של שעות ומחיר. הפרטים מגיעים אליי לוואטסאפ.</p>
+        <div class="ctas">
+          <button class="btn btn-deep" data-open-bot>הערכת מחיר בצ׳אט</button>
+          <a class="btn btn-line" href="#" data-wa="היי שקד, יש לי שאלה על ניקיון">וואטסאפ</a>
+        </div>
+      </div>
+    </div>
+    <div class="ba" id="ba" style="--pos:50%">
+      <svg role="img" aria-label="הסלון אחרי ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+        <g fill="#fff">
+          <path d="M1120 230 l8 -26 l8 26 l26 8 l-26 8 l-8 26 l-8 -26 l-26 -8 Z"/>
+          <path d="M560 690 l6 -18 l6 18 l18 6 l-18 6 l-6 18 l-6 -18 l-18 -6 Z" opacity=".9"/>
+          <path d="M300 560 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 Z" opacity=".85"/>
+        </g>
+      </svg>
+      <div class="before">
+        <svg role="img" aria-label="הסלון לפני ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+          <!-- dust film on the window -->
+          <g fill="#8b8270" opacity=".35"><ellipse cx="1080" cy="220" rx="70" ry="40"/><ellipse cx="1300" cy="420" rx="80" ry="50"/><ellipse cx="1180" cy="380" rx="40" ry="60"/></g>
+          <!-- cobweb -->
+          <g stroke="#6d6a62" stroke-width="2" fill="none" opacity=".6" transform="translate(1600 0) scale(-1 1)"><path d="M0 0 L140 90 M0 0 L90 140 M0 0 L160 30 M0 0 L30 160"/><path d="M40 12 Q30 30 12 40 M80 26 Q60 60 26 80 M120 40 Q90 90 40 120"/></g>
+          <!-- clutter: laundry, cups, papers -->
+          <path d="M240 520 q60 -50 130 -10 q40 -40 90 10 q-30 40 -110 30 q-70 10 -110 -30 Z" fill="#8e8a9c"/>
+          <path d="M300 515 q40 -20 80 0" stroke="#6f6b7d" stroke-width="6" fill="none"/>
+          <g><rect x="470" y="652" width="34" height="40" rx="6" fill="#d9d2c4"/><rect x="520" y="660" width="30" height="32" rx="6" fill="#c7bfb0"/><rect x="600" y="664" width="80" height="28" rx="3" fill="#ece6d6" transform="rotate(-8 640 678)"/></g>
+          <!-- stains and crumbs -->
+          <g fill="#7d6a52" opacity=".55"><ellipse cx="460" cy="800" rx="60" ry="16"/><ellipse cx="700" cy="770" rx="34" ry="10"/><ellipse cx="1060" cy="860" rx="46" ry="12"/></g>
+          <g fill="#6b5a45" opacity=".6"><circle cx="880" cy="820" r="5"/><circle cx="905" cy="836" r="4"/><circle cx="930" cy="812" r="5"/><circle cx="300" cy="860" r="4"/><circle cx="1320" cy="760" r="5"/></g>
+          <!-- shoe prints -->
+          <g fill="#8a7155" opacity=".35"><ellipse cx="1150" cy="700" rx="14" ry="26" transform="rotate(20 1150 700)"/><ellipse cx="1210" cy="740" rx="14" ry="26" transform="rotate(20 1210 740)"/><ellipse cx="1260" cy="690" rx="14" ry="26" transform="rotate(20 1260 690)"/></g>
+          <!-- plant drooping leaves on floor -->
+          <ellipse cx="1390" cy="650" rx="22" ry="8" fill="#9a8a50" opacity=".6"/>
+        </svg>
+      </div>
+      <input type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+      <div class="handle"><span class="knob" aria-hidden="true">⇆</span></div>
+      <span class="tag b">לפני</span><span class="tag a">אחרי</span>
+    </div>
+    <p class="ba-cap">גררו את העיגול כדי להשוות. אצלכם כאן יופיעו תמונות אמיתיות מהעבודות שלכם.</p>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה נכלל בניקיון</h2><span class="eyebrow">רשימה קבועה, כדי שלא יישכח כלום</span></div>
+      <div class="rooms">
+        <div class="room"><h3>מטבח</h3><ul><li>משטחים, כיריים וחזית הארונות</li><li>כיור וברזים, כולל אבנית</li><li>מיקרוגל מבפנים</li><li>רצפה, כולל מתחת לשולחן</li></ul></div>
+        <div class="room"><h3>שירותים ואמבטיה</h3><ul><li>אסלה, כיור ומקלחון</li><li>אריחים ופוגות</li><li>מראות וברזים</li><li>פח וחיטוי ידיות</li></ul></div>
+        <div class="room"><h3>חדרים וסלון</h3><ul><li>אבק על כל המשטחים והמדפים</li><li>שאיבה ושטיפה</li><li>החלפת מצעים, אם מבקשים</li><li>חלונות מבפנים</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rates">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה עולה</h2><span class="eyebrow">מחירים לדוגמה</span></div>
+      <div class="rate-grid">
+        <div class="rate"><h3>ניקיון שבועי</h3><div class="num">80 <small>₪ לשעה</small></div><p>אותה מנקה בכל פעם, ביום קבוע. מינימום שלוש שעות.</p><button class="btn btn-deep" data-open-bot>לבדוק מועד</button></div>
+        <div class="rate"><h3>ניקיון חד פעמי</h3><div class="num">90 <small>₪ לשעה</small></div><p>לפני חג, לפני אירוח או סתם כי הגיע הזמן.</p><button class="btn btn-deep" data-open-bot>הערכת מחיר</button></div>
+        <div class="rate"><h3>אחרי שיפוץ</h3><div class="num">110 <small>₪ לשעה</small></div><p>אבק בנייה, שאריות צבע וסיליקון. כולל חומרים מתאימים.</p><button class="btn btn-deep" data-open-bot>הערכת מחיר</button></div>
+      </div>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו המחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap owner-grid">
+      <div>
+        <h2>מה שקד מקבלת</h2>
+        <p>סוג הבית, הגודל, התדירות והישוב, בהודעה אחת. כך אפשר לשבץ את הלקוח ביומן בלי שיחה של עשר דקות.</p>
+        <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="ph-screen">
+            <div class="ph-top"><span class="ph-av">נ</span><div><b>נועה פרץ</b><small>מהאתר</small></div></div>
+            <div class="ph-chat">
+              <span class="ph-day">היום</span>
+              <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו ניקיון)
+סוג: דירה
+גודל: 4 עד 5 חדרים
+תדירות: כל שבועיים
+ישוב: פרדס חנה
+שם: נועה פרץ
+טלפון: 050-1122334<time>08:15</time></div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap">ככה הפנייה מגיעה</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>שקד · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script>
+  // Before/after slider
+  const ba = document.getElementById("ba"), range = ba.querySelector("input");
+  range.addEventListener("input", () => ba.style.setProperty("--pos", range.value + "%"));
+
+  const HOURS = { "עד 3 חדרים": [3, 4], "4 עד 5 חדרים": [4, 6], "6 חדרים ומעלה": [6, 8] };
+  const RATE = { "דירה": 90, "בית פרטי": 90, "משרד": 90, "אחרי שיפוץ או מעבר": 110 };
+  const fmt = (n) => n.toLocaleString("he-IL");
+  LeadBot.init({
+    whatsapp: "972526359513",
+    name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר",
+    greet: "היי, כאן שקד.\nכמה שאלות קצרות, ותקבלו הערכה של שעות ומחיר.",
+    steps: [
+      { key: "type", label: "סוג", ask: "מה מנקים?", chips: Object.keys(RATE) },
+      { key: "size", label: "גודל", ask: "מה הגודל?", chips: Object.keys(HOURS) },
+      { key: "freq", label: "תדירות", ask: "כל כמה זמן?", chips: ["פעם אחת", "כל שבוע", "כל שבועיים"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      let [lo, hi] = HOURS[d.size]; if (d.type === "אחרי שיפוץ או מעבר") { lo += 2; hi += 3; }
+      const rate = d.freq === "פעם אחת" ? RATE[d.type] : Math.min(RATE[d.type], 80);
+      return `תודה ${d.name.split(" ")[0]}! ${d.type}, ${d.size}: בערך ${lo} עד ${hi} שעות, כלומר ${fmt(lo * rate)} עד ${fmt(hi * rate)} ₪.\nלחצו למטה, ונקבע מועד בוואטסאפ.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+</script>
+</body>
+</html>

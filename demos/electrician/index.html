@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>רז שגב · חשמלאי מוסמך</title>
+<meta name="description" content="קצר, חשמל שקפץ, התקנות ועמדות טעינה. מתארים את התקלה בצ׳אט, והפרטים מגיעים לחשמלאי בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@700&family=Assistant:wght@400;600;700&family=Cousine:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the home breaker panel, with label-maker tape naming each circuit.
+     Detail: amps per circuit (16A, 20A), the 30mA RCD, the inspection sticker on the door.
+     Bold move: a working panel in the hero. One breaker has tripped; flipping it back opens the chat. */
+  :root {
+    --enamel: #e7e8e3;         /* panel paint */
+    --enamel-deep: #cfd1ca;
+    --graphite: #202427;       /* text, panel frame */
+    --breaker: #16191c;
+    --tape: #111315;           /* label-maker tape */
+    --live: #ff5a1f;           /* tripped indicator, safety orange */
+    --led: #1fbf6a;
+    --wall: #f4f4f1;
+    --display: "Miriam Libre", "Assistant", sans-serif;
+    --body: "Assistant", system-ui, sans-serif;
+    --mono: "Cousine", ui-monospace, monospace;
+    --phone-frame: var(--graphite);
+    --bot-bg: #fff; --bot-fg: var(--graphite); --bot-line: #dcddd8; --bot-muted: #5d6266;
+    --bot-accent: var(--graphite); --bot-accent-fg: #fff; --bot-them: #efefeb; --bot-me: var(--live); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--wall); color: var(--graphite); font-family: var(--body); font-size: 18px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--live); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.02; letter-spacing: -.02em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 4px; }
+  .btn-live { background: var(--live); color: #fff; }
+  .btn-live:hover { background: #e84a12; }
+  .btn-line { border: 2px solid var(--graphite); color: var(--graphite); background: transparent; }
+  .dymo { display: inline-block; background: var(--tape); color: #f2f2f2; font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: .01em; padding: 3px 8px 2px; border-radius: 2px;
+    text-shadow: 0 1px 0 rgba(255,255,255,.18); box-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap; }
+
+  .demo { background: var(--graphite); color: #c7cbcd; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 25px; display: flex; align-items: center; gap: 10px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 3px solid var(--live); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 470px); gap: 56px; align-items: center; padding-block: 30px 84px; }
+  .hero h1 { font-size: clamp(46px, 6.6vw, 88px); margin: 14px 0 18px; }
+  .hero h1 em { font-style: normal; color: var(--live); }
+  .hero p { font-size: 20px; max-width: 36ch; margin: 0 0 26px; color: #4a4f53; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .panel { background: var(--graphite); border-radius: 10px; padding: 14px; box-shadow: 0 40px 70px -35px rgba(0,0,0,.6); position: relative; }
+  .panel-in { background: linear-gradient(180deg, var(--enamel), var(--enamel-deep)); border-radius: 4px; padding: 22px 18px 18px; position: relative; }
+  .panel-in::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(0,0,0,.08); border-radius: 3px; pointer-events: none; }
+  .rail { display: flex; gap: 6px; justify-content: center; background: linear-gradient(180deg, #b8bbb4, #9fa39b 50%, #b8bbb4); padding: 10px 8px; border-radius: 3px; }
+  .brk { all: unset; box-sizing: border-box; cursor: pointer; width: 52px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .brk:focus-visible { outline: 3px solid var(--live); outline-offset: 3px; border-radius: 4px; }
+  .brk .dymo { font-size: 10.5px; padding: 2px 5px; letter-spacing: .02em; }
+  .brk .case { width: 100%; height: 118px; background: linear-gradient(90deg, #f7f7f4, #e3e4df); border-radius: 4px; border: 1px solid #b9bbb4; position: relative; box-shadow: inset 0 -4px 0 rgba(0,0,0,.05); }
+  .brk .slot { position: absolute; left: 50%; top: 30px; transform: translateX(-50%); width: 24px; height: 56px; background: #2a2e31; border-radius: 4px; }
+  .brk .lever { position: absolute; left: 50%; top: 32px; transform: translateX(-50%); width: 20px; height: 26px; background: var(--breaker); border-radius: 3px; transition: top .18s cubic-bezier(.3,1.6,.6,1); box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
+  .brk .win { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: 18px; height: 12px; border-radius: 2px; background: var(--led); box-shadow: 0 0 8px var(--led); }
+  .brk .amp { position: absolute; bottom: 7px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 10px; color: #5d6266; direction: ltr; }
+  .brk.off .lever { top: 58px; }
+  .brk.off .win { background: var(--live); box-shadow: 0 0 10px var(--live); }
+  .brk.trip .case { animation: tripPulse 1.6s ease-in-out infinite; }
+  @keyframes tripPulse { 50% { box-shadow: 0 0 0 4px rgba(255,90,31,.35); } }
+  .brk.main { width: 70px; }
+  .brk.main .lever { background: var(--live); }
+  .panel-foot { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-top: 16px; }
+  .hint { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .hint::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 4px rgba(255,90,31,.25); flex: none; }
+  .sticker { background: #fff; border: 1px dashed #9a9e98; padding: 6px 10px; font-size: 12.5px; line-height: 1.35; transform: rotate(2deg); color: #3b4044; }
+  .sticker b { display: block; font-size: 11px; color: var(--live); }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head h2 { font-size: clamp(36px, 5vw, 58px); }
+  .jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; border-top: 3px solid var(--graphite); }
+  .job { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; padding: 18px 0; border-bottom: 1px solid #d3d4cf; min-width: 0; }
+  .job:hover h3 { color: var(--live); }
+  .job:focus-visible { outline: 3px solid var(--live); outline-offset: 2px; }
+  .job h3 { font-size: 26px; }
+  .job .dymo { justify-self: start; align-self: center; }
+  .job p { grid-column: 1 / -1; margin: 0; color: #4a4f53; font-size: 16px; }
+
+  .safety { background: var(--live); color: #fff; }
+  .safety .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; padding-block: 30px; }
+  .safety b { font-family: var(--display); font-size: 30px; line-height: 1; }
+  .safety p { margin: 0; font-size: 18px; max-width: 70ch; }
+
+  .owner { background: var(--graphite); color: #eceeec; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner h2 { margin-bottom: 18px; }
+  .owner p { color: #b8bec1; max-width: 46ch; margin: 0 0 14px; }
+  .owner .dymo { background: #000; }
+  .owner .ph-cap { color: #9aa1a5; }
+
+  footer { padding-block: 34px 90px; color: #5d6266; font-size: 15px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--graphite); padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .panel { max-width: 470px; }
+    .jobs { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 520px) {
+    .panel { padding: 10px; }
+    .panel-in { padding: 16px 10px 14px; }
+    .rail { gap: 4px; padding: 8px 5px; }
+    .brk { width: 42px; } .brk.main { width: 50px; }
+    .brk .dymo { font-size: 9px; padding: 2px 3px; }
+    .brk .case { height: 104px; }
+    .safety .wrap { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .panel-foot { flex-direction: column; align-items: stretch; }
+    .sticker { align-self: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) { .brk.trip .case { animation: none; } .brk .lever { transition: none; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">רז שגב <span class="dymo">חשמלאי מוסמך</span></div>
+      <a href="#" data-wa="היי רז, הגעתי מהאתר ויש לי שאלה">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <span class="dymo">קצר · התקנות · לוחות · עמדות טעינה</span>
+        <h1>החשמל קפץ <em>ולא חוזר?</em></h1>
+        <p>מתארים מה קרה בצ׳אט קצר. הפרטים מגיעים אליי לוואטסאפ, ואני חוזר אליכם עם זמן הגעה.</p>
+        <div class="ctas">
+          <button class="btn btn-live" data-open-bot>לתאר את התקלה</button>
+          <a class="btn btn-line" href="#" data-wa="היי רז, אשמח לקבוע חשמלאי">וואטסאפ ישיר</a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-in">
+          <div class="rail" role="group" aria-label="לוח חשמל לדוגמה">
+            <button class="brk main" aria-label="מפסק ראשי"><span class="dymo">ראשי</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">40A</span></span></button>
+            <button class="brk" aria-label="פחת"><span class="dymo">פחת</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">30mA</span></span></button>
+            <button class="brk off trip" id="tripped" aria-label="מפסק המטבח קפץ. להרים אותו"><span class="dymo">מטבח</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+            <button class="brk" aria-label="סלון"><span class="dymo">סלון</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+            <button class="brk" aria-label="דוד"><span class="dymo">דוד</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+            <button class="brk" aria-label="מזגן"><span class="dymo">מזגן</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">20A</span></span></button>
+          </div>
+          <div class="panel-foot">
+            <span class="hint">המפסק של המטבח קפץ. לחצו עליו</span>
+            <span class="sticker"><b>בדיקת לוח</b>רז שגב · רישיון לדוגמה</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="safety">
+  <div class="wrap">
+    <b>קודם כל, בטיחות.</b>
+    <p>יש ריח שרוף או ניצוצות? מורידים את המפסק הראשי, לא נוגעים בלוח רטוב, ורק אז כותבים לנו.</p>
+  </div>
+</div>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>עבודות נפוצות</h2><span class="dymo">מחירים לדוגמה</span></div>
+      <div class="jobs">
+        <button class="job" data-issue="החשמל קפץ"><h3>איתור קצר</h3><span class="dymo">300 עד 600 ₪</span><p>מפסק שקופץ שוב ושוב, או פחת שלא מחזיק.</p></button>
+        <button class="job" data-issue="שקע או מתג לא עובד"><h3>שקע או מתג</h3><span class="dymo">180 עד 350 ₪</span><p>שקע שרוף, מתג שלא מגיב, נקודה שהפסיקה לעבוד.</p></button>
+        <button class="job" data-issue="התקנה חדשה"><h3>נקודה חדשה</h3><span class="dymo">250 עד 400 ₪</span><p>שקע, נקודת תאורה או הכנה למזגן. המחיר לנקודה.</p></button>
+        <button class="job" data-issue="עמדת טעינה לרכב"><h3>עמדת טעינה לרכב</h3><span class="dymo">2,800 עד 4,800 ₪</span><p>כולל בדיקת הלוח והגדלת חיבור, אם צריך.</p></button>
+        <button class="job" data-issue="החלפת לוח חשמל"><h3>החלפת לוח</h3><span class="dymo">2,500 עד 4,500 ₪</span><p>לוח ישן עם נתיכים, או לוח שאין בו מקום למעגל נוסף.</p></button>
+        <button class="job" data-issue="ריח שרוף או ניצוצות"><h3>ריח שרוף</h3><span class="dymo">דחוף</span><p>מורידים את הראשי וכותבים. זו הפנייה הראשונה שמטופלת.</p></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap owner-grid">
+      <div>
+        <span class="dymo">מה החשמלאי מקבל</span>
+        <h2 style="margin-top:14px">פנייה אחת, כל הפרטים.</h2>
+        <p>בלי "תתקשר אליי" ובלי לשאול שוב. התקלה, הדחיפות והישוב כבר בהודעה, ואפשר לתכנן את הסבב.</p>
+        <p>נסו את הצ׳אט למעלה, והטלפון כאן יתעדכן בפנייה שלכם.</p>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="ph-screen">
+            <div class="ph-top"><span class="ph-av">ע</span><div><b>עמית דהן</b><small>מהאתר</small></div></div>
+            <div class="ph-chat">
+              <span class="ph-day">היום</span>
+              <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו חשמלאי)
+תקלה: החשמל קפץ
+דחיפות: עכשיו, אין חשמל במטבח
+ישוב: חדרה
+שם: עמית דהן
+טלפון: 054-3210987<time>19:12</time></div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap">ככה הקריאה מגיעה לחשמלאי</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>רז שגב · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script>
+  const ISSUES = ["החשמל קפץ", "שקע או מתג לא עובד", "ריח שרוף או ניצוצות", "התקנה חדשה", "עמדת טעינה לרכב", "החלפת לוח חשמל"];
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "רז · חשמלאי", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ר", launcher: "תקלת חשמל?",
+    greet: "היי, כאן רז.\nכמה שאלות קצרות, והקריאה תגיע אליי לוואטסאפ.",
+    steps: [
+      { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES },
+      { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.issue}, ב${d.city}.` + (d.issue === "ריח שרוף או ניצוצות" ? "\nעד שאני חוזר: המפסק הראשי למטה, ולא נוגעים בלוח." : "") + "\nלחצו למטה, והקריאה תגיע אליי בוואטסאפ.",
+    summary: (d) => `קריאה מהאתר (דמו חשמלאי)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll(".brk").forEach((b) => b.addEventListener("click", () => {
+    if (b.classList.contains("trip")) {
+      b.classList.remove("off", "trip");
+      document.querySelector(".hint").textContent = "חזר? יופי. קפץ שוב? כתבו לנו.";
+      setTimeout(() => bot.open({ issue: "החשמל קפץ" }), 450);
+    } else b.classList.toggle("off");
+  }));
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+</script>
+</body>
+</html>
