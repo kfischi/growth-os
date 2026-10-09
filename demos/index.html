@@ -31,6 +31,7 @@
   color-scheme: light;
 }
 *, *::before, *::after { box-sizing: border-box; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.6 var(--f-text); overflow-x: clip; -webkit-font-smoothing: antialiased; }
 .page, .band, .bar, .dock { --dim: color-mix(in oklab, var(--fg) 64%, var(--bg)); --line: color-mix(in oklab, var(--fg) 20%, var(--bg)); }
 .page { position: relative; z-index: 1; }
@@ -168,10 +169,6 @@ bdi { white-space: nowrap; }
   background: linear-gradient(to top, var(--bg) 55%, color-mix(in srgb, var(--bg) 0%, transparent)); }
 .dock .btn { width: 100%; }
 
-/* cursor */
-.cursor { position: fixed; top: 0; left: 0; z-index: 40; inline-size: 14px; block-size: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--accent);
-  pointer-events: none; opacity: 0; display: grid; place-items: center; font: 600 3.4px/1 var(--f-text); color: transparent; }
-.cursor.big { color: var(--bg); }
 
 /* without motion: sections carry their own light */
 :root:not(.is-live) #without .verdict, :root:not(.is-live) .contact {
@@ -219,9 +216,7 @@ bdi { white-space: nowrap; }
   .contact h2 { font-size: 30vw; }
   .form { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
   .dock.on { display: block; }
-  .cursor { display: none; }
 }
-@media (hover: none) { .cursor { display: none; } }
 /* AI chat (shared/aibot.js): page colours, and above the phone dock */
 :root { --ab-accent: oklch(47% .09 178); --ab-font: var(--f-text); }
 @media (max-width: 899px) { body .ab-launch { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } body .ab-panel { bottom: calc(176px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 200px)); } }
@@ -231,7 +226,6 @@ bdi { white-space: nowrap; }
 <body>
 <canvas id="field" aria-hidden="true"></canvas>
 <div class="dayline" aria-hidden="true"></div>
-<div class="cursor" aria-hidden="true">דמו</div>
 
 <div class="page" id="top" dir="rtl" lang="he">
   <header class="bar">
@@ -322,21 +316,21 @@ bdi { white-space: nowrap; }
         </div>
         <div class="track-wrap">
           <div class="track">
-            <a class="demo" data-cursor href="plumber/"><b>אינסטלטור</b><small>דמו: אורן מים</small></a>
-            <a class="demo" data-cursor href="movers/"><b>הובלות</b><small>דמו: דרור הובלות</small></a>
-            <a class="demo" data-cursor href="trainer/"><b>מאמנת כושר</b><small>דמו: יעל ברק</small></a>
-            <a class="demo" data-cursor href="ac/"><b>מזגנים</b><small>דמו: אלון קור</small></a>
-            <a class="demo" data-cursor href="electrician/"><b>חשמלאי</b><small>דמו: רז שגב</small></a>
-            <a class="demo" data-cursor href="cleaning/"><b>ניקיון</b><small>דמו: שקד</small></a>
-            <a class="demo" data-cursor href="renovation/"><b>שיפוצים</b><small>דמו: נתן אדלר</small></a>
-            <a class="demo" data-cursor href="locksmith/"><b>מנעולן</b><small>דמו: עידו מפתח</small></a>
-            <a class="demo" data-cursor href="pest/"><b>הדברה</b><small>דמו: שקט</small></a>
-            <a class="demo" data-cursor href="appliance/"><b>מכשירי חשמל</b><small>דמו: רועי שטרן</small></a>
-            <a class="demo" data-cursor href="handyman/"><b>הנדימן</b><small>דמו: דורון</small></a>
-            <a class="demo" data-cursor href="garden/"><b>גינון</b><small>דמו: עומר גנים</small></a>
-            <a class="demo" data-cursor href="tutor/"><b>מורה פרטית</b><small>דמו: נועה שגיא</small></a>
-            <a class="demo" data-cursor href="psychologist/"><b>פסיכולוגית</b><small>דמו: תמר גלעד</small></a>
-            <a class="demo" data-cursor href="social-worker/"><b>עובדת סוציאלית</b><small>דמו: יעל שחר</small></a>
+            <a class="demo" href="plumber/"><b>אינסטלטור</b><small>דמו: אורן מים</small></a>
+            <a class="demo" href="movers/"><b>הובלות</b><small>דמו: דרור הובלות</small></a>
+            <a class="demo" href="trainer/"><b>מאמנת כושר</b><small>דמו: יעל ברק</small></a>
+            <a class="demo" href="ac/"><b>מזגנים</b><small>דמו: אלון קור</small></a>
+            <a class="demo" href="electrician/"><b>חשמלאי</b><small>דמו: רז שגב</small></a>
+            <a class="demo" href="cleaning/"><b>ניקיון</b><small>דמו: שקד</small></a>
+            <a class="demo" href="renovation/"><b>שיפוצים</b><small>דמו: נתן אדלר</small></a>
+            <a class="demo" href="locksmith/"><b>מנעולן</b><small>דמו: עידו מפתח</small></a>
+            <a class="demo" href="pest/"><b>הדברה</b><small>דמו: שקט</small></a>
+            <a class="demo" href="appliance/"><b>מכשירי חשמל</b><small>דמו: רועי שטרן</small></a>
+            <a class="demo" href="handyman/"><b>הנדימן</b><small>דמו: דורון</small></a>
+            <a class="demo" href="garden/"><b>גינון</b><small>דמו: עומר גנים</small></a>
+            <a class="demo" href="tutor/"><b>מורה פרטית</b><small>דמו: נועה שגיא</small></a>
+            <a class="demo" href="psychologist/"><b>פסיכולוגית</b><small>דמו: תמר גלעד</small></a>
+            <a class="demo" href="social-worker/"><b>עובדת סוציאלית</b><small>דמו: יעל שחר</small></a>
           </div>
         </div>
       </div>
@@ -396,7 +390,6 @@ bdi { white-space: nowrap; }
 
 <script src="shared/vendor/gsap.min.js"></script>
 <script src="shared/vendor/ScrollTrigger.min.js"></script>
-<script src="shared/vendor/lenis.min.js"></script>
 <script>
 (() => {
   const root = document.documentElement, $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -440,8 +433,6 @@ bdi { white-space: nowrap; }
   if (live) {
     root.classList.add('is-live');
     gsap.registerPlugin(ScrollTrigger);
-    let lenis = null;
-    if (window.Lenis) { lenis = new Lenis({ autoRaf: false, anchors: true }); lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add((t) => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
 
     const buildScore = () => { const A = ScrollTrigger.getById('without'), B = ScrollTrigger.getById('with'), S = ScrollTrigger.getById('sunset');
       if (!A || !B || !S) return; const at = (st, p) => st.start + (st.end - st.start) * p;
@@ -458,7 +449,7 @@ bdi { white-space: nowrap; }
 
       // act one: the day without
       const A = $('#without'), tA = gsap.timeline({ defaults: { ease: 'power2.out' },
-        scrollTrigger: { id: 'without', trigger: $('.stage', A), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 2.3 : 1.9), invalidateOnRefresh: true } });
+        scrollTrigger: { id: 'without', trigger: $('.stage', A), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 1.4 : 1.5), invalidateOnRefresh: true } });
       $$('.entry', A).forEach((e) => { const p = .66 * (e.dataset.t - 480) / 690;
         tA.from(e, { autoAlpha: 0, y: 26, duration: .05 }, p).from($('.status', e), { autoAlpha: 0, duration: .03 }, p + .045);
         if (e.dataset.state === 'lost') tA.to($$('time, p', e), { opacity: .36, duration: .05 }, p + .06); });
@@ -468,7 +459,7 @@ bdi { white-space: nowrap; }
 
       // act two: the clock runs back, then the same day with the site
       const B = $('#with'), tB = gsap.timeline({ defaults: { ease: 'power2.out' },
-        scrollTrigger: { id: 'with', trigger: $('.stage', B), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 2.7 : 2.2), invalidateOnRefresh: true } });
+        scrollTrigger: { id: 'with', trigger: $('.stage', B), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? 1.6 : 1.7), invalidateOnRefresh: true } });
       tB.to($('.bigclock', B), { autoAlpha: 0, scale: .9, duration: .05 }, .12)
         .from($$('.act-title .ln-i', B), { yPercent: 115, duration: .06, stagger: .02, ease: 'expo.out' }, .185);
       $$('.entry', B).forEach((e) => { const p = .24 + .56 * (e.dataset.t - 480) / 690;
@@ -484,13 +475,13 @@ bdi { white-space: nowrap; }
       // demos: a horizontal scene on wide screens. In RTL the track travels toward positive x.
       reveal($('#t-demos'));
       if (desktop) { const tr = $('.track'), dist = () => Math.max(0, tr.scrollWidth - innerWidth);
-        gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist(), invalidateOnRefresh: true } }); }
+        gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist() * .6, invalidateOnRefresh: true } }); }
 
       reveal($('#t-faces'));
       reveal($('#t-process'));
 
       // dusk interlude: the stage is empty except the clock while the light changes
-      gsap.timeline({ scrollTrigger: { id: 'sunset', trigger: $('.sunset'), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? .95 : .8), invalidateOnRefresh: true } })
+      gsap.timeline({ scrollTrigger: { id: 'sunset', trigger: $('.sunset'), pin: true, scrub: true, start: 'top top', end: () => '+=' + vh() * (desktop ? .5 : .6), invalidateOnRefresh: true } })
         .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: .12, ease: 'expo.out' }, .84).set({}, {}, 1);
       reveal($('#t-contact'));
 
@@ -499,10 +490,6 @@ bdi { white-space: nowrap; }
         $$('[data-magnetic]').forEach((el) => { const x = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3' }), y = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
           el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); x((e.clientX - r.left - r.width / 2) * .3); y((e.clientY - r.top - r.height / 2) * .3); });
           el.addEventListener('pointerleave', () => { x(0); y(0); }); });
-        const cur = $('.cursor'), cx = gsap.quickTo(cur, 'x', { duration: .35, ease: 'power3' }), cy = gsap.quickTo(cur, 'y', { duration: .35, ease: 'power3' });
-        addEventListener('pointermove', (e) => { cx(e.clientX); cy(e.clientY); gsap.to(cur, { opacity: 1, duration: .3, overwrite: 'auto' }); }, { passive: true });
-        $$('[data-cursor]').forEach((a) => { a.addEventListener('pointerenter', () => { cur.classList.add('big'); gsap.to(cur, { scale: 5.2, duration: .35, ease: 'power3' }); });
-          a.addEventListener('pointerleave', () => { cur.classList.remove('big'); gsap.to(cur, { scale: 1, duration: .35, ease: 'power3' }); }); });
       }
     });
 
