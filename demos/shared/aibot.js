@@ -3,7 +3,10 @@
      [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]
    If the function is missing, not configured or fails, it answers from a small scripted engine instead, so the page never breaks.
    Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat", pricingHref: "#plans", base: "" })
-   pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down. */
+   pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down.
+   On a paying business's site (netlify/functions/client-chat.mjs) also pass:
+     endpoint: "https://service-pro-web.netlify.app/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
+     placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"). */
 (function () {
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
@@ -87,7 +90,7 @@
       launch.append(el("span", "ab-spark", "AI"), el("span", "ab-label", cfg.launcher || "שאלו את הנציג החכם"));
       const panel = el("section", "ab-panel"); panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "נציג חכם");
       const head = el("div", "ab-head");
-      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של כפיר"), el("small", null, "עונה בעברית, על כל שאלה"));
+      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של כפיר"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
       const mode = el("span", "ab-mode", "AI");
       const x = el("button", "ab-x", "×"); x.type = "button"; x.setAttribute("aria-label", "סגירה");
       head.append(meta, mode, x);
@@ -95,15 +98,15 @@
       const typing = el("div", "ab-typing"); typing.append(el("i"), el("i"), el("i")); body.appendChild(typing);
       const chips = el("div", "ab-chips");
       const form = el("form", "ab-form");
-      const input = el("input"); input.placeholder = "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); input.maxLength = 600; input.autocomplete = "off";
+      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); input.maxLength = 600; input.autocomplete = "off";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
-      const note = el("div", "ab-note", "זה נציג AI. הוא יכול לטעות, וכפיר עונה על כל השאר בוואטסאפ.");
+      const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, וכפיר עונה על כל השאר בוואטסאפ.");
       panel.append(head, body, chips, form, note);
       document.body.append(launch, panel);
 
       const history = []; let busy = false, started = false, offline = false;
-      ["כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "איך זה עובד?", "אני רוצה לדבר עם כפיר"].forEach((q) => {
+      (cfg.chips || ["כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "איך זה עובד?", "אני רוצה לדבר עם כפיר"]).forEach((q) => {
         const b = el("button", null, q); b.type = "button"; b.addEventListener("click", () => ask(q)); chips.appendChild(b);
       });
 
@@ -117,7 +120,7 @@
           let a;
           if (kind === "demo" && DEMOS[arg]) { a = el("a", null, "לדמו: " + DEMOS[arg]); a.href = (cfg.base || "") + arg + "/"; }
           else if (kind === "pricing") { a = el("a", null, "למחירון"); a.href = cfg.pricingHref || "#pricing"; a.addEventListener("click", close); }
-          else if (kind === "whatsapp") { a = el("a", "wa", "לשלוח לכפיר בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
+          else if (kind === "whatsapp") { a = el("a", "wa", cfg.waLabel || "לשלוח לכפיר בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
           if (a) row.appendChild(a);
         });
         if (row.children.length) { body.insertBefore(row, typing); body.scrollTop = body.scrollHeight; }
@@ -134,13 +137,13 @@
         if (!offline) {
           try {
             const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 30000);
-            const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: history.slice(-19) }), signal: ctrl.signal });
+            const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: history.slice(-19), page: location.href, referrer: document.referrer, source: new URLSearchParams(location.search).get("utm_source") || "", campaign: new URLSearchParams(location.search).get("utm_campaign") || "" }), signal: ctrl.signal });
             clearTimeout(timer);
             if (r.ok) reply = (await r.json()).reply;
             else if (r.status === 404 || r.status === 503 || r.status === 405) goOffline();
           } catch (e) { goOffline(); }
         }
-        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = scripted(text, history); }
+        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + " [[whatsapp:" + text + "]]" : scripted(text, history); }
         typing.classList.remove("on");
         history.push({ role: "assistant", content: reply });
         render(reply);

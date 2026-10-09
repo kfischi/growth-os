@@ -1,0 +1,219 @@
+# מערכת הלידים: מה קורה מאחורי הקלעים
+
+מה המערכת עושה עם כל פנייה מאתר של לקוח בחבילת נציג AI:
+
+1. **שומרת** את הפנייה בטבלה, עם המקור שלה (גוגל, פייסבוק, קבוצה בוואטסאפ).
+2. **עונה ללקוח** בוואטסאפ, מהמספר של העסק, תוך שניות.
+3. **מתריעה לבעל העסק** בוואטסאפ, עם כל הפרטים וכפתור "טיפלתי".
+4. **מזכירה** לבעל העסק אחרי שעה (ברירת מחדל) אם עוד לא לחץ "טיפלתי". רק בשעות העבודה, ורק פעם אחת.
+5. **מציגה הכול בלוח פניות** (`/panel/`). בעל העסק מתקשר, מסמן סטטוס, כותב הערה ומוריד לאקסל.
+6. **שולחת סיכום חודשי** ב-1 לחודש: כמה פניות, כמה טופלו ומאיפה הגיעו.
+7. **הצ׳אט באתר** (נציג AI) מכיר את העסק, עונה על שאלות, ומכניס פנייה לאותה מערכת ברגע שהגולש משאיר שם וטלפון.
+
+אם משהו נופל (אין חיבור, השרת לא עונה), הדף פותח וואטסאפ כמו היום. פנייה לא הולכת לאיבוד.
+
+---
+
+## איך זה בנוי
+
+| חלק | איפה | מה הוא עושה |
+| --- | --- | --- |
+| קליטת פנייה | `demos/netlify/functions/lead.mjs` · `POST /api/lead/<slug>` | שומר, עונה ללקוח, מתריע לבעל העסק |
+| וובהוק וואטסאפ | `wa-webhook.mjs` · `/api/wa-webhook` | סטטוס מסירה, לחיצה על "טיפלתי", הודעות חוזרות מלקוחות |
+| תזכורות | `reminders.mjs` · כל רבע שעה | תזכורת אחת לבעל העסק על פנייה שלא טופלה |
+| דוח חודשי | `monthly-report.mjs` · ב-1 לחודש | סיכום בוואטסאפ ושמירה בטבלה `ls_reports` |
+| לוח פניות | `demos/panel/` + `leads-api.mjs` · `/api/leads` | הלוח של בעל העסק, ושל כפיר עם מפתח מנהל |
+| צ׳אט ללקוח | `client-chat.mjs` · `POST /api/chat/<slug>` | נציג AI עם הידע של העסק, מכניס לידים |
+| קוד משותף | `demos/netlify/lib/leads.mjs` | בסיס נתונים, וואטסאפ, תזכורות, דוח |
+| טבלאות | `supabase/lead-system/0001_lead_system.sql` | `ls_clients`, `ls_leads`, `ls_messages`, `ls_reports` |
+| טופס בדף | `demos/shared/leadform.js` | שולח את הפנייה, ומחזיר תשובה שאפשר ליפול ממנה לוואטסאפ |
+
+הכול רץ על אתר ה-Netlify הקיים (service-pro-web). אתר של לקוח, בדומיין שלו, שולח את הפניות לכתובת הזאת. אין שרת נוסף ואין n8n.
+
+**חשוב:** זה לא Growth OS ולא Multibrawn. פרויקט Supabase נפרד, טבלאות עם קידומת `ls_`.
+
+---
+
+## הקמה ראשונה (פעם אחת, בערך שעה)
+
+### 1. Supabase
+
+1. פותחים פרויקט חדש ב-supabase.com בשם `lead-system`. אזור: Frankfurt (הכי קרוב).
+2. SQL Editor → מדביקים את כל `supabase/lead-system/0001_lead_system.sql` → Run.
+3. Project Settings → API Keys: מעתיקים את ה-Project URL ואת ה-**secret key** (`sb_secret_...`).
+
+ה-secret key פותח את כל הטבלאות. הוא נכנס רק ל-Netlify. לא לצ׳אט, לא למייל ולא לריפו.
+
+### 2. משתני סביבה ב-Netlify
+
+Site configuration → Environment variables:
+
+| משתנה | ערך |
+| --- | --- |
+| `SUPABASE_URL` | ה-Project URL |
+| `SUPABASE_SERVICE_KEY` | ה-secret key |
+| `LEADS_ADMIN_KEY` | מחרוזת אקראית ארוכה (לפחות 16 תווים). המפתח של כפיר ללוח |
+| `WA_VERIFY_TOKEN` | מחרוזת אקראית. מקלידים אותה שוב ב-Meta |
+| `WA_APP_SECRET` | App secret של אפליקציית Meta (שלב 3) |
+| `WA_TOKEN_<SLUG>` | טוקן הגישה של כל עסק (שלב 4). למשל `WA_TOKEN_OREN_MAYIM` |
+| `ANTHROPIC_API_KEY` | כבר נדרש לצ׳אט בדף הבית |
+
+מחרוזת אקראית: `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`.
+
+אחרי שמוסיפים משתנים: Deploys → Trigger deploy.
+
+### 3. אפליקציית Meta (פעם אחת)
+
+1. developers.facebook.com → Create app → Business → מוסיפים את המוצר WhatsApp.
+2. App settings → Basic: מעתיקים את ה-App secret ל-`WA_APP_SECRET`.
+3. WhatsApp → Configuration → Webhook:
+   - Callback URL: `https://service-pro-web.netlify.app/api/wa-webhook`
+   - Verify token: הערך של `WA_VERIFY_TOKEN`
+   - Webhook fields: מסמנים `messages`.
+
+---
+
+## לקוח חדש בחבילת נציג AI
+
+### 1. שורה במערכת ומפתח ללוח
+
+```bash
+node scripts/lead-system/new-client.mjs oren-mayim "אורן מים" 052-1234567 https://www.oren.co.il https://oren.co.il
+```
+
+- הסקריפט מדפיס SQL. מדביקים ב-SQL Editor של Supabase.
+- הוא מדפיס גם קישור ללוח עם המפתח. זה הסיסמה: שולחים לבעל העסק בפרטי, פעם אחת.
+- הטלפון הוא הנייד **האישי** של בעל העסק, שאליו מגיעות ההתראות. לא המספר של העסק.
+- כתובות האתר: בדיוק כמו בדפדפן, עם `https://`, בלי `/` בסוף. עם www ובלי www, אם שתיהן פתוחות.
+- מפתח שאבד: מריצים שוב עם `--rekey`.
+
+### 2. מספר הוואטסאפ של העסק
+
+הלקוח הוא הבעלים: חשבון Meta Business על שמו, והמספר רשום שם. כפיר מקבל גישה.
+
+1. ב-Meta Business של הלקוח: WhatsApp Accounts → מוסיפים את המספר, מאמתים ב-SMS ומאשרים שם תצוגה.
+2. נותנים לאפליקציה של כפיר גישה לחשבון ה-WhatsApp, ויוצרים System user עם טוקן קבוע (הרשאות `whatsapp_business_messaging` ו-`whatsapp_business_management`).
+3. הטוקן נכנס ל-Netlify כ-`WA_TOKEN_<SLUG>`. ה-Phone number ID נכנס לטבלה:
+   ```sql
+   update public.ls_clients set wa_phone_number_id = '1234567890' where slug = 'oren-mayim';
+   ```
+4. Meta גובה תשלום על הודעות תבנית. לבדוק את המחירון העדכני של Meta לישראל, ולוודא שאמצעי התשלום בחשבון הוא של הלקוח.
+
+מספר שכבר עובד באפליקציית WhatsApp Business: Meta מאפשרת היום לחבר אותו ל-Cloud API ולהמשיך לענות מהאפליקציה (Coexistence). זה עובר דרך תהליך הרשמה של ספק מורשה. לבדוק בלקוח הראשון אם זה זמין לנו. אם לא, משתמשים במספר נפרד לעסק.
+
+### 3. ארבע תבניות לאישור ב-Meta
+
+WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. שפה: **Hebrew** (`he`). השמות בדיוק כמו כאן:
+
+**`lead_ack`** (ללקוח שפנה). שם העסק וזמן החזרה נכתבים בתבנית עצמה, ומשתנים מעסק לעסק:
+```
+היי {{1}}, כאן אורן מים. קיבלנו את הפנייה שלכם בנושא {{2}}, ונחזור אליכם עד שעתיים בשעות העבודה. אם יש עוד פרטים או תמונה, אפשר לשלוח כאן.
+```
+דוגמאות למשתנים: `דנה`, `נזילה במטבח`.
+
+**`owner_new_lead`** (לבעל העסק). כפתור Quick reply אחד: `טיפלתי`.
+```
+פנייה חדשה מהאתר. שם: {{1}}. טלפון: {{2}}. נושא: {{3}}. פרטים: {{4}}. מקור: {{5}}. כשחזרתם ללקוח, לחצו על הכפתור.
+```
+
+**`owner_reminder`** (לבעל העסק). כפתור Quick reply אחד: `טיפלתי`.
+```
+תזכורת: הפנייה של {{1}} ({{2}}) מחכה כבר {{3}} ועוד לא סומנה כטופלה. נושא: {{4}}. כשחזרתם ללקוח, לחצו על הכפתור.
+```
+
+**`monthly_report`** (לבעל העסק).
+```
+הסיכום של {{1}} מוכן. הגיעו {{2}} פניות, ו-{{3}} מהן סומנו כטופלו. רוב הפניות הגיעו דרך: {{4}}. כל הפרטים בלוח הפניות שלכם.
+```
+
+אישור לוקח בדרך כלל דקות עד יום. עד שהתבניות מאושרות, הפניות נשמרות בטבלה ובלוח, וההודעות מסומנות `failed`.
+
+### 4. הדף של הלקוח
+
+הטופס (`clients/<slug>/index.html`):
+
+```html
+<script src="https://service-pro-web.netlify.app/shared/leadform.js"></script>
+<script>
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const r = await LeadForm.send("https://service-pro-web.netlify.app/api/lead/oren-mayim",
+      { name, phone, service, message });
+    if (r.ok) showThanks();                       // "תודה, דנה! הודעת אישור בדרך אליכם בוואטסאפ."
+    else location.href = "https://wa.me/9725XXXXXXXX?text=" + encodeURIComponent(summary); // נפילה לוואטסאפ
+  });
+</script>
+```
+
+שדה מוסתר `company` (honeypot) עוצר בוטים: מוסיפים `<input name="company" tabindex="-1" autocomplete="off" hidden>` ושולחים את הערך שלו.
+
+הצ׳אט המתוסרט (`leadbot.js`) שולח באותו אופן, דרך `onDone`.
+
+הצ׳אט החכם (`aibot.js`):
+
+```html
+<script src="https://service-pro-web.netlify.app/shared/aibot.js"></script>
+<script>
+  AiBot.init({
+    endpoint: "https://service-pro-web.netlify.app/api/chat/oren-mayim",
+    whatsapp: "9725XXXXXXXX", name: "אורן מים", subtitle: "עונים על כל שאלה",
+    greet: "היי, כאן העוזר של אורן מים. אפשר לשאול על מחירים, אזורי שירות וזמני הגעה.",
+    chips: ["כמה עולה ביקור?", "אתם מגיעים לחדרה?", "יש לי נזילה דחופה"],
+    note: "זה עוזר AI. הוא יכול לטעות, ואורן עונה על כל השאר.",
+    placeholder: "כתבו שאלה", waLabel: "לשלוח לנו בוואטסאפ",
+    offline: "כרגע אני לא זמין. אפשר לשלוח לנו את השאלה בוואטסאפ.",
+  });
+</script>
+```
+
+מה הצ׳אט יודע על העסק נכתב בעמודה `chat_facts`, בעברית פשוטה: שירותים, אזורים, מחירים שהעסק מוכן לפרסם, שעות, מה לא עושים. הצ׳אט לא ממציא מחירים שלא כתובים שם.
+
+```sql
+update public.ls_clients set chat_facts = 'אינסטלטור בחדרה, פרדס חנה וכרכור. ביקור ואבחון: 250 ₪...' where slug = 'oren-mayim';
+```
+
+### 5. בדיקה לפני עלייה לאוויר
+
+- [ ] פנייה מהטופס מגיעה ללוח (`/panel/`), להודעה ללקוח ולהתראה לבעל העסק.
+- [ ] לחיצה על "טיפלתי" בוואטסאפ מסמנת את הפנייה בלוח.
+- [ ] תזכורת: משאירים פנייה בלי לסמן, ומריצים ידנית:
+  ```bash
+  curl -X POST https://service-pro-web.netlify.app/api/leads \
+    -H "authorization: Bearer admin:$LEADS_ADMIN_KEY" -d '{"run":"reminders"}'
+  ```
+  (התזכורת יוצאת רק אחרי `remind_after_min` דקות ובשעות העבודה.)
+- [ ] דוח לחודש הנוכחי בלי לשלוח: `-d '{"run":"report","client":"oren-mayim","month":"2026-10","send":false}'`.
+- [ ] הצ׳אט עונה מתוך `chat_facts` ומכניס פנייה כשמשאירים שם וטלפון.
+- [ ] מוחקים את פניות הבדיקה: `delete from ls_leads where client_slug = 'oren-mayim';`
+
+---
+
+## התאמות לכל עסק (עמודות ב-`ls_clients`)
+
+| עמודה | ברירת מחדל | מה משנים |
+| --- | --- | --- |
+| `remind_after_min` | 60 | אחרי כמה דקות תזכורת |
+| `work_start`, `work_end` | 8, 20 | שעות התזכורות, שעון ישראל |
+| `work_days` | `{0,1,2,3,4,5}` | ימים (0 ראשון, 6 שבת) |
+| `auto_reply`, `owner_alerts`, `reminders`, `monthly_report` | true | כיבוי של חלק מסוים |
+| `active` | true | **false כשהתשלום החודשי נעצר.** הדף ממשיך לעבוד ופותח וואטסאפ, והמערכת מפסיקה |
+
+## האתר של כפיר
+
+הטופס בדף הבית שולח גם לטבלה, תחת `kfir`, ועדיין פותח וואטסאפ כמו קודם. כדי להפעיל:
+
+```bash
+node scripts/lead-system/new-client.mjs kfir "נחיתה רכה" 052-6359513 https://service-pro-web.netlify.app
+```
+
+הדף נשלח מאותו אתר, אז אין צורך ב-allowed_origins. ההתראות לא יכולות להגיע למספר שמחובר ל-Cloud API עצמו: אם 052-6359513 הוא המספר של המערכת, מכניסים לבעל העסק מספר אחר. כדי שלא תצא הודעה אוטומטית לבעל עסק שכבר כתב לכפיר בוואטסאפ: `update ls_clients set auto_reply = false where slug = 'kfir';`. ההתראות והתזכורות נשארות.
+
+## פרטיות ואבטחה
+
+- הטבלאות סגורות (RLS בלי מדיניות). רק הפונקציות ב-Netlify, עם ה-secret key, ניגשות אליהן.
+- בעל עסק רואה רק את הפניות שלו. המפתח שלו נשמר בטבלה כ-hash בלבד.
+- הוובהוק מאמת חתימה של Meta. פנייה בלי חתימה נכונה נדחית.
+- קליטת פנייה מוגבלת לאתרים של העסק (`allowed_origins`) ולמספר בקשות לכתובת IP.
+- ההודעה ללקוח היא תשובה לפנייה שלו, לא פרסום. לא שולחים מהמערכת הודעות שיווק (חוק הספאם).
+- פסיכולוגית ועובדת סוציאלית: אוספים רק שם, טלפון ונושא כללי. לא פרטים רגישים בשדה החופשי.
+- פנייה שהלקוח מבקש למחוק: `delete from ls_leads where id = '...';`.

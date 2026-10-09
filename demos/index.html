@@ -531,9 +531,12 @@ img, svg { display: block; }
     if (bad > -1) { msg.textContent = ['חסר שם.', 'חסר מספר טלפון תקין.', 'חסר תחום העסק.'][bad]; inputs[bad].focus(); return; }
     const text = `היי כפיר, הגעתי מהאתר ואשמח לשיחת היכרות של 5 דקות.\nשם: ${inputs[0].value.trim()}\nטלפון: ${inputs[1].value.trim()}\nתחום העסק: ${inputs[2].value.trim()}`;
     msg.textContent = 'פותחים וואטסאפ עם הפרטים. לחצו שם על שליחה.';
-    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(text), '_blank', 'noopener'); });
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+    /* the same details also go to כפיר's own lead table, so a follow-up reminder comes if nobody answered */
+    if (window.LeadForm) LeadForm.send('/api/lead/kfir', { name: inputs[0].value.trim(), phone: inputs[1].value.trim(), service: 'שיחת היכרות', message: 'תחום העסק: ' + inputs[2].value.trim() }); });
 })();
 </script>
+<script src="shared/leadform.js"></script>
 <script src="shared/aibot.js"></script>
 <script>AiBot.init({ whatsapp: "972526359513", pricingHref: "#plans" });</script>
 </body>
