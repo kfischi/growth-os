@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>יעל ברק · אימון אישי</title>
+<meta name="description" content="אימון אישי בחדרה, בבית או אונליין. שאלון קצר בצ׳אט, ואימון היכרות נקבע בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Object: the chalkboard on the studio wall with the day's workout written on it.
+     Detail: sets, reps, rest in seconds, session length, the clock above the board.
+     Bold move: the whole hero is the board, with giant condensed chalk type. */
+  :root {
+    --board: #24352f;          /* slate-green chalkboard */
+    --board-deep: #1b2925;
+    --chalk: #f1efe8;          /* white chalk */
+    --chalk-dim: #a9b5ae;
+    --chalk-coral: #ff8a78;    /* coloured chalk for marks */
+    --chalk-sky: #9fd3e6;
+    --wall: #eef0ec;           /* studio wall */
+    --rubber: #1d2421;         /* floor mats, body text */
+    --display: "Karantina", "Rubik", sans-serif;
+    --body: "Rubik", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --bot-bg: #fbfbf8; --bot-fg: var(--rubber); --bot-line: #d6ddd8; --bot-muted: #5d6b64;
+    --bot-accent: var(--board); --bot-accent-fg: var(--chalk); --bot-them: #e8eee9; --bot-me: var(--board); --bot-me-fg: var(--chalk);
+    --bot-font: var(--body); --bot-radius: 10px; --bot-radius-msg: 10px; --bot-radius-pill: 6px; --bot-radius-input: 6px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--wall); color: var(--rubber); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--chalk-coral); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .92; margin: 0; letter-spacing: .01em; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 6px; }
+  .btn-chalk { background: var(--chalk); color: var(--board-deep); }
+  .btn-chalk:hover { background: #fff; }
+  .btn-line { border: 2px solid var(--chalk-dim); color: var(--chalk); background: transparent; }
+  .btn-board { background: var(--board); color: var(--chalk); }
+  .btn-board:hover { background: var(--board-deep); }
+
+  .demo { background: var(--rubber); color: #c5cfc9; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- The board ---------- */
+  .hero { background: var(--board); color: var(--chalk); position: relative; overflow: hidden;
+    background-image: radial-gradient(60% 50% at 25% 35%, rgba(255,255,255,.06), transparent 70%), radial-gradient(40% 40% at 80% 80%, rgba(255,255,255,.04), transparent 70%);
+    border-bottom: 14px solid #6f5a45; }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+    background-image: repeating-linear-gradient(-28deg, transparent 0 22px, rgba(255,255,255,.025) 22px 60px); }
+  .bar { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: 18px; z-index: 1; }
+  .logo { font-family: var(--display); font-size: 40px; line-height: 1; }
+  .logo span { color: var(--chalk-coral); }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--chalk-coral); }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 56px; align-items: center; padding-block: 28px 72px; }
+  .kicker { color: var(--chalk-dim); }
+  .hero h1 { font-size: clamp(76px, 11vw, 150px); margin: 8px 0 18px; }
+  .hero h1 u { text-decoration: none; background: linear-gradient(transparent 80%, var(--chalk-coral) 80% 88%, transparent 88%); }
+  .hero p { font-size: 19px; max-width: 34ch; margin: 0 0 28px; color: #d9ded9; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .wod { border: 2px dashed rgba(241,239,232,.35); border-radius: 4px; padding: 22px 24px 18px; transform: rotate(-1deg); }
+  .wod-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 2px solid rgba(241,239,232,.5); padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .wod-top h2 { font-size: 46px; }
+  .wod-top .mono { color: var(--chalk-sky); }
+  .wod ol { list-style: none; margin: 0; padding: 0; }
+  .wod li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(241,239,232,.12); }
+  .wod li b { font-weight: 500; }
+  .wod li .mono { color: var(--chalk-dim); align-self: center; }
+  .wod .total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; }
+  .wod .total b { font-family: var(--display); font-size: 64px; line-height: 1; color: var(--chalk-coral); }
+  .wod .total span { color: var(--chalk-dim); font-size: 14px; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(54px, 7vw, 84px); }
+  .head .mono { color: #5d6b64; }
+
+  .goals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--rubber); }
+  .goals button { all: unset; cursor: pointer; padding: 20px 18px 24px 0; border-inline-start: 1px solid #c9d1cc; min-width: 0; }
+  .goals button:first-child { border-inline-start: 0; }
+  .goals button + button { padding-inline-start: 18px; }
+  .goals button:hover h3, .goals button:focus-visible h3 { color: var(--board); text-decoration: underline; text-decoration-color: var(--chalk-coral); text-decoration-thickness: 3px; text-underline-offset: 6px; }
+  .goals button:focus-visible { outline: 3px solid var(--chalk-coral); outline-offset: -3px; }
+  .goals h3 { font-size: 40px; margin: 6px 0 8px; }
+  .goals p { margin: 0; font-size: 15px; color: #45524c; }
+  .goals .mono { color: #5d6b64; }
+
+  .plans-wrap { background: #e3e8e4; }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .plan { background: #fbfbf8; border-top: 6px solid var(--board); padding: 22px; display: flex; flex-direction: column; }
+  .plan.main { border-top-color: var(--chalk-coral); }
+  .plan h3 { font-size: 40px; }
+  .plan .price { font-family: var(--display); font-size: 58px; line-height: 1; margin: 14px 0 2px; }
+  .plan .per { color: #5d6b64; font-size: 14px; margin-bottom: 14px; }
+  .plan ul { margin: 0 0 20px; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 15px; }
+  .plan li::before { content: "— "; color: var(--chalk-coral); font-weight: 700; }
+  .plan .btn { margin-top: auto; }
+  .fine { font-size: 13px; color: #5d6b64; margin-top: 12px; }
+
+  .where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 3px solid var(--rubber); }
+  .where div { padding: 22px; min-width: 0; }
+  .where div + div { border-inline-start: 3px solid var(--rubber); }
+  .where h3 { font-size: 40px; margin-bottom: 6px; }
+  .where p { margin: 0; font-size: 15px; color: #45524c; }
+
+  footer { padding-block: 34px 90px; color: #5d6b64; font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--rubber); padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+    .wod { max-width: 460px; }
+    .goals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .goals button:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .goals button:nth-child(n+3) { border-top: 1px solid #c9d1cc; }
+    .plans, .where { grid-template-columns: minmax(0, 1fr); }
+    .where div + div { border-inline-start: 0; border-top: 3px solid var(--rubber); }
+  }
+  @media (max-width: 420px) {
+    .goals { grid-template-columns: minmax(0, 1fr); }
+    .goals button:nth-child(n) { border-inline-start: 0; padding-inline-start: 0; border-top: 1px solid #c9d1cc; }
+    .goals button:first-child { border-top: 0; }
+    .wod { padding: 18px 16px 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">יעל ברק<span>.</span></div>
+      <a href="#" data-wa="היי יעל, הגעתי מהאתר ואשמח לשמוע על אימון אישי">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <div class="mono kicker">אימון אישי · סטודיו בחדרה, בבית או אונליין</div>
+        <h1>הפעם זה <u>נשאר</u>.</h1>
+        <p>ארבע שאלות קצרות בצ׳אט, ואני חוזרת אליכם לקבוע אימון היכרות. בלי מנוי שנתי ובלי התחייבות.</p>
+        <div class="ctas">
+          <button class="btn btn-chalk" data-open-bot>לקבוע אימון היכרות</button>
+          <a class="btn btn-line" href="#" data-wa="היי יעל, יש לי שאלה לפני שמתחילים">לשאול בוואטסאפ</a>
+        </div>
+      </div>
+      <div class="wod" aria-label="דוגמה לאימון">
+        <div class="wod-top"><h2>האימון של היום</h2><span class="mono">יום ג׳ · 07:00</span></div>
+        <ol>
+          <li><b>חימום ותנועתיות</b><span class="mono">10 דקות</span></li>
+          <li><b>סקוואט עם משקולת</b><span class="mono">4 סטים של 8</span></li>
+          <li><b>חתירה בכבל</b><span class="mono">3 סטים של 10</span></li>
+          <li><b>סבב מטבולי</b><span class="mono">12 דקות</span></li>
+          <li><b>מנוחה בין סטים</b><span class="mono">60 שניות</span></li>
+          <li><b>שחרור ומתיחות</b><span class="mono">8 דקות</span></li>
+        </ol>
+        <div class="total"><span>כל אימון בנוי לפי המטרה שלכם</span><b>55 דקות</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>על מה עובדים?</h2><span class="mono">בוחרים מטרה, והצ׳אט נפתח</span></div>
+      <div class="goals">
+        <button data-goal="ירידה במשקל"><span class="mono">מטרה א׳</span><h3>ירידה במשקל</h3><p>אימוני כוח וסבולת, עם מעקב שבועי פשוט.</p></button>
+        <button data-goal="כוח ושרירים"><span class="mono">מטרה ב׳</span><h3>כוח ושרירים</h3><p>תוכנית מדורגת, עם טכניקה נכונה מהאימון הראשון.</p></button>
+        <button data-goal="חזרה לכושר אחרי הפסקה"><span class="mono">מטרה ג׳</span><h3>חזרה לכושר</h3><p>אחרי לידה, הפסקה ארוכה או תקופה עמוסה. מתחילים בקטן.</p></button>
+        <button data-goal="כושר כללי ובריאות"><span class="mono">מטרה ד׳</span><h3>כושר כללי</h3><p>להרגיש חזקים ביום יום, בכל גיל.</p></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="plans-wrap">
+    <div class="wrap">
+      <div class="head"><h2>מסלולים</h2><span class="mono">מחירים לדוגמה</span></div>
+      <div class="plans">
+        <div class="plan">
+          <span class="mono">מסלול 1</span><h3>אימון בודד</h3>
+          <div class="price">220 ₪</div><div class="per">לאימון של 55 דקות</div>
+          <ul><li>בסטודיו או בבית</li><li>בלי התחייבות</li></ul>
+          <button class="btn btn-board" data-open-bot>לקבוע אימון</button>
+        </div>
+        <div class="plan main">
+          <span class="mono">מסלול 2 · הכי נבחר</span><h3>כרטיסייה של 10</h3>
+          <div class="price">1,900 ₪</div><div class="per">190 ₪ לאימון</div>
+          <ul><li>תוכנית אישית ומעקב</li><li>תוקף של ארבעה חודשים</li><li>תוכנית לימים שבלי אימון</li></ul>
+          <button class="btn btn-board" data-open-bot>להתחיל באימון היכרות</button>
+        </div>
+        <div class="plan">
+          <span class="mono">מסלול 3</span><h3>אימון זוגי</h3>
+          <div class="price">150 ₪</div><div class="per">לאדם, לאימון</div>
+          <ul><li>עם בן או בת זוג, או חבר</li><li>אותה תוכנית, שני קצבים</li></ul>
+          <button class="btn btn-board" data-open-bot>לקבוע אימון</button>
+        </div>
+      </div>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו המסלולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>איפה מתאמנים</h2><span class="mono">חדרה, פרדס חנה, אור עקיבא</span></div>
+      <div class="where">
+        <div><h3>בסטודיו</h3><p>סטודיו פרטי בחדרה, עם חניה. רק אתם והמאמנת.</p></div>
+        <div><h3>אצלכם בבית</h3><p>מגיעה עם הציוד. צריך רק מקום של שני מטר על שני מטר.</p></div>
+        <div><h3>אונליין</h3><p>אימון בזום, עם תוכנית מותאמת למה שיש לכם בבית.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>יעל ברק · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script>
+  const PLACE = { "בסטודיו בחדרה": "בסטודיו בחדרה", "אצלי בבית": "אצלכם בבית", "אונליין": "בזום" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "יעל · אימון אישי", subtitle: "אימון היכרות בתיאום", initial: "י", launcher: "אימון היכרות",
+    greet: "היי, כאן יעל.\nארבע שאלות קצרות, ואחר כך הפרטים מגיעים אליי לוואטסאפ ונקבע אימון היכרות.",
+    steps: [
+      { key: "goal", label: "מטרה", ask: "על מה תרצו לעבוד?", chips: ["ירידה במשקל", "כוח ושרירים", "חזרה לכושר אחרי הפסקה", "כושר כללי ובריאות"] },
+      { key: "level", label: "ניסיון", ask: "איפה אתם היום?", chips: ["לא התאמנתי אף פעם", "התאמנתי בעבר", "מתאמן או מתאמנת עכשיו"] },
+      { key: "place", label: "מקום", ask: "איפה נוח לכם להתאמן?", chips: ["בסטודיו בחדרה", "אצלי בבית", "אונליין"] },
+      { key: "time", label: "שעות", ask: "באילו שעות?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! אימון היכרות של 45 דקות ${PLACE[d.place]}, בשעות ה${d.time}. מדברים על המטרה, בודקים טכניקה ובונים תוכנית ראשונה.\nלחצו למטה, ונקבע מועד בוואטסאפ.`,
+    summary: (d) => `פנייה לאימון אישי מהאתר (דמו)\nמטרה: ${d.goal}\nניסיון: ${d.level}\nמקום: ${d.place}\nשעות: ${d.time}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
+  });
+  document.querySelectorAll("[data-goal]").forEach((b) => b.addEventListener("click", () => bot.open({ goal: b.dataset.goal })));
+</script>
+</body>
+</html>

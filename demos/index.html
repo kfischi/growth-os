@@ -58,6 +58,18 @@
     .hero p { font-size: 19px; color: var(--ink-soft); max-width: 40ch; margin: 0 auto 30px; }
     .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
+    .niches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 26px; }
+    .niche { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: inherit; }
+    .niche:hover { border-color: var(--brand); }
+    .niche .sw { height: 120px; display: flex; align-items: flex-end; padding: 14px 18px; color: #fff; font-size: 26px; font-weight: 800; }
+    .niche .sw.plumber { background: #123a8c; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 22px 22px; }
+    .niche .sw.movers { background: #c69c6d; color: #181512; background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.04) 0 2px, transparent 2px 9px); }
+    .niche .sw.trainer { background: #24352f; color: #f1efe8; }
+    .niche .tx { padding: 16px 18px 20px; min-width: 0; }
+    .niche .tx b { display: block; font-size: 17px; margin-bottom: 4px; }
+    .niche .tx span { color: var(--ink-soft); font-size: 15px; }
+    .niche .go { margin-top: auto; padding: 0 18px 18px; color: var(--brand); font-weight: 700; }
+    @media (max-width: 860px) { .niches { grid-template-columns: minmax(0, 1fr); } }
     section.block { padding: 72px 0; }
     section.alt { background: var(--surface); border-block: 1px solid var(--line); }
     h2 { font-size: clamp(26px, 3.6vw, 36px); margin: 0 0 8px; font-weight: 800; }
@@ -191,6 +203,18 @@
           <li><b>00:03</b>אתם מקבלים התראה עם כל הפרטים</li>
           <li><b>אחרי 3 שע׳</b>תזכורת, אם עוד לא חזרתם אליו</li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="niches">
+    <div class="wrap">
+      <h2>דף נחיתה לכל סוג עסק</h2>
+      <p class="sub">שלושה עסקים בדויים, שלושה עיצובים שונים. בכל אחד יש צ'אט שעונה מיד ומעביר את הפנייה לוואטסאפ, עם כל הפרטים.</p>
+      <div class="niches">
+        <a class="niche" href="plumber/"><div class="sw plumber">אורן מים</div><div class="tx"><b>אינסטלטור</b><span>הצ'אט שואל מה התקלה, כמה דחוף ואיפה, ונותן טווח מחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="movers/"><div class="sw movers">דרור הובלות</div><div class="tx"><b>הובלות</b><span>מאיפה, לאן, גודל הדירה וקומה, ומחיר משוער תוך דקה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="trainer/"><div class="sw trainer">יעל ברק</div><div class="tx"><b>מאמנת כושר אישית</b><span>מטרה, ניסיון, מקום ושעות, ותיאום אימון היכרות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
       </div>
     </div>
   </section>

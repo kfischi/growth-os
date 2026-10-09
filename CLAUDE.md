@@ -16,6 +16,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | `prospect-sketch` | A business showed interest. Build a personalised sketch before the call |
 | `new-client-site` | A client paid. Build the real site in `clients/<slug>/` |
 | `outreach-message` | Writing a first message, a follow-up or a pilot offer to a business |
+| `web-design` | Before designing or restyling any page. Bans the AI-default looks and finds the identity in the subject |
 | `qa-page` | Before sending any page to anyone |
 | `monthly-report` | End of month. Turn a client's leads export into a short report |
 | `weekly-review` | Weekly. Update `docs/side-income/TRACKER.md` and pick the week's focus |
@@ -38,6 +39,10 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | נציג AI | 4,500 ₪ | 1,200 ₪ |
 
 The first 3 clients get the pilot price for לידים: 1,900 ₪ setup and 450 ₪ a month.
+
+## Niche demos
+
+`demos/plumber/`, `demos/movers/` and `demos/trainer/` are landing pages for fictional businesses, each with its own visual identity and the shared scripted chat `demos/shared/leadbot.js` (questions, phone check, summary, WhatsApp handoff). Sell to one niche at a time. A new niche page reuses `leadbot.js` and follows the `web-design` skill.
 
 ## Checks
 

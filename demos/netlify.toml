@@ -13,3 +13,18 @@
   for = "/ai-agent/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/plumber/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/movers/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/trainer/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
