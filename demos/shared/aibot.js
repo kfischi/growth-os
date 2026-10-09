@@ -6,7 +6,9 @@
 (function () {
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
-    cleaning: "ניקיון", renovation: "שיפוצים", "leads-demo": "דמו מערכת לידים", "ai-agent": "דמו נציג AI",
+    cleaning: "ניקיון", renovation: "שיפוצים", locksmith: "מנעולן", pest: "הדברה", appliance: "טכנאי מכשירי חשמל",
+    handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית",
+    "leads-demo": "דמו מערכת לידים", "ai-agent": "דמו נציג AI",
   };
   const CSS = `
   .ab-launch{position:fixed;z-index:60;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;
@@ -46,6 +48,10 @@
   // ---------- scripted fallback: same output format as the model ----------
   const NICHES = [
     [/אינסטל|נזיל|סתימ|ביוב|דוד/, "plumber"], [/הובל|מעבר דירה|משאית/, "movers"], [/מאמ|כושר|אימון|סטודיו/, "trainer"],
+    [/מנעול|מנעולן|צילינדר|ננעלתי/, "locksmith"], [/הדבר|ג.?וקים|מזיק|נמלים|מכרסמ/, "pest"],
+    [/מכונת כביסה|מקרר|מדיח|תנור|מייבש|מכשירי חשמל/, "appliance"], [/הנדימן|תחזוקה|תליית|הרכבת רהיט/, "handyman"],
+    [/גינ|גנן|גיזום|השקיה|דשא/, "garden"], [/מורה|שיעור|בגרות|תלמיד/, "tutor"], [/פסיכולוג|טיפול רגשי|חרדה/, "psychologist"],
+    [/עובדת סוציאלית|עו.?ס|הדרכת הורים/, "social-worker"],
     [/מזגן|מיזוג/, "ac"], [/חשמל/, "electrician"], [/ניקיון|מנק/, "cleaning"], [/שיפוצ|קבלן|מטבח חדש/, "renovation"],
   ];
   function scripted(text, history) {

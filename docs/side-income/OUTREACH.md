@@ -50,5 +50,13 @@
 | חשמלאי | https://service-pro-web.netlify.app/electrician/?utm_source=whatsapp |
 | ניקיון | https://service-pro-web.netlify.app/cleaning/?utm_source=whatsapp |
 | שיפוצים | https://service-pro-web.netlify.app/renovation/?utm_source=whatsapp |
+| מנעולן | https://service-pro-web.netlify.app/locksmith/?utm_source=whatsapp |
+| הדברה | https://service-pro-web.netlify.app/pest/?utm_source=whatsapp |
+| טכנאי מכשירי חשמל | https://service-pro-web.netlify.app/appliance/?utm_source=whatsapp |
+| הנדימן | https://service-pro-web.netlify.app/handyman/?utm_source=whatsapp |
+| גינון | https://service-pro-web.netlify.app/garden/?utm_source=whatsapp |
+| מורה פרטית | https://service-pro-web.netlify.app/tutor/?utm_source=whatsapp |
+| פסיכולוגית | https://service-pro-web.netlify.app/psychologist/?utm_source=whatsapp |
+| עובדת סוציאלית | https://service-pro-web.netlify.app/social-worker/?utm_source=whatsapp |
 
 בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.
