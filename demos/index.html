@@ -38,7 +38,7 @@
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       text-decoration: none; font-weight: 700; border-radius: 12px; padding: 14px 24px;
-      font-size: 17px; transition: filter .15s, transform .1s; border: 0; cursor: pointer;
+      font-size: 17px; font-family: inherit; transition: filter .15s, transform .1s; border: 0; cursor: pointer;
     }
     .btn:active { transform: scale(.99); }
     .btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-deep)); color: #fff; }
@@ -69,6 +69,14 @@
     .niche .sw.electrician { background: #202427; color: #fff; border-bottom: 6px solid #ff5a1f; }
     .niche .sw.cleaning { background: #dceeec; color: #0f3b3a; }
     .niche .sw.renovation { background: #2f5d4e; color: #fff; }
+    .niche .sw.locksmith { background: linear-gradient(135deg, #d9dde1, #9aa3ab); color: #6e1b24; }
+    .niche .sw.pest { background: #e6efe8; color: #1d4a35; background-image: linear-gradient(rgba(29,74,53,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(29,74,53,.08) 1px, transparent 1px); background-size: 18px 18px; }
+    .niche .sw.appliance { background: #eef1f8; color: #1d3bb3; }
+    .niche .sw.handyman { background: #b98d63; color: #1f2225; background-image: radial-gradient(rgba(70,50,35,.28) 2px, transparent 2.5px); background-size: 18px 18px; text-shadow: 0 1px 0 rgba(255,255,255,.35); }
+    .niche .sw.garden { background: #1f4d36; color: #f3efe6; }
+    .niche .sw.tutor { background: #fbfcff; color: #1b2a55; background-image: linear-gradient(#cfdcf3 1px, transparent 1px), linear-gradient(90deg, #cfdcf3 1px, transparent 1px); background-size: 16px 16px; border-bottom: 3px solid #d93a3a; }
+    .niche .sw.psychologist { background: linear-gradient(135deg, #e3ebe6, #b9cbc2); color: #1f3d36; }
+    .niche .sw.social-worker { background: #f3f5f2; color: #134e4a; border-bottom: 3px solid #d99a96; }
     .niche .tx { padding: 16px 18px 20px; min-width: 0; }
     .niche .tx b { display: block; font-size: 17px; margin-bottom: 4px; }
     .niche .tx span { color: var(--ink-soft); font-size: 15px; }
@@ -172,6 +180,7 @@
       <p>דף נחיתה שמביא פניות, מענה אוטומטי בוואטסאפ תוך שניות, ותזכורת כשמישהו עוד מחכה לתשובה.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="leads-demo/">לנסות דמו חי</a>
+        <button class="btn btn-ghost" type="button" data-open-ai>לשאול את הנציג החכם</button>
         <a class="btn btn-ghost" href="#pricing">למחירון</a>
       </div>
     </section>
@@ -198,6 +207,7 @@
           <div class="cta-row" style="justify-content:flex-start">
             <a class="btn btn-primary" href="leads-demo/">דמו מערכת לידים</a>
             <a class="btn btn-outline-light" href="ai-agent/">דמו נציג AI</a>
+            <button class="btn btn-outline-light" type="button" data-open-ai>נציג חכם, עכשיו</button>
           </div>
         </div>
         <ul class="demo-steps">
@@ -213,7 +223,7 @@
   <section class="block" id="niches">
     <div class="wrap">
       <h2>דף נחיתה לכל סוג עסק</h2>
-      <p class="sub">שבעה עסקים בדויים, שבעה עיצובים שונים. בכל אחד יש צ'אט שעונה מיד ומעביר את הפנייה לוואטסאפ, עם כל הפרטים.</p>
+      <p class="sub">15 עסקים בדויים, 15 עיצובים שונים. בכל אחד יש צ'אט שעונה מיד ומעביר את הפנייה לוואטסאפ, עם כל הפרטים.</p>
       <div class="niches">
         <a class="niche" href="plumber/"><div class="sw plumber">אורן מים</div><div class="tx"><b>אינסטלטור</b><span>הצ'אט שואל מה התקלה, כמה דחוף ואיפה, ונותן טווח מחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
         <a class="niche" href="movers/"><div class="sw movers">דרור הובלות</div><div class="tx"><b>הובלות</b><span>מאיפה, לאן, גודל הדירה וקומה, ומחיר משוער תוך דקה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
@@ -222,6 +232,14 @@
         <a class="niche" href="electrician/"><div class="sw electrician">רז שגב</div><div class="tx"><b>חשמלאי</b><span>לוח חשמל שאפשר ללחוץ עליו, ושאלה על דחיפות ובטיחות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
         <a class="niche" href="cleaning/"><div class="sw cleaning">שקד</div><div class="tx"><b>ניקיון</b><span>תמונת לפני ואחרי שגוררים, והערכה של שעות ומחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
         <a class="niche" href="renovation/"><div class="sw renovation">נתן אדלר</div><div class="tx"><b>שיפוצים</b><span>לוח חומרים, לוח זמנים בשבועות, ותיאום סיור בבית.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="locksmith/"><div class="sw locksmith">עידו מפתח</div><div class="tx"><b>מנעולן</b><span>ננעלתם בחוץ, צילינדר, מנעול. מפתח ענק עם קוד השיניים, וצ׳אט שמגיע עם זמן הגעה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="pest/"><div class="sw pest">שקט · הדברה</div><div class="tx"><b>הדברה</b><span>תוכנית דירה עם נקודות טיפול, תעודת ביצוע, וצ׳אט ששואל גם על ילדים וחיות בבית.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="appliance/"><div class="sw appliance">רועי שטרן</div><div class="tx"><b>טכנאי מכשירי חשמל</b><span>חוגת תוכניות של מכונת כביסה: בוחרים מכשיר, מקלידים קוד שגיאה, ומקבלים טווח מחיר.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="handyman/"><div class="sw handyman">דורון הנדימן</div><div class="tx"><b>הנדימן</b><span>לוח כלים שכל כלי בו הוא שירות, ורשימת סידורים לביקור אחד.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="garden/"><div class="sw garden">עומר גנים</div><div class="tx"><b>גינון</b><span>שקית זרעים עם הוראות שתילה, לוח עונות, וסיור בגינה לפני מחיר סגור.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="tutor/"><div class="sw tutor">נועה שגיא</div><div class="tx"><b>מורה פרטית</b><span>דף מחברת משבצות עם פרבולה, מחירון בצורת מבחן, ושיעור היכרות.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="psychologist/"><div class="sw psychologist">תמר גלעד</div><div class="tx"><b>פסיכולוגית</b><span>חדר שקט וחלון אור. צ׳אט שאוסף רק את המינימום, וקו חירום גלוי.</span></div><div class="go">לפתוח את הדמו ←</div></a>
+        <a class="niche" href="social-worker/"><div class="sw social-worker">יעל שחר</div><div class="tx"><b>עובדת סוציאלית</b><span>מפת משפחה מצוירת, הדרכת הורים, ושיחת היכרות קצרה.</span></div><div class="go">לפתוח את הדמו ←</div></a>
       </div>
     </div>
   </section>
@@ -231,7 +249,7 @@
       <h2>איך זה עובד</h2>
       <p class="sub">אתם עוסקים בעסק. אני דואג לשאר.</p>
       <div class="steps">
-        <div class="step"><h3>שיחה של 15 דקות</h3><p>מה העסק עושה, מי הלקוחות, ומה הם שואלים הכי הרבה.</p></div>
+        <div class="step"><h3>שיחה של 5 דקות</h3><p>מה העסק עושה, מי הלקוחות, ומה הם שואלים הכי הרבה.</p></div>
         <div class="step"><h3>תוך שבוע באוויר</h3><p>דף, חיבור לוואטסאפ ובדיקה מלאה מהטלפון שלכם.</p></div>
         <div class="step"><h3>מעקב כל חודש</h3><p>דוח קצר: כמה פניות נכנסו ומאיפה. שינוי אחד בחודש כלול.</p></div>
       </div>
@@ -297,7 +315,7 @@
         </div>
       </div>
 
-      <p class="fine">תשלום שנתי מראש: 10 חודשים במחיר של 12. הדומיין והאחסון רשומים על שמכם.</p>
+      <p class="fine">תשלום שנתי מראש: 12 חודשים במחיר של 10. הדומיין והאחסון רשומים על שמכם.</p>
     </div>
   </section>
 
@@ -346,5 +364,7 @@
       });
     }
   </script>
+  <script src="shared/aibot.js"></script>
+  <script>AiBot.init({ whatsapp: CONFIG.whatsappNumber });</script>
 </body>
 </html>

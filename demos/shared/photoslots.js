@@ -120,8 +120,13 @@
     init(cfg) {
       const page = (cfg && cfg.page) || location.pathname;
       const style = el("style"); style.textContent = CSS; document.head.appendChild(style);
-      const picker = el("input"); picker.type = "file"; picker.accept = "image/*"; picker.hidden = true; document.body.appendChild(picker);
-      let pickFor = null;
+      // A fresh file input per pick: reusing one input can swallow a second click that comes right after a first upload.
+      function openPicker(slot) {
+        const input = el("input"); input.type = "file"; input.accept = "image/*"; input.hidden = true;
+        input.addEventListener("change", () => { if (input.files[0]) slot._ps.setFile(input.files[0]); input.remove(); });
+        input.addEventListener("cancel", () => input.remove());
+        document.body.appendChild(input); input.click();
+      }
 
       // UI: toggle button and banner
       const btn = el("button", "ps-ui-btn"); btn.type = "button";
@@ -176,7 +181,7 @@
         };
         kvGet(key).then((v) => { if (v && v.src) { st = v; apply(); } });
 
-        pick.addEventListener("click", (e) => { e.stopPropagation(); pickFor = slot; picker.value = ""; picker.click(); });
+        pick.addEventListener("click", (e) => { e.stopPropagation(); openPicker(slot); });
         reset.addEventListener("click", (e) => { e.stopPropagation(); st = { src: null, x: 50, y: 50, z: 1 }; apply(); save(); });
         zoom.addEventListener("input", () => { st.z = +zoom.value; apply(); });
         zoom.addEventListener("change", save);
@@ -185,7 +190,7 @@
 
         slot.addEventListener("click", (e) => {
           if (!document.body.classList.contains("ps-edit") || st.src || e.target.closest("[data-edit]")) return;
-          e.preventDefault(); pickFor = slot; picker.value = ""; picker.click();
+          e.preventDefault(); openPicker(slot);
         });
         slot.addEventListener("wheel", (e) => {
           if (!document.body.classList.contains("ps-edit") || !st.src) return;
@@ -205,7 +210,6 @@
         slot.addEventListener("dragleave", () => slot.classList.remove("drop"));
         slot.addEventListener("drop", (e) => { if (!document.body.classList.contains("ps-edit")) return; e.preventDefault(); slot.classList.remove("drop"); slot._ps.setFile(e.dataTransfer.files[0]); });
       });
-      picker.addEventListener("change", () => { if (pickFor && picker.files[0]) pickFor._ps.setFile(picker.files[0]); });
 
       // Editable text
       document.querySelectorAll("[data-edit]").forEach((n) => {

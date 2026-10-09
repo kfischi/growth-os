@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>שקט · הדברה</title>
+<meta name="description" content="הדברה בחדרה, עמק חפר והשרון. מתארים בצ׳אט מה ראיתם, והפרטים מגיעים למדביר בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the inspection sheet the exterminator draws on (a floor plan with marked treatment points) and the treatment certificate left on the counter.
+     Detail: treatment points (כיור, מאחורי המקרר, ניקוז, ארון חשמל), the material, "חזרה לבית אחרי 4 שעות", warranty in months, the licence line.
+     Bold move: a large drawn floor plan in the hero, on graph paper, with red pen points that pulse once the page loads. */
+  :root {
+    --paper: #eef3ef;          /* inspection sheet, sage-white */
+    --grid: #d5e2da;           /* graph paper lines */
+    --ink: #0f2a24;            /* deep ink green: text, walls */
+    --ink-soft: #4b645d;
+    --sage: #9cc2b0;
+    --seal: #1d6a54;           /* certificate stamp */
+    --mark: #cf4038;           /* the exterminator's red pen */
+    --display: "Secular One", "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: #d6e2db; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--ink); --bot-accent-fg: #fff; --bot-them: #e8f0eb; --bot-me: var(--seal); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 10px; --bot-radius-input: 6px; --bot-focus: var(--mark);
+    --ps-a: #b9d6c8; --ps-b: #3f7d6a; --ps-ui: var(--ink); --ps-edit: var(--mark);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--mark); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--body); font-size: 13.5px; font-weight: 500; letter-spacing: .01em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -.01em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 4px; }
+  .btn-ink { background: var(--ink); color: #fff; }
+  .btn-ink:hover { background: var(--seal); }
+  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+
+  .demo { background: var(--ink); color: #b5cbc2; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the inspection sheet ---------- */
+  .hero { background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px; border-bottom: 2px solid var(--ink); }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; }
+  .logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--mark); }
+  .logo .sub { font-family: var(--body); font-size: 15px; color: var(--ink-soft); font-weight: 500; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--mark); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding: 20px 0 56px; }
+  .hero-copy { min-width: 0; }
+  .hero-copy .mono { color: var(--ink-soft); }
+  .hero h1 { font-size: clamp(42px, 5.6vw, 76px); margin: 12px 0 18px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--seal); display: block; }
+  .hero p { font-size: 18.5px; max-width: 36ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 26px; padding: 0; list-style: none; font-size: 14.5px; color: var(--ink-soft); }
+  .facts li::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--mark); margin-inline-end: 8px; vertical-align: middle; }
+
+  .sheet { min-width: 0; background: #fff; border: 1.5px solid var(--ink); padding: 14px; box-shadow: 10px 10px 0 var(--sage); }
+  .sheet svg { display: block; width: 100%; height: auto; }
+  .sheet .tb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1.5px solid var(--ink); border-top: 0; font-size: 13px; }
+  .sheet .tb div { padding: 7px 10px; border-inline-start: 1px solid var(--ink); min-width: 0; }
+  .sheet .tb div:first-child { border-inline-start: 0; }
+  .sheet .tb small { display: block; font-family: var(--body); font-size: 11.5px; color: var(--ink-soft); }
+  .sheet .tb b { font-weight: 700; }
+  .pt circle.core { fill: var(--mark); }
+  .pt circle.ring { fill: none; stroke: var(--mark); stroke-width: 2.5; transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
+  .pt:nth-child(2) circle.ring { animation-delay: .4s; } .pt:nth-child(3) circle.ring { animation-delay: .8s; }
+  .pt:nth-child(4) circle.ring { animation-delay: 1.2s; } .pt:nth-child(5) circle.ring { animation-delay: 1.6s; }
+  @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head h2 { font-size: clamp(36px, 5vw, 58px); }
+  .head .mono { color: var(--ink-soft); }
+
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 44px; align-items: start; }
+  .rows { border-top: 2px solid var(--ink); }
+  .row { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 16px; align-items: center;
+    padding: 18px 6px; border-bottom: 1px solid #c9d8cf; min-width: 0; }
+  .row:hover { background: #fff; }
+  .row:focus-visible { outline: 3px solid var(--mark); outline-offset: -3px; }
+  .row .pin { width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--mark); }
+  .row b { display: block; font-size: 20px; font-weight: 700; }
+  .row span.d { color: var(--ink-soft); font-size: 15px; }
+  .row .pr { font-family: var(--body); font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 600; white-space: nowrap; text-align: left; }
+  .row .pr.q { color: var(--seal); }
+  .season { margin-top: 22px; font-size: 15.5px; color: var(--ink-soft); }
+  .season b { color: var(--ink); }
+
+  /* The treatment certificate */
+  .cert { position: sticky; top: 20px; background: #fff; border: 1.5px solid var(--ink); }
+  .cert-h { background: var(--ink); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .cert-h h3 { font-size: 21px; }
+  .cert-h span { font-family: var(--body); font-size: 11px; color: var(--sage); white-space: nowrap; }
+  .cert dl { margin: 0; padding: 6px 16px 14px; }
+  .cert dl div { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px dashed #c3d3ca; font-size: 15px; }
+  .cert dt { color: var(--ink-soft); font-size: 13.5px; }
+  .cert dd { margin: 0; font-weight: 700; min-width: 0; }
+  .cert .sign { display: flex; justify-content: space-between; align-items: center; padding: 4px 16px 18px; gap: 12px; }
+  .cert .sign small { color: var(--ink-soft); font-size: 13px; }
+  .stamp { width: 96px; height: 96px; flex: none; border-radius: 50%; border: 3px double var(--seal); color: var(--seal); display: grid; place-items: center; text-align: center;
+    transform: rotate(-14deg); font-family: var(--display); font-size: 19px; line-height: 1.05; opacity: .9; }
+  .stamp small { display: block; font-family: var(--body); font-size: 9.5px; color: var(--seal); }
+  .cert .fine { margin: 0; padding: 0 16px 14px; font-size: 12.5px; color: var(--ink-soft); }
+
+  /* ---------- The exterminator: licence card + sample bags (photo slots) ---------- */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .lic { background: #fff; border: 1.5px solid var(--ink); border-radius: 12px; overflow: hidden; box-shadow: 8px 8px 0 var(--sage); }
+  .lic-h { background: var(--seal); color: #fff; padding: 9px 14px; display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 700; }
+  .lic-h span { font-family: var(--body); font-weight: 500; font-size: 11.5px; opacity: .85; }
+  .lic-b { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .lic .ps { aspect-ratio: 3 / 4; border-radius: 6px; }
+  .lic .ps .ps-chip { font-size: 11.5px; }
+  .lic-b b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.1; }
+  .lic-b .role { color: var(--ink-soft); font-size: 14.5px; }
+  .lic-b dl { margin: 12px 0 0; display: grid; gap: 6px; font-size: 13.5px; }
+  .lic-b dl div { min-width: 0; }
+  .lic-b dt { font-family: var(--body); font-size: 11.5px; color: var(--ink-soft); }
+  .lic-b dd { margin: 0; font-weight: 700; }
+  .lic-f { border-top: 1px dashed #c3d3ca; padding: 10px 16px; font-size: 13.5px; color: var(--ink-soft); }
+
+  .bags { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .bag { position: relative; min-width: 0; padding: 30px 10px 12px; background: rgba(255,255,255,.55); border: 1.5px solid #b8cdc2; border-radius: 4px 4px 10px 10px;
+    box-shadow: inset 0 0 0 6px rgba(255,255,255,.5), 0 18px 30px -24px rgba(15,42,36,.6); }
+  .bag:nth-child(1) { transform: rotate(-1.4deg); } .bag:nth-child(2) { transform: rotate(.8deg) translateY(10px); } .bag:nth-child(3) { transform: rotate(-.6deg); }
+  .bag::before { content: ""; position: absolute; top: 10px; inset-inline: 10px; height: 8px; border-radius: 4px; background: var(--mark); box-shadow: 0 4px 0 #e9b3ae; }
+  .bag .ps { aspect-ratio: 4 / 5; border-radius: 3px; }
+  .tag { margin-top: 10px; background: #fff; border: 1px solid var(--ink); padding: 8px 10px; font-size: 13px; }
+  .tag small { display: block; font-family: var(--body); font-size: 11.5px; color: var(--ink-soft); }
+  .tag b { display: block; font-size: 15px; }
+  .who-note { color: var(--ink-soft); font-size: 15.5px; margin-top: 30px; max-width: 52ch; }
+
+  /* ---------- What the owner sees ---------- */
+  .owner { background: var(--ink); color: #e5efea; }
+  .owner .head .mono { color: #8fb0a3; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--mark); display: grid; place-items: center; font-family: var(--mono); font-weight: 600; color: #fff; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #a8c1b7; font-size: 15.5px; }
+  .owner .ph-cap { color: #8fb0a3; }
+
+  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .frow { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #c3d3ca; padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .price-grid, .who-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .hero-grid { gap: 30px; padding-bottom: 44px; }
+    .cert { position: static; max-width: 420px; }
+    .lic { max-width: 420px; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    .sheet { padding: 8px; box-shadow: 6px 6px 0 var(--sage); }
+    .sheet .tb { font-size: 12px; } .sheet .tb div { padding: 6px 7px; }
+    .bags { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+    .bag:nth-child(3) { display: none; }
+    .bag:nth-child(2) { transform: rotate(.8deg); }
+    .tag b { font-size: 14px; }
+    .row { grid-template-columns: 14px minmax(0, 1fr); gap: 4px 14px; }
+    .row .pr { grid-column: 2; text-align: right; }
+    .lic-b { grid-template-columns: 104px minmax(0, 1fr); gap: 14px; }
+    section { padding-block: 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pt circle.ring { animation: none; opacity: .5; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span class="dot" aria-hidden="true"></span><span data-edit="name1">שקט</span><span class="sub" data-edit="name2">הדברה</span></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על הדברה">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="mono">מדביר מורשה · חדרה, עמק חפר והשרון</div>
+        <h1><span data-edit="h1a">ג׳וקים במטבח?</span> <em data-edit="h1b">כותבים, ואנחנו חוזרים.</em></h1>
+        <p>מתארים בצ׳אט מה ראיתם ואיפה. הפרטים מגיעים למדביר בוואטסאפ, והוא חוזר אליכם לקבוע מועד.</p>
+        <div class="ctas">
+          <button class="btn btn-ink" data-open-bot>לתאר מה ראיתם</button>
+          <a class="btn btn-line" href="#" data-wa="היי, אשמח לקבוע הדברה">וואטסאפ ישיר</a>
+        </div>
+        <ul class="facts">
+          <li>חזרה לבית אחרי 4 שעות</li>
+          <li>אחריות 3 חודשים</li>
+          <li>תעודת ביצוע בסוף</li>
+        </ul>
+      </div>
+
+      <figure class="sheet" style="margin:0" aria-label="דף בדיקה: תוכנית דירה עם נקודות טיפול">
+        <svg viewBox="0 0 640 470" fill="none" aria-hidden="true">
+          <!-- balcony -->
+          <rect x="370" y="404" width="250" height="52" stroke="#0f2a24" stroke-width="2" stroke-dasharray="6 5"/>
+          <text x="470" y="436" text-anchor="middle" font-family="IBM Plex Sans Hebrew, sans-serif" font-size="16" fill="#4b645d">מרפסת</text>
+          <!-- outer walls -->
+          <path d="M20 20 H620 V400 H520 M460 400 H20 V20" stroke="#0f2a24" stroke-width="9" stroke-linecap="square"/>
+          <!-- inner walls -->
+          <path d="M260 20 V100 M260 150 V250 M260 300 V400" stroke="#0f2a24" stroke-width="6"/>
+          <path d="M20 215 H120 M170 215 H260" stroke="#0f2a24" stroke-width="6"/>
+          <path d="M380 20 V112 M260 150 H330 M380 150 V112" stroke="#0f2a24" stroke-width="6"/>
+          <path d="M380 180 H440" stroke="#0f2a24" stroke-width="6"/>
+          <!-- doors -->
+          <g stroke="#4b645d" stroke-width="1.5">
+            <path d="M260 100 A50 50 0 0 1 210 150" /><path d="M260 100 V150" stroke-dasharray="3 3"/>
+            <path d="M120 215 A50 50 0 0 0 170 265" /><path d="M170 215 V265" stroke-dasharray="3 3"/>
+            <path d="M260 250 A50 50 0 0 0 310 300" /><path d="M260 300 H310" stroke-dasharray="3 3"/>
+            <path d="M330 150 A50 50 0 0 0 380 100" />
+            <path d="M460 400 A60 60 0 0 1 520 340" /><path d="M520 400 V340" stroke-dasharray="3 3"/>
+          </g>
+          <!-- fixtures -->
+          <g stroke="#0f2a24" stroke-width="1.6" fill="#fff">
+            <rect x="388" y="27" width="40" height="44"/>
+            <rect x="432" y="27" width="182" height="38"/>
+            <rect x="540" y="33" width="44" height="26" rx="6"/>
+            <rect x="452" y="33" width="34" height="26"/>
+            <rect x="267" y="27" width="40" height="110" rx="10"/>
+            <rect x="330" y="30" width="38" height="30" rx="6"/>
+            <rect x="50" y="48" width="150" height="120" rx="4"/>
+            <rect x="60" y="56" width="58" height="26" rx="4"/><rect x="132" y="56" width="58" height="26" rx="4"/>
+            <rect x="34" y="242" width="72" height="130" rx="4"/>
+            <rect x="420" y="320" width="170" height="44" rx="6"/>
+            <rect x="460" y="230" width="90" height="56" rx="4"/>
+            <rect x="268" y="364" width="30" height="28"/>
+          </g>
+          <!-- room names -->
+          <g font-family="IBM Plex Sans Hebrew, sans-serif" font-size="17" font-weight="500" fill="#0f2a24" text-anchor="middle">
+            <text x="510" y="118">מטבח</text>
+            <text x="320" y="190" font-size="14">אמבטיה</text>
+            <text x="125" y="196">חדר שינה</text>
+            <text x="180" y="320">חדר ילדים</text>
+            <text x="470" y="210">סלון</text>
+          </g>
+          <!-- dimension -->
+          <g stroke="#4b645d" stroke-width="1"><path d="M20 8 H620"/><path d="M20 3 V13 M620 3 V13"/></g>
+          <!-- treatment points -->
+          <g>
+            <g class="pt"><circle class="ring" cx="562" cy="46" r="11"/><circle class="core" cx="562" cy="46" r="6"/></g>
+            <g class="pt"><circle class="ring" cx="408" cy="80" r="11"/><circle class="core" cx="408" cy="80" r="6"/></g>
+            <g class="pt"><circle class="ring" cx="340" cy="110" r="11"/><circle class="core" cx="340" cy="110" r="6"/></g>
+            <g class="pt"><circle class="ring" cx="283" cy="378" r="11"/><circle class="core" cx="283" cy="378" r="6"/></g>
+            <g class="pt"><circle class="ring" cx="598" cy="432" r="11"/><circle class="core" cx="598" cy="432" r="6"/></g>
+          </g>
+          <!-- red pen notes -->
+          <g font-family="IBM Plex Sans Hebrew, sans-serif" font-size="14" font-weight="700" fill="#cf4038" text-anchor="middle">
+            <text x="562" y="88">כיור</text>
+            <text x="408" y="104" font-size="13">מקרר</text>
+            <text x="340" y="136" font-size="13">ניקוז</text>
+            <text x="330" y="383" font-size="13">חשמל</text>
+          </g>
+        </svg>
+        <div class="tb">
+          <div><small>דף בדיקה</small><b data-edit="tb1">דירת 4 חדרים</b></div>
+          <div><small>ישוב</small><b data-edit="tb2">חדרה</b></div>
+          <div><small>נקודות טיפול</small><b>5</b></div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>במה מטפלים</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="price-grid">
+        <div>
+          <div class="rows">
+            <button class="row" data-pest="ג׳וקים"><span class="pin"></span><span><b>ג׳וקים</b><span class="d">ריסוס דירה, כולל מטבח, אמבטיה ופתחי ניקוז</span></span><span class="pr">250 עד 400 ₪</span></button>
+            <button class="row" data-pest="נמלים"><span class="pin"></span><span><b>נמלים</b><span class="d">מאתרים את השביל ומטפלים בקן</span></span><span class="pr">250 עד 400 ₪</span></button>
+            <button class="row" data-pest="מכרסמים"><span class="pin"></span><span><b>עכברים וחולדות</b><span class="d">תחנות פיתיון נעולות וסגירת פתחים</span></span><span class="pr">350 עד 700 ₪</span></button>
+            <button class="row" data-pest="פשפש המיטה"><span class="pin"></span><span><b>פשפש המיטה</b><span class="d">שני ביקורים, מזרנים, מיטות וספות</span></span><span class="pr">800 עד 1,800 ₪</span></button>
+            <button class="row" data-pest="טרמיטים"><span class="pin"></span><span><b>טרמיטים</b><span class="d">בדיקה של עץ, משקופים ופרקט</span></span><span class="pr q">בדיקה והצעת מחיר</span></button>
+          </div>
+          <p class="season"><b>בקיץ ולפני פסח יש עומס.</b> כדאי לכתוב כמה ימים מראש.</p>
+        </div>
+
+        <aside class="cert" aria-label="תעודת ביצוע לדוגמה">
+          <div class="cert-h"><h3>תעודת ביצוע הדברה</h3><span>לדוגמה</span></div>
+          <dl>
+            <div><dt>מזיק</dt><dd>ג׳וקים</dd></div>
+            <div><dt>מקום</dt><dd>דירה, חדרה</dd></div>
+            <div><dt>חומר</dt><dd>חומר מאושר של המשרד להגנת הסביבה</dd></div>
+            <div><dt>חזרה לבית</dt><dd>אחרי 4 שעות</dd></div>
+            <div><dt>אחריות</dt><dd data-edit="warranty">3 חודשים</dd></div>
+            <div><dt>מדביר</dt><dd><span data-edit="cert-name">רון לוי</span> · רישיון מדביר לדוגמה</dd></div>
+          </dl>
+          <div class="sign"><small>את התעודה משאירים אצלכם בסוף כל טיפול.</small><div class="stamp" aria-hidden="true"><div>בוצע<small>שקט · הדברה</small></div></div></div>
+          <p class="fine">זמן החזרה והאחריות לדוגמה. העסק קובע אותם לפי סוג הטיפול.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="who-grid">
+        <div class="lic">
+          <div class="lic-h">כרטיס מדביר<span>לדוגמה</span></div>
+          <div class="lic-b">
+            <figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure>
+            <div>
+              <b data-edit="tech-name">רון לוי</b>
+              <span class="role" data-edit="tech-role">מדביר מורשה · 11 שנים בשטח</span>
+              <dl>
+                <div><dt>רישיון</dt><dd>רישיון מדביר לדוגמה</dd></div>
+                <div><dt>אזור</dt><dd data-edit="tech-area">חדרה, עמק חפר והשרון</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="lic-f" data-edit="tech-note">מגיע עם כרטיס, ומסביר לפני שמתחילים מה מרססים ואיפה.</div>
+        </div>
+
+        <div>
+          <div class="bags">
+            <div class="bag"><figure class="ps" data-slot="s1" data-icon="home" data-label="תמונה מעבודה"></figure>
+              <div class="tag"><small data-edit="s1a">מטבח · כפר יונה</small><b data-edit="s1">ריסוס מאחורי המקרר</b></div></div>
+            <div class="bag"><figure class="ps" data-slot="s2" data-icon="box" data-label="תמונה מעבודה"></figure>
+              <div class="tag"><small data-edit="s2a">מחסן · עמק חפר</small><b data-edit="s2">תחנות פיתיון נעולות</b></div></div>
+            <div class="bag"><figure class="ps" data-slot="s3" data-icon="camera" data-label="תמונה מעבודה"></figure>
+              <div class="tag"><small data-edit="s3a">מסעדה · נתניה</small><b data-edit="s3">טיפול חודשי לעסק</b></div></div>
+          </div>
+          <p class="who-note">את הדלת פותחים למי שמכירים מהתמונה. פנים אמיתיות ועבודות אמיתיות שוות יותר מכל סלוגן.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה המדביר רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>איזה מזיק, איפה, אם יש ילדים או חיות בבית, ישוב וטלפון.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש איזה טיפול זה ומה לקחת, בלי להתקשר ולשאול שוב.</span></div></li>
+          <li><div><b>חוזרים ללקוח וקובעים</b><span>הצ׳אט עובד גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">י</span><div><b>יעל מזרחי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו הדברה)
+מזיק: ג׳וקים
+מקום: דירה
+ילדים או חיות: כן
+ישוב: פרדס חנה
+שם: יעל מזרחי
+טלפון: 052-7654321<time>20:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למדביר</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>שקט · הדברה · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "pest" });
+  const RANGES = { "ג׳וקים": "250 עד 400 ₪", "נמלים": "250 עד 400 ₪", "מכרסמים": "350 עד 700 ₪", "פשפש המיטה": "800 עד 1,800 ₪" };
+  const SPRAY = ["ג׳וקים", "נמלים", "פשפש המיטה"];
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "רון · שקט הדברה", subtitle: "חוזרים אליכם לקבוע", initial: "ר", launcher: "ראיתם מזיק?",
+    greet: "היי, כאן רון.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
+    steps: [
+      { key: "pest", label: "מזיק", ask: "מה ראיתם?", chips: ["ג׳וקים", "נמלים", "מכרסמים", "פשפש המיטה", "טרמיטים", "אחר"] },
+      { key: "place", label: "מקום", ask: "איפה צריך לטפל?", chips: ["דירה", "בית פרטי", "עסק או מסעדה"] },
+      { key: "kids", label: "ילדים או חיות", ask: "יש בבית ילדים קטנים או חיות?", chips: ["כן", "לא"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const price = RANGES[d.pest] ? `בדרך כלל זה ${RANGES[d.pest]}, ואת המחיר הסופי נותנים אחרי בדיקה.` : "את המחיר נותנים אחרי בדיקה במקום.";
+      const back = SPRAY.includes(d.pest) ? " בריסוס חוזרים הביתה אחרי 4 שעות." : "";
+      const kids = d.kids === "כן" ? "\nלפני הטיפול אסביר לכם מתי יוצאים, מתי חוזרים ומה לשים בצד." : "";
+      return `תודה ${first}! קיבלתי: ${d.pest}, ${d.place}, ב${d.city}. ${price}${back}${kids}\nלחצו למטה, ונחזור אליכם לקבוע.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו הדברה)\nמזיק: ${d.pest}\nמקום: ${d.place}\nילדים או חיות: ${d.kids}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pest]").forEach((b) => b.addEventListener("click", () => bot.open({ pest: b.dataset.pest })));
+</script>
+</body>
+</html>

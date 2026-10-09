@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>עומר גנים · גינון ואחזקת גינות</title>
+<meta name="description" content="אחזקת גינות, גיזום, טפטוף ודשא בחדרה, עמק חפר והשרון. מספרים בצ׳אט מה יש בגינה, והפרטים מגיעים לגנן בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a seed packet. Illustrated front with the crimped top seal, planting instructions on the back (מתי, מה כולל, מחיר), and a garden plan on graph paper.
+     Detail: the Israeli garden year (גיזום בחורף, שתילה בסתיו, השקיה בקיץ), טפטוף, מחשב השקיה, מ״ר of lawn, moshav names in עמק חפר.
+     Bold move: a giant rotated seed packet as the hero, with its back peeking out behind it. Everything else is quiet paper and green. */
+  :root {
+    --leaf: #1b4430;           /* deep leaf, text and packet body */
+    --sage: #a8bf9f;           /* dry-season foliage */
+    --mist: #eaf0e5;           /* pale sage paper (not cream) */
+    --soil: #6a4430;           /* turned soil, pruning */
+    --bloom: #e9604f;          /* pomegranate flower, the one accent */
+    --drip: #4f9fd0;           /* irrigation water */
+    --display: "Karantina", "Varela Round", system-ui, sans-serif;
+    --body: "Varela Round", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", "Varela Round", ui-monospace, monospace;
+    --leaf-soft: color-mix(in srgb, var(--leaf) 72%, var(--mist));
+    --line: color-mix(in srgb, var(--sage) 55%, var(--mist));
+    --phone-frame: var(--leaf);
+    --bot-bg: #fff; --bot-fg: var(--leaf); --bot-line: var(--line); --bot-muted: var(--leaf-soft);
+    --bot-accent: var(--leaf); --bot-accent-fg: #fff; --bot-them: #eef3ea; --bot-me: var(--leaf); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --bot-focus: var(--bloom);
+    --ps-a: #8fb08a; --ps-b: #3f6b4c; --ps-ui: var(--leaf); --ps-edit: var(--bloom);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--mist); color: var(--leaf); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--bloom); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--body); font-size: 13.5px; letter-spacing: 0; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .9; letter-spacing: 0; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 400; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 10px; }
+  .btn-leaf { background: var(--leaf); color: #fff; }
+  .btn-leaf:hover { background: #10301f; }
+  .btn-line { border: 2px solid var(--leaf); color: var(--leaf); background: transparent; }
+  .btn-line:hover { background: #fff; }
+
+  .demo { background: var(--leaf); color: #bcd0bf; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the packet ---------- */
+  .hero { position: relative; overflow: hidden; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
+  .logo { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: 1; }
+  .logo span + span { color: var(--bloom); margin-inline-start: 6px; }
+  .bar a { text-decoration: none; border-bottom: 2px solid var(--bloom); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 470px); gap: 40px; align-items: center; padding: 20px 0 90px; }
+  .hero-copy { min-width: 0; }
+  .now { display: inline-flex; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px 5px 10px; margin-bottom: 20px; }
+  .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--bloom); flex: none; }
+  .hero h1 { font-size: clamp(64px, 9vw, 128px); margin-bottom: 18px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--soil); display: block; }
+  .hero p { font-size: 19px; max-width: 42ch; margin: 0 0 28px; color: var(--leaf-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .area { margin-top: 26px; color: var(--leaf-soft); }
+
+  .packets { position: relative; min-width: 0; height: 600px; }
+  .packet { position: absolute; width: 380px; aspect-ratio: 380 / 560; border-radius: 6px 6px 10px 10px; box-shadow: 0 40px 60px -35px rgba(15,40,25,.6), 0 2px 0 rgba(0,0,0,.05); }
+  .packet::before { content: ""; position: absolute; inset: 0 0 auto; height: 22px; border-radius: 6px 6px 0 0; z-index: 2;
+    background: repeating-linear-gradient(90deg, rgba(0,0,0,.16) 0 2px, transparent 2px 6px); }
+  .packet.back { background: #fff; top: 10px; inset-inline-start: 0; transform: rotate(7deg); padding: 44px 26px 24px; color: var(--leaf); }
+  .packet.front { background: var(--leaf); top: 40px; inset-inline-end: 0; transform: rotate(-5deg); padding: 34px 20px 18px; color: #fff; display: flex; flex-direction: column; z-index: 1; }
+  .back h3 { font-size: 34px; margin-bottom: 10px; }
+  .back .rows { display: grid; gap: 0; font-size: 13px; }
+  .back .rows div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; border-top: 1px solid var(--line); padding: 7px 0; }
+  .back .rows span { color: var(--leaf-soft); }
+  .back .mini-cal { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; margin-top: 14px; }
+  .back .mini-cal i { height: 16px; border-radius: 2px; background: var(--line); }
+  .back .mini-cal i.p { background: var(--leaf); } .back .mini-cal i.w { background: var(--drip); } .back .mini-cal i.c { background: var(--soil); }
+  .front .tag { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .front .tag b { background: var(--bloom); color: #fff; font-weight: 400; font-size: 13px; padding: 3px 10px; border-radius: 999px; }
+  .front .tag span { font-family: var(--mono); font-size: 12px; color: var(--sage); }
+  .front .ps { flex: 1; margin: 12px 0; border-radius: 4px; min-height: 0; }
+  .front .ttl { font-family: var(--display); font-weight: 700; font-size: 72px; line-height: .85; }
+  .front .ttl span { color: var(--sage); }
+  .front .net { display: flex; justify-content: space-between; gap: 10px; border-top: 1px dashed rgba(255,255,255,.35); margin-top: 10px; padding-top: 8px; font-size: 13px; color: #d5e2d4; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(54px, 7vw, 88px); }
+  .head .mono { color: var(--leaf-soft); }
+
+  /* the garden year */
+  .year { background: #fff; border-block: 1px solid var(--line); }
+  .months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; padding-top: 12px; }
+  .m { min-width: 0; border-radius: 6px; padding: 10px 8px 12px; background: var(--mist); border-top: 6px solid var(--c, var(--sage)); position: relative; }
+  .m b { display: block; font-size: 15px; }
+  .m span { display: block; font-size: 13px; line-height: 1.35; color: var(--leaf-soft); margin-top: 4px; }
+  .m.prune { --c: var(--soil); } .m.plant { --c: var(--leaf); } .m.water { --c: var(--drip); } .m.lawn { --c: var(--sage); }
+  .m.cur { outline: 2px solid var(--bloom); outline-offset: 2px; background: #fff; }
+  .m.cur::after { content: "החודש"; position: absolute; top: -12px; inset-inline-end: 8px; background: var(--bloom); color: #fff; font-size: 12px; padding: 1px 8px; border-radius: 999px; }
+  .legend { display: flex; gap: 8px 20px; flex-wrap: wrap; margin-top: 20px; font-size: 14px; color: var(--leaf-soft); }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px; background: var(--c); }
+
+  /* services: packet backs */
+  .backs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .pk { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; position: relative; background: #fff; border-radius: 6px; padding: 38px 22px 20px; border: 1px solid var(--line); display: flex; flex-direction: column; }
+  .pk::before { content: ""; position: absolute; inset: 0 0 auto; height: 16px; border-radius: 6px 6px 0 0; background: var(--c, var(--leaf)); -webkit-mask: repeating-linear-gradient(90deg, #000 0 4px, rgba(0,0,0,.7) 4px 6px); mask: repeating-linear-gradient(90deg, #000 0 4px, rgba(0,0,0,.7) 4px 6px); }
+  .pk:hover { border-color: var(--leaf); }
+  .pk:focus-visible { outline: 3px solid var(--bloom); outline-offset: 2px; }
+  .pk.wide { grid-column: span 2; }
+  .pk h3 { font-size: 46px; }
+  .pk > p { margin: 6px 0 16px; color: var(--leaf-soft); font-size: 15.5px; }
+  .pk dl { margin: auto 0 0; display: grid; font-size: 14.5px; }
+  .pk dl div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; border-top: 1px solid var(--line); padding: 8px 0; }
+  .pk dt { color: var(--leaf-soft); }
+  .pk dd { margin: 0; }
+  .pk dd.pr { font-weight: 400; color: var(--leaf); font-size: 16px; }
+  .pk .go { margin-top: 12px; color: var(--bloom); font-size: 15px; }
+  .pk.prune { --c: var(--soil); } .pk.water { --c: var(--drip); } .pk.plant { --c: var(--leaf); } .pk.lawn { --c: var(--sage); } .pk.keep { --c: var(--bloom); }
+  .pk.wide .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: auto; }
+  .pk.wide .cols ul { margin: 0; padding: 0; list-style: none; font-size: 15px; }
+  .pk.wide .cols li { border-top: 1px solid var(--line); padding: 7px 0; }
+  .pk.wide .cols li::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); margin-inline-end: 8px; vertical-align: 2px; }
+  .note { color: var(--leaf-soft); font-size: 14.5px; margin-top: 18px; }
+
+  /* who comes: plant-label portrait + packets with photo fronts */
+  .who { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 56px; align-items: end; }
+  .stake { width: 100%; max-width: 280px; margin-inline: auto; }
+  .stake .label { background: #fff; padding: 14px 14px 20px; border-radius: 10px 10px 0 0; border: 1px solid var(--line); border-bottom: 0; }
+  .stake .ps { aspect-ratio: 1; border-radius: 6px; }
+  .stake .ps-chip { display: none; }
+  .stake b { display: block; font-family: var(--display); font-size: 48px; line-height: .9; margin-top: 14px; }
+  .stake small { display: block; color: var(--leaf-soft); font-size: 14.5px; }
+  .stake .spike { height: 90px; width: 100%; background: #fff; clip-path: polygon(0 0, 100% 0, 58% 100%, 42% 100%); border-inline: 1px solid var(--line); }
+  .stake .soil { height: 18px; border-radius: 50%; background: var(--soil); margin: -14px 18% 0; opacity: .85; }
+  .shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; }
+  .sp { min-width: 0; position: relative; background: var(--leaf); color: #fff; border-radius: 4px 4px 8px 8px; padding: 26px 10px 14px; box-shadow: 0 30px 40px -30px rgba(15,40,25,.55); }
+  .sp::before { content: ""; position: absolute; inset: 0 0 auto; height: 14px; background: repeating-linear-gradient(90deg, rgba(0,0,0,.25) 0 2px, transparent 2px 6px); border-radius: 4px 4px 0 0; }
+  .sp:nth-child(1) { transform: rotate(-2deg); } .sp:nth-child(2) { transform: translateY(-14px) rotate(1.5deg); background: var(--soil); } .sp:nth-child(3) { transform: rotate(-1deg); }
+  .sp .ps { aspect-ratio: 4 / 5; border-radius: 3px; }
+  .sp b { display: block; font-family: var(--display); font-size: 32px; line-height: .95; margin-top: 10px; }
+  .sp small { display: block; color: #d5e2d4; font-size: 13.5px; line-height: 1.4; margin-top: 4px; }
+  .who-note { color: var(--leaf-soft); font-size: 15px; margin-top: 26px; }
+
+  /* before/after on graph paper */
+  .plan { background-color: #f4f8fb; background-image: linear-gradient(color-mix(in srgb, var(--drip) 22%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--drip) 22%, transparent) 1px, transparent 1px);
+    background-size: 26px 26px; border-block: 1px solid color-mix(in srgb, var(--drip) 30%, transparent); }
+  .ba-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 48px; align-items: center; }
+  .ps-ba.gard { aspect-ratio: 4 / 3; border-radius: 6px; border: 8px solid #fff; box-shadow: 0 40px 70px -45px rgba(15,40,25,.6); }
+  .ps-ba.gard .ps-chip { display: none; }
+  .ps-ba.gard [data-slot="before"] { --ps-a: #b9ab8e; --ps-b: #7a6a4f; }
+  .ps-ba.gard [data-slot="after"] .ps-tools { left: auto; right: 12px; transform: none; top: 54px; }
+  .ps-ba.gard [data-slot="before"] .ps-tools { left: 12px; transform: none; top: 54px; }
+  .ba-side h2 { font-size: clamp(48px, 6vw, 72px); margin: 10px 0 14px; }
+  .ba-side p { color: var(--leaf-soft); margin: 0 0 12px; }
+  .facts { display: grid; margin-top: 18px; font-size: 15px; background: #fff; border: 1px solid color-mix(in srgb, var(--drip) 30%, transparent); border-radius: 6px; padding: 4px 14px; }
+  .facts div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; }
+  .facts div + div { border-top: 1px dashed color-mix(in srgb, var(--drip) 40%, transparent); }
+  .facts span { color: var(--leaf-soft); }
+
+  /* what the gardener sees */
+  .owner { background: var(--leaf); color: #e4eee3; }
+  .owner .head .mono { color: var(--sage); }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--sage); display: grid; place-items: center; font-family: var(--display); font-size: 28px; color: var(--sage); }
+  .owner li b { display: block; font-size: 19px; font-weight: 400; color: #fff; }
+  .owner li span { color: #b9cdb9; font-size: 15.5px; }
+  .owner .ph-cap { color: var(--sage); }
+  .owner .phone { --phone-frame: #0e2a1b; }
+
+  footer { padding-block: 34px 90px; color: var(--leaf-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); padding-bottom: 60px; }
+    .packets { height: 560px; max-width: 470px; width: 100%; margin-inline: auto; }
+    .months { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 18px; }
+    .backs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .who, .ba-wrap, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    section { padding-block: 64px; }
+    .hero-grid { padding-top: 6px; gap: 30px; }
+    .hero h1 { font-size: 66px; }
+    .hero p { font-size: 17.5px; }
+    .packets { height: 450px; max-width: 330px; }
+    .packet { width: 270px; }
+    .packet.front { top: 30px; padding: 28px 14px 14px; }
+    .packet.back { padding: 36px 18px 18px; transform: rotate(8deg); }
+    .back h3 { font-size: 28px; } .back .rows { font-size: 12px; } .back .rows div { grid-template-columns: 58px minmax(0, 1fr); padding: 5px 0; }
+    .front .ttl { font-size: 54px; }
+    .front .net { font-size: 12px; }
+    .months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .backs { grid-template-columns: minmax(0, 1fr); }
+    .pk.wide { grid-column: auto; }
+    .pk.wide .cols { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .shelf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+    .sp:nth-child(3) { display: none; }
+    .sp b { font-size: 27px; }
+    .stake { max-width: 240px; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .packet.front { animation: settle .9s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes settle { from { transform: translateY(30px) rotate(-11deg); opacity: 0; } }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name1">עומר</span><span data-edit="name2">גנים</span></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על הגינה">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="now mono"><i></i><span id="now">עכשיו אוקטובר: זמן לשתול</span></div>
+        <h1><span data-edit="h1a">גינה מטופלת,</span> <em data-edit="h1b">בלי לרדוף אחרי הגנן.</em></h1>
+        <p>אחזקה קבועה, גיזום, טפטוף ודשא. מספרים בצ׳אט מה יש בגינה, ואני חוזר אליכם לקבוע סיור.</p>
+        <div class="ctas">
+          <button class="btn btn-leaf" data-open-bot>לבדוק מחיר</button>
+          <a class="btn btn-line" href="#" data-wa="היי, אשמח לתאם סיור בגינה">וואטסאפ ישיר</a>
+        </div>
+        <div class="area mono">חדרה · עמק חפר · השרון · מושבים וקיבוצים</div>
+      </div>
+
+      <div class="packets">
+        <div class="packet back" aria-hidden="true">
+          <h3>הוראות לגינה</h3>
+          <div class="rows">
+            <div><span>עומק שתילה</span><b>פי שניים מגובה הגוש</b></div>
+            <div><span>מרווח</span><b>40 ס״מ בין שיחים</b></div>
+            <div><span>טפטוף</span><b>2 ליטר לשעה, פעמיים ביום בקיץ</b></div>
+            <div><span>גיזום</span><b>דצמבר עד פברואר</b></div>
+            <div><span>שתילה</span><b>אוקטובר עד דצמבר</b></div>
+          </div>
+          <div class="mini-cal"><i class="c"></i><i class="c"></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i></i><i class="p"></i><i class="p"></i><i class="c"></i></div>
+        </div>
+        <div class="packet front">
+          <div class="tag"><b>זרעי גינה</b><span>2026</span></div>
+          <figure class="ps" data-slot="hero" data-icon="trowel" data-label="הגינה של משפחת לוי">
+            <svg class="ps-ph" viewBox="0 0 340 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="340" height="300" fill="#cfe3ee"/>
+              <circle cx="270" cy="62" r="26" fill="#fff" opacity=".7"/>
+              <path d="M0 150 C 70 120, 140 135, 200 125 S 300 110, 340 128 V300 H0z" fill="#8fb08a"/>
+              <path d="M0 190 C 90 170, 200 180, 340 165 V300 H0z" fill="#5f8a5f"/>
+              <rect x="0" y="232" width="340" height="68" fill="#6a4430"/>
+              <path d="M0 246 H340 M0 268 H340 M0 290 H340" stroke="#4f3222" stroke-width="3"/>
+              <g fill="#2f5a3e"><circle cx="40" cy="236" r="14"/><circle cx="100" cy="234" r="16"/><circle cx="165" cy="236" r="13"/><circle cx="228" cy="233" r="16"/><circle cx="294" cy="236" r="14"/></g>
+              <g fill="#e9604f"><circle cx="96" cy="226" r="4"/><circle cx="108" cy="232" r="3.5"/><circle cx="224" cy="226" r="4"/><circle cx="236" cy="232" r="3.5"/></g>
+              <g fill="#4f9fd0"><circle cx="20" cy="257" r="2.6"/><circle cx="70" cy="257" r="2.6"/><circle cx="130" cy="257" r="2.6"/><circle cx="195" cy="257" r="2.6"/><circle cx="260" cy="257" r="2.6"/><circle cx="320" cy="257" r="2.6"/></g>
+              <path d="M78 190 V120" stroke="#5a3b28" stroke-width="8"/>
+              <circle cx="78" cy="98" r="42" fill="#1b4430"/><circle cx="104" cy="118" r="26" fill="#245a3f"/>
+              <g fill="#e9604f"><circle cx="62" cy="92" r="6"/><circle cx="90" cy="80" r="6"/><circle cx="96" cy="112" r="6"/></g>
+            </svg>
+          </figure>
+          <div class="ttl"><span data-edit="pk-a">גינה</span> <span data-edit="pk-b" style="color:#fff">מסודרת</span></div>
+          <div class="net"><span>תכולה: גינה אחת</span><span>עמק חפר והשרון</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="year">
+    <div class="wrap">
+      <div class="head"><h2>מה עושים בגינה, חודש אחרי חודש</h2><span class="mono">ככה נראית שנה באחזקה קבועה</span></div>
+      <div class="months" id="months">
+        <div class="m prune"><b>ינואר</b><span>גיזום עצים ושיחים</span></div>
+        <div class="m prune"><b>פברואר</b><span>גיזום ושתילת עצי פרי</span></div>
+        <div class="m water"><b>מרץ</b><span>בדיקת טפטוף ודליפות</span></div>
+        <div class="m lawn"><b>אפריל</b><span>דשא חדש ודישון</span></div>
+        <div class="m water"><b>מאי</b><span>מחשב השקיה לקיץ</span></div>
+        <div class="m water"><b>יוני</b><span>השקיה וכיסוח</span></div>
+        <div class="m water"><b>יולי</b><span>השקיה מוקדמת בבוקר</span></div>
+        <div class="m water"><b>אוגוסט</b><span>חיפוי נגד התאדות</span></div>
+        <div class="m lawn"><b>ספטמבר</b><span>הכנת ערוגות</span></div>
+        <div class="m plant"><b>אוקטובר</b><span>זמן לשתול</span></div>
+        <div class="m plant"><b>נובמבר</b><span>שתילה וכיוון השקיה לחורף</span></div>
+        <div class="m prune"><b>דצמבר</b><span>גיזום חורף</span></div>
+      </div>
+      <div class="legend"><span style="--c:var(--soil)">גיזום</span><span style="--c:var(--leaf)">שתילה</span><span style="--c:var(--drip)">השקיה</span><span style="--c:var(--sage)">דשא וערוגות</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה צריך בגינה?</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="backs">
+        <button class="pk keep wide" data-service="אחזקה קבועה">
+          <h3>אחזקה קבועה</h3>
+          <p>אותו גנן, באותו יום בשבוע. אתם רק נהנים מהגינה.</p>
+          <div class="cols">
+            <ul><li>כיסוח דשא וקיצוץ שוליים</li><li>ניכוש עשבים בערוגות</li><li>גיזום קל של שיחים</li><li>בדיקת טפטוף ומחשב השקיה</li></ul>
+            <dl>
+              <div><dt>מתי</dt><dd>כל שבועיים או פעם בחודש</dd></div>
+              <div><dt>מחיר</dt><dd class="pr">350 עד 900 ₪ לחודש, לפי גודל הגינה</dd></div>
+            </dl>
+          </div>
+          <span class="go">לבדוק מחיר לגינה שלכם</span>
+        </button>
+        <button class="pk prune" data-service="גיזום">
+          <h3>גיזום</h3>
+          <p>עצים, גדר חיה ושיחים שהשתלטו.</p>
+          <dl>
+            <div><dt>מתי</dt><dd>בעיקר בחורף, דצמבר עד פברואר</dd></div>
+            <div><dt>מחיר</dt><dd class="pr">400 עד 1,500 ₪</dd></div>
+          </dl>
+          <span class="go">לבדוק מחיר</span>
+        </button>
+        <button class="pk water" data-service="מערכת השקיה">
+          <h3>מערכת השקיה</h3>
+          <p>טפטוף, ממטרות ומחשב השקיה.</p>
+          <dl>
+            <div><dt>מתי</dt><dd>לפני הקיץ, מרץ עד מאי</dd></div>
+            <div><dt>מחיר</dt><dd class="pr">800 עד 2,500 ₪</dd></div>
+          </dl>
+          <span class="go">לבדוק מחיר</span>
+        </button>
+        <button class="pk plant" data-service="שתילה ועיצוב">
+          <h3>שתילה ועיצוב</h3>
+          <p>ערוגות, שיחים ועצי פרי.</p>
+          <dl>
+            <div><dt>מתי</dt><dd>בסתיו, אוקטובר עד דצמבר</dd></div>
+            <div><dt>מחיר</dt><dd class="pr">לפי הצעת מחיר</dd></div>
+          </dl>
+          <span class="go">לבדוק מחיר</span>
+        </button>
+        <button class="pk lawn" data-service="דשא">
+          <h3>דשא</h3>
+          <p>התקנת מרבדים וחידוש דשא קיים.</p>
+          <dl>
+            <div><dt>מתי</dt><dd>באביב ובתחילת הקיץ</dd></div>
+            <div><dt>מחיר</dt><dd class="pr">התקנה לפי מ״ר</dd></div>
+          </dl>
+          <span class="go">לבדוק מחיר</span>
+        </button>
+      </div>
+      <p class="note">את המחיר הסופי נותנים אחרי סיור קצר בגינה, ולפני שמתחילים.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מי מגיע לגינה</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="who">
+        <div class="stake">
+          <div class="label">
+            <figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure>
+            <b data-edit="g-name">עומר דהן</b>
+            <small data-edit="g-role">גנן, 11 שנים בשטח</small>
+          </div>
+          <div class="spike" aria-hidden="true"></div>
+          <div class="soil" aria-hidden="true"></div>
+        </div>
+        <div>
+          <div class="shelf">
+            <div class="sp"><figure class="ps" data-slot="g1" data-icon="home" data-label="תמונה מגינה"></figure><b data-edit="g1">הגינה של משפחת לוי</b><small data-edit="g1s">אחזקה קבועה · אביחיל</small></div>
+            <div class="sp"><figure class="ps" data-slot="g2" data-icon="trowel" data-label="תמונה מגינה"></figure><b data-edit="g2">גדר חיה חדשה</b><small data-edit="g2s">גיזום ושתילה · כפר ויתקין</small></div>
+            <div class="sp"><figure class="ps" data-slot="g3" data-icon="drop" data-label="תמונה מגינה"></figure><b data-edit="g3">טפטוף לערוגות</b><small data-edit="g3s">מחשב השקיה · פרדס חנה</small></div>
+          </div>
+          <p class="who-note">פותחים את השער למי שמכירים מהתמונה. גינות אמיתיות ופנים אמיתיות שוות יותר מכל סלוגן.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="plan">
+    <div class="wrap ba-wrap">
+      <div class="ps-ba gard">
+        <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"></figure>
+        <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני"></figure></div>
+        <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+        <span class="ps-ba-line" aria-hidden="true"></span>
+        <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
+      </div>
+      <div class="ba-side">
+        <span class="mono" style="color:var(--leaf-soft)">תוכנית הגינה · לפני ואחרי</span>
+        <h2 data-edit="ba-title">גינה מוזנחת בבת חפר</h2>
+        <p data-edit="ba-text">שלושה ימי עבודה, ומאז אחזקה פעם בחודש. גררו את הקו כדי להשוות.</p>
+        <div class="facts">
+          <div><span>שטח</span><b data-edit="f1">140 מ״ר</b></div>
+          <div><span>משך</span><b data-edit="f2">שלושה ימים</b></div>
+          <div><span>מה נעשה</span><b data-edit="f3">ניכוש, טפטוף, דשא</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה הגנן רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, גודל הגינה, כל כמה זמן, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זו גינה של 40 מ״ר או חצי דונם, לפני שמרימים טלפון.</span></div></li>
+          <li><div><b>קובעים סיור ונותנים מחיר סגור</b><span>הצ׳אט עונה גם כשהידיים באדמה ואין איך לענות לטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רונית לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו גינון)
+שירות: אחזקה קבועה
+גינה: 50 עד 200 מ״ר
+תדירות: ביקור כל שבועיים
+ישוב: אביחיל
+שם: רונית לוי
+טלפון: 052-7654321<time>18:20</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לגנן</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>עומר גנים · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "garden" });
+
+  // the garden year: mark this month, and say it in the hero
+  (function () {
+    const months = document.querySelectorAll("#months .m"); const i = new Date().getMonth(); const m = months[i];
+    if (!m) return;
+    m.classList.add("cur");
+    document.getElementById("now").textContent = "עכשיו " + m.querySelector("b").textContent + ": " + m.querySelector("span").textContent;
+  })();
+
+  const RANGES = {
+    "אחזקה קבועה": "בדרך כלל זה 350 עד 900 ₪ לחודש, לפי גודל הגינה",
+    "גיזום": "גיזום עולה בדרך כלל 400 עד 1,500 ₪",
+    "מערכת השקיה": "טפטוף עם מחשב השקיה עולה בדרך כלל 800 עד 2,500 ₪",
+    "שתילה ועיצוב": "על שתילה ועיצוב נותנים הצעת מחיר",
+    "דשא": "דשא מתמחרים לפי מ״ר",
+  };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "עומר · גינון", subtitle: "חוזר אליכם לקבוע סיור", initial: "ע", launcher: "מחיר לגינה?",
+    greet: "היי, כאן עומר.\nכמה שאלות קצרות על הגינה, והפרטים יגיעו אליי לוואטסאפ.",
+    steps: [
+      { key: "service", label: "שירות", ask: "מה צריך בגינה?", chips: Object.keys(RANGES) },
+      { key: "size", label: "גינה", ask: "מה גודל הגינה, בערך?", chips: ["עד 50 מ״ר", "50 עד 200 מ״ר", "מעל 200 מ״ר"] },
+      { key: "freq", label: "תדירות",
+        ask: (d) => d.service === "אחזקה קבועה" ? "כל כמה זמן להגיע?" : "זו עבודה חד פעמית, או שתרצו גם ביקור קבוע?",
+        chips: [{ label: "פעם אחת", value: "עבודה חד פעמית" }, { label: "כל שבועיים", value: "ביקור כל שבועיים" }, { label: "פעם בחודש", value: "ביקור פעם בחודש" }] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב הגינה?", input: "text", placeholder: "למשל: אביחיל" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.service}, גינה ${d.size}, ${d.freq}, ב${d.city}.\n${RANGES[d.service]}. קובעים סיור קצר בגינה ונותנים מחיר סגור.`,
+    summary: (d) => `פנייה מהאתר (דמו גינון)\nשירות: ${d.service}\nגינה: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-service]").forEach((b) => b.addEventListener("click", () => bot.open({ service: b.dataset.service })));
+</script>
+</body>
+</html>
