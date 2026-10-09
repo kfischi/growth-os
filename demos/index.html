@@ -3,95 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>נחיתה רכה · האתר עונה</title>
-<meta name="description" content="אתרים ודפי נחיתה לעסקים קטנים, עם מענה אוטומטי בוואטסאפ. מטפלים בפניות גם כשהעסק ישן.">
+<title>נחיתה רכה · אתר לעסק שעונה ללקוחות</title>
+<meta name="description" content="אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&display=swap">
-<script>
-(function (r) {
-  r.lang = 'he'; r.dir = 'rtl';
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) { r.classList.add('pre'); setTimeout(function () { r.classList.remove('pre'); }, 3000); }
-})(document.documentElement);
-</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap">
 <style>
-/* Layout: one workday told twice. The ground is the day's light, a fixed clock keeps the time,
-   poster type sits on a call-log grid, and a field of dots (each one an inquiry) runs behind everything. */
+/* The object: the business owner's phone. The whole story is told through it: a film of one working day on two
+   phones, then what makes the second phone different, how it gets built, examples, prices and a form.
+   The detail only this subject has: real times and real notifications ("שיחה שלא נענתה", "✓✓").
+   The one bold move: the film's own light turns from morning to dusk. Everything around it stays quiet. */
 :root {
-  --m-bg: oklch(94% .018 285);  --m-fg: oklch(24% .06 300);  --m-accent: oklch(47% .09 178);  --m-lost: oklch(52% .14 15);
-  --d-bg: oklch(34% .085 335);  --d-fg: oklch(94% .022 330); --d-accent: oklch(86% .08 172);  --d-lost: oklch(78% .1 15);
-  --n-bg: oklch(19% .04 265);
-  --bg: var(--m-bg); --fg: var(--m-fg); --accent: var(--m-accent); --lost: var(--m-lost);
-  --f-display: 'Karantina', 'Arial Narrow', Impact, sans-serif;
-  --f-text: 'IBM Plex Sans Hebrew', 'Assistant', system-ui, sans-serif;
-  --f-clock: 'Miriam Libre', 'Courier New', monospace;
-  --gut: clamp(16px, 4vw, 56px);
-  --hero: min(24vw, 36svh);
-  color-scheme: light;
+  --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #c2413b;
+  --line: color-mix(in oklab, var(--ink) 14%, var(--paper));
+  --font: 'Rubik', 'Calibri', 'Segoe UI', system-ui, sans-serif;
+  --gut: clamp(16px, 4.2vw, 64px); --wrap: 1240px;
+  /* the film's light; JavaScript moves it from morning to dusk */
+  --bg: var(--mist); --fg: var(--ink); --accent: var(--mint); --lost: var(--brick); --dim: var(--slate);
 }
-*, *::before, *::after { box-sizing: border-box; }
+* { box-sizing: border-box; }
+html { scroll-padding-top: 84px; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.6 var(--f-text); overflow-x: clip; -webkit-font-smoothing: antialiased; }
-.page, .band, .bar, .dock { --dim: color-mix(in oklab, var(--fg) 64%, var(--bg)); --line: color-mix(in oklab, var(--fg) 20%, var(--bg)); }
-.page { position: relative; z-index: 1; }
-#field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3, p, ol, ul, figure { margin: 0; }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-h1, h2, h3, p, ol { margin: 0; }
-bdi, time, .clock { font-variant-numeric: tabular-nums; }
-bdi { white-space: nowrap; }
-
-/* masked line reveal */
-.ln { display: block; overflow: clip; padding-block: .12em .05em; margin-block: -.12em -.05em; }
-.ln-i { display: block; }
+img, svg { display: block; }
+:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+.wrap { inline-size: min(100%, var(--wrap)); margin-inline: auto; padding-inline: var(--gut); }
 
 /* top bar */
-.bar { position: fixed; inset-inline: 0; top: 0; z-index: 20; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--gut) 26px; pointer-events: none;
-  background: linear-gradient(to bottom, var(--bg) 30%, color-mix(in srgb, var(--bg) 0%, transparent)); }
-.bar > * { pointer-events: auto; }
-.brand { display: inline-flex; align-items: center; gap: .6em; text-decoration: none; font-weight: 500; font-size: .95rem; justify-self: start; min-height: 44px; }
-.brand i { inline-size: .62em; block-size: .62em; border-radius: 50%; background: var(--fg); flex: none; }
-.brand b { font-weight: 600; font-size: 1.05rem; }
-.brand .long { font-weight: 400; color: var(--dim); margin-inline-start: .8em; }
-.clock { font: 400 1.05rem/1 var(--f-clock); direction: ltr; letter-spacing: .04em; }
-.bar-cta { justify-self: end; font-weight: 600; font-size: .95rem; text-decoration: none; padding: .7em 0; border-bottom: 2px solid var(--fg); }
-.bar-cta:hover { border-color: var(--accent); color: var(--accent); }
-.dayline { position: fixed; inset-inline: 0; top: 0; height: 3px; z-index: 21; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: 100% 50%; }
+.bar { position: sticky; top: 0; z-index: 30; background: color-mix(in oklab, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
+.brand i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 22%, transparent); }
+.brand small { font-weight: 400; color: var(--slate); font-size: .9rem; }
+.nav { display: flex; gap: 22px; margin-inline-start: auto; }
+.nav a { text-decoration: none; font-size: .95rem; color: var(--slate); }
+.nav a:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 52px; padding: .8em 1.5em; border-radius: 999px; border: 0;
+  background: var(--ink); color: var(--paper); font: 600 1.02rem/1 var(--font); text-decoration: none; cursor: pointer; transition: transform .2s, background-color .2s; }
+.btn:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--ink) 85%, var(--mint)); }
+.btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn.ghost:hover { box-shadow: inset 0 0 0 1.5px var(--ink); background: transparent; }
+.btn.sm { min-height: 42px; padding: .6em 1.15em; font-size: .95rem; }
 
-/* buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .7em; min-height: 56px; padding: 1em 1.7em; background: var(--fg); color: var(--bg);
-  font: 600 1.06rem/1 var(--f-text); text-decoration: none; border: 0; cursor: pointer; transition: background-color .25s, color .25s; }
-.btn::before { content: ""; inline-size: .56em; block-size: .56em; border-radius: 50%; background: currentColor; }
-.btn:hover, .btn:focus-visible { background: var(--accent); }
+/* sections */
+.sec { padding-block: clamp(72px, 12svh, 128px); }
+.kicker { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; font-weight: 600; color: var(--mint); margin-bottom: .8rem; }
+.kicker::before { content: ""; inline-size: 22px; block-size: 2px; background: currentColor; }
+.sec h2 { font: 800 clamp(2.1rem, 4.2vw, 3.4rem)/1.1 var(--font); letter-spacing: -.02em; max-width: 20ch; text-wrap: balance; }
+.sec-sub { margin-top: .9rem; max-width: 56ch; font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: var(--slate); text-wrap: pretty; }
+.sec-head { margin-bottom: clamp(32px, 6svh, 56px); }
+.alt { background: var(--mist); }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2, .8, .2, 1); }
+.reveal.on { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
-/* hero */
-/* the hero: one working day on two phones, split screen like a film */
-.hero { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); align-items: center; gap: 28px clamp(32px, 5vw, 96px);
-  padding: clamp(84px, 11svh, 112px) var(--gut) clamp(20px, 3svh, 36px); }
-.hero-text { min-width: 0; display: grid; justify-items: start; gap: clamp(.8rem, 2svh, 1.3rem); }
-.hero h1 { font: 700 clamp(3.8rem, 7.6vw, 8.4rem)/.86 var(--f-display); }
-.hero h1 .ln { display: block; }
-.hero-sub { font: 600 clamp(1.25rem, 1.8vw, 1.7rem)/1.3 var(--f-text); }
-.lede { text-wrap: pretty; max-width: 36ch; font-size: clamp(1.06rem, 1.4vw, 1.32rem); line-height: 1.5; }
-.hero .lede { font-size: clamp(1.02rem, 1.25vw, 1.18rem); line-height: 1.55; color: var(--dim); }
-.pre .hero-text > *, .pre .day { opacity: 0; }
-.day { min-width: 0; display: grid; gap: 12px; }
-.day-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(14px, 2.6vw, 40px); }
-.ph { margin: 0; min-width: 0; display: grid; gap: 10px; }
-.ph-label { font: 700 clamp(1.7rem, 2.5vw, 2.5rem)/1 var(--f-display); }
+/* hero: what this is, and the film that shows it */
+.hero { padding-block: clamp(40px, 7svh, 72px) clamp(56px, 9svh, 96px); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 32px clamp(32px, 4.5vw, 72px); }
+.hero-text { min-width: 0; display: grid; justify-items: start; gap: 18px; }
+.hero h1 { font: 800 clamp(2.2rem, 3.5vw, 3.3rem)/1.1 var(--font); letter-spacing: -.025em; text-wrap: balance; }
+.hero h1 em { font-style: normal; color: var(--mint); }
+.hero-sub { font-size: clamp(1.08rem, 1.5vw, 1.28rem); color: var(--slate); max-width: 40ch; text-wrap: pretty; }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.hero-points { list-style: none; padding: 0; display: grid; gap: 6px; margin-top: 6px; font-size: .97rem; }
+.hero-points li { display: flex; gap: 8px; align-items: baseline; }
+.hero-points li::before { content: "✓"; color: var(--mint); font-weight: 700; }
+
+/* the film */
+.day { min-width: 0; display: grid; gap: 12px; padding: clamp(16px, 2.2vw, 28px); border-radius: 28px; background: var(--bg); color: var(--fg); transition: background-color .2s; }
+.day-cap { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .9rem; color: var(--dim); }
+.day-cap b { color: var(--fg); font-weight: 600; }
+.day-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(12px, 2vw, 28px); }
+.ph { margin: 0; min-width: 0; display: grid; gap: 8px; }
+.ph-label { font-weight: 700; font-size: clamp(1rem, 1.4vw, 1.2rem); display: flex; align-items: center; gap: 8px; }
+.ph-label::before { content: ""; inline-size: 9px; block-size: 9px; border-radius: 50%; background: currentColor; }
 .ph-today .ph-label { color: var(--lost); }
 .ph-site .ph-label { color: var(--accent); }
-.ph-body { position: relative; block-size: min(54svh, 476px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
-  border: 1.5px solid color-mix(in oklab, var(--fg) 26%, var(--bg)); border-radius: clamp(24px, 2.8vw, 40px); padding: clamp(26px, 3svh, 36px) clamp(10px, 1.2vw, 16px) clamp(12px, 1.6svh, 18px);
-  background: color-mix(in oklab, var(--fg) 5%, var(--bg));
-  box-shadow: 0 0 0 5px color-mix(in oklab, var(--fg) 7%, var(--bg)), 0 34px 60px -34px color-mix(in oklab, var(--fg) 55%, transparent); }
-.ph-body::before { content: ""; position: absolute; top: 10px; inset-inline: 0; margin-inline: auto; inline-size: 30%; block-size: 6px; border-radius: 6px; background: color-mix(in oklab, var(--fg) 22%, var(--bg)); }
-.ph-top { display: grid; justify-items: center; gap: 2px; }
-.ph-time { font: 400 clamp(2rem, 3.6vw, 3.4rem)/1 var(--f-clock); direction: ltr; letter-spacing: -.01em; }
-.ph-date { font-size: .78rem; color: var(--dim); }
-.ph-notes { list-style: none; padding: 0; margin: clamp(10px, 1.8svh, 18px) 0 0; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.ph-body { position: relative; block-size: min(52svh, 456px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  border: 1.5px solid color-mix(in oklab, var(--fg) 22%, var(--bg)); border-radius: clamp(24px, 2.6vw, 36px); padding: 26px clamp(9px, 1.1vw, 14px) 12px;
+  background: color-mix(in oklab, var(--fg) 5%, var(--bg)); box-shadow: 0 0 0 5px color-mix(in oklab, var(--fg) 6%, var(--bg)); }
+.ph-body::before { content: ""; position: absolute; top: 10px; inset-inline: 0; margin-inline: auto; inline-size: 30%; block-size: 6px; border-radius: 6px; background: color-mix(in oklab, var(--fg) 20%, var(--bg)); }
+.ph-top { display: grid; justify-items: center; }
+.ph-time { font: 300 clamp(2rem, 3.4vw, 3.1rem)/1 var(--font); font-variant-numeric: tabular-nums; direction: ltr; }
+.ph-date { font-size: .76rem; color: var(--dim); }
+.ph-notes { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
 .n { display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(-6px); transition: grid-template-rows .55s cubic-bezier(.2, .8, .2, 1), opacity .45s, transform .55s cubic-bezier(.2, .8, .2, 1); }
 .n.in { grid-template-rows: 1fr; opacity: 1; transform: none; }
 .n.in .n-card { animation: arrive 1.4s ease-out; }
@@ -99,8 +95,7 @@ bdi { white-space: nowrap; }
 @keyframes arrive { from { background: color-mix(in oklab, var(--fg) 22%, var(--bg)); } }
 @keyframes miss { from { background: color-mix(in oklab, var(--lost) 30%, var(--bg)); } }
 .n-in { overflow: hidden; min-height: 0; }
-.n-card { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 8px 10px; border-radius: 13px;
-  background: color-mix(in oklab, var(--fg) 9%, var(--bg)); }
+.n-card { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 8px 10px; border-radius: 13px; background: color-mix(in oklab, var(--fg) 9%, var(--bg)); }
 .n[data-ghost] .n-card { background: transparent; outline: 1px dashed color-mix(in oklab, var(--lost) 70%, var(--bg)); outline-offset: -1px; }
 .n-ic { inline-size: 26px; block-size: 26px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--fg) 14%, var(--bg)); }
 .n-ic svg { inline-size: 14px; block-size: 14px; fill: currentColor; }
@@ -115,415 +110,411 @@ bdi { white-space: nowrap; }
 .ph-today .n.in:not(.done)[data-kind="call"] .n-ic { animation: ring .4s ease-in-out infinite; color: var(--lost); }
 @keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
 .ph-tally { margin-top: 8px; display: flex; align-items: baseline; justify-content: center; gap: .4em; font-size: .8rem; color: var(--dim); }
-.ph-tally b { font: 700 clamp(2rem, 3vw, 2.8rem)/1 var(--f-display); }
+.ph-tally b { font: 800 clamp(1.7rem, 2.4vw, 2.3rem)/1 var(--font); }
 .ph-today .ph-tally b { color: var(--lost); }
 .ph-site .ph-tally b { color: var(--accent); }
-.day-sub { min-height: 2.7em; text-align: center; font: 600 clamp(1.05rem, 1.45vw, 1.3rem)/1.35 var(--f-text); text-wrap: balance; transition: opacity .3s; }
+.day-sub { min-height: 2.7em; text-align: center; font-weight: 600; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.35; text-wrap: balance; transition: opacity .3s; }
 .day-sub.swap { opacity: 0; }
 .day-ctl { display: flex; align-items: center; gap: 12px; }
-.day-btn { flex: none; inline-size: 36px; block-size: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line);
-  background: transparent; color: var(--fg); font: 600 .72rem/1 var(--f-text); cursor: pointer; transition: border-color .2s, color .2s; }
-.day-btn:hover, .day-btn:focus-visible { border-color: var(--accent); color: var(--accent); outline: 0; }
-.day-bar { flex: 1; block-size: 2px; background: var(--line); overflow: hidden; }
+.day-btn { flex: none; inline-size: 34px; block-size: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--fg) 25%, var(--bg));
+  background: transparent; color: var(--fg); font: 600 .7rem/1 var(--font); cursor: pointer; }
+.day-bar { flex: 1; block-size: 2px; background: color-mix(in oklab, var(--fg) 18%, var(--bg)); overflow: hidden; border-radius: 2px; }
 .day-bar i { display: block; block-size: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; }
 .day-note { flex: none; font-size: .74rem; color: var(--dim); }
-@media (prefers-reduced-motion: reduce) { .n, .day-sub { transition: none; } .ph-today .n-ic, .n-card { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .n, .day-sub { transition: none; } .n-ic, .n-card { animation: none !important; } }
 
+/* what you get */
+.parts { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); }
+.part { min-width: 0; display: grid; align-content: start; gap: 10px; padding: clamp(18px, 2vw, 26px); border-radius: 22px; background: var(--paper); border: 1px solid var(--line); }
+.part-n { inline-size: 34px; block-size: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 700; }
+.part h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -.01em; }
+.part p { color: var(--slate); }
+.part-fig { block-size: 120px; display: grid; place-items: center; border-radius: 16px; background: var(--mist); margin-top: 4px; padding: 12px; }
+.part .n-card { --fg: var(--ink); --bg: var(--paper); inline-size: min(100%, 290px); }
+.part .n-card b { font-size: .84rem; font-weight: 600; }
+.part .n-card span { font-size: .78rem; }
+.part .n-card p { display: grid; line-height: 1.3; }
+.ok-ic { color: var(--paper); background: var(--mint) !important; }
+.ok-ic svg { inline-size: 14px; block-size: 14px; fill: currentColor; }
+.mini-page { inline-size: min(100%, 240px); display: grid; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); font-size: .8rem; }
+.mini-page b { font-size: .88rem; }
+.mini-page span { color: var(--slate); }
+.mp-bar { block-size: 5px; inline-size: 34%; border-radius: 4px; background: var(--line); }
+.mp-btn { justify-self: start; margin-top: 4px; padding: 4px 12px; border-radius: 999px; font-style: normal; font-weight: 600; color: var(--paper); background: var(--mint); }
+.mini-table { inline-size: min(100%, 300px); display: grid; font-size: .78rem; background: var(--paper); border-radius: 12px; padding: 4px 10px; border: 1px solid var(--line); }
+.mini-table span { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.mini-table span:last-child { border: 0; }
+.mini-table b { font-weight: 500; font-variant-numeric: tabular-nums; direction: ltr; }
+.mini-table em { font-style: normal; color: var(--mint); font-weight: 500; }
+.mini-table em.due { color: var(--brick); }
+.what-ai { margin-top: 24px; color: var(--slate); }
 
-/* sections in normal flow */
-.sec { padding: clamp(96px, 17svh, 190px) var(--gut); }
-.sec-title { font: 700 clamp(3.6rem, 10.5vw, 11rem)/.84 var(--f-display); margin-bottom: clamp(2rem, 7svh, 5rem); }
-.sec-sub { text-wrap: balance; max-width: 44ch; color: var(--dim); margin-top: -1.5rem; margin-bottom: clamp(2rem, 6svh, 4rem); }
+/* how it works */
+.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); counter-reset: s; }
+.step { position: relative; padding-top: 22px; border-top: 2px solid var(--ink); }
+.step-n { display: block; font-weight: 800; font-size: 2.6rem; line-height: 1; color: var(--mint); margin-bottom: 10px; }
+.step h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+.step p { color: var(--slate); max-width: 34ch; }
 
-.plan { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 3fr); align-items: start; gap: 1rem clamp(20px, 4vw, 64px);
-  padding: clamp(1.6rem, 4.5svh, 3rem) 0; border-top: 1px solid var(--line); }
-.plan:last-of-type { border-bottom: 1px solid var(--line); }
-.plan-name { font: 700 clamp(3.2rem, 7.4vw, 7.5rem)/.84 var(--f-display); }
-.plan-tag { display: block; margin-top: .8em; font: 500 .95rem/1.3 var(--f-text); color: var(--accent); }
-.plan-what { font-weight: 500; font-size: clamp(1.15rem, 1.6vw, 1.45rem); line-height: 1.3; margin-bottom: .55em; }
-.plan-inc { color: var(--dim); max-width: 50ch; }
-.plan-links { display: flex; flex-wrap: wrap; gap: .3em 1.6em; margin-top: 1em; }
-.plan-link { display: inline-block; font-weight: 600; text-underline-offset: .3em; }
-.plan-add .plan-name { font-size: clamp(2.6rem, 5.2vw, 5.2rem); }
-.plan-link:hover { color: var(--accent); }
-.plan-price { font-family: var(--f-clock); text-align: end; display: grid; gap: .5em; }
-.plan-price b { font-weight: 400; font-size: clamp(1.9rem, 3.1vw, 3rem); line-height: 1; }
-.plan-price span { font-family: var(--f-text); font-size: .95rem; color: var(--dim); }
-.offers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem clamp(20px, 4vw, 64px); margin-top: clamp(2rem, 6svh, 4rem); }
-.offers p { max-width: 46ch; }
-.offers strong { font-weight: 600; }
-.slots { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 5fr); align-items: end; gap: clamp(14px, 2.5vw, 36px); }
-.slot { margin: 0; max-width: 100%; aspect-ratio: 4 / 3; display: grid; align-content: end; padding: clamp(.9rem, 2vw, 1.4rem); border: 1px dashed var(--dim);
-  background: color-mix(in oklab, var(--fg) 5%, transparent); color: var(--dim); font-size: .98rem; line-height: 1.4; }
-.slot.tall { aspect-ratio: 3 / 4; }
-.slot b { display: block; margin-bottom: .45em; font: 400 .85rem/1 var(--f-clock); color: var(--fg); }
+/* demos: one small card per business, each in its own colours */
+.demo-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
+.demo { min-width: 0; display: grid; text-decoration: none; color: var(--ink); border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); transition: transform .25s, box-shadow .25s; }
+.demo:hover, .demo:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 28px -18px color-mix(in oklab, var(--ink) 60%, transparent); outline: 0; }
+.demo .sw { aspect-ratio: 16 / 10; display: flex; align-items: flex-end; padding: 10px 14px; font-weight: 700; font-size: clamp(1.02rem, 1.25vw, 1.2rem); color: #fff; }
+.demo .tx { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 10px 14px 12px; }
+.demo .tx b { font-size: .95rem; font-weight: 600; }
+.demo .tx small { font-size: .8rem; color: var(--slate); white-space: nowrap; }
+.demos-more { margin-top: 20px; }
+.sw.plumber { background: #123a8c; background-image: linear-gradient(rgb(255 255 255 / .08) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .08) 1px, transparent 1px); background-size: 18px 18px; }
+.sw.movers { background: #c69c6d; color: #181512; background-image: repeating-linear-gradient(90deg, rgb(0 0 0 / .05) 0 2px, transparent 2px 9px); }
+.sw.trainer { background: #24352f; color: #f1efe8; }
+.sw.ac { background: #e6f1f6; color: #0d2235; }
+.sw.electrician { background: #202427; box-shadow: inset 0 -5px #ff5a1f; }
+.sw.cleaning { background: #dceeec; color: #0f3b3a; }
+.sw.renovation { background: #2f5d4e; }
+.sw.locksmith { background: linear-gradient(135deg, #d9dde1, #9aa3ab); color: #6e1b24; }
+.sw.pest { background: #e6efe8; color: #1d4a35; background-image: linear-gradient(rgb(29 74 53 / .09) 1px, transparent 1px), linear-gradient(90deg, rgb(29 74 53 / .09) 1px, transparent 1px); background-size: 14px 14px; }
+.sw.appliance { background: #eef1f8; color: #1d3bb3; }
+.sw.handyman { background: #b98d63; color: #1f2225; background-image: radial-gradient(rgb(70 50 35 / .28) 2px, transparent 2.5px); background-size: 16px 16px; }
+.sw.garden { background: #1f4d36; color: #f3efe6; }
+.sw.tutor { background: #fbfcff; color: #1b2a55; background-image: linear-gradient(#cfdcf3 1px, transparent 1px), linear-gradient(90deg, #cfdcf3 1px, transparent 1px); background-size: 14px 14px; box-shadow: inset 0 -3px #d93a3a; }
+.sw.psychologist { background: linear-gradient(135deg, #e3ebe6, #b9cbc2); color: #1f3d36; }
+.sw.social-worker { background: #f3f5f2; color: #134e4a; box-shadow: inset 0 -3px #d99a96; }
 
-/* demos */
-.demos { padding-block: clamp(96px, 17svh, 190px); overflow: clip; }
-.demos-head { padding-inline: var(--gut); }
-.track-wrap { overflow-x: auto; }
-.track { display: flex; align-items: end; gap: clamp(36px, 6vw, 120px); width: max-content; padding-inline: var(--gut); }
-.demo { flex: none; display: grid; gap: .5rem; text-decoration: none; }
-.demo b { font: 700 clamp(5rem, 17vw, 17rem)/.84 var(--f-display); transition: color .3s; -webkit-text-stroke: 0 transparent; }
-.demo small { font-size: 1rem; color: var(--dim); }
-@media (hover: hover) {
-  .track:hover .demo:not(:hover) b { color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
-  .demo:hover b { color: var(--accent); }
-}
+/* prices */
+.plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); align-items: stretch; }
+.plan { min-width: 0; display: grid; align-content: start; gap: 14px; padding: clamp(22px, 2.6vw, 34px); border-radius: 24px; background: var(--paper); border: 1px solid var(--line); }
+.plan.featured { border: 2px solid var(--ink); position: relative; }
+.plan-tag { position: absolute; top: -13px; inset-inline-start: 24px; padding: 4px 12px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: .82rem; font-weight: 600; }
+.plan h3 { font-size: 1.7rem; font-weight: 800; letter-spacing: -.015em; }
+.plan-for { color: var(--slate); }
+.price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 10px; }
+.price b { font-size: clamp(2.2rem, 3.6vw, 2.9rem); font-weight: 800; letter-spacing: -.02em; }
+.price span { color: var(--slate); font-size: .95rem; }
+.monthly { font-weight: 600; }
+.monthly small { display: block; font-weight: 400; color: var(--slate); font-size: .9rem; }
+.inc { list-style: none; padding: 0; display: grid; gap: 7px; border-top: 1px solid var(--line); padding-top: 14px; }
+.inc li { display: flex; gap: 10px; align-items: baseline; }
+.inc li::before { content: "✓"; color: var(--mint); font-weight: 700; }
+.plan-links { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: .92rem; }
+.plan .btn { justify-self: start; margin-top: 4px; }
+.addon { margin-top: clamp(14px, 2vw, 24px); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px 24px; padding: 20px clamp(22px, 2.6vw, 34px); border-radius: 20px; border: 1px dashed color-mix(in oklab, var(--ink) 30%, var(--paper)); }
+.addon b { font-size: 1.15rem; }
+.addon p { color: var(--slate); }
+.addon .price b { font-size: 1.8rem; }
+.offers { margin-top: 18px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; color: var(--slate); font-size: .97rem; }
+.offers strong { color: var(--ink); font-weight: 600; }
 
-/* process */
-.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px); }
-.step { border-top: 1px solid var(--line); padding-top: 1.1rem; }
-.step .n { display: block; font: 700 clamp(4.4rem, 9vw, 9rem)/.8 var(--f-display); }
-.step h3 { font: 600 1.35rem/1.25 var(--f-text); margin: .5em 0 .35em; }
-.step p { color: var(--dim); max-width: 34ch; }
-.terms { list-style: none; padding: 0; margin-top: clamp(2.4rem, 8svh, 5rem); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem clamp(24px, 4vw, 64px); font-weight: 500; }
+/* questions */
+.faq { display: grid; gap: 10px; max-width: 820px; }
+.faq details { border-radius: 16px; background: var(--paper); border: 1px solid var(--line); padding: 4px 20px; }
+.faq summary { cursor: pointer; padding: 14px 0; font-weight: 600; font-size: 1.05rem; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; color: var(--mint); font-weight: 700; font-size: 1.3rem; line-height: 1; }
+.faq details[open] summary::after { content: "−"; }
+.faq details p { padding-bottom: 16px; color: var(--slate); }
 
-/* dusk interlude and night */
-.sunset { display: none; }
-.contact { min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); align-content: end; gap: clamp(1.5rem, 4svh, 2.8rem);
-  padding: clamp(96px, 15svh, 150px) var(--gut) calc(clamp(28px, 5svh, 56px) + env(safe-area-inset-bottom, 0px)); }
-.contact h2 { font: 700 min(14.5vw, 29svh)/.84 var(--f-display); }
-.contact h2 .ln:nth-child(2) { text-align: end; }
-.contact .lede { margin-top: clamp(1.2rem, 3svh, 2rem); max-width: 46ch; }
-.form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: 1.2rem clamp(16px, 2.5vw, 40px); }
-.field { display: grid; gap: .35rem; }
-.field label { font-size: .92rem; color: var(--dim); }
-.field input { font: 500 1.3rem/1.3 var(--f-text); color: var(--fg); background: transparent; border: 0; border-bottom: 1px solid var(--dim); border-radius: 0;
-  padding: .45em 0; min-height: 48px; width: 100%; transition: border-color .25s; }
-.field input:focus { outline: 0; border-bottom: 2px solid var(--accent); }
-.field input::placeholder { color: color-mix(in oklab, var(--fg) 34%, var(--bg)); }
-.form-foot { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
-.fdots { display: inline-flex; gap: .5rem; }
-.fdots i { inline-size: .62rem; block-size: .62rem; border-radius: 50%; border: 1px solid var(--dim); transition: background-color .3s, border-color .3s, transform .3s; }
-.fdots i.on { background: var(--accent); border-color: var(--accent); transform: scale(1.25); }
-.form-msg { grid-column: 1 / -1; min-height: 1.6em; font-weight: 500; color: var(--accent); }
-.foot { display: flex; justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap; padding-top: 1.4rem; border-top: 1px solid var(--line); font-size: .9rem; color: var(--dim); }
+/* contact */
+.contact { background: var(--plum); color: #f3eef6; }
+.contact .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px clamp(32px, 5vw, 80px); align-items: start; }
+.contact .kicker { color: #7fe0cc; }
+.contact h2 { color: #fff; }
+.contact .sec-sub { color: color-mix(in oklab, #f3eef6 75%, var(--plum)); }
+.form { display: grid; gap: 16px; padding: clamp(20px, 2.6vw, 32px); border-radius: 24px; background: color-mix(in oklab, #fff 7%, var(--plum)); }
+.field { display: grid; gap: 6px; }
+.field label { font-size: .92rem; color: color-mix(in oklab, #f3eef6 80%, var(--plum)); }
+.field input { font: 400 1.1rem/1.3 var(--font); color: #fff; background: color-mix(in oklab, #fff 8%, var(--plum)); border: 1px solid color-mix(in oklab, #fff 18%, var(--plum));
+  border-radius: 12px; padding: 13px 14px; }
+.field input:focus { outline: 0; border-color: #7fe0cc; }
+.field input::placeholder { color: color-mix(in oklab, #fff 42%, var(--plum)); }
+.form-foot { display: flex; align-items: center; gap: 14px; }
+.form .btn { background: #fff; color: var(--plum); }
+.form .btn:hover { background: #e9fbf6; }
+.fdots { display: flex; gap: 6px; }
+.fdots i { inline-size: 9px; block-size: 9px; border-radius: 50%; background: color-mix(in oklab, #fff 22%, var(--plum)); transition: background-color .3s; }
+.fdots i.on { background: #7fe0cc; }
+.form-msg { min-height: 1.4em; font-size: .95rem; color: #ffd0cc; }
+.foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 28px; margin-top: 12px; border-top: 1px solid color-mix(in oklab, #fff 14%, var(--plum)); font-size: .88rem; color: color-mix(in oklab, #fff 60%, var(--plum)); }
 
 /* phone dock */
-.dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 26px 16px calc(12px + env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(to top, var(--bg) 55%, color-mix(in srgb, var(--bg) 0%, transparent)); }
-.dock .btn { width: 100%; }
+.dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 60%, transparent); }
+.dock .btn { inline-size: 100%; }
 
+/* AI chat (shared/aibot.js) in the page colours */
+:root { --ab-accent: var(--mint); --ab-font: var(--font); }
 
-/* without motion: sections carry their own light */
-:root:not(.is-live) .contact {
-  --bg: var(--d-bg); --fg: var(--d-fg); --accent: var(--d-accent); --lost: var(--d-lost); background: var(--bg); color: var(--fg); }
-:root:not(.is-live) .contact { --bg: var(--n-bg); }
-:root:not(.is-live) .bar { position: absolute; }
-
-/* with motion */
-.is-live .bigclock { display: grid; position: absolute; inset: 0; place-content: center; pointer-events: none; direction: ltr;
-  font: 400 clamp(5rem, 25vw, 25rem)/1 var(--f-clock); letter-spacing: -.02em; }
-.is-live .sunset { display: grid; position: relative; min-height: 100svh; }
-.is-live .sunset .cap { position: absolute; inset-inline: 0; bottom: 12svh; text-align: center; font: 700 clamp(2.6rem, 6vw, 6rem)/.9 var(--f-display); }
-.is-live .track-wrap { overflow: visible; }
-.is-live .demos-pin { min-height: 100svh; display: grid; align-content: center; gap: 2svh; }
-
-@media (max-width: 899px) {
-  .bar-cta { display: none; }
-  .bar { grid-template-columns: 1fr auto; }
-  .brand .long { display: none; }
-  .hero { grid-template-columns: minmax(0, 1fr); align-items: start; gap: 22px; padding-top: 76px; }
-  .hero h1 { font-size: 17vw; }
-  .day-split { gap: 10px; }
-  .ph-label { font-size: 1.55rem; }
-  .ph-body { block-size: auto; min-block-size: 372px; border-radius: 24px; padding: 24px 7px 10px; }
-  .ph-time { font-size: 1.9rem; }
-  .n-card { gap: 6px; padding: 7px 7px; border-radius: 11px; }
+@media (max-width: 960px) {
+  .nav { display: none; }
+  .bar .btn { margin-inline-start: auto; }
+  .hero .wrap, .contact .wrap { grid-template-columns: minmax(0, 1fr); }
+  .parts, .steps { grid-template-columns: minmax(0, 1fr); }
+  .demo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .brand small { display: none; }
+  .hero { padding-top: 24px; }
+  .hero-points { display: none; }
+  .day { padding: 12px; border-radius: 22px; margin-inline: calc(var(--gut) * -.5); }
+  .day-split { gap: 8px; }
+  .ph-body { block-size: auto; min-block-size: 360px; border-radius: 22px; padding: 24px 6px 10px; }
+  .ph-time { font-size: 1.8rem; }
+  .n-card { gap: 6px; padding: 7px; border-radius: 11px; }
   .n-ic { inline-size: 22px; block-size: 22px; } .n-ic svg { inline-size: 12px; block-size: 12px; }
   .n b { font-size: .74rem; } .n p span { font-size: .68rem; }
   .ph-tally { flex-direction: column; align-items: center; gap: 0; font-size: .7rem; }
-  .day-note, .hero .lede { display: none; }
-  :root.in-hero .ab-launch { opacity: 0; pointer-events: none; }
-  .plan { grid-template-columns: minmax(0, 1fr); }
-  .plan-name { font-size: 22vw; }
-  .plan-price { text-align: start; gap: .4em; }
-  .plan-add .plan-name { font-size: 15vw; }
-  .slots { grid-template-columns: minmax(0, 1fr); }
-  .slot.tall { aspect-ratio: 4 / 5; }
-  .offers, .steps, .terms { grid-template-columns: minmax(0, 1fr); }
-  .track-wrap { overflow: visible; }
-  .track { flex-direction: column; align-items: stretch; width: auto; gap: 0; }
-  .demo { grid-template-columns: minmax(0, 1fr) auto; align-items: end; padding: .9rem 0 .7rem; border-top: 1px solid var(--line); }
-  .demo:last-child { border-bottom: 1px solid var(--line); }
-  .demo b { font-size: 21vw; }
-  .demo small { padding-bottom: .5em; }
-  .is-live .demos-pin { min-height: 0; display: block; }
-  .contact { gap: 2rem; }
-  .contact h2 { font-size: 30vw; }
-  .form { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; }
+  .day-note, .day-cap span:last-child { display: none; }
+  .demo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo .sw { aspect-ratio: 16 / 9; padding: 8px 12px; }
+  .demo .tx { padding: 8px 12px 10px; }
+  .demo .tx small { display: none; }
+  .plans, .offers { grid-template-columns: minmax(0, 1fr); }
+  .addon { grid-template-columns: minmax(0, 1fr); }
   .dock.on { display: block; }
+  :root.dock-on body .ab-launch { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  :root.dock-on body .ab-panel { bottom: calc(150px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 180px)); }
+  :root.in-hero .ab-launch { opacity: 0; pointer-events: none; }
 }
-/* AI chat (shared/aibot.js): page colours, and above the phone dock */
-:root { --ab-accent: oklch(47% .09 178); --ab-font: var(--f-text); }
-@media (max-width: 899px) { body .ab-launch { bottom: calc(108px + env(safe-area-inset-bottom, 0px)); } body .ab-panel { bottom: calc(176px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 200px)); } }
 </style>
-
 </head>
 <body>
-<canvas id="field" aria-hidden="true"></canvas>
-<div class="dayline" aria-hidden="true"></div>
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top"><i></i><span>נחיתה רכה <small>· אתרים לעסקים קטנים</small></span></a>
+    <nav class="nav" aria-label="ניווט">
+      <a href="#what">מה מקבלים</a><a href="#how">איך זה עובד</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
+    </nav>
+    <a class="btn sm" href="#contact">שיחת היכרות</a>
+  </div>
+</header>
 
-<div class="page" id="top" dir="rtl" lang="he">
-  <header class="bar">
-    <a class="brand" href="#top"><i></i><span><b>נחיתה רכה</b><span class="long">אתרים שבונים עסקים</span></span></a>
-    <span class="clock" data-clock aria-hidden="true">07:58</span>
-    <a class="bar-cta" href="#contact">שיחת היכרות</a>
-  </header>
-
-  <main>
-    <section class="hero" id="hero">
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="wrap">
       <div class="hero-text">
-        <h1><span class="ln"><span class="ln-i">אותו עסק.</span></span> <span class="ln"><span class="ln-i">אותו יום.</span></span></h1>
-        <p class="hero-sub">ההבדל: אתר שעונה כשאתם עסוקים.</p>
-        <p class="lede">אתרים ודפי נחיתה לעסקים קטנים, עם מענה אוטומטי בוואטסאפ. צפו ביום עבודה אחד משני הצדדים.</p>
-        <a class="btn" href="#contact" data-magnetic>לשיחת היכרות של 5 דקות</a>
+        <h1>אתר לעסק <em>שעונה ללקוחות</em>, גם כשאתם עסוקים.</h1>
+        <p class="hero-sub">אני בונה לעסקים קטנים דף נחיתה עם מענה אוטומטי בוואטסאפ, כדי שאף פנייה לא תלך לאיבוד.</p>
+        <div class="hero-ctas"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a><a class="btn ghost" href="#demos">לראות דוגמאות</a></div>
+        <ul class="hero-points"><li>מענה ללקוח תוך שניות, מהמספר העסקי שלכם</li><li>כל הפניות בטבלה אחת, עם תזכורת</li><li>באוויר תוך שבוע. הדומיין רשום על שמכם</li></ul>
       </div>
       <div class="day" id="day" role="group" aria-label="יום עבודה אחד: העסק היום מול אותו עסק עם אתר">
+        <p class="day-cap"><b>אותו עסק. אותו יום. אותן חמש פניות.</b><span>מימין העסק היום, משמאל עם אתר</span></p>
         <div class="day-split">
           <figure class="ph ph-today"><figcaption class="ph-label">העסק היום</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="search" data-ghost><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"/></svg></span><p class="pre"><b></b><span class="dim"></span></p><p class="post"><b>חיפשו אתכם בגוגל</b><span class="lost">אין איך לפנות. הלך הלאה</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">13:05. אתם על הסולם</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>וואטסאפ</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="lost">לא נקרא עד הערב</span></p></div></div></li><li class="n" data-i="0" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">09:12. אתם באמצע עבודה</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
           <figure class="ph ph-site"><figcaption class="ph-label">עם אתר שעונה</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">העסק סגור</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">השאיר פרטים. מחכה לבוקר</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">אתם על הסולם</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">בטבלה, עם תזכורת לחזור</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>צ׳אט באתר</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="ok">קיבל טווח מחיר ✓✓</span></p></div></div></li><li class="n" data-i="0" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">שם, טלפון ומה צריך</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">מענה בוואטסאפ תוך שניות ✓✓</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
         </div>
-        <p class="day-sub" aria-live="polite">יום עבודה אחד. אותן חמש פניות.</p>
+        <p class="day-sub" aria-live="polite">יום עבודה רגיל מתחיל.</p>
         <div class="day-ctl"><button type="button" class="day-btn" aria-label="השהיה"><span aria-hidden="true">❚❚</span></button><span class="day-bar"><i></i></span><span class="day-note">המחשה, לא נתון סטטיסטי</span></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-
-    <section class="sec" id="plans" aria-labelledby="t-plans">
-      <h2 class="sec-title" id="t-plans" data-reveal><span class="ln"><span class="ln-i">שתי חבילות.</span></span></h2>
-      <article class="plan">
-        <h3 class="plan-name">נוכחות</h3>
-        <div><p class="plan-what">דף אחד, מעוצב, שמייצג אתכם.</p><p class="plan-inc">דף מעוצב ומותאם לנייד, כפתור וואטסאפ וחיוג, חיבור לדומיין שלכם, אחסון ותחזוקה.</p></div>
-        <p class="plan-price"><b><bdi>1,500 ₪</bdi></b><span>הקמה, ועוד <bdi>150 ₪</bdi> לחודש</span></p>
-      </article>
-      <article class="plan">
-        <h3 class="plan-name">נציג AI<span class="plan-tag">הדף, מערכת הלידים והנציג</span></h3>
-        <div><p class="plan-what">דף שעונה ללקוחות במקומכם.</p><p class="plan-inc">כל מה שבנוכחות, מענה אוטומטי בוואטסאפ, התראה על כל פנייה, תזכורת מעקב, טבלה אחת לכל הפניות, צ'אט באתר, סינון פניות וסיכום שיחות בוואטסאפ, דוח חודשי ושינוי אחד בחודש.</p>
-          <p class="plan-links"><a class="plan-link" href="ai-agent/" target="_blank" rel="noopener">לראות את הנציג בפעולה</a><a class="plan-link" href="leads-demo/" target="_blank" rel="noopener">לנסות את מערכת הלידים</a></p></div>
-        <p class="plan-price"><b><bdi>2,250 ₪</bdi></b><span>הקמה: בתשלום אחד, או בשלושה תשלומים של <bdi>750 ₪</bdi>. אותו סכום.</span><span>מהחודש הרביעי: <bdi>500 ₪</bdi> לחודש</span></p>
-      </article>
-      <article class="plan plan-add">
-        <h3 class="plan-name">ניהול עצמאי<span class="plan-tag">תוספת לכל חבילה</span></h3>
-        <div><p class="plan-what">משנים תכנים בסיסיים ועיצוב לבד, בלי לחכות לאף אחד.</p><p class="plan-inc">פאנל ניהול תוכן (Sanity) שמחובר לדף. לעסקים שמעדכנים שירותים, מחירים וטקסטים לעיתים קרובות.</p></div>
-        <p class="plan-price"><b><bdi>1,000 ₪</bdi></b><span>תוספת חד-פעמית להקמה. התשלום החודשי לא משתנה.</span></p>
-      </article>
-      <div class="offers">
-        <p><strong>מפסיקים את התשלום החודשי?</strong> הדף והדומיין נשארים שלכם. המענה האוטומטי, הנציג, ההתראות והטבלה פועלים רק עם התשלום החודשי.</p>
-        <p><strong>משלמים שנה מראש?</strong> 12 חודשים במחיר של 10.</p>
+  <section class="sec alt" id="what" aria-labelledby="t-what">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">מה מקבלים</p>
+        <h2 id="t-what">מה שראיתם בטלפון השני. שלושה חלקים שעובדים יחד.</h2>
+        <p class="sec-sub">לא צריך להבין בטכנולוגיה. אני מקים, מחבר ובודק, ואתם ממשיכים לעבוד.</p>
       </div>
-    </section>
-
-    <section class="demos" id="demos" aria-labelledby="t-demos">
-      <div class="demos-pin">
-        <div class="demos-head">
-          <h2 class="sec-title" id="t-demos" data-reveal><span class="ln"><span class="ln-i">ככה זה נראה.</span></span></h2>
-          <p class="sec-sub">15 עסקים לדוגמה. בוחרים תחום ונכנסים לדמו חי. <a class="plan-link" href="all/">כל הדמואים עם הסבר</a></p>
-        </div>
-        <div class="track-wrap">
-          <div class="track">
-            <a class="demo" href="plumber/"><b>אינסטלטור</b><small>דמו: אורן מים</small></a>
-            <a class="demo" href="movers/"><b>הובלות</b><small>דמו: דרור הובלות</small></a>
-            <a class="demo" href="trainer/"><b>מאמנת כושר</b><small>דמו: יעל ברק</small></a>
-            <a class="demo" href="ac/"><b>מזגנים</b><small>דמו: אלון קור</small></a>
-            <a class="demo" href="electrician/"><b>חשמלאי</b><small>דמו: רז שגב</small></a>
-            <a class="demo" href="cleaning/"><b>ניקיון</b><small>דמו: שקד</small></a>
-            <a class="demo" href="renovation/"><b>שיפוצים</b><small>דמו: נתן אדלר</small></a>
-            <a class="demo" href="locksmith/"><b>מנעולן</b><small>דמו: עידו מפתח</small></a>
-            <a class="demo" href="pest/"><b>הדברה</b><small>דמו: שקט</small></a>
-            <a class="demo" href="appliance/"><b>מכשירי חשמל</b><small>דמו: רועי שטרן</small></a>
-            <a class="demo" href="handyman/"><b>הנדימן</b><small>דמו: דורון</small></a>
-            <a class="demo" href="garden/"><b>גינון</b><small>דמו: עומר גנים</small></a>
-            <a class="demo" href="tutor/"><b>מורה פרטית</b><small>דמו: נועה שגיא</small></a>
-            <a class="demo" href="psychologist/"><b>פסיכולוגית</b><small>דמו: תמר גלעד</small></a>
-            <a class="demo" href="social-worker/"><b>עובדת סוציאלית</b><small>דמו: יעל שחר</small></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="sec" id="faces" aria-labelledby="t-faces">
-      <h2 class="sec-title" id="t-faces" data-reveal><span class="ln"><span class="ln-i">מי בונה לכם.</span></span></h2>
-      <div class="slots">
-        <figure class="slot tall"><figcaption><b>תמונה 1</b>מי שבונה את הדף, בזמן עבודה. צילום לאורך.</figcaption></figure>
-        <figure class="slot"><figcaption><b>תמונה 2</b>צילום מסך של דף אמיתי שנבנה ללקוח.</figcaption></figure>
-        <figure class="slot"><figcaption><b>תמונה 3</b>בעל עסק שעובד עם הדף, במקום העבודה שלו.</figcaption></figure>
-      </div>
-      <p class="note">מסגרות לתמונות שיתווספו. בדף הסופי יופיעו כאן הצילומים עצמם.</p>
-    </section>
-
-    <section class="sec" id="process" aria-labelledby="t-process">
-      <h2 class="sec-title" id="t-process" data-reveal><span class="ln"><span class="ln-i">מהשיחה</span></span><span class="ln"><span class="ln-i">ועד הפנייה הראשונה.</span></span></h2>
-      <ol class="steps">
-        <li class="step"><span class="n">1</span><h3>שיחה של 5 דקות</h3><p>על העסק ועל הלקוחות שלכם.</p></li>
-        <li class="step"><span class="n">2</span><h3>הקמה, בדרך כלל עד שבוע</h3><p>כולל חיבור לוואטסאפ ובדיקה מהטלפון שלכם. חבילת נציג AI: עד שבועיים.</p></li>
-        <li class="step"><span class="n">3</span><h3>מעקב חודשי</h3><p>עם דוח קצר.</p></li>
+      <ol class="parts">
+        <li class="part reveal">
+          <span class="part-n">1</span>
+          <h3>דף לעסק</h3>
+          <p>דף מעוצב לנייד, עם השירותים, האזור, התמונות שלכם וכפתור וואטסאפ. אליו שולחים מגוגל, מפייסבוק ומהקבוצות.</p>
+          <div class="part-fig" aria-hidden="true"><div class="mini-page"><i class="mp-bar"></i><b>אורן מים · אינסטלציה</b><span>חדרה והסביבה. חוזר אליכם היום.</span><i class="mp-btn">וואטסאפ</i></div></div>
+        </li>
+        <li class="part reveal">
+          <span class="part-n">2</span>
+          <h3>מענה תוך שניות</h3>
+          <p>מי שמשאיר פרטים מקבל הודעה בוואטסאפ מהמספר העסקי שלכם, מיד. אתם מקבלים התראה עם כל הפרטים.</p>
+          <div class="part-fig" aria-hidden="true"><div class="n-card"><span class="n-ic ok-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p><b>נשלח ללקוח</b><span>״קיבלנו את הפנייה. חוזרים אליכם היום.״ ✓✓</span></p></div></div>
+        </li>
+        <li class="part reveal">
+          <span class="part-n">3</span>
+          <h3>אף פנייה לא נשכחת</h3>
+          <p>כל הפניות בטבלה אחת. לא חזרתם ללקוח? מגיעה תזכורת. פעם בחודש דוח קצר: כמה פניות נכנסו ומאיפה.</p>
+          <div class="part-fig" aria-hidden="true"><div class="mini-table"><span><b>09:12</b> דנה · נזילה במטבח <em>חזרתם</em></span><span><b>13:05</b> אבי · דוד שמש <em class="due">תזכורת 16:00</em></span><span><b>19:20</b> מיכל · סתימה <em>מחר בבוקר</em></span></div></div>
+        </li>
       </ol>
-      <ul class="terms">
-        <li>בלי התחייבות. ביטול בהודעה של 30 יום מראש.</li>
-        <li>בחרתם בתשלומים וביטלתם לפני התשלום השלישי? משלימים את יתרת ההקמה.</li>
-        <li>הדומיין והאחסון רשומים על שמכם, והדומיין נשאר אצלכם.</li>
-        <li>ההודעות יוצאות מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp.</li>
-      </ul>
-    </section>
+      <p class="what-ai reveal">בחבילת נציג AI יש גם צ׳אט באתר שעונה על שאלות של לקוחות, כמו זה שבפינה.</p>
+    </div>
+  </section>
 
-    <section class="sunset" aria-hidden="true">
-      <div class="bigclock" data-clock>19:30</div>
-      <p class="cap"><span class="ln"><span class="ln-i">היום נגמר. הפניות לא.</span></span></p>
-    </section>
-
-    <section class="contact band" id="contact" aria-labelledby="t-contact">
-      <div>
-        <h2 id="t-contact" data-reveal><span class="ln"><span class="ln-i">העסק סגור.</span></span><span class="ln"><span class="ln-i">האתר עובד.</span></span></h2>
-        <p class="lede">גם ב-<bdi>22:47</bdi>, מי שמשאיר פרטים מקבל מענה. משאירים שלושה פרטים, והם מגיעים אליי בוואטסאפ. אחזור אליכם לשיחה של 5 דקות.</p>
+  <section class="sec" id="how" aria-labelledby="t-how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">איך זה עובד</p>
+        <h2 id="t-how">משיחה של 5 דקות ועד הפנייה הראשונה.</h2>
       </div>
-      <form class="form" id="lead" novalidate>
+      <ol class="steps">
+        <li class="step reveal"><span class="step-n">1</span><h3>שיחה של 5 דקות</h3><p>מספרים לי על העסק, על הלקוחות ועל השאלות שחוזרות.</p></li>
+        <li class="step reveal"><span class="step-n">2</span><h3>תוך שבוע באוויר</h3><p>אני בונה את הדף, מחבר לוואטסאפ העסקי שלכם ובודק איתכם מהטלפון. נציג AI: עד שבועיים.</p></li>
+        <li class="step reveal"><span class="step-n">3</span><h3>מעקב כל חודש</h3><p>דוח קצר: כמה פניות נכנסו ומאיפה. שינוי אחד בחודש כלול.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec alt" id="demos" aria-labelledby="t-demos">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">דוגמאות</p>
+        <h2 id="t-demos">ככה זה נראה בתחום שלכם.</h2>
+        <p class="sec-sub">15 עסקים לדוגמה, כל אחד בסגנון משלו. נכנסים, משאירים פנייה ורואים מה הלקוח מקבל.</p>
+      </div>
+      <div class="demo-grid">
+        <a class="demo" href="plumber/"><span class="sw plumber">אורן מים</span><span class="tx"><b>אינסטלטור</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="movers/"><span class="sw movers">דרור הובלות</span><span class="tx"><b>הובלות</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="trainer/"><span class="sw trainer">יעל ברק</span><span class="tx"><b>מאמנת כושר</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="ac/"><span class="sw ac">אלון קור</span><span class="tx"><b>טכנאי מזגנים</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="electrician/"><span class="sw electrician">רז שגב</span><span class="tx"><b>חשמלאי</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="cleaning/"><span class="sw cleaning">שקד</span><span class="tx"><b>ניקיון</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="renovation/"><span class="sw renovation">נתן אדלר</span><span class="tx"><b>שיפוצים</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="locksmith/"><span class="sw locksmith">עידו מפתח</span><span class="tx"><b>מנעולן</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="pest/"><span class="sw pest">שקט</span><span class="tx"><b>הדברה</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="appliance/"><span class="sw appliance">רועי שטרן</span><span class="tx"><b>מכשירי חשמל</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="handyman/"><span class="sw handyman">דורון</span><span class="tx"><b>הנדימן</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="garden/"><span class="sw garden">עומר גנים</span><span class="tx"><b>גינון</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="tutor/"><span class="sw tutor">נועה שגיא</span><span class="tx"><b>מורה פרטית</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="psychologist/"><span class="sw psychologist">תמר גלעד</span><span class="tx"><b>פסיכולוגית</b><small>לדמו ←</small></span></a>
+        <a class="demo" href="social-worker/"><span class="sw social-worker">יעל שחר</span><span class="tx"><b>עובדת סוציאלית</b><small>לדמו ←</small></span></a>
+      </div>
+      <p class="demos-more"><a href="all/">כל הדוגמאות עם הסבר על כל אחת</a> · <a href="leads-demo/">מערכת הלידים מבפנים</a> · <a href="ai-agent/">הנציג החכם בפעולה</a></p>
+    </div>
+  </section>
+
+  <section class="sec" id="plans" aria-labelledby="t-plans">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">מחירים</p>
+        <h2 id="t-plans">שתי חבילות. בלי התחייבות.</h2>
+        <p class="sec-sub">מחיר הקמה פעם אחת, ותשלום חודשי שכולל אחסון, תחזוקה ומעקב.</p>
+      </div>
+      <div class="plans">
+        <article class="plan reveal">
+          <h3>נוכחות</h3>
+          <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
+          <p class="price"><b><bdi>1,500 ₪</bdi></b><span>הקמה</span></p>
+          <p class="monthly"><bdi>150 ₪</bdi> לחודש</p>
+          <ul class="inc"><li>דף מעוצב ומותאם לנייד</li><li>כפתור וואטסאפ וחיוג</li><li>חיבור לדומיין שלכם</li><li>אחסון ותחזוקה</li></ul>
+          <a class="btn ghost" data-wa data-plan="נוכחות" href="#contact">לפרטים בוואטסאפ</a>
+        </article>
+        <article class="plan featured reveal">
+          <span class="plan-tag">מה שראיתם בסרטון</span>
+          <h3>נציג AI</h3>
+          <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
+          <p class="price"><b><bdi>2,250 ₪</bdi></b><span>הקמה, או 3 תשלומים של <bdi>750 ₪</bdi></span></p>
+          <p class="monthly"><bdi>500 ₪</bdi> לחודש, מהחודש הרביעי<small>שלושת החודשים הראשונים כלולים בהקמה.</small></p>
+          <ul class="inc"><li>כל מה שבנוכחות</li><li>מענה אוטומטי בוואטסאפ תוך שניות</li><li>התראה על כל פנייה ותזכורת מעקב</li><li>כל הפניות בטבלה אחת</li><li>צ׳אט באתר שעונה על שאלות ומסנן פניות</li><li>דוח חודשי ושינוי אחד בחודש</li></ul>
+          <p class="plan-links"><a href="ai-agent/">לראות את הנציג בפעולה</a><a href="leads-demo/">לנסות את מערכת הלידים</a></p>
+          <a class="btn" data-wa data-plan="נציג AI" href="#contact">אני רוצה את זה</a>
+        </article>
+      </div>
+      <div class="addon reveal">
+        <div><b>תוספת: ניהול עצמאי</b><p>פאנל ניהול תוכן (Sanity) שמחובר לדף. משנים שירותים, מחירים וטקסטים לבד. לכל חבילה.</p></div>
+        <p class="price"><b><bdi>+1,000 ₪</bdi></b><span>פעם אחת. החודשי לא משתנה.</span></p>
+      </div>
+      <div class="offers reveal">
+        <p><strong>משלמים שנה מראש?</strong> 12 חודשים במחיר של 10.</p>
+        <p><strong>מפסיקים את התשלום החודשי?</strong> הדף והדומיין נשארים שלכם. המענה האוטומטי, הנציג וההתראות פועלים רק עם התשלום החודשי.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="faq" aria-labelledby="t-faq">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">שאלות</p>
+        <h2 id="t-faq">מה ששואלים אותי הכי הרבה.</h2>
+      </div>
+      <div class="faq reveal">
+        <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. אתם עונים על כמה שאלות בשיחה, ואני מקים, מחבר ובודק הכול.</p></details>
+        <details><summary>יש התחייבות?</summary><p>לא. מבטלים בהודעה של 30 יום מראש. מי שבחר בתשלומים ומבטל לפני התשלום השלישי משלים את יתרת ההקמה.</p></details>
+        <details><summary>על שם מי הדומיין?</summary><p>על שמכם. הדומיין והאחסון רשומים אצלכם, והדף נשאר שלכם.</p></details>
+        <details><summary>ההודעות יוצאות מהמספר שלי?</summary><p>כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה כותבים יחד.</p></details>
+        <details><summary>כמה זמן עד שזה באוויר?</summary><p>בדרך כלל עד שבוע מהשיחה. חבילת נציג AI לוקחת עד שבועיים.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec contact" id="contact" aria-labelledby="t-contact">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="kicker">שיחת היכרות</p>
+        <h2 id="t-contact">רוצים לראות איך זה ייראה אצלכם?</h2>
+        <p class="sec-sub">משאירים שלושה פרטים, והם מגיעים אליי בוואטסאפ. אחזור אליכם לשיחה של 5 דקות, בלי התחייבות.</p>
+      </div>
+      <form class="form reveal" id="lead" novalidate>
         <div class="field"><label for="f-name">שם</label><input id="f-name" name="name" type="text" autocomplete="name" placeholder="איך קוראים לכם"></div>
         <div class="field"><label for="f-phone">טלפון</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
         <div class="field"><label for="f-trade">תחום העסק</label><input id="f-trade" name="trade" type="text" placeholder="אינסטלציה, הובלות, קליניקה"></div>
-        <div class="form-foot">
-          <button class="btn" type="submit" data-magnetic>לקבוע שיחת היכרות</button>
-          <span class="fdots" aria-hidden="true"><i></i><i></i><i></i></span>
-        </div>
+        <div class="form-foot"><button class="btn" type="submit">לקבוע שיחת היכרות</button><span class="fdots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         <p class="form-msg" id="lead-msg" role="status" aria-live="polite"></p>
       </form>
-      <footer class="foot"><span>נחיתה רכה. אתרים שבונים עסקים.</span><span>העסקים בדמואים הם עסקים לדוגמה.</span></footer>
-    </section>
-  </main>
+      <footer class="foot"><span>נחיתה רכה · אתרים לעסקים קטנים · כפיר</span><span>העסקים בדוגמאות הם עסקים בדויים.</span></footer>
+    </div>
+  </section>
+</main>
+<div class="dock"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></div>
 
-  <div class="dock"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></div>
-</div>
-
-<script src="shared/vendor/gsap.min.js"></script>
-<script src="shared/vendor/ScrollTrigger.min.js"></script>
 <script>
 (() => {
   const root = document.documentElement, $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const live = !!(window.gsap && window.ScrollTrigger) && !reduce;
+  const WA = '972526359513';
 
-  /* ---- the day's light: four phases, interpolated in OKLCH ---- */
-  const SKY = { bg: [[.94, .018, 285], [.9, .02, 318], [.34, .085, 335], [.19, .04, 265]],
-    fg: [[.24, .06, 300], [.94, .022, 330]], accent: [[.47, .09, 178], [.86, .08, 172]], lost: [[.52, .14, 15], [.78, .1, 15]] };
-  const rgb = ([L, C, h]) => { const a = C * Math.cos(h * Math.PI / 180), b = C * Math.sin(h * Math.PI / 180);
-    const l = (L + .3963377774 * a + .2158037573 * b) ** 3, m = (L - .1055613458 * a - .0638541728 * b) ** 3, s = (L - .0894841775 * a - 1.291485548 * b) ** 3;
-    const f = (v) => { v = Math.min(1, Math.max(0, v)); return v <= .0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - .055; };
-    return [f(4.0767416621 * l - 3.3077115913 * m + .2309699292 * s), f(-1.2684380046 * l + 2.6097574011 * m - .3413193965 * s), f(-.0041960863 * l - .7034186147 * m + 1.707614701 * s)]; };
-  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t), css = (c) => `rgb(${rgb(c).map((v) => Math.round(v * 255)).join(' ')})`;
-  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-  const state = { order: .3, lost: 0, answered: 0, fade: 1, fg: rgb(SKY.fg[0]), accent: rgb(SKY.accent[0]) };
-  let lastSky = -1;
-  const applySky = (t) => { if (Math.abs(t - lastSky) < .002) return; lastSky = t;
-    const i = Math.min(2, Math.floor(t)), k = smooth(1.42, 1.58, t);
-    const fg = mix(SKY.fg[0], SKY.fg[1], k), accent = mix(SKY.accent[0], SKY.accent[1], k);
-    root.style.setProperty('--bg', css(mix(SKY.bg[i], SKY.bg[i + 1], t - i)));
-    root.style.setProperty('--fg', css(fg)); root.style.setProperty('--accent', css(accent));
-    root.style.setProperty('--lost', css(mix(SKY.lost[0], SKY.lost[1], k)));
-    state.fg = rgb(fg); state.accent = rgb(accent); };
-
-  /* ---- one state drives the light, the clocks and the dots ---- */
-  const S = { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 };
-  const clocks = $$('[data-clock], [data-day-clock]'); let lastMin = -1;
-  const setClock = (m) => { m = Math.round(m); if (m === lastMin) return; lastMin = m;
-    const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); };
-  const frame = () => { const y = window.scrollY, max = document.documentElement.scrollHeight - innerHeight;
-    root.style.setProperty('--p', max > 0 ? (y / max).toFixed(4) : 0);
-    applySky(S.sky); setClock(S.clock);
-    state.order = S.order; state.lost = S.lost; state.answered = S.answered; state.fade = S.fade; };
-
-  /* ---- the hero film: one working day on two phones, side by side ----
-     Plays on its own and loops: morning light to dusk, five enquiries, the score, a new day. */
-  const day = (() => {
-    const box = $('#day'); if (!box) return null;
+  /* ---- the film: one working day on two phones. Its own light runs from morning to dusk ---- */
+  (() => {
+    const box = $('#day'); if (!box) return;
+    const DAY = { bg: [235, 233, 244], fg: [29, 27, 46], accent: [15, 122, 108], lost: [194, 65, 59], dim: [93, 90, 114] };
+    const DUSK = { bg: [58, 34, 64], fg: [243, 238, 246], accent: [111, 211, 191], lost: [255, 138, 128], dim: [190, 176, 196] };
+    // the ground fades; the ink switches at the midpoint, so text never sits mid-grey on mid-grey
+    const paint = (k) => { for (const key in DAY) { const w = key === 'bg' ? k : k < .5 ? 0 : 1;
+      box.style.setProperty('--' + key, 'rgb(' + DAY[key].map((v, i) => Math.round(v + (DUSK[key][i] - v) * w)).join(' ') + ')'); } };
     const RUN = 13600, HOLD = 5200, TOTAL = RUN + HOLD, T0 = 478, T1 = 1170, LEAD = 900, SPAN = 11500, RES = 1150;
-    const at = [552, 700, 785, 990, 1160], tIn = at.map((m) => LEAD + (m - T0) / (T1 - T0) * SPAN);
+    const tIn = [552, 700, 785, 990, 1160].map((m) => LEAD + (m - T0) / (T1 - T0) * SPAN);
     const subs = ['09:12. אתם באמצע עבודה, והטלפון מצלצל.', '11:40. לקוח שואל בוואטסאפ כמה זה עולה.', '13:05. אתם על הסולם. עוד שיחה.',
       '16:30. לקוח קבוע מתקשר. את זה תפסתם.', '19:20. העסק סגור. מישהו מחפש אתכם בגוגל.'];
-    const SUB0 = 'יום עבודה אחד. אותן חמש פניות.', SUB_END = 'חמש פניות. בלי אתר: אחת נענתה. עם אתר: אף אחת לא אבדה.';
+    const SUB0 = 'יום עבודה רגיל מתחיל.', SUB_END = 'חמש פניות. בלי אתר: אחת נענתה. עם אתר: אף אחת לא אבדה.';
+    const clocks = $$('[data-day-clock]', box);
     const sides = $$('.ph', box).map((ph) => ({ notes: [0, 1, 2, 3, 4].map((i) => $(`.n[data-i="${i}"]`, ph)), tally: $('[data-tally]', ph), site: ph.classList.contains('ph-site') }));
     const sub = $('.day-sub', box), bar = $('.day-bar i', box), btn = $('.day-btn', box), icon = $('span', btn);
-    let t = 0, last = 0, run = false, held = false, seen = false, subNow = SUB0, raf = 0;
-    const setSub = (txt) => { if (txt === subNow) return; subNow = txt; sub.classList.add('swap');
-      setTimeout(() => { sub.textContent = txt; sub.classList.remove('swap'); }, 260); };
+    let t = 0, last = 0, run = false, held = false, subNow = SUB0, raf = 0, lastMin = -1, lastK = -1;
+    const setSub = (txt) => { if (txt === subNow) return; subNow = txt; sub.classList.add('swap'); setTimeout(() => { sub.textContent = txt; sub.classList.remove('swap'); }, 260); };
     const render = (t) => {
-      const k = Math.min(1, Math.max(0, (t - LEAD) / SPAN)), clock = T0 + k * (T1 - T0);
-      let sky = clock <= 990 ? (clock - T0) / (990 - T0) : 1 + (clock - 990) / (T1 - 990);
-      if (t > TOTAL - 1300) sky *= Math.max(0, (TOTAL - t) / 1300);          // a new day: back to morning light
-      let beat = -1, missed = 0, answered = [0, 0];
-      tIn.forEach((ti, i) => { const isIn = t >= ti, done = t >= ti + RES; if (isIn) beat = i;
-        sides.forEach((sd, j) => { sd.notes[i].classList.toggle('in', isIn); sd.notes[i].classList.toggle('done', done);
-          if (done && (sd.site || i === 3)) answered[j]++; if (done && !sd.site && i !== 3) missed++; }); });
+      const reset = t > TOTAL - 1300, clock = reset ? T0 : T0 + Math.min(1, Math.max(0, (t - LEAD) / SPAN)) * (T1 - T0);
+      let k = Math.min(1, Math.max(0, (clock - 1000) / 60)); if (t > TOTAL - 1300) k = Math.max(0, (TOTAL - t) / 1300);
+      if (Math.abs(k - lastK) > .004) { lastK = k; paint(k); }
+      const m = Math.round(clock); if (m !== lastMin) { lastMin = m; const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); }
+      let beat = -1; const answered = [0, 0];
+      tIn.forEach((ti, i) => { const isIn = !reset && t >= ti, done = !reset && t >= ti + RES; if (isIn) beat = i;
+        sides.forEach((sd, j) => { sd.notes[i].classList.toggle('in', isIn); sd.notes[i].classList.toggle('done', done); if (done && (sd.site || i === 3)) answered[j]++; }); });
       sides.forEach((sd, j) => { sd.tally.textContent = answered[j]; });
-      Object.assign(S, { sky, clock: t > TOTAL - 1300 ? T0 : clock, order: .3 + .7 * answered[1] / 5, lost: .17 * missed, answered: answered[1] / 5 * .9, fade: 1 });
-      setSub(t >= RUN ? SUB_END : beat < 0 ? SUB0 : subs[beat]);
+      setSub(t >= RUN && !reset ? SUB_END : beat < 0 ? SUB0 : subs[beat]);
       bar.style.transform = `scaleX(${(t / TOTAL).toFixed(4)})`; };
     const show = () => { icon.textContent = run ? '❚❚' : '▶'; btn.setAttribute('aria-label', run ? 'השהיה' : 'המשך'); };
-    const loop = (now) => { if (!run) return; t += Math.min(64, now - last); last = now; if (t >= TOTAL) t = 0; render(t); if (!live) frame(); raf = requestAnimationFrame(loop); };
+    const loop = (now) => { if (!run) return; t += Math.min(64, now - last); last = now; if (t >= TOTAL) t = 0; render(t); raf = requestAnimationFrame(loop); };
     const play = () => { if (run || held || reduce) return; run = true; last = performance.now(); raf = requestAnimationFrame(loop); show(); };
     const pause = () => { run = false; cancelAnimationFrame(raf); show(); };
     btn.addEventListener('click', () => { if (run) { held = true; pause(); } else { held = false; play(); } });
-    if (reduce) { render(RUN); $('.day-ctl', box).hidden = true; Object.assign(S, { sky: 0, clock: T0 }); }
-    else { render(0); new IntersectionObserver(([e]) => { seen = e.isIntersecting; root.classList.toggle('in-hero', seen); seen ? play() : pause(); }, { threshold: .3 }).observe(box); }
+    if (reduce || !('IntersectionObserver' in window)) { render(RUN); paint(0); $('.day-ctl', box).hidden = true; }
+    else { render(0); new IntersectionObserver(([e]) => { root.classList.toggle('in-hero', e.isIntersecting); e.isIntersecting ? play() : pause(); }, { threshold: .3 }).observe(box); }
     show();
-    return { owns: () => seen };
   })();
 
-  /* ---- motion ---- */
-  if (live) {
-    root.classList.add('is-live');
-    gsap.registerPlugin(ScrollTrigger);
-    const MOOD = { morning: { sky: 0, clock: 478, order: .3, lost: 0, answered: 0, fade: 1 },
-      evening: { sky: 1, clock: 1170, order: 1, lost: 0, answered: 1, fade: .5 },
-      night: { sky: 3, clock: 1367, order: .3, lost: 0, answered: 0, fade: 1 } };
-    // outside the hero film the light follows the page: evening after it, night from the dusk on.
-    // Checked when scrolling stops, so the film that was only scrolled past does not leave its light behind.
-    let dusk = null;
-    const zone = () => { const mid = scrollY + innerHeight / 2, top = (sel) => $(sel).getBoundingClientRect().top + scrollY;
-      return mid < top('#plans') ? (day && day.owns() ? null : 'morning') : mid >= top('.sunset') ? 'night' : 'evening'; };
-    const settle = () => { if (dusk && dusk.isActive()) return; const m = zone();
-      if (m) gsap.to(S, { ...MOOD[m], duration: 1.2, ease: 'power2.inOut', overwrite: 'auto' }); };
+  /* ---- sections rise in once ---- */
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    $$('.reveal').forEach((el) => io.observe(el));
+  } else $$('.reveal').forEach((el) => el.classList.add('on'));
 
-    ScrollTrigger.addEventListener('scrollEnd', settle);
-
-    // dusk interlude: plays once it is on screen, no pinning
-    dusk = gsap.timeline({ paused: true }).to(S, { ...MOOD.night, duration: 2.4, ease: 'power1.inOut' }, 0)
-      .from($('.sunset .cap .ln-i'), { yPercent: 115, duration: 1, ease: 'expo.out' }, 1.6);
-    ScrollTrigger.create({ trigger: '.sunset', start: 'top 55%', onEnter: () => dusk.restart() });
-
-    // section headings: one masked rise each
-    const reveal = (h) => gsap.from($$('.ln-i', h), { yPercent: 115, duration: 1.1, ease: 'expo.out', stagger: .09, scrollTrigger: { trigger: h, start: 'top 86%' } });
-    ['#t-plans', '#t-demos', '#t-faces', '#t-process', '#t-contact'].forEach((h) => reveal($(h)));
-
-    // demos: a horizontal scene on wide screens. In RTL the track travels toward positive x.
-    gsap.matchMedia().add('(min-width: 900px)', () => {
-      const tr = $('.track'), dist = () => Math.max(0, tr.scrollWidth - innerWidth);
-      gsap.to(tr, { x: dist, ease: 'none', scrollTrigger: { trigger: $('.demos-pin'), pin: true, scrub: true, start: 'center center', end: () => '+=' + dist() * .6, invalidateOnRefresh: true } });
-      // magnetic buttons, fine pointers only
-      if (matchMedia('(hover: hover) and (pointer: fine)').matches)
-        $$('[data-magnetic]').forEach((el) => { const x = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3' }), y = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
-          el.addEventListener('pointermove', (e) => { const r = el.getBoundingClientRect(); x((e.clientX - r.left - r.width / 2) * .3); y((e.clientY - r.top - r.height / 2) * .3); });
-          el.addEventListener('pointerleave', () => { x(0); y(0); }); });
-    });
-
-    gsap.ticker.add(frame);
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
-    // the one load sequence
-    root.classList.remove('pre');
-    gsap.from('.hero .ln-i', { yPercent: 115, duration: 1.25, ease: 'expo.out', stagger: .11, delay: .15 });
-    gsap.from('.hero-sub, .hero .lede, .hero-text .btn', { autoAlpha: 0, y: 18, duration: .9, ease: 'power3.out', stagger: .1, delay: .6 });
-    gsap.from('.day', { autoAlpha: 0, y: 24, duration: 1.1, ease: 'power3.out', delay: .4 });
-  } else {
-    root.classList.remove('pre');
-    addEventListener('scroll', frame, { passive: true }); frame();
-  }
+  /* ---- plan buttons open WhatsApp with the plan named ---- */
+  $$('[data-wa]').forEach((a) => { a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('היי כפיר, ראיתי את המחירון ואשמח לשמוע על חבילת ' + a.dataset.plan + '.'); a.target = '_blank'; a.rel = 'noopener'; });
 
   /* ---- phone dock: after the first screen, until the form ---- */
   if ('IntersectionObserver' in window) { const dock = $('.dock'), seen = { hero: true, contact: false };
-    const io = new IntersectionObserver((es) => { es.forEach((e) => (seen[e.target.id] = e.isIntersecting)); dock.classList.toggle('on', !seen.hero && !seen.contact); }, { threshold: .15 });
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (seen[e.target.id] = e.isIntersecting)); const on = !seen.hero && !seen.contact; dock.classList.toggle('on', on); root.classList.toggle('dock-on', on && innerWidth <= 640); }, { threshold: .15 });
     io.observe($('#hero')); io.observe($('#contact')); }
 
-  /* ---- the form: three details, three dots ---- */
+  /* ---- the form: three details, three dots, then WhatsApp ---- */
   const form = $('#lead'), dots = $$('.fdots i'), msg = $('#lead-msg');
   const ok = [(v) => v.trim().length >= 2, (v) => /^[\d\s+\-]{9,14}$/.test(v.trim()), (v) => v.trim().length >= 2], inputs = $$('input', form);
   const check = () => inputs.map((el, i) => { const good = ok[i](el.value); dots[i].classList.toggle('on', good); return good; });
@@ -532,53 +523,10 @@ bdi { white-space: nowrap; }
     if (bad > -1) { msg.textContent = ['חסר שם.', 'חסר מספר טלפון תקין.', 'חסר תחום העסק.'][bad]; inputs[bad].focus(); return; }
     const text = `היי כפיר, הגעתי מהאתר ואשמח לשיחת היכרות של 5 דקות.\nשם: ${inputs[0].value.trim()}\nטלפון: ${inputs[1].value.trim()}\nתחום העסק: ${inputs[2].value.trim()}`;
     msg.textContent = 'פותחים וואטסאפ עם הפרטים. לחצו שם על שליחה.';
-    window.open('https://wa.me/972526359513?text=' + encodeURIComponent(text), '_blank', 'noopener'); });
-
-  /* ---- the signature: a field of dots, each one an inquiry ---- */
-  const start = () => { const canvas = $('#field'), gl = canvas.getContext('webgl', { alpha: true, premultipliedAlpha: false, antialias: false, powerPreference: 'high-performance' });
-    if (!gl) return;
-    const N = innerWidth < 900 ? 800 : 1700, seeds = new Float32Array(N * 4); for (let i = 0; i < seeds.length; i++) seeds[i] = Math.random();
-    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }, prog = gl.createProgram();
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, `attribute vec4 aSeed; uniform float uTime, uOrder, uLost, uAnswered, uDpr, uAspect, uFade; uniform vec2 uPointer; varying float vAlpha, vAcc;
-      void main(){
-        vec2 c = aSeed.xy * 2. - 1.;                                            // adrift
-        c += .07 * vec2(sin(uTime * .21 + aSeed.z * 6.283 + c.y * 3.), cos(uTime * .17 + aSeed.w * 6.283 + c.x * 3.));
-        float rows = 9., row = floor(aSeed.z * rows);                           // in rows, like a ledger, moving in reading direction
-        vec2 o = vec2((fract(aSeed.x - uTime * (.008 + .012 * aSeed.w)) * 2. - 1.) * 1.04, mix(-.8, .8, (row + .5) / rows) + (aSeed.y - .5) * .012);
-        float k = smoothstep(aSeed.w * .82, aSeed.w * .82 + .18, uOrder);         // each dot is caught in its own turn
-        vec2 p = mix(c, o, k);
-        float gone = smoothstep(aSeed.y, aSeed.y + .14, uLost * 1.14);           // lost: falls out of the day
-        p.y -= gone * (.5 + aSeed.z * .9); p.x += gone * (aSeed.x - .5) * .3;
-        vec2 d = p - uPointer; d.x *= uAspect; float r = length(d);              // the pointer parts the field
-        p += normalize(d + 1e-5) * vec2(1. / uAspect, 1.) * .07 * smoothstep(.26, 0., r);
-        vAcc = step(fract(aSeed.x * 7.13 + aSeed.z * 3.71), uAnswered * .6 - .0005);
-        vAlpha = (1. - gone) * (.22 + .5 * aSeed.z) * uFade;
-        gl_Position = vec4(p, 0., 1.);
-        gl_PointSize = uDpr * ((1.4 + 2.3 * aSeed.w * aSeed.w) * mix(1., .86, k) + vAcc * 1.1);
-      }`));
-    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, `precision mediump float; uniform vec3 uFg, uAccent; varying float vAlpha, vAcc;
-      void main(){ float m = smoothstep(.5, .32, length(gl_PointCoord - .5)); gl_FragColor = vec4(mix(uFg, uAccent, vAcc), m * mix(vAlpha, min(1., vAlpha * 1.5 + .12), vAcc)); }`));
-    gl.linkProgram(prog); if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return; gl.useProgram(prog);
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, seeds, gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, 'aSeed'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 4, gl.FLOAT, false, 0, 0);
-    gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-    const U = {}; ['uTime', 'uOrder', 'uLost', 'uAnswered', 'uDpr', 'uAspect', 'uFade', 'uPointer', 'uFg', 'uAccent'].forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
-    let dpr = 1; const ptr = [9, 9];
-    const resize = () => { dpr = Math.min(devicePixelRatio || 1, 1.75); canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(canvas.clientHeight * dpr); gl.viewport(0, 0, canvas.width, canvas.height); };
-    new ResizeObserver(resize).observe(canvas); resize();
-    addEventListener('pointermove', (e) => { if (e.pointerType !== 'touch') { ptr[0] = e.clientX / innerWidth * 2 - 1; ptr[1] = 1 - e.clientY / innerHeight * 2; } }, { passive: true });
-    const t0 = performance.now(), ease = { order: state.order, lost: 0, answered: 0, fade: 1 };
-    const draw = () => { if (document.hidden) return;
-      for (const k in ease) ease[k] += (state[k] - ease[k]) * .09;
-      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.uniform1f(U.uTime, reduce ? 12 : (performance.now() - t0) / 1000); gl.uniform1f(U.uOrder, ease.order); gl.uniform1f(U.uLost, ease.lost); gl.uniform1f(U.uAnswered, ease.answered); gl.uniform1f(U.uFade, ease.fade);
-      gl.uniform1f(U.uDpr, dpr); gl.uniform1f(U.uAspect, canvas.width / canvas.height); gl.uniform2f(U.uPointer, ptr[0], ptr[1]);
-      gl.uniform3fv(U.uFg, state.fg); gl.uniform3fv(U.uAccent, state.accent); gl.drawArrays(gl.POINTS, 0, N); };
-    if (live) gsap.ticker.add(draw); else { draw(); addEventListener('scroll', draw, { passive: true }); addEventListener('resize', draw); } };
-  (window.requestIdleCallback || setTimeout)(start);
+    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(text), '_blank', 'noopener'); });
 })();
 </script>
-
 <script src="shared/aibot.js"></script>
 <script>AiBot.init({ whatsapp: "972526359513", pricingHref: "#plans" });</script>
-</body></html>
+</body>
+</html>
