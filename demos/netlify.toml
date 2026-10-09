@@ -3,6 +3,10 @@
   publish = "."
   command = "echo 'static demo site, nothing to build'"
 
+# Netlify auto-attached its Next.js plugin when it first saw the repo root. This site is static, so skip it.
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
 [[headers]]
   for = "/leads-demo/*"
   [headers.values]
