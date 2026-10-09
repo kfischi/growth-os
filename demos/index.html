@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>נחיתה רכה · אתר לעסק שעונה ללקוחות</title>
+<title>נחיתה רכה · אתרים שבונים עסקים</title>
 <meta name="description" content="אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap">
@@ -62,8 +62,9 @@ img, svg { display: block; }
 .hero { padding-block: clamp(40px, 7svh, 72px) clamp(56px, 9svh, 96px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: 32px clamp(32px, 4.5vw, 72px); }
 .hero-text { min-width: 0; display: grid; justify-items: start; gap: 18px; }
-.hero h1 { font: 800 clamp(2.2rem, 3.5vw, 3.3rem)/1.1 var(--font); letter-spacing: -.025em; text-wrap: balance; }
+.hero h1 { font: 800 clamp(2.6rem, 4.6vw, 4.2rem)/1.04 var(--font); letter-spacing: -.025em; text-wrap: balance; }
 .hero h1 em { font-style: normal; color: var(--mint); }
+.hero-lead { font-size: clamp(1.3rem, 2vw, 1.75rem); font-weight: 700; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
 .hero-sub { font-size: clamp(1.08rem, 1.5vw, 1.28rem); color: var(--slate); max-width: 40ch; text-wrap: pretty; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .hero-points { list-style: none; padding: 0; display: grid; gap: 6px; margin-top: 6px; font-size: .97rem; }
@@ -279,7 +280,7 @@ img, svg { display: block; }
 <body>
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#top"><i></i><span>נחיתה רכה <small>· אתרים לעסקים קטנים</small></span></a>
+    <a class="brand" href="#top"><i></i><span>נחיתה רכה <small>· אתרים שבונים עסקים</small></span></a>
     <nav class="nav" aria-label="ניווט">
       <a href="#what">מה מקבלים</a><a href="#how">איך זה עובד</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
@@ -291,7 +292,8 @@ img, svg { display: block; }
   <section class="hero" id="hero">
     <div class="wrap">
       <div class="hero-text">
-        <h1>אתר לעסק <em>שעונה ללקוחות</em>, גם כשאתם עסוקים.</h1>
+        <h1>אתרים <em>שבונים</em> עסקים.</h1>
+        <p class="hero-lead">אתר לעסק שעונה ללקוחות, גם כשאתם עסוקים.</p>
         <p class="hero-sub">אני בונה לעסקים קטנים דף נחיתה עם מענה אוטומטי בוואטסאפ, כדי שאף פנייה לא תלך לאיבוד.</p>
         <div class="hero-ctas"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a><a class="btn ghost" href="#demos">לראות דוגמאות</a></div>
         <ul class="hero-points"><li>מענה ללקוח תוך שניות, מהמספר העסקי שלכם</li><li>כל הפניות בטבלה אחת, עם תזכורת</li><li>באוויר תוך שבוע. הדומיין רשום על שמכם</li></ul>
@@ -449,7 +451,7 @@ img, svg { display: block; }
         <div class="form-foot"><button class="btn" type="submit">לקבוע שיחת היכרות</button><span class="fdots" aria-hidden="true"><i></i><i></i><i></i></span></div>
         <p class="form-msg" id="lead-msg" role="status" aria-live="polite"></p>
       </form>
-      <footer class="foot"><span>נחיתה רכה · אתרים לעסקים קטנים · כפיר</span><span>העסקים בדוגמאות הם עסקים בדויים.</span></footer>
+      <footer class="foot"><span>נחיתה רכה · אתרים שבונים עסקים · כפיר</span><span>העסקים בדוגמאות הם עסקים בדויים.</span></footer>
     </div>
   </section>
 </main>
