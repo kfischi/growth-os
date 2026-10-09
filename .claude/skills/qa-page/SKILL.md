@@ -29,6 +29,7 @@ Open `desktop.png` and `mobile.png` and check:
 
 ## 3. Copy review (Hebrew)
 
+- Run `node scripts/hebrew-copy-lint.cjs <page-dir>` and fix every hit (rules in the `hebrew-copy` skill).
 - No spelling mistakes. Read every line once more.
 - Short sentences. One idea per sentence.
 - No promises the business can't keep: no "guaranteed", no "double", no invented numbers or reviews.
