@@ -107,6 +107,32 @@
   footer { padding-block: 34px 90px; color: #5d6266; font-size: 15px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--graphite); padding-top: 18px; }
 
+
+  /* ---------- Work report on a clipboard (photo slots) ---------- */
+  :root { --ps-a: #8a8f8a; --ps-b: #2a2e31; --ps-ui: var(--graphite); --ps-edit: var(--live); }
+  .report-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 56px; align-items: center; }
+  .board { background: linear-gradient(135deg, #a8774c, #8a5d37); border-radius: 18px; padding: 54px 20px 22px; position: relative; box-shadow: 0 40px 70px -40px rgba(0,0,0,.7); max-width: 640px; }
+  .board::before { content: ""; position: absolute; top: 12px; left: 50%; width: 150px; height: 46px; margin-left: -75px; border-radius: 10px 10px 16px 16px; background: linear-gradient(180deg, #e9ebe8, #a9ada8); box-shadow: 0 6px 10px rgba(0,0,0,.35); }
+  .paper { background: #fff; padding: 22px; box-shadow: 0 2px 0 #ddd, 0 4px 0 #f3f3f3; }
+  .paper-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 3px solid var(--graphite); padding-bottom: 12px; margin-bottom: 16px; }
+  .paper-top h3 { font-size: 26px; }
+  .paper-top .who { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+  .paper-top .who .ps { width: 54px; height: 54px; border-radius: 6px; flex: none; }
+  .paper-top .who b { display: block; font-size: 16px; }
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .shot .ps { aspect-ratio: 4 / 3; }
+  .shot .dymo { margin-top: 8px; }
+  .checks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 6px; font-size: 15.5px; }
+  .checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; }
+  .checks li::before { content: "✓"; width: 20px; height: 20px; border: 2px solid var(--graphite); display: grid; place-items: center; font-weight: 700; font-size: 13px; color: var(--live); }
+  .sign { margin-top: 16px; padding-top: 10px; border-top: 1px dashed #b8bab5; font-size: 13.5px; color: #5d6266; display: flex; justify-content: space-between; gap: 10px; }
+  .report-side h2 { font-size: clamp(34px, 4.6vw, 54px); margin-bottom: 14px; }
+  .report-side p { color: #4a4f53; margin: 0 0 12px; }
+  .paper-top .who .ps-chip, .shot .ps-chip { font-size: 10.5px; }
+  .paper-top .who .ps-chip { display: none; }
+  @media (max-width: 900px) { .report-wrap { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
+  @media (max-width: 520px) { .board { padding: 46px 10px 12px; } .paper { padding: 14px; } .paper-top { flex-direction: column; align-items: flex-start; } .shots { gap: 8px; } .shot .dymo { font-size: 10px; } }
+
   @media (max-width: 900px) {
     .hero-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
     .panel { max-width: 470px; }
@@ -133,13 +159,13 @@
 <header class="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo">רז שגב <span class="dymo">חשמלאי מוסמך</span></div>
+      <div class="logo"><span data-edit="name">רז שגב</span> <span class="dymo">חשמלאי מוסמך</span></div>
       <a href="#" data-wa="היי רז, הגעתי מהאתר ויש לי שאלה">וואטסאפ</a>
     </div>
     <div class="hero-grid">
       <div>
         <span class="dymo">קצר · התקנות · לוחות · עמדות טעינה</span>
-        <h1>החשמל קפץ <em>ולא חוזר?</em></h1>
+        <h1><span data-edit="h1a">החשמל קפץ</span> <em data-edit="h1b">ולא חוזר?</em></h1>
         <p>מתארים מה קרה בצ׳אט קצר. הפרטים מגיעים אליי לוואטסאפ, ואני חוזר אליכם עם זמן הגעה.</p>
         <div class="ctas">
           <button class="btn btn-live" data-open-bot>לתאר את התקלה</button>
@@ -188,6 +214,35 @@
     </div>
   </section>
 
+  <section style="padding-top:0">
+    <div class="wrap report-wrap">
+      <div class="board">
+        <div class="paper">
+          <div class="paper-top">
+            <h3>דו״ח עבודה</h3>
+            <div class="who"><figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure><div><b data-edit="report-name">רז שגב</b><span data-edit="report-role">חשמלאי מוסמך</span></div></div>
+          </div>
+          <div class="shots">
+            <div class="shot"><figure class="ps" data-slot="before" data-icon="bolt" data-label="תמונת לפני"></figure><span class="dymo" data-edit="shot1">לפני: לוח ישן עם נתיכים</span></div>
+            <div class="shot"><figure class="ps" data-slot="after" data-icon="bolt" data-label="תמונת אחרי"></figure><span class="dymo" data-edit="shot2">אחרי: לוח חדש עם פחת</span></div>
+          </div>
+          <ul class="checks">
+            <li data-edit="c1">בדיקת הארקה ופחת</li>
+            <li data-edit="c2">סימון כל המעגלים בלוח</li>
+            <li data-edit="c3">צילום הלוח לפני ואחרי, ללקוח</li>
+          </ul>
+          <div class="sign"><span data-edit="sign-place">חדרה, דירת 4 חדרים</span><span>חתימה: ________</span></div>
+        </div>
+      </div>
+      <div class="report-side">
+        <span class="dymo">כל תמונה כאן מתחלפת בתמונה שלכם</span>
+        <h2 style="margin-top:14px">ככה נראית עבודה מסודרת.</h2>
+        <p>לקוחות לא מבינים בחשמל, אבל מבינים לוח מסודר ותמונה לפני ואחרי. דו״ח כזה בכל עבודה בונה אמון.</p>
+        <p>לחצו על "לנסות עם התמונות שלכם" ושימו את התמונות מהעבודה האחרונה.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
@@ -225,7 +280,9 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
 <script>
+  PhotoSlots.init({ page: "electrician" });
   const ISSUES = ["החשמל קפץ", "שקע או מתג לא עובד", "ריח שרוף או ניצוצות", "התקנה חדשה", "עמדת טעינה לרכב", "החלפת לוח חשמל"];
   const bot = LeadBot.init({
     whatsapp: "972526359513",

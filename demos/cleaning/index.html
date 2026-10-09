@@ -65,6 +65,27 @@
   .ba .tag.a { right: 18px; background: #fff; color: var(--deep); }
   .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
   .ba input:focus-visible + .handle .knob { outline: 3px solid var(--sponge); outline-offset: 3px; }
+  :root { --ps-a: #bfe3de; --ps-b: #24a593; --ps-ui: var(--deep); --ps-edit: var(--sponge); }
+  .ba .ps { position: absolute; inset: 0; background: transparent; }
+  .ba .ps-chip { display: none; }
+  .ba [data-slot="after"] .ps-tools { left: auto; right: 14px; transform: none; top: 60px; }
+  .ba [data-slot="before"] .ps-tools { left: 14px; transform: none; top: 60px; }
+  .ba .handle, .ba .tag { z-index: 4; }
+  .ba input { z-index: 3; }
+  body.ps-edit .ba input { pointer-events: none; }
+  .crew { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .crew-card { background: #fff; border-radius: 26px; padding: 14px 14px 20px; text-align: center; box-shadow: 0 30px 60px -40px rgba(15,59,58,.6); border: 1px solid #e1ecea; }
+  .crew-card .ps { aspect-ratio: 1; border-radius: 20px; }
+  .crew-card h3 { font-size: 34px; margin-top: 14px; }
+  .crew-card p { margin: 0; color: var(--deep-soft); font-size: 15px; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .tile { position: relative; }
+  .tile .ps { aspect-ratio: 1; border-radius: 18px; }
+  .tile b { position: absolute; z-index: 3; bottom: 10px; right: 10px; background: #fff; color: var(--deep); font-size: 13.5px; padding: 3px 10px; border-radius: 999px; }
+  .tile .ps-chip { display: none; }
+  .crew-note { color: var(--deep-soft); font-size: 15px; margin: 18px 0 0; }
+  @media (max-width: 900px) { .crew { grid-template-columns: minmax(0, 1fr); gap: 28px; } .crew-card { max-width: 280px; width: 100%; margin-inline: auto; } }
+  @media (max-width: 520px) { .tiles { gap: 8px; } .tile b { font-size: 11px; padding: 2px 7px; bottom: 6px; right: 6px; } }
   .ba-cap { text-align: center; font-size: 14px; color: var(--deep-soft); margin: 12px 0 0; }
 
   /* ---------- Sections ---------- */
@@ -159,13 +180,13 @@
 <header class="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo">שקד<small>ניקיון בית ומשרד</small></div>
+      <div class="logo"><span data-edit="name">שקד</span><small>ניקיון בית ומשרד</small></div>
       <a href="#" data-wa="היי שקד, הגעתי מהאתר ואשמח לשמוע על ניקיון">וואטסאפ</a>
     </div>
     <div class="hero-top">
       <div>
         <div class="eyebrow">בתים · משרדים · אחרי שיפוץ · חדרה והשרון</div>
-        <h1>חוזרים הביתה, והכול מבריק.</h1>
+        <h1 data-edit="h1">חוזרים הביתה, והכול מבריק.</h1>
       </div>
       <div>
         <p>בוחרים בצ׳אט מה צריך, ומקבלים הערכה של שעות ומחיר. הפרטים מגיעים אליי לוואטסאפ.</p>
@@ -176,15 +197,15 @@
       </div>
     </div>
     <div class="ba" id="ba" style="--pos:50%">
-      <svg role="img" aria-label="הסלון אחרי ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+      <figure class="ps" data-slot="after" data-label="תמונת אחרי"><svg class="ps-ph" role="img" aria-label="הסלון אחרי ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
         <g fill="#fff">
           <path d="M1120 230 l8 -26 l8 26 l26 8 l-26 8 l-8 26 l-8 -26 l-26 -8 Z"/>
           <path d="M560 690 l6 -18 l6 18 l18 6 l-18 6 l-6 18 l-6 -18 l-18 -6 Z" opacity=".9"/>
           <path d="M300 560 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 Z" opacity=".85"/>
         </g>
-      </svg>
+      </svg></figure>
       <div class="before">
-        <svg role="img" aria-label="הסלון לפני ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+        <figure class="ps" data-slot="before" data-label="תמונת לפני"><svg class="ps-ph" role="img" aria-label="הסלון לפני ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
           <!-- dust film on the window -->
           <g fill="#8b8270" opacity=".35"><ellipse cx="1080" cy="220" rx="70" ry="40"/><ellipse cx="1300" cy="420" rx="80" ry="50"/><ellipse cx="1180" cy="380" rx="40" ry="60"/></g>
           <!-- cobweb -->
@@ -200,13 +221,13 @@
           <g fill="#8a7155" opacity=".35"><ellipse cx="1150" cy="700" rx="14" ry="26" transform="rotate(20 1150 700)"/><ellipse cx="1210" cy="740" rx="14" ry="26" transform="rotate(20 1210 740)"/><ellipse cx="1260" cy="690" rx="14" ry="26" transform="rotate(20 1260 690)"/></g>
           <!-- plant drooping leaves on floor -->
           <ellipse cx="1390" cy="650" rx="22" ry="8" fill="#9a8a50" opacity=".6"/>
-        </svg>
+        </svg></figure>
       </div>
       <input type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
       <div class="handle"><span class="knob" aria-hidden="true">⇆</span></div>
       <span class="tag b">לפני</span><span class="tag a">אחרי</span>
     </div>
-    <p class="ba-cap">גררו את העיגול כדי להשוות. אצלכם כאן יופיעו תמונות אמיתיות מהעבודות שלכם.</p>
+    <p class="ba-cap">גררו את העיגול כדי להשוות. בכפתור "לנסות עם התמונות שלכם" מחליפים את הציור בתמונות לפני ואחרי מהעבודות שלכם.</p>
   </div>
 </header>
 
@@ -218,6 +239,21 @@
         <div class="room"><h3>מטבח</h3><ul><li>משטחים, כיריים וחזית הארונות</li><li>כיור וברזים, כולל אבנית</li><li>מיקרוגל מבפנים</li><li>רצפה, כולל מתחת לשולחן</li></ul></div>
         <div class="room"><h3>שירותים ואמבטיה</h3><ul><li>אסלה, כיור ומקלחון</li><li>אריחים ופוגות</li><li>מראות וברזים</li><li>פח וחיטוי ידיות</li></ul></div>
         <div class="room"><h3>חדרים וסלון</h3><ul><li>אבק על כל המשטחים והמדפים</li><li>שאיבה ושטיפה</li><li>החלפת מצעים, אם מבקשים</li><li>חלונות מבפנים</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap crew">
+      <div class="crew-card"><figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure><h3 data-edit="crew-name">שקד</h3><p data-edit="crew-role">מנקה בעצמה, בכל בית</p></div>
+      <div>
+        <div class="head" style="margin-bottom:16px"><h2>מהשבוע</h2><span class="eyebrow">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+        <div class="tiles">
+          <div class="tile"><figure class="ps" data-slot="t1" data-icon="sparkle" data-label="תמונה מעבודה"></figure><b data-edit="t1">מטבח, פרדס חנה</b></div>
+          <div class="tile"><figure class="ps" data-slot="t2" data-icon="drop" data-label="תמונה מעבודה"></figure><b data-edit="t2">מקלחון בלי אבנית</b></div>
+          <div class="tile"><figure class="ps" data-slot="t3" data-icon="home" data-label="תמונה מעבודה"></figure><b data-edit="t3">סלון לפני אירוח</b></div>
+        </div>
+        <p class="crew-note">נותנים מפתח למי שסומכים עליו. פנים מוכרות ותמונות אמיתיות מהבתים שניקיתם עושות את זה.</p>
       </div>
     </div>
   </section>
@@ -271,11 +307,13 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
 <script>
   // Before/after slider
   const ba = document.getElementById("ba"), range = ba.querySelector("input");
   range.addEventListener("input", () => ba.style.setProperty("--pos", range.value + "%"));
 
+  PhotoSlots.init({ page: "cleaning" });
   const HOURS = { "עד 3 חדרים": [3, 4], "4 עד 5 חדרים": [4, 6], "6 חדרים ומעלה": [6, 8] };
   const RATE = { "דירה": 90, "בית פרטי": 90, "משרד": 90, "אחרי שיפוץ או מעבר": 110 };
   const fmt = (n) => n.toLocaleString("he-IL");

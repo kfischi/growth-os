@@ -112,6 +112,24 @@
   footer { padding-block: 34px 90px; color: var(--charcoal-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--charcoal); padding-top: 18px; }
 
+
+  /* ---------- Photo slots: pinned project photo + before/after ---------- */
+  :root { --ps-a: #9fb8ad; --ps-b: #2f5d4e; --ps-ui: var(--verde); --ps-edit: #c0532f; }
+  .board .pinned { position: absolute; z-index: 2; top: -26px; left: -26px; width: 170px; aspect-ratio: 4 / 3; border: 8px solid #fff; border-bottom-width: 26px; transform: rotate(-6deg); box-shadow: 0 16px 28px -14px rgba(0,0,0,.6); }
+  .board .pinned .ps-chip { bottom: 4px; font-size: 10px; }
+  .ba-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 48px; align-items: center; }
+  .ps-ba.reno { aspect-ratio: 4 / 3; box-shadow: 0 40px 70px -45px rgba(0,0,0,.6); }
+  .ps-ba.reno .ps-chip { display: none; }
+  .ps-ba.reno [data-slot="after"] .ps-tools { left: auto; right: 12px; transform: none; top: 54px; }
+  .ps-ba.reno [data-slot="before"] .ps-tools { left: 12px; transform: none; top: 54px; }
+  .ps-ba.reno [data-slot="before"] { --ps-a: #b9b3a8; --ps-b: #6b655c; }
+  .ba-side h2 { font-size: clamp(36px, 5vw, 58px); margin-bottom: 14px; }
+  .ba-side p { color: var(--charcoal-soft); margin: 0 0 12px; }
+  .ba-side .facts { display: grid; gap: 6px; margin-top: 18px; font-size: 15px; }
+  .ba-side .facts div { display: flex; justify-content: space-between; border-bottom: 1px solid #cfcec8; padding-bottom: 6px; gap: 10px; }
+  @media (max-width: 900px) { .ba-wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+  @media (max-width: 520px) { .board .pinned { width: 104px; top: -18px; left: -10px; border-width: 5px; border-bottom-width: 16px; } }
+
   @media (max-width: 900px) {
     .hero-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
     .board { max-width: 520px; }
@@ -139,13 +157,13 @@
 <header class="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo">נתן אדלר<span>שיפוצים ובנייה קלה</span></div>
+      <div class="logo"><span data-edit="name" style="all:unset">נתן אדלר</span><span>שיפוצים ובנייה קלה</span></div>
       <a href="#" data-wa="היי נתן, הגעתי מהאתר ואשמח לשמוע על שיפוץ">וואטסאפ</a>
     </div>
     <div class="hero-grid">
       <div>
         <div class="label">מטבחים · אמבטיות · דירות שלמות · השרון</div>
-        <h1>שיפוץ עם <em>לוח זמנים</em> שאפשר לסמוך עליו.</h1>
+        <h1><span data-edit="h1a">שיפוץ עם</span> <em data-edit="h1b">לוח זמנים</em> <span data-edit="h1c">שאפשר לסמוך עליו.</span></h1>
         <p>מתארים את הפרויקט בצ׳אט קצר. אחר כך נקבע סיור בבית, ותקבלו הצעת מחיר מפורטת בכתב.</p>
         <div class="ctas">
           <button class="btn btn-verde" data-open-bot>לתאר את הפרויקט</button>
@@ -153,6 +171,7 @@
         </div>
       </div>
       <div class="board" aria-label="לוח חומרים לדוגמה">
+        <figure class="ps pinned" data-slot="pin" data-icon="home" data-label="תמונת פרויקט"></figure>
         <div class="board-grid">
           <div class="sw oak pin"><span class="tag">פרקט אלון</span></div>
           <div class="sw terrazzo pin"><canvas id="terrazzo" aria-hidden="true"></canvas><span class="tag">טרצו, 60 על 60</span></div>
@@ -197,6 +216,28 @@
     </div>
   </section>
 
+  <section>
+    <div class="wrap ba-wrap">
+      <div class="ps-ba reno">
+        <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"></figure>
+        <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני"></figure></div>
+        <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+        <span class="ps-ba-line" aria-hidden="true"></span>
+        <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
+      </div>
+      <div class="ba-side">
+        <span class="label">כל תמונה כאן מתחלפת בתמונה שלכם</span>
+        <h2 style="margin-top:10px" data-edit="ba-title">מטבח בהרצליה, לפני ואחרי</h2>
+        <p data-edit="ba-text">שבעה שבועות, בלי חריגה בתקציב. גררו את הקו כדי להשוות.</p>
+        <div class="facts">
+          <div><span>שטח</span><b data-edit="f1">12 מ״ר</b></div>
+          <div><span>משך</span><b data-edit="f2">שבעה שבועות</b></div>
+          <div><span>מה נעשה</span><b data-edit="f3">הריסה, ריצוף, נגרות</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
@@ -234,6 +275,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
 <script>
   // Generated terrazzo sample: random stone chips on a pale base.
   (function () {
@@ -254,6 +296,7 @@
     draw(); addEventListener("resize", draw);
   })();
 
+  PhotoSlots.init({ page: "renovation" });
   const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "נתן · שיפוצים", subtitle: "קובעים סיור בבית", initial: "נ", launcher: "לתאר פרויקט",
