@@ -110,6 +110,34 @@
   footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 20px; }
 
+
+  /* ---------- From the field: badge + detail callouts (photo slots) ---------- */
+  :root { --ps-a: #2a56b8; --ps-b: #0c2a68; --ps-ui: var(--blueprint); --ps-edit: var(--signal); }
+  .field { background: var(--blueprint-deep); color: #fff; overflow: hidden;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
+  .field .head .mono { color: #a9bce6; }
+  .field-grid { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 64px; align-items: start; }
+  .lanyard { display: flex; flex-direction: column; align-items: center; }
+  .lanyard::before { content: ""; width: 34px; height: 90px; background: repeating-linear-gradient(180deg, var(--signal) 0 14px, #b8261e 14px 16px); clip-path: polygon(0 0, 100% 0, 70% 100%, 30% 100%); }
+  .clip { width: 46px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #d8dde6, #9aa3b3); margin-top: -4px; position: relative; z-index: 1; }
+  .badge { width: 100%; background: #fff; color: var(--ink); border-radius: 14px; padding: 16px; margin-top: -6px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); transform: rotate(-3deg); }
+  .badge-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
+  .badge-top b { color: var(--blueprint); font-family: var(--display); font-size: 16px; font-weight: 400; }
+  .badge .ps { aspect-ratio: 1; border-radius: 10px; }
+  .badge h3 { font-size: 30px; margin-top: 14px; }
+  .badge p { margin: 2px 0 12px; color: var(--ink-soft); font-size: 15px; }
+  .badge .code { height: 30px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 7px, transparent 7px 9px); }
+  .details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  .detail { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+  .detail .ring { width: 100%; max-width: 230px; aspect-ratio: 1; border-radius: 50%; padding: 8px; border: 2px dashed rgba(232,239,255,.55); position: relative; }
+  .detail .ring::after { content: ""; position: absolute; width: 46px; height: 2px; background: rgba(232,239,255,.55); bottom: 10%; left: -30px; transform: rotate(-35deg); }
+  .detail .ps { width: 100%; height: 100%; border-radius: 50%; }
+  .detail .mono { color: #a9bce6; margin-top: 14px; }
+  .detail h3 { font-size: 22px; margin-top: 2px; }
+  .field-note { color: #a9bce6; font-size: 14px; margin-top: 26px; }
+  @media (max-width: 880px) { .field-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .lanyard { max-width: 300px; margin-inline: auto; } }
+  @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+
   @media (max-width: 880px) {
     .hero-grid, .area .row { grid-template-columns: minmax(0, 1fr); }
     .drawing { max-width: 420px; }
@@ -134,13 +162,13 @@
 
 <header class="hero">
   <div class="wrap bar">
-    <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg>אורן מים</div>
+    <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg><span data-edit="name">אורן מים</span></div>
     <span class="live mono"><i></i>זמין עכשיו · הגעה משוערת 45 דק׳</span>
   </div>
   <div class="wrap hero-grid">
     <div>
       <div class="tag mono">אינסטלציה · חדרה, עמק חפר והשרון · 24/7</div>
-      <h1>נזילה? סתימה?<br><span>מגיעים היום.</span></h1>
+      <h1><span data-edit="h1a">נזילה? סתימה?</span><br><span data-edit="h1b">מגיעים היום.</span></h1>
       <p>מתארים את התקלה בצ׳אט, מקבלים הערכת מחיר, והפרטים מגיעים אליי לוואטסאפ. אני חוזר תוך 15 דקות.</p>
       <div class="ctas">
         <button class="btn btn-signal" type="button" data-open-bot>לפתוח קריאה בצ׳אט</button>
@@ -200,7 +228,33 @@
   </div>
 </section>
 
-<section style="padding-top:0">
+<section class="field">
+  <div class="wrap">
+    <div class="head"><h2>מהשטח</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+    <div class="field-grid">
+      <div class="lanyard">
+        <span class="clip"></span>
+        <div class="badge">
+          <div class="badge-top"><b data-edit="badge-brand">אורן מים</b><span>טכנאי מוסמך</span></div>
+          <figure class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></figure>
+          <h3 data-edit="badge-name">אורן לוי</h3>
+          <p data-edit="badge-role">אינסטלטור · 12 שנה בשטח</p>
+          <div class="code" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div>
+        <div class="details">
+          <div class="detail"><div class="ring"><figure class="ps" data-slot="d1" data-icon="wrench" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט א׳</span><h3 data-edit="d1">החלפת סיפון במטבח</h3></div>
+          <div class="detail"><div class="ring"><figure class="ps" data-slot="d2" data-icon="drop" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ב׳</span><h3 data-edit="d2">איתור נזילה בקיר</h3></div>
+          <div class="detail"><div class="ring"><figure class="ps" data-slot="d3" data-icon="home" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ג׳</span><h3 data-edit="d3">דוד חדש על הגג</h3></div>
+        </div>
+        <p class="field-note">לקוחות סומכים על מי שהם רואים. תמונה אמיתית שלכם ושל העבודה שלכם עושה יותר מכל משפט.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
   <div class="wrap">
     <div class="head"><h2>מה קורה כשפותחים קריאה</h2></div>
     <div class="steps">
@@ -227,6 +281,7 @@
 <footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · דף לדוגמה, העסק בדוי</span><a href="../">רוצים דף כזה לעסק שלכם?</a></div></footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
@@ -244,6 +299,7 @@
     summary: (d) => `קריאה חדשה מהאתר (דמו אינסטלטור)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הצ׳אט מותאם לשירותים ולמחירים שלכם.",
   });
+  PhotoSlots.init({ page: "plumber" });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
 </script>
 </body>
