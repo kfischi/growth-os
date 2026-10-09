@@ -44,6 +44,8 @@ The first 3 clients get the pilot price for לידים: 1,900 ₪ setup and 450 
 
 ## Niche demos
 
+Live at https://service-pro-web.netlify.app (Netlify, publishing the `demos/` folder). Per-niche links for outreach are in `docs/side-income/OUTREACH.md`.
+
 `demos/plumber/`, `demos/movers/`, `demos/trainer/`, `demos/ac/`, `demos/electrician/`, `demos/cleaning/` and `demos/renovation/` are landing pages for fictional businesses, each with its own visual identity and the shared scripted chat `demos/shared/leadbot.js` (questions, phone check, summary, WhatsApp handoff). The newer pages also show the phone mockup from `demos/shared/phone.css`, which displays the visitor's own lead after the chat. This environment cannot download stock photos, so pages use drawn SVG and CSS mockups; a real client site uses the client's own photos. Sell to one niche at a time. A new niche page reuses `leadbot.js` and follows the `web-design` skill.
 
 ## Checks

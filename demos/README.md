@@ -1,5 +1,7 @@
 # אתר הדמו והמחירון
 
+באוויר: https://service-pro-web.netlify.app (Netlify).
+
 אתר אחד (Vercel או Netlify) עם העמודים האלה:
 
 | כתובת | קובץ | מה זה |

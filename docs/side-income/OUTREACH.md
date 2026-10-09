@@ -35,3 +35,20 @@
 - לא מבטיחים מספרים. מבטיחים שאף פנייה לא הולכת לאיבוד.
 - פותחים בשאלה, לא בהצעה.
 - את לינק הדמו שולחים עם `?utm_source=whatsapp`.
+
+## לינקים לדמו
+
+שולחים לכל עסק את הדמו של התחום שלו, לא את העמוד הראשי.
+
+| תחום | לינק |
+| --- | --- |
+| עמוד ראשי | https://service-pro-web.netlify.app/?utm_source=whatsapp |
+| אינסטלטור | https://service-pro-web.netlify.app/plumber/?utm_source=whatsapp |
+| הובלות | https://service-pro-web.netlify.app/movers/?utm_source=whatsapp |
+| מאמני כושר | https://service-pro-web.netlify.app/trainer/?utm_source=whatsapp |
+| מזגנים | https://service-pro-web.netlify.app/ac/?utm_source=whatsapp |
+| חשמלאי | https://service-pro-web.netlify.app/electrician/?utm_source=whatsapp |
+| ניקיון | https://service-pro-web.netlify.app/cleaning/?utm_source=whatsapp |
+| שיפוצים | https://service-pro-web.netlify.app/renovation/?utm_source=whatsapp |
+
+בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.
