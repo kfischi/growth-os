@@ -1,5 +1,7 @@
-# One Netlify site for the portfolio page and its demos (base directory: demos).
+# Netlify serves only the static demo site in demos/, never the Next.js app at the repo root.
+# Paths in [build] are relative to the base directory.
 [build]
+  base = "demos"
   publish = "."
   command = "echo 'static demo site, nothing to build'"
 

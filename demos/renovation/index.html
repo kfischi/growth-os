@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>נתן אדלר · שיפוצים</title>
+<meta name="description" content="שיפוץ מטבחים, אמבטיות ודירות. מתארים את הפרויקט בצ׳אט, וקובעים סיור באתר.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@800;900&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the material board on the site office wall: real samples pinned next to a sketch.
+     Detail: square metres, weeks per stage, the order of trades (הריסה, אינסטלציה, ריצוף, נגרות, צבע).
+     Bold move: a tactile mood board in the hero, with a generated terrazzo sample. */
+  :root {
+    --plaster: #eeede9;        /* page */
+    --concrete: #d3d2cd;
+    --charcoal: #1c1e1d;       /* text */
+    --charcoal-soft: #535855;
+    --verde: #2f5d4e;          /* green marble, the accent */
+    --verde-light: #dfe9e4;
+    --oak: #b98a5a;
+    --display: "Noto Serif Hebrew", serif;
+    --body: "Noto Sans Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--charcoal);
+    --bot-bg: #fff; --bot-fg: var(--charcoal); --bot-line: #dddcd7; --bot-muted: var(--charcoal-soft);
+    --bot-accent: var(--verde); --bot-accent-fg: #fff; --bot-them: #f0efeb; --bot-me: var(--verde); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 2px; --bot-radius-msg: 2px; --bot-radius-pill: 2px; --bot-radius-input: 2px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--plaster); color: var(--charcoal); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: 1.04; margin: 0; letter-spacing: -.01em; }
+  .label { font-size: 13px; font-weight: 500; color: var(--charcoal-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 15px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 2px; }
+  .btn-verde { background: var(--verde); color: #fff; }
+  .btn-verde:hover { background: #244a3e; }
+  .btn-line { border: 1.5px solid var(--charcoal); color: var(--charcoal); background: transparent; }
+
+  .demo { background: var(--charcoal); color: #c4c6c2; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 20px; border-bottom: 1px solid #cfcec8; }
+  .logo { font-family: var(--display); font-weight: 900; font-size: 24px; }
+  .logo span { font-family: var(--body); font-weight: 400; font-size: 14px; color: var(--charcoal-soft); margin-inline-start: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--verde); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 56px; align-items: center; padding-block: 48px 90px; }
+  .hero h1 { font-size: clamp(48px, 6.6vw, 92px); margin: 12px 0 20px; }
+  .hero h1 em { font-style: normal; color: var(--verde); }
+  .hero p { font-size: 19px; max-width: 36ch; margin: 0 0 28px; color: var(--charcoal-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .board { background: #c7b79f; padding: 18px; position: relative; box-shadow: 0 40px 70px -40px rgba(0,0,0,.6);
+    background-image: radial-gradient(rgba(0,0,0,.08) 1px, transparent 1.4px), radial-gradient(rgba(255,255,255,.12) 1px, transparent 1.4px); background-size: 7px 7px, 11px 11px; }
+  .board-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: 64px; gap: 12px; }
+  .sw { position: relative; box-shadow: 0 10px 18px -10px rgba(0,0,0,.55); min-width: 0; }
+  .sw .tag { position: absolute; bottom: -8px; inset-inline-start: 8px; background: #fff; font-size: 11.5px; font-weight: 500; padding: 1px 7px; box-shadow: 0 2px 4px rgba(0,0,0,.2); white-space: nowrap; }
+  .sw.pin::before { content: ""; position: absolute; top: 6px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: #7a2f2f; box-shadow: 0 2px 2px rgba(0,0,0,.4); z-index: 1; }
+  .terrazzo { grid-column: 4 / span 3; grid-row: 1 / span 3; background: #e9e6df; }
+  .terrazzo canvas { width: 100%; height: 100%; display: block; }
+  .oak { grid-column: 1 / span 3; grid-row: 1 / span 2; transform: rotate(-1.5deg);
+    background: repeating-linear-gradient(90deg, rgba(90,55,25,.18) 0 2px, transparent 2px 9px, rgba(90,55,25,.1) 9px 10px, transparent 10px 23px), linear-gradient(90deg, #c4925f, #b07c4a 40%, #c99a68 70%, #b58250); }
+  .zellige { grid-column: 1 / span 2; grid-row: 3 / span 2; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: #f4f2ec; padding: 3px; }
+  .zellige i { background: var(--verde); }
+  .zellige i:nth-child(2) { background: #356a59; } .zellige i:nth-child(4) { background: #29534a; } .zellige i:nth-child(6) { background: #3a7262; } .zellige i:nth-child(8) { background: #2b5649; }
+  .steel { grid-column: 3 / span 1; grid-row: 3 / span 2; background: linear-gradient(90deg, #8d9191, #e3e5e4 30%, #a3a7a6 55%, #d7d9d8 80%, #8d9191); }
+  .paint { grid-column: 4 / span 2; grid-row: 4 / span 2; background: #fff; padding: 8px; display: grid; grid-template-rows: 1fr 1fr 1fr; gap: 4px; transform: rotate(2deg); }
+  .paint i { display: block; }
+  .paint i:nth-child(1) { background: #f3f1ea; border: 1px solid #e5e2d9; } .paint i:nth-child(2) { background: #d9dcd5; } .paint i:nth-child(3) { background: #aab3a8; }
+  .plan { grid-column: 6 / span 1; grid-row: 4 / span 2; background: #fff; transform: rotate(-3deg); padding: 6px; }
+  .plan svg { width: 100%; height: 100%; display: block; }
+  .board-note { grid-column: 1 / span 3; grid-row: 5 / span 1; background: #fff; padding: 8px 12px; font-size: 13px; line-height: 1.4; transform: rotate(.6deg); }
+  .board-note b { font-family: var(--display); font-size: 16px; display: block; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(36px, 5vw, 60px); }
+
+  .gantt { background: #fff; border: 1px solid #d8d7d1; }
+  .g-row { display: grid; grid-template-columns: 190px minmax(0, 1fr); border-bottom: 1px solid #e6e5e0; min-height: 52px; }
+  .g-row:last-child { border-bottom: 0; }
+  .g-name { padding: 12px 16px; font-weight: 700; font-size: 15.5px; border-inline-end: 1px solid #e6e5e0; display: flex; align-items: center; }
+  .g-track { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); align-items: center; padding: 0 8px; position: relative;
+    background-image: repeating-linear-gradient(-90deg, transparent 0 calc(12.5% - 1px), #efeee9 calc(12.5% - 1px) 12.5%); }
+  .bar-g { height: 22px; background: var(--verde); border-radius: 2px; }
+  .bar-g.oak { background: var(--oak); } .bar-g.ch { background: var(--charcoal); }
+  .g-head .g-track { background: none; }
+  .g-head .g-track span { font-size: 12px; color: var(--charcoal-soft); text-align: center; }
+  .g-head .g-name { font-size: 12.5px; color: var(--charcoal-soft); font-weight: 500; }
+  .g-note { font-size: 14px; color: var(--charcoal-soft); margin-top: 12px; }
+
+  .proj { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--charcoal); }
+  .proj button { all: unset; box-sizing: border-box; cursor: pointer; padding: 22px 22px 26px 0; min-width: 0; }
+  .proj button + button { border-inline-start: 1px solid #cfcec8; padding-inline-start: 22px; }
+  .proj button:hover h3 { color: var(--verde); }
+  .proj button:focus-visible { outline: 3px solid var(--verde); outline-offset: -3px; }
+  .proj h3 { font-size: 32px; margin: 4px 0 8px; }
+  .proj .price { font-weight: 700; font-size: 18px; }
+  .proj p { margin: 6px 0 0; color: var(--charcoal-soft); font-size: 15.5px; }
+
+  .owner { background: var(--verde); color: #f0f4f2; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner h2 { font-size: clamp(36px, 5vw, 60px); margin-bottom: 16px; }
+  .owner p { color: #cfe0d8; max-width: 44ch; margin: 0 0 12px; }
+  .owner .ph-cap { color: #cfe0d8; }
+
+  footer { padding-block: 34px 90px; color: var(--charcoal-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--charcoal); padding-top: 18px; }
+
+
+  /* ---------- Photo slots: pinned project photo + before/after ---------- */
+  :root { --ps-a: #9fb8ad; --ps-b: #2f5d4e; --ps-ui: var(--verde); --ps-edit: #c0532f; }
+  .board .pinned { position: absolute; z-index: 2; top: -26px; left: -26px; width: 170px; aspect-ratio: 4 / 3; border: 8px solid #fff; border-bottom-width: 26px; transform: rotate(-6deg); box-shadow: 0 16px 28px -14px rgba(0,0,0,.6); }
+  .board .pinned .ps-chip { bottom: 4px; font-size: 10px; }
+  .ba-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 48px; align-items: center; }
+  .ps-ba.reno { aspect-ratio: 4 / 3; box-shadow: 0 40px 70px -45px rgba(0,0,0,.6); }
+  .ps-ba.reno .ps-chip { display: none; }
+  .ps-ba.reno [data-slot="after"] .ps-tools { left: auto; right: 12px; transform: none; top: 54px; }
+  .ps-ba.reno [data-slot="before"] .ps-tools { left: 12px; transform: none; top: 54px; }
+  .ps-ba.reno [data-slot="before"] { --ps-a: #b9b3a8; --ps-b: #6b655c; }
+  .ba-side h2 { font-size: clamp(36px, 5vw, 58px); margin-bottom: 14px; }
+  .ba-side p { color: var(--charcoal-soft); margin: 0 0 12px; }
+  .ba-side .facts { display: grid; gap: 6px; margin-top: 18px; font-size: 15px; }
+  .ba-side .facts div { display: flex; justify-content: space-between; border-bottom: 1px solid #cfcec8; padding-bottom: 6px; gap: 10px; }
+  @media (max-width: 900px) { .ba-wrap { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+  @media (max-width: 520px) { .board .pinned { width: 104px; top: -18px; left: -10px; border-width: 5px; border-bottom-width: 16px; } }
+
+  @media (max-width: 900px) {
+    .hero-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .board { max-width: 520px; }
+    .proj { grid-template-columns: minmax(0, 1fr); }
+    .proj button + button { border-inline-start: 0; padding-inline-start: 0; border-top: 1px solid #cfcec8; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 520px) {
+    .board { padding: 12px; }
+    .board-grid { grid-auto-rows: 46px; gap: 9px; }
+    .board-note { padding: 5px 8px; font-size: 11px; line-height: 1.3; }
+    .board-note b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sw .tag { font-size: 10.5px; }
+    .g-row { grid-template-columns: 104px minmax(0, 1fr); }
+    .g-name { padding: 10px; font-size: 13.5px; }
+    .g-track { padding: 0 4px; }
+    .g-head .g-track span { font-size: 10.5px; }
+    .bar-g { height: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name" style="all:unset">נתן אדלר</span><span>שיפוצים ובנייה קלה</span></div>
+      <a href="#" data-wa="היי נתן, הגעתי מהאתר ואשמח לשמוע על שיפוץ">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <div class="label">מטבחים · אמבטיות · דירות שלמות · השרון</div>
+        <h1><span data-edit="h1a">שיפוץ עם</span> <em data-edit="h1b">לוח זמנים</em> <span data-edit="h1c">שאפשר לסמוך עליו.</span></h1>
+        <p>מתארים את הפרויקט בצ׳אט קצר. אחר כך נקבע סיור בבית, ותקבלו הצעת מחיר מפורטת בכתב.</p>
+        <div class="ctas">
+          <button class="btn btn-verde" data-open-bot>לתאר את הפרויקט</button>
+          <a class="btn btn-line" href="#" data-wa="היי נתן, יש לי שאלה על שיפוץ">וואטסאפ ישיר</a>
+        </div>
+      </div>
+      <div class="board" aria-label="לוח חומרים לדוגמה">
+        <figure class="ps pinned" data-slot="pin" data-icon="home" data-label="תמונת פרויקט"></figure>
+        <div class="board-grid">
+          <div class="sw oak pin"><span class="tag">פרקט אלון</span></div>
+          <div class="sw terrazzo pin"><canvas id="terrazzo" aria-hidden="true"></canvas><span class="tag">טרצו, 60 על 60</span></div>
+          <div class="sw zellige"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span class="tag">זליג׳ ירוק</span></div>
+          <div class="sw steel"><span class="tag">ידית</span></div>
+          <div class="sw paint pin"><i></i><i></i><i></i><span class="tag">לבן גיר</span></div>
+          <div class="sw plan">
+            <svg viewBox="0 0 60 80" fill="none" stroke="#1c1e1d" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="52" height="72"/><path d="M4 40 H34 M34 40 V76 M34 22 V4"/><path d="M8 8 H30 V16 H8 Z" stroke-width="1"/><path d="M34 52 A12 12 0 0 1 46 40" stroke-width="1"/><circle cx="18" cy="60" r="7" stroke-width="1"/></svg>
+          </div>
+          <div class="sw board-note"><b>מטבח · דירה בכפר סבא</b>12 מ״ר · שבעה שבועות</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section style="background:#fff">
+    <div class="wrap">
+      <div class="head"><h2>ככה נראה שיפוץ מטבח</h2><span class="label">לוח זמנים לדוגמה, בשבועות</span></div>
+      <div class="gantt" role="table" aria-label="לוח זמנים לדוגמה לשיפוץ מטבח">
+        <div class="g-row g-head" role="row"><div class="g-name" role="columnheader">שלב</div><div class="g-track"><span>שבוע 1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">הריסה ופינוי</div><div class="g-track"><span class="bar-g ch" style="grid-column:1 / span 1"></span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">אינסטלציה וחשמל</div><div class="g-track"><span class="bar-g" style="grid-column:2 / span 2"></span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">טיח וריצוף</div><div class="g-track"><span class="bar-g" style="grid-column:3 / span 2"></span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">נגרות ומטבח</div><div class="g-track"><span class="bar-g oak" style="grid-column:5 / span 2"></span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">צבע וגמר</div><div class="g-track"><span class="bar-g" style="grid-column:7 / span 1"></span></div></div>
+        <div class="g-row" role="row"><div class="g-name" role="cell">מסירה</div><div class="g-track"><span class="bar-g ch" style="grid-column:8 / span 1"></span></div></div>
+      </div>
+      <p class="g-note">כל לקוח מקבל לוח זמנים כזה לפני שמתחילים, ועדכון בוואטסאפ בסוף כל שבוע.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>פרויקטים</h2><span class="label">טווחי מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="proj">
+        <button data-project="מטבח"><span class="label">ארבעה עד שמונה שבועות</span><h3>מטבח</h3><div class="price">35,000 עד 80,000 ₪</div><p>כולל הריסה, אינסטלציה, ריצוף וחיפוי. בלי הארונות.</p></button>
+        <button data-project="חדר אמבטיה"><span class="label">שלושה עד חמישה שבועות</span><h3>חדר אמבטיה</h3><div class="price">25,000 עד 45,000 ₪</div><p>איטום, ריצוף, כלים סניטריים ומקלחון.</p></button>
+        <button data-project="דירה שלמה"><span class="label">שניים עד ארבעה חודשים</span><h3>דירה שלמה</h3><div class="price">2,500 עד 4,500 ₪ למ״ר</div><p>תכנון, ניהול קבלני משנה ומסירה עם רשימת ליקויים.</p></button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap ba-wrap">
+      <div class="ps-ba reno">
+        <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"></figure>
+        <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני"></figure></div>
+        <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+        <span class="ps-ba-line" aria-hidden="true"></span>
+        <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
+      </div>
+      <div class="ba-side">
+        <span class="label">כל תמונה כאן מתחלפת בתמונה שלכם</span>
+        <h2 style="margin-top:10px" data-edit="ba-title">מטבח בהרצליה, לפני ואחרי</h2>
+        <p data-edit="ba-text">שבעה שבועות, בלי חריגה בתקציב. גררו את הקו כדי להשוות.</p>
+        <div class="facts">
+          <div><span>שטח</span><b data-edit="f1">12 מ״ר</b></div>
+          <div><span>משך</span><b data-edit="f2">שבעה שבועות</b></div>
+          <div><span>מה נעשה</span><b data-edit="f3">הריסה, ריצוף, נגרות</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap owner-grid">
+      <div>
+        <h2>מה נתן מקבל</h2>
+        <p>סוג הפרויקט, הגודל, מתי רוצים להתחיל והישוב. כך יודעים כבר לפני הטלפון אם זה מתאים, ומה להביא לסיור.</p>
+        <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="ph-screen">
+            <div class="ph-top"><span class="ph-av">ר</span><div><b>רותם בן דוד</b><small>מהאתר</small></div></div>
+            <div class="ph-chat">
+              <span class="ph-day">היום</span>
+              <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו שיפוצים)
+פרויקט: מטבח
+גודל: 60 עד 100 מ״ר
+מתי: בעוד כשלושה חודשים
+ישוב: רעננה
+שם: רותם בן דוד
+טלפון: 052-9988776<time>13:05</time></div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap">ככה הפנייה מגיעה</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>נתן אדלר · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  // Generated terrazzo sample: random stone chips on a pale base.
+  (function () {
+    const c = document.getElementById("terrazzo"), box = c.parentElement;
+    function draw() {
+      const w = box.clientWidth, h = box.clientHeight, dpr = window.devicePixelRatio || 1;
+      c.width = w * dpr; c.height = h * dpr; const x = c.getContext("2d"); x.scale(dpr, dpr);
+      x.fillStyle = "#ebe8e1"; x.fillRect(0, 0, w, h);
+      let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+      const cols = ["#2f5d4e", "#3f7563", "#b98a5a", "#8e8b84", "#1c1e1d", "#c9c4b8", "#d9a48a"];
+      for (let i = 0; i < (w * h) / 90; i++) {
+        const cx = rnd() * w, cy = rnd() * h, r = 1.5 + rnd() * (rnd() < .12 ? 9 : 4), n = 5 + Math.floor(rnd() * 3);
+        x.fillStyle = cols[Math.floor(rnd() * cols.length)]; x.beginPath();
+        for (let k = 0; k < n; k++) { const a = (k / n) * Math.PI * 2 + rnd() * .6, rr = r * (.6 + rnd() * .6); x[k ? "lineTo" : "moveTo"](cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+        x.closePath(); x.fill();
+      }
+    }
+    draw(); addEventListener("resize", draw);
+  })();
+
+  PhotoSlots.init({ page: "renovation" });
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "נתן · שיפוצים", subtitle: "קובעים סיור בבית", initial: "נ", launcher: "לתאר פרויקט",
+    greet: "היי, כאן נתן.\nכמה שאלות על הפרויקט, ואחר כך נקבע סיור בבית.",
+    steps: [
+      { key: "project", label: "פרויקט", ask: "מה משפצים?", chips: ["מטבח", "חדר אמבטיה", "דירה שלמה", "ריצוף", "צבע ותיקונים"] },
+      { key: "size", label: "גודל", ask: "מה גודל הדירה?", chips: ["עד 60 מ״ר", "60 עד 100 מ״ר", "מעל 100 מ״ר"] },
+      { key: "when", label: "מתי", ask: "מתי רוצים להתחיל?", chips: ["בחודש הקרוב", "בעוד כשלושה חודשים", "רק בודקים בינתיים"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.project} ב${d.city}. השלב הבא הוא סיור בבית, בלי עלות, ואחריו הצעת מחיר מפורטת בכתב.\nלחצו למטה, ונתאם את הסיור בוואטסאפ.`,
+    summary: (d) => `פנייה מהאתר (דמו שיפוצים)\nפרויקט: ${d.project}\nגודל: ${d.size}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-project]").forEach((b) => b.addEventListener("click", () => bot.open({ project: b.dataset.project })));
+</script>
+</body>
+</html>

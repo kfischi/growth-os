@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>דרור הובלות</title>
+<meta name="description" content="הובלות דירות ומשרדים. הצעת מחיר בצ׳אט תוך דקה, ופרטים ישר לוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Object: a shipping label stuck on a cardboard box. Detail: from/to, floor, elevator, tracking number.
+     Bold move: the label itself is the hero, on a kraft field with packing tape. */
+  :root {
+    --kraft: #c69c6d;          /* cardboard */
+    --kraft-deep: #a87f52;
+    --kraft-light: #e7d3b8;
+    --label: #fdfdfb;          /* sticker paper */
+    --ink: #181512;            /* marker black */
+    --ink-soft: #5d5246;
+    --stamp: #d1302a;          /* fragile stamp */
+    --tape: rgba(240, 230, 210, .55);
+    --display: "Suez One", "Rubik", serif;
+    --body: "Rubik", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --bot-bg: var(--label); --bot-fg: var(--ink); --bot-line: #ddd3c4; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--ink); --bot-accent-fg: var(--label); --bot-them: #f2ebe0; --bot-me: var(--ink); --bot-me-fg: var(--label);
+    --bot-font: var(--body); --bot-radius: 4px; --bot-radius-msg: 4px; --bot-radius-pill: 3px; --bot-radius-input: 3px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--kraft-light); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--stamp); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .03em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; margin: 0; text-wrap: balance; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 3px; }
+  .btn-ink { background: var(--ink); color: var(--label); }
+  .btn-ink:hover { background: #000; }
+  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+
+  .demo { background: var(--ink); color: #d9cbb7; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero on cardboard ---------- */
+  .hero { background: var(--kraft); position: relative; overflow: hidden;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px), radial-gradient(120% 80% at 80% 0%, rgba(255,255,255,.18), transparent 60%); }
+  .hero::before { content: ""; position: absolute; inset: 0 auto 0 12%; width: 110px; background: var(--tape); mix-blend-mode: screen; }
+  .bar { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 28px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid; }
+  .hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 48px; align-items: center; padding-block: 36px 80px; }
+  .hero h1 { font-size: clamp(50px, 7.4vw, 100px); margin: 10px 0 18px; }
+  .hero p { font-size: 19px; max-width: 34ch; margin: 0 0 28px; color: #2d2620; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .label { background: var(--label); padding: 18px; box-shadow: 0 2px 0 rgba(0,0,0,.08), 0 30px 50px -28px rgba(40, 25, 10, .65); transform: rotate(-1.5deg); position: relative; }
+  .label::before, .label::after { content: ""; position: absolute; width: 90px; height: 26px; background: var(--tape); top: -12px; }
+  .label::before { right: 22px; transform: rotate(4deg); } .label::after { left: 22px; transform: rotate(-5deg); }
+  .label .in { border: 3px solid var(--ink); }
+  .lrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-bottom: 3px solid var(--ink); }
+  .lrow:last-child { border-bottom: 0; }
+  .lrow > div { padding: 10px 12px; min-width: 0; }
+  .lrow > div + div { border-inline-start: 3px solid var(--ink); }
+  .lrow.full { grid-template-columns: minmax(0, 1fr); }
+  .lab { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .12em; }
+  .val { font-family: var(--display); font-size: 30px; line-height: 1.1; }
+  .val small { font-family: var(--body); font-size: 14px; display: block; color: var(--ink-soft); }
+  .barcode { height: 54px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px, var(--ink) 8px 11px, transparent 11px 12px, var(--ink) 12px 13px, transparent 13px 16px); }
+  .stamp { position: absolute; left: -10px; bottom: 70px; transform: rotate(-14deg); border: 4px double var(--stamp); color: var(--stamp); font-family: var(--display); font-size: 30px; padding: 2px 14px; background: rgba(253,253,251,.7); }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(36px, 5vw, 60px); }
+  .head .mono { color: var(--ink-soft); }
+  .prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .box { background: var(--kraft); border-radius: 2px; padding: 14px; position: relative; background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px); }
+  .box .in { background: var(--label); padding: 18px; height: 100%; display: flex; flex-direction: column; }
+  .box h3 { font-size: 30px; }
+  .box .mono { color: var(--ink-soft); }
+  .box .price { font-family: var(--display); font-size: 34px; margin: 16px 0 6px; }
+  .box ul { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 4px; font-size: 15px; }
+  .box li::before { content: "☐ "; font-family: var(--mono); }
+  .box .btn { margin-top: auto; }
+  .fine { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
+
+  .included { background: var(--ink); color: var(--label); }
+  .included .head .mono { color: #bba98f; }
+  .manifest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #4a4036; }
+  .manifest div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid #4a4036; }
+  .manifest div:nth-child(odd) { padding-inline-end: 28px; }
+  .manifest div:nth-child(even) { padding-inline-start: 28px; border-inline-start: 1px solid #4a4036; }
+  .manifest .mono { color: var(--kraft); padding-top: 4px; }
+  .manifest b { font-family: var(--display); font-weight: 400; font-size: 24px; display: block; }
+  .manifest span { color: #cbbda7; font-size: 15px; }
+
+  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
+
+
+  /* ---------- On the road: truck + polaroids (photo slots) ---------- */
+  :root { --ps-a: #b98e62; --ps-b: #5e4129; --ps-ui: var(--ink); --ps-edit: var(--stamp); }
+  .road { background: var(--kraft); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px); overflow: hidden; }
+  .road .head .mono { color: #4a3b2c; }
+  .truck { position: relative; display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); align-items: end; direction: ltr; max-width: 860px; margin: 10px auto 0; padding-bottom: 46px; }
+  .truck .cab { height: 150px; background: var(--ink); border-radius: 26px 6px 0 10px; position: relative; }
+  .truck .cab::before { content: ""; position: absolute; top: 18px; left: 18px; width: 70px; height: 52px; background: #b9d3e0; border-radius: 14px 4px 4px 4px; }
+  .truck .cab::after { content: ""; position: absolute; bottom: 22px; left: 0; width: 18px; height: 12px; background: #f6e7c8; border-radius: 0 4px 4px 0; }
+  .truck .box { aspect-ratio: 2.3 / 1; border-radius: 6px; border: 6px solid var(--label); box-shadow: 0 24px 40px -24px rgba(0,0,0,.6); }
+  .truck .box .brand { position: absolute; top: 12px; right: 14px; z-index: 2; background: var(--label); color: var(--ink); font-family: var(--display); font-size: 22px; padding: 2px 12px; direction: rtl; }
+  .truck .wheel { position: absolute; bottom: 0; width: 76px; height: 76px; border-radius: 50%; background: radial-gradient(circle, #8b8178 0 22%, #2b2622 23% 60%, #181512 61%); box-shadow: 0 0 0 6px var(--kraft); }
+  .truck .w1 { left: 54px; } .truck .w2 { right: 90px; } .truck .w3 { right: 180px; }
+  .truck .chassis { position: absolute; left: 10px; right: 10px; bottom: 34px; height: 14px; background: #2b2622; border-radius: 6px; z-index: -1; }
+  .polas { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; margin-top: 40px; }
+  .pola { background: var(--label); padding: 12px 12px 14px; width: min(270px, 100%); box-shadow: 0 22px 40px -24px rgba(40,25,10,.8); position: relative; }
+  .pola:nth-child(1) { transform: rotate(-3deg); } .pola:nth-child(2) { transform: rotate(2deg) translateY(14px); } .pola:nth-child(3) { transform: rotate(-1deg); }
+  .pola::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 26px; margin-left: -45px; background: var(--tape); transform: rotate(-3deg); z-index: 1; }
+  .pola .ps { aspect-ratio: 1; }
+  .pola p { margin: 10px 4px 0; font-family: var(--display); font-size: 20px; line-height: 1.2; }
+  .road-note { text-align: center; color: #4a3b2c; font-size: 15px; margin: 34px 0 0; }
+  @media (max-width: 620px) {
+    .truck { grid-template-columns: minmax(0, 90px) minmax(0, 1fr); padding-bottom: 32px; }
+    .truck .cab { height: 92px; border-radius: 18px 4px 0 8px; } .truck .cab::before { top: 12px; left: 10px; width: 40px; height: 32px; }
+    .truck .box .brand { font-size: 15px; top: 8px; right: 8px; padding: 1px 8px; }
+    .truck .wheel { width: 48px; height: 48px; box-shadow: 0 0 0 4px var(--kraft); } .truck .w1 { left: 26px; } .truck .w2 { right: 40px; } .truck .w3 { right: 96px; }
+    .truck .chassis { bottom: 22px; height: 10px; }
+    .polas { gap: 14px; } .pola { width: calc(50% - 7px); padding: 8px 8px 10px; } .pola p { font-size: 16px; margin-top: 8px; }
+    .pola:nth-child(1) { transform: rotate(-2deg); } .pola:nth-child(2) { transform: rotate(2deg); } .pola:nth-child(3) { transform: rotate(-1deg); }
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); }
+    .label { max-width: 440px; }
+    .prices { grid-template-columns: minmax(0, 1fr); }
+    .manifest { grid-template-columns: minmax(0, 1fr); }
+    .manifest div:nth-child(n) { padding-inline: 0; border-inline-start: 0; }
+  }
+  @media (max-width: 420px) { .val { font-size: 24px; } .stamp { font-size: 24px; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. ההודעה בוואטסאפ תגיע לכפיר, שבנה את הדף. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap bar"><div class="logo" data-edit="name">דרור הובלות</div><a href="#" data-wa="היי דרור, אני צריך הצעת מחיר להובלה.">וואטסאפ</a></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="mono">הובלות דירות ומשרדים · מהשרון לכל הארץ</div>
+      <h1 data-edit="h1">עוברים דירה? הצעת מחיר תוך דקה.</h1>
+      <p>עונים על חמש שאלות בצ׳אט, רואים מחיר משוער, והפרטים נשלחים אליי בוואטסאפ. בלי לחכות שמישהו יחזור אליכם.</p>
+      <div class="ctas">
+        <button class="btn btn-ink" type="button" data-open-bot>לקבל הצעת מחיר</button>
+        <a class="btn btn-line" href="#prices">מחירון משוער</a>
+      </div>
+    </div>
+    <div class="label" aria-label="דוגמה למדבקת משלוח">
+      <div class="in">
+        <div class="lrow"><div><div class="lab">מ:</div><div class="val">חדרה<small>קומה 3, יש מעלית</small></div></div><div><div class="lab">אל:</div><div class="val">תל אביב<small>קומה 5, צריך מנוף</small></div></div></div>
+        <div class="lrow"><div><div class="lab">תאריך</div><div class="val">חמישי 16.10</div></div><div><div class="lab">דירה</div><div class="val">3 חדרים</div></div></div>
+        <div class="lrow full"><div><div class="lab">מספר הובלה · DR-2614-HDR</div><div class="barcode" aria-hidden="true"></div></div></div>
+      </div>
+      <div class="stamp" aria-hidden="true">שביר</div>
+    </div>
+  </div>
+</header>
+
+<section id="prices">
+  <div class="wrap">
+    <div class="head"><h2>כמה זה עולה בערך</h2><span class="mono">מחירים להמחשה · תלוי בקומות, מנוף ומרחק</span></div>
+    <div class="prices">
+      <div class="box"><div class="in"><span class="mono">ארגז 01</span><h3>סטודיו או חדר</h3><div class="price">1,200 עד 1,900 ₪</div><ul><li>משאית קטנה ושני סבלים</li><li>עטיפת רהיטים</li><li>עד 3 שעות</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
+      <div class="box"><div class="in"><span class="mono">ארגז 02</span><h3>2 עד 3 חדרים</h3><div class="price">2,500 עד 4,200 ₪</div><ul><li>משאית גדולה ושלושה סבלים</li><li>פירוק והרכבה של מיטות וארונות</li><li>עטיפה מלאה</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
+      <div class="box"><div class="in"><span class="mono">ארגז 03</span><h3>4 חדרים ומעלה</h3><div class="price">4,500 עד 7,800 ₪</div><ul><li>שתי משאיות או נסיעה כפולה</li><li>צוות של ארבעה</li><li>אפשרות לאריזה מלאה</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
+    </div>
+    <p class="fine">הדף לדוגמה. אצלכם יופיעו המחירים והשירותים שלכם.</p>
+  </div>
+</section>
+
+<section class="road">
+  <div class="wrap">
+    <div class="head"><h2>בדרך</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+    <div class="truck" aria-label="משאית עם תמונה של העסק">
+      <div class="cab" aria-hidden="true"></div>
+      <figure class="ps box" data-slot="truck" data-icon="truck" data-label="תמונה או לוגו על המשאית"><span class="brand" data-edit="truck-brand">דרור הובלות</span></figure>
+      <span class="chassis" aria-hidden="true"></span>
+      <span class="wheel w1" aria-hidden="true"></span><span class="wheel w2" aria-hidden="true"></span><span class="wheel w3" aria-hidden="true"></span>
+    </div>
+    <div class="polas">
+      <div class="pola"><figure class="ps" data-slot="p1" data-icon="person" data-label="הצוות שלכם"></figure><p data-edit="p1">הצוות, לפני הובלה בחיפה</p></div>
+      <div class="pola"><figure class="ps" data-slot="p2" data-icon="box" data-label="תמונה מהובלה"></figure><p data-edit="p2">פסנתר, קומה רביעית</p></div>
+      <div class="pola"><figure class="ps" data-slot="p3" data-icon="home" data-label="תמונה מהובלה"></figure><p data-edit="p3">מטבח ארוז ומוכן</p></div>
+    </div>
+    <p class="road-note">לקוחות רוצים לראות מי ייכנס להם הביתה. תמונה של הצוות והמשאית שלכם בונה אמון מהר.</p>
+  </div>
+</section>
+
+<section class="included">
+  <div class="wrap">
+    <div class="head"><h2>מה בתוך ההובלה</h2><span class="mono">רשימת תכולה</span></div>
+    <div class="manifest">
+      <div><span class="mono">פריט 1</span><p style="margin:0"><b>ביטוח תכולה</b><span>כל ההובלה מבוטחת, כולל כלים ומכשירי חשמל.</span></p></div>
+      <div><span class="mono">פריט 2</span><p style="margin:0"><b>פירוק והרכבה</b><span>מיטות, ארונות ושולחנות, עם הכלים שלנו.</span></p></div>
+      <div><span class="mono">פריט 3</span><p style="margin:0"><b>מנוף לפי הצורך</b><span>לקומות גבוהות ופריטים שלא נכנסים במעלית.</span></p></div>
+      <div><span class="mono">פריט 4</span><p style="margin:0"><b>מחיר סגור מראש</b><span>מה שסגרנו בוואטסאפ, זה מה שמשלמים.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap"><div class="row"><span>דרור הובלות · דף לדוגמה, העסק בדוי</span><a href="../">רוצים דף כזה לעסק שלכם?</a></div></footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  const EST = { "סטודיו או חדר": [1200, 1900], "2 עד 3 חדרים": [2500, 4200], "4 חדרים ומעלה": [4500, 7800] };
+  const EXTRA = { "קרקע או יש מעלית": 0, "קומה בלי מעלית": 400, "צריך מנוף": 900 };
+  const fmt = (n) => n.toLocaleString("he-IL");
+  PhotoSlots.init({ page: "movers" });
+  LeadBot.init({
+    whatsapp: "972526359513",
+    name: "דרור · הובלות", subtitle: "הצעת מחיר בדקה", initial: "ד", launcher: "הצעת מחיר",
+    greet: "היי, כאן דרור 👋\nחמש שאלות קצרות ותקבלו מחיר משוער. אחר כך הפרטים מגיעים אליי לוואטסאפ.",
+    steps: [
+      { key: "from", label: "מאיפה", ask: "מאיזה ישוב עוברים?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "to", label: "לאן", ask: (d) => `ומ${d.from} לאן?`, input: "text", placeholder: "למשל: תל אביב" },
+      { key: "size", label: "גודל", ask: "מה גודל הדירה?", chips: ["סטודיו או חדר", "2 עד 3 חדרים", "4 חדרים ומעלה"] },
+      { key: "floor", label: "גישה", ask: "איך הגישה בשני הצדדים?", chips: ["קרקע או יש מעלית", "קומה בלי מעלית", "צריך מנוף"] },
+      { key: "when", label: "מתי", ask: "מתי ההובלה?", chips: ["השבוע", "החודש", "עוד אין תאריך"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לשלוח את ההצעה?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const [lo, hi] = EST[d.size]; const x = EXTRA[d.floor];
+      return `תודה ${d.name.split(" ")[0]}! הובלה מ${d.from} ל${d.to}, ${d.size}: בערך ${fmt(lo + x)} עד ${fmt(hi + x)} ₪.\nאת המחיר הסופי סוגרים אחרי שיחה קצרה או תמונות.\nלחצו למטה, וההצעה תמשיך בוואטסאפ.`;
+    },
+    summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+  });
+</script>
+</body>
+</html>
