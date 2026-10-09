@@ -157,14 +157,17 @@
         const key = page + ":img:" + slot.dataset.slot;
         if (!slot.querySelector(":scope > .ps-ph")) slot.prepend(placeholder(slot));
         // the <img> is attached only once there is a photo, so an empty slot never shows a broken image
-        const img = el("img", "ps-img"); img.alt = slot.dataset.label || ""; img.draggable = false;
+        const img = el("img", "ps-img"); img.alt = slot.dataset.alt || slot.dataset.label || ""; img.draggable = false; img.loading = "lazy"; img.decoding = "async";
         if (slot.dataset.label) slot.appendChild(el("span", "ps-chip", slot.dataset.label));
         const tools = el("div", "ps-tools");
         const pick = el("button", "ps-pick", "החלפת תמונה"); pick.type = "button";
         const zoom = el("input"); zoom.type = "range"; zoom.min = "1"; zoom.max = "3"; zoom.step = "0.01"; zoom.value = "1"; zoom.setAttribute("aria-label", "זום");
         const reset = el("button", "ps-reset", "איפוס"); reset.type = "button";
         tools.append(pick, zoom, reset); slot.appendChild(tools);
-        let st = { src: null, x: 50, y: 50, z: 1 };
+        // data-src: a sample photo shown until the owner picks their own. data-pos: its focus point, "x y" in percent.
+        const [dx, dy] = (slot.dataset.pos || "50 50").split(" ").map(Number);
+        const initial = () => ({ src: slot.dataset.src || null, x: dx, y: dy, z: 1 });
+        let st = initial();
 
         function apply() {
           slot.classList.toggle("has-img", !!st.src);
@@ -179,10 +182,11 @@
             catch (e) { say("לא הצלחנו לפתוח את הקובץ. נסו תמונה בפורמט JPG או PNG.", true); }
           },
         };
+        apply();
         kvGet(key).then((v) => { if (v && v.src) { st = v; apply(); } });
 
         pick.addEventListener("click", (e) => { e.stopPropagation(); openPicker(slot); });
-        reset.addEventListener("click", (e) => { e.stopPropagation(); st = { src: null, x: 50, y: 50, z: 1 }; apply(); save(); });
+        reset.addEventListener("click", (e) => { e.stopPropagation(); st = initial(); apply(); kvSet(key, undefined); });
         zoom.addEventListener("input", () => { st.z = +zoom.value; apply(); });
         zoom.addEventListener("change", save);
         tools.addEventListener("click", (e) => e.stopPropagation());
