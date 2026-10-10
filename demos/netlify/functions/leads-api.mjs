@@ -12,7 +12,7 @@ const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, 
 export default async (req) => {
   if (!configured()) return json({ error: "not_configured" }, 503);
   const origin = req.headers.get("origin");
-  if (origin && new URL(origin).host !== new URL(req.url).host) return json({ error: "forbidden" }, 403);
+  if (origin) { let same = false; try { same = new URL(origin).host === new URL(req.url).host; } catch { /* "null" and other junk */ } if (!same) return json({ error: "forbidden" }, 403); }
   if (limited(clientIp(req))) return json({ error: "rate_limited" }, 429);
 
   let who;

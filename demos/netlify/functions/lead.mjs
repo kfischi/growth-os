@@ -29,7 +29,7 @@ export default async (req, context) => {
 
   try {
     const result = await processLead(client, body, "form");
-    return json(result, result.ok ? 200 : 422, cors);
+    return json(result, result.ok ? 200 : result.error === "alert_failed" ? 202 : 422, cors);
   } catch (e) {
     console.error("lead", e.message);
     return json({ ok: false, error: "server" }, 502, cors);

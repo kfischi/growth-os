@@ -32,6 +32,7 @@ export async function db(method, path, body, prefer) {
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(5000), // a hung call must fail fast, so the page can still fall back to WhatsApp
   });
   const text = await res.text();
   if (!res.ok) throw new Error(`db ${method} ${path.split("?")[0]} ${res.status}: ${text.slice(0, 300)}`);
@@ -157,6 +158,7 @@ async function waSend(client, to, payload, log) {
       method: "POST",
       headers: { authorization: "Bearer " + token, "content-type": "application/json" },
       body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", to, ...payload }),
+      signal: AbortSignal.timeout(6000),
     });
     const data = await res.json().catch(() => ({}));
     const id = data.messages && data.messages[0] && data.messages[0].id;
@@ -194,7 +196,9 @@ export function sourceOf(input) {
 }
 
 // Validates, stores, answers the lead on WhatsApp and alerts the owner.
-// Returns { ok, id, duplicate, autoReply } or { ok: false, error }.
+// Returns { ok: true, id, duplicate?, autoReply } only when the owner was alerted (or alerts are off).
+// If the alert didn't go out, the lead is still stored but the answer is { ok: false, error: "alert_failed" },
+// so the page opens WhatsApp to the business and the enquiry reaches a person anyway.
 export async function processLead(client, input, channel = "form") {
   const phone = israeliPhone(input.phone);
   if (!phone) return { ok: false, error: "bad_phone" };
@@ -205,6 +209,7 @@ export async function processLead(client, input, channel = "form") {
   const since = new Date(Date.now() - 10 * 60_000).toISOString();
   const dup = await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${phone.intl}&created_at=gte.${q(since)}&select=id&limit=1`);
   if (dup.length) return { ok: true, id: dup[0].id, duplicate: true };
+  // (A double tap within the same second can still make two rows. Rare, and two alerts beat none.)
 
   const lead = await insertLead({
     client_slug: client.slug, name, phone: phone.local, phone_intl: phone.intl,
@@ -225,7 +230,8 @@ export async function processLead(client, input, channel = "form") {
         { kind: "owner_alert", leadId: lead.id, buttonPayload: "done:" + lead.id })
       : Promise.resolve("off"),
   ]);
-  await updateLead(lead.id, { auto_reply: autoReply, owner_alert: ownerAlert });
+  try { await updateLead(lead.id, { auto_reply: autoReply, owner_alert: ownerAlert }); } catch (e) { console.error("update lead", e.message); }
+  if (ownerAlert !== "sent" && ownerAlert !== "off") return { ok: false, id: lead.id, error: "alert_failed" };
   return { ok: true, id: lead.id, autoReply };
 }
 
@@ -243,24 +249,27 @@ export function corsHeaders(req, client) {
 
 export async function runReminders(now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&reminders=eq.true&select=*");
-  let sent = 0;
+  let sent = 0, failed = 0;
   for (const client of clients) {
     if (!inWorkingHours(client, now)) continue;
-    const before = new Date(now - client.remind_after_min * 60_000).toISOString();
-    const notOlder = new Date(now - 7 * 86_400_000).toISOString(); // a week-old lead is the panel's job
-    const leads = await db("GET",
-      `ls_leads?client_slug=eq.${q(client.slug)}&status=eq.new&reminded_at=is.null&created_at=lte.${q(before)}&created_at=gte.${q(notOlder)}&select=*&order=created_at.asc&limit=20`);
-    for (const lead of leads) {
-      // Mark first, so a slow send can't make two runs remind twice.
-      const claimed = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&reminded_at=is.null`, { reminded_at: now.toISOString() }, "return=representation");
-      if (!claimed.length) continue;
-      await sendTemplate(client, client.owner_phone, client.tpl_owner_reminder,
-        [lead.name, lead.phone, ago(lead.created_at, now), lead.service || "-"],
-        { kind: "reminder", leadId: lead.id, buttonPayload: "done:" + lead.id });
-      sent++;
-    }
+    try { // one client's error must not stop the others
+      const before = new Date(now - client.remind_after_min * 60_000).toISOString();
+      const notOlder = new Date(now - 7 * 86_400_000).toISOString(); // a week-old lead is the panel's job
+      const leads = await db("GET",
+        `ls_leads?client_slug=eq.${q(client.slug)}&status=eq.new&reminded_at=is.null&created_at=lte.${q(before)}&created_at=gte.${q(notOlder)}&select=*&order=created_at.asc&limit=20`);
+      for (const lead of leads) {
+        // Mark first, so a slow send can't make two runs remind twice.
+        const claimed = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&reminded_at=is.null`, { reminded_at: now.toISOString() }, "return=representation");
+        if (!claimed.length) continue;
+        const r = await sendTemplate(client, client.owner_phone, client.tpl_owner_reminder,
+          [lead.name, lead.phone, ago(lead.created_at, now), lead.service || "-"],
+          { kind: "reminder", leadId: lead.id, buttonPayload: "done:" + lead.id });
+        if (r === "sent") sent++;
+        else { failed++; await db("PATCH", `ls_leads?id=eq.${q(lead.id)}`, { reminded_at: null }); } // try again next run
+      }
+    } catch (e) { failed++; console.error("reminders", client.slug, e.message); }
   }
-  return { reminders: sent };
+  return { reminders: sent, failed };
 }
 
 const MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
@@ -314,8 +323,32 @@ export async function buildReport(client, month, { send = true, now = new Date()
 export async function runMonthlyReports(month, now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&select=*");
   const out = [];
-  for (const c of clients) out.push({ client: c.slug, ...(await buildReport(c, month, { now })) });
+  for (const c of clients) {
+    try { out.push({ client: c.slug, ...(await buildReport(c, month, { now })) }); }
+    catch (e) { console.error("report", c.slug, e.message); out.push({ client: c.slug, error: e.message }); }
+  }
   return out;
+}
+
+// The privacy notice promises leads are kept up to two years. Runs with the monthly report.
+export const RETENTION_DAYS = 730;
+export async function deleteOldLeads(now = new Date()) {
+  const cutoff = new Date(now - RETENTION_DAYS * 86_400_000).toISOString();
+  const leads = await db("DELETE", `ls_leads?created_at=lt.${q(cutoff)}&select=id`, undefined, "return=representation");
+  await db("DELETE", `ls_messages?created_at=lt.${q(cutoff)}`);
+  return { deleted: leads.length };
+}
+
+// For an uptime monitor: problems in the last 24 hours, counts only, no personal data.
+export async function healthCheck(now = new Date()) {
+  const day = new Date(now - 86_400_000).toISOString(), stale = new Date(now - 10 * 60_000).toISOString();
+  const [alerts, pending, messages] = await Promise.all([
+    db("GET", `ls_leads?created_at=gte.${q(day)}&owner_alert=in.(failed,skipped)&select=client_slug`),
+    db("GET", `ls_leads?created_at=gte.${q(day)}&created_at=lt.${q(stale)}&owner_alert=eq.pending&select=client_slug`),
+    db("GET", `ls_messages?created_at=gte.${q(day)}&direction=eq.out&status=in.(failed,skipped)&select=client_slug,kind`),
+  ]);
+  const clients = [...new Set([...alerts, ...pending, ...messages].map((r) => r.client_slug))];
+  return { ok: !alerts.length && !pending.length && !messages.length, ownerAlertsFailed: alerts.length, ownerAlertsStuck: pending.length, messagesFailed: messages.length, clients };
 }
 
 /* ---------------- panel access ---------------- */

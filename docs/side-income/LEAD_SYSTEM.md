@@ -10,7 +10,7 @@
 6. **שולחת סיכום חודשי** ב-1 לחודש: כמה פניות, כמה טופלו ומאיפה הגיעו.
 7. **הצ׳אט באתר** (נציג AI) מכיר את העסק, עונה על שאלות, ומכניס פנייה לאותה מערכת ברגע שהגולש משאיר שם וטלפון.
 
-אם משהו נופל (אין חיבור, השרת לא עונה), הדף פותח וואטסאפ כמו היום. פנייה לא הולכת לאיבוד.
+הדף מציג "קיבלנו" רק כשהפנייה נשמרה **וגם** ההתראה לבעל העסק יצאה. בכל מקרה אחר (אין חיבור, השרת לא עונה, תבנית לא מאושרת, טוקן שבוטל) הפנייה נשמרת אם אפשר, והדף פותח וואטסאפ לעסק עם הפרטים. כל כשל כזה מופיע בלוח באדום ומפיל את בדיקת התקינות (`/api/health`), כך שכפיר יודע עליו תוך דקות.
 
 ---
 
@@ -57,6 +57,7 @@ Site configuration → Environment variables:
 | `WA_APP_SECRET` | App secret של אפליקציית Meta (שלב 3) |
 | `WA_TOKEN_<SLUG>` | טוקן הגישה של כל עסק (שלב 4). למשל `WA_TOKEN_OREN_MAYIM` |
 | `ANTHROPIC_API_KEY` | כבר נדרש לצ׳אט בדף הבית |
+| `HEALTH_KEY` | מחרוזת אקראית. נכנסת לכתובת של בדיקת התקינות (שלב 4 למטה) |
 
 מחרוזת אקראית: `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`.
 
@@ -74,6 +75,13 @@ Site configuration → Environment variables:
 אפליקציה אחת משרתת את כל הלקוחות. כל לקוח מחובר אליה עם חשבון WhatsApp משלו, טוקן משלו ומספר משלו, והמערכת מזהה מי זה לפי המספר.
 
 לפני הלקוח הראשון צריך לבדוק ב-Meta מה נדרש כדי שאפליקציה של עסק אחד (כפיר) תשלח מחשבונות של עסקים אחרים: אימות העסק של כפיר (Business Verification), מעבר האפליקציה למצב Live, ואולי בדיקת אפליקציה (App Review) להרשאות. הדרישות של Meta משתנות, אז בודקים אותן כשמגיעים לזה.
+
+### 4. בדיקת תקינות שמתריעה לכפיר (חובה)
+
+1. פותחים חשבון חינמי ב-UptimeRobot (uptimerobot.com).
+2. New monitor → HTTP(s) → הכתובת: `https://service-pro-web.netlify.app/api/health?key=<HEALTH_KEY>` → כל 5 דקות → התראה במייל ובאפליקציה.
+3. הבדיקה נכשלת כשב-24 השעות האחרונות התראה לבעל עסק לא יצאה או נתקעה, הודעת וואטסאפ נכשלה, או שבסיס הנתונים לא עונה. היא מחזירה רק מספרים ושמות עסקים, בלי פרטים של לקוחות.
+4. כשמגיעה התראה: נכנסים ללוח, מוצאים את הפניות המסומנות באדום, וחוזרים ללקוחות. אחר כך מתקנים את הסיבה (בדרך כלל תבנית או טוקן) ב-`ls_messages`, בעמודה `error`.
 
 ---
 
@@ -139,10 +147,12 @@ WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. 
 
 ### 4. הדף של הלקוח
 
-הטופס (`clients/<slug>/index.html`):
+דוגמה מלאה ועובדת: `clients/sample-plumber/` (ראו `CLIENT_SITES.md`). הקבצים `leadform.js`, `leadbot.js` ו-`aibot.js` מועתקים לתיקייה `assets/` של האתר, ולא נטענים מהאתר של כפיר, כך ששינוי בדמואים לא משנה אתר שכבר באוויר.
+
+טופס רגיל:
 
 ```html
-<script src="https://service-pro-web.netlify.app/shared/leadform.js"></script>
+<script src="assets/leadform.js"></script>
 <script>
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -156,12 +166,12 @@ WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. 
 
 שדה מוסתר `company` (honeypot) עוצר בוטים: מוסיפים `<input name="company" tabindex="-1" autocomplete="off" hidden>` ושולחים את הערך שלו.
 
-הצ׳אט המתוסרט (`leadbot.js`) שולח באותו אופן, דרך `onDone`.
+הצ׳אט המתוסרט (`leadbot.js`) שולח דרך האפשרות `capture`, כמו ב-`sample-plumber`. לא מחברים גם את `onDone` לשליחה, אחרת כל פנייה נשלחת פעמיים.
 
 הצ׳אט החכם (`aibot.js`):
 
 ```html
-<script src="https://service-pro-web.netlify.app/shared/aibot.js"></script>
+<script src="assets/aibot.js"></script>
 <script>
   AiBot.init({
     endpoint: "https://service-pro-web.netlify.app/api/chat/oren-mayim",
@@ -193,9 +203,12 @@ update public.ls_clients set chat_facts = 'אינסטלטור בחדרה, פרד
   (התזכורת יוצאת רק אחרי `remind_after_min` דקות ובשעות העבודה.)
 - [ ] דוח לחודש הנוכחי בלי לשלוח: `-d '{"run":"report","client":"oren-mayim","month":"2026-10","send":false}'`.
 - [ ] הצ׳אט עונה מתוך `chat_facts` ומכניס פנייה כשמשאירים שם וטלפון.
+- [ ] מנתקים זמנית את הטוקן (או מכניסים שם תבנית שגוי) ושולחים פנייה: הדף פותח וואטסאפ, הפנייה מסומנת באדום בלוח, ו-`/api/health` מחזיר 503. מחזירים את ההגדרה.
 - [ ] מוחקים את פניות הבדיקה: `delete from ls_leads where client_slug = 'oren-mayim';`
 
 ---
+
+שינוי בטבלה `ls_clients` (למשל `active = false` או מפתח חדש) נכנס לתוקף תוך עד דקה, כי כל פונקציה שומרת את פרטי העסק בזיכרון לדקה.
 
 ## התאמות לכל עסק (עמודות ב-`ls_clients`)
 
@@ -226,3 +239,5 @@ node scripts/lead-system/new-client.mjs kfir "נחיתה רכה" 052-6359513 htt
 - ההודעה ללקוח היא תשובה לפנייה שלו, לא פרסום. לא שולחים מהמערכת הודעות שיווק (חוק הספאם).
 - פסיכולוגית ועובדת סוציאלית: אוספים רק שם, טלפון ונושא כללי. לא פרטים רגישים בשדה החופשי.
 - פנייה שהלקוח מבקש למחוק: `delete from ls_leads where id = '...';`.
+- פניות בנות יותר משנתיים נמחקות אוטומטית ב-1 לחודש, כמו שכתוב בדף הפרטיות של אתרי הלקוחות.
+- הריפו ציבורי: מפתחות, טוקנים, טלפונים אישיים ופרטי תשלום לא נכנסים אליו אף פעם.

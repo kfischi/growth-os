@@ -68,8 +68,9 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 - `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
 - Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.
 - The home page form also sends to `/api/lead/kfir` and still opens WhatsApp.
-- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `ANTHROPIC_API_KEY`. Never in the repo or the chat.
+- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`. Never in the repo or the chat.
 - `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
+- The page shows "received" only when the lead is stored **and** the owner's WhatsApp alert went out. Otherwise `/api/lead` answers `alert_failed` and the page opens WhatsApp. Failures show in red in the panel and fail `/api/health` (`health.mjs`), which an uptime monitor checks every 5 minutes. Leads older than two years are deleted on the 1st of the month.
 
 ## Client sites
 
