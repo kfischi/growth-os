@@ -10,9 +10,20 @@ async function clientByPhoneId(id) {
   return rows[0] || null;
 }
 
+// Meta may send statuses out of order. A status only moves forward: accepted > sent > delivered > read,
+// and failed can replace anything but read.
+const EARLIER = { sent: "accepted", delivered: "accepted,sent", read: "accepted,sent,delivered", failed: "accepted,sent,delivered" };
+
 async function onStatus(s) {
+  if (!EARLIER[s.status]) return;
   const error = s.errors && s.errors[0] ? clip(`${s.errors[0].code} ${s.errors[0].title || ""}`, 300) : null;
-  await db("PATCH", `ls_messages?wa_id=eq.${q(s.id)}`, error ? { status: s.status, error } : { status: s.status });
+  const rows = await db("PATCH", `ls_messages?wa_id=eq.${q(s.id)}&status=in.(${EARLIER[s.status]})`,
+    error ? { status: s.status, error } : { status: s.status }, "return=representation");
+  // An owner alert that Meta accepted but couldn't deliver: mark the lead, so the panel and /api/health show it.
+  const m = rows[0];
+  if (s.status === "failed" && m && m.kind === "owner_alert" && m.lead_id) {
+    await db("PATCH", `ls_leads?id=eq.${q(m.lead_id)}`, { owner_alert: "failed" });
+  }
 }
 
 // Logs an incoming message once. Meta may deliver the same event again; then this returns false.
@@ -30,12 +41,14 @@ async function onMessage(client, m) {
   // Owner pressed "טיפלתי" on an alert or a reminder.
   if (from === client.owner_phone && /^done:[0-9a-f-]{36}$/.test(payload || "")) {
     const id = payload.slice(5);
-    const fresh = await logInbound({ client_slug: client.slug, lead_id: id, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload } });
-    if (!fresh) return;
+    // Mark first: it is safe to repeat, so a Meta retry after an error still marks the lead.
     const rows = await db("PATCH", `ls_leads?id=eq.${q(id)}&client_slug=eq.${q(client.slug)}&status=eq.new`,
       { status: "handled", handled_at: new Date().toISOString() }, "return=representation");
+    const exists = rows.length || (await db("GET", `ls_leads?id=eq.${q(id)}&select=id`)).length;
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: exists ? id : null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload } });
+    if (!fresh) return;
     // The owner just wrote, so a free text reply is allowed.
-    await sendText(client, from, rows.length ? `סומן כטופל: ${rows[0].name}.` : "הפנייה הזאת כבר סומנה.", { kind: "owner_reply", leadId: id });
+    await sendText(client, from, rows.length ? `סומן כטופל: ${rows[0].name}.` : exists ? "הפנייה הזאת כבר סומנה." : "הפנייה הזאת כבר לא במערכת.", { kind: "owner_reply", leadId: exists ? id : null });
     return;
   }
 

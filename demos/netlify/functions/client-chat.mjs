@@ -83,8 +83,9 @@ export default async (req, context) => {
   } catch (e) {
     console.error("client-chat lead", e.message);
   }
-  // Not stored: hand the visitor a WhatsApp button with the summary, so the enquiry still reaches the business.
-  return json({ reply: `${reply} [[whatsapp:היי, אני ${name}. ${summary}]]`, lead: false }, 200, cors);
+  // Not confirmed (not stored, or the owner wasn't alerted): hand the visitor a WhatsApp button with the
+  // summary, so the enquiry reaches the business anyway.
+  return json({ reply: `כדי לוודא שהפרטים מגיעים, שלחו אותם גם בוואטסאפ בלחיצה כאן. [[whatsapp:היי, אני ${name}. ${summary}]]`, lead: false }, 200, cors);
 };
 
 export const config = { path: "/api/chat/:client" };

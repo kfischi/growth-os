@@ -26,18 +26,15 @@ If a sketch exists in `demos/sketch-<slug>/`, start from it.
 
 ## 2. Build
 
-1. Copy from `demos/sketch-<slug>/` if it exists, otherwise from `demos/leads-demo/`, into `clients/<slug>/`.
-2. Remove everything that belongs to the demo:
-   - the top demo bar
-   - the whole `.overlay` dialog, the `playDemo`, `resetStage` and `closeDemo` functions and their CSS
-   - `<meta name="robots" content="noindex">`
-   - "דף דמו" in the footer. The footer gets the business name and year.
-3. After a successful submit, replace the overlay with an inline thank-you state inside the form card:
-   `תודה, {firstName}! קיבלנו את הפנייה. הודעת אישור בדרך אליכם בוואטסאפ.` Hide the form fields, show the message, and move focus to it.
-4. Fill in `CONFIG`: `https://service-pro-web.netlify.app/api/lead/<slug>` in `webhookUrl`, the business number in `whatsappNumber` (the fallback when the system is down), and `businessName`.
-5. Add an `og:title`, an `og:description` and a favicon (the business initial in an SVG is fine).
-6. Add `clients/<slug>/netlify.toml` with `publish = "."` and the security headers, without noindex.
-7. Add `clients/<slug>/CLIENT.md` with the intake table, the package, the launch date, the retainer amount and the billing method (monthly or annual).
+Full guide: `docs/side-income/CLIENT_SITES.md`. The worked example is `clients/sample-plumber/` (built from `demos/plumber/`); diff the two to see every change.
+
+1. Start from the client's trade demo in `demos/<trade>/` (or `demos/sketch-<slug>/` if one was made). Copy it to `clients/<slug>/index.html`. Copy `demos/shared/leadbot.js` and `leadform.js` into `clients/<slug>/assets/`, and the client's own photos into `assets/photos/` as WebP.
+2. Remove everything that belongs to the demo: the demo bar and its CSS, "להמחשה", "לדוגמה", "בדוי", the footer link to the demos, `photoslots.js` and every `data-edit`. Editable photo frames become plain `<img>` with `alt`, `loading="lazy"` and `object-position`. Nothing may point at `../` or `demos/`.
+3. Put the client's facts in: name, services, prices, areas, years, response time. Only facts the client confirmed. Keep the page's visual identity, or adjust it with the `web-design` skill.
+4. One `const SITE = { whatsapp, leads }` at the top of the script. נציג AI: add `capture` to `LeadBot.init` (see the sample) so the lead is stored and the chat falls back to WhatsApp when the system doesn't confirm. נוכחות: no `capture`.
+5. Add `og:` tags, `assets/favicon.svg`, a privacy line in the footer ("הפרטים משמשים רק כדי לחזור אליכם"), and `_headers` with the security headers and without `noindex`.
+6. Add `clients/<slug>/CLIENT.md` (intake table, package, launch date, monthly amount, billing method).
+7. Hosting: `CLIENT_SITES.md` → "עלייה לאוויר". A Netlify account in the client's name, the Project ID in `clients/<slug>/netlify.json`, the token only as a GitHub secret. Merged changes deploy themselves.
 
 ## 3. Automation (נציג AI package)
 
@@ -54,7 +51,8 @@ A נוכחות client has no row in the system: the page opens WhatsApp directly
 - [ ] A real test lead arrives in the panel (`/panel/`), on the lead's WhatsApp and on the owner's WhatsApp
 - [ ] "טיפלתי" on the owner's WhatsApp marks it in the panel, and a reminder arrives for a lead left open
 - [ ] The test leads have been deleted (`delete from ls_leads where client_slug = '<slug>';`)
-- [ ] The domain is connected, HTTPS works, and the `www` and bare domain both resolve
+- [ ] The site deployed through "Deploy client sites", the domain is connected, HTTPS works, and the `www` and bare domain both resolve
+- [ ] No `noindex` left in `index.html` or `_headers`
 - [ ] The client has seen the site on their phone and approved it in writing (WhatsApp is fine)
 - [ ] `CLIENT.md` is complete and the row in `docs/side-income/TRACKER.md` is updated
 

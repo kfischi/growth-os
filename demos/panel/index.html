@@ -67,6 +67,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.line { color: var(--accent); } }
 .acts select { min-height: 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); padding: 0 12px; margin-inline-start: auto; }
 .note { width: 100%; margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); padding: 9px 12px; resize: vertical; min-height: 44px; line-height: 1.4; }
+.warn { margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: var(--new-soft); color: var(--new); font-size: .9rem; font-weight: 500; }
 .empty { text-align: center; color: var(--muted); padding: 40px 16px; background: var(--card); border: 1px dashed var(--line); border-radius: var(--radius); }
 
 .login { max-width: 400px; margin: 12vh auto 0; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; }
@@ -226,6 +227,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
     meta.append(el('span', null, l.phone));
     meta.append(el('span', null, (l.channel === 'chat' ? 'צ׳אט' : 'טופס') + ' · ' + (SOURCE[l.source] || l.source || 'ישיר')));
     meta.append(el('span', null, l.auto_reply === 'sent' ? 'קיבל מענה אוטומטי' : l.auto_reply === 'failed' ? 'המענה האוטומטי לא נשלח' : ''));
+    // The owner's WhatsApp alert didn't go out: this enquiry may have been seen only here.
+    const stuck = l.owner_alert === 'pending' && Date.now() - new Date(l.created_at) > 10 * 60000;
+    if (l.owner_alert === 'failed' || l.owner_alert === 'skipped' || stuck) c.append(el('p', 'warn', 'ההתראה בוואטסאפ על הפנייה הזאת לא נשלחה. כדאי לחזור ללקוח מכאן.'));
     if (l.reminded_at && l.status === 'new') meta.append(el('span', null, 'נשלחה תזכורת'));
     c.append(meta);
     ins.slice(0, 2).forEach((x) => {
@@ -259,7 +263,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   function csv() {
     if (!data) return;
     const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
-    const cell = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    // A leading = + - @ would run as a formula in Excel. Anyone can type into the form, so neutralise it.
+    const cell = (v) => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
     const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : (k === 'created_at' || k === 'handled_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
     const blob = new Blob(['﻿' + [cols.map((c) => cell(c[1])).join(','), ...rows].join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'leads-' + data.client.slug + '-' + new Date().toISOString().slice(0, 10) + '.csv';

@@ -143,7 +143,10 @@
             else if (r.status === 404 || r.status === 503 || r.status === 405) goOffline();
           } catch (e) { goOffline(); }
         }
-        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + " [[whatsapp:" + text + "]]" : scripted(text, history); }
+        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + " [[whatsapp:" + text + "]]"
+          // A business's own chat (endpoint set) must never fall back to כפיר's sales script.
+          : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + text + "]]"
+          : scripted(text, history); }
         typing.classList.remove("on");
         history.push({ role: "assistant", content: reply });
         render(reply);

@@ -1,0 +1,87 @@
+# Deploys each paying client's site (clients/<slug>/) to that client's own Netlify site.
+# A folder is deployed only when it has clients/<slug>/netlify.json:
+#   { "siteId": "<Netlify Project ID>", "tokenSecret": "NETLIFY_TOKEN_<SLUG>" }
+# The token is a Netlify personal access token of the account that holds the site (the client's account,
+# or כפיר's), saved in GitHub: Settings > Secrets and variables > Actions. Without a matching secret,
+# NETLIFY_TOKEN is used. Full guide: docs/side-income/CLIENT_SITES.md
+name: Deploy client sites
+
+on:
+  push:
+    branches: [claude/multitenant-business-os-9y3vc1]
+    paths: ["clients/**"]
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "The folder name under clients/ to deploy"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-clients-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      clients: ${{ steps.list.outputs.clients }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: list
+        env:
+          INPUT_SLUG: ${{ inputs.slug }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ -n "$INPUT_SLUG" ]; then
+            slugs="$INPUT_SLUG"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            slugs=$(git diff --name-only "$BEFORE" HEAD -- clients | cut -d/ -f2 | sort -u)
+          else
+            # First push of the branch or a force push: no reliable base, so deploy every client site.
+            slugs=$(ls clients)
+          fi
+          out="[]"
+          for s in $slugs; do
+            [[ "$s" =~ ^[a-z0-9-]{2,40}$ ]] || { echo "skip bad name: $s"; continue; }
+            f="clients/$s/netlify.json"
+            [ -f "$f" ] || { echo "skip $s: no netlify.json yet"; continue; }
+            site=$(jq -r '.siteId // ""' "$f"); secret=$(jq -r '.tokenSecret // "NETLIFY_TOKEN"' "$f")
+            [[ "$site" =~ ^[A-Za-z0-9-]{8,64}$ ]] || { echo "::error::$f: siteId is missing or malformed"; exit 1; }
+            [[ "$secret" =~ ^[A-Z][A-Z0-9_]{2,60}$ ]] || { echo "::error::$f: tokenSecret must look like NETLIFY_TOKEN_MY_CLIENT"; exit 1; }
+            out=$(jq -c --arg s "$s" --arg site "$site" --arg secret "$secret" '. + [{slug: $s, site: $site, secret: $secret}]' <<<"$out")
+          done
+          echo "clients=$out" >> "$GITHUB_OUTPUT"
+          echo "to deploy: $out"
+
+  deploy:
+    needs: plan
+    if: needs.plan.outputs.clients != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        client: ${{ fromJson(needs.plan.outputs.clients) }}
+    name: deploy ${{ matrix.client.slug }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets[matrix.client.secret] || secrets.NETLIFY_TOKEN }}
+          SITE_ID: ${{ matrix.client.site }}
+          SLUG: ${{ matrix.client.slug }}
+          SECRET_NAME: ${{ matrix.client.secret }}
+        run: |
+          [ -n "$NETLIFY_AUTH_TOKEN" ] || { echo "::error::No token: add the secret $SECRET_NAME (or NETLIFY_TOKEN) in GitHub"; exit 1; }
+          # Copy the folder out of the repo, so the root netlify.toml (the demo site and its functions) is never picked up.
+          cp -r "clients/$SLUG" "$RUNNER_TEMP/site"
+          rm -f "$RUNNER_TEMP/site/CLIENT.md" "$RUNNER_TEMP/site/netlify.json"
+          cd "$RUNNER_TEMP/site"
+          npx -y netlify-cli@27.8.0 deploy --prod --no-build --dir . --site "$SITE_ID" --message "$GITHUB_SHA"

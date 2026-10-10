@@ -129,7 +129,7 @@
       }
 
       // UI: toggle button and banner
-      const btn = el("button", "ps-ui-btn"); btn.type = "button";
+      const btn = el("button", "ps-ui-btn"); btn.type = "button"; btn.setAttribute("aria-label", (cfg && cfg.label) || "לנסות עם התמונות שלכם");
       btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${ICONS.camera}"/></svg><span class="ps-ui-label">${(cfg && cfg.label) || "לנסות עם התמונות שלכם"}</span>`;
       const banner = el("div", "ps-banner"); banner.setAttribute("role", "status");
       const msg = el("p", null, "לחצו על תמונה כדי להחליף אותה, או גררו לתוכה קובץ. גוררים כדי למקם, והסליידר מגדיל. גם הטקסטים המסומנים ניתנים לעריכה. הכול נשמר רק בדפדפן הזה.");
