@@ -197,7 +197,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
       render();
       $('#updated').textContent = 'עודכן ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
     } catch (e) {
-      if (e.message !== 'unauthorised') $('#a-err').textContent = 'לא הצלחנו לטעון את הפניות. ננסה שוב בעוד דקה.';
+      if (e.message === 'unauthorised') return;
+      const msg = 'לא הצלחנו לטעון את הפניות. ננסה שוב בעוד דקה. (' + e.message + ')';
+      // Nothing loaded yet: the app is still hidden, so say it on the login screen instead of a blank page.
+      if ($('#app').hidden) { $('#login').hidden = false; $('#l-err').textContent = msg; } else $('#a-err').textContent = msg;
     }
   }
 
