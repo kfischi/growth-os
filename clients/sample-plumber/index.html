@@ -26,7 +26,7 @@
     --ink: #0f1d3a;
     --ink-soft: #4b5873;
     --rule: #c9d4e6;
-    --signal: #e0362c;         /* emergency red */
+    --signal: #cc2e26;         /* emergency red */
     --display: "Secular One", "IBM Plex Sans Hebrew", sans-serif;
     --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -210,6 +210,8 @@
   </div>
 </header>
 
+<main>
+
 <section>
   <div class="wrap">
     <div class="head"><h2>הקריאות הנפוצות</h2><span class="mono">טווחי מחיר · המחיר הסופי נקבע אחרי אבחון</span></div>
@@ -281,7 +283,9 @@
   </div>
 </section>
 
-<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · 2026</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם.</span></div></footer>
+</main>
+
+<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · 2026</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="privacy.html">פרטיות</a> · <a href="accessibility.html">הצהרת נגישות</a></span></div></footer>
 
 <script src="assets/leadform.js"></script>
 <script src="assets/leadbot.js"></script>
@@ -298,7 +302,7 @@
       { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
-      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור? לשם יישלח גם אישור בוואטסאפ.", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => [`תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.`, d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\n"),
     summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
