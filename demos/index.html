@@ -157,6 +157,17 @@ img, svg { display: block; }
 .step h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
 .step p { color: var(--slate); max-width: 34ch; }
 
+/* watch it work: three phones with a short recording of a demo in use (shared/reel.js plays them) */
+.watch { margin-top: clamp(48px, 8svh, 80px); }
+.watch-h { font-size: 1.3rem; font-weight: 700; margin-bottom: 18px; }
+.watch-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 48px); }
+.clip { margin: 0; min-width: 0; }
+.clip .reel-frame { position: relative; aspect-ratio: 390 / 844; max-height: 640px; margin-inline: auto; border-radius: 34px; padding: 9px; background: var(--ink); box-shadow: 0 24px 50px -28px color-mix(in oklab, var(--ink) 70%, transparent); }
+.clip video { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 26px; background: var(--mist); }
+.clip figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 12px; padding-inline: 6px; }
+.clip figcaption b { font-weight: 700; }
+.clip figcaption a { color: var(--mint); font-weight: 600; font-size: .95rem; }
+
 /* demos: one small card per business, each in its own colours */
 .demo-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); }
 .demo { min-width: 0; display: grid; text-decoration: none; color: var(--ink); border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: var(--paper); transition: transform .25s, box-shadow .25s; }
@@ -260,6 +271,10 @@ img, svg { display: block; }
   .bar .btn { margin-inline-start: auto; }
   .hero .wrap, .contact .wrap { grid-template-columns: minmax(0, 1fr); }
   .parts, .steps { grid-template-columns: minmax(0, 1fr); }
+  /* one phone at a time, swiped sideways */
+  .watch-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); padding-bottom: 6px; scrollbar-width: none; }
+  .watch-row::-webkit-scrollbar { display: none; }
+  .clip { flex: 0 0 min(74vw, 300px); scroll-snap-align: center; }
   .demo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
@@ -365,6 +380,26 @@ img, svg { display: block; }
         <li class="step reveal"><span class="step-n">2</span><h3>תוך שבוע באוויר</h3><p>אנחנו בונים את הדף, מחברים לוואטסאפ העסקי שלכם ובודקים איתכם מהטלפון. נציג AI: עד שבועיים.</p></li>
         <li class="step reveal"><span class="step-n">3</span><h3>מעקב כל חודש</h3><p>דוח קצר: כמה פניות נכנסו ומאיפה. שינוי אחד בחודש כלול.</p></li>
       </ol>
+      <div class="watch reveal" role="group" aria-labelledby="t-watch">
+        <h3 class="watch-h" id="t-watch">לראות איך זה עובד</h3>
+        <div class="watch-row">
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/plumber-poster.webp" aria-label="הדגמה באתר של אינסטלטור: הצ׳אט מהלחיצה הראשונה ועד הסיכום בוואטסאפ"><source src="shared/video/walkthrough/plumber.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>אינסטלטור</b><a href="plumber/">לדמו המלא</a></figcaption>
+        </figure>
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/movers-poster.webp" aria-label="הדגמה באתר של חברת הובלות: הצ׳אט מהלחיצה הראשונה ועד הסיכום בוואטסאפ"><source src="shared/video/walkthrough/movers.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>הובלות</b><a href="movers/">לדמו המלא</a></figcaption>
+        </figure>
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/electrician-poster.webp" aria-label="הדגמה באתר של חשמלאי: הצ׳אט, הסיכום, והפנייה שמגיעה לוואטסאפ"><source src="shared/video/walkthrough/electrician.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>חשמלאי</b><a href="electrician/">לדמו המלא</a></figcaption>
+        </figure>
+        </div>
+      </div>
       <p class="sec-cta reveal"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></p>
     </div>
   </section>
@@ -546,6 +581,7 @@ img, svg { display: block; }
 })();
 </script>
 <script src="shared/leadform.js"></script>
+<script src="shared/reel.js"></script>
 <script src="shared/aibot.js"></script>
 <script>AiBot.init({ whatsapp: "972526359513", pricingHref: "#plans" }); LeadForm.visit("/api/visit/kfir");</script>
 </body>

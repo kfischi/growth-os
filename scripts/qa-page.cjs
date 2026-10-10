@@ -75,6 +75,9 @@ const VIEWPORTS = [
       if (r.url().startsWith(base) && r.status() >= 400) fail(`HTTP ${r.status()}: ${r.url().slice(base.length - 1)}`);
     });
 
+    // The Netlify Functions (/api/...) don't run on this static server: answer them with an empty 204,
+    // as the visit counter does in production, so only the page itself is checked.
+    await page.route(/\/api\//, (r) => r.fulfill({ status: 204, body: "" }));
     await page.goto(target, { waitUntil: "networkidle" });
 
     const meta = await page.evaluate(() => ({
