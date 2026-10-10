@@ -18,7 +18,7 @@
       --brand: #0f6e7a;
       --brand-deep: #0a4c55;
       --brand-tint: #e3f1f2;
-      --wa: #1f9d55;
+      --wa: #178244;
       --radius: 18px;
       --shadow: 0 14px 40px rgba(13, 27, 42, .09);
     }
@@ -161,10 +161,11 @@
   </style>
 </head>
 <body>
+<main>
 
   <div class="wrap">
     <header class="top">
-      <div class="brand" data-owner-name>כפיר<small>דפי נחיתה ואוטומציה לעסקים</small></div>
+      <a class="brand" href="../">נחיתה רכה<small>אתרים שבונים עסקים</small></a>
       <a class="btn btn-wa btn-sm" data-wa href="#contact">וואטסאפ</a>
     </header>
 
@@ -197,7 +198,7 @@
       <div class="demo-card">
         <div>
           <h2>לראות לפני שמחליטים</h2>
-          <p>בניתי דף לעסק בדוי של טכנאי מזגנים. ממלאים את הטופס עם השם שלכם, ורואים בדיוק מה הלקוח שלכם יקבל בוואטסאפ, ומה קורה מאחורי הקלעים.</p>
+          <p>דף לעסק בדוי של טכנאי מזגנים. ממלאים את הטופס עם השם שלכם, ורואים בדיוק מה הלקוח שלכם יקבל בוואטסאפ, ומה קורה מאחורי הקלעים.</p>
           <div class="cta-row" style="justify-content:flex-start">
             <a class="btn btn-primary" href="../leads-demo/">דמו מערכת לידים</a>
             <a class="btn btn-outline-light" href="../ai-agent/">דמו נציג AI</a>
@@ -241,7 +242,7 @@
   <section class="block alt">
     <div class="wrap">
       <h2>איך זה עובד</h2>
-      <p class="sub">אתם עוסקים בעסק. אני דואג לשאר.</p>
+      <p class="sub">אתם עוסקים בעסק. אנחנו דואגים לשאר.</p>
       <div class="steps">
         <div class="step"><h3>שיחה של 5 דקות</h3><p>מה העסק עושה, מי הלקוחות, ומה הם שואלים הכי הרבה.</p></div>
         <div class="step"><h3>תוך שבוע באוויר</h3><p>דף, חיבור לוואטסאפ ובדיקה מלאה מהטלפון שלכם.</p></div>
@@ -255,7 +256,7 @@
     <div class="wrap">
       <h2>שאלות נפוצות</h2>
       <p class="sub">בקצרה.</p>
-      <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. אתם עונים על כמה שאלות בשיחה, ואני מקים, מחבר ובודק הכל.</p></details>
+      <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. אתם עונים על כמה שאלות בשיחה, ואנחנו מקימים, מחברים ובודקים הכול.</p></details>
       <details><summary>על שם מי הדומיין והדף?</summary><p>על שמכם. אם תחליטו להפסיק, הדומיין נשאר אצלכם.</p></details>
       <details><summary>יש התחייבות?</summary><p>אין. התשלום החודשי מתחדש כל חודש, ואפשר להפסיק בהודעה מראש של 30 יום.</p></details>
       <details><summary>ההודעות בוואטסאפ יוצאות מהמספר שלי?</summary><p>מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אנחנו כותבים יחד.</p></details>
@@ -271,25 +272,23 @@
     </div>
   </section>
 
-  <footer class="wrap"><span data-owner-name-plain>כפיר</span> · דפי נחיתה ואוטומציה לעסקים</footer>
+</main>
+
+  <footer class="wrap"><a href="../">נחיתה רכה</a> · אתרים שבונים עסקים</footer>
 
   <script>
     // Contact settings. whatsappNumber in international format without "+", e.g. 972501234567.
     const CONFIG = {
-      ownerName: "כפיר",
       whatsappNumber: "972526359513",
     };
 
-    document.querySelectorAll("[data-owner-name-plain]").forEach((el) => { el.textContent = CONFIG.ownerName; });
-    const brand = document.querySelector("[data-owner-name]");
-    if (brand) brand.firstChild.textContent = CONFIG.ownerName;
 
     if (CONFIG.whatsappNumber) {
       document.querySelectorAll("[data-wa]").forEach((a) => {
         const plan = a.dataset.plan;
         const text = plan
-          ? "היי " + CONFIG.ownerName + ", ראיתי את המחירון. אשמח לשמוע על חבילת " + plan + "."
-          : "היי " + CONFIG.ownerName + ", ראיתי את הדמו ואשמח לשמוע עוד.";
+          ? "היי, ראיתי את המחירון. אשמח לשמוע על חבילת " + plan + "."
+          : "היי, ראיתי את הדמואים ואשמח לשמוע עוד.";
         a.href = "https://wa.me/" + CONFIG.whatsappNumber + "?text=" + encodeURIComponent(text);
         a.target = "_blank";
         a.rel = "noopener";
