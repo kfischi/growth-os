@@ -4,3 +4,5 @@ Sources: AI-generated images Kfir sent (two collages, then five single scenes fo
 electrician, trainer and tutor). Business names and fake lettering on shirts and boxes were inpainted,
 and yellow gym balls recoloured. The trainer cover is mirrored so the magazine headline clears her face.
 They are illustrations for fictional businesses only. A real client site uses the client's own photos.
+
+locksmith-work, locksmith-portrait, locksmith-cylinder: one image generated with Figma AI (gemini-3.1-flash-image), the "FAMILIE LEVY" nameplate text removed and the brass lock and keys turned to steel.
