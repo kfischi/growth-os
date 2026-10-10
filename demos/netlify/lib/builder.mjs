@@ -54,8 +54,23 @@ export async function saveDraft(d, patch) {
   return rows[0];
 }
 
+// Saves the photos only if no other upload saved in between; tries again on the fresh row.
+// Returns the saved row, or null when the draft is no longer editable.
+export async function savePhotos(id, change) {
+  for (let i = 0; i < 4; i++) {
+    const fresh = (await db("GET", `ls_drafts?id=eq.${q(id)}&select=*`))[0];
+    if (!fresh || !["draft", "returned"].includes(fresh.status)) return { row: null, before: fresh };
+    const photos = change({ ...(fresh.photos || {}) });
+    const patch = { photos, photo_rev: fresh.photo_rev + 1 };
+    if (!fresh.photo_rights_at && Object.keys(photos).length) patch.photo_rights_at = new Date().toISOString();
+    const rows = await db("PATCH", `ls_drafts?id=eq.${q(id)}&photo_rev=eq.${fresh.photo_rev}&status=in.(draft,returned)`, patch, "return=representation");
+    if (rows.length) return { row: rows[0], before: fresh };
+  }
+  throw new Conflict("photos changed");
+}
+
 export function templateOf(d) {
-  const t = TEMPLATES[d.template];
+  const t = Object.hasOwn(TEMPLATES, d.template) ? TEMPLATES[d.template] : null;
   if (!t) throw new Error("unknown template " + d.template);
   return t;
 }
@@ -192,7 +207,7 @@ export function publicState(d) {
     photos: Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, photoUrl(p)])),
     photoRights: Boolean(d.photo_rights_at), package: d.package, plan: d.plan, returnNote: d.status === "returned" ? d.return_note : null,
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
-    pay: d.status === "client_approved" && d.package ? payLinks(d.package) : [],
+    pay: d.status === "client_approved" && d.package && !d.paid_at ? payLinks(d.package) : [],
     rev: d.rev,
   };
 }
@@ -292,6 +307,11 @@ const ai = () => (anthropic ||= new Anthropic({ timeout: Number(process.env.BUIL
 export async function chatTurn(d, message) {
   const t = templateOf(d);
   const history = (d.messages || []).map((m) => ({ role: m.role, content: m.content }));
+  // A cache breakpoint on the last stored message: the whole earlier conversation is read from cache next turn.
+  if (history.length) {
+    const last = history[history.length - 1];
+    history[history.length - 1] = { role: last.role, content: [{ type: "text", text: last.content, cache_control: { type: "ephemeral" } }] };
+  }
   const turn = `<draft_state>${stateFor(d)}</draft_state>\n<owner_message>${message}</owner_message>`;
   const response = await ai().beta.messages.create({
     model: MODEL,
@@ -392,9 +412,14 @@ export async function publishToRepo(d, slug) {
   const files = siteFiles(d, slug);
   const dir = `clients/${slug}`;
 
+  // A folder that is already there must be this draft's own (its CLIENT.md names the draft): never another site's.
   const existing = await gh("GET", `/contents/${dir}?ref=${q(BRANCH())}`);
-  if (existing.ok && d.published_slug !== slug) throw new Error("slug_taken");
   if (!existing.ok && existing.status !== 404) ghOk(existing, "contents");
+  if (existing.ok) {
+    const card = await gh("GET", `/contents/${dir}/CLIENT.md?ref=${q(BRANCH())}`);
+    const text = card.ok && card.data.content ? Buffer.from(card.data.content, "base64").toString("utf8") : "";
+    if (!text.includes(d.id)) throw new Error("slug_taken");
+  }
 
   const assets = ghOk(await gh("GET", `/contents/clients/sample-plumber/assets?ref=${q(BRANCH())}`), "assets");
   const shared = ["leadbot.js", "leadform.js"].map((name) => {
@@ -403,11 +428,10 @@ export async function publishToRepo(d, slug) {
     return { path: `${dir}/assets/${name}`, mode: "100644", type: "blob", sha: f.sha };
   });
 
-  const photos = [];
-  for (const [slot, p] of Object.entries(d.photos || {})) {
+  const photos = await Promise.all(Object.entries(d.photos || {}).map(async ([slot, p]) => {
     const blob = ghOk(await gh("POST", "/git/blobs", { content: (await photoBytes(p)).toString("base64"), encoding: "base64" }), "blob");
-    photos.push({ path: `${dir}/assets/photos/${slot}.${p.ext}`, mode: "100644", type: "blob", sha: blob.sha });
-  }
+    return { path: `${dir}/assets/photos/${slot}.${p.ext}`, mode: "100644", type: "blob", sha: blob.sha };
+  }));
   const text = Object.entries(files).map(([name, content]) => ({ path: `${dir}/${name}`, mode: "100644", type: "blob", content }));
 
   for (let attempt = 0; attempt < 2; attempt++) { // someone else may push in between: build on the new head once more
@@ -447,7 +471,7 @@ export async function ensureLeadClient(d, slug) {
 // Runs with the monthly report: drafts nobody approved or touched for 30 days, and their photos.
 export async function deleteStaleDrafts(now = new Date()) {
   const cutoff = new Date(now - STALE_DAYS * 86_400_000).toISOString();
-  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&updated_at=lt.${q(cutoff)}&select=id,photos&limit=500`);
+  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&paid_at=is.null&updated_at=lt.${q(cutoff)}&select=id,photos&limit=500`);
   for (const r of rows) {
     await deletePhotos(Object.values(r.photos || {}).map((p) => p.path));
     await db("DELETE", `ls_drafts?id=eq.${q(r.id)}`);

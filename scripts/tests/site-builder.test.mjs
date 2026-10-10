@@ -27,6 +27,8 @@ let r = await J(await req("start", { body: { name: "אורן", phone: "052635951
 r = await J(await req("start", { body: { name: "אורן", phone: "04-6222222", consent: true } })); assert.equal(r.error, "bad_phone", "a landline can't be the business WhatsApp");
 r = await J(await req("start", { body: { name: "אורן", phone: "0526359513" } })); assert.equal(r.error, "no_consent");
 r = await J(await req("start", { body: { name: "בוט", phone: "0526359513", consent: true, company: "x" } })); assert.equal(r.status, 429); assert.equal(T.ls_drafts.length, 0);
+r = await J(await req("start", { body: { name: "אורן", phone: "0526359513", consent: true, template: "constructor" }, ip: "2.2.2.2" }));
+assert.equal(r.status, 201, "an odd template name falls back to plumber"); assert.equal(T.ls_drafts[0].template, "plumber"); T.ls_drafts.length = 0;
 r = await J(await req("start", { body: { name: "אורן לוי", phone: "+972 52-635-9513", consent: true } }));
 assert.equal(r.status, 201, JSON.stringify(r)); assert.ok(r.id && r.key.length >= 32);
 const D = T.ls_drafts[0];
@@ -69,7 +71,7 @@ r = await J(await req("chat", { body: { message: "הנה כל הפרטים", rev
 assert.equal(r.status, 200); assert.deepEqual(r.state.missing, []); assert.equal(D.content.services.length, 4);
 assert.equal(D.content.towns.length, 8, "duplicates and blanks dropped"); assert.equal(D.content.phone, "046222222");
 assert.equal(D.content.radius_note, SAMPLE.radius_note, "too long, not applied: the earlier value stays"); assert.match(r.reply, /הערה לאזור: עד 40 תווים/);
-assert.equal(aiCalls.at(-1).messages.length, 3, "history (2) + this turn"); assert.match(aiCalls.at(-1).messages[1].content, /^נעים מאוד. באיזה אזור אתם עובדים\?\n\nלא עדכנו:/, "the model sees what was not applied");
+assert.equal(aiCalls.at(-1).messages.length, 3, "history (2) + this turn"); assert.ok(aiCalls.at(-1).messages[1].content[0].cache_control, "the history is cached"); assert.match(aiCalls.at(-1).messages[1].content[0].text, /^נעים מאוד. באיזה אזור אתם עובדים\?\n\nלא עדכנו:/, "the model sees what was not applied");
 
 // too many services: the list is not replaced
 ai.queue.push({ reply: "x", set: [], services: Array.from({ length: 7 }, (_, i) => ({ name: "שירות " + i, detail: "", time: "", price: "" })), towns: null });
@@ -96,6 +98,9 @@ page = await draftPage(new Request(`${ORIGIN}/draft/${D.id}?a=${B.adminPreviewTo
 const evil = P.render({ ...SAMPLE, business_name: '<img src=x onerror=alert(1)>', services: [{ name: "</script><script>alert(2)</script>", detail: "", time: "", price: "1 ₪" }] }, { mode: "site", leads: null });
 assert.ok(!evil["index.html"].includes("<img src=x") && !evil["index.html"].includes("</script><script>alert(2)"), "owner text can't inject markup or close the script");
 assert.throws(() => P.render({ ...SAMPLE, intro: "" }, { mode: "site" }), /missing/);
+assert.match(P.render({ ...SAMPLE, years: "3" }, { mode: "site" })["index.html"], /<b>3 שנים<\/b>/);
+assert.match(P.render({ ...SAMPLE, years: "1" }, { mode: "site" })["index.html"], /שנה אחת · |<b>שנה אחת<\/b>/);
+assert.match(P.chatFacts(SAMPLE), /12 שנה בתחום/);
 
 /* ---------------- photos ---------------- */
 const webp = Buffer.concat([Buffer.from("RIFF0000WEBPVP8 "), Buffer.alloc(200, 1)]);
@@ -112,9 +117,19 @@ r = await J(await req("photo", { raw: jpg, query: "?slot=portrait", headers: { "
 assert.equal(D.photos.portrait.ext, "jpg"); assert.ok(!storage.has(firstPath), "the replaced photo is deleted"); assert.equal(storage.size, 1);
 r = await J(await req("photo", { raw: webp, query: "?slot=work1", headers: { "x-photo-rights": "yes" } })); assert.equal(Object.keys(D.photos).length, 2);
 assert.equal(D.rev, 4, "photos don't bump the chat's rev");
+for (const bad of ["constructor", "__proto__", "toString"]) { r = await J(await req("photo", { raw: webp, query: "?slot=" + bad, headers: { "x-photo-rights": "yes" } })); assert.equal(r.error, "bad_slot", bad); }
+// two uploads at the same moment: both stay
+const [a1, a2] = await Promise.all([
+  req("photo", { raw: webp, query: "?slot=work2", headers: { "x-photo-rights": "yes" } }),
+  req("photo", { raw: jpg, query: "?slot=work3", headers: { "x-photo-rights": "yes" } }),
+]);
+assert.equal(a1.status, 200); assert.equal(a2.status, 200);
+assert.ok(D.photos.work2 && D.photos.work3, "neither upload erased the other"); assert.equal(storage.size, 4);
+for (const slot of ["work2", "work3"]) await req("photo", { method: "DELETE", query: "?slot=" + slot });
+assert.equal(storage.size, 2);
 r = await J(await req("photo", { method: "DELETE", query: "?slot=work1" })); assert.equal(Object.keys(D.photos).length, 1); assert.equal(storage.size, 1);
 r = await J(await req("photo", { raw: webp, query: "?slot=work1", headers: { "x-photo-rights": "yes" } }));
-html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>תעלו בצ׳אט/, "an empty slot is marked in the draft");
+html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>מעלים ב״תמונות״/, "an empty slot is marked in the draft");
 
 /* ---------------- approve ---------------- */
 r = await J(await req("approve", { body: { package: "presence", plan: "three", rev: D.rev } })); assert.equal(r.error, "bad_package");
@@ -144,10 +159,29 @@ r = await J(await adm("POST", { action: "return", id: D.id, note: "תחליפו 
 r = await J(await req("state", { method: "GET" })); assert.equal(r.state.returnNote, "תחליפו את התמונה הראשית");
 r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(D.status, "client_approved"); assert.equal(D.return_note, null);
 r = await J(await adm("POST", { action: "paid", id: D.id })); assert.equal(D.status, "paid");
+// sent back after payment: the owner fixes, approves again, and it goes straight back to paid
+r = await J(await adm("POST", { action: "return", id: D.id, note: "תקנו את שם הישוב" })); assert.equal(D.status, "returned");
+D.updated_at = "2026-08-01T00:00:00Z";
+assert.equal((await B.deleteStaleDrafts(new Date("2026-10-10T03:00:00Z"))).draftsDeleted, 0, "a paid draft is never cleaned up");
+r = await J(await req("approve", { body: { package: "presence", plan: "full", rev: D.rev } }));
+assert.equal(D.status, "paid"); assert.equal(D.package, "ai", "the package stays as paid for"); assert.deepEqual(r.state.pay, [], "no second payment");
+r = await J(await adm("POST", { action: "delete", id: D.id })); assert.equal(r.status, 409, "a paid draft can't be deleted");
 for (const bad of ["Oren", "-oren", "a", "sample-plumber", "../x", "kfir"]) { r = await J(await adm("POST", { action: "publish", id: D.id, slug: bad })); assert.equal(r.error, "bad_slug", bad); }
 gh.files.set("clients/taken/index.html", "x");
 r = await J(await adm("POST", { action: "publish", id: D.id, slug: "taken" })); assert.equal(r.error, "slug_taken", "never overwrite another site");
-gh.moveFails = 1; // someone pushed in between
+assert.equal(D.published_slug, null, "the name is released");
+T.ls_clients.push({ ...DEF.ls_clients(), slug: "by-hand", name: "עסק אחר" });
+r = await J(await adm("POST", { action: "publish", id: D.id, slug: "by-hand" })); assert.equal(r.error, "slug_taken", "never take over a lead system client");
+r = await J(await adm("POST", { action: "publish", id: D.id, slug: "admin" })); assert.equal(r.error, "bad_slug");
+// GitHub fails half way: the name stays reserved, and publishing again finishes the job
+gh.moveFails = 3;
+r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 502);
+assert.equal(D.status, "paid"); assert.equal(D.published_slug, "oren-mayim");
+r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-2" })); assert.equal(r.status, 409, "a reserved draft keeps its name");
+gh.moveFails = 0;
+// the commit went in but the draft wasn't marked (a timeout): the folder is ours, so it's written again
+gh.files.set("clients/oren-mayim/CLIENT.md", "טיוטה `" + D.id + "`");
+gh.moveFails = 1; // and someone pushed in between
 r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");

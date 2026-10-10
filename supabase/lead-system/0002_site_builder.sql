@@ -26,6 +26,7 @@ create table if not exists public.ls_drafts (
   published_slug  text check (published_slug is null or published_slug ~ '^[a-z0-9-]{2,40}$'),
   published_sha   text,
   rev             integer not null default 0,    -- bumped on every save, so two tabs can't overwrite each other
+  photo_rev       integer not null default 0,    -- the same for the photos, which are saved apart from the chat
   ip_hash         text,
   approved_at     timestamptz,
   paid_at         timestamptz,

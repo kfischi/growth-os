@@ -65,6 +65,8 @@ const js = (v) => JSON.stringify(v).replace(/</g, "\\u003c").replace(/\u2028/g, 
 
 const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
 const prettyPhone = (local) => local.length === 10 ? `${local.slice(0, 3)}-${local.slice(3)}` : local.length === 9 ? `${local.slice(0, 2)}-${local.slice(2)}` : local;
+// "12 שנה" but "3 שנים" and "שנה אחת".
+const yearsHe = (y) => { const n = Number(y); return n === 1 ? "שנה אחת" : n >= 2 && n <= 10 ? `${n} שנים` : `${n} שנה`; };
 const firstName = (n) => String(n || "").trim().split(/\s+/)[0] || "";
 
 export function missing(c) {
@@ -116,12 +118,12 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const robots = draft ? '<meta name="robots" content="noindex, nofollow">\n' : "";
   const photo = (slot, alt, extra = "") => photos[slot]
     ? `<figure class="ps has-img"><img src="${h(photos[slot])}" alt="${h(alt)}" loading="lazy" decoding="async"${extra}></figure>`
-    : draft ? `<figure class="ps ph"><span>${h(PHOTOS[slot].label)}<br>תעלו בצ׳אט</span></figure>` : "";
+    : draft ? `<figure class="ps ph"><span>${h(PHOTOS[slot].label)}<br>מעלים ב״תמונות״</span></figure>` : "";
   const desc = `${trade} ב${String(c.area || "").trim()}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. פותחים קריאה בצ׳אט.`;
 
   const facts = [
     has("response_time") || draft ? `<div><b>${v("response_time")}</b><span>זמן חזרה</span></div>` : "",
-    has("years") ? `<div><b>${h(c.years)} שנה</b><span>בתחום</span></div>` : "",
+    has("years") ? `<div><b>${h(yearsHe(c.years))}</b><span>בתחום</span></div>` : "",
     has("warranty") ? `<div><b>${h(c.warranty)}</b><span>אחריות</span></div>` : "",
   ].filter(Boolean).join("\n        ");
 
@@ -227,7 +229,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
           <div class="badge-top"><b>${v("business_name")}</b><span>${v("trade")}</span></div>
           ${portrait}
           <h3>${v("owner_name")}</h3>
-          <p>${v("trade")}${has("years") ? ` · ${h(c.years)} שנה בתחום` : ""}</p>
+          <p>${v("trade")}${has("years") ? ` · ${h(yearsHe(c.years))} בתחום` : ""}</p>
           <div class="code" aria-hidden="true"></div>
         </div>
       </div>
@@ -371,7 +373,7 @@ export function chatFacts(c) {
     `${c.business_name}: ${c.trade}, ${c.area}. בעל העסק: ${c.owner_name}.`,
     c.hours && `שעות פעילות: ${c.hours}.`,
     `זמן חזרה ללקוח: ${c.response_time}.`,
-    c.years && `${c.years} שנה בתחום.`,
+    c.years && `${yearsHe(c.years)} בתחום.`,
     c.warranty && `אחריות: ${c.warranty}.`,
     `ישובים: ${(c.towns || []).join(", ")}.${c.radius_note ? " " + c.radius_note + "." : ""}`,
     "שירותים:",

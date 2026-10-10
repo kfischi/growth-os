@@ -9,7 +9,7 @@ export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [] 
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
 export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
-  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
   ls_leads: () => ({ id: randomUUID(), status: "new", created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
   ls_clients: () => ({ package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", auto_reply: true, owner_alerts: true }),
@@ -40,6 +40,7 @@ globalThis.fetch = async (url, opt = {}) => {
     assert.equal(opt.headers.authorization, "Bearer ghp_test"); assert.ok(opt.signal, "github call has a timeout");
     const body = opt.body ? JSON.parse(opt.body) : null; const p = u.pathname.replace("/repos/kfischi/growth-os", ""); gh.calls.push([method, p]);
     if (method === "GET" && p.startsWith("/contents/clients/sample-plumber/assets")) return res([{ name: "leadbot.js", type: "file", sha: "sha-bot" }, { name: "leadform.js", type: "file", sha: "sha-form" }, { name: "photos", type: "dir", sha: "x" }]);
+    if (method === "GET" && p.startsWith("/contents/") && p.endsWith(".md")) { const f = gh.files.get(p.slice(10)); return f ? res({ content: Buffer.from(f).toString("base64"), encoding: "base64" }) : res({ message: "Not Found" }, 404); }
     if (method === "GET" && p.startsWith("/contents/")) { const dir = p.slice(10); return [...gh.files.keys()].some((k) => k.startsWith(dir + "/")) ? res([{ name: "index.html" }]) : res({ message: "Not Found" }, 404); }
     if (method === "GET" && p.startsWith("/git/ref/heads/")) return res({ object: { sha: gh.head } });
     if (method === "GET" && p.startsWith("/git/commits/")) return res({ sha: p.split("/").pop(), tree: { sha: "tree-" + p.split("/").pop() } });

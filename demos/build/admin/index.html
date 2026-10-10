@@ -59,6 +59,7 @@
   <section id="board" hidden>
     <h1>טיוטות</h1>
     <div class="filters" id="filters"></div>
+    <div class="result" id="notice" role="status" hidden></div>
     <p class="err" id="err" role="alert"></p>
     <div class="list" id="list"></div>
   </section>
@@ -98,6 +99,8 @@
       b.addEventListener('click', () => { filter = k; paint(); }); box.append(b);
     }
   }
+  // The publish result (with the owner's panel link) stays on top after the list is redrawn.
+  function notice(from) { const n = $('#notice'); n.textContent = ''; n.append(...from.childNodes); n.hidden = false; n.scrollIntoView({ block: 'nearest' }); }
   const shown = (d) => filter === 'all' || (filter === 'todo' ? ['client_approved', 'paid'].includes(d.status) : filter === 'draft' ? ['draft', 'returned'].includes(d.status) : d.status === filter);
 
   function paint() {
@@ -111,7 +114,7 @@
       const h = el('h2', '', d.business || '(בלי שם עדיין)'); info.append(h);
       const tag = el('span', 'tag ' + d.status, STATUS[d.status] || d.status);
       const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.owner, d.phone, d.package ? PKG[d.package] + (d.plan ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
-      const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.messages + ' הודעות · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
+      const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
       const acts = el('div', 'acts');
@@ -131,6 +134,7 @@
         else if (r.leads.row === 'failed') res.append('מערכת הלידים: יצירת הלקוח נכשלה. לפרסם שוב עם אותו שם ישלים את זה.');
         res.append(' הצעד הבא: אתר ב-Netlify ו-netlify.json, לפי CLIENT_SITES.md.');
         const i = drafts.findIndex((x) => x.id === d.id); if (i >= 0) drafts[i] = r.draft;
+        notice(res); paint();
       });
       if (d.status !== 'published') act('למחוק', 'danger', async () => { if (!confirm('למחוק את הטיוטה ואת התמונות שלה? אין דרך חזרה.')) return; await call('POST', { action: 'delete', id: d.id }); load(); });
       item.append(info, acts, result);

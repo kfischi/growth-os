@@ -11,7 +11,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
 import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
-  chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir,
+  chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, getDraft,
 } from "../lib/builder.mjs";
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
@@ -29,6 +29,7 @@ export default async (req, context) => {
   if (!configured() || !process.env.ANTHROPIC_API_KEY) return json({ error: "not_configured" }, 503);
   const action = context.params && context.params.action;
   const ip = clientIp(req);
+  let d = null;
 
   try {
     if (action === "start") {
@@ -40,7 +41,7 @@ export default async (req, context) => {
       if (name.length < 2) return json({ error: "bad_name" }, 422);
       if (!phone || !phone.mobile) return json({ error: "bad_phone" }, 422);
       if (body.consent !== true) return json({ error: "no_consent" }, 422);
-      const template = TEMPLATES[body.template] ? body.template : "plumber";
+      const template = typeof body.template === "string" && Object.hasOwn(TEMPLATES, body.template) ? body.template : "plumber";
       if (startLimited(ip)) return json({ error: "rate_limited" }, 429);
       const cap = Number(process.env.BUILDER_DAILY_MAX) || 40;
       const since = new Date(Date.now() - 86_400_000).toISOString();
@@ -57,7 +58,7 @@ export default async (req, context) => {
 
     // Everything else needs the private link.
     const [id, key] = String(req.headers.get("x-draft") || "").split(":");
-    const d = await loadDraft(id, key);
+    d = await loadDraft(id, key);
     if (!d) return json({ error: "not_found" }, 404);
 
     if (action === "state" && req.method === "GET") return json({ state: stateOf(d) });
@@ -80,14 +81,14 @@ export default async (req, context) => {
     if (action === "photo") {
       const slot = new URL(req.url).searchParams.get("slot");
       const t = templateOf(d);
-      if (!t.PHOTOS[slot]) return json({ error: "bad_slot" }, 400);
+      if (!slot || !Object.hasOwn(t.PHOTOS, slot)) return json({ error: "bad_slot" }, 400);
       if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
-      const old = (d.photos || {})[slot];
       if (req.method === "DELETE") {
-        const photos = { ...(d.photos || {}) }; delete photos[slot];
-        const rows = await db("PATCH", `ls_drafts?id=eq.${d.id}&status=in.(draft,returned)`, { photos }, "return=representation");
+        const { row, before } = await savePhotos(d.id, (photos) => { delete photos[slot]; return photos; });
+        if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
+        const old = ((before && before.photos) || {})[slot];
         if (old) await deletePhotos([old.path]);
-        return json({ state: stateOf(rows[0] || d) });
+        return json({ state: stateOf(row) });
       }
       if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
       if (req.headers.get("x-photo-rights") !== "yes") return json({ error: "no_rights" }, 422);
@@ -98,15 +99,15 @@ export default async (req, context) => {
       const ext = photoType(buf);
       if (!ext) return json({ error: "bad_type" }, 415);
       const photo = await uploadPhoto(d.id, slot, buf, ext);
-      // Photos are saved apart from the chat's rev, so an upload during a chat answer doesn't cancel the answer.
-      const fresh = (await db("GET", `ls_drafts?id=eq.${d.id}&select=photos`))[0] || { photos: {} };
-      const patch = { photos: { ...(fresh.photos || {}), [slot]: photo } };
-      if (!d.photo_rights_at) patch.photo_rights_at = new Date().toISOString();
-      const rows = await db("PATCH", `ls_drafts?id=eq.${d.id}&status=in.(draft,returned)`, patch, "return=representation");
-      if (!rows.length) { await deletePhotos([photo.path]); return json({ error: "locked" }, 409); }
-      const replaced = (fresh.photos || {})[slot];
+      // Photos have their own version (photo_rev), so an upload during a chat answer doesn't cancel the answer,
+      // and two uploads at once both stay.
+      let saved;
+      try { saved = await savePhotos(d.id, (photos) => ({ ...photos, [slot]: photo })); }
+      catch (e) { await deletePhotos([photo.path]); throw e; }
+      if (!saved.row) { await deletePhotos([photo.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
+      const replaced = ((saved.before && saved.before.photos) || {})[slot];
       if (replaced) await deletePhotos([replaced.path]);
-      return json({ state: stateOf(rows[0]) });
+      return json({ state: stateOf(saved.row) });
     }
 
     if (action === "approve" && req.method === "POST") {
@@ -116,6 +117,12 @@ export default async (req, context) => {
       const t = templateOf(d);
       const missing = t.missing(d.content);
       if (missing.length) return json({ error: "missing", missing }, 422);
+      // Already paid (כפיר sent it back for a fix): the package stays as paid for, and it goes straight back to him.
+      if (d.paid_at) {
+        const saved = await saveDraft(d, { status: "paid", approved_at: new Date().toISOString(), return_note: null });
+        const alert = await alertKfir(saved, "תיקון אחרי תשלום, מחכה לפרסום");
+        return json({ state: stateOf(saved), alert });
+      }
       const pkg = body.package, plan = body.plan;
       if (!(pkg === "presence" && plan === "full") && !(pkg === "ai" && (plan === "full" || plan === "three"))) return json({ error: "bad_package" }, 422);
       const saved = await saveDraft(d, { status: "client_approved", package: pkg, plan, approved_at: new Date().toISOString(), return_note: null });
@@ -133,7 +140,10 @@ export default async (req, context) => {
 
     return json({ error: "not_found" }, 404);
   } catch (e) {
-    if (e instanceof Conflict) return json({ error: "conflict" }, 409);
+    if (e instanceof Conflict) {
+      const fresh = d && await getDraft(d.id).catch(() => null);
+      return json({ error: "conflict", state: fresh ? stateOf(fresh) : undefined }, 409);
+    }
     console.error("builder", action, e && e.message);
     if (e instanceof Anthropic.AuthenticationError) return json({ error: "not_configured" }, 503);
     if (e instanceof Anthropic.RateLimitError || e instanceof Anthropic.APIConnectionError || (e instanceof Anthropic.APIError && e.status >= 500)) return json({ error: "busy" }, 503);

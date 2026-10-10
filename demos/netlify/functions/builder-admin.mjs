@@ -16,7 +16,7 @@ function view(d) {
     id: d.id, status: d.status, template: d.template, package: d.package, plan: d.plan,
     business: d.content.business_name || "", owner: d.owner_name, phone: d.owner_phone ? "0" + d.owner_phone.slice(3) : "",
     missing: t.missing(d.content), photos: Object.keys(d.photos || {}).length, rights: Boolean(d.photo_rights_at),
-    messages: (d.messages || []).length, returnNote: d.return_note, slug: d.published_slug,
+    returnNote: d.return_note, slug: d.published_slug,
     created: d.created_at, updated: d.updated_at, approved: d.approved_at, paid: d.paid_at, published: d.published_at,
   };
 }
@@ -39,7 +39,8 @@ export default async (req) => {
           preview: `/draft/${d.id}?a=${adminPreviewToken(d.id)}`,
         });
       }
-      const rows = await db("GET", "ls_drafts?select=*&order=created_at.desc&limit=200");
+      // Everything but the chat and the key hash: the list stays small.
+      const rows = await db("GET", "ls_drafts?select=id,status,template,package,plan,content,photos,photo_rights_at,owner_name,owner_phone,return_note,published_slug,created_at,updated_at,approved_at,paid_at,published_at&order=created_at.desc&limit=200");
       return json({ drafts: rows.map(view) });
     }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -64,21 +65,34 @@ export default async (req) => {
 
     if (body.action === "publish") {
       const slug = String(body.slug || "");
-      if (!SLUG.test(slug) || slug === "sample-plumber" || slug === "kfir") return json({ error: "bad_slug" }, 422);
-      if (d.status === "published" ? d.published_slug !== slug : d.status !== "paid") return json({ error: "wrong_status", status: d.status }, 409);
+      if (!SLUG.test(slug) || ["sample-plumber", "kfir", "admin"].includes(slug)) return json({ error: "bad_slug" }, 422);
+      if (!["paid", "published"].includes(d.status) || (d.published_slug && d.published_slug !== slug)) return json({ error: "wrong_status", status: d.status }, 409);
       const missing = templateOf(d).missing(d.content);
       if (missing.length) return json({ error: "missing", missing }, 422);
+      const mine = d.published_slug === slug;
       const other = await db("GET", `ls_drafts?published_slug=eq.${q(slug)}&id=neq.${q(d.id)}&select=id`);
       if (other.length) return json({ error: "slug_taken" }, 409);
+      // A business already in the lead system (made by hand with new-client.mjs) keeps its name.
+      if (!mine && (await db("GET", `ls_clients?slug=eq.${q(slug)}&select=slug`)).length) return json({ error: "slug_taken" }, 409);
 
+      // Reserve the name before writing to the repo: a second click, or a retry after a half-finished
+      // publish, then continues this draft's folder instead of being refused as "taken".
+      let draft = d;
+      if (!mine) {
+        try { draft = await saveDraft(d, { published_slug: slug }); }
+        catch (e) { if (e instanceof Conflict || /23505|duplicate/.test(e.message)) return json({ error: "conflict" }, 409); throw e; }
+      }
       let sha;
-      try { sha = await publishToRepo(d, slug); }
+      try { sha = await publishToRepo(draft, slug); }
       catch (e) {
-        if (e.message === "slug_taken") return json({ error: "slug_taken" }, 409);
+        if (e.message === "slug_taken") {
+          if (!mine) await saveDraft(draft, { published_slug: null }).catch((x) => console.error("release slug", x.message));
+          return json({ error: "slug_taken" }, 409);
+        }
         if (e.message.startsWith("not_configured")) return json({ error: "not_configured", detail: "GITHUB_TOKEN" }, 503);
         throw e;
       }
-      const saved = await saveDraft(d, { status: "published", published_slug: slug, published_sha: sha, published_at: now });
+      const saved = await saveDraft(draft, { status: "published", published_sha: sha, published_at: now });
       // The site is in the repo already. If the lead system row fails, publishing again with the same slug finishes it.
       let leads;
       try { leads = await ensureLeadClient(saved, slug); } catch (e) { console.error("builder lead client", e.message); leads = { row: "failed" }; }
@@ -86,7 +100,7 @@ export default async (req) => {
     }
 
     if (body.action === "delete") {
-      if (d.status === "published") return json({ error: "wrong_status", status: d.status }, 409);
+      if (d.status === "published" || d.paid_at) return json({ error: "wrong_status", status: d.status }, 409);
       await deletePhotos(Object.values(d.photos || {}).map((p) => p.path));
       await db("DELETE", `ls_drafts?id=eq.${q(d.id)}`);
       return json({ deleted: d.id });
