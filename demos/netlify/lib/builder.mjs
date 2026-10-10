@@ -13,7 +13,7 @@
 //   BUILDER_AI_TIMEOUT_MS                how long one chat answer may take (default 25000)
 import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";
-import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead } from "./leads.mjs";
+import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, adminKey } from "./leads.mjs";
 import * as plumber from "./templates/plumber.mjs";
 
 export const TEMPLATES = { plumber };
@@ -505,12 +505,12 @@ export async function deleteStaleDrafts(now = new Date()) {
 // A link that opens any draft for an hour, signed with LEADS_ADMIN_KEY, so the admin page never needs the owner's key.
 export function adminPreviewToken(id, now = Date.now()) {
   const exp = Math.floor(now / 1000) + 3600;
-  return `${exp}.${createHmac("sha256", process.env.LEADS_ADMIN_KEY).update(`draft:${id}:${exp}`).digest("base64url")}`;
+  return `${exp}.${createHmac("sha256", adminKey()).update(`draft:${id}:${exp}`).digest("base64url")}`;
 }
 
 export function validPreviewToken(id, token, now = Date.now()) {
   const m = /^(\d{10})\.([A-Za-z0-9_-]{43})$/.exec(token || "");
-  const secret = process.env.LEADS_ADMIN_KEY;
+  const secret = adminKey();
   if (!m || !secret || secret.length < 16 || Number(m[1]) * 1000 < now) return false;
   return safeEqual(m[2], createHmac("sha256", secret).update(`draft:${id}:${m[1]}`).digest("base64url"));
 }

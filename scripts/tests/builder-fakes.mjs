@@ -2,7 +2,8 @@
 // Importing this file replaces globalThis.fetch. Used by site-builder.test.mjs and builder-page.test.mjs.
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", BUILDER_DAILY_MAX: "5" });
+Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", LEADS_ADMIN_KEY: " admin-key-0123456789\n", ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", BUILDER_DAILY_MAX: "5" });
+// LEADS_ADMIN_KEY carries the space and line break a paste into Netlify can add: the functions must trim it.
 
 /* ---------------- fakes ---------------- */
 export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [] };

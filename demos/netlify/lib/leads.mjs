@@ -410,12 +410,21 @@ export async function healthCheck(now = new Date()) {
 
 /* ---------------- panel access ---------------- */
 
+// The admin key as pasted into Netlify, without the spaces or line break a paste can carry.
+export const adminKey = () => String(process.env.LEADS_ADMIN_KEY || "").trim();
+
 // Authorization: Bearer <slug>:<key>   or   Bearer admin:<LEADS_ADMIN_KEY>
 export async function authorise(req) {
   const m = /^Bearer ([a-z0-9-]{2,40}):(\S{16,200})$/.exec(req.headers.get("authorization") || "");
   if (!m) return null;
   const [, who, key] = m;
-  if (who === "admin") return process.env.LEADS_ADMIN_KEY && process.env.LEADS_ADMIN_KEY.length >= 16 && safeEqual(key, process.env.LEADS_ADMIN_KEY) ? { admin: true } : null;
+  if (who === "admin") {
+    const admin = adminKey();
+    if (admin.length >= 16 && safeEqual(key, admin)) return { admin: true };
+    // Lengths only, never the key: tells a bad paste in Netlify (spaces, a cut) from a wrong key.
+    console.warn(`admin login refused: got ${key.length} characters, LEADS_ADMIN_KEY has ${admin.length}`);
+    return null;
+  }
   const client = await getClient(who);
   if (!client || !client.key_hash || !safeEqual(sha256(key), client.key_hash)) return null;
   return { admin: false, client };
