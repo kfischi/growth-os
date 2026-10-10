@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אתרים בבנייה · ניהול</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* Object: the studio's job board. Detail: each site's status, from draft to published.
+     Bold move: none, a working tool. Quiet on purpose. */
+  :root { --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #b23730;
+    --line: color-mix(in oklab, var(--ink) 14%, var(--paper)); --font: "Rubik", "Calibri", "Segoe UI", system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 15px/1.55 var(--font); }
+  :focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+  button, input { font: inherit; }
+  [hidden] { display: none !important; }
+  .top { background: var(--plum); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .top b { font-weight: 900; font-size: 18px; }
+  .top button { background: none; border: 1px solid rgba(255,255,255,.4); color: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  main { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 26px; margin: 0 0 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 6px 14px; border-radius: 8px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; font-weight: 500; text-decoration: none; white-space: nowrap; }
+  .btn:hover { border-color: var(--ink); }
+  .btn.go { background: var(--mint); border-color: var(--mint); color: #fff; }
+  .btn.danger { color: var(--brick); }
+  .login { max-width: 420px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  label { display: block; font-weight: 500; margin-bottom: 6px; }
+  input[type=password] { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-bottom: 10px; }
+  .err { color: var(--brick); font-weight: 500; min-height: 1.5em; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filters button[aria-pressed=true] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .list { display: grid; gap: 10px; }
+  .item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; align-items: start; }
+  .item h2 { font-size: 18px; margin: 0; }
+  .meta { color: var(--slate); font-size: 14px; }
+  .tag { display: inline-block; border-radius: 6px; padding: 1px 8px; font-size: 13px; font-weight: 700; background: var(--mist); }
+  .tag.client_approved { background: #dcefe9; color: #0b5a4f; }
+  .tag.paid { background: var(--mint); color: #fff; }
+  .tag.published { background: var(--ink); color: #fff; }
+  .tag.returned { background: #f8e4e2; color: #6e1f1a; }
+  .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .result { grid-column: 1 / -1; background: var(--mist); border-radius: 8px; padding: 10px; font-size: 14px; overflow-wrap: anywhere; }
+  .empty { color: var(--slate); }
+  @media (max-width: 700px) { .item { grid-template-columns: minmax(0, 1fr); } .acts { justify-content: flex-start; } }
+</style>
+</head>
+<body>
+<header class="top"><b>אתרים בבנייה</b><button type="button" id="logout" hidden>יציאה</button></header>
+<main>
+  <form class="login" id="login" hidden>
+    <label for="key">מפתח הניהול (LEADS_ADMIN_KEY)</label>
+    <input id="key" type="password" autocomplete="current-password" required>
+    <p class="err" id="loginErr" role="alert"></p>
+    <button class="btn go" type="submit">כניסה</button>
+  </form>
+  <section id="board" hidden>
+    <h1>טיוטות</h1>
+    <div class="filters" id="filters"></div>
+    <p class="err" id="err" role="alert"></p>
+    <div class="list" id="list"></div>
+  </section>
+</main>
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const API = '/api/builder-admin', KEY = 'ls-panel'; // the same login as the leads panel
+  const STATUS = { draft: 'בשיחה', returned: 'הוחזר ללקוח', client_approved: 'הלקוח אישר', paid: 'שולם', published: 'פורסם' };
+  const PKG = { presence: 'נוכחות', ai: 'נציג AI' }, PLAN = { full: 'תשלום אחד', three: '3 תשלומים' };
+  let auth = null, drafts = [], filter = 'todo';
+  const store = {
+    get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
+    set(v) { try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch (e) { /* private mode */ } },
+  };
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const when = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+
+  async function call(method, body, query) {
+    const r = await fetch(API + (query || ''), { method, headers: { authorization: 'Bearer ' + auth, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const out = await r.json().catch(() => ({}));
+    if (r.status === 401) { logout('המפתח לא נכון.'); throw new Error('unauthorised'); }
+    if (!r.ok) throw new Error(out.error + (out.detail ? ': ' + out.detail : '') + (out.missing ? ': ' + out.missing.join(', ') : '') + (out.status ? ' (' + out.status + ')' : ''));
+    return out;
+  }
+
+  function logout(msg) { store.set(null); auth = null; $('#board').hidden = true; $('#logout').hidden = true; $('#login').hidden = false; $('#loginErr').textContent = msg || ''; }
+  $('#logout').addEventListener('click', () => logout());
+  $('#login').addEventListener('submit', (e) => { e.preventDefault(); auth = 'admin:' + $('#key').value.trim(); store.set(auth); load(); });
+
+  const FILTERS = { todo: 'לטיפול', all: 'הכל', draft: 'בשיחה', published: 'פורסמו' };
+  function paintFilters() {
+    const box = $('#filters'); box.textContent = '';
+    for (const [k, label] of Object.entries(FILTERS)) {
+      const b = el('button', 'btn', label); b.type = 'button'; b.setAttribute('aria-pressed', String(k === filter));
+      b.addEventListener('click', () => { filter = k; paint(); }); box.append(b);
+    }
+  }
+  const shown = (d) => filter === 'all' || (filter === 'todo' ? ['client_approved', 'paid'].includes(d.status) : filter === 'draft' ? ['draft', 'returned'].includes(d.status) : d.status === filter);
+
+  function paint() {
+    paintFilters();
+    const list = $('#list'); list.textContent = '';
+    const rows = drafts.filter(shown);
+    if (!rows.length) list.append(el('p', 'empty', filter === 'todo' ? 'אין אתרים שמחכים לך.' : 'אין כאן כלום.'));
+    for (const d of rows) {
+      const item = el('article', 'item');
+      const info = el('div');
+      const h = el('h2', '', d.business || '(בלי שם עדיין)'); info.append(h);
+      const tag = el('span', 'tag ' + d.status, STATUS[d.status] || d.status);
+      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.owner, d.phone, d.package ? PKG[d.package] + (d.plan ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
+      const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.messages + ' הודעות · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
+      info.append(m1, m2);
+      if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
+      const acts = el('div', 'acts');
+      const result = el('div', 'result'); result.hidden = true;
+      const act = (label, cls, fn) => { const b = el('button', 'btn ' + (cls || ''), label); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; try { await fn(result); } catch (e) { result.hidden = false; result.textContent = 'לא הצליח: ' + e.message; } b.disabled = false; }); acts.append(b); };
+      act('תצוגה', '', async () => { const w = window.open('', '_blank'); const r = await call('GET', null, '?id=' + d.id); if (w) w.location = r.preview; else location.href = r.preview; });
+      if (d.status === 'client_approved') act('התשלום התקבל', 'go', async () => { if (!confirm('לסמן ש' + (d.business || 'הלקוח') + ' שילם?')) return; await call('POST', { action: 'paid', id: d.id }); load(); });
+      if (d.status === 'client_approved' || d.status === 'paid') act('להחזיר ללקוח', '', async () => { const note = prompt('מה לתקן? הלקוח יראה את זה מעל הצ׳אט.'); if (!note) return; await call('POST', { action: 'return', id: d.id, note }); load(); });
+      if (d.status === 'paid' || d.status === 'published') act(d.status === 'published' ? 'לפרסם שוב' : 'לפרסם', 'go', async (res) => {
+        const slug = d.slug || prompt('שם התיקייה באנגלית (clients/<slug>), למשל oren-mayim:');
+        if (!slug) return;
+        if (!confirm('לכתוב את clients/' + slug + '/ לריפו?')) return;
+        const r = await call('POST', { action: 'publish', id: d.id, slug });
+        res.hidden = false; res.textContent = '';
+        res.append('נכתב: ' + r.folder + ' (commit ' + r.commit.slice(0, 7) + '). ');
+        if (r.leads.row === 'created') { res.append('מערכת הלידים: נוצר לקוח. קישור לפאנל של בעל העסק (נשמר רק כאן, העתיקו עכשיו): '); res.append(el('code', '', r.leads.panel)); }
+        else if (r.leads.row === 'failed') res.append('מערכת הלידים: יצירת הלקוח נכשלה. לפרסם שוב עם אותו שם ישלים את זה.');
+        res.append(' הצעד הבא: אתר ב-Netlify ו-netlify.json, לפי CLIENT_SITES.md.');
+        const i = drafts.findIndex((x) => x.id === d.id); if (i >= 0) drafts[i] = r.draft;
+      });
+      if (d.status !== 'published') act('למחוק', 'danger', async () => { if (!confirm('למחוק את הטיוטה ואת התמונות שלה? אין דרך חזרה.')) return; await call('POST', { action: 'delete', id: d.id }); load(); });
+      item.append(info, acts, result);
+      list.append(item);
+    }
+  }
+
+  async function load() {
+    $('#err').textContent = '';
+    try {
+      const r = await call('GET');
+      drafts = r.drafts; $('#login').hidden = true; $('#board').hidden = false; $('#logout').hidden = false; paint();
+    } catch (e) { if (auth) $('#err').textContent = 'לא הצליח לטעון: ' + e.message; }
+  }
+
+  const saved = store.get();
+  if (saved && saved.startsWith('admin:')) { auth = saved; load(); } else $('#login').hidden = false;
+})();
+</script>
+</body>
+</html>

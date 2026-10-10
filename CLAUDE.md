@@ -56,7 +56,7 @@ Live at https://service-pro-web.netlify.app (Netlify, publishing the `demos/` fo
 
 The home page `demos/index.html` is the sales page, built as one story with a top menu: the site's name "נחיתה רכה" in the top bar, a hero whose headline is the slogan ("אתרים שבונים עסקים") and what it is right under it ("אתר שעונה ללקוחות, גם כשאתם עסוקים") next to a short film of one working day on two phones ("העסק היום" against "עם אתר שעונה": the same five enquiries, missed on one phone and answered on the other, with subtitles and a final score of 1 against 5; the film's own light turns from morning to dusk), then what you get (three parts), how it works (three steps), the 16 demos as small cards in each business's own colours, the prices (`#plans`), common questions and the WhatsApp form. Font: Rubik. No libraries, no background animation, nothing pinned to the scroll. `demos/all/` lists every demo with a short description. The old address `/start/` redirects to `/`.
 
-`demos/shared/aibot.js` (UI) calls `demos/netlify/functions/chat.mjs` (`/api/chat`, Claude via the official SDK, `claude-opus-5-5`, effort low, server-side fallbacks). It runs on the home page and on `/all/`. The system prompt in that file and the scripted price answer in `aibot.js` hold the prices: keep both in sync with `#plans` in `demos/index.html`. Without `ANTHROPIC_API_KEY` in Netlify the chat falls back to scripted answers.
+`demos/shared/aibot.js` (UI) calls `demos/netlify/functions/chat.mjs` (`/api/chat`, Claude via the official SDK, `claude-opus-5-5`, effort low, server-side fallbacks). It runs on the home page and on `/all/`. The system prompt in that file, the scripted price answer in `aibot.js` and the approval dialog in `demos/build/index.html` hold the prices: keep all three in sync with `#plans` in `demos/index.html`. Without `ANTHROPIC_API_KEY` in Netlify the chat falls back to scripted answers.
 
 ## The lead system (the real backend)
 
@@ -69,9 +69,20 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 - `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
 - Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.
 - The home page form also sends to `/api/lead/kfir` and still opens WhatsApp.
-- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`. Never in the repo or the chat.
+- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`. Never in the repo or the chat.
 - `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
 - The page shows "received" only when the lead is stored **and** the owner's WhatsApp alert went out. Otherwise `/api/lead` answers `alert_failed` and the page opens WhatsApp. Failures show in red in the panel and fail `/api/health` (`health.mjs`), which an uptime monitor checks every 5 minutes. Leads older than two years are deleted on the 1st of the month.
+
+## Site builder
+
+Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/build/index.html`). Claude fills the fields of a template, and the private draft at `/draft/<id>?k=<key>` (`draft.mjs`) fills up next to the chat. The owner uploads photos and approves, choosing a package. Kfir gets a WhatsApp alert through the lead system (a lead to `kfir`). In `/build/admin/` he marks it paid, returns it with a note, or publishes. Publishing writes `clients/<slug>/` to the repo in one commit through the GitHub API, and for נציג AI also creates the `ls_clients` row.
+
+- Code: `demos/netlify/lib/builder.mjs` and `demos/netlify/functions/builder.mjs` (`/api/builder/:action`), `builder-admin.mjs`, `draft.mjs`.
+- Table: `ls_drafts`, plus the `builder` storage bucket, in `supabase/lead-system/0002_site_builder.sql`.
+- Templates: `demos/netlify/lib/templates/<id>.mjs`, holding the fields and `render()`. The first one is `plumber.mjs`, built from `clients/sample-plumber/`. Every value is escaped. Facts (years, warranty, prices, response time) come only from the owner.
+- The chat uses structured outputs (`output_config.format`), effort low, and fallbacks `"default"`. The history is stored as text only and only grows; the draft state goes into the last message only.
+- Extra secrets: `GITHUB_TOKEN`, fine-grained, this repo only, Contents: read and write. Optional: `PAY_URL_*`, `BUILDER_DAILY_MAX`.
+- The approval dialog in `demos/build/index.html` shows the prices. Keep it in sync with `#plans`.
 
 ## Client sites
 

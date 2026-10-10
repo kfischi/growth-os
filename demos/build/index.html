@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>בונים אתר בשיחה · נחיתה רכה</title>
+<meta name="description" content="עונים על כמה שאלות על העסק, ורואים את האתר נבנה מולכם. מאשרים, ורק אז משלמים.">
+<meta name="theme-color" content="#3d2442">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* Object: a job sheet that fills itself while you talk. Detail: the site's own fields, ticked one by one.
+     Bold move: the live draft of the owner's own site, right next to the chat. */
+  :root {
+    --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #b23730;
+    --line: color-mix(in oklab, var(--ink) 14%, var(--paper));
+    --font: "Rubik", "Calibri", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--font); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+  button, input, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 20px; border-radius: 10px; border: 0; background: var(--mint); color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .btn:hover { background: #0b6a5d; }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn.quiet { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  .btn.quiet:hover { border-color: var(--ink); }
+
+  .top { background: var(--plum); color: #fff; }
+  .top .in { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1400px; margin: 0 auto; }
+  .brand { font-weight: 900; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
+  .top small { color: #d9cde0; font-size: 14px; }
+
+  /* ---------- start ---------- */
+  .start { max-width: 1100px; margin: 0 auto; padding: 48px 16px 64px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 48px; align-items: start; }
+  .start h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.02; font-weight: 900; letter-spacing: -.02em; margin: 0 0 16px; }
+  .start .lead { font-size: 19px; color: var(--slate); max-width: 34ch; margin: 0 0 28px; }
+  .sheet { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .sheet li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .sheet b { display: block; }
+  .sheet span { color: var(--slate); }
+  .tick { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--mint); display: grid; place-items: center; color: var(--mint); font-weight: 900; font-size: 14px; }
+  .note { color: var(--slate); font-size: 14px; margin-top: 18px; }
+  form.card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  form.card h2 { margin: 0 0 4px; font-size: 24px; }
+  form.card p { margin: 0 0 18px; color: var(--slate); }
+  label { display: block; font-weight: 500; margin: 14px 0 6px; }
+  input[type=text], input[type=tel], textarea { width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  input:focus, textarea:focus { border-color: var(--mint); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--mint) 25%, transparent); }
+  .check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; font-weight: 400; font-size: 14px; color: var(--slate); margin-top: 16px; }
+  .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--mint); }
+  .hp { position: absolute; inset-inline-start: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .err { color: var(--brick); font-weight: 500; min-height: 1.6em; margin: 10px 0 0; }
+  form.card .btn { width: 100%; margin-top: 10px; }
+
+  /* ---------- workspace ---------- */
+  .work { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); height: calc(100dvh - 52px); }
+  .side { display: flex; flex-direction: column; min-height: 0; border-inline-end: 1px solid var(--line); background: #fff; }
+  .progress { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .progress summary { cursor: pointer; font-weight: 700; display: flex; justify-content: space-between; gap: 8px; list-style: none; }
+  .progress summary::-webkit-details-marker { display: none; }
+  .bar { height: 6px; background: var(--mist); border-radius: 6px; margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--mint); width: 0; transition: width .4s; }
+  .items { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 12px; font-size: 14px; }
+  .items li { color: var(--slate); display: flex; gap: 6px; align-items: baseline; min-width: 0; }
+  .items li::before { content: "○"; color: var(--slate); }
+  .items li.done { color: var(--ink); }
+  .items li.done::before { content: "✓"; color: var(--mint); font-weight: 900; }
+  .banner { margin: 12px 16px 0; padding: 10px 12px; border-radius: 10px; background: var(--mist); font-size: 15px; }
+  .banner.warn { background: #f8e4e2; color: #6e1f1a; }
+  .log { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg { max-width: 88%; padding: 10px 14px; border-radius: 14px; white-space: pre-line; overflow-wrap: anywhere; }
+  .msg.them { background: var(--mist); align-self: flex-start; border-start-start-radius: 4px; }
+  .msg.me { background: var(--plum); color: #fff; align-self: flex-end; border-start-end-radius: 4px; }
+  .msg.sys { align-self: center; background: none; color: var(--slate); font-size: 14px; text-align: center; padding: 4px; }
+  .msg.fail { align-self: center; background: #f8e4e2; color: #6e1f1a; font-size: 14px; }
+  .typing { align-self: flex-start; color: var(--slate); font-size: 14px; }
+  .compose { border-top: 1px solid var(--line); padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
+  .compose textarea { min-height: 48px; max-height: 140px; resize: none; }
+  .compose .btn { padding-inline: 16px; }
+  .photos { border-top: 1px solid var(--line); padding: 10px 12px 12px; }
+  .photos summary { cursor: pointer; font-weight: 700; }
+  .slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .slot { position: relative; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; overflow: hidden; display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--slate); background: var(--paper); cursor: pointer; padding: 4px; }
+  .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .slot input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .slot .x { position: absolute; top: 4px; inset-inline-start: 4px; z-index: 2; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(29,27,46,.8); color: #fff; cursor: pointer; font-size: 14px; }
+  .slot.busy::after { content: "מעלים…"; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.85); color: var(--ink); }
+  .approve { border-top: 1px solid var(--line); padding: 12px; }
+  .approve .btn { width: 100%; }
+  .approve p { margin: 0 0 8px; font-size: 14px; color: var(--slate); }
+
+  .view { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--mist); }
+  .viewbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; font-size: 14px; color: var(--slate); }
+  .viewbar a { font-weight: 500; }
+  .frame { flex: 1; min-height: 0; padding: 0 12px 12px; }
+  .frame iframe { width: 100%; height: 100%; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .tabs { display: none; }
+
+  dialog { border: 0; border-radius: 16px; padding: 24px; width: min(560px, calc(100% - 32px)); color: var(--ink); }
+  dialog::backdrop { background: rgba(29,27,46,.55); }
+  dialog h2 { margin: 0 0 6px; font-size: 24px; }
+  dialog p { margin: 0 0 14px; color: var(--slate); }
+  .pkgs { display: grid; gap: 10px; }
+  .pkg { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; margin: 0; font-weight: 400; }
+  .pkg:has(input:checked) { border-color: var(--mint); background: color-mix(in oklab, var(--mint) 7%, #fff); }
+  .pkg input { margin-top: 4px; accent-color: var(--mint); width: 18px; height: 18px; }
+  .pkg b { display: block; font-size: 17px; }
+  .pkg span { color: var(--slate); font-size: 14px; }
+  .plans { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: 14px; }
+  .plans label { margin: 0; font-weight: 400; display: flex; gap: 6px; align-items: center; }
+  .row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .row .btn { flex: 1; }
+
+  @media (max-width: 860px) {
+    .start { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 32px; }
+    .work { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+    .tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--line); background: #fff; }
+    .tabs button { min-height: 46px; border: 0; background: none; font-weight: 700; color: var(--slate); border-bottom: 3px solid transparent; cursor: pointer; }
+    .tabs button[aria-selected=true] { color: var(--ink); border-bottom-color: var(--mint); }
+    .tabs button.new::after { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--brick); margin-inline-start: 6px; vertical-align: middle; }
+    .work[data-tab=chat] .view, .work[data-tab=site] .side { display: none; }
+    .side { border: 0; }
+    .frame { padding: 0; } .frame iframe { border-radius: 0; border-inline: 0; }
+    .items { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a class="brand" href="/">נחיתה רכה</a><small>בונה האתרים</small></div></header>
+
+<main id="start" class="start" hidden>
+  <section aria-labelledby="t-start">
+    <h1 id="t-start">בונים לכם אתר, בשיחה.</h1>
+    <p class="lead">עונים על כמה שאלות על העסק, ורואים את האתר נבנה מולכם. מאשרים, ורק אז משלמים.</p>
+    <ol class="sheet">
+      <li><span class="tick" aria-hidden="true">1</span><div><b>שיחה של כמה דקות</b><span>שם העסק, אזור, שירותים ומחירים. שאלה אחת בכל פעם.</span></div></li>
+      <li><span class="tick" aria-hidden="true">2</span><div><b>האתר שלכם מתמלא מולכם</b><span>בקישור פרטי, עם התמונות שלכם. מבקשים שינוי, והוא מתעדכן.</span></div></li>
+      <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, ואנחנו מעלים לאוויר</b><span>אחרי האישור שלכם והתשלום, אנחנו עוברים על הכל ומעלים.</span></div></li>
+    </ol>
+    <p class="note">כרגע: אתרים לאינסטלטורים. בתחום אחר? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%90%D7%AA%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a>, ונבנה יחד.</p>
+  </section>
+  <form id="startForm" class="card" novalidate>
+    <h2>מתחילים</h2>
+    <p>נשמור את הטיוטה, ותוכלו לחזור אליה מכל מכשיר.</p>
+    <label for="fName">איך קוראים לכם?</label>
+    <input id="fName" type="text" autocomplete="name" maxlength="40" required>
+    <label for="fPhone">הנייד של העסק (וואטסאפ)</label>
+    <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="050-1234567" dir="ltr" maxlength="16" required>
+    <div class="hp" aria-hidden="true"><label for="fCompany">חברה</label><input id="fCompany" type="text" tabindex="-1" autocomplete="off"></div>
+    <label class="check"><input id="fConsent" type="checkbox"><span>מסכימים שנשמור את הפרטים והשיחה כדי לבנות את האתר ולחזור אליכם. לא נשלח פרסומות.</span></label>
+    <p class="err" id="startErr" role="alert"></p>
+    <button class="btn" type="submit">לבנות את האתר</button>
+  </form>
+</main>
+
+<main id="work" class="work" data-tab="chat" hidden>
+  <div class="tabs" role="tablist" aria-label="תצוגה">
+    <button type="button" role="tab" id="tabChat" aria-selected="true" data-tab="chat">שיחה</button>
+    <button type="button" role="tab" id="tabSite" aria-selected="false" data-tab="site">האתר שלכם</button>
+  </div>
+
+  <section class="side" aria-label="שיחה">
+    <details class="progress" id="progress">
+      <summary><span id="progLabel">מה כבר באתר</span><span id="progCount"></span></summary>
+      <div class="bar" aria-hidden="true"><i id="progBar"></i></div>
+      <ul class="items" id="items"></ul>
+    </details>
+    <div class="banner warn" id="returned" hidden></div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <form class="compose" id="compose">
+      <label for="msg" class="hp">הודעה</label>
+      <textarea id="msg" rows="1" maxlength="800" placeholder="כתבו כאן…" enterkeyhint="send"></textarea>
+      <button class="btn" type="submit" id="send">שליחה</button>
+    </form>
+    <details class="photos" id="photos">
+      <summary>תמונות</summary>
+      <label class="check"><input id="rights" type="checkbox"><span>התמונות שלנו, ומותר לפרסם אותן באתר.</span></label>
+      <div class="slots" id="slots"></div>
+    </details>
+    <div class="approve" id="approveBox"></div>
+  </section>
+
+  <section class="view" aria-label="האתר שלכם">
+    <div class="viewbar"><span>טיוטה · מתעדכנת אחרי כל תשובה</span><a id="openDraft" href="#" target="_blank" rel="noopener">לפתוח בחלון מלא</a></div>
+    <div class="frame"><iframe id="frame" title="הטיוטה של האתר"></iframe></div>
+  </section>
+</main>
+
+<dialog id="approveDlg" aria-labelledby="t-approve">
+  <form method="dialog" id="approveForm">
+    <h2 id="t-approve">מאשרים את האתר</h2>
+    <p>בוחרים חבילה. אחרי התשלום אנחנו עוברים על האתר ומעלים אותו לאוויר. עד אז אפשר עוד לבקש שינויים.</p>
+    <div class="pkgs">
+      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,250 ₪ הקמה, ומהחודש הרביעי 500 ₪ לחודש.</span>
+        <div class="plans" id="aiPlans"><label><input type="radio" name="plan" value="full" checked> תשלום אחד</label><label><input type="radio" name="plan" value="three"> 3 תשלומים של 750 ₪</label></div></div></label>
+      <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
+    </div>
+    <p class="note">בלי התחייבות: מבטלים בהודעה של 30 יום. הדומיין והאתר רשומים על שמכם.</p>
+    <p class="err" id="approveErr" role="alert"></p>
+    <div class="row"><button class="btn" value="ok" id="approveGo">מאשרים</button><button class="btn quiet" value="cancel" formnovalidate>עוד לא</button></div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const API = '/api/builder/', STORE = 'nr-builder', WA = '972526359513';
+  const SLOTS = { portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3' };
+  const ERR = {
+    not_configured: 'הבונה עוד לא פתוח. כתבו לנו בוואטסאפ ונבנה את האתר יחד.',
+    busy_today: 'היום נפתחו כבר הרבה אתרים. נסו שוב מחר, או כתבו לנו בוואטסאפ.',
+    rate_limited: 'יותר מדי ניסיונות בזמן קצר. נסו שוב בעוד כמה דקות.',
+    bad_name: 'כתבו שם, לפחות שתי אותיות.',
+    bad_phone: 'צריך מספר נייד ישראלי, למשל 050-1234567.',
+    no_consent: 'כדי להמשיך צריך לסמן את ההסכמה.',
+    busy: 'לוקח לנו רגע יותר מהרגיל. ההודעה נשארה בתיבה, שלחו אותה שוב.',
+    conflict: 'השיחה התעדכנה בחלון אחר. רעננו אותה, שלחו שוב.',
+    limit: 'הגענו לסוף השיחה כאן. נמשיך בוואטסאפ, וזה יהיה מהיר.',
+    locked: 'האתר כבר אושר. שינויים עכשיו דרכנו בוואטסאפ.',
+    too_long: 'ההודעה ארוכה מדי. אפשר לחלק אותה לכמה הודעות.',
+    missing: 'חסרים עוד כמה פרטים לפני אישור.',
+    no_rights: 'סמנו קודם שהתמונות שלכם ומותר לפרסם אותן.',
+    too_big: 'התמונה גדולה מדי. נסו תמונה אחרת.',
+    bad_type: 'אפשר להעלות רק תמונה (JPG או WebP).',
+    not_found: 'הטיוטה לא נמצאה. אולי היא נמחקה אחרי 30 יום בלי שימוש.',
+  };
+  const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.';
+
+  let cred = null, state = null, sending = false;
+  const store = {
+    get() { try { return localStorage.getItem(STORE); } catch (e) { return null; } },
+    set(v) { try { v ? localStorage.setItem(STORE, v) : localStorage.removeItem(STORE); } catch (e) { /* private mode */ } },
+  };
+
+  async function call(action, { method = 'POST', body, raw, headers = {}, query = '' } = {}) {
+    const h = { ...headers };
+    if (cred) h['x-draft'] = cred;
+    if (body !== undefined) h['content-type'] = 'application/json';
+    let r;
+    try { r = await fetch(API + action + query, { method, headers: h, body: raw || (body !== undefined ? JSON.stringify(body) : undefined) }); }
+    catch (e) { return { ok: false, status: 0, data: { error: 'network' } }; }
+    const data = await r.json().catch(() => ({ error: r.status >= 500 ? 'busy' : 'server' }));
+    return { ok: r.ok, status: r.status, data };
+  }
+
+  /* ---------- start ---------- */
+  $('#startForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]'), err = $('#startErr');
+    err.textContent = '';
+    if (!$('#fConsent').checked) { err.textContent = say('no_consent'); return; }
+    btn.disabled = true; btn.textContent = 'פותחים…';
+    const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value, template: 'plumber' } });
+    btn.disabled = false; btn.textContent = 'לבנות את האתר';
+    if (!r.ok) {
+      err.textContent = say(r.data.error);
+      if (r.data.error === 'not_configured' || r.data.error === 'busy_today') err.append(' ', waLink('לוואטסאפ', 'היי, אשמח לבנות אתר לעסק שלי.'));
+      return;
+    }
+    cred = r.data.id + ':' + r.data.key;
+    store.set(cred);
+    history.replaceState(null, '', '#d=' + cred);
+    openWork(r.data.state);
+  });
+
+  function waLink(text, msg) {
+    const a = document.createElement('a');
+    a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg); a.target = '_blank'; a.rel = 'noopener'; a.textContent = text;
+    return a;
+  }
+
+  /* ---------- workspace ---------- */
+  const log = $('#log'), frame = $('#frame');
+  const draftUrl = () => { const [id, key] = cred.split(':'); return '/draft/' + id + '?k=' + encodeURIComponent(key); };
+
+  function bubble(cls, text) {
+    const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text; log.append(d);
+    log.scrollTop = log.scrollHeight; return d;
+  }
+
+  function openWork(s) {
+    $('#start').hidden = true; $('#work').hidden = false;
+    state = s;
+    log.textContent = '';
+    bubble('them', s.greeting);
+    for (const m of s.messages) bubble(m.role === 'user' ? 'me' : 'them', m.content);
+    $('#openDraft').href = draftUrl();
+    frame.src = draftUrl();
+    paint();
+    if (s.status === 'draft' || s.status === 'returned') setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
+  }
+
+  // Reload the draft and keep the reader where they were.
+  function refreshFrame() {
+    let y = 0;
+    try { y = frame.contentWindow.scrollY; } catch (e) { /* not loaded */ }
+    frame.addEventListener('load', () => { try { frame.contentWindow.scrollTo(0, y); } catch (e) { /* ignore */ } }, { once: true });
+    frame.src = draftUrl() + '&t=' + Date.now();
+  }
+
+  function paint() {
+    const s = state, editable = s.status === 'draft' || s.status === 'returned';
+    // progress
+    const req = s.checklist.filter((i) => !i.optional), done = req.filter((i) => i.done).length;
+    $('#progCount').textContent = done + ' מתוך ' + req.length;
+    $('#progBar').style.width = Math.round(done / req.length * 100) + '%';
+    const ul = $('#items'); ul.textContent = '';
+    for (const i of s.checklist) { const li = document.createElement('li'); li.textContent = i.label; if (i.done) li.className = 'done'; ul.append(li); }
+    // note from us
+    const ret = $('#returned');
+    ret.hidden = !s.returnNote; ret.textContent = s.returnNote ? 'הערה מאיתנו: ' + s.returnNote : '';
+    // compose and photos
+    $('#compose').hidden = !editable; $('#photos').hidden = !editable;
+    $('#rights').checked = $('#rights').checked || s.photoRights;
+    paintSlots(editable);
+    paintApprove();
+  }
+
+  function paintSlots(editable) {
+    const box = $('#slots'); box.textContent = '';
+    for (const [slot, label] of Object.entries(SLOTS)) {
+      const el = document.createElement('label'); el.className = 'slot';
+      const url = state.photos[slot];
+      if (url) {
+        const img = document.createElement('img'); img.src = url; img.alt = label; el.append(img);
+        if (editable) {
+          const x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = '✕'; x.setAttribute('aria-label', 'להסיר: ' + label);
+          x.addEventListener('click', (e) => { e.preventDefault(); removePhoto(slot); });
+          el.append(x);
+        }
+      } else el.append(document.createTextNode(label));
+      if (editable) {
+        const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+        input.setAttribute('aria-label', (url ? 'להחליף: ' : 'להעלות: ') + label);
+        input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) uploadPhoto(slot, f, el); }); // cleared, so the same file can be picked again
+        el.append(input);
+      }
+      box.append(el);
+    }
+  }
+
+  function paintApprove() {
+    const box = $('#approveBox'), s = state; box.textContent = '';
+    const p = (t) => { const e = document.createElement('p'); e.textContent = t; box.append(e); return e; };
+    if (s.status === 'draft' || s.status === 'returned') {
+      if (s.missing.length) p('לפני אישור חסרים: ' + s.missing.join(', ') + '.');
+      else p('הכל מוכן. עברו על האתר, ואם הוא נראה טוב, אשרו.');
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'מאשרים את האתר';
+      b.disabled = s.missing.length > 0; b.addEventListener('click', () => { $('#approveErr').textContent = ''; $('#approveDlg').showModal(); });
+      box.append(b);
+    } else if (s.status === 'client_approved') {
+      p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
+      if (s.pay.length) {
+        for (const l of s.pay) {
+          const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = l.plan === 'three' ? 'לתשלום ב-3 תשלומים' : 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
+        }
+      } else p('נשלח לכם קישור לתשלום בוואטסאפ, בדרך כלל באותו יום.');
+      const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'רוצים לשנות משהו? חזרה לעריכה';
+      back.addEventListener('click', reopen); box.append(back);
+    } else if (s.status === 'paid') {
+      p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+    } else if (s.status === 'published') {
+      p('האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
+    }
+  }
+
+  /* ---------- chat ---------- */
+  const msg = $('#msg');
+  msg.addEventListener('input', () => { msg.style.height = 'auto'; msg.style.height = Math.min(msg.scrollHeight, 140) + 'px'; });
+  msg.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) { e.preventDefault(); $('#compose').requestSubmit(); } });
+
+  $('#compose').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = msg.value.trim();
+    if (!text || sending) return;
+    sending = true; $('#send').disabled = true;
+    const mine = bubble('me', text);
+    msg.value = ''; msg.style.height = '';
+    const typing = document.createElement('div'); typing.className = 'typing'; typing.textContent = 'כותבים…'; log.append(typing); log.scrollTop = log.scrollHeight;
+    const r = await call('chat', { body: { message: text, rev: state.rev } });
+    typing.remove(); sending = false; $('#send').disabled = false;
+    if (!r.ok) {
+      mine.remove(); msg.value = text;
+      const f = bubble('fail', say(r.data.error));
+      if (r.data.error === 'limit') f.append(' ', waLink('לוואטסאפ', 'היי, התחלתי לבנות אתר בבונה ואשמח להמשיך איתכם.'));
+      if (r.data.state) { state = r.data.state; paint(); if (r.data.error === 'conflict') openWork(state); msg.value = text; }
+      return;
+    }
+    state = r.data.state;
+    bubble('them', r.data.reply);
+    paint();
+    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    msg.focus({ preventScroll: true });
+  });
+
+  /* ---------- photos: resized and re-encoded here, which also drops the location data ---------- */
+  async function shrink(file) {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+    const enc = (type, q) => new Promise((res) => c.toBlob(res, type, q));
+    let blob = await enc('image/webp', 0.82);
+    if (!blob || blob.type !== 'image/webp') blob = await enc('image/jpeg', 0.85); // Safari can't write WebP
+    for (let q = 0.75; blob && blob.size > 950000 && q > 0.4; q -= 0.15) blob = await enc('image/jpeg', q);
+    return blob;
+  }
+
+  async function uploadPhoto(slot, file, el) {
+    if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+    el.classList.add('busy');
+    let blob;
+    try { blob = await shrink(file); } catch (e) { el.classList.remove('busy'); bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו תמונה אחרת, או צלמו מסך שלה.'); return; }
+    const r = await call('photo', { raw: blob, query: '?slot=' + slot, headers: { 'content-type': blob.type, 'x-photo-rights': 'yes' } });
+    el.classList.remove('busy');
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    state = r.data.state; paint(); refreshFrame(); markSite();
+  }
+
+  async function removePhoto(slot) {
+    const r = await call('photo', { method: 'DELETE', query: '?slot=' + slot });
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    state = r.data.state; paint(); refreshFrame();
+  }
+
+  /* ---------- approve ---------- */
+  document.querySelectorAll('input[name=pkg]').forEach((r) => r.addEventListener('change', () => { $('#aiPlans').hidden = $('input[name=pkg]:checked').value !== 'ai'; }));
+  $('#approveForm').addEventListener('submit', async (e) => {
+    if (e.submitter && e.submitter.value === 'cancel') return;
+    e.preventDefault();
+    const pkg = $('input[name=pkg]:checked').value, plan = pkg === 'ai' ? $('input[name=plan]:checked').value : 'full';
+    $('#approveGo').disabled = true;
+    const r = await call('approve', { body: { package: pkg, plan, rev: state.rev } });
+    $('#approveGo').disabled = false;
+    if (!r.ok) { $('#approveErr').textContent = say(r.data.error) + (r.data.missing ? ' ' + r.data.missing.join(', ') : ''); if (r.data.state) { state = r.data.state; paint(); } return; }
+    $('#approveDlg').close();
+    state = r.data.state; paint();
+    bubble('sys', 'האתר אושר. תודה!');
+  });
+
+  async function reopen() {
+    const r = await call('reopen', { body: { rev: state.rev } });
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    state = r.data.state; paint();
+    bubble('sys', 'חזרנו לעריכה. מה לשנות?');
+  }
+
+  /* ---------- tabs (phone) ---------- */
+  // On a phone the draft is on the other tab: mark it when it changed.
+  function markSite() { if ($('#work').dataset.tab === 'chat') $('#tabSite').classList.add('new'); }
+  document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+    $('#work').dataset.tab = b.dataset.tab;
+    if (b.dataset.tab === 'site') $('#tabSite').classList.remove('new');
+    document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+  }));
+
+  /* ---------- open: from the link, from this browser, or a new start ---------- */
+  async function boot() {
+    const m = /^#d=([0-9a-f-]{36}:[A-Za-z0-9_-]{20,80})$/.exec(location.hash);
+    cred = m ? m[1] : store.get();
+    if (!cred) { $('#start').hidden = false; return; }
+    const r = await call('state', { method: 'GET' });
+    if (!r.ok) {
+      if (r.status === 404) store.set(null);
+      cred = null; $('#start').hidden = false;
+      if (r.status === 404 && m) $('#startErr').textContent = say('not_found');
+      return;
+    }
+    store.set(cred);
+    if (!m) history.replaceState(null, '', '#d=' + cred);
+    openWork(r.data.state);
+  }
+  addEventListener('hashchange', () => location.reload());
+  boot();
+})();
+</script>
+</body>
+</html>

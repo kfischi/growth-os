@@ -125,3 +125,20 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "no-referrer"
     X-Content-Type-Options = "nosniff"
+
+# The site builder: the owner's page, and כפיר's page. Not for search engines.
+[[headers]]
+  for = "/build/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/build/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"
