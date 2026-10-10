@@ -44,11 +44,45 @@ const CAPTION = `(() => {
 })()`;
 const cap = (p, t, sub) => p.evaluate(([t, sub]) => window.__cap(t, sub), [t, sub || ""]);
 
-async function tap(p, el) {
+// An arrow that glides to what is about to be pressed, bobs twice, and a soft ring on the element itself.
+// Mint with a white outline (the studio's colour), so it reads on any demo's palette.
+const POINTER = `(() => {
+  const s = document.createElement("style");
+  s.textContent = ".__arrow{position:fixed;z-index:2147483647;width:54px;height:54px;pointer-events:none;opacity:0;transition:left .45s cubic-bezier(.2,.8,.2,1),top .45s cubic-bezier(.2,.8,.2,1),opacity .25s;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35))}" +
+    ".__arrow.on{opacity:1}.__arrow svg{width:100%;height:100%;animation:__bob .7s ease-in-out infinite alternate}" +
+    "@keyframes __bob{from{transform:translate(0,0)}to{transform:translate(var(--bx),var(--by))}}" +
+    ".__glow{position:fixed;z-index:2147483645;pointer-events:none;border-radius:14px;box-shadow:0 0 0 3px rgba(15,122,108,.95),0 0 0 9px rgba(15,122,108,.25);opacity:0;transition:opacity .3s;animation:__pulse 1s ease-in-out infinite}" +
+    ".__glow.on{opacity:1}@keyframes __pulse{50%{box-shadow:0 0 0 3px rgba(15,122,108,.95),0 0 0 14px rgba(15,122,108,.12)}}";
+  document.head.appendChild(s);
+  const a = document.createElement("div"); a.className = "__arrow";
+  a.innerHTML = '<svg viewBox="0 0 48 48"><path d="M24 44 L10 26 H19 V4 H29 V26 H38 Z" fill="#0f7a6c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>';
+  const g = document.createElement("div"); g.className = "__glow";
+  document.body.append(g, a);
+  // Above the element pointing down, or below it pointing up when there is no room above.
+  window.__point = (r) => {
+    const up = r.top < 100, x = r.left + r.width / 2 - 27, y = up ? r.bottom + 6 : r.top - 60;
+    a.style.left = x + "px"; a.style.top = y + "px";
+    a.style.setProperty("--bx", "0px"); a.style.setProperty("--by", up ? "-6px" : "6px");
+    a.querySelector("svg").style.rotate = up ? "180deg" : "0deg";
+    Object.assign(g.style, { left: r.left - 4 + "px", top: r.top - 4 + "px", width: r.width + 8 + "px", height: r.height + 8 + "px", borderRadius: Math.min(18, r.height / 2 + 4) + "px" });
+    a.classList.add("on"); g.classList.add("on");
+  };
+  window.__unpoint = () => { a.classList.remove("on"); g.classList.remove("on"); };
+})()`;
+
+async function point(p, el, hold = 700) {
   await el.scrollIntoViewIfNeeded();
+  const r = await el.evaluate((e) => { const b = e.getBoundingClientRect(); return { left: b.left, top: b.top, width: b.width, height: b.height, bottom: b.bottom }; });
+  await p.evaluate((r) => window.__point(r), r);
+  await p.waitForTimeout(hold);
+}
+
+async function tap(p, el) {
+  await point(p, el);
   const b = await el.boundingBox();
   await p.evaluate(([x, y]) => window.__tap(x, y), [b.x + b.width / 2, b.y + b.height / 2]);
-  await p.waitForTimeout(260);
+  await p.waitForTimeout(220);
+  await p.evaluate(() => window.__unpoint());
   await el.click();
 }
 
@@ -68,6 +102,7 @@ async function record(browser, demo) {
   await p.addStyleTag({ content: ".demo,.ps-ui-btn{display:none!important}" }); // the demo ribbon and the edit button aren't part of the business's site
   await p.evaluate(TAP);
   await p.evaluate(CAPTION);
+  await p.evaluate(POINTER);
   await p.evaluate(async () => { await document.fonts.ready; document.querySelectorAll("img[loading=lazy]").forEach((i) => { i.loading = "eager"; }); });
   await p.waitForTimeout(800);
 
@@ -116,8 +151,9 @@ async function record(browser, demo) {
   await cap(p, "הכול מסוכם, ונשלח אליכם בוואטסאפ", "אף פנייה לא הולכת לאיבוד");
   await p.waitForTimeout(1200);
   const wa = await p.$(".lb-panel .lb-wa");
-  if (wa) { const b = await wa.boundingBox(); await p.evaluate(([x, y]) => window.__tap(x, y), [b.x + b.width / 2, b.y + b.height / 2]); }
+  if (wa) { await point(p, wa, 1200); const b = await wa.boundingBox(); await p.evaluate(([x, y]) => window.__tap(x, y), [b.x + b.width / 2, b.y + b.height / 2]); }
   await p.waitForTimeout(2600);
+  await p.evaluate(() => window.__unpoint());
 
   // 3. The phone mockup with the visitor's own lead, where the page has one.
   const phone = await p.$(".phone, .ph-phone, [data-phone]");
