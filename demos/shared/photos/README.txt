@@ -8,3 +8,5 @@ They are illustrations for fictional businesses only. A real client site uses th
 locksmith-work, locksmith-portrait, locksmith-cylinder: one image generated with Figma AI (gemini-3.1-flash-image), the "FAMILIE LEVY" nameplate text removed and the brass lock and keys turned to steel.
 
 ac, pest, appliance, handyman, psychologist, social-worker (-work card, -portrait, -room job photo): generated with Figma AI (gemini-3.1-flash-image); yellow toned down in the tool bag, level, drawings and toys; labelled bottles, sponges and the pest technician's bare feet cropped out.
+
+music-work, music-portrait, music-studio, music-lesson: generated with Figma AI; the piano brand name on the fallboard removed.
