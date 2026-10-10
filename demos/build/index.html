@@ -257,7 +257,7 @@
     video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
     video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
   };
-  const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.';
+  const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.' + (code ? ' (' + code + ')' : ''); // the code helps us find it in the log
 
   let cred = null, state = null, sending = false;
   const busy = new Set(); let queue = Promise.resolve(); // photos go up one at a time
