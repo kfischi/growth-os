@@ -11,7 +11,7 @@
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
     cleaning: "ניקיון", renovation: "שיפוצים", locksmith: "מנעולן", pest: "הדברה", appliance: "טכנאי מכשירי חשמל",
-    handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית",
+    handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית", music: "מורה לנגינה",
     "leads-demo": "דמו מערכת לידים", "ai-agent": "דמו נציג AI",
   };
   const CSS = `
@@ -56,6 +56,7 @@
     [/מכונת כביסה|מקרר|מדיח|תנור|מייבש|מכשירי חשמל/, "appliance"], [/הנדימן|תחזוקה|תליית|הרכבת רהיט/, "handyman"],
     [/גינ|גנן|גיזום|השקיה|דשא/, "garden"], [/מורה|שיעור|בגרות|תלמיד/, "tutor"], [/פסיכולוג|טיפול רגשי|חרדה/, "psychologist"],
     [/עובדת סוציאלית|עו.?ס|הדרכת הורים/, "social-worker"],
+    [/נגינה|פסנתר|גיטרה|מוזיקה|מוסיקה|תופים|כינור/, "music"],
     [/מזגן|מיזוג/, "ac"], [/חשמל/, "electrician"], [/ניקיון|מנק/, "cleaning"], [/שיפוצ|קבלן|מטבח חדש/, "renovation"],
   ];
   function scripted(text, history) {

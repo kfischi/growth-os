@@ -60,5 +60,6 @@
 | מורה פרטית | https://service-pro-web.netlify.app/tutor/?utm_source=whatsapp |
 | פסיכולוגית | https://service-pro-web.netlify.app/psychologist/?utm_source=whatsapp |
 | עובדת סוציאלית | https://service-pro-web.netlify.app/social-worker/?utm_source=whatsapp |
+| מורה לנגינה | https://service-pro-web.netlify.app/music/?utm_source=whatsapp |
 
 בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.

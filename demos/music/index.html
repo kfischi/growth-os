@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מאיה לב · שיעורי פסנתר וגיטרה</title>
+<meta name="description" content="שיעורי פסנתר וגיטרה לילדים מגיל 6 ולמבוגרים, בכרכור או אצלכם בבית. שיעור ניסיון קצר לפני שמתחילים.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@500;700&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a piano keyboard over a sheet of staff paper, and the concert programme of the end-of-year recital.
+     Detail: note names (דו רה מי), the staff with its ledger line, 45-minute lessons, ages, the felt strip under the keys.
+     Bold move: a real, playable keyboard across the hero; every note you play lands on the staff above it. */
+  :root {
+    --paper: #f3f4f6;          /* staff paper, cool white */
+    --ivory: #fcfcfa;          /* the white keys (not cream) */
+    --ebony: #15161a;          /* black keys, ink */
+    --graphite: #565a63;       /* pencil */
+    --felt: #8e2236;           /* the red felt under the keys, the one accent */
+    --walnut: #5b3b2b;         /* guitar body */
+    --rule: #c9ccd3;           /* staff lines */
+    --display: "David Libre", "Noto Serif Hebrew", serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ebony);
+    --bot-bg: #fff; --bot-fg: var(--ebony); --bot-line: #dfe1e6; --bot-muted: var(--graphite);
+    --bot-accent: var(--felt); --bot-accent-fg: #fff; --bot-them: #eef0f3; --bot-me: var(--ebony); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px;
+    --ps-a: #d9dce3; --ps-b: #6f6470; --ps-ui: var(--ebony); --ps-edit: var(--felt);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ebony); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--body); font-weight: 500; font-size: 13px; letter-spacing: .01em; } /* Hebrew labels: Plex Mono has no Hebrew */
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 700; }
+  h2 { font-size: clamp(32px, 4.4vw, 50px); line-height: 1.1; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; font: 700 16px/1 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; }
+  .btn-felt { background: var(--felt); color: #fff; }
+  .btn-felt:hover { background: #761b2d; }
+  .btn-line { border: 2px solid var(--ebony); color: var(--ebony); background: transparent; }
+  .demo { background: var(--ebony); color: #c4c7cf; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  /* staff paper: five thin lines, repeated */
+  .staffpaper { background-image: repeating-linear-gradient(to bottom, transparent 0 34px, var(--rule) 34px 35px, transparent 35px 44px, var(--rule) 44px 45px, transparent 45px 54px, var(--rule) 54px 55px, transparent 55px 64px, var(--rule) 64px 65px, transparent 65px 74px, var(--rule) 74px 75px, transparent 75px 120px); }
+
+  /* ---------- Hero ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-weight: 700; font-size: 26px; white-space: nowrap; }
+  .logo small { font-family: var(--body); font-weight: 500; font-size: 13px; color: var(--graphite); margin-inline-start: 10px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--felt); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: 40px; align-items: center; padding: 20px 0 30px; }
+  .tag { color: var(--felt); margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(38px, 5.6vw, 72px); line-height: 1.04; letter-spacing: -.01em; }
+  .hero h1 em { font-style: normal; color: var(--felt); }
+  .lead { font-size: 19px; color: var(--graphite); max-width: 38ch; margin: 18px 0 24px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  /* the staff that shows what you played */
+  .score { background: var(--ivory); border: 1px solid #dfe1e6; border-radius: 6px; padding: 18px 22px 14px; box-shadow: 0 24px 50px -36px rgba(21,22,26,.5); min-width: 0; }
+  .score svg { display: block; width: 100%; height: auto; }
+  .score .cap { display: flex; justify-content: space-between; gap: 10px; color: var(--graphite); margin-top: 6px; }
+  .score .cap b { font-family: var(--display); color: var(--felt); font-size: 22px; font-weight: 700; letter-spacing: 0; }
+  .nh { transition: transform .18s ease-out, opacity .18s; }
+  /* the keyboard: lowest note on the left, like a real one */
+  .kb-wrap { padding-bottom: 46px; }
+  .kb-label { display: flex; justify-content: space-between; color: var(--graphite); margin-bottom: 8px; }
+  .keys { direction: ltr; position: relative; display: flex; height: 168px; background: var(--ebony); padding: 14px 10px 10px; border-radius: 10px 10px 14px 14px; box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
+  .keys::before { content: ""; position: absolute; left: 10px; right: 10px; top: 8px; height: 6px; background: var(--felt); border-radius: 2px; }
+  .k { all: unset; box-sizing: border-box; cursor: pointer; position: relative; }
+  .k.w { flex: 1 1 0; min-width: 0; background: var(--ivory); border: 1px solid #b9bcc4; border-top: 0; border-radius: 0 0 6px 6px; margin-inline: 1px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-family: var(--body); font-size: 12px; color: #8a8e97; }
+  .k.b { position: absolute; top: 14px; width: calc((100% - 20px) / var(--whites) * .62); height: 92px; background: linear-gradient(#2a2c32, var(--ebony) 70%); border-radius: 0 0 4px 4px; z-index: 2; transform: translateX(-50%); box-shadow: 0 3px 0 #000; }
+  .k.w.on, .k.w:active { background: #e8e0e3; box-shadow: inset 0 -6px 0 var(--felt); }
+  .k.b.on, .k.b:active { background: var(--felt); }
+  .k:focus-visible { outline: 3px solid var(--felt); outline-offset: -3px; }
+
+  /* ---------- The programme: what you can learn ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 28px; }
+  .head .mono { color: var(--graphite); }
+  .programme { background: var(--ivory); border: 1px solid #dfe1e6; padding: 30px 38px 14px; position: relative; box-shadow: 0 24px 50px -40px rgba(21,22,26,.5); }
+  .programme::before { content: "תוכנית"; position: absolute; top: -14px; inset-inline-start: 30px; background: var(--felt); color: #fff; font: 700 13px/1 var(--body); letter-spacing: .08em; padding: 7px 12px; }
+  .item { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 18px; align-items: baseline; width: 100%; padding: 18px 4px; border-bottom: 1px dotted #b9bcc4; }
+  .item:last-of-type { border-bottom: 0; }
+  .item:hover b { color: var(--felt); }
+  .item:focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
+  .item .no { font-family: var(--display); font-size: 26px; color: var(--felt); }
+  .item b { display: block; font-family: var(--display); font-size: 24px; line-height: 1.2; }
+  .item .d { display: block; color: var(--graphite); font-size: 15.5px; margin-top: 3px; }
+  .item .p { font-family: var(--mono); font-size: 14px; white-space: nowrap; text-align: left; }
+  .item .p small { display: block; color: var(--graphite); font-size: 12px; }
+  .prog-foot { display: flex; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; border-top: 2px solid var(--ebony); padding: 14px 4px 6px; font-size: 15px; color: var(--graphite); }
+  .prog-foot b { color: var(--ebony); }
+
+  /* ---------- The teacher ---------- */
+  .teacher { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 46px; align-items: start; }
+  .portrait-card { background: var(--ivory); padding: 14px 14px 18px; border: 1px solid #dfe1e6; box-shadow: 0 24px 50px -36px rgba(21,22,26,.5); transform: rotate(-1.5deg); }
+  .portrait-card .ps { aspect-ratio: 4 / 5; border-radius: 3px; }
+  .portrait-card b { display: block; font-family: var(--display); font-size: 28px; margin-top: 12px; }
+  .portrait-card span { color: var(--graphite); font-size: 15.5px; }
+  .facts { list-style: none; margin: 0 0 26px; padding: 0; }
+  .facts li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid #dfe1e6; }
+  .facts li > b { font-family: var(--display); color: var(--felt); font-size: 19px; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .shots figure { margin: 0; min-width: 0; }
+  .shots .ps { aspect-ratio: 4 / 3; border-radius: 4px; }
+  .shots figcaption { font-size: 14.5px; color: var(--graphite); margin-top: 6px; }
+  .steps { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; }
+  .steps li::before { counter-increment: s; content: counter(s); width: 34px; height: 34px; border-radius: 50%; background: var(--ebony); color: #fff; display: grid; place-items: center; font-family: var(--display); font-size: 18px; }
+  .steps b { display: block; }
+  .steps span { color: var(--graphite); font-size: 15.5px; }
+
+  /* ---------- What the teacher sees ---------- */
+  .owner { background: var(--ebony); color: #eceef2; }
+  .owner .head .mono { color: #a4a8b2; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e58a9a; color: #e58a9a; display: grid; place-items: center; font-family: var(--display); font-size: 20px; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #b4b8c2; font-size: 15.5px; }
+  .owner .ph-cap { color: #a4a8b2; }
+  footer { padding-block: 34px 90px; color: var(--graphite); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 18px; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .teacher, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .score { max-width: 520px; width: 100%; }
+    .portrait-card { max-width: 340px; margin-inline: auto; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    .hero h1 { font-size: clamp(34px, 10vw, 46px); }
+    .lead { font-size: 17px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .keys { height: 150px; padding-inline: 6px; }
+    .keys::before { left: 6px; right: 6px; }
+    .k.b { height: 82px; }
+    .k.x2 { display: none; }       /* one octave and a bit on a phone */
+    .k.w { font-size: 11px; }
+    section { padding-block: 60px; }
+    .programme { padding: 26px 16px 8px; }
+    .item { grid-template-columns: 34px minmax(0, 1fr); gap: 4px 12px; }
+    .item .p { grid-column: 2; text-align: right; }
+    .item b { font-size: 21px; }
+    .facts li { grid-template-columns: 88px minmax(0, 1fr); }
+    .shots { gap: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nh { transition: none; } }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+
+<header class="hero staffpaper">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">מאיה לב</span><small>פסנתר · גיטרה</small></div>
+      <a href="#" data-wa="היי מאיה, הגעתי מהאתר ויש לי שאלה על שיעורי נגינה">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <p class="tag mono">כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים</p>
+        <h1><span data-edit="h1a">שיעורי פסנתר וגיטרה,</span> <em data-edit="h1b">מהשיר שאתם אוהבים</em></h1>
+        <p class="lead">לומדים לנגן את מה שבא לכם לשמוע, וקוראים תווים בדרך. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.</p>
+        <div class="ctas">
+          <button class="btn btn-felt" type="button" data-open-bot>לקבוע שיעור ניסיון</button>
+          <a class="btn btn-line" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
+        </div>
+      </div>
+      <div class="score" aria-live="polite">
+        <svg viewBox="0 0 420 150" role="img" aria-label="חמשה. התו שמנגנים מופיע עליה.">
+          <g stroke="#c9ccd3" stroke-width="1.4">
+            <line x1="20" y1="40" x2="404" y2="40"/><line x1="20" y1="54" x2="404" y2="54"/><line x1="20" y1="68" x2="404" y2="68"/><line x1="20" y1="82" x2="404" y2="82"/><line x1="20" y1="96" x2="404" y2="96"/>
+          </g>
+          <!-- treble clef, drawn -->
+          <path d="M52 112 c-10 0 -12 -12 -4 -14 c8 -2 10 10 2 12 M50 110 C46 70 70 60 66 34 C64 20 52 24 54 38 C58 66 34 70 36 88 C38 104 62 104 64 88 C66 74 48 72 46 84" fill="none" stroke="#15161a" stroke-width="2.6" stroke-linecap="round"/>
+          <text x="86" y="62" font-family="David Libre, serif" font-size="22" fill="#15161a">4</text>
+          <text x="86" y="90" font-family="David Libre, serif" font-size="22" fill="#15161a">4</text>
+          <line x1="404" y1="40" x2="404" y2="96" stroke="#15161a" stroke-width="2"/>
+          <g id="notes"></g>
+        </svg>
+        <div class="cap mono"><span id="last">נגנו על הקלידים למטה</span><b id="name"></b></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap kb-wrap">
+    <div class="kb-label mono"><span>נסו לנגן ↓</span><span id="sound">צליל קצר, בלי הקלטה</span></div>
+    <div class="keys" id="keys" role="group" aria-label="קלידים לנגינה"></div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה לומדים</h2><span class="mono">מחירים לדוגמה · לשיעור של 45 דקות · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="programme">
+        <button class="item" type="button" data-instrument="פסנתר"><span class="no">I</span><span><b>פסנתר לילדים</b><span class="d">מגיל 6. שירים מוכרים, שתי ידיים, וקריאת תווים בקצב של הילד.</span></span><span class="p">150 ₪<small>לשיעור</small></span></button>
+        <button class="item" type="button" data-instrument="גיטרה"><span class="no">II</span><span><b>גיטרה</b><span class="d">מגיל 8. אקורדים ראשונים, פריטה וליווי לשירים. אפשר להתחיל עם גיטרה מושאלת.</span></span><span class="p">150 ₪<small>לשיעור</small></span></button>
+        <button class="item" type="button" data-who="מבוגר/ת"><span class="no">III</span><span><b>מבוגרים שתמיד רצו</b><span class="d">מתחילים מאפס או חוזרים אחרי שנים. בלי מבחנים, בקצב שלכם.</span></span><span class="p">170 ₪<small>לשיעור</small></span></button>
+        <button class="item" type="button" data-level="ממשיכים"><span class="no">IV</span><span><b>ממשיכים ומגמת מוזיקה</b><span class="d">תיאוריה, שמיעה והכנה לרסיטל או לבחינה.</span></span><span class="p">180 ₪<small>לשיעור</small></span></button>
+        <div class="prog-foot"><span><b>שיעור ניסיון:</b> 30 דקות, להכיר ולבדוק מה מתאים.</span><span><b>סוף שנה:</b> רסיטל קטן לתלמידים ולמשפחות.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="staffpaper" style="padding-top:40px">
+    <div class="wrap">
+      <div class="head"><h2>מי מלמדת</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="teacher">
+        <div class="portrait-card">
+          <figure class="ps" data-slot="portrait" data-src="../shared/photos/music-portrait.webp" data-alt="מורה לנגינה ליד הפסנתר" data-pos="50 30" data-icon="person" data-label="תמונה שלכם"></figure>
+          <b data-edit="t-name">מאיה לב</b>
+          <span data-edit="t-role">מורה לפסנתר ולגיטרה · 14 שנה</span>
+        </div>
+        <div>
+          <ul class="facts">
+            <li><b>שיעור</b><span data-edit="f1">45 דקות, פעם בשבוע. מבוגרים יכולים גם פעם בשבועיים</span></li>
+            <li><b>איפה</b><span data-edit="f2">בסטודיו בכרכור, או אצלכם בבית</span></li>
+            <li><b>כלים</b><span data-edit="f3">פסנתר, קלידים וגיטרה אקוסטית או קלאסית</span></li>
+            <li><b>בבית</b><span data-edit="f4">אחרי כל שיעור, הקלטה קצרה של מה לתרגל</span></li>
+          </ul>
+          <div class="shots">
+            <figure><div class="ps" data-slot="studio" data-src="../shared/photos/music-studio.webp" data-alt="גיטרה ועמוד תווים בסטודיו" data-icon="home" data-label="הסטודיו"></div><figcaption data-edit="c1">הסטודיו בכרכור</figcaption></figure>
+            <figure><div class="ps" data-slot="lesson" data-src="../shared/photos/music-lesson.webp" data-alt="ידיים על קלידי הפסנתר" data-icon="camera" data-label="תמונה משיעור"></div><figcaption data-edit="c2">שיעור פסנתר</figcaption></figure>
+          </div>
+          <ol class="steps">
+            <li><div><b>שיעור ניסיון</b><span>מכירים, מנגנים קצת, ובודקים איזה כלי מתאים.</span></div></li>
+            <li><div><b>שיר ראשון</b><span>בוחרים שיר שאוהבים, ומנגנים אותו כבר בחודש הראשון.</span></div></li>
+            <li><div><b>רסיטל בסוף השנה</b><span>מי שרוצה מנגן מול המשפחה. מי שלא, מקליט בבית.</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה המורה רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>ההורה או התלמיד עונים על כמה שאלות</b><span>איזה כלי, לאיזה גיל, ניסיון קודם ואיפה לומדים.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זה ילד בן 7 שמתחיל או מבוגר שחוזר לנגן.</span></div></li>
+          <li><div><b>חוזרים וקובעים שיעור ניסיון</b><span>הצ׳אט עונה גם כשאתם באמצע שיעור.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שירן כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מורה לנגינה)
+כלי: פסנתר
+מי לומד: ילד/ה, 6 עד 9
+ניסיון: מתחילים מאפס
+איפה: בסטודיו
+שם: שירן כהן
+טלפון: 052-7654321<time>19:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למורה</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>מאיה לב · דף לדוגמה, העסק בדוי</span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "music" });
+
+  /* ---- the keyboard: two octaves from middle C, a short sound, and the note on the staff ---- */
+  (function () {
+    const NAMES = ["דו", "רה", "מי", "פה", "סול", "לה", "סי"];
+    const WHITE_SEMI = [0, 2, 4, 5, 7, 9, 11];
+    const keys = document.getElementById("keys"), notes = document.getElementById("notes");
+    const lastEl = document.getElementById("last"), nameEl = document.getElementById("name");
+    const whites = 14; keys.style.setProperty("--whites", whites);
+    let ctx = null, played = [];
+    const freq = (semi) => 261.63 * Math.pow(2, semi / 12);
+    function sound(f) {
+      try {
+        ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+        const t = ctx.currentTime, g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
+        g.connect(ctx.destination);
+        [[1, "triangle", 1], [2, "sine", 0.35]].forEach(([m, type, v]) => {
+          const o = ctx.createOscillator(), og = ctx.createGain(); o.type = type; o.frequency.value = f * m; og.gain.value = v;
+          o.connect(og); og.connect(g); o.start(t); o.stop(t + 1.45);
+        });
+      } catch (e) { /* no sound is fine */ }
+    }
+    // staff position: E4 on the bottom line (y=96), each step of the scale is half a line gap (7px)
+    function show(step, sharp, label) {
+      const y = 96 - (step - 2) * 7;
+      played.push({ y, sharp, step }); if (played.length > 8) played.shift();
+      notes.innerHTML = played.map((n, i) => {
+        const x = 130 + i * 34;
+        const ledger = n.step <= 0 ? `<line x1="${x - 13}" x2="${x + 13}" y1="110" y2="110" stroke="#15161a" stroke-width="1.6"/>` : n.step >= 12 ? `<line x1="${x - 13}" x2="${x + 13}" y1="26" y2="26" stroke="#15161a" stroke-width="1.6"/>` : "";
+        const acc = n.sharp ? `<text x="${x - 22}" y="${n.y + 6}" font-size="18" fill="#15161a">♯</text>` : "";
+        const last = i === played.length - 1;
+        return `${ledger}${acc}<ellipse class="nh" cx="${x}" cy="${n.y}" rx="8.5" ry="6.2" transform="rotate(-18 ${x} ${n.y})" fill="${last ? "#8e2236" : "#15161a"}"/><line x1="${x + 8}" y1="${n.y}" x2="${x + 8}" y2="${n.y - 34}" stroke="${last ? "#8e2236" : "#15161a"}" stroke-width="1.8"/>`;
+      }).join("");
+      lastEl.textContent = "ניגנתם:"; nameEl.textContent = label;
+    }
+    function press(btn) {
+      sound(freq(+btn.dataset.semi)); show(+btn.dataset.step, btn.dataset.sharp === "1", btn.getAttribute("aria-label"));
+      btn.classList.add("on"); setTimeout(() => btn.classList.remove("on"), 180);
+    }
+    for (let i = 0; i < whites; i++) {
+      const oct = Math.floor(i / 7), d = i % 7, b = document.createElement("button");
+      b.type = "button"; b.className = "k w" + (i >= 10 ? " x2" : "");
+      b.dataset.semi = oct * 12 + WHITE_SEMI[d]; b.dataset.step = i; b.setAttribute("aria-label", NAMES[d]);
+      if (d === 0) b.textContent = "דו";
+      keys.appendChild(b);
+    }
+    // black keys sit between whites: after דו, רה, פה, סול, לה
+    for (let i = 0; i < whites - 1; i++) {
+      const d = i % 7; if (![0, 1, 3, 4, 5].includes(d)) continue;
+      const oct = Math.floor(i / 7), b = document.createElement("button");
+      b.type = "button"; b.className = "k b" + (i >= 9 ? " x2" : "");
+      b.dataset.semi = oct * 12 + WHITE_SEMI[d] + 1; b.dataset.step = i; b.dataset.sharp = "1";
+      b.setAttribute("aria-label", NAMES[d] + " דיאז");
+      b.style.left = `calc(10px + (100% - 20px) / ${whites} * ${i + 1})`;
+      keys.appendChild(b);
+    }
+    keys.addEventListener("pointerdown", (e) => { const b = e.target.closest(".k"); if (b) { e.preventDefault(); press(b); } });
+    keys.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest(".k")) { e.preventDefault(); press(e.target.closest(".k")); } });
+    // on a phone only the first ten white keys show, so the black keys follow that width
+    const mq = matchMedia("(max-width: 620px)");
+    function fit() { const n = mq.matches ? 10 : 14; keys.style.setProperty("--whites", n);
+      keys.querySelectorAll(".k.b").forEach((b) => { const i = +b.dataset.step; b.style.left = `calc(${mq.matches ? 6 : 10}px + (100% - ${mq.matches ? 12 : 20}px) / ${n} * ${i + 1})`; }); }
+    fit(); mq.addEventListener ? mq.addEventListener("change", fit) : mq.addListener(fit);
+  })();
+
+  const PRICE = { "פסנתר": "150", "גיטרה": "150", "עוד לא בטוחים": "150 עד 170" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "מאיה · פסנתר וגיטרה", subtitle: "עונה מיד, גם באמצע שיעור", initial: "מ", launcher: "לקבוע שיעור ניסיון",
+    greet: "היי, כאן מאיה.\nכמה שאלות קצרות, ואחזור אליכם לקבוע שיעור ניסיון.",
+    steps: [
+      { key: "instrument", label: "כלי", ask: "על מה רוצים לנגן?", chips: ["פסנתר", "גיטרה", "עוד לא בטוחים"] },
+      { key: "who", label: "מי לומד", ask: "מי לומד?", chips: ["ילד/ה, 6 עד 9", "ילד/ה, 10 עד 14", "נוער", "מבוגר/ת"] },
+      { key: "level", label: "ניסיון", ask: "יש ניסיון קודם?", chips: ["מתחילים מאפס", "מנגנים קצת", "ממשיכים"] },
+      { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: ["בסטודיו", "אצלנו בבית"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור של 45 דקות עולה בדרך כלל ${d.who === "מבוגר/ת" ? "170" : PRICE[d.instrument] || "150"} ₪. מתחילים בשיעור ניסיון של 30 דקות.\nלחצו למטה, ואחזור אליכם לקבוע.`,
+    summary: (d) => `פנייה מהאתר (דמו מורה לנגינה)\nכלי: ${d.instrument}\nמי לומד: ${d.who}\nניסיון: ${d.level}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-instrument]").forEach((b) => b.addEventListener("click", () => bot.open({ instrument: b.dataset.instrument })));
+  document.querySelectorAll("[data-who]").forEach((b) => b.addEventListener("click", () => bot.open({ who: b.dataset.who })));
+  document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => bot.open({ level: b.dataset.level })));
+</script>
+</body>
+</html>
