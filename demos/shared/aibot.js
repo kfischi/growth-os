@@ -73,12 +73,12 @@
     if (/התחייב|לבטל|דומיין|על שם/.test(t))
       return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק בהודעה של 30 יום. הדומיין והאחסון רשומים על שמכם ונשארים שלכם, והמענה האוטומטי והנציג פועלים כל עוד יש תשלום חודשי.";
     if (/דבר|שיחה|כפיר|וואטסאפ|טלפון|רוצה|מעוניין|מעוניינת|להתחיל/.test(t))
-      return "בשמחה. לחצו כאן, וההודעה תגיע לכפיר בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
-    return "אני יכול לספר על החבילות והמחירים, להראות דף לדוגמה לתחום שלכם, או להעביר אתכם לכפיר בוואטסאפ. מה מעניין אתכם?";
+      return "בשמחה. לחצו כאן, וההודעה תגיע אלינו בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
+    return "אני יכול לספר על החבילות והמחירים, להראות דף לדוגמה לתחום שלכם, או להעביר אתכם לשיחה בוואטסאפ. מה מעניין אתכם?";
   }
   function summary(history) {
     const said = history.filter((m) => m.role === "user").map((m) => m.content).slice(-3).join(" · ");
-    return ("היי כפיר, הגעתי מהאתר. " + said).slice(0, 400);
+    return ("היי, הגעתי מהאתר. " + said).slice(0, 400);
   }
 
   const AiBot = {
@@ -90,7 +90,7 @@
       launch.append(el("span", "ab-spark", "AI"), el("span", "ab-label", cfg.launcher || "שאלו את הנציג החכם"));
       const panel = el("section", "ab-panel"); panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "נציג חכם");
       const head = el("div", "ab-head");
-      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של כפיר"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
+      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של נחיתה רכה"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
       const mode = el("span", "ab-mode", "AI");
       const x = el("button", "ab-x", "×"); x.type = "button"; x.setAttribute("aria-label", "סגירה");
       head.append(meta, mode, x);
@@ -101,12 +101,12 @@
       const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); input.maxLength = 600; input.autocomplete = "off";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
-      const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, וכפיר עונה על כל השאר בוואטסאפ.");
+      const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, ועל כל השאר עונים בוואטסאפ.");
       panel.append(head, body, chips, form, note);
       document.body.append(launch, panel);
 
       const history = []; let busy = false, started = false, offline = false;
-      (cfg.chips || ["כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "איך זה עובד?", "אני רוצה לדבר עם כפיר"]).forEach((q) => {
+      (cfg.chips || ["כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "איך זה עובד?", "אני רוצה שיחת היכרות"]).forEach((q) => {
         const b = el("button", null, q); b.type = "button"; b.addEventListener("click", () => ask(q)); chips.appendChild(b);
       });
 
@@ -120,7 +120,7 @@
           let a;
           if (kind === "demo" && DEMOS[arg]) { a = el("a", null, "לדמו: " + DEMOS[arg]); a.href = (cfg.base || "") + arg + "/"; }
           else if (kind === "pricing") { a = el("a", null, "למחירון"); a.href = cfg.pricingHref || "#pricing"; a.addEventListener("click", close); }
-          else if (kind === "whatsapp") { a = el("a", "wa", cfg.waLabel || "לשלוח לכפיר בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
+          else if (kind === "whatsapp") { a = el("a", "wa", cfg.waLabel || "לשלוח בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
           if (a) row.appendChild(a);
         });
         if (row.children.length) { body.insertBefore(row, typing); body.scrollTop = body.scrollHeight; }
@@ -144,7 +144,7 @@
           } catch (e) { goOffline(); }
         }
         if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + " [[whatsapp:" + text + "]]"
-          // A business's own chat (endpoint set) must never fall back to כפיר's sales script.
+          // A business's own chat (endpoint set) must never fall back to the sales script above.
           : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + text + "]]"
           : scripted(text, history); }
         typing.classList.remove("on");
@@ -155,7 +155,7 @@
 
       function open() {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
-        if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של כפיר. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
+        if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של נחיתה רכה. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
         input.focus();
       }
       function close() { panel.classList.remove("open"); launch.setAttribute("aria-expanded", "false"); }

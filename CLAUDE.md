@@ -26,6 +26,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 ## House rules for anything a client or prospect sees
 
 - **Hebrew:** correct, short and plain. No spelling mistakes. Address the reader in plural (`אתם`) unless you know who it is.
+- **The brand speaks, not a person.** The site, the demos and the AI chat speak as נחיתה רכה, in plural ("אנחנו", "נחזור אליכם"). Never put Kfir's name, or a first-person "I" for the studio, on anything a visitor sees. (A fictional demo business may speak as its own owner.) Outreach messages Kfir sends himself are the exception.
 - **No overpromising.** Never promise "double your clients". The promise is "no enquiry gets lost".
 - **No yellow** in any palette. Aim for modern and premium, not cheap.
 - **Mobile first and RTL.** Every page passes `node scripts/qa-page.cjs <dir> [page]` before it ships.
