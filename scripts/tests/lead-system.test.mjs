@@ -5,7 +5,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [] };
+const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 const DEF = {
   ls_clients: { package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", tpl_owner_reminder: "owner_reminder", tpl_monthly_report: "monthly_report", auto_reply: true, owner_alerts: true, reminders: true, monthly_report: true, remind_after_min: 60, work_start: 8, work_end: 20, work_days: [0,1,2,3,4,5] },
@@ -30,6 +30,12 @@ globalThis.fetch = async (url, opt = {}) => {
     return res({ messages: [{ id: "wamid." + sent.length }] }); }
   if (u.host === "api.anthropic.com") return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "end_turn", content: [{ type: "text", text: aiReply }], usage: { input_tokens: 1, output_tokens: 1 } });
   assert.equal(u.host, "x.supabase.co"); assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "db call has a timeout"); assert.ok(!opt.headers.authorization);
+  if (u.pathname === "/rest/v1/rpc/ls_add_visit") { // the SQL function in 0003_reports.sql
+    const b = JSON.parse(opt.body); assert.match(b.p_day, /^\d{4}-\d{2}-\d{2}$/);
+    const row = T.ls_visits.find((v) => v.client_slug === b.p_slug && v.day === b.p_day && v.source === b.p_source);
+    if (row) row.visits++; else T.ls_visits.push({ client_slug: b.p_slug, day: b.p_day, source: b.p_source, visits: 1 });
+    return new Response(null, { status: 204 });
+  }
   const table = u.pathname.split("/").pop(); const rows = T[table]; assert.ok(rows, table);
   const filters = []; let order, limit;
   for (const [k, v] of u.searchParams) {
@@ -196,4 +202,48 @@ assert.equal(lib.israeliPhone("12345"), null);
 const mr = lib.monthRange("2026-07"); assert.equal(mr.start, "2026-07-01T00:00:00+03:00"); assert.equal(mr.end, "2026-08-01T00:00:00+03:00");
 assert.equal(lib.monthRange("2026-12").end, "2027-01-01T00:00:00+02:00");
 assert.equal(lib.monthRange(null, new Date("2026-10-01T08:00:00Z")).key, "2026-09");
+// --- visits: a number per day and source, only from the business's own site, once per visitor
+const visit = (await import(F + "visit.mjs")).default;
+const vreq = (slug, { origin = "https://oren.co.il", ip = "5.5.5.5", ua = "Mozilla/5.0 (iPhone)", body = {} } = {}) => visit(new Request("https://service-pro-web.netlify.app/api/visit/" + slug, {
+  method: "POST", body: JSON.stringify(body), headers: { "content-type": "text/plain", origin, "user-agent": ua, "x-nf-client-connection-ip": ip } }), ctx(slug));
+const today = lib.israelDay();
+const count = (src) => (T.ls_visits.find((v) => v.client_slug === "oren" && v.day === today && v.source === src) || {}).visits || 0;
+r = await vreq("oren", { body: { page: "https://oren.co.il/", referrer: "https://www.google.com/" } }); assert.equal(r.status, 204);
+assert.equal(count("google.com"), 1, "a visit from Google");
+await vreq("oren", { body: { page: "https://oren.co.il/", referrer: "https://www.google.com/" } }); assert.equal(count("google.com"), 1, "the same visitor again is not a new visit");
+await vreq("oren", { ip: "6.6.6.6", ua: "Googlebot/2.1", body: {} }); assert.equal(count("direct"), 0, "bots don't count");
+await vreq("oren", { ip: "7.7.7.7", origin: "https://evil.com" }); assert.equal(count("direct"), 0, "another site can't add visits");
+await vreq("off", { ip: "8.8.8.8", origin: "https://service-pro-web.netlify.app" }); assert.ok(!T.ls_visits.some((v) => v.client_slug === "off"), "a paused business isn't counted");
+await vreq("nope", { ip: "8.8.8.9" });
+await vreq("oren", { ip: "9.9.9.9", body: { page: "https://oren.co.il/?utm_source=facebook", referrer: "https://oren.co.il/", source: "facebook" } }); assert.equal(count("facebook"), 1, "utm_source wins over the site's own pages");
+await vreq("oren", { ip: "9.9.9.10", origin: "https://service-pro-web.netlify.app", body: { page: "https://service-pro-web.netlify.app/plumber/", referrer: "" } }); assert.equal(count("direct"), 1);
+assert.ok(!JSON.stringify(T.ls_visits).includes("5.5.5.5"), "no IP is stored");
+
+// --- the monthly report: visits, leads, outside working hours, handled, where from
+T.ls_visits.push({ client_slug: "oren", day: "2026-07-03", source: "google.com", visits: 40 }, { client_slug: "oren", day: "2026-07-20", source: "direct", visits: 20 }, { client_slug: "oren", day: "2026-08-01", source: "direct", visits: 999 });
+const jl = (name, at, extra = {}) => T.ls_leads.push({ ...DEF.ls_leads(), client_slug: "oren", name, phone: "0500000000", phone_intl: "972500000000", source: "google.com", auto_reply: "sent", created_at: at, ...extra });
+jl("ביום", "2026-07-07T07:00:00Z", { status: "handled", handled_at: "2026-07-07T07:20:00Z" }); // Tuesday 10:00 in Israel
+jl("בלילה", "2026-07-07T21:30:00Z");                                                          // Wednesday 00:30
+jl("בשבת", "2026-07-11T08:00:00Z", { status: "won", handled_at: "2026-07-12T06:00:00Z", source: "facebook" }); // Saturday
+const sentBefore = sent.length;
+const rep = await lib.buildReport(T.ls_clients[0], "2026-07");
+assert.equal(rep.visits, 60, "only July's visits"); assert.equal(rep.total, 3); assert.equal(rep.afterHours, 2, "the night and the Saturday leads");
+assert.equal(rep.handled, 2); assert.equal(rep.open, 1); assert.equal(rep.conversion, 5, "3 leads of 60 visits"); assert.equal(rep.autoAnswered, 3);
+const mt = sent.slice(sentBefore).find((m) => m.template && m.template.name === "monthly_report");
+assert.deepEqual(mt.template.components[0].parameters.map((p) => p.text), ["יולי 2026", "60", "3", "2", "2", "גוגל"]);
+
+// --- the weekly update, for owners who asked for it
+T.ls_clients[0].weekly_report = true;
+T.ls_visits.push({ client_slug: "oren", day: "2026-07-08", source: "direct", visits: 15 }, { client_slug: "oren", day: "2026-07-12", source: "direct", visits: 7 }); // inside the week, and the next day
+let wk = await lib.runWeeklyReports(new Date("2026-07-12T06:00:00Z")); // Sunday morning: the week of 5 to 11 July
+assert.equal(wk.length, 1); assert.equal(wk[0].sent, "sent");
+const wt = sent.at(-1); assert.equal(wt.template.name, "weekly_report");
+assert.deepEqual(wt.template.components[0].parameters.map((p) => p.text), ["15", "3", "2", "1"], "visits, leads, outside working hours, still waiting");
+T.ls_clients[0].weekly_report = false;
+wk = await lib.runWeeklyReports(new Date("2026-07-12T06:00:00Z")); assert.equal(wk.length, 0, "off unless asked for");
+
+// --- the panel shows this month so far
+r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+assert.ok(out.month && out.month.visits >= 3 && typeof out.month.afterHours === "number", JSON.stringify(out.month));
+
 console.log("all lead system tests passed");

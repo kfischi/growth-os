@@ -306,19 +306,76 @@ export function summarise(leads) {
   };
 }
 
+/* ---------------- visits ---------------- */
+
+// The date in Israel, YYYY-MM-DD.
+export function israelDay(date = new Date()) {
+  const t = israelTime(date);
+  return `${t.year}-${String(t.month).padStart(2, "0")}-${String(t.date).padStart(2, "0")}`;
+}
+
+// One visit: a number for the day and the source, nothing about the person.
+export async function recordVisit(client, input, now = new Date()) {
+  let source = sourceOf(input);
+  try { // a click from one page of the site to another is not a new source
+    if (input.referrer && input.page && new URL(input.referrer).host === new URL(input.page).host) source = clip(input.source, 40).toLowerCase() || "direct";
+  } catch { /* bad URL: keep what we have */ }
+  await db("POST", "rpc/ls_add_visit", { p_slug: client.slug, p_day: israelDay(now), p_source: source || "direct" });
+}
+
+/* ---------------- what a period brought: the monthly report, the weekly update and the panel ---------------- */
+
+// From start (inclusive) to end (exclusive), both ISO strings with their offset.
+export async function periodStats(client, start, end) {
+  const [leads, visits] = await Promise.all([
+    db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&created_at=gte.${q(start)}&created_at=lt.${q(end)}&select=status,source,channel,created_at,handled_at,auto_reply&limit=5000`),
+    db("GET", `ls_visits?client_slug=eq.${q(client.slug)}&day=gte.${israelDay(new Date(start))}&day=lt.${israelDay(new Date(end))}&select=visits,source&limit=5000`),
+  ]);
+  const base = summarise(leads);
+  const visitCount = visits.reduce((n, v) => n + (v.visits || 0), 0);
+  return {
+    ...base,
+    visits: visitCount,
+    // The leads that would have been missed: they came when the business was closed.
+    afterHours: leads.filter((l) => !inWorkingHours(client, new Date(l.created_at))).length,
+    autoAnswered: leads.filter((l) => l.auto_reply === "sent").length,
+    open: base.byStatus.new || 0,
+    conversion: visitCount ? Math.round((leads.length / visitCount) * 1000) / 10 : null, // % of visits that became a lead
+  };
+}
+
 export async function buildReport(client, month, { send = true, now = new Date() } = {}) {
   const r = monthRange(month, now);
-  const leads = await db("GET",
-    `ls_leads?client_slug=eq.${q(client.slug)}&created_at=gte.${q(r.start)}&created_at=lt.${q(r.end)}&select=status,source,channel,created_at,handled_at&limit=5000`);
-  const data = { month: r.key, label: r.label, ...summarise(leads) };
+  const data = { month: r.key, label: r.label, ...(await periodStats(client, r.start, r.end)) };
   let sent = "off";
   if (send && client.monthly_report && client.active) {
+    // monthly_report: {{1}} month, {{2}} visits, {{3}} leads, {{4}} outside working hours, {{5}} handled, {{6}} top source
     sent = await sendTemplate(client, client.owner_phone, client.tpl_monthly_report,
-      [r.label, String(data.total), String(data.handled), data.topSource ? sourceHe(data.topSource) : "-"], { kind: "report" });
+      [r.label, String(data.visits), String(data.total), String(data.afterHours), String(data.handled), data.topSource ? sourceHe(data.topSource) : "-"], { kind: "report" });
   }
   await db("POST", "ls_reports?on_conflict=client_slug,month", { client_slug: client.slug, month: r.first, data, sent }, "resolution=merge-duplicates");
   return { ...data, sent };
 }
+
+// The weekly update, for owners who asked for it (ls_clients.weekly_report): the seven days that just ended.
+export async function runWeeklyReports(now = new Date()) {
+  const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&weekly_report=eq.true&select=*");
+  const end = new Date(`${israelDay(now)}T00:00:00${israelOffset(now)}`), start = new Date(end - 7 * 86_400_000);
+  const out = [];
+  for (const c of clients) {
+    try {
+      const d = await periodStats(c, start.toISOString(), end.toISOString());
+      // weekly_report: {{1}} visits, {{2}} leads, {{3}} outside working hours, {{4}} still waiting
+      const sent = await sendTemplate(c, c.owner_phone, c.tpl_weekly_report || "weekly_report",
+        [String(d.visits), String(d.total), String(d.afterHours), String(d.open)], { kind: "weekly" });
+      out.push({ client: c.slug, sent, visits: d.visits, total: d.total });
+    } catch (e) { console.error("weekly", c.slug, e.message); out.push({ client: c.slug, error: e.message }); }
+  }
+  return out;
+}
+
+const israelOffset = (date) => new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Jerusalem", timeZoneName: "longOffset" })
+  .formatToParts(date).find((p) => p.type === "timeZoneName").value.replace("GMT", "") || "+02:00";
 
 export async function runMonthlyReports(month, now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&select=*");

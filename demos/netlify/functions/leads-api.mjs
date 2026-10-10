@@ -1,10 +1,10 @@
 // Netlify Function: the owner's panel (demos/panel/) reads and updates leads here.
 // Authorization: Bearer <slug>:<key>   (the owner, sees only their business)
 //                Bearer admin:<LEADS_ADMIN_KEY>   (כפיר, picks a business with ?client=<slug>)
-// GET   /api/leads?client=<slug>&days=90     -> { client, leads, messages }
+// GET   /api/leads?client=<slug>&days=90     -> { client, leads, messages, month }   month: this month so far
 // PATCH /api/leads  { id, status?, note? }   -> { lead }
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
-import { json, configured, db, q, getClient, authorise, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE } from "../lib/leads.mjs";
+import { json, configured, db, q, getClient, authorise, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
 const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
@@ -49,7 +49,14 @@ export default async (req) => {
       const messages = ids.length
         ? await db("GET", `ls_messages?lead_id=in.(${ids.join(",")})&direction=eq.in&kind=eq.inbound&select=lead_id,body,created_at&order=created_at.desc&limit=300`)
         : [];
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE });
+      // This month so far: what the site brought (visits, leads, leads outside working hours). Never blocks the list.
+      let month = null;
+      try {
+        const t = israelTime(), r = monthRange(`${t.year}-${String(t.month).padStart(2, "0")}`);
+        const s = await periodStats(client, r.start, r.end); // to the end of the month, so today is in
+        month = { label: r.label, visits: s.visits, leads: s.total, afterHours: s.afterHours, handled: s.handled, open: s.open, conversion: s.conversion };
+      } catch (e) { console.error("panel stats", e.message); }
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month });
     }
 
     if (req.method === "PATCH") {

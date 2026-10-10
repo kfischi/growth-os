@@ -64,7 +64,8 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 
 - `POST /api/lead/<slug>` (`lead.mjs`): stores the enquiry, answers the lead from the business's number, alerts the owner with a "טיפלתי" button. Any answer but `{ ok: true }` means the page falls back to opening WhatsApp.
 - `/api/wa-webhook`: delivery statuses, the owner's "טיפלתי", replies from leads. Verified with `WA_APP_SECRET`.
-- `reminders.mjs` (every 15 minutes) and `monthly-report.mjs` (the 1st of the month): scheduled.
+- `reminders.mjs` (every 15 minutes), `monthly-report.mjs` (the 1st of the month) and `weekly-report.mjs` (Sunday morning, only where `weekly_report = true`): scheduled.
+- Reports: `POST /api/visit/<slug>` (`visit.mjs`, sent once per visit by `LeadForm.visit`) counts visits per day and source in `ls_visits` (`0003_reports.sql`), with no IP, no cookie and nothing identifying. The monthly report, the weekly update and the owner's panel show visits, leads, leads outside working hours, handled, and the top source. Never promise more clients in them; the point is "nothing got lost".
 - `/panel/` with `/api/leads`: the owner's panel. Owners log in with a key made by `scripts/lead-system/new-client.mjs`; only its hash is stored.
 - `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
 - Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.

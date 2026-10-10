@@ -313,6 +313,7 @@
     },
   });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
+  LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
 </script>
 </body>
 </html>

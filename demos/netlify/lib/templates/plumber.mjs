@@ -295,6 +295,7 @@ ${video ? `<script>${REEL_JS}</script>
     } : undefined,
   });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button")) bot.open(); }));
+  if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
 </script>
 </body>
 </html>
@@ -323,7 +324,7 @@ ${body}
 
   const privacy = legal("פרטיות", `
 <h2>מה אנחנו אוספים</h2>
-<p>כשפותחים קריאה בצ׳אט: שם, טלפון, סוג השירות, הדחיפות והישוב. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>
+<p>כשפותחים קריאה בצ׳אט: שם, טלפון, סוג השירות, הדחיפות והישוב. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>${leads ? "\n<p>אנחנו סופרים כמה פעמים נכנסו לאתר ומאיפה, כמספר בלבד: בלי עוגיות, בלי כתובת IP ובלי שום פרט שמזהה אתכם.</p>" : ""}
 
 <h2>למה</h2>
 <p>רק כדי לחזור אליכם בעניין הקריאה${leads ? ", לשלוח לכם אישור בוואטסאפ" : ""} ולתאם את העבודה. לא שולחים לכם פרסומות, ולא מוכרים או מעבירים את הפרטים לאף אחד לצורך שיווק.</p>
