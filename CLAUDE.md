@@ -79,6 +79,7 @@ A paying client gets a real site in `clients/<slug>/`, copied from the trade dem
 
 ## Checks
 
+- **Everything at once, before every PR:** `bash scripts/check-all.sh`. It runs qa-page on every demo and client page, the Hebrew lint, every demo chat to its WhatsApp handoff on phone and desktop (`scripts/tests/demo-chats.cjs`), the lead system end to end against fakes (`scripts/tests/lead-system.test.mjs`), the function bundles and lint.
 - Hebrew copy: `node scripts/hebrew-copy-lint.cjs <file-or-dir>` flags AI-sounding and bureaucratic Hebrew.
 - Static pages: `node scripts/qa-page.cjs <dir> [page-path]`. Needs Playwright: `npm i -D playwright && npx playwright install chromium`.
 - Next app: `npm run lint` and `npm run typecheck`. ESLint ignores `demos/**` and `clients/**`.
