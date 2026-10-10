@@ -6,6 +6,8 @@ import { SAMPLE } from "./builder-sample.mjs";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 
 import { T, storage, sentWa, aiCalls, ai, gh, DEF } from "./builder-fakes.mjs";
+// What the model was told about the draft in its last turn.
+const aiCallsState = () => { const m = aiCalls.at(-1).messages.at(-1).content; return typeof m === "string" ? m : m[0].text; };
 
 
 const builder = (await import(F + "builder.mjs")).default;
@@ -129,6 +131,34 @@ for (const slot of ["work2", "work3"]) await req("photo", { method: "DELETE", qu
 assert.equal(storage.size, 2);
 r = await J(await req("photo", { method: "DELETE", query: "?slot=work1" })); assert.equal(Object.keys(D.photos).length, 1); assert.equal(storage.size, 1);
 r = await J(await req("photo", { raw: webp, query: "?slot=work1", headers: { "x-photo-rights": "yes" } }));
+
+/* ---------------- the short video ---------------- */
+const mp4 = Buffer.concat([Buffer.from([0, 0, 0, 0x20]), Buffer.from("ftypisom"), Buffer.alloc(3000, 3)]);
+const vbody = (frame, movie) => Buffer.concat([frame, movie]);
+const vreq = (body, headers = {}) => req("video", { raw: body, headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length), ...headers } });
+r = await J(await vreq(vbody(jpg, mp4), { "x-photo-rights": "" })); assert.equal(r.error, "no_rights");
+r = await J(await vreq(vbody(jpg, Buffer.from("<html>not a video</html>".repeat(10))))); assert.equal(r.status, 415, "only an MP4");
+r = await J(await vreq(vbody(Buffer.alloc(204, 7), mp4))); assert.equal(r.status, 415, "the first frame must be a picture");
+r = await J(await vreq(vbody(jpg, mp4), { "x-poster-length": "abc" })); assert.equal(r.status, 415);
+r = await J(await vreq(vbody(jpg, Buffer.concat([mp4, Buffer.alloc(4_500_000)])))); assert.equal(r.status, 413);
+const stored = storage.size;
+r = await J(await vreq(vbody(jpg, mp4)));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.video.ext, "mp4"); assert.equal(D.video.poster.ext, "jpg"); assert.equal(storage.size, stored + 2);
+assert.match(r.state.video.src, /\/public\/builder\/drafts\/.*\/video-[0-9a-f]{12}\.mp4$/); assert.match(r.state.video.poster, /poster-.*\.jpg$/);
+assert.equal(storage.get(D.video.path).toString("ascii", 4, 8), "ftyp", "the MP4 is stored without the frame in front");
+const firstVideo = D.video.path;
+r = await J(await vreq(vbody(jpg, mp4))); assert.ok(!storage.has(firstVideo), "a replaced video is deleted"); assert.equal(storage.size, stored + 2);
+html = B.renderDraft(D);
+assert.match(html, /<figure class="reel">/); assert.match(html, /<video muted loop playsinline preload="none" poster="https:\/\/x\.supabase\.co/); assert.ok(!/<video[^>]*autoplay/.test(html), "the script decides when it plays");
+assert.match(html, /class="reel-toggle"/); assert.ok(!html.includes('class="drawing"'), "the video takes the drawing's place");
+ai.queue.push({ reply: "יופי של סרטון.", set: [{ field: "video_title", value: "פתיחת סתימה במטבח" }], services: null, towns: null });
+r = await J(await req("chat", { body: { message: "העליתי סרטון", rev: D.rev } })); assert.equal(r.status, 200);
+assert.match(aiCallsState(), /"video":true/, "the chat knows there is a video"); assert.match(B.renderDraft(D), /צילום מהשטח · פתיחת סתימה במטבח/);
+r = await J(await req("video", { method: "DELETE" })); assert.equal(D.video, null); assert.equal(storage.size, stored);
+assert.match(B.renderDraft(D), /class="drawing"/);
+r = await J(await vreq(vbody(jpg, mp4))); assert.equal(r.error, "rate_limited", "6 videos per 10 minutes from one address");
+r = await J(await req("video", { raw: vbody(jpg, mp4), ip: "3.3.3.3", headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length) } }));
+assert.ok(D.video, "back for the publish test");
 html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>מעלים ב״תמונות״/, "an empty slot is marked in the draft");
 
 /* ---------------- approve ---------------- */
@@ -186,12 +216,12 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).sort();
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
 assert.ok(!/noindex|טיוטה|class="todo"/.test(index), "no draft marks on the real site"); assert.match(index, /"leads":"https:\/\/service-pro-web.netlify.app\/api\/lead\/oren-mayim"/);
-assert.match(index, /src="assets\/photos\/portrait.jpg"/); assert.match(index, /src="assets\/leadbot.js"/);
+assert.match(index, /src="assets\/photos\/portrait.jpg"/); assert.match(index, /src="assets\/leadbot.js"/); assert.match(index, /<source src="assets\/hero.mp4" type="video\/mp4">/); assert.match(index, /poster="assets\/hero-poster.jpg"/);
 assert.ok(!file("_headers").content.includes("noindex")); assert.ok(!/0526359513|972526359513/.test(file("CLIENT.md").content), "no phone in the public repo card");
 const C = T.ls_clients.find((c) => c.slug === "oren-mayim");
 assert.ok(C && C.key_hash && C.owner_phone === "972526359513"); assert.match(C.chat_facts, /סתימה בכיור.*250 עד 450 ₪/);

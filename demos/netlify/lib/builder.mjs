@@ -22,6 +22,8 @@ export const BUCKET = "builder";
 export const MAX_MESSAGES = 80;       // stored chat messages per draft (40 turns), to cap the cost of one draft
 export const MAX_CHARS = 800;         // per owner message
 export const MAX_PHOTO_BYTES = 1_048_576;
+export const MAX_VIDEO_BYTES = 4_500_000;   // about 10 seconds at 720p; Netlify takes request bodies up to 6 MB
+export const MAX_POSTER_BYTES = 400_000;
 export const STALE_DAYS = 30;         // an unapproved draft nobody touched for this long is deleted
 
 const MODEL = process.env.BUILDER_MODEL || "claude-opus-5-5";
@@ -54,19 +56,27 @@ export async function saveDraft(d, patch) {
   return rows[0];
 }
 
-// Saves the photos only if no other upload saved in between; tries again on the fresh row.
-// Returns the saved row, or null when the draft is no longer editable.
-export async function savePhotos(id, change) {
+// Saves the photos and the video only if no other upload saved in between; tries again on the fresh row.
+// change(fresh) returns { photos?, video? }. Returns { row, before }; row is null when the draft is no longer editable.
+export async function saveMedia(id, change) {
   for (let i = 0; i < 4; i++) {
     const fresh = (await db("GET", `ls_drafts?id=eq.${q(id)}&select=*`))[0];
     if (!fresh || !["draft", "returned"].includes(fresh.status)) return { row: null, before: fresh };
-    const photos = change({ ...(fresh.photos || {}) });
-    const patch = { photos, photo_rev: fresh.photo_rev + 1 };
-    if (!fresh.photo_rights_at && Object.keys(photos).length) patch.photo_rights_at = new Date().toISOString();
+    const patch = { ...change(fresh), photo_rev: fresh.photo_rev + 1 };
+    const any = Object.keys(patch.photos || fresh.photos || {}).length || (patch.video !== undefined ? patch.video : fresh.video);
+    if (!fresh.photo_rights_at && any) patch.photo_rights_at = new Date().toISOString();
     const rows = await db("PATCH", `ls_drafts?id=eq.${q(id)}&photo_rev=eq.${fresh.photo_rev}&status=in.(draft,returned)`, patch, "return=representation");
     if (rows.length) return { row: rows[0], before: fresh };
   }
   throw new Conflict("photos changed");
+}
+
+export const savePhotos = (id, change) => saveMedia(id, (fresh) => ({ photos: change({ ...(fresh.photos || {}) }) }));
+
+// Every file a draft keeps in storage: the photos, the video and its first frame.
+export function mediaPaths(d) {
+  const v = d.video;
+  return [...Object.values(d.photos || {}).map((p) => p.path), ...(v ? [v.path, v.poster && v.poster.path] : [])].filter(Boolean);
 }
 
 export function templateOf(d) {
@@ -146,13 +156,18 @@ export function photoType(buf) {
   return null;
 }
 
+// The browser already turned the owner's video into a short MP4 (H.264, no sound). Here: is it really an MP4?
+// An MP4 starts with a box whose type, at bytes 4 to 8, is "ftyp".
+export const isMp4 = (buf) => buf.length > 12 && buf.toString("ascii", 4, 8) === "ftyp";
+
+const MIME = { webp: "image/webp", jpg: "image/jpeg", mp4: "video/mp4" };
 export async function uploadPhoto(draftId, slot, buf, ext) {
   const path = `drafts/${draftId}/${slot}-${randomBytes(6).toString("hex")}.${ext}`;
   const res = await fetch(storageUrl(`${BUCKET}/${path}`), {
     method: "POST",
-    headers: storageHeaders({ "content-type": ext === "webp" ? "image/webp" : "image/jpeg", "cache-control": "max-age=31536000", "x-upsert": "false" }),
+    headers: storageHeaders({ "content-type": MIME[ext], "cache-control": "max-age=31536000", "x-upsert": "false" }),
     body: buf,
-    signal: AbortSignal.timeout(8000),
+    signal: AbortSignal.timeout(ext === "mp4" ? 15000 : 8000),
   });
   if (!res.ok) throw new Error(`storage upload ${res.status}: ${(await res.text()).slice(0, 200)}`);
   return { path, ext };
@@ -170,7 +185,7 @@ export async function deletePhotos(paths) {
 }
 
 async function photoBytes(p) {
-  const res = await fetch(storageUrl(`${BUCKET}/${p.path}`), { headers: storageHeaders(), signal: AbortSignal.timeout(8000) });
+  const res = await fetch(storageUrl(`${BUCKET}/${p.path}`), { headers: storageHeaders(), signal: AbortSignal.timeout(15000) });
   if (!res.ok) throw new Error(`storage read ${res.status}`);
   return Buffer.from(await res.arrayBuffer());
 }
@@ -205,6 +220,7 @@ export function publicState(d) {
   return {
     id: d.id, status: d.status, template: d.template, content: d.content, missing: t.missing(d.content), checklist: checklist(t, d),
     photos: Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, photoUrl(p)])),
+    video: videoUrls(d),
     photoRights: Boolean(d.photo_rights_at), package: d.package, plan: d.plan, returnNote: d.status === "returned" ? d.return_note : null,
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
     pay: d.status === "client_approved" && d.package && !d.paid_at ? payLinks(d.package) : [],
@@ -212,10 +228,12 @@ export function publicState(d) {
   };
 }
 
+const videoUrls = (d) => (d.video ? { src: photoUrl(d.video), poster: photoUrl(d.video.poster) } : null);
+
 export function renderDraft(d) {
   const t = templateOf(d);
   const photos = Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, photoUrl(p)]));
-  return t.render(d.content, { mode: "draft", assets: "/shared/", photos })["index.html"];
+  return t.render(d.content, { mode: "draft", assets: "/shared/", photos, video: videoUrls(d) })["index.html"];
 }
 
 /* ---------------- the chat ---------------- */
@@ -256,7 +274,7 @@ Order of the conversation (skip what is already filled, see the draft state):
 3. services: what they do most, and price ranges if they want to show them.
 4. response_time: how fast they really get back to a customer. Then, in one question, the optional facts: hours, years, warranty.
 5. Propose headline_2 and intro from the facts.
-6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them.
+6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
 7. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
 After approval the content is locked; changes then go through us on WhatsApp.
 
@@ -291,7 +309,7 @@ function stateFor(d) {
   const fields = Object.fromEntries(Object.keys(t.FIELDS).map((k) => [k, d.content[k] || ""]));
   return JSON.stringify({
     fields, services: d.content.services || [], towns: d.content.towns || [],
-    photos: Object.keys(d.photos || {}), missing_required: t.missing(d.content),
+    photos: Object.keys(d.photos || {}), video: Boolean(d.video), missing_required: t.missing(d.content),
   });
 }
 
@@ -385,7 +403,8 @@ export function siteFiles(d, slug) {
   const photos = {};
   for (const [slot, p] of Object.entries(d.photos || {})) photos[slot] = `assets/photos/${slot}.${p.ext}`;
   const leads = d.package === "ai" ? `${SITE_ORIGIN}/api/lead/${slug}` : null;
-  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads });
+  const video = d.video ? { src: "assets/hero.mp4", poster: `assets/hero-poster.${d.video.poster.ext}` } : null;
+  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video });
   const card = `# ${d.content.business_name}
 
 נבנה בבונה האתרים (${t.label}), טיוטה \`${d.id}\`. פורסם: ${new Date().toISOString().slice(0, 10)}.
@@ -428,9 +447,11 @@ export async function publishToRepo(d, slug) {
     return { path: `${dir}/assets/${name}`, mode: "100644", type: "blob", sha: f.sha };
   });
 
-  const photos = await Promise.all(Object.entries(d.photos || {}).map(async ([slot, p]) => {
+  const media = Object.entries(d.photos || {}).map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
+  if (d.video) media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
+  const photos = await Promise.all(media.map(async ([p, to]) => {
     const blob = ghOk(await gh("POST", "/git/blobs", { content: (await photoBytes(p)).toString("base64"), encoding: "base64" }), "blob");
-    return { path: `${dir}/assets/photos/${slot}.${p.ext}`, mode: "100644", type: "blob", sha: blob.sha };
+    return { path: `${dir}/${to}`, mode: "100644", type: "blob", sha: blob.sha };
   }));
   const text = Object.entries(files).map(([name, content]) => ({ path: `${dir}/${name}`, mode: "100644", type: "blob", content }));
 
@@ -471,9 +492,9 @@ export async function ensureLeadClient(d, slug) {
 // Runs with the monthly report: drafts nobody approved or touched for 30 days, and their photos.
 export async function deleteStaleDrafts(now = new Date()) {
   const cutoff = new Date(now - STALE_DAYS * 86_400_000).toISOString();
-  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&paid_at=is.null&updated_at=lt.${q(cutoff)}&select=id,photos&limit=500`);
+  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&paid_at=is.null&updated_at=lt.${q(cutoff)}&select=id,photos,video&limit=500`);
   for (const r of rows) {
-    await deletePhotos(Object.values(r.photos || {}).map((p) => p.path));
+    await deletePhotos(mediaPaths(r));
     await db("DELETE", `ls_drafts?id=eq.${q(r.id)}`);
   }
   return { draftsDeleted: rows.length };

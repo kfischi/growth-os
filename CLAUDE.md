@@ -83,6 +83,7 @@ Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/b
 - The chat uses structured outputs (`output_config.format`), effort low, and fallbacks `"default"`. The history is stored as text only and only grows; the draft state goes into the last message only.
 - Extra secrets: `GITHUB_TOKEN`, fine-grained, this repo only, Contents: read and write. Optional: `PAY_URL_*`, `BUILDER_DAILY_MAX`.
 - The approval dialog in `demos/build/index.html` shows the prices. Keep it in sync with `#plans`.
+- An owner can add one short video (optional). The browser cuts 10 seconds and converts them to an H.264 MP4 with no sound, using Mediabunny (`demos/shared/vendor/`, loaded only when a video is picked). In the template it takes the drawing's place at the top. It plays only on screen, never for reduced motion or save-data, and has a pause button. Tests run the same conversion in VP9, because the test browser has no H.264 encoder.
 
 ## Client sites
 

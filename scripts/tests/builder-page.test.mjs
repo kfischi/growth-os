@@ -6,6 +6,8 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
+import os from "node:os";
+import { execFileSync } from "node:child_process";
 import { T, ai } from "./builder-fakes.mjs";
 import { SAMPLE } from "./builder-sample.mjs";
 const require = createRequire(import.meta.url);
@@ -15,7 +17,7 @@ const ROOT = path.resolve(new URL("../../demos", import.meta.url).pathname);
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 const builder = (await import(F + "builder.mjs")).default;
 const draft = (await import(F + "draft.mjs")).default;
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".webp": "image/webp", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".webp": "image/webp", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg" };
 const PORT = 8791, BASE = `http://localhost:${PORT}`;
 
 // Photos live in the fake storage; the draft points at https://x.supabase.co/..., which the browser gets from here.
@@ -37,10 +39,19 @@ const server = http.createServer(async (req, res) => {
 
 const fill = { reply: "עדכנו את כל הפרטים. תסתכלו על האתר מצד שמאל.", set: Object.entries(SAMPLE).filter(([k]) => !["services", "towns", "whatsapp"].includes(k)).map(([field, value]) => ({ field, value: String(value) })), services: SAMPLE.services, towns: SAMPLE.towns };
 
+// A 14-second portrait video, as a phone would make (VP8: the test browser can decode it).
+let clip = null;
+try {
+  clip = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "builder-")), "phone.webm");
+  execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=720x1280:rate=30", "-t", "14", "-c:v", "libvpx", "-b:v", "1M", clip]);
+} catch { clip = null; console.log("no ffmpeg: the video step is skipped"); }
+
 const b = await chromium.launch();
 let bad = 0;
 for (const [w, h] of [[390, 844], [1280, 900]]) {
   const ctx = await b.newContext({ viewport: { width: w, height: h } });
+  // The test browser has no H.264 encoder (Chrome and Safari do), so the same conversion runs with VP9.
+  await ctx.addInitScript(() => { window.NR_VIDEO_CODEC = "vp9"; });
   const p = await ctx.newPage(); const errs = [];
   p.on("pageerror", (e) => errs.push(e.message));
   p.on("console", (msg) => { if (msg.type() === "error" && !/Failed to load resource/.test(msg.text())) errs.push(msg.text()); });
@@ -48,7 +59,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   await p.route(/^https:\/\/x\.supabase\.co\/storage\/v1\/object\/public\/builder\//, (r) => {
     const key = new URL(r.request().url()).pathname.replace("/storage/v1/object/public/builder/", "");
     const buf = storage.get(key);
-    return buf ? r.fulfill({ status: 200, contentType: key.endsWith(".jpg") ? "image/jpeg" : "image/webp", body: buf }) : r.fulfill({ status: 404 });
+    return buf ? r.fulfill({ status: 200, contentType: key.endsWith(".jpg") ? "image/jpeg" : key.endsWith(".mp4") ? "video/mp4" : "image/webp", body: buf }) : r.fulfill({ status: 404 });
   });
   const check = async (what, fn) => { try { await fn(); } catch (e) { bad++; console.log(`FAIL ${w}px ${what}: ${e.message.split("\n")[0]}`); } };
   const overflow = () => p.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
@@ -93,6 +104,29 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.ok(loaded > 0, "the uploaded photo shows");
   });
 
+  if (clip) await check("a short video, cut and converted in the browser", async () => {
+    await p.setInputFiles("#vid .pick input", clip);
+    await p.waitForSelector("#videoDlg[open]");
+    await p.waitForFunction(() => !document.querySelector("#vPick").hidden, null, { timeout: 8000 });
+    assert.equal(await p.$eval("#vStart", (i) => i.max), "4", "14 seconds: the clip can start up to second 4");
+    await p.$eval("#vStart", (i) => { i.value = "2"; i.dispatchEvent(new Event("input")); });
+    await p.click("#vGo");
+    await p.waitForSelector("#vid video", { timeout: 60000 });
+    const d = T.ls_drafts.at(-1);
+    const { storage: st } = await import("./builder-fakes.mjs");
+    const movie = st.get(d.video.path);
+    assert.equal(movie.toString("ascii", 4, 8), "ftyp", "an MP4 was uploaded");
+    assert.ok(movie.length < 4_500_000, "small enough");
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), "clip-")); fs.writeFileSync(path.join(dir, "c.mp4"), movie);
+    const probe = JSON.parse(execFileSync("ffprobe", ["-v", "error", "-show_entries", "stream=codec_type,width,height:format=duration", "-of", "json", path.join(dir, "c.mp4")]).toString());
+    assert.equal(probe.streams.length, 1, "video only, no sound"); assert.equal(probe.streams[0].width, 720); assert.equal(probe.streams[0].height, 1280);
+    assert.ok(Math.abs(Number(probe.format.duration) - 10) < 0.5, "10 seconds, got " + probe.format.duration);
+    assert.ok(["jpg", "webp"].includes(d.video.poster.ext));
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator(".reel video").waitFor({ timeout: 8000 });
+    if (w < 860) await p.click("#tabChat");
+  });
+
   await check("approve", async () => {
     await p.click("#approveBox .btn");
     await p.waitForSelector("#approveDlg[open]");
@@ -111,6 +145,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.equal(await overflow(), false);
   });
   await p.screenshot({ path: `/tmp/qa-page/builder-${w}.png`, fullPage: false }).catch(() => {});
+  if (errs.length) console.log("errors:", errs.join(" | ").slice(0, 1500));
   await check("no errors", async () => assert.deepEqual(errs, []));
   await ctx.close();
 }

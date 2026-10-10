@@ -32,6 +32,7 @@ export const FIELDS = {
   work1_title: { label: "כותרת לתמונת עבודה 1", max: 34, kind: "text" },
   work2_title: { label: "כותרת לתמונת עבודה 2", max: 34, kind: "text" },
   work3_title: { label: "כותרת לתמונת עבודה 3", max: 34, kind: "text" },
+  video_title: { label: "כותרת לסרטון", max: 34, kind: "text", hint: "מה רואים בסרטון, למשל: פתיחת סתימה במטבח" },
 };
 
 export const SERVICES = {
@@ -86,10 +87,11 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @param opts.assets    prefix for leadbot.js and leadform.js ("assets/" on a site, "/shared/" for a draft)
  * @param opts.photos    { slot: url } for the slots that have a photo
  * @param opts.leads     the lead system endpoint, or null (נוכחות package, or a draft)
+ * @param opts.video     { src, poster } for the short silent video at the top, or null (then the drawing shows)
  * @param opts.now       Date, for the "updated" line
  * @returns {{ "index.html": string, "privacy.html": string, "accessibility.html": string }}
  */
-export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, now = new Date() } = {}) {
+export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, now = new Date() } = {}) {
   const draft = mode === "draft";
   if (!draft) {
     const m = missing(c);
@@ -196,7 +198,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
         ${facts}
       </div>
     </div>
-    ${DRAWING}
+    ${video ? reel(video, String(c.video_title || "").trim()) : DRAWING}
   </div>
 </header>
 
@@ -268,7 +270,8 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
 
 <footer class="wrap"><div class="row"><span>${h(name)} · ${h(trade)} · ${year}</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="${draft ? "#" : "privacy.html"}">פרטיות</a> · <a href="${draft ? "#" : "accessibility.html"}">הצהרת נגישות</a></span></div></footer>
 
-<script src="${h(assets)}leadform.js"></script>
+${video ? `<script>${REEL_JS}</script>
+` : ""}<script src="${h(assets)}leadform.js"></script>
 <script src="${h(assets)}leadbot.js"></script>
 <script>
   const RANGES = ${js(ranges)};
@@ -403,6 +406,29 @@ const DRAWING = `<svg class="drawing" viewBox="0 0 520 420" aria-hidden="true">
       <text x="40" y="404">שרטוט: מטבח, דירה 3 חד׳ · גיליון 1/1</text>
     </svg>`;
 
+// The owner's own short video, in a blueprint detail frame. Silent, looping, never more than 10 seconds.
+// It starts only when the visitor hasn't asked for less motion or less data, and a button stops it (WCAG 2.2.2).
+const reel = (v, title) => `<figure class="reel">
+      <div class="reel-frame"><video muted loop playsinline preload="none" poster="${h(v.poster)}" aria-label="${h(title || "צילום מהעבודה")}"><source src="${h(v.src)}" type="video/mp4"></video>
+        <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+      <figcaption class="mono">צילום מהשטח${title ? " · " + h(title) : ""}</figcaption>
+    </figure>`;
+
+const REEL_JS = `(function () {
+  var v = document.querySelector(".reel video"), b = document.querySelector(".reel-toggle");
+  if (!v || !b) return;
+  var c = navigator.connection || {};
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches || c.saveData || /2g/.test(c.effectiveType || "");
+  var wanted = !calm;
+  function show() { var on = !v.paused; b.dataset.state = on ? "pause" : "play"; b.setAttribute("aria-label", on ? "לעצור את הסרטון" : "להפעיל את הסרטון"); }
+  function play() { v.preload = "auto"; var p = v.play(); if (p && p.catch) p.catch(function () { show(); }); }
+  v.addEventListener("play", show); v.addEventListener("pause", show);
+  b.addEventListener("click", function () { wanted = v.paused; if (wanted) play(); else v.pause(); });
+  // Plays only while on screen, to save the visitor's battery and data.
+  if ("IntersectionObserver" in window) new IntersectionObserver(function (e) { if (e[0].isIntersecting) { if (wanted) play(); } else v.pause(); }).observe(v);
+  else if (wanted) play();
+})();`;
+
 const CSS = `
   :root {
     --blueprint: #123a8c; --blueprint-deep: #0c2a68; --grid: rgba(255, 255, 255, .09); --line-w: #e8efff;
@@ -445,6 +471,16 @@ const CSS = `
   .facts b { display: block; font-family: var(--display); font-size: 30px; font-weight: 400; line-height: 1; }
   .facts span { color: #a9bce6; }
   .drawing { width: 100%; height: auto; max-width: 560px; justify-self: center; }
+  .reel { margin: 0; justify-self: center; width: min(100%, 340px); }
+  .reel-frame { position: relative; aspect-ratio: 4 / 5; border: 1.5px solid var(--line-w); padding: 8px; background: rgba(255,255,255,.04); }
+  .reel-frame::before, .reel-frame::after { content: ""; position: absolute; width: 18px; height: 18px; border: 3px solid var(--signal); }
+  .reel-frame::before { top: -6px; inset-inline-start: -6px; border-inline-end: 0; border-bottom: 0; }
+  .reel-frame::after { bottom: -6px; inset-inline-end: -6px; border-inline-start: 0; border-top: 0; }
+  .reel video { width: 100%; height: 100%; object-fit: cover; display: block; background: var(--blueprint-deep); }
+  .reel-toggle { position: absolute; bottom: 16px; inset-inline-start: 16px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(12,42,104,.85); cursor: pointer; display: grid; place-items: center; }
+  .reel-toggle::before { content: ""; width: 0; height: 0; border-block: 8px solid transparent; border-inline-start: 13px solid #fff; transform: scaleX(-1); }
+  .reel-toggle[data-state=pause]::before { width: 12px; height: 16px; border: 0; transform: none; background: linear-gradient(90deg, #fff 0 4px, transparent 4px 8px, #fff 8px 12px); }
+  .reel figcaption { color: #a9bce6; margin-top: 10px; text-align: center; }
   .drawing .p { fill: none; stroke: var(--line-w); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
   .drawing .d { fill: none; stroke: #a9bce6; stroke-width: 1; stroke-dasharray: 4 4; }
   .drawing text { font-family: var(--mono); font-size: 13px; fill: #a9bce6; }
@@ -511,6 +547,7 @@ const CSS = `
     .field-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .lanyard { max-width: 300px; margin-inline: auto; }
     .hero-grid, .area .row { grid-template-columns: minmax(0, 1fr); }
     .drawing { max-width: 420px; }
+    .reel { width: min(100%, 300px); }
     .steps { grid-template-columns: minmax(0, 1fr); }
     .step { border-inline-start: 0; border-top: 1px solid var(--rule); padding: 18px 0 0; }
     .step:first-child { border-top: 0; }

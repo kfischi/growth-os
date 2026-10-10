@@ -4,6 +4,8 @@
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
 //   DELETE /api/builder/photo?slot=portrait                               -> { state }
+//   POST   /api/builder/video     body: the first frame (JPEG/WebP) then the MP4; x-poster-length: frame bytes -> { state }
+//   DELETE /api/builder/video                                             -> { state }
 //   POST   /api/builder/approve   { package, plan, rev }                  -> { state }
 //   POST   /api/builder/reopen    { rev }   back to editing, before payment -> { state }
 // Every call but start sends the private link's "<id>:<key>" in the x-draft header.
@@ -11,12 +13,14 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
 import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
-  chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, getDraft,
+  chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
+  isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
 } from "../lib/builder.mjs";
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
 const chatLimited = rateLimiter(40, 10 * 60 * 1000);    // chat turns per IP
 const photoLimited = rateLimiter(30, 10 * 60 * 1000);
+const videoLimited = rateLimiter(6, 10 * 60 * 1000);
 const EDITABLE = ["draft", "returned"];
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
@@ -107,6 +111,37 @@ export default async (req, context) => {
       if (!saved.row) { await deletePhotos([photo.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const replaced = ((saved.before && saved.before.photos) || {})[slot];
       if (replaced) await deletePhotos([replaced.path]);
+      return json({ state: stateOf(saved.row) });
+    }
+
+    if (action === "video") {
+      if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (req.method === "DELETE") {
+        const { row, before } = await saveMedia(d.id, () => ({ video: null }));
+        if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
+        const old = before && before.video;
+        if (old) await deletePhotos([old.path, old.poster.path]);
+        return json({ state: stateOf(row) });
+      }
+      if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+      if (req.headers.get("x-photo-rights") !== "yes") return json({ error: "no_rights" }, 422);
+      if (videoLimited(ip)) return json({ error: "rate_limited" }, 429);
+      if (Number(req.headers.get("content-length") || 0) > MAX_VIDEO_BYTES + MAX_POSTER_BYTES) return json({ error: "too_big" }, 413);
+      const buf = Buffer.from(await req.arrayBuffer());
+      const n = Number(req.headers.get("x-poster-length"));
+      if (!Number.isInteger(n) || n < 100 || n > MAX_POSTER_BYTES || n >= buf.length) return json({ error: "bad_type" }, 415);
+      const frame = buf.subarray(0, n), movie = buf.subarray(n);
+      if (movie.length > MAX_VIDEO_BYTES) return json({ error: "too_big" }, 413);
+      const frameExt = photoType(frame);
+      if (!frameExt || !isMp4(movie)) return json({ error: "bad_type" }, 415);
+      const [poster, film] = await Promise.all([uploadPhoto(d.id, "poster", frame, frameExt), uploadPhoto(d.id, "video", movie, "mp4")]);
+      const video = { ...film, poster };
+      let saved;
+      try { saved = await saveMedia(d.id, () => ({ video })); }
+      catch (e) { await deletePhotos([film.path, poster.path]); throw e; }
+      if (!saved.row) { await deletePhotos([film.path, poster.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
+      const old = saved.before && saved.before.video;
+      if (old) await deletePhotos([old.path, old.poster.path]);
       return json({ state: stateOf(saved.row) });
     }
 

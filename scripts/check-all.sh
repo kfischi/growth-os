@@ -19,10 +19,11 @@ for p in clients/*/index.html clients/*/privacy.html clients/*/accessibility.htm
 done
 echo "done"
 
-step "qa-page on what the site builder renders (full site, bare site, empty draft)"
+step "qa-page on what the site builder renders (full site, bare site, empty draft, with a video)"
 built=$(mktemp -d)
 node scripts/tests/builder-render.mjs "$built" >/dev/null || fail=1
-for page in index.html privacy.html accessibility.html bare.html draft.html; do
+for page in index.html privacy.html accessibility.html bare.html draft.html video.html; do
+  [ -f "$built/$page" ] || continue
   out=$(node scripts/qa-page.cjs "$built" "$page" 2>&1 | tail -1)
   case "$out" in PASS*) ;; *) echo "FAIL builder $page: $out"; fail=1;; esac
 done

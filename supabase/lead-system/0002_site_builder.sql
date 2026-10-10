@@ -14,6 +14,7 @@ create table if not exists public.ls_drafts (
   template        text not null default 'plumber',
   content         jsonb not null default '{}',   -- the fields the chat filled
   photos          jsonb not null default '{}',   -- { slot: { path, ext } } in the "builder" bucket
+  video           jsonb,                         -- { path, ext: "mp4", poster: { path, ext } }: the short video at the top, or null
   photo_rights_at timestamptz,                   -- the owner confirmed the photos are theirs to publish
   messages        jsonb not null default '[]',   -- the chat, text only: [{ role, content }]
   status          text not null default 'draft'
@@ -45,8 +46,12 @@ create trigger ls_drafts_touch before update on public.ls_drafts
 
 alter table public.ls_drafts enable row level security;
 
--- Photos: public to read (the draft and the site show them), written only by the functions.
--- Up to 1 MB each, JPEG or WebP only.
+-- Photos and the short video: public to read (the draft and the site show them), written only by the functions.
+-- JPEG, WebP or MP4. The bucket allows up to 5 MB a file; the functions allow photos up to 1 MB and a video up to 4.5 MB.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('builder', 'builder', true, 1048576, array['image/webp', 'image/jpeg'])
-on conflict (id) do update set public = true, file_size_limit = 1048576, allowed_mime_types = array['image/webp', 'image/jpeg'];
+values ('builder', 'builder', true, 5242880, array['image/webp', 'image/jpeg', 'video/mp4'])
+on conflict (id) do update set public = true, file_size_limit = 5242880, allowed_mime_types = array['image/webp', 'image/jpeg', 'video/mp4'];
+
+-- For a database that ran an earlier copy of this file.
+alter table public.ls_drafts add column if not exists photo_rev integer not null default 0;
+alter table public.ls_drafts add column if not exists video jsonb;

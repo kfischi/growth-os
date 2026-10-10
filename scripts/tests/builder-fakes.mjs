@@ -9,7 +9,7 @@ export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [] 
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
 export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
-  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, video: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
   ls_leads: () => ({ id: randomUUID(), status: "new", created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
   ls_clients: () => ({ package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", auto_reply: true, owner_alerts: true }),
@@ -58,7 +58,7 @@ globalThis.fetch = async (url, opt = {}) => {
   assert.equal(u.host, "x.supabase.co"); assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "supabase call has a timeout");
   if (u.pathname.startsWith("/storage/v1/object/")) {
     const rest = u.pathname.slice("/storage/v1/object/".length);
-    if (method === "POST") { assert.ok(/^builder\/drafts\/[0-9a-f-]{36}\/\w+-[0-9a-f]{12}\.(webp|jpg)$/.test(rest), rest); storage.set(rest.slice(8), Buffer.from(opt.body)); return res({ Key: rest }); }
+    if (method === "POST") { assert.ok(/^builder\/drafts\/[0-9a-f-]{36}\/\w+-[0-9a-f]{12}\.(webp|jpg|mp4)$/.test(rest), rest); storage.set(rest.slice(8), Buffer.from(opt.body)); return res({ Key: rest }); }
     if (method === "DELETE") { for (const p of JSON.parse(opt.body).prefixes) storage.delete(p); return res([]); }
     if (method === "GET") { const b = storage.get(rest.slice(8)); return b ? new Response(b) : res({}, 404); }
   }

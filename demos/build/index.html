@@ -92,6 +92,13 @@
   .slot .x { position: absolute; top: 4px; inset-inline-start: 4px; z-index: 2; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(29,27,46,.8); color: #fff; cursor: pointer; font-size: 14px; }
   .slot:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
   .slot.busy::after { content: "מעלים…"; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.85); color: var(--ink); }
+  .vid { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 14px; color: var(--slate); }
+  .vid video { width: 72px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; background: var(--mist); }
+  .vid .pick { position: relative; overflow: hidden; }
+  .vid .pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .vid .pick:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
+  .vprev { width: 100%; max-height: 46vh; background: var(--ink); border-radius: 10px; margin-bottom: 10px; }
+  input[type=range] { width: 100%; accent-color: var(--mint); }
   .approve { border-top: 1px solid var(--line); padding: 12px; }
   .approve .btn { width: 100%; }
   .approve p { margin: 0 0 8px; font-size: 14px; color: var(--slate); }
@@ -182,9 +189,10 @@
       <button class="btn" type="submit" id="send">שליחה</button>
     </form>
     <details class="photos" id="photos">
-      <summary>תמונות</summary>
-      <label class="check"><input id="rights" type="checkbox"><span>התמונות שלנו, ומותר לפרסם אותן באתר.</span></label>
+      <summary>תמונות וסרטון</summary>
+      <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטון שלנו, ומותר לפרסם אותם באתר.</span></label>
       <div class="slots" id="slots"></div>
+      <div class="vid" id="vid"></div>
     </details>
     <div class="approve" id="approveBox"></div>
   </section>
@@ -194,6 +202,18 @@
     <div class="frame"><iframe id="frame" title="הטיוטה של האתר"></iframe></div>
   </section>
 </main>
+
+<dialog id="videoDlg" aria-labelledby="t-video">
+  <h2 id="t-video">איזה קטע לשים באתר?</h2>
+  <p>בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.</p>
+  <video id="vPrev" class="vprev" muted playsinline></video>
+  <div id="vPick"><label for="vStart">מתחילים בשנייה <output id="vStartOut" for="vStart">0</output></label>
+  <input id="vStart" type="range" min="0" step="0.5" value="0"></div>
+  <div class="bar" id="vBarBox" hidden><i id="vBar"></i></div>
+  <p class="note" id="vNote" aria-live="polite"></p>
+  <p class="err" id="vErr" role="alert"></p>
+  <div class="row"><button class="btn" type="button" id="vGo">להשתמש בקטע הזה</button><button class="btn quiet" type="button" id="vCancel">ביטול</button></div>
+</dialog>
 
 <dialog id="approveDlg" aria-labelledby="t-approve">
   <form method="dialog" id="approveForm">
@@ -233,6 +253,9 @@
     too_big: 'התמונה גדולה מדי. נסו תמונה אחרת.',
     bad_type: 'אפשר להעלות רק תמונה (JPG או WebP).',
     not_found: 'הטיוטה לא נמצאה. אולי היא נמחקה אחרי 30 יום בלי שימוש.',
+    video_unsupported: 'הדפדפן הזה לא יכול להכין את הסרטון. נסו מכרום או מספארי מעודכנים, או שלחו לנו את הסרטון בוואטסאפ.',
+    video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
+    video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
   };
   const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.';
 
@@ -324,6 +347,7 @@
     $('#compose').hidden = !editable; $('#photos').hidden = !editable;
     $('#rights').checked = $('#rights').checked || s.photoRights;
     paintSlots(editable);
+    paintVideo(editable);
     paintApprove();
   }
 
@@ -439,6 +463,131 @@
     const r = await call('photo', { method: 'DELETE', query: '?slot=' + slot });
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
     state = r.data.state; paint(); refreshFrame();
+  }
+
+  /* ---------- the short video: the owner picks 10 seconds, the browser makes a small MP4 (H.264, no sound) ---------- */
+  const VIDEO_LIB = '/shared/vendor/mediabunny-1.61.3.min.mjs', CLIP = 10;
+  let vFile = null, vDur = 0, vUrl = null;
+
+  function paintVideo(editable) {
+    const box = $('#vid'); box.textContent = '';
+    if (!editable) return;
+    if (busy.has('video')) { box.append('מכינים את הסרטון…'); return; }
+    const v = state.video;
+    if (v) {
+      const el = document.createElement('video'); el.src = v.src; el.poster = v.poster; el.muted = true; el.loop = true; el.playsInline = true; el.setAttribute('aria-label', 'הסרטון שלכם');
+      el.autoplay = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'btn quiet'; x.textContent = 'להסיר את הסרטון';
+      x.addEventListener('click', removeVideo);
+      box.append(el, x, pickButton('להחליף'));
+    } else {
+      box.append(pickButton('להוסיף סרטון קצר'), document.createTextNode('לא חובה. 10 שניות מהעבודה, בראש האתר.'));
+    }
+  }
+
+  function pickButton(text) {
+    const l = document.createElement('label'); l.className = 'btn quiet pick'; l.textContent = text;
+    const input = document.createElement('input'); input.type = 'file'; input.accept = 'video/*'; input.setAttribute('aria-label', text);
+    input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) openVideo(f); });
+    l.append(input); return l;
+  }
+
+  function openVideo(file) {
+    if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+    if (!('VideoEncoder' in window)) { bubble('fail', say('video_unsupported')); return; }
+    if (file.size > 1_500_000_000) { bubble('fail', 'הסרטון גדול מדי. צלמו קטע קצר יותר.'); return; }
+    vFile = file; vDur = 0;
+    if (vUrl) URL.revokeObjectURL(vUrl);
+    vUrl = URL.createObjectURL(file);
+    const prev = $('#vPrev'); prev.src = vUrl;
+    $('#vErr').textContent = ''; $('#vNote').textContent = ''; $('#vBarBox').hidden = true; $('#vGo').disabled = false; $('#vPick').hidden = true;
+    prev.onloadedmetadata = () => {
+      vDur = prev.duration || 0;
+      const max = Math.max(0, Math.floor((vDur - CLIP) * 2) / 2);
+      $('#vStart').max = String(max); $('#vStart').value = '0'; $('#vStartOut').textContent = '0';
+      $('#vPick').hidden = max <= 0;
+      prev.currentTime = 0; prev.play().catch(() => {});
+    };
+    $('#videoDlg').showModal();
+  }
+
+  // The preview loops over the chosen 10 seconds.
+  $('#vPrev').addEventListener('timeupdate', (e) => { const s = Number($('#vStart').value); if (e.target.currentTime > s + CLIP || e.target.currentTime < s - 0.5) e.target.currentTime = s; });
+  $('#vStart').addEventListener('input', (e) => { $('#vStartOut').textContent = e.target.value; $('#vPrev').currentTime = Number(e.target.value); });
+  $('#vCancel').addEventListener('click', () => { $('#videoDlg').close(); });
+  $('#videoDlg').addEventListener('close', () => { $('#vPrev').pause(); });
+
+  $('#vGo').addEventListener('click', async () => {
+    const start = Number($('#vStart').value) || 0;
+    $('#vGo').disabled = true; $('#vErr').textContent = ''; $('#vBarBox').hidden = false; $('#vNote').textContent = 'מכינים את הסרטון. זה לוקח כמה שניות…';
+    $('#vPrev').pause();
+    let made;
+    try { made = await makeClip(vFile, start, (p) => { $('#vBar').style.width = Math.round(p * 100) + '%'; }); }
+    catch (e) { $('#vGo').disabled = false; $('#vBarBox').hidden = true; $('#vNote').textContent = ''; $('#vErr').textContent = say(e.message === 'unsupported' ? 'video_unsupported' : e.message === 'too_short' ? 'video_short' : 'video_failed'); return; }
+    $('#videoDlg').close();
+    busy.add('video'); paint();
+    queue = queue.then(() => uploadVideo(made)).catch(() => {});
+  });
+
+  async function makeClip(file, start, onProgress) {
+    const MB = await import(VIDEO_LIB);
+    const input = new MB.Input({ source: new MB.BlobSource(file), formats: MB.ALL_FORMATS });
+    const track = await input.getPrimaryVideoTrack();
+    if (!track) throw new Error('failed');
+    const duration = await input.computeDuration();
+    if (duration < 2) throw new Error('too_short');
+    // At most 720 pixels on the short side, in even numbers (the encoder needs them).
+    const w0 = track.displayWidth, h0 = track.displayHeight, k = Math.min(1, 720 / Math.min(w0, h0));
+    const width = Math.round(w0 * k / 2) * 2, height = Math.round(h0 * k / 2) * 2;
+    const codec = window.NR_VIDEO_CODEC || 'avc'; // H.264 plays on every phone. The test sets vp9: test browsers can't encode H.264.
+    for (const bitrate of [1_400_000, 800_000]) {
+      const output = new MB.Output({ format: new MB.Mp4OutputFormat({ fastStart: 'in-memory' }), target: new MB.BufferTarget() });
+      const conversion = await MB.Conversion.init({
+        input, output, showWarnings: false,
+        video: { codec, width, height, fit: 'fill', frameRate: 30, quality: new MB.Quality({ bitrate }), forceTranscode: true, allowTransformationMetadata: false },
+        audio: { discard: true },
+        trim: { start, end: Math.min(duration, start + CLIP) },
+      });
+      if (!conversion.isValid) throw new Error('unsupported');
+      conversion.onProgress = onProgress;
+      await conversion.execute();
+      const movie = new Blob([output.target.buffer], { type: 'video/mp4' });
+      if (movie.size <= 4_400_000) return { movie, poster: await firstFrame(movie) };
+    }
+    throw new Error('failed');
+  }
+
+  // The first frame, as the picture shown before the video plays.
+  function firstFrame(movie) {
+    return new Promise((resolve, reject) => {
+      const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto';
+      const url = URL.createObjectURL(movie); v.src = url;
+      v.onerror = () => { URL.revokeObjectURL(url); reject(new Error('failed')); };
+      v.onloadeddata = () => { v.currentTime = Math.min(0.2, (v.duration || 1) / 2); };
+      v.onseeked = () => {
+        const c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight;
+        c.getContext('2d').drawImage(v, 0, 0);
+        URL.revokeObjectURL(url);
+        c.toBlob((b) => (b && b.type === 'image/webp' ? resolve(b) : c.toBlob((j) => (j ? resolve(j) : reject(new Error('failed'))), 'image/jpeg', 0.8)), 'image/webp', 0.75);
+      };
+    });
+  }
+
+  async function uploadVideo({ movie, poster }) {
+    const r = await call('video', { raw: new Blob([poster, movie]), headers: { 'content-type': 'application/octet-stream', 'x-poster-length': String(poster.size), 'x-photo-rights': 'yes' } });
+    busy.delete('video');
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame(); markSite();
+  }
+
+  async function removeVideo() {
+    const r = await call('video', { method: 'DELETE' });
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame();
   }
 
   /* ---------- approve ---------- */
