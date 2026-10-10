@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אורן מים · אינסטלציה</title>
+<meta name="description" content="אינסטלטור בחדרה והשרון: סתימות, נזילות, דודים. פותחים קריאה בצ׳אט ומקבלים מענה מיד.">
+<meta name="robots" content="noindex"><!-- sample business only: remove for a real client -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="אורן מים · אינסטלטור בחדרה והשרון">
+<meta property="og:description" content="סתימות, נזילות ודודים. פותחים קריאה בצ׳אט, ואורן חוזר תוך 15 דקות.">
+<meta property="og:locale" content="he_IL">
+<meta name="theme-color" content="#0c2a68">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Object: a plumbing blueprint and a work order. Detail: pipe diameters, pressure in bar, response time.
+     Bold move: an isometric pipe drawing on a blueprint field. */
+  :root {
+    --blueprint: #123a8c;      /* blueprint field */
+    --blueprint-deep: #0c2a68;
+    --grid: rgba(255, 255, 255, .09);
+    --line-w: #e8efff;         /* white ink on blueprint */
+    --paper: #f3f6fb;          /* whiteprint paper */
+    --ink: #0f1d3a;
+    --ink-soft: #4b5873;
+    --rule: #c9d4e6;
+    --signal: #e0362c;         /* emergency red */
+    --display: "Secular One", "IBM Plex Sans Hebrew", sans-serif;
+    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    /* chatbot */
+    --bot-bg: #ffffff; --bot-fg: var(--ink); --bot-line: var(--rule); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--blueprint); --bot-accent-fg: #fff; --bot-them: #eef2f9; --bot-me: var(--blueprint); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .02em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0; text-wrap: balance; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 22px; border-radius: 4px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; }
+  .btn-signal { background: var(--signal); color: #fff; }
+  .btn-signal:hover { background: #c42a21; }
+  .btn-ghost { border: 1.5px solid rgba(232, 239, 255, .5); color: #fff; background: transparent; }
+  .btn-ghost:hover { border-color: #fff; }
+
+
+  /* ---------- Hero ---------- */
+  .hero { background: var(--blueprint); color: #fff; position: relative; overflow: hidden;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; }
+  .logo svg { width: 30px; height: 30px; }
+  .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 6px 10px; border-radius: 4px; }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 0 0 rgba(57,217,138,.6); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(57,217,138,0); } 100% { box-shadow: 0 0 0 0 rgba(57,217,138,0); } }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 40px 72px; }
+  .hero .tag { color: #a9bce6; }
+  .hero h1 { font-size: clamp(48px, 7vw, 92px); margin: 14px 0 18px; }
+  .hero h1 span { color: #fff; background: var(--signal); padding: 0 .12em; }
+  .hero p { font-size: 19px; color: #d5def3; max-width: 34ch; margin: 0 0 28px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { display: flex; gap: 28px; margin-top: 34px; padding-top: 18px; border-top: 1px dashed rgba(232, 239, 255, .3); flex-wrap: wrap; }
+  .facts b { display: block; font-family: var(--display); font-size: 30px; font-weight: 400; line-height: 1; }
+  .facts span { color: #a9bce6; }
+  .drawing { width: 100%; height: auto; max-width: 560px; justify-self: center; }
+  .drawing .p { fill: none; stroke: var(--line-w); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .drawing .d { fill: none; stroke: #a9bce6; stroke-width: 1; stroke-dasharray: 4 4; }
+  .drawing text { font-family: var(--mono); font-size: 13px; fill: #a9bce6; }
+  .drawing .drop { fill: #7fb2ff; animation: drip 2.4s ease-in infinite; }
+  @keyframes drip { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 80% { transform: translateY(46px); opacity: 1; } 100% { transform: translateY(52px); opacity: 0; } }
+
+  /* ---------- Work order ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head .mono { color: var(--ink-soft); }
+  .order { background: #fff; border: 1.5px solid var(--ink); }
+  .order-top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1.5px solid var(--ink); }
+  .order-top div { padding: 10px 14px; border-inline-start: 1px solid var(--rule); }
+  .order-top div:first-child { border: 0; }
+  .order-top b { display: block; font-family: var(--display); font-weight: 400; font-size: 18px; }
+  .order table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  .order th { text-align: start; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); padding: 12px 14px; border-bottom: 1px solid var(--rule); }
+  .order td { padding: 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .order tr:last-child td { border-bottom: 0; }
+  .order td b { font-weight: 600; }
+  .order td small { display: block; color: var(--ink-soft); font-size: 14px; }
+  .order .price { font-family: var(--mono); font-size: 14px; white-space: nowrap; }
+  .order button { border: 1.5px solid var(--blueprint); background: none; color: var(--blueprint); font: 600 14px var(--body); padding: 6px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+  .order button:hover { background: var(--blueprint); color: #fff; }
+  .fine { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1.5px solid var(--ink); }
+  .step { padding: 22px 22px 0 0; border-inline-start: 1px solid var(--rule); padding-inline: 22px; }
+  .step:first-child { border: 0; padding-inline-start: 0; }
+  .step .mono { color: var(--signal); font-weight: 500; }
+  .step h3 { font-size: 26px; margin: 8px 0 6px; }
+  .step p { margin: 0; color: var(--ink-soft); }
+
+  .area { background: var(--blueprint-deep); color: #fff; }
+  .area .head h2 { color: #fff; } .area .head .mono { color: #a9bce6; }
+  .towns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .towns span { border: 1px solid rgba(232, 239, 255, .35); padding: 8px 14px; border-radius: 4px; }
+  .area .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+  .area p { color: #d5def3; margin: 0 0 20px; }
+
+  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 20px; }
+
+
+  /* ---------- From the field: badge + detail callouts (photo slots) ---------- */
+  :root { --ps-a: #2a56b8; --ps-b: #0c2a68; --ps-ui: var(--blueprint); --ps-edit: var(--signal); }
+  .field { background: var(--blueprint-deep); color: #fff; overflow: hidden;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
+  .field .head .mono { color: #a9bce6; }
+  .field-grid { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 64px; align-items: start; }
+  .lanyard { display: flex; flex-direction: column; align-items: center; }
+  .lanyard::before { content: ""; width: 34px; height: 90px; background: repeating-linear-gradient(180deg, var(--signal) 0 14px, #b8261e 14px 16px); clip-path: polygon(0 0, 100% 0, 70% 100%, 30% 100%); }
+  .clip { width: 46px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #d8dde6, #9aa3b3); margin-top: -4px; position: relative; z-index: 1; }
+  .badge { width: 100%; background: #fff; color: var(--ink); border-radius: 14px; padding: 16px; margin-top: -6px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); transform: rotate(-3deg); }
+  .badge-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
+  .badge-top b { color: var(--blueprint); font-family: var(--display); font-size: 16px; font-weight: 400; }
+  .badge .ps { aspect-ratio: 1; border-radius: 10px; }
+  .badge h3 { font-size: 30px; margin-top: 14px; }
+  .badge p { margin: 2px 0 12px; color: var(--ink-soft); font-size: 15px; }
+  .badge .code { height: 30px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 7px, transparent 7px 9px); }
+  .details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+  .detail { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+  .detail .ring { width: 100%; max-width: 230px; aspect-ratio: 1; border-radius: 50%; padding: 8px; border: 2px dashed rgba(232,239,255,.55); position: relative; }
+  .detail .ring::after { content: ""; position: absolute; width: 46px; height: 2px; background: rgba(232,239,255,.55); bottom: 10%; left: -30px; transform: rotate(-35deg); }
+  .detail .ps { width: 100%; height: 100%; border-radius: 50%; }
+  .detail .mono { color: #a9bce6; margin-top: 14px; }
+  .detail h3 { font-size: 22px; margin-top: 2px; }
+  .field-note { color: #a9bce6; font-size: 14px; margin-top: 26px; }
+  @media (max-width: 880px) { .field-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .lanyard { max-width: 300px; margin-inline: auto; } }
+  @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+
+  @media (max-width: 880px) {
+    .hero-grid, .area .row { grid-template-columns: minmax(0, 1fr); }
+    .drawing { max-width: 420px; }
+    .steps { grid-template-columns: minmax(0, 1fr); }
+    .step { border-inline-start: 0; border-top: 1px solid var(--rule); padding: 18px 0 0; }
+    .step:first-child { border-top: 0; }
+    .order .hide-sm { display: none; }
+  }
+  @media (max-width: 520px) {
+    .order-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .order-top div:nth-child(3) { display: none; }
+    .order td, .order th { padding-inline: 10px; }
+    .order th:last-child, .order td:last-child { display: none; }
+    .order tbody tr { cursor: pointer; }
+    .bar .live { display: none; }
+  }
+  .ps { position: relative; overflow: hidden; margin: 0; background: var(--ps-b); }
+  .ps img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap bar">
+    <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg><span>אורן מים</span></div>
+    <span class="live mono"><i></i>זמין עכשיו · הגעה משוערת 45 דק׳</span>
+  </div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="tag mono">אינסטלציה · חדרה, עמק חפר והשרון · 24/7</div>
+      <h1><span>נזילה? סתימה?</span><br><span>מגיעים היום.</span></h1>
+      <p>מתארים את התקלה בצ׳אט, מקבלים הערכת מחיר, והפרטים מגיעים אליי לוואטסאפ. אני חוזר תוך 15 דקות.</p>
+      <div class="ctas">
+        <button class="btn btn-signal" type="button" data-open-bot>לפתוח קריאה בצ׳אט</button>
+        <a class="btn btn-ghost" href="#" data-wa="היי אורן, יש לי תקלה ואשמח שתחזור אליי.">וואטסאפ ישיר</a>
+      </div>
+      <div class="facts mono">
+        <div><b>15 דק׳</b><span>זמן חזרה</span></div>
+        <div><b>12 שנה</b><span>בשטח</span></div>
+        <div><b>מחיר סגור</b><span>לפני שמתחילים</span></div>
+      </div>
+    </div>
+    <svg class="drawing" viewBox="0 0 520 420" aria-hidden="true">
+      <!-- isometric pipe run -->
+      <path class="p" d="M40 300 L170 225 L170 140 L300 65 L430 140"/>
+      <path class="p" d="M170 225 L300 300 L300 360"/>
+      <path class="p" d="M430 140 L430 230 L360 270"/>
+      <!-- fittings -->
+      <g fill="#123a8c" stroke="#e8efff" stroke-width="3">
+        <circle cx="170" cy="225" r="9"/><circle cx="170" cy="140" r="9"/><circle cx="300" cy="65" r="9"/>
+        <circle cx="430" cy="140" r="9"/><circle cx="300" cy="300" r="9"/><circle cx="430" cy="230" r="9"/>
+      </g>
+      <!-- valve -->
+      <g transform="translate(235 102)"><path d="M-14 -8 L14 8 M-14 8 L14 -8" stroke="#e8efff" stroke-width="3"/><path d="M0 0 L0 -22 M-10 -22 L10 -22" stroke="#e8efff" stroke-width="3" stroke-linecap="round"/></g>
+      <!-- leak -->
+      <circle cx="360" cy="270" r="6" fill="none" stroke="#e0362c" stroke-width="3"/>
+      <path class="drop" d="M360 282 c-5 8 -7 12 -7 16 a7 7 0 0 0 14 0 c0 -4 -2 -8 -7 -16z"/>
+      <!-- dimensions -->
+      <path class="d" d="M40 330 L170 255"/><text x="70" y="318">Ø 3/4״</text>
+      <path class="d" d="M200 140 L200 225"/><text x="208" y="190">85 ס״מ</text>
+      <text x="318" y="52">לחץ 3.5 בר</text>
+      <text x="372" y="300" fill="#ff8a80">נקודת נזילה</text>
+      <text x="40" y="404">שרטוט: מטבח, דירה 3 חד׳ · גיליון 1/1</text>
+    </svg>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="head"><h2>הקריאות הנפוצות</h2><span class="mono">טווחי מחיר · המחיר הסופי נקבע אחרי אבחון</span></div>
+    <div class="order">
+      <div class="order-top mono">
+        <div>הזמנת עבודה<b>מס׳ 2614</b></div>
+        <div>זמינות<b>היום</b></div>
+        <div>אחריות<b>12 חודשים</b></div>
+      </div>
+      <table>
+        <thead><tr><th>תקלה</th><th class="hide-sm">זמן טיפול</th><th>טווח מחיר</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><b>סתימה בכיור, באסלה או בניקוז</b><small>פתיחה במכונה, בלי לשבור</small></td><td class="hide-sm">עד שעה</td><td class="price">250 עד 450 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
+          <tr><td><b>נזילה מתחת לכיור או מצנרת</b><small>החלפת אטמים, חיבורים וקטעי צנרת</small></td><td class="hide-sm">שעה עד שעתיים</td><td class="price">300 עד 650 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
+          <tr><td><b>דוד חשמל או שמש</b><small>גוף חימום, טרמוסטט, החלפת דוד</small></td><td class="hide-sm">שעה עד שלוש</td><td class="price">350 עד 2,800 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
+          <tr><td><b>איתור נזילה בלי הרס</b><small>מצלמה תרמית ומכשור אקוסטי</small></td><td class="hide-sm">שעתיים</td><td class="price">650 עד 1,200 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="field">
+  <div class="wrap">
+    <div class="head"><h2>מהשטח</h2><span class="mono">עבודות אחרונות</span></div>
+    <div class="field-grid">
+      <div class="lanyard">
+        <span class="clip"></span>
+        <div class="badge">
+          <div class="badge-top"><b>אורן מים</b><span>טכנאי מוסמך</span></div>
+          <figure class="ps has-img"><img src="assets/photos/plumber-portrait.webp" alt="אינסטלטור מתקן צנרת מתחת לכיור" loading="lazy" decoding="async" style="object-position:55% 35%"></figure>
+          <h3>אורן לוי</h3>
+          <p>אינסטלטור · 12 שנה בשטח</p>
+          <div class="code" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div>
+        <div class="details">
+          <div class="detail"><div class="ring"><figure class="ps has-img"><img src="assets/photos/plumber-siphon.webp" alt="החלפת סיפון מתחת לכיור במטבח" loading="lazy" decoding="async" style="object-position:50% 50%"></figure></div><span class="mono">פרט א׳</span><h3>החלפת סיפון במטבח</h3></div>
+          <div class="detail"><div class="ring"><figure class="ps has-img"><img src="assets/photos/plumber-leak.webp" alt="איתור נזילה בצנרת שבקיר" loading="lazy" decoding="async" style="object-position:50% 50%"></figure></div><span class="mono">פרט ב׳</span><h3>איתור נזילה בקיר</h3></div>
+          <div class="detail"><div class="ring"><figure class="ps has-img"><img src="assets/photos/plumber-drain.webp" alt="פתיחת סתימה באמבטיה" loading="lazy" decoding="async" style="object-position:50% 50%"></figure></div><span class="mono">פרט ג׳</span><h3>פתיחת סתימה באמבטיה</h3></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="head"><h2>מה קורה כשפותחים קריאה</h2></div>
+    <div class="steps">
+      <div class="step"><span class="mono">שלב 1 · 30 שניות</span><h3>מתארים בצ׳אט</h3><p>מה התקלה, כמה דחוף ואיפה. בלי לחכות על הקו.</p></div>
+      <div class="step"><span class="mono">שלב 2 · מיד</span><h3>מקבלים הערכת מחיר</h3><p>טווח מחיר ברור, והפרטים נשלחים אליי בוואטסאפ.</p></div>
+      <div class="step"><span class="mono">שלב 3 · תוך 15 דק׳</span><h3>אני חוזר וקובע</h3><p>אישור שעה, ומחיר סגור לפני שמתחילים לעבוד.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="area">
+  <div class="wrap row">
+    <div>
+      <div class="head"><h2>אזורי שירות</h2><span class="mono">רדיוס 25 ק״מ מחדרה</span></div>
+      <div class="towns"><span>חדרה</span><span>עמק חפר</span><span>נתניה</span><span>פרדס חנה כרכור</span><span>אור עקיבא</span><span>קיסריה</span><span>בנימינה</span><span>כפר יונה</span></div>
+    </div>
+    <div>
+      <p>לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט ותקבלו תשובה מיד.</p>
+      <button class="btn btn-signal" type="button" data-open-bot>לבדוק בצ׳אט</button>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · 2026</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם.</span></div></footer>
+
+<script src="assets/leadform.js"></script>
+<script src="assets/leadbot.js"></script>
+<script>
+  const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
+  // The business: its WhatsApp number (the fallback) and its address in the lead system.
+  const SITE = { whatsapp: "972526359513", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber" };
+  const bot = LeadBot.init({
+    whatsapp: SITE.whatsapp,
+    name: "אורן · אינסטלטור", subtitle: "עונה מיד, גם כשאני בשטח", initial: "א", launcher: "לפתוח קריאה",
+    greet: "היי, כאן אורן 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה אני עונה מיד. שלוש שאלות קצרות ואני חוזר אליכם.",
+    steps: [
+      { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => [`תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.`, d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\n"),
+    summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    capture: {
+      endpoint: SITE.leads,
+      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, message: `דחיפות: ${d.urgency}. ישוב: ${d.city}.` }),
+      saved: (d) => `תודה ${d.name.split(" ")[0]}! הקריאה אצלי, ואישור בדרך אליכם בוואטסאפ. ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}, והמחיר הסופי אחרי אבחון.${d.urgency.startsWith("עכשיו") ? "\nעד שאגיע: סגרו את הברז הראשי." : ""}`,
+    },
+  });
+  document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
+</script>
+</body>
+</html>

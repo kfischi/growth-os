@@ -71,6 +71,10 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 - Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `ANTHROPIC_API_KEY`. Never in the repo or the chat.
 - `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
 
+## Client sites
+
+A paying client gets a real site in `clients/<slug>/`, copied from the trade demo and cleaned of every demo mark. The worked example is `clients/sample-plumber/` (a fictional business, kept `noindex`). Each site is self-contained (its own `assets/`), hosted on its own Netlify site, preferably in the client's own free account, and deployed by `.github/workflows/deploy-clients.yml` from `clients/<slug>/netlify.json` and a token in GitHub secrets. Guide: `docs/side-income/CLIENT_SITES.md`.
+
 ## Checks
 
 - Hebrew copy: `node scripts/hebrew-copy-lint.cjs <file-or-dir>` flags AI-sounding and bureaucratic Hebrew.
