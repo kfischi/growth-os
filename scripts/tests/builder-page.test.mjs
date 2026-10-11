@@ -115,12 +115,16 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   await check("a photo, resized in the browser", async () => {
     await p.evaluate(() => { document.querySelector("#photos").open = true; });
     await p.setInputFiles("#slots .slot:nth-child(1) input", path.join(ROOT, "shared/photos/plumber-portrait.webp"));
-    assert.match(await p.textContent("#log"), /סמנו קודם/);
-    await p.check("#rights");
+    assert.match(await p.textContent("#log"), /סמנו קודם/, "declining the question stops the upload");
+    p.once("dialog", (d) => d.accept()); // agreeing at the moment of picking checks the box and uploads
+    // and a photo createImageBitmap can't open (an iPhone HEIC) still goes up, through an <img>
+    await p.evaluate(() => { window.__cib = window.createImageBitmap; window.createImageBitmap = () => Promise.reject(new Error("unsupported")); });
     await p.setInputFiles("#slots .slot:nth-child(1) input", path.join(ROOT, "shared/photos/plumber-portrait.webp"));
     await p.waitForSelector("#slots .slot:nth-child(1) img", { timeout: 8000 });
     const loaded = await p.$eval("#slots .slot:nth-child(1) img", (i) => new Promise((r) => (i.complete ? r(i.naturalWidth) : (i.onload = () => r(i.naturalWidth)))));
     assert.ok(loaded > 0, "the uploaded photo shows");
+    assert.equal(await p.isChecked("#rights"), true, "the agreement checked the box");
+    await p.evaluate(() => { window.createImageBitmap = window.__cib; });
   });
 
   if (clip) await check("a short video, cut and converted in the browser", async () => {

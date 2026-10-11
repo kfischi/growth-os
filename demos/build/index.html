@@ -396,7 +396,7 @@
         input.addEventListener('change', () => { // cleared, so the same file can be picked again
           const f = input.files[0]; input.value = '';
           if (!f) return;
-          if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+          if (!confirmRights()) return;
           busy.add(slot); el.classList.add('busy');
           queue = queue.then(() => uploadPhoto(slot, f)).catch(() => {});
         });
@@ -647,15 +647,34 @@
   });
 
   /* ---------- photos: resized and re-encoded here, which also drops the location data ---------- */
+  // The rights box is easy to miss on a phone: asking at the moment of picking keeps the upload going.
+  function confirmRights() {
+    if ($('#rights').checked) return true;
+    if (confirm('התמונות והסרטון שלכם, ומותר לפרסם אותם באתר?')) { $('#rights').checked = true; return true; }
+    bubble('fail', say('no_rights')); return false;
+  }
+
+  // Some phone photos (HEIC on an iPhone) don't open with createImageBitmap but do as an <img>.
+  async function decode(file) {
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      const url = URL.createObjectURL(file), img = new Image();
+      try { img.src = url; await img.decode(); return img; }
+      finally { setTimeout(() => URL.revokeObjectURL(url), 2000); }
+    }
+  }
+
   async function shrink(file) {
-    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
-    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
-    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+    const bmp = await decode(file);
+    const bw = bmp.naturalWidth || bmp.width, bh = bmp.naturalHeight || bmp.height;
+    const scale = Math.min(1, 1600 / Math.max(bw, bh));
+    const c = document.createElement('canvas'); c.width = Math.round(bw * scale); c.height = Math.round(bh * scale);
     c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
     const enc = (type, q) => new Promise((res) => c.toBlob(res, type, q));
     let blob = await enc('image/webp', 0.82);
     if (!blob || blob.type !== 'image/webp') blob = await enc('image/jpeg', 0.85); // Safari can't write WebP
     for (let q = 0.75; blob && blob.size > 950000 && q > 0.4; q -= 0.15) blob = await enc('image/jpeg', q);
+    if (!blob) throw new Error('encode');
     return blob;
   }
 
@@ -704,7 +723,7 @@
   }
 
   function openVideo(file) {
-    if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+    if (!confirmRights()) return;
     if (!('VideoEncoder' in window)) { bubble('fail', say('video_unsupported')); return; }
     if (file.size > 1_500_000_000) { bubble('fail', 'הסרטון גדול מדי. צלמו קטע קצר יותר.'); return; }
     vFile = file; vDur = 0;
