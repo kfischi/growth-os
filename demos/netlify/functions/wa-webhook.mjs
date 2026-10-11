@@ -3,8 +3,10 @@
 // GET  verifies the webhook once. POST carries delivery statuses and incoming messages:
 //   - the owner taps "טיפלתי" on an alert or a reminder: the lead is marked handled
 //   - the owner writes "עסוק" / "פנוי" / "אוטומטי" / "סטטוס": the site's "available now" line changes
-//   - a lead writes back: the message is logged and shown in the panel
-import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability } from "../lib/leads.mjs";
+//   - a lead writes back: the message is logged and shown in the panel ("הסר" stops review requests)
+//   - after "טיפלתי", if the business has review requests on: the owner is asked, and "כן, לשלוח" sends one
+import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
+  sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT } from "../lib/leads.mjs";
 
 async function clientByPhoneId(id) {
   const rows = await db("GET", `ls_clients?wa_phone_number_id=eq.${q(id)}&select=*`);
@@ -48,8 +50,31 @@ async function onMessage(client, m) {
     const exists = rows.length || (await db("GET", `ls_leads?id=eq.${q(id)}&select=id`)).length;
     const fresh = await logInbound({ client_slug: client.slug, lead_id: exists ? id : null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload } });
     if (!fresh) return;
-    // The owner just wrote, so a free text reply is allowed.
-    await sendText(client, from, rows.length ? `סומן כטופל: ${rows[0].name}.` : exists ? "הפנייה הזאת כבר סומנה." : "הפנייה הזאת כבר לא במערכת.", { kind: "owner_reply", leadId: exists ? id : null });
+    // The owner just wrote, so a free text reply (or buttons) is allowed.
+    const done = rows[0];
+    if (done && reviewOn(client) && /^9725\d{8}$/.test(done.phone_intl) && !(await reviewBlocked(client, done.phone_intl))) {
+      await db("PATCH", `ls_leads?id=eq.${q(id)}&review=is.null`, { review: "asked" });
+      await sendButtons(client, from, `סומן כטופל: ${done.name}. לשלוח ל${firstName(done.name)} בקשה לכתוב ביקורת בגוגל? זו הודעה אחת, פעם אחת.`,
+        [{ id: "review:" + id, title: "כן, לשלוח" }, { id: "noreview:" + id, title: "לא הפעם" }], { kind: "owner_reply", leadId: id });
+      return;
+    }
+    await sendText(client, from, done ? `סומן כטופל: ${done.name}.` : exists ? "הפנייה הזאת כבר סומנה." : "הפנייה הזאת כבר לא במערכת.", { kind: "owner_reply", leadId: exists ? id : null });
+    return;
+  }
+
+  // The owner's answer: send the review request, or not. Only from "asked", so a retry never sends twice.
+  const rv = from === client.owner_phone && /^(review|noreview):([0-9a-f-]{36})$/.exec(payload || "");
+  if (rv) {
+    const id = rv[2];
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload } });
+    if (!fresh) return;
+    const [l] = await db("PATCH", `ls_leads?id=eq.${q(id)}&client_slug=eq.${q(client.slug)}&review=eq.asked`, { review: rv[1] === "review" ? "sent" : "skipped" }, "return=representation");
+    if (!l) return void (await sendText(client, from, "כבר טיפלנו בזה.", { kind: "owner_reply" }));
+    if (rv[1] === "noreview") return void (await sendText(client, from, "בסדר, לא נשלח.", { kind: "owner_reply", leadId: id }));
+    // review_request: {{1}} first name, {{2}} the business, {{3}} the Google review link. Ends with how to opt out.
+    const r = reviewOn(client) ? await sendTemplate(client, l.phone_intl, client.tpl_review_request, [firstName(l.name), client.name, client.review_url], { kind: "review", leadId: id }) : "off";
+    if (r !== "sent") await db("PATCH", `ls_leads?id=eq.${q(id)}`, { review: "failed" });
+    await sendText(client, from, r === "sent" ? `נשלח ל${firstName(l.name)}. תודה!` : "לא הצלחנו לשלוח הפעם. הפנייה מסומנת בלוח.", { kind: "owner_reply", leadId: id });
     return;
   }
 
@@ -67,6 +92,11 @@ async function onMessage(client, m) {
   const lead = (await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}&select=id&order=created_at.desc&limit=1`))[0];
   const fresh = await logInbound({ client_slug: client.slug, lead_id: lead ? lead.id : null, kind: from === client.owner_phone ? "owner_reply" : "inbound", from_phone: from, wa_id: m.id, body: { type: m.type, text: clip(text, 1000) } });
   if (fresh && lead) await updateLead(lead.id, { last_inbound_at: new Date().toISOString() });
+  // "הסר": no more review requests to this number from this business, ever.
+  if (fresh && lead && from !== client.owner_phone && m.type === "text" && OPT_OUT.test(String(text).trim())) {
+    await db("PATCH", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}`, { review: "optout" });
+    await sendText(client, from, "הוסרתם. לא תקבלו מאיתנו הודעות כאלה יותר.", { kind: "optout", leadId: lead.id });
+  }
 }
 
 export default async (req) => {

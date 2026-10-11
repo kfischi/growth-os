@@ -347,6 +347,47 @@ assert.match(rt.template.components[0].parameters[3].text, /^שיפוץ · בי�
 others.forEach((l) => { l.reminded_at = null; });
 Object.assign(C0, { work_start: 8, work_end: 20, work_days: [0, 1, 2, 3, 4, 5] });
 
+// --- a review request after "טיפלתי": the owner approves each one, one per number, "הסר" stops it
+const newLead = async (name, phone, ip) => { const x = await lead(post("/api/lead/oren", { name, phone, service: "נזילה" }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": ip }), ctx("oren")); const j = await x.json(); return T.ls_leads.find((l) => l.id === j.id); };
+const tapDone = (id, payload, title = "טיפלתי") => hook(wh(val({ messages: [{ from: "972501111111", id, type: "button", button: { text: title, payload } }] })));
+const pickReply = (id, replyId) => hook(wh(val({ messages: [{ from: "972501111111", id, type: "interactive", interactive: { type: "button_reply", button_reply: { id: replyId, title: "x" } } }] })));
+// off by default: "טיפלתי" answers as before
+let RL = await newLead("שירה לוי", "0503333338", "10.0.0.6");
+await tapDone("rv-0", "done:" + RL.id); assert.equal(sent.at(-1).text.body, "סומן כטופל: שירה לוי."); assert.equal(RL.review, undefined);
+Object.assign(C0, { review_requests: true, review_url: "https://g.page/r/oren-mayim/review", tpl_review_request: "review_request" });
+RL = await newLead("רז כהן", "0503333339", "10.0.0.7");
+await tapDone("rv-1", "done:" + RL.id);
+let ask = sent.at(-1); assert.equal(ask.type, "interactive"); assert.equal(ask.to, "972501111111");
+assert.equal(ask.interactive.body.text, "סומן כטופל: רז כהן. לשלוח לרז בקשה לכתוב ביקורת בגוגל? זו הודעה אחת, פעם אחת.");
+assert.deepEqual(ask.interactive.action.buttons.map((x) => x.reply.id), ["review:" + RL.id, "noreview:" + RL.id]);
+assert.equal(RL.review, "asked");
+const beforeRv = sent.length;
+await pickReply("rv-2", "review:" + RL.id);
+const req = sent.find((m, i) => i >= beforeRv && m.template && m.template.name === "review_request");
+assert.equal(req.to, "972503333339"); assert.deepEqual(req.template.components[0].parameters.map((p) => p.text), ["רז", "אורן מים", "https://g.page/r/oren-mayim/review"]);
+assert.equal(RL.review, "sent"); assert.equal(sent.at(-1).text.body, "נשלח לרז. תודה!");
+await pickReply("rv-2", "review:" + RL.id); await pickReply("rv-3", "review:" + RL.id); // a retry, and a second tap
+assert.equal(sent.filter((m) => m.template && m.template.name === "review_request").length, 1, "never twice"); assert.equal(sent.at(-1).text.body, "כבר טיפלנו בזה.");
+// the same number again later: not asked again
+T.ls_leads.filter((l) => l.phone_intl === "972503333339").forEach((l) => { l.created_at = "2026-01-01T00:00:00Z"; });
+const RL2 = await newLead("רז כהן", "0503333339", "10.0.0.8");
+await tapDone("rv-4", "done:" + RL2.id); assert.equal(sent.at(-1).text.body, "סומן כטופל: רז כהן."); assert.equal(RL2.review, undefined);
+// the owner says no
+const RL3 = await newLead("טל בר", "0503333340", "10.0.0.9");
+await tapDone("rv-5", "done:" + RL3.id); await pickReply("rv-6", "noreview:" + RL3.id);
+assert.equal(RL3.review, "skipped"); assert.equal(sent.at(-1).text.body, "בסדר, לא נשלח.");
+// someone else can't approve
+await hook(wh(val({ messages: [{ from: "972509999999", id: "rv-7", type: "interactive", interactive: { type: "button_reply", button_reply: { id: "review:" + RL3.id, title: "x" } } }] })));
+assert.equal(RL3.review, "skipped");
+// "הסר": every lead of that number at this business
+await hook(wh(val({ messages: [{ from: "972503333339", id: "rv-8", type: "text", text: { body: "הסר" } }] })));
+assert.ok(T.ls_leads.filter((l) => l.phone_intl === "972503333339").every((l) => l.review === "optout"));
+assert.equal(sent.at(-1).text.body, "הוסרתם. לא תקבלו מאיתנו הודעות כאלה יותר."); assert.equal(sent.at(-1).to, "972503333339");
+// a landline is never asked
+const RL4 = await newLead("קווי", "04-6333333", "10.0.0.10");
+await tapDone("rv-9", "done:" + RL4.id); assert.equal(sent.at(-1).text.body, "סומן כטופל: קווי.");
+Object.assign(C0, { review_requests: false });
+
 // --- helpers
 assert.equal(lib.israeliPhone("0771234567").intl, "972771234567");
 assert.equal(lib.israeliPhone("12345"), null);

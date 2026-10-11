@@ -357,6 +357,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
     const stuck = l.owner_alert === 'pending' && Date.now() - new Date(l.created_at) > 10 * 60000;
     if (l.owner_alert === 'failed' || l.owner_alert === 'skipped' || stuck) c.append(el('p', 'warn', 'ההתראה בוואטסאפ על הפנייה הזאת לא נשלחה. כדאי לחזור ללקוח מכאן.'));
     if (l.reminded_at && l.status === 'new') meta.append(el('span', null, 'נשלחה תזכורת'));
+    const REVIEW = { sent: 'נשלחה בקשה לביקורת', failed: 'הבקשה לביקורת לא נשלחה', optout: 'ביקשו לא לקבל הודעות' };
+    if (REVIEW[l.review]) meta.append(el('span', null, REVIEW[l.review]));
     c.append(meta);
     ins.slice(0, 2).forEach((x) => {
       const b = el('div', 'inbound'); b.append(el('small', null, 'הודעה בוואטסאפ · ' + ago(x.created_at)), document.createTextNode((x.body && x.body.text) || ''));

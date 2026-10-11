@@ -241,6 +241,25 @@ export function sendText(client, to, text, { kind, leadId } = {}) {
   return waSend(client, to, { type: "text", text: { body: clip(text, 1000), preview_url: false } }, { kind, lead_id: leadId || null });
 }
 
+// Up to three reply buttons, inside the 24 hours after the person wrote (the owner just tapped a button).
+export function sendButtons(client, to, text, buttons, { kind, leadId } = {}) {
+  return waSend(client, to, {
+    type: "interactive",
+    interactive: { type: "button", body: { text: clip(text, 1000) }, action: { buttons: buttons.slice(0, 3).map((b) => ({ type: "reply", reply: { id: b.id, title: clip(b.title, 20) } })) } },
+  }, { kind, lead_id: leadId || null });
+}
+
+/* ---------------- a review request after "טיפלתי" (0009_reviews.sql) ---------------- */
+
+// Off unless כפיר turned it on and set the Google review link. The owner approves each customer,
+// one request per phone number ever, and "הסר" stops it for good.
+export const reviewOn = (client) => !!(client.review_requests && /^https:\/\//.test(client.review_url || ""));
+export async function reviewBlocked(client, phoneIntl) {
+  const rows = await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(phoneIntl)}&review=in.(asked,sent,failed,optout)&select=id&limit=1`);
+  return rows.length > 0;
+}
+export const OPT_OUT = /^(הסר|הסירו|להסיר|הסרה|stop|unsubscribe)[.!]?$/i;
+
 /* ---------------- the lead flow ---------------- */
 
 export function sourceOf(input) {
