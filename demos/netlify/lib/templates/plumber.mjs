@@ -197,7 +197,8 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>
       <div class="facts mono">
         ${facts}
-      </div>
+      </div>${leads ? `
+      <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
     ${video ? reel(video, String(c.video_title || "").trim()) : DRAWING}
   </div>
@@ -298,6 +299,7 @@ ${video ? `<script>${REEL_JS}</script>
   });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button")) bot.open(); }));
   if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
+  if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
 </script>
 </body>
 </html>
@@ -462,6 +464,12 @@ const CSS = `
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
   .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; min-width: 0; }
   .logo svg { width: 30px; height: 30px; flex: none; }
+  .avail-line { margin: 22px 0 0; }
+  .live[hidden], .avail-line .live[hidden] { display: none; }
+  .avail-line .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 6px 10px; border-radius: 4px; font-size: 13px; }
+  .avail-line .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; }
+  .avail-line .live[data-state="busy"] i { background: #ff8a7a; }
+  .avail-line .live[data-state="closed"] i { background: #a9bce6; }
   .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; white-space: nowrap; }
   .live:hover { border-color: #fff; }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 40px 72px; }

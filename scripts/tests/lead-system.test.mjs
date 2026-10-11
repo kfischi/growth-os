@@ -276,6 +276,51 @@ for (let i = 0; i < 29; i++) T.ls_links.push({ client_slug: "oren", code: "q" + 
 r = await api(post("/api/leads", { link: "עוד אחד" }, owner)); assert.equal((await r.json()).error, "too_many_links");
 T.ls_links.length = 0;
 
+// --- "available now": the owner writes "עסוק" / "פנוי", the site says so; otherwise the working hours
+const C0 = T.ls_clients[0];
+const at = (iso) => new Date(iso);
+assert.deepEqual(lib.availability({ ...C0 }, at("2026-07-07T07:00:00Z")), { state: "open", until: null, text: "זמינים היום עד 20:00." }); // Tuesday 10:00
+assert.equal(lib.availability({ ...C0 }, at("2026-07-07T19:30:00Z")).text, "השאירו פרטים, ונחזור אליכם מחר מ-8:00."); // Tuesday 22:30
+assert.equal(lib.availability({ ...C0 }, at("2026-07-07T03:00:00Z")).text, "השאירו פרטים, ונחזור אליכם היום מ-8:00."); // Tuesday 06:00
+assert.equal(lib.availability({ ...C0 }, at("2026-07-11T08:00:00Z")).text, "השאירו פרטים, ונחזור אליכם מחר מ-8:00."); // Saturday 11:00, Sunday works
+assert.equal(lib.availability({ ...C0, work_days: [1, 2, 3, 4] }, at("2026-07-09T19:30:00Z")).text, "השאירו פרטים, ונחזור אליכם ביום שני מ-8:00."); // Thursday night
+assert.equal(lib.availability({ ...C0, work_start: 0, work_end: 24, work_days: [0, 1, 2, 3, 4, 5, 6] }).text, "זמינים 24/7.");
+assert.deepEqual(lib.availability({ ...C0, avail: "busy", avail_until: "2026-07-07T09:30:00Z" }, at("2026-07-07T07:00:00Z")).text, "באמצע עבודה. חוזרים אליכם עד 12:30.");
+assert.equal(lib.availability({ ...C0, avail: "busy", avail_until: "2026-07-07T06:00:00Z" }, at("2026-07-07T07:00:00Z")).state, "open", "it runs out by itself");
+assert.deepEqual(lib.availabilityCommand("עסוק"), { avail: "busy", hours: 3 });
+assert.deepEqual(lib.availabilityCommand(" עסוק 2! "), { avail: "busy", hours: 2 });
+assert.deepEqual(lib.availabilityCommand("עסוק 99"), { avail: "busy", hours: 12 });
+assert.deepEqual(lib.availabilityCommand("פנויה"), { avail: "free", hours: null });
+assert.deepEqual(lib.availabilityCommand("אוטומטי"), { avail: null });
+assert.deepEqual(lib.availabilityCommand("סטטוס"), { status: true });
+assert.equal(lib.availabilityCommand("אני עסוק עכשיו, אחזור אליך"), null, "only the word itself");
+// from WhatsApp: only the owner's number changes it
+const before4 = sent.length;
+await hook(wh(val({ messages: [{ from: "972509999999", id: "in-busy-x", type: "text", text: { body: "עסוק" } }] })));
+assert.equal(C0.avail, undefined, "a customer writing עסוק changes nothing"); assert.equal(sent.length, before4);
+await hook(wh(val({ messages: [{ from: "972501111111", id: "in-busy", type: "text", text: { body: "עסוק" } }] })));
+assert.equal(C0.avail, "busy"); assert.ok(new Date(C0.avail_until) - Date.now() > 2.9 * 3600000);
+assert.match(sent.at(-1).text.body, /^באתר כתוב עכשיו: באמצע עבודה\. חוזרים אליכם עד \d\d:\d\d\. כשתסיימו, כתבו "פנוי"\.$/);
+await hook(wh(val({ messages: [{ from: "972501111111", id: "in-busy", type: "text", text: { body: "עסוק" } }] }))); // Meta retries
+assert.equal(sent.filter((m) => m.text && /^באתר כתוב/.test(m.text.body)).length, 1, "answered once");
+// the site reads it
+const status = (await import(F + "status.mjs")).default;
+const st = (slug) => status(new Request("https://service-pro-web.netlify.app/api/status/" + slug), ctx(slug));
+r = await st("oren"); out = await r.json(); assert.equal(out.state, "busy"); assert.equal(r.headers.get("access-control-allow-origin"), "*");
+assert.ok(!JSON.stringify(out).includes("972"), "no phone numbers");
+r = await st("off"); assert.equal((await r.json()).state, null, "a paused business shows nothing");
+r = await st("nope"); assert.equal((await r.json()).state, null);
+r = await st("../x"); assert.equal((await r.json()).state, null);
+await hook(wh(val({ messages: [{ from: "972501111111", id: "in-free", type: "text", text: { body: "פנוי" } }] })));
+assert.equal(C0.avail, "free"); assert.equal((await (await st("oren")).json()).state, "free");
+// the panel shows it and changes it
+r = await api(get("", "Bearer oren:" + key)); out = await r.json(); assert.equal(out.availability.state, "free"); assert.equal(out.availability.manual, true);
+r = await api(post("/api/leads", { available: "auto" }, owner)); out = await r.json(); assert.equal(out.availability.manual, false); assert.equal(C0.avail, null);
+r = await api(post("/api/leads", { available: "busy", hours: 1 }, owner)); out = await r.json(); assert.equal(out.availability.state, "busy");
+assert.ok(new Date(C0.avail_until) - Date.now() < 1.1 * 3600000);
+r = await api(post("/api/leads", { available: "maybe" }, owner)); assert.equal(r.status, 400);
+await api(post("/api/leads", { available: "auto" }, owner));
+
 // --- helpers
 assert.equal(lib.israeliPhone("0771234567").intl, "972771234567");
 assert.equal(lib.israeliPhone("12345"), null);

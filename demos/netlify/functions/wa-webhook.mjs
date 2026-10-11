@@ -2,8 +2,9 @@
 // In Meta: WhatsApp > Configuration > Webhook: this URL, the WA_VERIFY_TOKEN value, and subscribe to "messages".
 // GET  verifies the webhook once. POST carries delivery statuses and incoming messages:
 //   - the owner taps "טיפלתי" on an alert or a reminder: the lead is marked handled
+//   - the owner writes "עסוק" / "פנוי" / "אוטומטי" / "סטטוס": the site's "available now" line changes
 //   - a lead writes back: the message is logged and shown in the panel
-import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip } from "../lib/leads.mjs";
+import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability } from "../lib/leads.mjs";
 
 async function clientByPhoneId(id) {
   const rows = await db("GET", `ls_clients?wa_phone_number_id=eq.${q(id)}&select=*`);
@@ -49,6 +50,17 @@ async function onMessage(client, m) {
     if (!fresh) return;
     // The owner just wrote, so a free text reply is allowed.
     await sendText(client, from, rows.length ? `סומן כטופל: ${rows[0].name}.` : exists ? "הפנייה הזאת כבר סומנה." : "הפנייה הזאת כבר לא במערכת.", { kind: "owner_reply", leadId: exists ? id : null });
+    return;
+  }
+
+  // The owner writes "עסוק" or "פנוי": the site shows it (0007_availability.sql).
+  const cmd = from === client.owner_phone && m.type === "text" ? availabilityCommand(text) : null;
+  if (cmd) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 100) } });
+    if (!fresh) return;
+    const now = cmd.status ? availability(client) : await setAvailability(client, cmd);
+    const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : "\"עסוק\" או \"פנוי\" משנים את זה.";
+    await sendText(client, from, `באתר כתוב עכשיו: ${now.text} ${tip}`, { kind: "owner_reply" });
     return;
   }
 

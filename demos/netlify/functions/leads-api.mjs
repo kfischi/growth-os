@@ -5,7 +5,8 @@
 // PATCH /api/leads  { id, status?, note? }   -> { lead }
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
 // POST  /api/leads  { link: "קבוצת השכונה" } -> { link }   |   { unlink: "k3p9" } -> { ok }   the owner's tagged links
-import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks } from "../lib/leads.mjs";
+// POST  /api/leads  { available: "busy" | "free" | "auto", hours? } -> { availability }   the site's "available now" line
+import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
 const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
@@ -23,7 +24,7 @@ export default async (req) => {
   const url = new URL(req.url);
   try {
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : null;
-    const linkAction = body && (body.link !== undefined || body.unlink !== undefined);
+    const linkAction = body && (body.link !== undefined || body.unlink !== undefined || body.available !== undefined);
     if (req.method === "POST" && !linkAction) {
       if (!who.admin) return json({ error: "forbidden" }, 403);
       if (body.run === "reminders") return json(await runReminders());
@@ -43,6 +44,12 @@ export default async (req) => {
     const client = who.admin ? await getClient(slug) : who.client;
     if (!client) return json({ error: "unknown_client" }, 404);
 
+    if (linkAction && body.available !== undefined) {
+      if (!["busy", "free", "auto"].includes(body.available)) return json({ error: "bad_available" }, 400);
+      const hours = body.hours == null ? null : Math.min(Math.max(Math.round(Number(body.hours)) || 1, 1), AVAIL_MAX_HOURS);
+      const now = await setAvailability(client, body.available === "auto" ? { avail: null } : { avail: body.available, hours: hours || (body.available === "busy" ? 3 : null) });
+      return json({ availability: { ...now, manual: body.available !== "auto" } });
+    }
     if (linkAction) {
       const out = body.link !== undefined ? await addLink(client, body.link) : await removeLink(client, body.unlink);
       return json(out, out.error ? (out.error === "not_found" ? 404 : 400) : 200);
@@ -66,7 +73,8 @@ export default async (req) => {
       } catch (e) { console.error("panel stats", e.message); }
       // A photo the visitor attached: the panel gets the private link, never the storage path.
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links });
+      const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, availability: avail });
     }
 
     if (req.method === "PATCH") {

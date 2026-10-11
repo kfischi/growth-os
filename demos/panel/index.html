@@ -80,6 +80,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .err { color: var(--new); min-height: 1.5em; margin: 10px 0 0; font-size: .9rem; }
 .foot { margin-top: 24px; color: var(--muted); font-size: .8rem; display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
 [hidden] { display: none !important; }
+.avail { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px; }
+.avail-now { display: flex; gap: 10px; align-items: center; }
+.avail-now small { display: block; color: var(--muted); font-size: .8rem; }
+.avail-now b { font-weight: 500; }
+.dot { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--muted); }
+.dot.free, .dot.open { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.dot.busy { background: var(--new); box-shadow: 0 0 0 4px var(--new-soft); }
+.avail-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.avail-btns [aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .avail-btns [aria-pressed="true"] { color: #0f1514; } }
+.avail .hint { margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
 .links { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
 .links summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
 .links summary small { color: var(--muted); font-weight: 400; }
@@ -130,6 +141,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
       <div class="stat"><b id="s-visits">0</b><span>כניסות לאתר החודש</span></div>
       <div class="stat"><b id="s-after">0</b><span>פניות מחוץ לשעות העבודה</span></div>
       <div class="stat"><b id="s-conv">-</b><span>מהנכנסים השאירו פרטים</span></div>
+    </div>
+
+    <div class="avail" id="avail" hidden>
+      <div class="avail-now"><span class="dot" id="av-dot"></span><div><small>מה כתוב באתר עכשיו</small><b id="av-text"></b></div></div>
+      <div class="avail-btns" role="group" aria-label="לשנות את מה שכתוב באתר">
+        <button class="ghost" type="button" data-av="busy">עסוק</button>
+        <button class="ghost" type="button" data-av="free">פנוי</button>
+        <button class="ghost" type="button" data-av="auto">לפי שעות הפעילות</button>
+      </div>
+      <p class="hint">אפשר גם לכתוב "עסוק" או "פנוי" בוואטסאפ למספר של העסק. "עסוק 2" זה לשעתיים.</p>
     </div>
 
     <details class="links" id="links" hidden>
@@ -253,6 +274,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     }
 
     renderLinks();
+    renderAvail();
 
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
@@ -292,6 +314,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
       li.append(row, code);
       return li;
     }));
+  }
+  function renderAvail() {
+    const a = data.availability;
+    $('#avail').hidden = !a || !data.month;
+    if (!a) return;
+    $('#av-text').textContent = a.text; $('#av-dot').className = 'dot ' + a.state;
+    $$('[data-av]').forEach((b) => b.setAttribute('aria-pressed', String(a.manual ? b.dataset.av === a.state : b.dataset.av === 'auto')));
   }
   const adminQuery = () => auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '';
 
@@ -363,6 +392,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   });
   $('#logout').addEventListener('click', () => logout());
   const LINK_ERR = { bad_label: 'כתבו שם של שתי אותיות לפחות.', label_taken: 'כבר יש קישור בשם הזה.', too_many_links: 'הגעתם ל-30 קישורים. מחקו אחד שכבר לא בשימוש.' };
+  $$('[data-av]').forEach((b) => b.addEventListener('click', async () => {
+    try { const { availability } = await call('POST', { available: b.dataset.av }, adminQuery()); data.availability = availability; renderAvail(); $('#a-err').textContent = ''; }
+    catch (e) { if (e.message !== 'unauthorised') $('#a-err').textContent = 'השינוי לא נשמר. נסו שוב.'; }
+  }));
   $('#link-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const input = $('#link-name'), label = input.value.trim();

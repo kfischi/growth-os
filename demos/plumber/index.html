@@ -54,6 +54,13 @@
   .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; }
   .logo svg { width: 30px; height: 30px; }
   .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 6px 10px; border-radius: 4px; }
+  .live[data-state="busy"] i { background: #ff8a7a; animation: none; }
+  .live[data-state="closed"] i { background: #a9bce6; animation: none; }
+  .avail-try { margin-top: 22px; display: grid; gap: 10px; justify-items: start; }
+  .avail-try .try { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: #a9bce6; }
+  .avail-try .try button { font: inherit; color: #e8efff; background: transparent; border: 1px solid rgba(232, 239, 255, .35); border-radius: 4px; padding: 6px 10px; min-height: 34px; cursor: pointer; }
+  .avail-try .try button[aria-pressed="true"] { background: #e8efff; color: var(--ink); }
+  .live[hidden] { display: none; }
   .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 0 0 rgba(57,217,138,.6); animation: pulse 1.8s infinite; }
   @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(57,217,138,0); } 100% { box-shadow: 0 0 0 0 rgba(57,217,138,0); } }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 40px 72px; }
@@ -172,7 +179,7 @@
 <header class="hero">
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg><span data-edit="name">אורן מים</span></div>
-    <span class="live mono"><i></i>זמין עכשיו · הגעה משוערת 45 דק׳</span>
+    <span class="live mono" data-avail><i></i>זמינים 24/7.</span>
   </div>
   <div class="wrap hero-grid">
     <div>
@@ -187,6 +194,10 @@
         <div><b>15 דק׳</b><span>זמן חזרה</span></div>
         <div><b>12 שנה</b><span>בשטח</span></div>
         <div><b>מחיר סגור</b><span>לפני שמתחילים</span></div>
+      </div>
+      <div class="avail-try">
+        <span class="live mono" data-avail><i></i>זמינים 24/7.</span>
+        <div class="try mono" data-avail-try><span>נסו: אורן כותב בוואטסאפ</span></div>
       </div>
     </div>
     <figure class="reel">
@@ -291,6 +302,7 @@
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/reel.js"></script>
 <script src="../shared/estimate.js"></script>
+<script src="../shared/status.js"></script>
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
@@ -310,6 +322,8 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הצ׳אט מותאם לשירותים ולמחירים שלכם.",
   });
   PhotoSlots.init({ page: "plumber" });
+  // The "available now" line. On a real site it follows what the owner writes in WhatsApp ("עסוק", "פנוי").
+  LeadStatus.init({ hours: { days: [0, 1, 2, 3, 4, 5, 6], start: 0, end: 24 }, demo: true });
   Estimate.init(document.querySelector("[data-estimate]"), {
     pick: { ask: "מה התקלה?", items: [
       { label: "סתימה", range: [250, 450], prefill: { issue: "סתימה" } },

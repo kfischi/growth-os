@@ -126,6 +126,60 @@ export function inWorkingHours(client, date = new Date()) {
   return (client.work_days || []).includes(t.day) && t.hour >= client.work_start && t.hour < client.work_end;
 }
 
+/* ---------------- "available now" (0007_availability.sql) ---------------- */
+
+// What the owner said ("עסוק", "פנוי") counts until avail_until; after that the working hours decide.
+// state: "free" | "busy" | "open" | "closed". text: one short line for the site, in the business's voice (plural).
+const DAYS_HE = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+const clock = (d) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jerusalem", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
+export const AVAIL_MAX_HOURS = 12;
+
+export function availability(client, now = new Date()) {
+  const until = client.avail_until ? new Date(client.avail_until) : null;
+  if (client.avail && until && until > now) {
+    return client.avail === "busy"
+      ? { state: "busy", until: until.toISOString(), text: `באמצע עבודה. חוזרים אליכם עד ${clock(until)}.` }
+      : { state: "free", until: until.toISOString(), text: "פנויים עכשיו. אפשר לכתוב או להתקשר." };
+  }
+  if (client.work_start <= 0 && client.work_end >= 24 && (client.work_days || []).length === 7) return { state: "open", until: null, text: "זמינים 24/7." };
+  if (inWorkingHours(client, now)) return { state: "open", until: null, text: `זמינים היום עד ${client.work_end}:00.` };
+  // The next opening: today later, tomorrow, or the next working day.
+  const t = israelTime(now);
+  for (let i = 0; i < 8; i++) {
+    const day = (t.day + i) % 7;
+    if (!(client.work_days || []).includes(day) || (i === 0 && t.hour >= client.work_start)) continue;
+    const when = i === 0 ? "היום" : i === 1 ? "מחר" : `ביום ${DAYS_HE[day]}`;
+    return { state: "closed", until: null, text: `השאירו פרטים, ונחזור אליכם ${when} מ-${client.work_start}:00.` };
+  }
+  return { state: "closed", until: null, text: "השאירו פרטים, ונחזור אליכם." };
+}
+
+// From the owner's WhatsApp: "עסוק", "עסוק 2" (hours), "פנוי", "אוטומטי", "סטטוס". Anything else: null.
+export function availabilityCommand(text) {
+  const t = String(text || "").trim().replace(/[.!?,׳'"]+$/g, "").replace(/\s+/g, " ");
+  let m = /^(עסוק|עסוקה|עסוקים|בעבודה)(?: (\d{1,2}))?$/.exec(t);
+  if (m) return { avail: "busy", hours: Math.min(Math.max(Number(m[2]) || 3, 1), AVAIL_MAX_HOURS) };
+  m = /^(פנוי|פנויה|פנויים|זמין|זמינה|זמינים)(?: (\d{1,2}))?$/.exec(t);
+  if (m) return { avail: "free", hours: m[2] ? Math.min(Math.max(Number(m[2]), 1), AVAIL_MAX_HOURS) : null };
+  if (/^(אוטומטי|רגיל|לפי השעות)$/.test(t)) return { avail: null };
+  if (/^(סטטוס|מצב)$/.test(t)) return { status: true };
+  return null;
+}
+
+// Sets it and returns what the site shows now. "free" without hours lasts to the end of today's working hours (at least 2 hours).
+export async function setAvailability(client, cmd, now = new Date()) {
+  let patch = { avail: null, avail_until: null };
+  if (cmd.avail) {
+    let hours = cmd.hours;
+    if (!hours) { const t = israelTime(now); hours = Math.min(Math.max(client.work_end - t.hour, 2), AVAIL_MAX_HOURS); }
+    patch = { avail: cmd.avail, avail_until: new Date(now.getTime() + hours * 3_600_000).toISOString() };
+  }
+  await db("PATCH", `ls_clients?slug=eq.${q(client.slug)}`, patch);
+  Object.assign(client, patch);
+  clientCache.delete(client.slug); // the next read in this instance sees it; others within a minute
+  return availability(client, now);
+}
+
 export function ago(fromIso, now = new Date()) {
   const min = Math.max(1, Math.round((now - new Date(fromIso)) / 60000));
   if (min < 60) return min === 1 ? "דקה" : `${min} דקות`;
