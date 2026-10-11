@@ -138,7 +138,7 @@
         if (!offline) {
           try {
             const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 30000);
-            const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: history.slice(-19), page: location.href, referrer: document.referrer, source: new URLSearchParams(location.search).get("utm_source") || "", campaign: new URLSearchParams(location.search).get("utm_campaign") || "" }), signal: ctrl.signal });
+            const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: history.slice(-19), page: location.href, referrer: document.referrer, source: (window.LeadForm && LeadForm.source ? LeadForm.source() : new URLSearchParams(location.search).get("utm_source")) || "", campaign: new URLSearchParams(location.search).get("utm_campaign") || "" }), signal: ctrl.signal });
             clearTimeout(timer);
             if (r.ok) reply = (await r.json()).reply;
             else if (r.status === 404 || r.status === 503 || r.status === 405) goOffline();

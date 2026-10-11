@@ -225,6 +225,14 @@
   </div>
 </section>
 
+<section class="calc" id="calc">
+  <div class="wrap">
+    <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+    <div data-estimate></div>
+    <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים והתוספות שלכם.</p>
+  </div>
+</section>
+
 <section class="field">
   <div class="wrap">
     <div class="head"><h2>מהשטח</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -282,6 +290,7 @@
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/reel.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
@@ -290,6 +299,7 @@
     greet: "היי, כאן אורן 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה אני עונה מיד. שלוש שאלות קצרות ואני חוזר אליכם.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
       { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -300,6 +310,31 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הצ׳אט מותאם לשירותים ולמחירים שלכם.",
   });
   PhotoSlots.init({ page: "plumber" });
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה התקלה?", items: [
+      { label: "סתימה", range: [250, 450], prefill: { issue: "סתימה" } },
+      { label: "נזילה", range: [300, 650], prefill: { issue: "נזילה" } },
+      { label: "דוד: גוף חימום או טרמוסטט", range: [350, 600], prefill: { issue: "דוד ומים חמים" } },
+      { label: "דוד: החלפה", range: [1900, 2800], prefill: { issue: "דוד ומים חמים" }, note: "כולל דוד חדש, פירוק ופינוי של הישן." },
+      { label: "איתור נזילה", range: [650, 1200], prefill: { issue: "איתור נזילה" } },
+      { label: "התקנה או החלפה", range: null, prefill: { issue: "התקנה או החלפה" } },
+    ] },
+    factors: [
+      { ask: "כמה דחוף?", options: [
+        { label: "היום", prefill: { urgency: "היום" } },
+        { label: "השבוע", prefill: { urgency: "השבוע" } },
+        { label: "עכשיו, יש מים על הרצפה", add: 100, prefill: { urgency: "עכשיו, יש מים על הרצפה" }, note: "יציאה מיידית: 100 ₪ נוספים." },
+      ] },
+      { ask: "מתי נוח שנגיע?", options: [
+        { label: "בשעות היום" },
+        { label: "בערב או בשבת", add: 150, note: "בערב ובשבת: 150 ₪ נוספים." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי נקבע אחרי אבחון במקום, ותמיד לפני שמתחילים.",
+    quote: "לפי הצעת מחיר, אחרי שרואים את העבודה",
+    cta: "לפתוח קריאה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
 </script>
 </body>

@@ -177,6 +177,14 @@
   </div>
 </section>
 
+<section class="calc" id="calc">
+  <div class="wrap">
+    <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+    <div data-estimate></div>
+    <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+  </div>
+</section>
+
 <section class="road">
   <div class="wrap">
     <div class="head"><h2>בדרך</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -211,12 +219,13 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   const EST = { "סטודיו או חדר": [1200, 1900], "2 עד 3 חדרים": [2500, 4200], "4 חדרים ומעלה": [4500, 7800] };
   const EXTRA = { "קרקע או יש מעלית": 0, "קומה בלי מעלית": 400, "צריך מנוף": 900 };
   const fmt = (n) => n.toLocaleString("he-IL");
   PhotoSlots.init({ page: "movers" });
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "דרור · הובלות", subtitle: "הצעת מחיר בדקה", initial: "ד", launcher: "הצעת מחיר",
     greet: "היי, כאן דרור 👋\nחמש שאלות קצרות ותקבלו מחיר משוער. אחר כך הפרטים מגיעים אליי לוואטסאפ.",
@@ -235,6 +244,28 @@
     },
     summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+  });
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה גודל הדירה?", items: [
+      { label: "סטודיו או חדר", range: [1200, 1900], prefill: { size: "סטודיו או חדר" } },
+      { label: "2 עד 3 חדרים", range: [2500, 4200], prefill: { size: "2 עד 3 חדרים" } },
+      { label: "4 חדרים ומעלה", range: [4500, 7800], prefill: { size: "4 חדרים ומעלה" } },
+    ] },
+    factors: [
+      { ask: "איך הגישה בשני הצדדים?", options: [
+        { label: "קרקע או יש מעלית", prefill: { floor: "קרקע או יש מעלית" } },
+        { label: "קומה בלי מעלית", add: [300, 700], prefill: { floor: "קומה בלי מעלית" }, note: "סחיבה במדרגות: לפי מספר הקומות." },
+        { label: "צריך מנוף", add: [800, 1500], prefill: { floor: "צריך מנוף" }, note: "מנוף: 800 עד 1,500 ₪ נוספים." },
+      ] },
+      { ask: "כמה רחוק?", options: [
+        { label: "באותה עיר" },
+        { label: "עד 50 ק״מ", add: [300, 500] },
+        { label: "יותר מ-50 ק״מ", add: [700, 1200] },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. הצעה מדויקת אחרי רשימת תכולה, ובלי הפתעות ביום ההובלה.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
   });
 </script>
 </body>

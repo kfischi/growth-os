@@ -305,6 +305,14 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="wrap">
       <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -381,6 +389,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "pest" });
   const RANGES = { "ג׳וקים": "250 עד 400 ₪", "נמלים": "250 עד 400 ₪", "מכרסמים": "350 עד 700 ₪", "פשפש המיטה": "800 עד 1,800 ₪" };
@@ -391,6 +400,7 @@
     greet: "היי, כאן רון.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "pest", label: "מזיק", ask: "מה ראיתם?", chips: ["ג׳וקים", "נמלים", "מכרסמים", "פשפש המיטה", "טרמיטים", "אחר"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של מה שראיתם? זה עוזר לזהות את המזיק.", photo: true },
       { key: "place", label: "מקום", ask: "איפה צריך לטפל?", chips: ["דירה", "בית פרטי", "עסק או מסעדה"] },
       { key: "kids", label: "ילדים או חיות", ask: "יש בבית ילדים קטנים או חיות?", chips: ["כן", "לא"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
@@ -409,6 +419,30 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-pest]").forEach((b) => b.addEventListener("click", () => bot.open({ pest: b.dataset.pest })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה ראיתם?", items: [
+      { label: "ג׳וקים", range: [250, 400], prefill: { pest: "ג׳וקים" } },
+      { label: "נמלים", range: [250, 400], prefill: { pest: "נמלים" } },
+      { label: "מכרסמים", range: [350, 700], prefill: { pest: "מכרסמים" } },
+      { label: "פשפש המיטה", range: [800, 1800], prefill: { pest: "פשפש המיטה" }, note: "בדרך כלל שני טיפולים, בהפרש של שבועיים." },
+      { label: "טרמיטים", range: null, prefill: { pest: "טרמיטים" } },
+    ] },
+    factors: [
+      { ask: "איפה צריך לטפל?", options: [
+        { label: "דירה", prefill: { place: "דירה" } },
+        { label: "בית פרטי", mul: 1.4, prefill: { place: "בית פרטי" }, note: "בבית פרטי מטפלים גם בחצר ובקירות החוץ." },
+        { label: "עסק או מסעדה", mul: 1.8, prefill: { place: "עסק או מסעדה" }, note: "לעסק: כולל אישור טיפול למשרד הבריאות." },
+      ] },
+      { ask: "יש בבית ילדים קטנים או חיות?", options: [
+        { label: "לא", prefill: { kids: "לא" } },
+        { label: "כן", prefill: { kids: "כן" }, note: "עובדים עם חומרים מתאימים לילדים ולחיות, בלי תוספת." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי שרואים את המקום.",
+    quote: "הצעת מחיר אחרי בדיקה במקום",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

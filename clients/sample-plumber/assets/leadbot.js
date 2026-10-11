@@ -14,7 +14,8 @@
     steps: [
       { key, ask: string | (data) => string,
         chips?: [string | {label, value}],
-        input?: "text" | "tel", placeholder?, optional? }
+        input?: "text" | "tel", placeholder?, optional?,
+        photo?: true, skip?: "בלי תמונה" }   // photo: the visitor may attach one photo (shrunk here), or skip
     ],
     summary: (data) => "text for WhatsApp",
     closing: (data) => "last bot message before the WhatsApp button",
@@ -23,6 +24,8 @@
     capture?: { endpoint: "https://…/api/lead/<slug>", lead: (data) => ({ name, phone, service, message }),
                 saved: (data) => "last bot message when the lead was stored" },
   }
+  A photo goes with the lead to the lead system (capture). Without capture it shows in the summary card,
+  goes to onDone(data, text, photoUrl) for the phone mockup, and the WhatsApp text says it will follow there.
   With capture, a stored lead ends the chat with saved(data) and no WhatsApp button. If the system
   doesn't confirm, the chat falls back to the WhatsApp button, so the enquiry still arrives.
 */
@@ -65,6 +68,11 @@
   .lb-form{display:none;gap:8px}.lb-form.on{display:flex}
   .lb-form input{flex:1;min-width:0;border:1.5px solid var(--bot-line);background:var(--bot-input,var(--bot-bg));color:var(--bot-fg);border-radius:var(--bot-radius-input,10px);padding:10px 12px;font:16px var(--bot-font)}
   .lb-form button{border:0;border-radius:var(--bot-radius-input,10px);padding:0 16px;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 15px var(--bot-font);cursor:pointer}
+  .lb-photo{display:none;position:relative;align-items:center;justify-content:center;gap:8px;border-radius:var(--bot-radius-input,10px);padding:11px;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 15px var(--bot-font);cursor:pointer}
+  .lb-photo.on{display:flex}.lb-photo input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .lb-photo:focus-within{outline:3px solid var(--bot-focus,var(--bot-accent));outline-offset:2px}
+  .lb-msg.pic{padding:4px}.lb-msg.pic img{display:block;max-width:180px;max-height:180px;border-radius:calc(var(--bot-radius-msg,14px) - 4px)}
+  .lb-card img{display:block;max-width:120px;max-height:120px;border-radius:8px;margin-top:8px}
   .lb-wa{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border-radius:var(--bot-radius-input,10px);padding:13px;background:#1f9d55;color:#fff;font:700 16px var(--bot-font)}
   .lb-restart{border:0;background:none;color:var(--bot-muted);font:13px var(--bot-font);text-decoration:underline;cursor:pointer;justify-self:start;padding:0}
   .lb-note{font-size:11.5px;color:var(--bot-muted);padding:0 14px 10px}
@@ -95,12 +103,15 @@
       const input = el("input"); input.id = "lb-input"; input.setAttribute("aria-label", "תשובה"); input.autocomplete = "off";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
-      foot.append(chips, form);
+      const photoBtn = el("label", "lb-photo", "📷 לצרף תמונה");
+      const file = el("input"); file.type = "file"; file.accept = "image/*"; file.setAttribute("aria-label", "לצרף תמונה");
+      photoBtn.append(file);
+      foot.append(photoBtn, chips, form);
       panel.append(head, body, foot);
       if (cfg.note) panel.appendChild(el("div", "lb-note", cfg.note));
       document.body.append(launch, panel);
 
-      let step = 0, data = {}, pre = {}, busy = false, started = false, timers = [];
+      let step = 0, data = {}, pre = {}, busy = false, started = false, timers = [], photo = null;
       const later = (ms, fn) => timers.push(setTimeout(fn, ms));
 
       function say(text, who) {
@@ -111,7 +122,7 @@
         busy = true; typing.classList.add("on"); body.scrollTop = body.scrollHeight;
         later(Math.min(1300, 380 + text.length * 7), () => { typing.classList.remove("on"); say(text, "bot"); busy = false; if (then) then(); });
       }
-      function clearFoot() { chips.innerHTML = ""; form.classList.remove("on"); }
+      function clearFoot() { chips.innerHTML = ""; form.classList.remove("on"); photoBtn.classList.remove("on"); }
 
       function ask() {
         const s = cfg.steps[step];
@@ -127,6 +138,12 @@
             b.addEventListener("click", () => answer(value, label));
             chips.appendChild(b);
           });
+          if (s.photo) {
+            photoBtn.classList.add("on");
+            const skip = el("button", null, s.skip || "בלי תמונה"); skip.type = "button";
+            skip.addEventListener("click", () => answer(null, s.skip || "בלי תמונה"));
+            chips.appendChild(skip);
+          }
           if (s.input) {
             form.classList.add("on");
             input.type = s.input === "tel" ? "tel" : "text";
@@ -149,6 +166,36 @@
         ask();
       }
 
+      // The photo: shrunk here to 1280px, JPEG, under 900KB, which also drops the location data.
+      async function shrink(f) {
+        let src;
+        try { src = await createImageBitmap(f, { imageOrientation: "from-image" }); }
+        catch (e) { // some phone photos (HEIC) open only as an <img>
+          const u = URL.createObjectURL(f); src = new Image(); src.src = u;
+          try { await src.decode(); } finally { setTimeout(() => URL.revokeObjectURL(u), 2000); }
+        }
+        const w = src.naturalWidth || src.width, h = src.naturalHeight || src.height, k = Math.min(1, 1280 / Math.max(w, h));
+        const c = document.createElement("canvas"); c.width = Math.round(w * k); c.height = Math.round(h * k);
+        c.getContext("2d").drawImage(src, 0, 0, c.width, c.height);
+        let blob = null;
+        for (let qy = 0.8; qy > 0.35 && (!blob || blob.size > 900000); qy -= 0.15) blob = await new Promise((r) => c.toBlob(r, "image/jpeg", qy));
+        if (!blob) throw new Error("encode");
+        return blob;
+      }
+      file.addEventListener("change", async () => {
+        const f = file.files[0]; file.value = "";
+        const s = cfg.steps[step];
+        if (!f || busy || !s || !s.photo) return;
+        busy = true;
+        try { const blob = await shrink(f); photo = { blob, url: URL.createObjectURL(blob) }; }
+        catch (e) { busy = false; botSay("לא הצלחנו לפתוח את התמונה. נסו תמונה אחרת, או המשיכו בלי."); return; }
+        busy = false;
+        const m = el("div", "lb-msg me pic"); const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; m.append(img);
+        body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
+        data[s.key] = "צורפה תמונה"; clearFoot(); step++; ask();
+      });
+      const toDataUrl = (blob) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(blob); });
+
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (busy) return;
@@ -167,14 +214,16 @@
         clearFoot();
         if (cfg.capture && window.LeadForm) {
           typing.classList.add("on"); body.scrollTop = body.scrollHeight;
-          const r = await LeadForm.send(cfg.capture.endpoint, cfg.capture.lead(data));
+          const lead = cfg.capture.lead(data);
+          if (photo) lead.photo = await toDataUrl(photo.blob);
+          const r = await LeadForm.send(cfg.capture.endpoint, lead, photo ? 20000 : 8000);
           typing.classList.remove("on");
           if (r.ok) {
             botSay(cfg.capture.saved(data), () => {
               const again = el("button", "lb-restart", "פנייה נוספת"); again.type = "button";
               again.addEventListener("click", restart);
               foot.append(again);
-              if (cfg.onDone) cfg.onDone(data, cfg.summary(data));
+              if (cfg.onDone) cfg.onDone(data, cfg.summary(data), photo && photo.url);
             });
             return;
           }
@@ -186,20 +235,25 @@
             if (!s.label || data[s.key] == null) return;
             const row = el("div"); row.append(el("dt", null, s.label), el("dd", null, data[s.key])); dl.appendChild(row);
           });
-          card.appendChild(dl); body.insertBefore(card, typing); body.scrollTop = body.scrollHeight;
+          card.appendChild(dl);
+          if (photo) { const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; card.appendChild(img); }
+          body.insertBefore(card, typing); body.scrollTop = body.scrollHeight;
+          // A WhatsApp link can't carry a photo: the text says it follows in the same chat.
+          const text = cfg.summary(data) + (photo ? "\nיש לי תמונה של זה, אשלח אותה כאן." : "");
           const wa = el("a", "lb-wa", "לשלוח את הפנייה בוואטסאפ");
-          wa.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(cfg.summary(data));
+          wa.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(text);
           wa.target = "_blank"; wa.rel = "noopener";
           const again = el("button", "lb-restart", "להתחיל מחדש"); again.type = "button";
           again.addEventListener("click", restart);
           foot.append(wa, again);
-          if (cfg.onDone) cfg.onDone(data, cfg.summary(data));
+          if (cfg.onDone) cfg.onDone(data, text, photo && photo.url);
         });
       }
 
       function restart() {
         timers.forEach(clearTimeout); timers = [];
         body.querySelectorAll(".lb-msg,.lb-card").forEach((n) => n.remove());
+        if (photo) { URL.revokeObjectURL(photo.url); photo = null; }
         foot.querySelectorAll(".lb-wa,.lb-restart").forEach((n) => n.remove());
         typing.classList.remove("on"); busy = false; step = 0; data = {}; pre = {};
         clearFoot(); start();
@@ -231,8 +285,15 @@
 
 // Phone mockup helper: show the lead text in a .ph-msg after the chat ends.
 window.LeadPhone = function (selector) {
-  return function (data, text) {
+  return function (data, text, photoUrl) {
     const msg = document.querySelector(selector); if (!msg) return;
+    const old = msg.parentNode.querySelector(".ph-pic"); if (old) old.remove();
+    if (photoUrl) { // the visitor's own photo, as it would arrive in WhatsApp
+      const pic = document.createElement("div"); pic.className = msg.className.replace(/\bnew\b/g, "").trim() + " ph-pic";
+      pic.style.padding = "4px"; const img = document.createElement("img"); img.src = photoUrl; img.alt = "";
+      img.style.cssText = "display:block;max-width:100%;max-height:150px;border-radius:8px"; pic.appendChild(img);
+      msg.parentNode.insertBefore(pic, msg);
+    }
     const top = msg.closest(".ph-screen").querySelector(".ph-top b");
     if (top && data.name) top.textContent = data.name;
     const av = msg.closest(".ph-screen").querySelector(".ph-av");

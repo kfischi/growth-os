@@ -310,6 +310,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section class="codes">
     <div class="wrap">
       <div class="head"><h2>מה כתוב על הצג?</h2><span class="mono">דוגמאות ממכונות כביסה של LG</span></div>
@@ -402,6 +409,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "appliance" });
   const RANGES = { "מכונת כביסה": "250 עד 600", "מקרר": "300 עד 800", "מדיח כלים": "250 עד 550", "תנור": "250 עד 500", "מייבש": "250 עד 550" };
@@ -411,6 +419,7 @@
     greet: "היי, כאן רועי.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "appliance", label: "מכשיר", ask: "איזה מכשיר עושה בעיות?", chips: Object.keys(RANGES) },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המכשיר או של מדבקת הדגם? כך מגיעים עם החלק הנכון.", photo: true },
       { key: "fault", label: "תקלה", ask: (d) => `מה קורה עם ה${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"] },
       { key: "code", label: "קוד שגיאה", ask: "יש קוד על הצג? כתבו אותו, למשל E21.\nאם אין, כתבו ״אין״.", input: "text", placeholder: "E21 או אין" },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
@@ -431,6 +440,25 @@
     setTimeout(() => bot.open({ appliance: b.dataset.appliance }), still ? 0 : 550);
   }));
   document.querySelectorAll(".row[data-appliance]").forEach((b) => b.addEventListener("click", () => bot.open({ appliance: b.dataset.appliance })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "איזה מכשיר?", items: [
+      { label: "מכונת כביסה", range: [250, 600], prefill: { appliance: "מכונת כביסה" } },
+      { label: "מקרר", range: [300, 800], prefill: { appliance: "מקרר" } },
+      { label: "מדיח כלים", range: [250, 550], prefill: { appliance: "מדיח כלים" } },
+      { label: "תנור", range: [250, 500], prefill: { appliance: "תנור" } },
+      { label: "מייבש", range: [250, 550], prefill: { appliance: "מייבש" } },
+    ] },
+    factors: [
+      { ask: "בן כמה המכשיר?", options: [
+        { label: "עד 5 שנים" },
+        { label: "5 עד 10 שנים" },
+        { label: "מעל 10 שנים", note: "במכשיר ותיק נגיד לכם בכנות אם שווה לתקן, לפני שמתחילים." },
+      ] },
+    ],
+    note: "כולל ביקור, אבחון ועבודה. חלקים לפי הצורך, ותמיד אחרי שאתם מאשרים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

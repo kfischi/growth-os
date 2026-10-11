@@ -214,6 +214,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="dymo">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="wrap report-wrap">
       <div class="board">
@@ -281,6 +288,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "electrician" });
   const ISSUES = ["החשמל קפץ", "שקע או מתג לא עובד", "ריח שרוף או ניצוצות", "התקנה חדשה", "עמדת טעינה לרכב", "החלפת לוח חשמל"];
@@ -290,6 +298,7 @@
     greet: "היי, כאן רז.\nכמה שאלות קצרות, והקריאה תגיע אליי לוואטסאפ.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הלוח או של מה שקרה? זה עוזר להבין לפני שמגיעים.", photo: true },
       { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -308,6 +317,31 @@
     } else b.classList.toggle("off");
   }));
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "איתור קצר", range: [300, 600], prefill: { issue: "החשמל קפץ" } },
+      { label: "שקע או מתג", range: [180, 350], prefill: { issue: "שקע או מתג לא עובד" } },
+      { label: "נקודה חדשה", range: [250, 400], prefill: { issue: "התקנה חדשה" } },
+      { label: "עמדת טעינה לרכב", range: [2800, 4800], prefill: { issue: "עמדת טעינה לרכב" }, note: "כולל בדיקת הלוח והגדלת חיבור, אם צריך." },
+      { label: "החלפת לוח", range: [2500, 4500], prefill: { issue: "החלפת לוח חשמל" } },
+    ] },
+    factors: [
+      { ask: "כמה נקודות?", for: ["נקודה חדשה", "שקע או מתג"], options: [
+        { label: "אחת" },
+        { label: "2 עד 3", mul: [1.8, 2.7], note: "כמה נקודות באותו ביקור זולות יותר לכל נקודה." },
+        { label: "4 עד 6", mul: [3.2, 5], note: "כמה נקודות באותו ביקור זולות יותר לכל נקודה." },
+      ] },
+      { ask: "כמה דחוף?", options: [
+        { label: "היום", prefill: { urgency: "היום" } },
+        { label: "השבוע", prefill: { urgency: "השבוע" } },
+        { label: "לא דחוף", prefill: { urgency: "לא דחוף" } },
+        { label: "עכשיו, אין חשמל", add: 150, prefill: { urgency: "עכשיו, אין חשמל" }, note: "יציאה מיידית: 150 ₪ נוספים." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי בדיקה במקום, ותמיד לפני שמתחילים. ריח שרוף או ניצוצות: מורידים את הראשי וכותבים מיד.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

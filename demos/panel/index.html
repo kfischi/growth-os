@@ -80,6 +80,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .err { color: var(--new); min-height: 1.5em; margin: 10px 0 0; font-size: .9rem; }
 .foot { margin-top: 24px; color: var(--muted); font-size: .8rem; display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
 [hidden] { display: none !important; }
+.links { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
+.links summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
+.links summary small { color: var(--muted); font-weight: 400; }
+.links .hint { margin: 0 0 10px; color: var(--muted); font-size: .9rem; }
+.links ul { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.links li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; border-top: 1px solid var(--line); padding-top: 8px; }
+.links li b { font-weight: 500; }
+.links li .n { color: var(--muted); font-size: .85rem; }
+.links li code { grid-column: 1 / -1; font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; direction: ltr; text-align: right; }
+.links li .row { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
+.links form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.links form input { flex: 1 1 200px; min-height: 40px; border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; background: var(--bg); }
+.links .err { margin: 6px 0 10px; }
+  .pic { display: inline-block; margin-top: 8px; }
+  .pic img { display: block; max-width: 160px; max-height: 160px; border-radius: 10px; border: 1px solid var(--line, #ddd); }
 </style>
 </head>
 <body>
@@ -116,6 +131,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
       <div class="stat"><b id="s-after">0</b><span>פניות מחוץ לשעות העבודה</span></div>
       <div class="stat"><b id="s-conv">-</b><span>מהנכנסים השאירו פרטים</span></div>
     </div>
+
+    <details class="links" id="links" hidden>
+      <summary>קישורים לשיתוף <small id="links-n"></small></summary>
+      <p class="hint">לכל קבוצה או ערוץ קישור משלו. מפרסמים אותו שם, ורואים כאן כמה נכנסו ממנו החודש וכמה השאירו פרטים.</p>
+      <ul id="links-list"></ul>
+      <form id="link-form">
+        <input id="link-name" maxlength="40" placeholder="למשל: קבוצת השכונה בפייסבוק" aria-label="שם לקישור החדש" required>
+        <button class="btn" type="submit">ליצור קישור</button>
+      </form>
+      <p class="err" id="link-err" role="alert"></p>
+    </details>
 
     <div class="tabs" role="group" aria-label="סינון">
       <button class="tab" type="button" data-f="new" aria-pressed="true">מחכות</button>
@@ -226,12 +252,48 @@ button, input, select, textarea { font: inherit; color: inherit; }
       $('#s-conv').textContent = m.conversion == null ? '-' : m.conversion + '%';
     }
 
+    renderLinks();
+
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
     const list = $('#list');
     if (!shown.length) { list.replaceChildren(el('div', 'empty', filter === 'new' ? 'אין פניות שמחכות. הכול מטופל.' : 'אין כאן פניות עדיין.')); return; }
     list.replaceChildren(...shown.map((l) => card(l, inbound[l.id] || [])));
   }
+
+  // The source as the owner knows it: a tagged link shows the name they gave it.
+  function sourceName(s) {
+    const link = /^t-[a-z0-9]{4}$/.test(s || '') && (data.links || []).find((x) => 't-' + x.code === s);
+    return link ? link.label : SOURCE[s] || s || 'ישיר';
+  }
+
+  function renderLinks() {
+    const links = data.links || [];
+    $('#links').hidden = !data.month; // the links need the lead system's numbers
+    $('#links-n').textContent = links.length ? '(' + links.length + ')' : '';
+    $('#links-list').replaceChildren(...links.map((k) => {
+      const li = el('li');
+      li.append(el('b', null, k.label), el('span', 'n', k.visits + ' כניסות · ' + k.leads + ' פניות'));
+      const row = el('span', 'row');
+      const copy = el('button', 'ghost', 'להעתיק'); copy.type = 'button'; copy.setAttribute('aria-label', 'להעתיק את הקישור של ' + k.label);
+      copy.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(k.url); copy.textContent = 'הועתק'; }
+        catch (e) { const r = document.createRange(); r.selectNodeContents(code); getSelection().removeAllRanges(); getSelection().addRange(r); copy.textContent = 'סמנו והעתיקו'; }
+        setTimeout(() => { copy.textContent = 'להעתיק'; }, 2000);
+      });
+      const del = el('button', 'ghost', 'למחוק'); del.type = 'button'; del.setAttribute('aria-label', 'למחוק את הקישור ' + k.label);
+      del.addEventListener('click', async () => {
+        if (!confirm('למחוק את "' + k.label + '"? מי שילחץ עליו עדיין יגיע לאתר, אבל לא נדע שהגיע ממנו.')) return;
+        try { await call('POST', { unlink: k.code }, adminQuery()); data.links = links.filter((x) => x !== k); renderLinks(); }
+        catch (e) { if (e.message !== 'unauthorised') $('#link-err').textContent = 'לא הצלחנו למחוק. נסו שוב.'; }
+      });
+      row.append(copy, del);
+      const code = el('code', null, k.url);
+      li.append(row, code);
+      return li;
+    }));
+  }
+  const adminQuery = () => auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '';
 
   function card(l, ins) {
     const c = el('article', 'lead' + (l.status === 'new' ? ' is-new' : ''));
@@ -241,9 +303,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
     c.append(head);
     if (l.service) c.append(el('p', 'svc', l.service));
     if (l.message) c.append(el('p', 'msg', l.message));
+    if (l.photo_url) { // the photo the customer attached in the chat
+      const a = el('a', 'pic'); a.href = l.photo_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const img = el('img'); img.src = l.photo_url; img.alt = 'התמונה שהלקוח צירף'; img.loading = 'lazy'; a.append(img); c.append(a);
+    }
     const meta = el('p', 'meta');
     meta.append(el('span', null, l.phone));
-    meta.append(el('span', null, (l.channel === 'chat' ? 'צ׳אט' : 'טופס') + ' · ' + (SOURCE[l.source] || l.source || 'ישיר')));
+    meta.append(el('span', null, (l.channel === 'chat' ? 'צ׳אט' : 'טופס') + ' · ' + sourceName(l.source)));
     meta.append(el('span', null, l.auto_reply === 'sent' ? 'קיבל מענה אוטומטי' : l.auto_reply === 'failed' ? 'המענה האוטומטי לא נשלח' : ''));
     // The owner's WhatsApp alert didn't go out: this enquiry may have been seen only here.
     const stuck = l.owner_alert === 'pending' && Date.now() - new Date(l.created_at) > 10 * 60000;
@@ -273,7 +339,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
   async function save(l, patch) {
     try {
-      const { lead } = await call('PATCH', Object.assign({ id: l.id }, patch), auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '');
+      const { lead } = await call('PATCH', Object.assign({ id: l.id }, patch), adminQuery());
       Object.assign(l, lead); render();
     } catch (e) { if (e.message !== 'unauthorised') $('#a-err').textContent = 'השינוי לא נשמר. נסו שוב.'; }
   }
@@ -283,7 +349,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
     // A leading = + - @ would run as a formula in Excel. Anyone can type into the form, so neutralise it.
     const cell = (v) => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
-    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : (k === 'created_at' || k === 'handled_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
+    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : k === 'source' ? sourceName(l.source) : (k === 'created_at' || k === 'handled_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
     const blob = new Blob(['﻿' + [cols.map((c) => cell(c[1])).join(','), ...rows].join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'leads-' + data.client.slug + '-' + new Date().toISOString().slice(0, 10) + '.csv';
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -296,6 +362,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
     auth = slug + ':' + key; store.set(auth); $('#l-err').textContent = ''; load();
   });
   $('#logout').addEventListener('click', () => logout());
+  const LINK_ERR = { bad_label: 'כתבו שם של שתי אותיות לפחות.', label_taken: 'כבר יש קישור בשם הזה.', too_many_links: 'הגעתם ל-30 קישורים. מחקו אחד שכבר לא בשימוש.' };
+  $('#link-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = $('#link-name'), label = input.value.trim();
+    if (label.length < 2) { $('#link-err').textContent = LINK_ERR.bad_label; return; }
+    try {
+      const { link } = await call('POST', { link: label }, adminQuery());
+      data.links = (data.links || []).concat(Object.assign({ visits: 0, leads: 0 }, link));
+      input.value = ''; $('#link-err').textContent = ''; renderLinks();
+    } catch (err) { if (err.message !== 'unauthorised') $('#link-err').textContent = LINK_ERR[err.message] || 'לא הצלחנו ליצור קישור. נסו שוב.'; }
+  });
   $('#csv').addEventListener('click', csv);
   $('#pick').addEventListener('change', (e) => { pickClient = e.target.value; load(); });
   $$('.tab').forEach((b) => b.addEventListener('click', () => {
@@ -303,7 +380,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   }));
 
   if (auth) load(); else logout();
-  setInterval(() => { if (auth && document.visibilityState === 'visible' && !document.activeElement.matches('textarea, select')) load(); }, 60000);
+  setInterval(() => { if (auth && document.visibilityState === 'visible' && !document.activeElement.matches('textarea, select, input')) load(); }, 60000);
 })();
 </script>
 </body>

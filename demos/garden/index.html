@@ -347,6 +347,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="wrap">
       <div class="head"><h2>מי מגיע לגינה</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -435,6 +442,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "garden" });
 
@@ -459,6 +467,7 @@
     greet: "היי, כאן עומר.\nכמה שאלות קצרות על הגינה, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "service", label: "שירות", ask: "מה צריך בגינה?", chips: Object.keys(RANGES) },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הגינה? זה עוזר להעריך את העבודה.", photo: true },
       { key: "size", label: "גינה", ask: "מה גודל הגינה, בערך?", chips: ["עד 50 מ״ר", "50 עד 200 מ״ר", "מעל 200 מ״ר"] },
       { key: "freq", label: "תדירות",
         ask: (d) => d.service === "אחזקה קבועה" ? "כל כמה זמן להגיע?" : "זו עבודה חד פעמית, או שתרצו גם ביקור קבוע?",
@@ -473,6 +482,25 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-service]").forEach((b) => b.addEventListener("click", () => bot.open({ service: b.dataset.service })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך בגינה?", items: [
+      { label: "אחזקה קבועה", range: [450, 650], per: "לחודש", prefill: { service: "אחזקה קבועה" } },
+      { label: "גיזום", range: [600, 1000], prefill: { service: "גיזום" } },
+      { label: "מערכת השקיה", range: [1200, 1800], prefill: { service: "מערכת השקיה" }, note: "טפטוף עם מחשב השקיה." },
+      { label: "שתילה ועיצוב", range: null, prefill: { service: "שתילה ועיצוב" } },
+    ] },
+    factors: [
+      { ask: "מה גודל הגינה, בערך?", for: ["אחזקה קבועה", "גיזום", "מערכת השקיה"], options: [
+        { label: "עד 50 מ״ר", mul: 0.75, prefill: { size: "עד 50 מ״ר" } },
+        { label: "50 עד 200 מ״ר", prefill: { size: "50 עד 200 מ״ר" } },
+        { label: "מעל 200 מ״ר", mul: 1.4, prefill: { size: "מעל 200 מ״ר" } },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי סיור בגינה.",
+    quote: "הצעת מחיר אחרי סיור בגינה",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

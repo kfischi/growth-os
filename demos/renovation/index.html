@@ -216,6 +216,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="label">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section>
     <div class="wrap ba-wrap">
       <div class="ps-ba reno">
@@ -276,6 +283,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   // Generated terrazzo sample: random stone chips on a pale base.
   (function () {
@@ -303,6 +311,7 @@
     greet: "היי, כאן נתן.\nכמה שאלות על הפרויקט, ואחר כך נקבע סיור בבית.",
     steps: [
       { key: "project", label: "פרויקט", ask: "מה משפצים?", chips: ["מטבח", "חדר אמבטיה", "דירה שלמה", "ריצוף", "צבע ותיקונים"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של החלל? זה עוזר להעריך את העבודה.", photo: true },
       { key: "size", label: "גודל", ask: "מה גודל הדירה?", chips: ["עד 60 מ״ר", "60 עד 100 מ״ר", "מעל 100 מ״ר"] },
       { key: "when", label: "מתי", ask: "מתי רוצים להתחיל?", chips: ["בחודש הקרוב", "בעוד כשלושה חודשים", "רק בודקים בינתיים"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
@@ -315,6 +324,28 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-project]").forEach((b) => b.addEventListener("click", () => bot.open({ project: b.dataset.project })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה משפצים?", items: [
+      { label: "מטבח", range: [35000, 80000], prefill: { project: "מטבח" }, note: "בלי הארונות." },
+      { label: "חדר אמבטיה", range: [25000, 45000], prefill: { project: "חדר אמבטיה" } },
+      { label: "דירה שלמה", range: [2500, 4500], prefill: { project: "דירה שלמה" } },
+    ] },
+    factors: [
+      { ask: "מה גודל הדירה?", for: ["דירה שלמה"], options: [
+        { label: "עד 60 מ״ר", mul: [45, 60], prefill: { size: "עד 60 מ״ר" } },
+        { label: "60 עד 100 מ״ר", mul: [60, 100], prefill: { size: "60 עד 100 מ״ר" } },
+        { label: "מעל 100 מ״ר", mul: [100, 140], prefill: { size: "מעל 100 מ״ר" } },
+      ] },
+      { ask: "איזו רמת גימור?", options: [
+        { label: "בסיסית", mul: [1, 0.7] },
+        { label: "בינונית", mul: [1.2, 0.85] },
+        { label: "גבוהה", mul: [1.5, 1] },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. הצעת מחיר מפורטת אחרי פגישה במקום, וכל שינוי בדרך באישור שלכם.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

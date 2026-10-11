@@ -4,7 +4,8 @@
 // GET   /api/leads?client=<slug>&days=90     -> { client, leads, messages, month }   month: this month so far
 // PATCH /api/leads  { id, status?, note? }   -> { lead }
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
-import { json, configured, db, q, getClient, authorise, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime } from "../lib/leads.mjs";
+// POST  /api/leads  { link: "קבוצת השכונה" } -> { link }   |   { unlink: "k3p9" } -> { ok }   the owner's tagged links
+import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
 const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
@@ -21,9 +22,10 @@ export default async (req) => {
 
   const url = new URL(req.url);
   try {
-    if (req.method === "POST") {
+    const body = req.method === "POST" ? await req.json().catch(() => ({})) : null;
+    const linkAction = body && (body.link !== undefined || body.unlink !== undefined);
+    if (req.method === "POST" && !linkAction) {
       if (!who.admin) return json({ error: "forbidden" }, 403);
-      const body = await req.json().catch(() => ({}));
       if (body.run === "reminders") return json(await runReminders());
       if (body.run === "report") {
         const c = await getClient(body.client);
@@ -41,6 +43,11 @@ export default async (req) => {
     const client = who.admin ? await getClient(slug) : who.client;
     if (!client) return json({ error: "unknown_client" }, 404);
 
+    if (linkAction) {
+      const out = body.link !== undefined ? await addLink(client, body.link) : await removeLink(client, body.unlink);
+      return json(out, out.error ? (out.error === "not_found" ? 404 : 400) : 200);
+    }
+
     if (req.method === "GET") {
       const days = Math.min(Math.max(Number(url.searchParams.get("days")) || 90, 1), 400);
       const since = new Date(Date.now() - days * 86_400_000).toISOString();
@@ -50,13 +57,16 @@ export default async (req) => {
         ? await db("GET", `ls_messages?lead_id=in.(${ids.join(",")})&direction=eq.in&kind=eq.inbound&select=lead_id,body,created_at&order=created_at.desc&limit=300`)
         : [];
       // This month so far: what the site brought (visits, leads, leads outside working hours). Never blocks the list.
-      let month = null;
+      let month = null, links = [];
       try {
         const t = israelTime(), r = monthRange(`${t.year}-${String(t.month).padStart(2, "0")}`);
         const s = await periodStats(client, r.start, r.end); // to the end of the month, so today is in
         month = { label: r.label, visits: s.visits, leads: s.total, afterHours: s.afterHours, handled: s.handled, open: s.open, conversion: s.conversion };
+        links = await listLinks(client, s); // each tagged link with its visits and leads this month
       } catch (e) { console.error("panel stats", e.message); }
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month });
+      // A photo the visitor attached: the panel gets the private link, never the storage path.
+      for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links });
     }
 
     if (req.method === "PATCH") {

@@ -7,7 +7,7 @@
 //   WA_APP_SECRET                             Meta app secret(s), comma separated, to verify webhooks
 //   WA_VERIFY_TOKEN                           any string, typed again in Meta when the webhook is added
 //   LEADS_ADMIN_KEY                           כפיר's key for the panel and the admin actions
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 export const STATUS_HE = { new: "חדש", handled: "טופל", won: "נסגר", lost: "לא רלוונטי" };
 const SOURCE_HE = { direct: "כניסה ישירה", google: "גוגל", facebook: "פייסבוק", instagram: "אינסטגרם", whatsapp: "וואטסאפ", tiktok: "טיקטוק", "m.facebook.com": "פייסבוק", "l.facebook.com": "פייסבוק", "lm.facebook.com": "פייסבוק", "l.instagram.com": "אינסטגרם" };
@@ -199,6 +199,113 @@ export function sourceOf(input) {
 // Returns { ok: true, id, duplicate?, autoReply } only when the owner was alerted (or alerts are off).
 // If the alert didn't go out, the lead is still stored but the answer is { ok: false, error: "alert_failed" },
 // so the page opens WhatsApp to the business and the enquiry reaches a person anyway.
+/* ---------------- a photo with the enquiry (0005_lead_photos.sql) ---------------- */
+
+export const PHOTO_BUCKET = "lead-photos";
+export const MAX_LEAD_PHOTO = 1_048_576;
+const SITE = "https://service-pro-web.netlify.app";
+
+// A data URL from the chat ("data:image/jpeg;base64,..."): only a real JPEG or WebP, up to 1 MB. Else null.
+export function decodePhoto(dataUrl) {
+  const m = /^data:image\/(jpeg|webp);base64,([A-Za-z0-9+/=]+)$/.exec(String(dataUrl || "").slice(0, 1_500_000));
+  if (!m) return null;
+  const buf = Buffer.from(m[2], "base64");
+  if (!buf.length || buf.length > MAX_LEAD_PHOTO) return null;
+  const jpeg = buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+  const webp = buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP";
+  if (!jpeg && !webp) return null;
+  return { buf, ext: jpeg ? "jpg" : "webp", type: jpeg ? "image/jpeg" : "image/webp" };
+}
+
+const storage = (path) => process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/object/" + path;
+function storageHeaders(extra = {}) {
+  const key = process.env.SUPABASE_SERVICE_KEY;
+  const h = { apikey: key, ...extra };
+  if (!key.startsWith("sb_")) h.authorization = "Bearer " + key;
+  return h;
+}
+async function uploadLeadPhoto(slug, leadId, photo) {
+  const path = `${slug}/${leadId}.${photo.ext}`;
+  const res = await fetch(storage(`${PHOTO_BUCKET}/${path}`), {
+    method: "POST", headers: storageHeaders({ "content-type": photo.type, "x-upsert": "true" }), body: photo.buf, signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error(`photo upload ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return path;
+}
+export async function readLeadPhoto(path) {
+  const res = await fetch(storage(`${PHOTO_BUCKET}/${path}`), { headers: storageHeaders(), signal: AbortSignal.timeout(8000) });
+  if (!res.ok) return null;
+  return Buffer.from(await res.arrayBuffer());
+}
+export async function deleteLeadPhotos(paths) {
+  if (!paths.length) return;
+  const res = await fetch(storage(PHOTO_BUCKET), {
+    method: "DELETE", headers: storageHeaders({ "content-type": "application/json" }), body: JSON.stringify({ prefixes: paths }), signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) console.error("photo delete", res.status);
+}
+// The private link to a lead's photo: whoever has it sees the photo, nobody can guess it.
+const photoSig = (id) => createHmac("sha256", process.env.SUPABASE_SERVICE_KEY || "").update("lead-photo:" + id).digest("base64url").slice(0, 22);
+export const photoLink = (id) => `${SITE}/p/${id}.${photoSig(id)}`;
+export function photoToken(token) {
+  const m = /^([0-9a-f-]{36})\.([A-Za-z0-9_-]{22})$/.exec(token || "");
+  return m && safeEqual(m[2], photoSig(m[1])) ? m[1] : null;
+}
+
+/* ---------------- tagged links (0006_links.sql) ---------------- */
+
+// The owner makes one link per group or channel in the panel: <site>/?s=k3p9. The page sends the source
+// "t-k3p9" (shared/leadform.js), and the name the owner gave it shows instead of the code.
+export const LINK_MAX = 30;
+const LINK_ABC = "abcdefghjkmnpqrstuvwxyz23456789"; // no 0/o, 1/l/i: read aloud or typed, it stays right
+export const isTag = (s) => /^t-[a-z0-9]{4}$/.test(s || "");
+export const sourceName = (s, labels = {}) => labels[s] || sourceHe(s);
+export function siteUrl(client) {
+  const o = (client.allowed_origins || []).find((x) => /^https:\/\//.test(x));
+  return (o || SITE).replace(/\/$/, "") + "/";
+}
+export const linkUrl = (client, code) => siteUrl(client) + "?s=" + code;
+
+// { "t-k3p9": "קבוצת השכונה" }. Never throws: without names the codes still show.
+export async function linkLabels(slug) {
+  try {
+    const rows = await db("GET", `ls_links?client_slug=eq.${q(slug)}&select=code,label&limit=${LINK_MAX * 2}`);
+    return Object.fromEntries(rows.map((r) => ["t-" + r.code, r.label]));
+  } catch (e) { console.error("link labels", e.message); return {}; }
+}
+
+export async function addLink(client, label) {
+  const name = clip(label, 40);
+  if (name.length < 2) return { error: "bad_label" };
+  const have = await db("GET", `ls_links?client_slug=eq.${q(client.slug)}&select=code,label`);
+  if (have.length >= LINK_MAX) return { error: "too_many_links" };
+  if (have.some((l) => l.label === name)) return { error: "label_taken" };
+  for (let i = 0; i < 5; i++) {
+    const bytes = randomBytes(4), code = [...bytes].map((b) => LINK_ABC[b % LINK_ABC.length]).join("");
+    if (have.some((l) => l.code === code)) continue;
+    try {
+      const [row] = await db("POST", "ls_links", { client_slug: client.slug, code, label: name }, "return=representation");
+      return { link: { code: row.code, label: row.label, url: linkUrl(client, row.code) } };
+    } catch (e) { if (!/409|duplicate/.test(e.message)) throw e; }
+  }
+  return { error: "try_again" };
+}
+
+export async function removeLink(client, code) {
+  if (!/^[a-z0-9]{4}$/.test(code || "")) return { error: "bad_code" };
+  const rows = await db("DELETE", `ls_links?client_slug=eq.${q(client.slug)}&code=eq.${q(code)}`, undefined, "return=representation");
+  return rows.length ? { ok: true } : { error: "not_found" };
+}
+
+// The links with what each brought in the period (from periodStats).
+export async function listLinks(client, stats) {
+  const rows = await db("GET", `ls_links?client_slug=eq.${q(client.slug)}&select=code,label,created_at&order=created_at.asc&limit=${LINK_MAX * 2}`);
+  return rows.map((r) => ({
+    code: r.code, label: r.label, url: linkUrl(client, r.code),
+    visits: (stats && stats.visitsBySource["t-" + r.code]) || 0, leads: (stats && stats.bySource["t-" + r.code]) || 0,
+  }));
+}
+
 export async function processLead(client, input, channel = "form") {
   const phone = israeliPhone(input.phone);
   if (!phone) return { ok: false, error: "bad_phone" };
@@ -218,6 +325,15 @@ export async function processLead(client, input, channel = "form") {
     auto_reply: client.auto_reply ? "pending" : "off", owner_alert: client.owner_alerts ? "pending" : "off",
   });
 
+  // The photo goes up before the alert, so the alert can link to it (a template parameter takes no line
+  // breaks, so it joins the message with " · "). A failed upload never stops the lead.
+  let photoNote = "";
+  const photo = input.photo ? decodePhoto(input.photo) : null;
+  if (photo) {
+    try { lead.photo = await uploadLeadPhoto(client.slug, lead.id, photo); await updateLead(lead.id, { photo: lead.photo }); photoNote = "תמונה: " + photoLink(lead.id); }
+    catch (e) { console.error("lead photo", e.message); photoNote = "הלקוח צירף תמונה, והיא לא נשמרה"; }
+  }
+
   const [autoReply, ownerAlert] = await Promise.all([
     client.auto_reply
       ? (phone.mobile
@@ -226,7 +342,8 @@ export async function processLead(client, input, channel = "form") {
       : Promise.resolve("off"),
     client.owner_alerts
       ? sendTemplate(client, client.owner_phone, client.tpl_owner_alert,
-        [name, phone.local, lead.service || "-", clip(lead.message, 400) || "-", sourceHe(lead.source)],
+        [name, phone.local, lead.service || "-", [clip(lead.message, 400), photoNote].filter(Boolean).join(" · ") || "-",
+          isTag(lead.source) ? sourceName(lead.source, await linkLabels(client.slug)) : sourceHe(lead.source)],
         { kind: "owner_alert", leadId: lead.id, buttonPayload: "done:" + lead.id })
       : Promise.resolve("off"),
   ]);
@@ -333,9 +450,11 @@ export async function periodStats(client, start, end) {
   ]);
   const base = summarise(leads);
   const visitCount = visits.reduce((n, v) => n + (v.visits || 0), 0);
+  const visitsBySource = {};
+  for (const v of visits) visitsBySource[v.source || "direct"] = (visitsBySource[v.source || "direct"] || 0) + (v.visits || 0);
   return {
     ...base,
-    visits: visitCount,
+    visits: visitCount, visitsBySource,
     // The leads that would have been missed: they came when the business was closed.
     afterHours: leads.filter((l) => !inWorkingHours(client, new Date(l.created_at))).length,
     autoAnswered: leads.filter((l) => l.auto_reply === "sent").length,
@@ -351,7 +470,7 @@ export async function buildReport(client, month, { send = true, now = new Date()
   if (send && client.monthly_report && client.active) {
     // monthly_report: {{1}} month, {{2}} visits, {{3}} leads, {{4}} outside working hours, {{5}} handled, {{6}} top source
     sent = await sendTemplate(client, client.owner_phone, client.tpl_monthly_report,
-      [r.label, String(data.visits), String(data.total), String(data.afterHours), String(data.handled), data.topSource ? sourceHe(data.topSource) : "-"], { kind: "report" });
+      [r.label, String(data.visits), String(data.total), String(data.afterHours), String(data.handled), data.topSource ? sourceName(data.topSource, await linkLabels(client.slug)) : "-"], { kind: "report" });
   }
   await db("POST", "ls_reports?on_conflict=client_slug,month", { client_slug: client.slug, month: r.first, data, sent }, "resolution=merge-duplicates");
   return { ...data, sent };
@@ -391,7 +510,8 @@ export async function runMonthlyReports(month, now = new Date()) {
 export const RETENTION_DAYS = 730;
 export async function deleteOldLeads(now = new Date()) {
   const cutoff = new Date(now - RETENTION_DAYS * 86_400_000).toISOString();
-  const leads = await db("DELETE", `ls_leads?created_at=lt.${q(cutoff)}&select=id`, undefined, "return=representation");
+  const leads = await db("DELETE", `ls_leads?created_at=lt.${q(cutoff)}&select=id,photo`, undefined, "return=representation");
+  await deleteLeadPhotos(leads.map((l) => l.photo).filter(Boolean));
   await db("DELETE", `ls_messages?created_at=lt.${q(cutoff)}`);
   return { deleted: leads.length };
 }

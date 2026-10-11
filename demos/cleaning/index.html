@@ -270,6 +270,14 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="eyebrow">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
@@ -308,6 +316,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   // Before/after slider
   const ba = document.getElementById("ba"), range = ba.querySelector("input");
@@ -317,7 +326,7 @@
   const HOURS = { "עד 3 חדרים": [3, 4], "4 עד 5 חדרים": [4, 6], "6 חדרים ומעלה": [6, 8] };
   const RATE = { "דירה": 90, "בית פרטי": 90, "משרד": 90, "אחרי שיפוץ או מעבר": 110 };
   const fmt = (n) => n.toLocaleString("he-IL");
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר",
     greet: "היי, כאן שקד.\nכמה שאלות קצרות, ותקבלו הערכה של שעות ומחיר.",
@@ -337,6 +346,29 @@
     summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
+  });
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה מנקים?", items: [
+      { label: "דירה", range: [90, 90], prefill: { type: "דירה" } },
+      { label: "בית פרטי", range: [90, 90], prefill: { type: "בית פרטי" } },
+      { label: "משרד", range: [90, 90], prefill: { type: "משרד" } },
+      { label: "אחרי שיפוץ או מעבר", range: [110, 110], prefill: { type: "אחרי שיפוץ או מעבר" }, note: "110 ₪ לשעה, כולל חומרים לאבק בנייה." },
+    ] },
+    factors: [
+      { ask: "מה הגודל?", options: [
+        { label: "עד 3 חדרים", mul: [3, 4], prefill: { size: "עד 3 חדרים" }, note: "בערך 3 עד 4 שעות." },
+        { label: "4 עד 5 חדרים", mul: [4, 6], prefill: { size: "4 עד 5 חדרים" }, note: "בערך 4 עד 6 שעות." },
+        { label: "6 חדרים ומעלה", mul: [6, 8], prefill: { size: "6 חדרים ומעלה" }, note: "בערך 6 עד 8 שעות." },
+      ] },
+      { ask: "כל כמה זמן?", options: [
+        { label: "פעם אחת", prefill: { freq: "פעם אחת" } },
+        { label: "כל שבוע", prefill: { freq: "כל שבוע" }, note: "בניקיון קבוע זה בדרך כלל לוקח פחות זמן מהפעם הראשונה." },
+        { label: "כל שבועיים", prefill: { freq: "כל שבועיים" } },
+      ] },
+    ],
+    note: "לפי שעות עבודה, לדוגמה. בסוף משלמים לפי הזמן בפועל.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
   });
 </script>
 </body>

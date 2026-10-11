@@ -381,6 +381,14 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <div class="head"><h2>עבודה אחת מקרוב</h2><span class="mono">גוררים את הפס כדי לראות לפני ואחרי</span></div>
@@ -450,6 +458,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "handyman" });
   const HOURLY = "שעת עבודה, 180 עד 250 ₪";
@@ -460,6 +469,7 @@
     greet: "היי, כאן דורון.\nכמה שאלות קצרות, והרשימה מגיעה אליי לוואטסאפ.",
     steps: [
       { key: "jobs", label: "עבודה", ask: "מה בראש הרשימה?", chips: Object.keys(PRICES) },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של מה שצריך לתקן? זה עוזר לתת מחיר.", photo: true },
       { key: "details", label: "עוד ברשימה", ask: "מה עוד ברשימה?", input: "text", placeholder: "למשל: מדף במטבח וידית בארון" },
       { key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["השבוע", "בשבועיים הקרובים", "גמיש"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
@@ -473,6 +483,25 @@
   });
   document.querySelectorAll("[data-job]").forEach((b) => b.addEventListener("click", () => bot.open({ jobs: b.dataset.job })));
   document.querySelectorAll("[data-list]").forEach((b) => b.addEventListener("click", () => bot.open({ jobs: "כמה עבודות קטנות" })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה בראש הרשימה?", items: [
+      { label: "תליית טלוויזיה", range: [250, 450], prefill: { jobs: "תליית טלוויזיה" } },
+      { label: "הרכבת רהיטים", range: [200, 500], prefill: { jobs: "הרכבת רהיטים" } },
+      { label: "מדפים ותמונות", range: [150, 300], prefill: { jobs: "מדפים ותמונות" } },
+      { label: "תיקוני צבע", range: [180, 250], per: "לשעה", prefill: { jobs: "תיקוני צבע" } },
+      { label: "כמה עבודות קטנות", range: [180, 250], per: "לשעה", prefill: { jobs: "כמה עבודות קטנות" }, note: "רשימה ארוכה יוצאת בדרך כלל זולה יותר מכמה ביקורים." },
+    ] },
+    factors: [
+      { ask: "כמה פריטים?", for: ["תליית טלוויזיה", "הרכבת רהיטים", "מדפים ותמונות"], options: [
+        { label: "אחד" },
+        { label: "שניים", mul: 1.7, note: "באותו ביקור, בלי עוד דמי הגעה." },
+        { label: "שלושה", mul: 2.4, note: "באותו ביקור, בלי עוד דמי הגעה." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי לפני שמתחילים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

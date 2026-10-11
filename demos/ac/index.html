@@ -218,6 +218,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="wrap">
       <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -278,6 +285,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "ac" });
   const RANGES = { "לא מקרר או לא מחמם": "350 עד 550", "מטפטף מים": "250 עד 380", "ניקוי תקופתי": "250 עד 350", "התקנת מזגן חדש": "850 עד 1,400", "רעש או ריח": "280 עד 450" };
@@ -287,6 +295,7 @@
     greet: "היי, כאן אלון.\nארבע שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES) },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המזגן או של מדבקת הדגם? כך מגיעים עם החלק הנכון.", photo: true },
       { key: "unit", label: "מזגן", ask: "איזה מזגן?", chips: ["עילי בחדר", "עילי בסלון", "מיני מרכזי", "מרכזי"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: כפר סבא" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -298,6 +307,31 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה קורה עם המזגן?", items: [
+      { label: "לא מקרר או לא מחמם", range: [350, 550], prefill: { issue: "לא מקרר או לא מחמם" } },
+      { label: "מטפטף מים", range: [250, 380], prefill: { issue: "מטפטף מים" } },
+      { label: "ניקוי תקופתי", range: [250, 350], prefill: { issue: "ניקוי תקופתי" } },
+      { label: "רעש או ריח", range: [280, 450], prefill: { issue: "רעש או ריח" } },
+      { label: "התקנת מזגן חדש", range: [850, 1400], prefill: { issue: "התקנת מזגן חדש" }, note: "עבודת ההתקנה, בלי המזגן עצמו." },
+    ] },
+    factors: [
+      { ask: "איזה מזגן?", options: [
+        { label: "עילי בחדר", prefill: { unit: "עילי בחדר" } },
+        { label: "עילי בסלון", mul: 1.15, prefill: { unit: "עילי בסלון" } },
+        { label: "מיני מרכזי", mul: 1.6, prefill: { unit: "מיני מרכזי" } },
+        { label: "מרכזי", mul: 2.2, prefill: { unit: "מרכזי" } },
+      ] },
+      { ask: "כמה מזגנים?", options: [
+        { label: "אחד" },
+        { label: "שניים", mul: 1.8, note: "המזגן השני באותו ביקור, בלי עוד דמי הגעה." },
+        { label: "שלושה", mul: 2.5, note: "כל המזגנים באותו ביקור, בלי עוד דמי הגעה." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי בדיקה במקום, ותמיד לפני שמתחילים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

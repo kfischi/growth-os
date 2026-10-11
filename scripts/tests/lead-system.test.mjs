@@ -5,8 +5,9 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [] };
+const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
+const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
   ls_clients: { package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", tpl_owner_reminder: "owner_reminder", tpl_monthly_report: "monthly_report", auto_reply: true, owner_alerts: true, reminders: true, monthly_report: true, remind_after_min: 60, work_start: 8, work_end: 20, work_days: [0,1,2,3,4,5] },
   ls_leads: () => ({ id: randomUUID(), status: "new", channel: "form", reminded_at: null, handled_at: null, last_inbound_at: null, note: null, created_at: new Date().toISOString() }),
@@ -23,7 +24,16 @@ function match(row, filters) {
   });
 }
 globalThis.fetch = async (url, opt = {}) => {
-  const u = new URL(url); const method = opt.method || "GET"; const body = opt.body ? JSON.parse(opt.body) : null;
+  const u = new URL(url); const method = opt.method || "GET";
+  if (u.pathname.startsWith("/storage/v1/object/")) {
+    assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "storage call has a timeout");
+    const path = decodeURIComponent(u.pathname.slice("/storage/v1/object/".length));
+    if (storageDown) return new Response("down", { status: 503 });
+    if (method === "POST") { assert.match(opt.headers["content-type"], /^image\/(jpeg|webp)$/); store.set(path, Buffer.from(opt.body)); return new Response("{}", { status: 200 }); }
+    if (method === "DELETE") { assert.equal(path, "lead-photos"); for (const p of JSON.parse(opt.body).prefixes) store.delete("lead-photos/" + p); return new Response("[]", { status: 200 }); }
+    return store.has(path) ? new Response(store.get(path), { status: 200 }) : new Response("{}", { status: 400 });
+  }
+  const body = opt.body ? JSON.parse(opt.body) : null;
   const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
   if (u.host === "graph.facebook.com") { assert.equal(opt.headers.authorization, "Bearer tok"); assert.ok(opt.signal, "graph call has a timeout"); sent.push({ path: u.pathname, ...body });
     if (graphDown) return res({ error: { message: "Template not approved", code: 132001 } }, 400);
@@ -195,6 +205,76 @@ const del = await lib.deleteOldLeads(new Date("2026-10-10T00:00:00Z")); assert.e
 
 // --- panel API: Origin null doesn't crash
 r = await api(new Request("https://service-pro-web.netlify.app/api/leads", { headers: { authorization: "Bearer oren:" + key, origin: "null" } })); assert.equal(r.status, 403);
+
+// --- a photo with the enquiry: stored privately, linked in the alert (one line), shown in the panel, deleted with the lead
+const JPEG = "data:image/jpeg;base64," + Buffer.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3, 4, 0xff, 0xd9]).toString("base64");
+r = await lead(post("/api/lead/oren", { name: "רון", phone: "0503333333", service: "נזילה", message: "מתחת לכיור", photo: JPEG }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.1" }), ctx("oren"));
+out = await r.json(); assert.ok(out.ok, JSON.stringify(out));
+const PL = T.ls_leads.find((l) => l.id === out.id); assert.equal(PL.photo, `oren/${PL.id}.jpg`); assert.ok(store.has("lead-photos/" + PL.photo));
+const palert = sent.at(-1); assert.equal(palert.template.name, "owner_new_lead");
+const p4 = palert.template.components[0].parameters[3].text;
+assert.ok(!/\n/.test(p4), "a template parameter takes no line break");
+assert.equal(p4, "מתחת לכיור · תמונה: " + lib.photoLink(PL.id)); assert.match(lib.photoLink(PL.id), /^https:\/\/service-pro-web\.netlify\.app\/p\/[0-9a-f-]{36}\.[\w-]{22}$/);
+// not a photo, or too big: the lead goes in without one
+r = await lead(post("/api/lead/oren", { name: "גל", phone: "0503333334", photo: "data:image/jpeg;base64," + Buffer.from("<svg onload=x>").toString("base64") }, { "x-nf-client-connection-ip": "10.0.0.2" }), ctx("oren"));
+out = await r.json(); assert.ok(out.ok); assert.equal(T.ls_leads.find((l) => l.id === out.id).photo, undefined);
+assert.equal(lib.decodePhoto("data:image/png;base64,iVBORw0KGgo="), null);
+assert.equal(lib.decodePhoto("data:image/jpeg;base64," + Buffer.alloc(1_048_577, 0xff).toString("base64")), null);
+// storage down: the lead and the alert still go out, and the alert says the photo was lost
+storageDown = true;
+r = await lead(post("/api/lead/oren", { name: "טל", phone: "0503333335", photo: JPEG }, { "x-nf-client-connection-ip": "10.0.0.3" }), ctx("oren")); out = await r.json(); storageDown = false;
+assert.ok(out.ok, JSON.stringify(out)); assert.equal(T.ls_leads.find((l) => l.id === out.id).photo, undefined);
+assert.match(sent.at(-1).template.components[0].parameters[3].text, /^הלקוח צירף תמונה, והיא לא נשמרה$/);
+// the private link
+const pic = (await import(F + "lead-photo.mjs")).default;
+const getPic = (token) => pic(new Request("https://service-pro-web.netlify.app/p/" + token), { params: { token } });
+const token = lib.photoLink(PL.id).split("/p/")[1];
+r = await getPic(token); assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "image/jpeg");
+assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow"); assert.match(r.headers.get("cache-control"), /^private/);
+assert.deepEqual(Buffer.from(await r.arrayBuffer()), store.get("lead-photos/" + PL.photo));
+r = await getPic(PL.id + ".AAAAAAAAAAAAAAAAAAAAAA"); assert.equal(r.status, 404, "a guessed signature");
+r = await getPic(T.ls_leads[0].id + "." + token.split(".")[1]); assert.equal(r.status, 404, "another lead's signature");
+r = await getPic("../../etc/passwd"); assert.equal(r.status, 404);
+// the panel gets the link, never the storage path
+r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+const pl = out.leads.find((l) => l.id === PL.id); assert.equal(pl.photo_url, lib.photoLink(PL.id)); assert.ok(!("photo" in pl));
+assert.ok(out.leads.filter((l) => l.id !== PL.id).every((l) => l.photo_url === null));
+// two years on, the photo goes with its lead
+PL.created_at = "2024-01-01T00:00:00Z";
+await lib.deleteOldLeads(new Date("2026-10-10T00:00:00Z")); assert.ok(!store.has("lead-photos/" + PL.photo), "the photo is deleted too");
+
+const vreqLink = async (code) => (await import(F + "visit.mjs")).default(new Request("https://service-pro-web.netlify.app/api/visit/oren", {
+  method: "POST", body: JSON.stringify({ page: "https://oren.co.il/?s=" + code, referrer: "https://www.facebook.com/", source: "t-" + code }),
+  headers: { "content-type": "text/plain", origin: "https://oren.co.il", "user-agent": "Mozilla/5.0 (iPhone)", "x-nf-client-connection-ip": "10.0.2.1" } }), ctx("oren"));
+// --- tagged links: the owner names one per group, and sees the name with its visits and leads
+const owner = { authorization: "Bearer oren:" + key, "x-nf-client-connection-ip": "10.0.1.1" };
+r = await api(post("/api/leads", { link: "קבוצת השכונה\nבפייסבוק" }, owner)); out = await r.json(); assert.equal(r.status, 200, JSON.stringify(out));
+const LK = out.link; assert.equal(LK.label, "קבוצת השכונה בפייסבוק"); assert.match(LK.code, /^[a-hj-km-np-z2-9]{4}$/);
+assert.equal(LK.url, "https://oren.co.il/?s=" + LK.code, "the business's own site");
+r = await api(post("/api/leads", { link: "קבוצת השכונה בפייסבוק" }, owner)); assert.equal(r.status, 400); assert.equal((await r.json()).error, "label_taken");
+r = await api(post("/api/leads", { link: " א " }, owner)); assert.equal((await r.json()).error, "bad_label");
+r = await api(post("/api/leads", { link: "<b>x</b>".repeat(10) }, owner)); out = await r.json(); assert.equal(out.link.label.length, 40, "clipped, and shown as text only");
+r = await api(post("/api/leads", { unlink: out.link.code }, owner)); assert.equal(r.status, 200);
+r = await api(post("/api/leads", { link: "x".repeat(5) }, { "x-nf-client-connection-ip": "10.0.1.2" })); assert.equal(r.status, 401);
+// a visit and a lead through the link
+await vreqLink(LK.code);
+r = await lead(post("/api/lead/oren", { name: "נועה", phone: "0503333336", source: "t-" + LK.code }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.4" }), ctx("oren"));
+assert.ok((await r.json()).ok);
+assert.equal(sent.at(-1).template.components[0].parameters[4].text, "קבוצת השכונה בפייסבוק", "the alert says which group");
+r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+assert.deepEqual(out.links.map((l) => [l.label, l.visits, l.leads]), [["קבוצת השכונה בפייסבוק", 1, 1]]);
+// an unknown or deleted code still goes through, shown as is
+assert.equal(lib.sourceName("t-zzzz", {}), "t-zzzz"); assert.equal(lib.sourceName("google.com", {}), "גוגל");
+// an owner can't touch another business's link
+T.ls_links.push({ client_slug: "off", code: "abcd", label: "של מישהו אחר", created_at: new Date().toISOString() });
+r = await api(post("/api/leads", { unlink: "abcd" }, owner)); assert.equal(r.status, 404); assert.ok(T.ls_links.some((l) => l.code === "abcd"));
+r = await api(post("/api/leads", { unlink: "../x" }, owner)); assert.equal(r.status, 400);
+// the admin manages a business's links with ?client=
+r = await api(post("/api/leads?client=off", { unlink: "abcd" }, { authorization: "Bearer admin:admin-key-0123456789" })); assert.equal(r.status, 200);
+// at most 30 per business
+for (let i = 0; i < 29; i++) T.ls_links.push({ client_slug: "oren", code: "q" + String(i).padStart(3, "0").replace(/0/g, "a").replace(/1/g, "b"), label: "קישור " + i, created_at: new Date().toISOString() });
+r = await api(post("/api/leads", { link: "עוד אחד" }, owner)); assert.equal((await r.json()).error, "too_many_links");
+T.ls_links.length = 0;
 
 // --- helpers
 assert.equal(lib.israeliPhone("0771234567").intl, "972771234567");

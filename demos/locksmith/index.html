@@ -289,6 +289,13 @@
     </div>
   </section>
 
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
   <section style="padding-top:0">
     <div class="wrap">
       <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
@@ -360,6 +367,7 @@
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "locksmith" });
   const ISSUES = ["ננעלתי בחוץ", "החלפת צילינדר", "החלפת מנעול", "מפתח נשבר במנעול", "כספת או אחר"];
@@ -370,6 +378,7 @@
     greet: "היי, כאן עידו.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "issue", label: "מה קרה", ask: "מה קרה?", chips: ISSUES },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המנעול או של הדלת? כך מגיעים עם הצילינדר הנכון.", photo: true },
       { key: "place", label: "איפה", ask: "איזו דלת?", chips: ["דירה", "בית פרטי", "עסק"] },
       { key: "when", label: "מתי", ask: (d) => (d.issue === "ננעלתי בחוץ" ? "אתם בחוץ עכשיו?" : "מתי צריך?"), chips: ["עכשיו", "היום", "השבוע"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
@@ -387,6 +396,25 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה קרה?", items: [
+      { label: "ננעלתי בחוץ", range: [250, 450], prefill: { issue: "ננעלתי בחוץ" } },
+      { label: "החלפת צילינדר", range: [250, 550], prefill: { issue: "החלפת צילינדר" } },
+      { label: "החלפת מנעול", range: [350, 800], prefill: { issue: "החלפת מנעול" } },
+      { label: "מפתח נשבר במנעול", range: [200, 400], prefill: { issue: "מפתח נשבר במנעול" } },
+    ] },
+    factors: [
+      { ask: "מתי?", options: [
+        { label: "עכשיו, ביום", prefill: { when: "עכשיו" } },
+        { label: "עכשיו, בלילה או בשבת", add: 150, prefill: { when: "עכשיו" }, note: "בלילה ובשבת: 150 ₪ נוספים." },
+        { label: "היום", prefill: { when: "היום" } },
+        { label: "השבוע", prefill: { when: "השבוע" } },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. אומרים את המחיר בטלפון, לפני שיוצאים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
 </body>
 </html>

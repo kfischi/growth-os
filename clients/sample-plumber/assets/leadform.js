@@ -2,15 +2,25 @@
    LeadForm.send(endpoint, { name, phone, service, message }) -> Promise<{ ok, id?, error? }>
    LeadForm.visit(endpoint) counts the visit once per session, for the owner's report (functions/visit.mjs).
    It adds the page, the referrer and utm_source / utm_campaign by itself, and never throws.
+   A tagged link from the owner's panel (?s=k3p9) becomes the source "t-k3p9" for the whole visit.
    Anything but { ok: true } means: open WhatsApp instead, so the enquiry still arrives.
    On a business's site: endpoint "https://service-pro-web.netlify.app/api/lead/<slug>". */
 (function () {
   const params = new URLSearchParams(location.search);
+  // Kept for the session, so a visitor who opened another page and came back still counts for the link.
+  const tag = (() => {
+    const s = (params.get("s") || "").toLowerCase();
+    let t = /^[a-z0-9]{4}$/.test(s) ? "t-" + s : "";
+    try { if (t) sessionStorage.setItem("lf-tag", t); else t = sessionStorage.getItem("lf-tag") || ""; } catch (e) { /* private mode */ }
+    return t;
+  })();
+  const source = () => params.get("utm_source") || tag;
   window.LeadForm = {
+    source,
     async send(endpoint, data, timeoutMs) {
       const body = Object.assign({
         page: location.href.split("#")[0], referrer: document.referrer,
-        source: params.get("utm_source") || "", campaign: params.get("utm_campaign") || "",
+        source: source(), campaign: params.get("utm_campaign") || "",
       }, data);
       try {
         const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), timeoutMs || 8000);
@@ -28,7 +38,7 @@
         if (sessionStorage.getItem(k)) return;
         sessionStorage.setItem(k, "1");
       } catch (e) { /* private mode: count it anyway */ }
-      const body = JSON.stringify({ page: location.href.split("#")[0], referrer: document.referrer, source: params.get("utm_source") || "", campaign: params.get("utm_campaign") || "" });
+      const body = JSON.stringify({ page: location.href.split("#")[0], referrer: document.referrer, source: source(), campaign: params.get("utm_campaign") || "" });
       try {
         const blob = new Blob([body], { type: "text/plain" });
         if (navigator.sendBeacon && navigator.sendBeacon(endpoint, blob)) return;
