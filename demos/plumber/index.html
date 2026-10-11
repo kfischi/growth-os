@@ -316,9 +316,10 @@
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !d.urgency.startsWith("עכשיו") },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.\n${d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : ""}\nלחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`,
-    summary: (d) => `קריאה חדשה מהאתר (דמו אינסטלטור)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה חדשה מהאתר (דמו אינסטלטור)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הצ׳אט מותאם לשירותים ולמחירים שלכם.",
   });
   PhotoSlots.init({ page: "plumber" });

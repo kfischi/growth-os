@@ -288,12 +288,13 @@ ${video ? `<script>${REEL_JS}</script>
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "ישוב")} },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !d.urgency.startsWith("עכשיו") },
     ],
     closing: (d) => ["תודה " + d.name.split(" ")[0] + "!", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ". המחיר הסופי אחרי אבחון." : "", d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\\n"),
-    summary: (d) => "קריאה חדשה מהאתר\\nתקלה: " + d.issue + "\\nדחיפות: " + d.urgency + "\\nישוב: " + d.city + "\\nשם: " + d.name + "\\nטלפון: " + d.phone,
+    summary: (d) => "קריאה חדשה מהאתר\\nתקלה: " + d.issue + "\\nדחיפות: " + d.urgency + "\\nישוב: " + d.city + "\\nשם: " + d.name + "\\nטלפון: " + d.phone + (d.callback ? "\\nמתי לחזור: " + d.callback : ""),
     capture: SITE.leads ? {
       endpoint: SITE.leads,
-      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, message: "דחיפות: " + d.urgency + ". ישוב: " + d.city + "." }),
+      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, callback: d.callback, message: "דחיפות: " + d.urgency + ". ישוב: " + d.city + "." }),
       saved: (d) => ["תודה " + d.name.split(" ")[0] + "! הקריאה אצלי, ואישור בדרך אליכם בוואטסאפ.", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ", והמחיר הסופי אחרי אבחון." : "", d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : ""].filter(Boolean).join("\\n"),
     } : undefined,
   });

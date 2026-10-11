@@ -59,6 +59,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .svc { margin: 6px 0 0; font-weight: 500; }
 .msg { margin: 4px 0 0; color: var(--muted); white-space: pre-line; }
 .meta { margin: 8px 0 0; color: var(--muted); font-size: .8rem; display: flex; gap: 12px; flex-wrap: wrap; }
+.call { display: inline-block; margin: 8px 0 0; padding: 4px 10px; border-radius: 999px; background: var(--won-soft); color: var(--won); font-size: .85rem; font-weight: 500; }
+.call.due { background: var(--new-soft); color: var(--new); }
 .inbound { margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: var(--accent-soft); font-size: .9rem; }
 .inbound small { color: var(--muted); display: block; }
 .acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
@@ -215,6 +217,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
     const h = Math.round(min / 60); if (h < 24) return h === 1 ? 'לפני שעה' : h === 2 ? 'לפני שעתיים' : 'לפני ' + h + ' שעות';
     return fmtTime(iso);
   }
+  // "היום ב-16:00", "מחר ב-09:00", or the date.
+  function whenText(iso) {
+    const d = new Date(iso), key = (x) => x.toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
+    const today = key(new Date()), tomorrow = key(new Date(Date.now() + 86400000));
+    const hm = d.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    return (key(d) === today ? 'היום' : key(d) === tomorrow ? 'מחר' : d.toLocaleDateString('he-IL', { timeZone: 'Asia/Jerusalem', weekday: 'long', day: 'numeric', month: 'numeric' })) + ' ב-' + hm;
+  }
   const fmtWait = (min) => min == null ? '-' : min < 60 ? min + ' דק׳' : min < 1440 ? Math.round(min / 60) + ' שע׳' : Math.round(min / 1440) + ' ימים';
 
   async function call(method, body, query) {
@@ -331,6 +340,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
     const t = el('time', null, ago(l.created_at)); t.dateTime = l.created_at; t.title = fmtTime(l.created_at); head.append(t);
     c.append(head);
     if (l.service) c.append(el('p', 'svc', l.service));
+    if (l.callback_at && l.status === 'new') { // the customer asked for a call at this time
+      const due = new Date(l.callback_at) <= new Date();
+      c.append(el('p', 'call' + (due ? ' due' : ''), (due ? 'הגיע הזמן לחזור: ' : 'ביקשו שתחזרו ') + whenText(l.callback_at)));
+    }
     if (l.message) c.append(el('p', 'msg', l.message));
     if (l.photo_url) { // the photo the customer attached in the chat
       const a = el('a', 'pic'); a.href = l.photo_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -375,10 +388,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
   function csv() {
     if (!data) return;
-    const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
+    const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['callback_at', 'לחזור ב'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
     // A leading = + - @ would run as a formula in Excel. Anyone can type into the form, so neutralise it.
     const cell = (v) => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
-    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : k === 'source' ? sourceName(l.source) : (k === 'created_at' || k === 'handled_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
+    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : k === 'source' ? sourceName(l.source) : (k === 'created_at' || k === 'handled_at' || k === 'callback_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
     const blob = new Blob(['﻿' + [cols.map((c) => cell(c[1])).join(','), ...rows].join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'leads-' + data.client.slug + '-' + new Date().toISOString().slice(0, 10) + '.csv';
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);

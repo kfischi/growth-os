@@ -237,12 +237,13 @@
       { key: "when", label: "מתי", ask: "מתי ההובלה?", chips: ["השבוע", "החודש", "עוד אין תאריך"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לשלוח את ההצעה?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => {
       const [lo, hi] = EST[d.size]; const x = EXTRA[d.floor];
       return `תודה ${d.name.split(" ")[0]}! הובלה מ${d.from} ל${d.to}, ${d.size}: בערך ${fmt(lo + x)} עד ${fmt(hi + x)} ₪.\nאת המחיר הסופי סוגרים אחרי שיחה קצרה או תמונות.\nלחצו למטה, וההצעה תמשיך בוואטסאפ.`;
     },
-    summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
   });
   Estimate.init(document.querySelector("[data-estimate]"), {

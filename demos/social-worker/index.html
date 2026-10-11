@@ -371,9 +371,10 @@
       { key: "times", label: "זמנים", ask: "מתי נוח לכם לדבר?", chips: ["בוקר", "אחר הצהריים", "ערב"] },
       { key: "name", label: "שם", ask: "מה השם הפרטי שלכם?", input: "text", placeholder: "שם פרטי" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח לדבר בטלפון?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => `תודה, ${d.name.split(" ")[0]}. אחזור אליכם לשיחת היכרות קצרה, ${WHEN[d.times]}. לשליחת הפנייה לחצו למטה.\n` + CRISIS,
-    summary: (d) => `פנייה מהאתר (דמו עובדת סוציאלית)\nבשביל מי: ${d.who}\nנושא: ${d.topic}\nמסגרת: ${d.format}\nזמנים: ${d.times}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו עובדת סוציאלית)\nבשביל מי: ${d.who}\nנושא: ${d.topic}\nמסגרת: ${d.format}\nזמנים: ${d.times}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות קבועות מראש. שום פרט לא נשמר באתר, הפנייה נשלחת רק בוואטסאפ.",
     onDone: LeadPhone("#ph-msg"),
   });

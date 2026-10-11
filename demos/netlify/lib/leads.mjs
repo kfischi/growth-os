@@ -360,6 +360,34 @@ export async function listLinks(client, stats) {
   }));
 }
 
+/* ---------------- when to call back (0008_callback.sql) ---------------- */
+
+// The visitor picks in the chat. "עכשיו", a time already passed, or anything else: no time, as before.
+export const CALLBACK_CHOICES = ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"];
+// hour:00 in Israel, addDays days from now's Israel date.
+function israelAt(now, addDays, hour) {
+  const t = israelTime(now);
+  const day = new Date(Date.UTC(t.year, t.month - 1, t.date + addDays));
+  const y = day.getUTCFullYear(), m = day.getUTCMonth() + 1, d = day.getUTCDate(), pad = (n) => String(n).padStart(2, "0");
+  return new Date(`${y}-${pad(m)}-${pad(d)}T${pad(hour)}:00:00${israelOffset(new Date(Date.UTC(y, m - 1, d, 12)))}`);
+}
+export function callbackAt(choice, now = new Date()) {
+  const c = clip(choice, 40);
+  let at = null;
+  if (c === "בעוד שעה") at = new Date(now.getTime() + 3_600_000);
+  else if (c === "היום אחרי 16:00") at = israelAt(now, 0, 16);
+  else if (c === "היום אחרי 18:00") at = israelAt(now, 0, 18);
+  else if (c === "מחר בבוקר") at = israelAt(now, 1, 9);
+  return at && at > now ? at : null;
+}
+// "היום ב-16:00", "מחר ב-09:00", "ביום שני ב-09:00".
+export function callbackText(at, now = new Date()) {
+  const a = israelTime(at), n = israelTime(now);
+  const days = Math.round((Date.UTC(a.year, a.month - 1, a.date) - Date.UTC(n.year, n.month - 1, n.date)) / 86_400_000);
+  const when = days === 0 ? "היום" : days === 1 ? "מחר" : "ביום " + DAYS_HE[a.day];
+  return `${when} ב-${clock(at)}`;
+}
+
 export async function processLead(client, input, channel = "form") {
   const phone = israeliPhone(input.phone);
   if (!phone) return { ok: false, error: "bad_phone" };
@@ -372,11 +400,13 @@ export async function processLead(client, input, channel = "form") {
   if (dup.length) return { ok: true, id: dup[0].id, duplicate: true };
   // (A double tap within the same second can still make two rows. Rare, and two alerts beat none.)
 
+  const callAt = input.callback ? callbackAt(input.callback) : null;
   const lead = await insertLead({
     client_slug: client.slug, name, phone: phone.local, phone_intl: phone.intl,
     service: clip(input.service, 120) || null, message: clip(input.message, 1500) || null, channel,
     source: sourceOf(input), campaign: clip(input.campaign, 60) || null, page: clip(input.page, 300) || null,
     auto_reply: client.auto_reply ? "pending" : "off", owner_alert: client.owner_alerts ? "pending" : "off",
+    ...(callAt ? { callback_at: callAt.toISOString() } : {}),
   });
 
   // The photo goes up before the alert, so the alert can link to it (a template parameter takes no line
@@ -396,7 +426,7 @@ export async function processLead(client, input, channel = "form") {
       : Promise.resolve("off"),
     client.owner_alerts
       ? sendTemplate(client, client.owner_phone, client.tpl_owner_alert,
-        [name, phone.local, lead.service || "-", [clip(lead.message, 400), photoNote].filter(Boolean).join(" · ") || "-",
+        [name, phone.local, lead.service || "-", [clip(lead.message, 400), callAt ? "ביקשו שתחזרו " + callbackText(callAt) : "", photoNote].filter(Boolean).join(" · ") || "-",
           isTag(lead.source) ? sourceName(lead.source, await linkLabels(client.slug)) : sourceHe(lead.source)],
         { kind: "owner_alert", leadId: lead.id, buttonPayload: "done:" + lead.id })
       : Promise.resolve("off"),
@@ -426,14 +456,17 @@ export async function runReminders(now = new Date()) {
     try { // one client's error must not stop the others
       const before = new Date(now - client.remind_after_min * 60_000).toISOString();
       const notOlder = new Date(now - 7 * 86_400_000).toISOString(); // a week-old lead is the panel's job
-      const leads = await db("GET",
-        `ls_leads?client_slug=eq.${q(client.slug)}&status=eq.new&reminded_at=is.null&created_at=lte.${q(before)}&created_at=gte.${q(notOlder)}&select=*&order=created_at.asc&limit=20`);
+      const open = await db("GET",
+        `ls_leads?client_slug=eq.${q(client.slug)}&status=eq.new&reminded_at=is.null&created_at=gte.${q(notOlder)}&select=*&order=created_at.asc&limit=50`);
+      // A lead that asked for a call at a time is reminded 5 minutes before it, not earlier. The rest after remind_after_min.
+      const soon = new Date(now.getTime() + 5 * 60_000);
+      const leads = open.filter((l) => (l.callback_at ? new Date(l.callback_at) <= soon : new Date(l.created_at) <= new Date(before))).slice(0, 20);
       for (const lead of leads) {
         // Mark first, so a slow send can't make two runs remind twice.
         const claimed = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&reminded_at=is.null`, { reminded_at: now.toISOString() }, "return=representation");
         if (!claimed.length) continue;
         const r = await sendTemplate(client, client.owner_phone, client.tpl_owner_reminder,
-          [lead.name, lead.phone, ago(lead.created_at, now), lead.service || "-"],
+          [lead.name, lead.phone, ago(lead.created_at, now), [lead.service || "-", lead.callback_at ? "ביקשו שתחזרו " + callbackText(new Date(lead.callback_at), now) : ""].filter(Boolean).join(" · ")],
           { kind: "reminder", leadId: lead.id, buttonPayload: "done:" + lead.id });
         if (r === "sent") sent++;
         else { failed++; await db("PATCH", `ls_leads?id=eq.${q(lead.id)}`, { reminded_at: null }); } // try again next run

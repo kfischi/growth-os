@@ -15,7 +15,8 @@
       { key, ask: string | (data) => string,
         chips?: [string | {label, value}],
         input?: "text" | "tel", placeholder?, optional?,
-        photo?: true, skip?: "בלי תמונה" }   // photo: the visitor may attach one photo (shrunk here), or skip
+        photo?: true, skip?: "בלי תמונה",    // photo: the visitor may attach one photo (shrunk here), or skip
+        show?: (data) => boolean }            // show: ask this step only when it returns true
     ],
     summary: (data) => "text for WhatsApp",
     closing: (data) => "last bot message before the WhatsApp button",
@@ -127,6 +128,7 @@
       function ask() {
         const s = cfg.steps[step];
         if (!s) return finish();
+        if (s.show && !s.show(data)) { step++; return ask(); }
         const q = typeof s.ask === "function" ? s.ask(data) : s.ask;
         if (pre[s.key] != null) { const v = pre[s.key]; delete pre[s.key]; return botSay(q, () => answer(v, v)); }
         botSay(q, () => {

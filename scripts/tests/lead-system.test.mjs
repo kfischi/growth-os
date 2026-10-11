@@ -321,6 +321,32 @@ assert.ok(new Date(C0.avail_until) - Date.now() < 1.1 * 3600000);
 r = await api(post("/api/leads", { available: "maybe" }, owner)); assert.equal(r.status, 400);
 await api(post("/api/leads", { available: "auto" }, owner));
 
+// --- when to call back: the visitor's choice becomes a time; the alert says it, the reminder waits for it
+const cbNow = at("2026-07-07T07:00:00Z"); // Tuesday 10:00 in Israel
+assert.equal(lib.callbackAt("היום אחרי 16:00", cbNow).toISOString(), "2026-07-07T13:00:00.000Z");
+assert.equal(lib.callbackAt("מחר בבוקר", cbNow).toISOString(), "2026-07-08T06:00:00.000Z");
+assert.equal(lib.callbackAt("בעוד שעה", cbNow).toISOString(), "2026-07-07T08:00:00.000Z");
+assert.equal(lib.callbackAt("היום אחרי 16:00", at("2026-07-07T14:00:00Z")), null, "already past: as soon as possible");
+assert.equal(lib.callbackAt("עכשיו", cbNow), null); assert.equal(lib.callbackAt("<script>", cbNow), null);
+assert.equal(lib.callbackAt("מחר בבוקר", at("2026-12-07T08:00:00Z")).toISOString(), "2026-12-08T07:00:00.000Z", "winter time");
+assert.equal(lib.callbackText(at("2026-07-07T13:00:00Z"), cbNow), "היום ב-16:00");
+assert.equal(lib.callbackText(at("2026-07-08T06:00:00Z"), cbNow), "מחר ב-09:00");
+assert.equal(lib.callbackText(at("2026-07-10T06:00:00Z"), cbNow), "ביום שישי ב-09:00");
+r = await lead(post("/api/lead/oren", { name: "עדי", phone: "0503333337", service: "שיפוץ", callback: "בעוד שעה" }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.5" }), ctx("oren"));
+out = await r.json(); assert.ok(out.ok);
+const CB = T.ls_leads.find((l) => l.id === out.id); assert.ok(Math.abs(new Date(CB.callback_at) - Date.now() - 3600000) < 60000);
+assert.match(sent.at(-1).template.components[0].parameters[3].text, /^ביקשו שתחזרו (היום|מחר) ב-\d\d:\d\d$/);
+// the reminder: not after remind_after_min, but 5 minutes before the time they asked for
+Object.assign(C0, { work_start: 0, work_end: 24, work_days: [0, 1, 2, 3, 4, 5, 6] });
+CB.created_at = new Date(Date.now() - 2 * 3600000).toISOString(); // long past remind_after_min
+const others = T.ls_leads.filter((l) => l !== CB && l.status === "new" && !l.reminded_at); others.forEach((l) => { l.reminded_at = "2026-01-01T00:00:00Z"; });
+rem = await lib.runReminders(new Date()); assert.equal(rem.reminders, 0, "too early: they asked for a call in an hour");
+rem = await lib.runReminders(new Date(Date.now() + 56 * 60000)); assert.equal(rem.reminders, 1);
+const rt = sent.at(-1); assert.equal(rt.template.name, "owner_reminder");
+assert.match(rt.template.components[0].parameters[3].text, /^שיפוץ · ביקשו שתחזרו היום ב-\d\d:\d\d$|^שיפוץ · ביקשו שתחזרו מחר ב-\d\d:\d\d$/);
+others.forEach((l) => { l.reminded_at = null; });
+Object.assign(C0, { work_start: 8, work_end: 20, work_days: [0, 1, 2, 3, 4, 5] });
+
 // --- helpers
 assert.equal(lib.israeliPhone("0771234567").intl, "972771234567");
 assert.equal(lib.israeliPhone("12345"), null);
