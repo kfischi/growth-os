@@ -77,10 +77,29 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.equal(await overflow(), false);
   });
 
+  await check("the questionnaire: pick answers, type what's missing, no AI", async () => {
+    const calls = ai.queue.length;
+    assert.match(await p.textContent("#guide .q"), /איך קוראים לעסק/);
+    await p.fill("#guide .other input", "אורן מים"); await p.click("#guide .other button");
+    await p.waitForFunction(() => /באיזה אזור/.test(document.querySelector("#guide .q").textContent));
+    await p.click("#guide .chip >> nth=0"); // the first region
+    await p.waitForFunction(() => /לאילו ישובים/.test(document.querySelector("#guide .q").textContent));
+    assert.ok(await p.$eval("#guide .chip[aria-pressed=true]", (e) => Boolean(e)), "the region's towns come ticked");
+    await p.screenshot({ path: `/tmp/qa-page/builder-guide-${w}.png` }).catch(() => {});
+    await p.fill("#guide .other input", "גבעת חיים"); await p.click("#guide .other button");
+    await p.click("#guide > .btn");
+    await p.waitForFunction(() => /מה אתם עושים/.test(document.querySelector("#guide .q").textContent));
+    const d = T.ls_drafts.at(-1);
+    assert.equal(d.content.business_name, "אורן מים"); assert.ok(d.content.towns.includes("גבעת חיים"), "a typed town is kept");
+    assert.equal(ai.queue.length, calls, "no AI answer was used");
+    assert.match(await p.textContent("#log"), /איך קוראים לעסק/, "the answers stay in the conversation");
+    assert.equal(await overflow(), false);
+  });
+
   ai.queue.push(fill);
   await p.fill("#msg", "אורן מים, אינסטלציה בחדרה והשרון. הנה כל הפרטים");
   await p.click("#send");
-  await p.waitForFunction(() => document.querySelectorAll("#log .msg.them").length >= 2, null, { timeout: 8000 });
+  await p.waitForFunction(() => /עדכנו את כל הפרטים/.test(document.querySelector("#log").textContent), null, { timeout: 8000 }).catch(() => {});
   await check("the chat fills the draft", async () => {
     assert.match(await p.textContent("#log"), /עדכנו את כל הפרטים/);
     assert.equal(await p.textContent("#progCount"), "10 מתוך 10");

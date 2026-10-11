@@ -2,6 +2,7 @@
 //   POST   /api/builder/start     { name, phone, consent, company? }      -> { id, key, state }
 //   GET    /api/builder/state                                             -> { state }
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
+//   POST   /api/builder/answer    { set, services, towns, rev }   an answer picked in the questionnaire, no AI -> { state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
 //   DELETE /api/builder/photo?slot=portrait                               -> { state }
 //   POST   /api/builder/video     body: the first frame (JPEG/WebP) then the MP4; x-poster-length: frame bytes -> { state }
@@ -17,7 +18,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
 import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
-  chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
+  chatTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
   editing, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient,
@@ -28,6 +29,7 @@ const chatLimited = rateLimiter(40, 10 * 60 * 1000);    // chat turns per IP
 const photoLimited = rateLimiter(30, 10 * 60 * 1000);
 const videoLimited = rateLimiter(6, 10 * 60 * 1000);
 const publishLimited = rateLimiter(6, 10 * 60 * 1000);
+const answerLimited = rateLimiter(120, 10 * 60 * 1000);
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
 const stateOf = (d) => ({ ...publicState(d), greeting: (editing(d) ? editGreeting : greeting)(first(d.owner_name)) });
@@ -89,6 +91,24 @@ export default async (req, context) => {
       const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
       const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
       return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved) });
+    }
+
+    // The questionnaire: the owner picked or typed an answer. Same checks as the chat's changes, no AI call.
+    if (action === "answer" && req.method === "POST") {
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (answerLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== "object") return json({ error: "bad_json" }, 400);
+      if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
+      const update = {
+        set: Array.isArray(body.set) ? body.set.slice(0, 10).filter((x) => x && typeof x.field === "string") : [],
+        services: Array.isArray(body.services) ? body.services : null,
+        towns: Array.isArray(body.towns) ? body.towns.slice(0, 40) : null,
+      };
+      const { content, changed, errors } = applyUpdate(templateOf(d), d.content, update);
+      if (errors.length) return json({ error: "bad_answer", errors, state: stateOf(d) }, 422);
+      const saved = changed.length ? await saveDraft(d, { content }) : d;
+      return json({ changed, state: stateOf(saved) });
     }
 
     if (action === "photo") {

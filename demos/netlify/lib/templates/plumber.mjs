@@ -2,6 +2,7 @@
 // Built from clients/sample-plumber/. The chat fills FIELDS, SERVICES and TOWNS; it never writes HTML.
 // render() escapes every value, so whatever the owner or the model typed can't break the page.
 import { israeliPhone } from "../leads.mjs";
+export { GUIDE } from "./plumber-guide.mjs";
 //
 // Two modes:
 //   draft  the private preview at /draft/<id>: noindex, a "טיוטה" ribbon, empty fields and photos marked.

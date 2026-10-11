@@ -267,6 +267,8 @@ export function publicState(d) {
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
     pay: d.status === "client_approved" && d.package && !d.paid_at ? payLinks(d.package) : [],
     edit: editing(d) ? editState(d) : null,
+    // The questionnaire (answers to pick from) while the site is being built, not while editing a live one.
+    guide: !editing(d) && t.GUIDE ? t.GUIDE : null,
     rev: d.rev,
   };
 }
@@ -290,7 +292,7 @@ export function renderDraft(d) {
 /* ---------------- the chat ---------------- */
 
 export const greeting = (name) =>
-  `היי${name ? " " + name : ""}, נבנה יחד את האתר של העסק. אנחנו שואלים, ואתם רואים את האתר מתמלא תוך כדי.\nנתחיל משם העסק: איך הלקוחות מכירים אתכם?`;
+  `היי${name ? " " + name : ""}, נבנה יחד את האתר של העסק. אנחנו שואלים, ואתם רואים את האתר מתמלא תוך כדי.\nבכל שאלה בוחרים תשובה, ומה שלא מופיע כותבים בעצמכם. אפשר גם לכתוב לנו חופשי בכל רגע.`;
 
 export const editGreeting = (name) =>
   `היי${name ? " " + name : ""}, האתר שלכם באוויר. כתבו כאן מה לשנות: טקסט, שירות, מחיר, אזור או תמונה.\nתראו את השינוי ליד השיחה, והוא עולה לאתר רק כשתלחצו "לפרסם את השינויים".`;

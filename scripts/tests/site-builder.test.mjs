@@ -292,6 +292,43 @@ assert.equal(D.content.intro, liveIntro); assert.equal(D.self_edit, false);
 r = await J(await req("chat", { body: { message: "עוד", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
 r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
 
+/* ---------------- the questionnaire: answers picked, no AI ---------------- */
+{
+  // every answer in the knowledge base fits the template, so a pick never fails
+  const G = P.GUIDE, t = { FIELDS: P.FIELDS, SERVICES: P.SERVICES, TOWNS: P.TOWNS };
+  for (const r of G.regions) { const u = B.applyUpdate(t, {}, { set: [{ field: "area", value: r.label }], towns: r.towns }); assert.deepEqual(u.errors, [], r.label); }
+  assert.deepEqual(B.applyUpdate(t, {}, { services: G.services.slice(0, 6) }).errors, []);
+  assert.deepEqual(B.applyUpdate(t, {}, { services: G.services.slice(6) }).errors, []);
+  for (const st of G.steps) {
+    if (st.type === "pick") for (const o of st.options) assert.deepEqual(B.applyUpdate(t, {}, { set: [{ field: st.field, value: typeof o === "string" ? o : o.value }] }).errors, [], st.id);
+    if (st.type === "copy") for (const o of st.options) for (const when of ["תוך 15 דק׳", "תוך שעתיים", "באותו יום"])
+      assert.deepEqual(B.applyUpdate(t, {}, { set: Object.entries(o).map(([field, value]) => ({ field, value: value.replace("{when}", when) })) }).errors, [], st.id + " " + when);
+  }
+  // a fresh draft, answered through /answer: the draft fills, the AI is never called
+  cred = ""; ai.queue.length = 0;
+  r = await J(await req("start", { body: { name: "דנה", phone: "0541234567", consent: true }, ip: "8.8.8.1" }));
+  cred = r.id + ":" + r.key; const Q = T.ls_drafts.find((x) => x.id === r.id);
+  assert.equal(r.state.guide.steps[0].field, "business_name"); assert.match(r.state.greeting, /בוחרים תשובה/);
+  const calls = aiCalls.length;
+  r = await J(await req("answer", { body: { set: [{ field: "business_name", value: "דנה צנרת" }], rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(Q.content.business_name, "דנה צנרת"); assert.deepEqual(r.changed, ["business_name"]);
+  r = await J(await req("answer", { body: { set: [{ field: "area", value: P.GUIDE.regions[2].label }], towns: P.GUIDE.regions[2].towns, rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(Q.towns, undefined); assert.equal(Q.content.towns.length, P.GUIDE.regions[2].towns.length);
+  r = await J(await req("answer", { body: { services: [{ ...P.GUIDE.services[0], price: "" }, { name: "שירות שלי" }], rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(Q.content.services.length, 2); assert.equal(Q.content.services[0].price, "", "no price until the owner keeps one");
+  assert.equal(aiCalls.length, calls, "the questionnaire never calls the AI");
+  // the same checks as the chat: a bad answer changes nothing
+  r = await J(await req("answer", { body: { set: [{ field: "years", value: "שתים עשרה" }], rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 422); assert.equal(r.error, "bad_answer"); assert.equal(Q.content.years, "");
+  r = await J(await req("answer", { body: { set: [{ field: "key_hash", value: "x" }, { field: "intro", value: "<b>hi</b>" }], rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 200); assert.ok(!("key_hash" in Q.content)); assert.equal(Q.content.intro, " b hi /b ".trim().replace(/\s+/g, " "), "markup brackets are cleaned");
+  r = await J(await req("answer", { body: { set: [{ field: "intro", value: "x" }], rev: Q.rev - 1 }, ip: "8.8.8.1" })); assert.equal(r.error, "conflict");
+  Q.status = "client_approved";
+  r = await J(await req("answer", { body: { set: [{ field: "intro", value: "x" }], rev: Q.rev }, ip: "8.8.8.1" })); assert.equal(r.error, "locked");
+  assert.equal(r.state.guide.steps.length > 0, true);
+  T.ls_drafts.splice(T.ls_drafts.indexOf(Q), 1); // the daily-cap test below counts drafts
+}
+
 /* ---------------- a faster model: its own settings ---------------- */
 for (const [model, check] of [["claude-haiku-5-5", (c) => { assert.ok(!c.fallbacks && !c.betas, "Haiku has no server-side fallback"); assert.deepEqual(c.thinking, { type: "disabled" }); }],
   ["claude-sonnet-5-5", (c) => { assert.ok(!c.fallbacks); assert.deepEqual(c.thinking, { type: "between_tools" }); }]]) {

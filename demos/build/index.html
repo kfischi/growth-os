@@ -80,6 +80,24 @@
   .msg.sys { align-self: center; background: none; color: var(--slate); font-size: 14px; text-align: center; padding: 4px; }
   .msg.fail { align-self: center; background: #f8e4e2; color: #6e1f1a; font-size: 14px; }
   .typing { align-self: flex-start; color: var(--slate); font-size: 14px; }
+  /* the questionnaire: one question, answers to pick, a field for what isn't listed */
+  .guide { border-top: 1px solid var(--line); padding: 12px; background: #fff; max-height: 52vh; overflow-y: auto; }
+  .guide[hidden] { display: none; }
+  .guide.busy { opacity: .55; pointer-events: none; }
+  .guide .q { margin: 0 0 10px; font-weight: 500; }
+  .guide .step { font-size: 12px; color: var(--slate); margin: 0 0 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 15px; cursor: pointer; text-align: start; }
+  .chip:hover { border-color: var(--mint); }
+  .chip[aria-pressed=true] { background: var(--mint); border-color: var(--mint); color: #fff; }
+  .chip.card { border-radius: 12px; width: 100%; line-height: 1.45; }
+  .other { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-bottom: 8px; }
+  .other input { min-height: 44px; }
+  .prow { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(0, 9.5em); gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .prow input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--mint); }
+  .prow input[type=text] { min-height: 40px; padding: 6px 10px; }
+  .guide .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .linkish.skip { font-size: 14px; color: var(--slate); }
   .compose { border-top: 1px solid var(--line); padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
   .compose textarea { min-height: 48px; max-height: 140px; resize: none; }
   .compose .btn { padding-inline: 16px; }
@@ -183,9 +201,10 @@
     </details>
     <div class="banner warn" id="returned" hidden></div>
     <div class="log" id="log" aria-live="polite"></div>
+    <div class="guide" id="guide" aria-live="polite" hidden></div>
     <form class="compose" id="compose">
       <label for="msg" class="hp">הודעה</label>
-      <textarea id="msg" rows="1" maxlength="800" placeholder="כתבו כאן…" enterkeyhint="send"></textarea>
+      <textarea id="msg" rows="1" maxlength="800" placeholder="או כתבו לנו חופשי…" enterkeyhint="send"></textarea>
       <button class="btn" type="submit" id="send">שליחה</button>
     </form>
     <details class="photos" id="photos">
@@ -352,6 +371,7 @@
     // compose and photos
     $('#compose').hidden = !editable; $('#photos').hidden = !editable;
     $('#rights').checked = $('#rights').checked || s.photoRights;
+    paintGuide();
     paintSlots(editable);
     paintVideo(editable);
     paintApprove();
@@ -444,6 +464,157 @@
     if (action === 'publish') { openWork(state); bubble('sys', 'השינויים פורסמו. האתר יתעדכן בעוד כמה דקות.'); }
     else if (action === 'discard') { openWork(state); bubble('sys', 'ביטלנו את השינויים. התצוגה חזרה למה שבאתר.'); }
     else { paint(); refreshFrame(); markSite(); bubble('sys', 'טענו את הגרסה הקודמת. עברו עליה, ואם היא נכונה, פרסמו.'); }
+  }
+
+  /* ---------- the questionnaire: pick an answer, type what isn't listed; no AI involved ---------- */
+  const guideBox = $('#guide');
+  const doneKey = () => 'nr-guide-' + String(cred || '').split(':')[0];
+  const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(doneKey()) || '[]')); } catch (e) { return new Set(); } };
+  const markDone = (id) => { const d = doneSet(); d.add(id); try { localStorage.setItem(doneKey(), JSON.stringify([...d])); } catch (e) { /* private mode */ } };
+  const whenText = (r) => (!r ? 'מהר' : /^באותו/.test(r) ? r : 'תוך ' + r);
+  const fill = (text) => String(text).replace('{when}', whenText(state.content.response_time));
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  function stepDone(st, s, done) {
+    const c = s.content;
+    if (done.has(st.id)) return true;
+    if (st.type === 'text' || st.type === 'pick') return Boolean(String(c[st.field] || '').trim());
+    if (st.type === 'region') return Boolean(String(c.area || '').trim());
+    if (st.type === 'towns') return (c.towns || []).length > 0;
+    if (st.type === 'services') return (c.services || []).length > 0;
+    if (st.type === 'headline') return Boolean(c.headline_2);
+    if (st.type === 'copy') return st.id === 'headline' ? Boolean(c.headline_2) : Boolean(String(c[Object.keys(st.options[0])[0]] || '').trim());
+    if (st.type === 'photos') return Object.keys(s.photos || {}).length > 0;
+    return false;
+  }
+
+  async function answer(st, payload, label) {
+    guideBox.classList.add('busy');
+    const r = await call('answer', { body: { ...payload, rev: state.rev } });
+    guideBox.classList.remove('busy');
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return false; }
+    bubble('them', st.ask); bubble('me', label);
+    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    paint();
+    return true;
+  }
+
+  // A field for an answer that isn't on the list.
+  function otherField(placeholder, onSave, btnText) {
+    const f = el('form', 'other'); const i = el('input'); i.type = 'text'; i.placeholder = placeholder || 'משהו אחר? כתבו כאן'; i.setAttribute('aria-label', i.placeholder);
+    const b = el('button', 'btn quiet', btnText || 'הוספה'); b.type = 'submit';
+    f.addEventListener('submit', (e) => { e.preventDefault(); const v = i.value.trim(); if (v) onSave(v, i); });
+    f.append(i, b); return f;
+  }
+  function chip(text, pressed, onClick, cls) {
+    const b = el('button', 'chip' + (cls ? ' ' + cls : ''), text); b.type = 'button';
+    if (pressed != null) b.setAttribute('aria-pressed', String(pressed));
+    b.addEventListener('click', onClick); return b;
+  }
+
+  function paintGuide() {
+    const s = state, g = s.guide;
+    guideBox.textContent = '';
+    if (!g || !(s.status === 'draft' || s.status === 'returned')) { guideBox.hidden = true; return; }
+    const done = doneSet(), steps = g.steps, i = steps.findIndex((st) => !stepDone(st, s, done));
+    if (i < 0) { guideBox.hidden = true; return; }
+    const st = steps[i], c = s.content;
+    guideBox.hidden = false;
+    guideBox.append(el('p', 'step', 'שאלה ' + (i + 1) + ' מתוך ' + steps.length), el('p', 'q', st.ask));
+    const chips = el('div', 'chips');
+
+    if (st.type === 'text') {
+      guideBox.append(otherField(st.placeholder, (v) => answer(st, { set: [{ field: st.field, value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'pick') {
+      for (const o of st.options) {
+        const label = typeof o === 'string' ? o : o.label, value = typeof o === 'string' ? o : o.value;
+        chips.append(chip(label, null, () => answer(st, { set: [{ field: st.field, value }] }, label)));
+      }
+      guideBox.append(chips, otherField(st.placeholder, (v) => answer(st, { set: [{ field: st.field, value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'region') {
+      for (const r of g.regions) chips.append(chip(r.label, null, () => answer(st, { set: [{ field: 'area', value: r.label }] }, r.label)));
+      guideBox.append(chips, otherField('אזור אחר, למשל: רחובות והסביבה', (v) => answer(st, { set: [{ field: 'area', value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'towns') {
+      const region = g.regions.find((r) => r.label === c.area);
+      const picked = new Set((c.towns || []).length ? c.towns : region ? region.towns : []);
+      const all = [...new Set([...(region ? region.towns : []), ...picked])];
+      const draw = () => {
+        chips.textContent = '';
+        for (const t of all) chips.append(chip(t, picked.has(t), () => { picked.has(t) ? picked.delete(t) : picked.add(t); draw(); }));
+      };
+      draw();
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', () => {
+        const list = all.filter((t) => picked.has(t));
+        if (!list.length) { bubble('fail', 'סמנו לפחות ישוב אחד.'); return; }
+        if (list.length > 12) { bubble('fail', 'עד 12 ישובים. הורידו כמה.'); return; }
+        answer(st, { towns: list }, list.join(', '));
+      });
+      guideBox.append(chips, otherField('ישוב נוסף', (v, input) => { all.push(v); picked.add(v); input.value = ''; draw(); }), save);
+    } else if (st.type === 'services') {
+      const have = new Map((c.services || []).map((x) => [x.name, x]));
+      const picked = new Set(have.keys());
+      const all = [...g.services.map((x) => x.name), ...[...have.keys()].filter((n) => !g.services.some((x) => x.name === n))];
+      const draw = () => {
+        chips.textContent = '';
+        for (const n of all) chips.append(chip(n, picked.has(n), () => {
+          if (!picked.has(n) && picked.size >= 6) { bubble('fail', 'עד 6 שירותים. הורידו אחד קודם.'); return; }
+          picked.has(n) ? picked.delete(n) : picked.add(n); draw();
+        }));
+      };
+      draw();
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', () => {
+        const list = all.filter((n) => picked.has(n)).map((n) => {
+          const kb = g.services.find((x) => x.name === n), old = have.get(n);
+          return old || { name: n, detail: kb ? kb.detail : '', time: kb ? kb.time : '', price: '' };
+        });
+        if (!list.length) { bubble('fail', 'סמנו לפחות שירות אחד.'); return; }
+        answer(st, { services: list }, list.map((x) => x.name).join(', '));
+      });
+      guideBox.append(chips, otherField('שירות נוסף', (v, input) => {
+        if (picked.size >= 6) { bubble('fail', 'עד 6 שירותים. הורידו אחד קודם.'); return; }
+        all.push(v); picked.add(v); input.value = ''; draw();
+      }), save);
+    } else if (st.type === 'prices') {
+      const rows = (c.services || []).map((x) => {
+        const kb = g.services.find((k) => k.name === x.name);
+        const row = el('label', 'prow'); const on = el('input'); on.type = 'checkbox'; on.checked = Boolean(x.price || kb);
+        const name = el('span', '', x.name); const v = el('input'); v.type = 'text'; v.value = x.price || (kb ? kb.price : ''); v.placeholder = 'למשל: 300 עד 500 ₪'; v.maxLength = 24;
+        v.setAttribute('aria-label', 'מחיר: ' + x.name); on.setAttribute('aria-label', 'להציג מחיר: ' + x.name);
+        row.append(on, name, v); guideBox.append(row);
+        return { x, on, v };
+      });
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button'; save.style.marginTop = '10px';
+      save.addEventListener('click', async () => {
+        const list = rows.map(({ x, on, v }) => ({ ...x, price: on.checked ? v.value.trim() : '' }));
+        if (await answer(st, { services: list }, list.filter((x) => x.price).length ? 'המחירים נשמרו' : 'בלי מחירים')) { markDone('prices'); paint(); }
+      });
+      const none = el('button', 'linkish skip', 'בלי מחירים באתר'); none.type = 'button';
+      none.addEventListener('click', async () => { if (await answer(st, { services: rows.map(({ x }) => ({ ...x, price: '' })) }, 'בלי מחירים')) { markDone('prices'); paint(); } });
+      const r = el('div', 'row'); r.append(save, none); guideBox.append(r);
+    } else if (st.type === 'copy') {
+      for (const o of st.options) {
+        const set = Object.entries(o).map(([field, value]) => ({ field, value: fill(value) }));
+        const text = set.map((x) => x.value).join(' ');
+        chips.append(chip(text, null, async () => { if (await answer(st, { set }, text)) { markDone(st.id); paint(); } }, 'card'));
+      }
+      const own = el('button', 'linkish skip', 'רוצים נוסח אחר? כתבו לנו בשיחה'); own.type = 'button';
+      own.addEventListener('click', () => { msg.value = st.id === 'headline' ? 'אשמח לכותרת אחרת: ' : 'אשמח לפסקת פתיחה אחרת: '; msg.focus(); });
+      guideBox.append(chips, own);
+    } else if (st.type === 'photos') {
+      const open = el('button', 'btn', 'לתמונות'); open.type = 'button';
+      open.addEventListener('click', () => { $('#photos').open = true; $('#photos').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+      const later = el('button', 'linkish skip', 'בלי תמונות כרגע'); later.type = 'button';
+      later.addEventListener('click', () => { markDone('photos'); paint(); });
+      const r = el('div', 'row'); r.append(open, later); guideBox.append(r);
+    }
+    if (st.optional) {
+      const skip = el('button', 'linkish skip', 'לדלג'); skip.type = 'button';
+      skip.addEventListener('click', () => { markDone(st.id); paint(); });
+      guideBox.append(skip);
+    }
   }
 
   /* ---------- chat ---------- */
