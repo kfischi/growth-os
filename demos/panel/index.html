@@ -105,6 +105,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .links li .row { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
 .links form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
 .links form input { flex: 1 1 200px; min-height: 40px; border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; background: var(--bg); }
+.qr-dlg { border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink); padding: 20px; width: min(420px, calc(100% - 32px)); }
+.qr-dlg::backdrop { background: rgba(10, 16, 15, .55); }
+.qr-dlg h2 { margin: 0 0 12px; font-size: 1.1rem; }
+.qr-img { background: #fff; border-radius: 12px; padding: 12px; display: grid; place-items: center; }
+.qr-img svg { width: 100%; max-width: 280px; height: auto; display: block; }
+.qr-dlg .hint { color: var(--muted); font-size: .85rem; margin: 12px 0 6px; }
+.qr-dlg code { display: block; direction: ltr; text-align: right; font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+.qr-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .links .err { margin: 6px 0 10px; }
   .pic { display: inline-block; margin-top: 8px; }
   .pic img { display: block; max-width: 160px; max-height: 160px; border-radius: 10px; border: 1px solid var(--line, #ddd); }
@@ -165,6 +173,18 @@ button, input, select, textarea { font: inherit; color: inherit; }
       </form>
       <p class="err" id="link-err" role="alert"></p>
     </details>
+
+    <dialog class="qr-dlg" id="qr-dlg" aria-labelledby="qr-title">
+      <h2 id="qr-title"></h2>
+      <div class="qr-img" id="qr-img"></div>
+      <p class="hint">להדביק על הרכב, על כרטיס הביקור או על החשבונית. מי שסורק מגיע לאתר, והכניסה נספרת כאן תחת הקישור הזה.</p>
+      <code id="qr-url"></code>
+      <div class="qr-acts">
+        <a class="btn" id="qr-svg" download>להורדה להדפסה (SVG)</a>
+        <a class="btn line" id="qr-png" download>להורדה כתמונה (PNG)</a>
+        <button class="ghost" type="button" id="qr-close">סגירה</button>
+      </div>
+    </dialog>
 
     <div class="tabs" role="group" aria-label="סינון">
       <button class="tab" type="button" data-f="new" aria-pressed="true">מחכות</button>
@@ -318,7 +338,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
         try { await call('POST', { unlink: k.code }, adminQuery()); data.links = links.filter((x) => x !== k); renderLinks(); }
         catch (e) { if (e.message !== 'unauthorised') $('#link-err').textContent = 'לא הצלחנו למחוק. נסו שוב.'; }
       });
-      row.append(copy, del);
+      const qrb = el('button', 'ghost', 'QR'); qrb.type = 'button'; qrb.setAttribute('aria-label', 'קוד QR של ' + k.label);
+      qrb.addEventListener('click', () => openQr(k));
+      row.append(copy, qrb, del);
       const code = el('code', null, k.url);
       li.append(row, code);
       return li;
@@ -331,6 +353,34 @@ button, input, select, textarea { font: inherit; color: inherit; }
     $('#av-text').textContent = a.text; $('#av-dot').className = 'dot ' + a.state;
     $$('[data-av]').forEach((b) => b.setAttribute('aria-pressed', String(a.manual ? b.dataset.av === a.state : b.dataset.av === 'auto')));
   }
+  // A QR code for a tagged link, to print. The encoder (vendor/, MIT) loads only on the first one.
+  let qrLib = null;
+  const loadQr = () => qrLib || (qrLib = new Promise((ok, fail) => {
+    const sc = document.createElement('script'); sc.src = '/shared/vendor/qrcode-generator-2.0.4.js';
+    sc.onload = () => ok(window.qrcode); sc.onerror = () => { qrLib = null; fail(new Error('qr')); }; document.head.append(sc);
+  }));
+  async function openQr(k) {
+    let qr;
+    try { const make = await loadQr(); qr = make(0, 'M'); qr.addData(k.url); qr.make(); }
+    catch (e) { $('#link-err').textContent = 'לא הצלחנו ליצור קוד QR. נסו שוב.'; return; }
+    const n = qr.getModuleCount(), m = 4, size = n + m * 2;
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="' + d + '" fill="#000"/></svg>';
+    const svgUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    const img = new Image(); img.alt = 'קוד QR שמוביל אל ' + k.url; img.src = svgUrl;
+    $('#qr-img').replaceChildren(img);
+    $('#qr-title').textContent = k.label; $('#qr-url').textContent = k.url;
+    const file = 'qr-' + k.code;
+    $('#qr-svg').href = svgUrl; $('#qr-svg').download = file + '.svg';
+    // PNG: 1,200 px, sharp for print and fine for a WhatsApp status.
+    const cv = document.createElement('canvas'), px = Math.floor(1200 / size); cv.width = cv.height = size * px;
+    const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#000';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect((c + m) * px, (r + m) * px, px, px);
+    $('#qr-png').href = cv.toDataURL('image/png'); $('#qr-png').download = file + '.png';
+    $('#qr-dlg').showModal();
+  }
+  $('#qr-close').addEventListener('click', () => $('#qr-dlg').close());
   const adminQuery = () => auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '';
 
   function card(l, ins) {

@@ -2,6 +2,7 @@
 // Built from clients/sample-plumber/. The chat fills FIELDS, SERVICES and TOWNS; it never writes HTML.
 // render() escapes every value, so whatever the owner or the model typed can't break the page.
 import { israeliPhone } from "../leads.mjs";
+import { localBusiness } from "./schema.mjs";
 export { GUIDE } from "./plumber-guide.mjs";
 //
 // Two modes:
@@ -83,6 +84,21 @@ export function missing(c) {
 }
 
 const FAVICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><rect width="30" height="30" rx="7" fill="#0c2a68"/><path d="M15 5c3.3 5 6.5 8.2 6.5 12.3a6.5 6.5 0 0 1-13 0C8.5 13.2 11.7 10 15 5z" fill="#fff"/></svg>';
+// "Save to contacts": a vCard (3.0, UTF-8) with what a customer needs to find the business again.
+const vEsc = (v) => String(v || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/([,;])/g, "\\$1");
+export function vcard(c) {
+  const name = String(c.business_name || "").trim(), owner = String(c.owner_name || "").trim();
+  const wa = israeliPhone(c.whatsapp), call = israeliPhone(c.phone);
+  const lines = ["BEGIN:VCARD", "VERSION:3.0", `N:;${vEsc(name)};;;`, `FN:${vEsc(name)}`, `ORG:${vEsc(name)}`];
+  if (c.trade) lines.push(`TITLE:${vEsc(String(c.trade).trim())}`);
+  if (call) lines.push(`TEL;TYPE=WORK,VOICE:+${call.intl}`);
+  if (wa) lines.push(`TEL;TYPE=CELL${call ? "" : ",VOICE"}:+${wa.intl}`);
+  const note = [String(c.trade || "").trim() + (c.area ? " ב" + String(c.area).trim() : ""), owner, wa ? "וואטסאפ: " + wa.local : ""].filter(Boolean).join(". ");
+  if (note) lines.push(`NOTE:${vEsc(note)}`);
+  lines.push("END:VCARD");
+  return lines.join("\r\n") + "\r\n";
+}
+
 export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other assets are copied from clients/sample-plumber/assets/
 
 /**
@@ -193,7 +209,8 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
 ${robots}<meta property="og:type" content="website">
 <meta property="og:title" content="${h(name)} · ${h(trade)} ב${h(c.area || "")}">
 <meta property="og:description" content="${h(desc)}">
-<meta property="og:locale" content="he_IL">
+<meta property="og:locale" content="he_IL">${draft ? "" : `
+<script type="application/ld+json">${js(localBusiness({ ...c, services, towns }, { phone: call ? "+" + call.intl : "", description: desc }))}</script>`}
 <meta name="theme-color" content="#0c2a68">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -285,6 +302,7 @@ ${ba}
     <div>
       <p>לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה.</p>
       <button class="btn btn-signal" type="button" data-open-bot>לכתוב בצ׳אט</button>
+      <a class="save-contact" href="${draft ? "#" : "contact.vcf"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את ${h(name)} באנשי הקשר</a>
     </div>
   </div>
 </section>
@@ -384,7 +402,7 @@ ${body}
 <p>אם משהו באתר לא נגיש לכם, נשמח לשמוע ולתקן. אפשר גם לפתוח קריאה בטלפון במקום בצ׳אט.</p>
 <p>אחראי נגישות: ${h(owner)}${contact ? " · " + contact : ""}</p>`);
 
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility };
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "contact.vcf": vcard(c) }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
@@ -396,6 +414,9 @@ export const HEADERS = `# Netlify headers for this site. Applied however the sit
 
 /assets/*
   Cache-Control: public, max-age=604800
+
+/contact.vcf
+  Content-Type: text/vcard; charset=utf-8
 `;
 
 // What the AI chat on the site knows (ls_clients.chat_facts), from the approved content only.
@@ -588,6 +609,8 @@ const CSS = `
     .order .hide-sm { display: none; }
   }
   @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+  .save-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: inherit; font-weight: 600; text-underline-offset: 4px; }
+  .save-contact svg { width: 22px; height: 22px; flex: none; }
   .ba-sec { background: #fff; }
   .ba { position: relative; overflow: hidden; aspect-ratio: 4 / 3; max-width: 880px; margin-inline: auto; border: 1px solid var(--rule); border-radius: 6px; direction: ltr; user-select: none; touch-action: pan-y; background: #eef2f9; }
   .ba > .ps, .ba-before > .ps { position: absolute; inset: 0; width: 100%; height: 100%; }

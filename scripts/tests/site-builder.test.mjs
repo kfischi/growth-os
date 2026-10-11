@@ -216,7 +216,7 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).sort();
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
@@ -371,6 +371,41 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.ok(draft.includes("<section class=\"ba-sec\">") && draft.includes('class="ba half"') && !draft.includes('class="ba-range"'));
   assert.ok(!P.render(SAMPLE, { mode: "draft" })["index.html"].includes("<section class=\"ba-sec\">"), "nothing until a photo is in");
   assert.ok(P.PHOTOS.before && P.PHOTOS.after && P.FIELDS.ba_title.max === 40);
+}
+
+// --- schema.org JSON-LD: on a live site only, from the owner's facts
+{
+  const S = await import(new URL("../../demos/netlify/lib/templates/schema.mjs", import.meta.url).href);
+  const ld = (html) => { const m = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(html); return m && JSON.parse(m[1]); };
+  const site = P.render({ ...SAMPLE, business_name: "אורן </script><b>", hours: "א׳–ה׳ 7:00–19:00" }, { mode: "site" })["index.html"];
+  assert.equal(site.match(/<\/script>/g).length, site.match(/<script\b/g).length, "nothing closes the JSON-LD early");
+  const j = ld(site);
+  assert.equal(j["@type"], "Plumber"); assert.equal(j.name, "אורן </script><b>"); assert.equal(j.telephone, "+972526359513");
+  assert.deepEqual(j.areaServed, SAMPLE.towns);
+  assert.deepEqual(j.openingHoursSpecification[0].dayOfWeek, ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"]);
+  assert.equal(j.openingHoursSpecification[0].opens, "07:00");
+  const offers = j.hasOfferCatalog.itemListElement;
+  assert.equal(offers.length, SAMPLE.services.length);
+  assert.deepEqual(offers[2].priceSpecification, { "@type": "PriceSpecification", minPrice: 350, maxPrice: 2800, priceCurrency: "ILS" });
+  assert.ok(!("aggregateRating" in j) && !("address" in j), "nothing the owner didn't give");
+  assert.equal(ld(P.render(SAMPLE, { mode: "draft" })["index.html"]), null, "not in a draft");
+  assert.equal(S.openingHours("בתיאום מראש"), null); assert.equal(S.priceRange("לפי הצעת מחיר"), null); assert.equal(S.priceRange("2026"), null);
+  assert.equal(S.schemaType("חשמלאי מוסמך"), "Electrician"); assert.equal(S.schemaType("גינון"), "HomeAndConstructionBusiness");
+  const bare = ld(P.render({ ...SAMPLE, hours: "", services: [{ name: "שירות", price: "" }] }, { mode: "site" })["index.html"]);
+  assert.ok(!bare.openingHoursSpecification && !bare.hasOfferCatalog.itemListElement[0].priceSpecification);
+  assert.equal(S.localBusiness({ ...SAMPLE, towns: [] }).areaServed, SAMPLE.area);
+}
+
+// --- "save to contacts": a vCard on a live site, linked from the page, with its own content type
+{
+  const site = P.render({ ...SAMPLE, business_name: "אורן; מים", phone: "04-6222222" }, { mode: "site" });
+  const v = site["contact.vcf"];
+  assert.ok(v.startsWith("BEGIN:VCARD\r\nVERSION:3.0\r\n") && v.endsWith("END:VCARD\r\n"));
+  assert.ok(v.includes("FN:אורן\\; מים\r\n"), "vCard special characters are escaped");
+  assert.ok(v.includes("TEL;TYPE=WORK,VOICE:+97246222222\r\n") && v.includes("TEL;TYPE=CELL:+972526359513\r\n"));
+  assert.ok(site["index.html"].includes('href="contact.vcf"'));
+  assert.ok(!("contact.vcf" in P.render(SAMPLE, { mode: "draft" })), "not in a draft");
+  assert.match(P.HEADERS, /\/contact\.vcf\n  Content-Type: text\/vcard; charset=utf-8/);
 }
 
 console.log("all site builder tests passed");

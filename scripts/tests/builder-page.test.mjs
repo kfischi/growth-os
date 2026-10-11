@@ -79,16 +79,19 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
 
   await check("the questionnaire: pick answers, type what's missing, no AI", async () => {
     const calls = ai.queue.length;
+    // Waits for the next question; on a timeout, says which one and what the page showed instead.
+    const nextQ = (re) => p.waitForFunction((src) => new RegExp(src).test(document.querySelector("#guide .q").textContent), re.source, { timeout: 30000 })
+      .catch(async () => { throw new Error(`waited for ${re} but the question is "${await p.textContent("#guide .q").catch(() => "?")}", log ends "${(await p.textContent("#log")).slice(-80)}"`); });
     assert.match(await p.textContent("#guide .q"), /איך קוראים לעסק/);
     await p.fill("#guide .other input", "אורן מים"); await p.click("#guide .other button");
-    await p.waitForFunction(() => /באיזה אזור/.test(document.querySelector("#guide .q").textContent));
+    await nextQ(/באיזה אזור/);
     await p.click("#guide .chip >> nth=0"); // the first region
-    await p.waitForFunction(() => /לאילו ישובים/.test(document.querySelector("#guide .q").textContent));
+    await nextQ(/לאילו ישובים/);
     assert.ok(await p.$eval("#guide .chip[aria-pressed=true]", (e) => Boolean(e)), "the region's towns come ticked");
     await p.screenshot({ path: `/tmp/qa-page/builder-guide-${w}.png` }).catch(() => {});
     await p.fill("#guide .other input", "גבעת חיים"); await p.click("#guide .other button");
     await p.click("#guide > .btn");
-    await p.waitForFunction(() => /מה אתם עושים/.test(document.querySelector("#guide .q").textContent));
+    await nextQ(/מה אתם עושים/);
     const d = T.ls_drafts.at(-1);
     assert.equal(d.content.business_name, "אורן מים"); assert.ok(d.content.towns.includes("גבעת חיים"), "a typed town is kept");
     assert.equal(ai.queue.length, calls, "no AI answer was used");
