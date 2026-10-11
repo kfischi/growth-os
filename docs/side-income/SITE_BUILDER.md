@@ -172,6 +172,7 @@
    | `GITHUB_TOKEN` | GitHub > Settings > Developer settings > Fine-grained tokens. רק הריפו הזה, הרשאת Contents: Read and write. תוקף: שנה, ותזכורת לחדש |
    | `BUILDER_DAILY_MAX` | לא חובה. כמה טיוטות חדשות ביום, לכולם יחד (ברירת מחדל 40) |
    | `PAY_URL_AI`, `PAY_URL_AI_THREE`, `PAY_URL_PRESENCE` | לא חובה. דפי תשלום קבועים של מערכת החשבוניות. בלעדיהם הלקוח רואה "נשלח לכם קישור לתשלום בוואטסאפ" |
+   | `BUILDER_MODEL` | לא חובה. ברירת מחדל `claude-opus-5-5`. לצ׳אט מהיר יותר: `claude-sonnet-5-5`, או `claude-haiku-5-5` (הכי מהיר, ניסוח פשוט יותר) |
    | `BUILDER_AI_TIMEOUT_MS` | לא חובה. ברירת מחדל 25000. אם Netlify עוצר פונקציות אחרי 10 שניות, לשים 9000 כדי שהלקוח יקבל "נסו שוב" מסודר |
 
 3. **התראה לכפיר.** כשלקוח מאשר, ההתראה יוצאת דרך מערכת הלידים, לעסק `kfir` (אפשר לשנות ב-`BUILDER_ALERT_CLIENT`). בלי וואטסאפ מחובר, הטיוטה עדיין מופיעה ב-`/build/admin/` תחת "לטיפול".

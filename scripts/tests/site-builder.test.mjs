@@ -292,6 +292,18 @@ assert.equal(D.content.intro, liveIntro); assert.equal(D.self_edit, false);
 r = await J(await req("chat", { body: { message: "עוד", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
 r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
 
+/* ---------------- a faster model: its own settings ---------------- */
+for (const [model, check] of [["claude-haiku-5-5", (c) => { assert.ok(!c.fallbacks && !c.betas, "Haiku has no server-side fallback"); assert.deepEqual(c.thinking, { type: "disabled" }); }],
+  ["claude-sonnet-5-5", (c) => { assert.ok(!c.fallbacks); assert.deepEqual(c.thinking, { type: "between_tools" }); }]]) {
+  process.env.BUILDER_MODEL = model;
+  const F2 = T.ls_drafts.find((x) => x.status === "draft") || T.ls_drafts.at(-1);
+  F2.status = "draft"; const fKey = "f".repeat(32); F2.key_hash = createHash("sha256").update(fKey).digest("hex"); F2.messages = []; cred = F2.id + ":" + fKey;
+  ai.queue.push({ reply: "בסדר.", set: [], services: null, towns: null });
+  r = await J(await req("chat", { body: { message: "שלום", rev: F2.rev }, ip: "4.4.4." + model.length }));
+  assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(aiCalls.at(-1).model, model); check(aiCalls.at(-1)); assert.equal(aiCalls.at(-1).output_config.effort, "low");
+}
+delete process.env.BUILDER_MODEL;
+
 /* ---------------- limits and housekeeping ---------------- */
 for (let i = 0; i < 3; i++) { cred = ""; r = await J(await req("start", { body: { name: "בודק", phone: "0501234567", consent: true }, ip: "9.9.9." + i })); assert.equal(r.status, 201); }
 r = await J(await req("start", { body: { name: "בודק", phone: "0501234567", consent: true }, ip: "9.9.9.9" })); assert.equal(r.status, 201);

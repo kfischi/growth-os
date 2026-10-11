@@ -11,6 +11,7 @@
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
 //   PAY_URL_PRESENCE, PAY_URL_AI, PAY_URL_AI_THREE   payment pages, if set; otherwise payment is arranged on WhatsApp
 //   BUILDER_AI_TIMEOUT_MS                how long one chat answer may take (default 25000)
+//   BUILDER_MODEL                        the chat's model (default claude-opus-5-5); claude-sonnet-5-5 or claude-haiku-5-5 answer faster
 //   BUILDER_EDIT_MESSAGES, BUILDER_EDIT_PUBLISHES   self edit: chat messages and publishes per site per month (60, 10)
 import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";
@@ -27,7 +28,16 @@ export const MAX_VIDEO_BYTES = 4_500_000;   // about 10 seconds at 720p; Netlify
 export const MAX_POSTER_BYTES = 400_000;
 export const STALE_DAYS = 30;         // an unapproved draft nobody touched for this long is deleted
 
-const MODEL = process.env.BUILDER_MODEL || "claude-opus-5-5";
+const MODEL = () => process.env.BUILDER_MODEL || "claude-opus-5-5";
+// BUILDER_MODEL may be a faster model. Each family takes different settings:
+// Opus: the server-side fallback on a refusal. Sonnet 5.5: thinking off is "between_tools".
+// Haiku 5.5: no server-side fallback, thinking off is "disabled". A refusal is handled below either way.
+function modelOptions(model) {
+  if (model.startsWith("claude-opus")) return { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" };
+  if (model.startsWith("claude-sonnet-5-5")) return { thinking: { type: "between_tools" } };
+  if (model.startsWith("claude-haiku")) return { thinking: { type: "disabled" } };
+  return {};
+}
 
 export class Conflict extends Error {}
 
@@ -386,11 +396,10 @@ export async function chatTurn(d, message) {
   }
   const turn = `<draft_state>${stateFor(d)}</draft_state>\n<owner_message>${message}</owner_message>`;
   const response = await ai().beta.messages.create({
-    model: MODEL,
+    model: MODEL(),
     max_tokens: 4000,
     output_config: { effort: "low", format: { type: "json_schema", schema: outputSchema(t) } },
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
+    ...modelOptions(MODEL()),
     system: [{ type: "text", text: systemPrompt(t, editing(d) ? "edit" : "build"), cache_control: { type: "ephemeral" } }],
     messages: [...history, { role: "user", content: turn }],
   });
