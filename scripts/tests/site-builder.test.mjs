@@ -232,6 +232,66 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-2" })); assert.equal(r.status, 409);
 r = await J(await adm("POST", { action: "delete", id: D.id })); assert.equal(r.status, 409, "a published draft stays");
 
+/* ---------------- self edit: the owner changes the live site ---------------- */
+cred = good;
+r = await J(await req("chat", { body: { message: "תשנו את הכותרת", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked", "not before כפיר turns it on");
+assert.equal(r.state.edit, null);
+r = await J(await adm("POST", { action: "self_edit", id: D.id, on: true })); assert.equal(r.status, 200); assert.equal(D.self_edit, true);
+assert.deepEqual(D.live.content, D.content, "what the site shows now"); assert.deepEqual(D.messages, [], "a fresh chat for changes");
+r = await J(await req("state", { method: "GET" }));
+assert.deepEqual(r.state.edit, { dirty: false, canUndo: false, messagesLeft: 60, publishesLeft: 10 }); assert.match(r.state.greeting, /האתר שלכם באוויר/);
+r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "no_changes");
+r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(r.error, "locked", "a live site is never approved again");
+// a change in the chat: on the draft, not on the site
+const liveIntro = D.content.intro;
+ai.queue.push({ reply: "עדכנו את הפתיחה.", set: [{ field: "intro", value: "פתיחה חדשה מבעל העסק." }], services: null, towns: null });
+r = await J(await req("chat", { body: { message: "תשנו את הפתיחה", rev: D.rev }, ip: "6.6.6.1" }));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(r.state.edit.dirty, true); assert.equal(r.state.edit.messagesLeft, 59);
+assert.match(aiCalls.at(-1).system[0].text, /The site is already live/); assert.ok(!/Order of the conversation/.test(aiCalls.at(-1).system[0].text));
+assert.equal(D.live.content.intro, liveIntro, "the live copy is untouched until publish");
+r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.error, "owner_editing", "כפיר never publishes the owner's unfinished changes");
+// a new portrait of another type, then publish: the old file leaves the repo, the old storage file stays for "back"
+const oldPortrait = D.photos.portrait.path;
+r = await J(await req("photo", { raw: webp, query: "?slot=portrait", headers: { "x-photo-rights": "yes" }, ip: "6.6.6.1" })); assert.equal(r.status, 200, JSON.stringify(r));
+assert.ok(storage.has(oldPortrait), "the live site's photo stays in storage while editing");
+T.ls_leads.forEach((l) => { l.created_at = "2026-01-01T00:00:00Z"; }); // the lead system merges alerts within 10 minutes
+const leadsBefore = T.ls_leads.length;
+r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" }));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(r.state.edit.dirty, false); assert.equal(r.state.edit.canUndo, true); assert.equal(r.state.edit.publishesLeft, 9);
+const t2 = gh.trees.at(-1).tree, at = (f) => t2.find((e) => e.path === "clients/oren-mayim/" + f);
+assert.match(at("index.html").content, /פתיחה חדשה מבעל העסק/); assert.ok(at("assets/photos/portrait.webp").sha.startsWith("blob-"));
+assert.equal(at("assets/photos/portrait.jpg").sha, null, "the replaced photo leaves the site"); assert.ok(!gh.files.has("clients/oren-mayim/assets/photos/portrait.jpg"));
+assert.ok(gh.files.has("clients/oren-mayim/assets/hero.mp4"), "the video stays");
+assert.equal(D.live.content.intro, "פתיחה חדשה מבעל העסק."); assert.equal(D.prev_live.content.intro, liveIntro); assert.deepEqual(D.messages, []);
+assert.ok(storage.has(oldPortrait), "kept for back"); assert.equal(T.ls_leads.length, leadsBefore + 1); assert.equal(T.ls_leads.at(-1).service, "בעל העסק פרסם שינוי באתר");
+assert.match(T.ls_clients.find((c) => c.slug === "oren-mayim").chat_facts, /פתיחה חדשה|סתימה/);
+// discard: a change and a new photo, then back to what is live; the unused upload is deleted
+ai.queue.push({ reply: "הורדנו.", set: [{ field: "intro", value: "טעות." }], services: null, towns: null });
+r = await J(await req("chat", { body: { message: "תשנו", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(D.content.intro, "טעות.");
+r = await J(await req("photo", { raw: jpg, query: "?slot=work2", headers: { "x-photo-rights": "yes" }, ip: "6.6.6.1" }));
+const unused = D.photos.work2.path;
+r = await J(await req("discard", { body: { rev: D.rev }, ip: "6.6.6.1" }));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.content.intro, "פתיחה חדשה מבעל העסק."); assert.ok(!D.photos.work2); assert.ok(!storage.has(unused)); assert.equal(r.state.edit.dirty, false);
+// back to the previous version: loaded as changes, published like any change
+r = await J(await req("undo", { body: { rev: D.rev }, ip: "6.6.6.1" }));
+assert.equal(r.status, 200); assert.equal(D.content.intro, liveIntro); assert.equal(D.photos.portrait.path, oldPortrait); assert.equal(r.state.edit.dirty, true);
+r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.status, 200, JSON.stringify(r));
+assert.ok(gh.files.has("clients/oren-mayim/assets/photos/portrait.jpg")); assert.ok(!gh.files.has("clients/oren-mayim/assets/photos/portrait.webp"));
+assert.equal(D.prev_live.content.intro, "פתיחה חדשה מבעל העסק.");
+// the monthly allowance
+D.edit_publishes = 10;
+ai.queue.push({ reply: "שינינו.", set: [{ field: "intro", value: "עוד שינוי." }], services: null, towns: null });
+await req("chat", { body: { message: "עוד", rev: D.rev }, ip: "6.6.6.1" });
+r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "edit_limit");
+D.edit_messages = 60; const aiBefore = aiCalls.length;
+r = await J(await req("chat", { body: { message: "עוד", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "edit_limit"); assert.equal(aiCalls.length, aiBefore, "no AI call over the allowance");
+D.edit_month = "2020-01"; r = await J(await req("state", { method: "GET" })); assert.equal(r.state.edit.publishesLeft, 10, "a new month starts from zero");
+// turned off: the unpublished change is dropped, and the chat is locked again
+r = await J(await adm("POST", { action: "self_edit", id: D.id, on: false })); assert.equal(r.status, 200);
+assert.equal(D.content.intro, liveIntro); assert.equal(D.self_edit, false);
+r = await J(await req("chat", { body: { message: "עוד", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
+r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked");
+
 /* ---------------- limits and housekeeping ---------------- */
 for (let i = 0; i < 3; i++) { cred = ""; r = await J(await req("start", { body: { name: "בודק", phone: "0501234567", consent: true }, ip: "9.9.9." + i })); assert.equal(r.status, 201); }
 r = await J(await req("start", { body: { name: "בודק", phone: "0501234567", consent: true }, ip: "9.9.9.9" })); assert.equal(r.status, 201);

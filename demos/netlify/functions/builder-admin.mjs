@@ -4,9 +4,10 @@
 //   POST /api/builder-admin { action: "paid",    id }            payment arrived (until the invoicing system's webhook does it)
 //   POST /api/builder-admin { action: "return",  id, note }      back to the owner for changes, with a note they see
 //   POST /api/builder-admin { action: "publish", id, slug }      writes clients/<slug>/ to the repo; for נציג AI also the lead system row
+//   POST /api/builder-admin { action: "self_edit", id, on }      the owner may change the live site in the chat (0004_self_edit.sql)
 //   POST /api/builder-admin { action: "delete",  id }
 import { json, configured, authorise, db, q, clip } from "../lib/leads.mjs";
-import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, publishToRepo, ensureLeadClient, deletePhotos, mediaPaths, Conflict } from "../lib/builder.mjs";
+import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, publishToRepo, ensureLeadClient, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia } from "../lib/builder.mjs";
 
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/;
 
@@ -17,6 +18,7 @@ function view(d) {
     business: d.content.business_name || "", owner: d.owner_name, phone: d.owner_phone ? "0" + d.owner_phone.slice(3) : "",
     missing: t.missing(d.content), photos: Object.keys(d.photos || {}).length, video: Boolean(d.video), rights: Boolean(d.photo_rights_at),
     returnNote: d.return_note, slug: d.published_slug,
+    selfEdit: Boolean(d.self_edit), editDirty: editing(d) ? isDirty(d) : false, edits: d.self_edit ? editUsage(d) : null,
     created: d.created_at, updated: d.updated_at, approved: d.approved_at, paid: d.paid_at, published: d.published_at,
   };
 }
@@ -40,7 +42,7 @@ export default async (req) => {
         });
       }
       // Everything but the chat and the key hash: the list stays small.
-      const rows = await db("GET", "ls_drafts?select=id,status,template,package,plan,content,photos,video,photo_rights_at,owner_name,owner_phone,return_note,published_slug,created_at,updated_at,approved_at,paid_at,published_at&order=created_at.desc&limit=200");
+      const rows = await db("GET", "ls_drafts?select=id,status,template,package,plan,content,photos,video,photo_rights_at,owner_name,owner_phone,return_note,published_slug,self_edit,live,edit_month,edit_messages,edit_publishes,created_at,updated_at,approved_at,paid_at,published_at&order=created_at.desc&limit=200");
       return json({ drafts: rows.map(view) });
     }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -69,6 +71,8 @@ export default async (req) => {
       if (!["paid", "published"].includes(d.status) || (d.published_slug && d.published_slug !== slug)) return json({ error: "wrong_status", status: d.status }, 409);
       const missing = templateOf(d).missing(d.content);
       if (missing.length) return json({ error: "missing", missing }, 422);
+      // The owner is in the middle of changes they haven't published: never put them live for them.
+      if (editing(d) && isDirty(d)) return json({ error: "owner_editing" }, 409);
       const mine = d.published_slug === slug;
       const other = await db("GET", `ls_drafts?published_slug=eq.${q(slug)}&id=neq.${q(d.id)}&select=id`);
       if (other.length) return json({ error: "slug_taken" }, 409);
@@ -92,11 +96,23 @@ export default async (req) => {
         if (e.message.startsWith("not_configured")) return json({ error: "not_configured", detail: "GITHUB_TOKEN" }, 503);
         throw e;
       }
-      const saved = await saveDraft(draft, { status: "published", published_sha: sha, published_at: now });
+      const saved = await saveDraft(draft, { status: "published", published_sha: sha, published_at: now, live: snapshot(draft) });
       // The site is in the repo already. If the lead system row fails, publishing again with the same slug finishes it.
       let leads;
       try { leads = await ensureLeadClient(saved, slug); } catch (e) { console.error("builder lead client", e.message); leads = { row: "failed" }; }
       return json({ draft: view(saved), commit: sha, folder: `clients/${slug}/`, leads });
+    }
+
+    if (body.action === "self_edit") {
+      if (d.status !== "published" || !d.published_slug) return json({ error: "wrong_status", status: d.status }, 409);
+      const on = body.on === true;
+      // A site published before self edit existed: what it shows now is its content.
+      // Turned off: changes the owner didn't publish are dropped, so a later publish by כפיר never carries them.
+      const back = !on && d.live && isDirty(d) ? { content: d.live.content, photos: d.live.photos || {}, video: d.live.video || null, photo_rev: d.photo_rev + 1 } : {};
+      const patch = on ? { self_edit: true, live: d.live || snapshot(d), messages: [] } : { self_edit: false, messages: [], ...back };
+      const saved = await saveDraft(d, patch);
+      if (back.content) await releaseMedia(saved, mediaPaths(d));
+      return json({ draft: view(saved) });
     }
 
     if (body.action === "delete") {

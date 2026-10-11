@@ -11,9 +11,10 @@
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
 //   PAY_URL_PRESENCE, PAY_URL_AI, PAY_URL_AI_THREE   payment pages, if set; otherwise payment is arranged on WhatsApp
 //   BUILDER_AI_TIMEOUT_MS                how long one chat answer may take (default 25000)
+//   BUILDER_EDIT_MESSAGES, BUILDER_EDIT_PUBLISHES   self edit: chat messages and publishes per site per month (60, 10)
 import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";
-import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, adminKey } from "./leads.mjs";
+import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, adminKey, israelDay } from "./leads.mjs";
 import * as plumber from "./templates/plumber.mjs";
 
 export const TEMPLATES = { plumber };
@@ -61,11 +62,11 @@ export async function saveDraft(d, patch) {
 export async function saveMedia(id, change) {
   for (let i = 0; i < 4; i++) {
     const fresh = (await db("GET", `ls_drafts?id=eq.${q(id)}&select=*`))[0];
-    if (!fresh || !["draft", "returned"].includes(fresh.status)) return { row: null, before: fresh };
+    if (!fresh || !isEditable(fresh)) return { row: null, before: fresh };
     const patch = { ...change(fresh), photo_rev: fresh.photo_rev + 1 };
     const any = Object.keys(patch.photos || fresh.photos || {}).length || (patch.video !== undefined ? patch.video : fresh.video);
     if (!fresh.photo_rights_at && any) patch.photo_rights_at = new Date().toISOString();
-    const rows = await db("PATCH", `ls_drafts?id=eq.${q(id)}&photo_rev=eq.${fresh.photo_rev}&status=in.(draft,returned)`, patch, "return=representation");
+    const rows = await db("PATCH", `ls_drafts?id=eq.${q(id)}&photo_rev=eq.${fresh.photo_rev}&status=eq.${q(fresh.status)}`, patch, "return=representation");
     if (rows.length) return { row: rows[0], before: fresh };
   }
   throw new Conflict("photos changed");
@@ -77,6 +78,37 @@ export const savePhotos = (id, change) => saveMedia(id, (fresh) => ({ photos: ch
 export function mediaPaths(d) {
   const v = d.video;
   return [...Object.values(d.photos || {}).map((p) => p.path), ...(v ? [v.path, v.poster && v.poster.path] : [])].filter(Boolean);
+}
+
+/* ---------------- self edit: the owner changes a live site (0004_self_edit.sql) ---------------- */
+
+// A published site whose owner may edit it in the chat. Its content, photos and video are the working copy;
+// d.live is what the site shows. Nothing goes live until the owner presses "לפרסם את השינויים".
+export const editing = (d) => d.status === "published" && Boolean(d.self_edit) && Boolean(d.published_slug);
+export const isEditable = (d) => d.status === "draft" || d.status === "returned" || editing(d);
+
+export const snapshot = (d) => ({ content: d.content || {}, photos: d.photos || {}, video: d.video || null });
+// Key order doesn't matter: the chat rebuilds objects.
+const stable = (v) => JSON.stringify(v, (k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map((key) => [key, x[key]])) : x));
+export const isDirty = (d) => !d.live || stable(snapshot(d)) !== stable(d.live);
+
+export const EDIT_MESSAGES = () => Number(process.env.BUILDER_EDIT_MESSAGES) || 60;
+export const EDIT_PUBLISHES = () => Number(process.env.BUILDER_EDIT_PUBLISHES) || 10;
+// This month's use, in Israel time: a new month starts from zero.
+export function editUsage(d, now = new Date()) {
+  const month = israelDay(now).slice(0, 7);
+  return d.edit_month === month ? { month, messages: d.edit_messages || 0, publishes: d.edit_publishes || 0 } : { month, messages: 0, publishes: 0 };
+}
+
+// The files the live site or the version before it still use: never deleted while the owner edits.
+export function keptPaths(d) {
+  return new Set([d.live, d.prev_live].filter(Boolean).flatMap((v) => mediaPaths(v)));
+}
+// Deletes the storage files a draft no longer needs, but never one the live site or "back" still uses.
+export async function releaseMedia(d, paths) {
+  const kept = keptPaths(d);
+  const drop = paths.filter((p) => p && !kept.has(p));
+  if (drop.length) await deletePhotos(drop);
 }
 
 export function templateOf(d) {
@@ -224,7 +256,16 @@ export function publicState(d) {
     photoRights: Boolean(d.photo_rights_at), package: d.package, plan: d.plan, returnNote: d.status === "returned" ? d.return_note : null,
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
     pay: d.status === "client_approved" && d.package && !d.paid_at ? payLinks(d.package) : [],
+    edit: editing(d) ? editState(d) : null,
     rev: d.rev,
+  };
+}
+
+function editState(d) {
+  const use = editUsage(d);
+  return {
+    dirty: isDirty(d), canUndo: Boolean(d.prev_live),
+    messagesLeft: Math.max(0, EDIT_MESSAGES() - use.messages), publishesLeft: Math.max(0, EDIT_PUBLISHES() - use.publishes),
   };
 }
 
@@ -241,6 +282,9 @@ export function renderDraft(d) {
 export const greeting = (name) =>
   `היי${name ? " " + name : ""}, נבנה יחד את האתר של העסק. אנחנו שואלים, ואתם רואים את האתר מתמלא תוך כדי.\nנתחיל משם העסק: איך הלקוחות מכירים אתכם?`;
 
+export const editGreeting = (name) =>
+  `היי${name ? " " + name : ""}, האתר שלכם באוויר. כתבו כאן מה לשנות: טקסט, שירות, מחיר, אזור או תמונה.\nתראו את השינוי ליד השיחה, והוא עולה לאתר רק כשתלחצו "לפרסם את השינויים".`;
+
 function fieldCatalog(t) {
   const lines = Object.entries(t.FIELDS).map(([k, f]) =>
     `- ${k} (${f.kind}${f.required ? ", required" : ""}, max ${f.max} chars): ${f.label}${f.hint ? ". " + f.hint : ""}`);
@@ -250,7 +294,26 @@ function fieldCatalog(t) {
   return lines.join("\n");
 }
 
-function systemPrompt(t) {
+const BUILD_ORDER = `Order of the conversation (skip what is already filled, see the draft state):
+1. business_name, then owner_name if missing.
+2. area (a short line) and towns (the list of towns they serve).
+3. services: what they do most, and price ranges if they want to show them.
+4. response_time: how fast they really get back to a customer. Then, in one question, the optional facts: hours, years, warranty.
+5. Propose headline_2 and intro from the facts.
+6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
+7. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
+After approval the content is locked; changes then go through us on WhatsApp.
+`;
+
+const EDIT_ORDER = `The site is already live. The owner came back to change it.
+- Ask what they want to change, then change exactly that. Don't walk them through the other fields again.
+- After a change, say in one short sentence what changed, and that they see it on the page next to the chat.
+- Photos and the video: they replace them with the "תמונות" buttons under the chat. You may change the titles.
+- Nothing reaches the live site until they press "לפרסם את השינויים". When they say they're done, remind them to press it.
+- Something you can't do here (a new page, the design, the domain, the lead system): say we take care of it on WhatsApp.
+`;
+
+function systemPrompt(t, mode) {
   return `You are the site builder of נחיתה רכה ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
 You talk with the owner of a ${t.label} business. Together you fill in the content of their one-page site. The page next to the chat shows the draft and updates after every answer. You never write HTML: you only set the fields below.
 
@@ -268,16 +331,7 @@ The facts rule (the most important rule):
 - Fields of kind "text" are copy you may write, but only from facts the owner gave. The site speaks as the owner in first person singular ("אני חוזר אליכם"). Before you set headline_2 or intro, or change them, show the owner the text in your reply and ask if it works; set it in the same answer, and change it if they ask.
 - Prices appear only if the owner wants to publish them. A price is a range or a "from" price the owner gave.
 
-Order of the conversation (skip what is already filled, see the draft state):
-1. business_name, then owner_name if missing.
-2. area (a short line) and towns (the list of towns they serve).
-3. services: what they do most, and price ranges if they want to show them.
-4. response_time: how fast they really get back to a customer. Then, in one question, the optional facts: hours, years, warranty.
-5. Propose headline_2 and intro from the facts.
-6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
-7. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
-After approval the content is locked; changes then go through us on WhatsApp.
-
+${mode === "edit" ? EDIT_ORDER : BUILD_ORDER}
 What you return: JSON with
 - reply: your message to the owner.
 - set: the fields to change, [{field, value}]. An empty value clears a field. Only fields that change.
@@ -337,11 +391,11 @@ export async function chatTurn(d, message) {
     output_config: { effort: "low", format: { type: "json_schema", schema: outputSchema(t) } },
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
-    system: [{ type: "text", text: systemPrompt(t), cache_control: { type: "ephemeral" } }],
+    system: [{ type: "text", text: systemPrompt(t, editing(d) ? "edit" : "build"), cache_control: { type: "ephemeral" } }],
     messages: [...history, { role: "user", content: turn }],
   });
   if (response.stop_reason === "refusal") {
-    return { refused: true, reply: "את זה לא נוכל להכניס לאתר. נמשיך עם פרטי העסק?" };
+    return { refused: true, reply: editing(d) ? "את זה לא נוכל להכניס לאתר. מה עוד תרצו לשנות?" : "את זה לא נוכל להכניס לאתר. נמשיך עם פרטי העסק?" };
   }
   if (response.stop_reason === "max_tokens") throw new Error("max_tokens");
   const text = response.content.filter((b) => b.type === "text").map((b) => b.text).join("");
@@ -426,7 +480,7 @@ export function siteFiles(d, slug) {
  * reused from clients/sample-plumber/assets (same blob, no copy), the photos are uploaded as blobs.
  * Refuses to overwrite a folder that belongs to another draft. Returns the commit sha.
  */
-export async function publishToRepo(d, slug) {
+export async function publishToRepo(d, slug, message = `Publish clients/${slug} from the site builder\n\nDraft ${d.id}, approved by the owner and by כפיר.`) {
   if (!process.env.GITHUB_TOKEN) throw new Error("not_configured: GITHUB_TOKEN");
   const files = siteFiles(d, slug);
   const dir = `clients/${slug}`;
@@ -455,13 +509,25 @@ export async function publishToRepo(d, slug) {
   }));
   const text = Object.entries(files).map(([name, content]) => ({ path: `${dir}/${name}`, mode: "100644", type: "blob", content }));
 
+  // A photo or the video the owner removed or replaced with another type: its old file goes too.
+  let stale = [];
+  if (existing.ok) {
+    const keep = new Set([...text, ...shared, ...photos].map((e) => e.path));
+    const listFiles = async (sub) => {
+      const r = await gh("GET", `/contents/${dir}/${sub}?ref=${q(BRANCH())}`);
+      return r.ok && Array.isArray(r.data) ? r.data.filter((f) => f.type === "file").map((f) => `${dir}/${sub}/${f.name}`) : [];
+    };
+    const media = [...await listFiles("assets/photos"), ...(await listFiles("assets")).filter((p) => /\/hero(-poster)?\.\w+$/.test(p))];
+    stale = media.filter((p) => !keep.has(p)).map((path) => ({ path, mode: "100644", type: "blob", sha: null }));
+  }
+
   for (let attempt = 0; attempt < 2; attempt++) { // someone else may push in between: build on the new head once more
     const ref = ghOk(await gh("GET", `/git/ref/heads/${BRANCH()}`), "ref");
     const head = ref.object.sha;
     const commit = ghOk(await gh("GET", `/git/commits/${head}`), "commit");
-    const tree = ghOk(await gh("POST", "/git/trees", { base_tree: commit.tree.sha, tree: [...text, ...shared, ...photos] }), "tree");
+    const tree = ghOk(await gh("POST", "/git/trees", { base_tree: commit.tree.sha, tree: [...text, ...shared, ...photos, ...stale] }), "tree");
     const made = ghOk(await gh("POST", "/git/commits", {
-      message: `Publish ${dir} from the site builder\n\nDraft ${d.id}, approved by the owner and by כפיר.`, tree: tree.sha, parents: [head],
+      message, tree: tree.sha, parents: [head],
     }), "new commit");
     const moved = await gh("PATCH", `/git/refs/heads/${BRANCH()}`, { sha: made.sha, force: false });
     if (moved.ok) return made.sha;

@@ -8,6 +8,10 @@
 //   DELETE /api/builder/video                                             -> { state }
 //   POST   /api/builder/approve   { package, plan, rev }                  -> { state }
 //   POST   /api/builder/reopen    { rev }   back to editing, before payment -> { state }
+// Self edit, on a published site whose owner may change it (0004_self_edit.sql):
+//   POST   /api/builder/publish   { rev }   puts the changes on the live site -> { state }
+//   POST   /api/builder/discard   { rev }   back to what the site shows now  -> { state }
+//   POST   /api/builder/undo      { rev }   loads the version before the last publish, to publish again -> { state }
 // Every call but start sends the private link's "<id>:<key>" in the x-draft header.
 import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
@@ -15,16 +19,18 @@ import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
   chatTurn, greeting, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
+  editing, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
+  publishToRepo, ensureLeadClient,
 } from "../lib/builder.mjs";
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
 const chatLimited = rateLimiter(40, 10 * 60 * 1000);    // chat turns per IP
 const photoLimited = rateLimiter(30, 10 * 60 * 1000);
 const videoLimited = rateLimiter(6, 10 * 60 * 1000);
-const EDITABLE = ["draft", "returned"];
+const publishLimited = rateLimiter(6, 10 * 60 * 1000);
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
-const stateOf = (d) => ({ ...publicState(d), greeting: greeting(first(d.owner_name)) });
+const stateOf = (d) => ({ ...publicState(d), greeting: (editing(d) ? editGreeting : greeting)(first(d.owner_name)) });
 
 export default async (req, context) => {
   // Only this site's own pages call the builder.
@@ -68,7 +74,7 @@ export default async (req, context) => {
     if (action === "state" && req.method === "GET") return json({ state: stateOf(d) });
 
     if (action === "chat" && req.method === "POST") {
-      if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
       if (chatLimited(ip)) return json({ error: "rate_limited" }, 429);
       const body = await req.json().catch(() => null);
       const message = clip(body && body.message, MAX_CHARS + 1);
@@ -76,9 +82,12 @@ export default async (req, context) => {
       if (message.length > MAX_CHARS) return json({ error: "too_long" }, 400);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
       if ((d.messages || []).length >= MAX_MESSAGES) return json({ error: "limit", state: stateOf(d) }, 429);
+      const use = editing(d) ? editUsage(d) : null;
+      if (use && use.messages >= EDIT_MESSAGES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
       const turn = await chatTurn(d, message);
       const messages = [...(d.messages || []), { role: "user", content: message }, { role: "assistant", content: turn.reply }];
-      const saved = await saveDraft(d, turn.refused ? { messages } : { content: turn.content, messages });
+      const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
+      const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
       return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved) });
     }
 
@@ -86,12 +95,12 @@ export default async (req, context) => {
       const slot = new URL(req.url).searchParams.get("slot");
       const t = templateOf(d);
       if (!slot || !Object.hasOwn(t.PHOTOS, slot)) return json({ error: "bad_slot" }, 400);
-      if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
       if (req.method === "DELETE") {
         const { row, before } = await savePhotos(d.id, (photos) => { delete photos[slot]; return photos; });
         if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
         const old = ((before && before.photos) || {})[slot];
-        if (old) await deletePhotos([old.path]);
+        if (old) await releaseMedia(row, [old.path]);
         return json({ state: stateOf(row) });
       }
       if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -110,17 +119,17 @@ export default async (req, context) => {
       catch (e) { await deletePhotos([photo.path]); throw e; }
       if (!saved.row) { await deletePhotos([photo.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const replaced = ((saved.before && saved.before.photos) || {})[slot];
-      if (replaced) await deletePhotos([replaced.path]);
+      if (replaced) await releaseMedia(saved.row, [replaced.path]);
       return json({ state: stateOf(saved.row) });
     }
 
     if (action === "video") {
-      if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
       if (req.method === "DELETE") {
         const { row, before } = await saveMedia(d.id, () => ({ video: null }));
         if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
         const old = before && before.video;
-        if (old) await deletePhotos([old.path, old.poster.path]);
+        if (old) await releaseMedia(row, [old.path, old.poster.path]);
         return json({ state: stateOf(row) });
       }
       if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -141,13 +150,13 @@ export default async (req, context) => {
       catch (e) { await deletePhotos([film.path, poster.path]); throw e; }
       if (!saved.row) { await deletePhotos([film.path, poster.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const old = saved.before && saved.before.video;
-      if (old) await deletePhotos([old.path, old.poster.path]);
+      if (old) await releaseMedia(saved.row, [old.path, old.poster.path]);
       return json({ state: stateOf(saved.row) });
     }
 
     if (action === "approve" && req.method === "POST") {
       const body = await req.json().catch(() => ({}));
-      if (!EDITABLE.includes(d.status)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (!isEditable(d) || editing(d)) return json({ error: "locked", state: stateOf(d) }, 409);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
       const t = templateOf(d);
       const missing = t.missing(d.content);
@@ -171,6 +180,44 @@ export default async (req, context) => {
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
       const saved = await saveDraft(d, { status: "draft", approved_at: null });
       return json({ state: stateOf(saved) });
+    }
+
+    if (["publish", "discard", "undo"].includes(action) && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      if (!editing(d)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
+      const editPatch = (v) => ({ content: v.content, photos: v.photos || {}, video: v.video || null, photo_rev: d.photo_rev + 1 });
+
+      if (action === "discard") {
+        if (!isDirty(d)) return json({ error: "no_changes", state: stateOf(d) }, 409);
+        const saved = await saveDraft(d, { ...editPatch(d.live), messages: [] });
+        await releaseMedia(saved, mediaPaths(d)); // the uploads that never went live
+        return json({ state: stateOf(saved) });
+      }
+
+      if (action === "undo") {
+        if (!d.prev_live) return json({ error: "no_changes", state: stateOf(d) }, 409);
+        const saved = await saveDraft(d, editPatch(d.prev_live));
+        await releaseMedia(saved, mediaPaths(d));
+        return json({ state: stateOf(saved) });
+      }
+
+      // publish: the changes go to the live site, in one commit to clients/<slug>/
+      if (!isDirty(d)) return json({ error: "no_changes", state: stateOf(d) }, 409);
+      const missing = templateOf(d).missing(d.content);
+      if (missing.length) return json({ error: "missing", missing, state: stateOf(d) }, 422);
+      const use = editUsage(d);
+      if (use.publishes >= EDIT_PUBLISHES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
+      if (publishLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const sha = await publishToRepo(d, d.published_slug, `Update clients/${d.published_slug}: the owner's changes\n\nDraft ${d.id}, published by the owner from the builder chat.`);
+      const saved = await saveDraft(d, {
+        live: snapshot(d), prev_live: d.live, published_sha: sha, published_at: new Date().toISOString(), messages: [],
+        edit_month: use.month, edit_messages: use.messages, edit_publishes: use.publishes + 1,
+      });
+      await releaseMedia(saved, d.prev_live ? mediaPaths(d.prev_live) : []); // two versions back: no longer needed
+      if (saved.package === "ai") await ensureLeadClient(saved, saved.published_slug).catch((e) => console.error("builder lead client", e.message));
+      const alert = await alertKfir(saved, "בעל העסק פרסם שינוי באתר");
+      return json({ state: stateOf(saved), commit: sha, alert });
     }
 
     return json({ error: "not_found" }, 404);

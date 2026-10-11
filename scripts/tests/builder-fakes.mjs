@@ -42,7 +42,11 @@ globalThis.fetch = async (url, opt = {}) => {
     const body = opt.body ? JSON.parse(opt.body) : null; const p = u.pathname.replace("/repos/kfischi/growth-os", ""); gh.calls.push([method, p]);
     if (method === "GET" && p.startsWith("/contents/clients/sample-plumber/assets")) return res([{ name: "leadbot.js", type: "file", sha: "sha-bot" }, { name: "leadform.js", type: "file", sha: "sha-form" }, { name: "photos", type: "dir", sha: "x" }]);
     if (method === "GET" && p.startsWith("/contents/") && p.endsWith(".md")) { const f = gh.files.get(p.slice(10)); return f ? res({ content: Buffer.from(f).toString("base64"), encoding: "base64" }) : res({ message: "Not Found" }, 404); }
-    if (method === "GET" && p.startsWith("/contents/")) { const dir = p.slice(10); return [...gh.files.keys()].some((k) => k.startsWith(dir + "/")) ? res([{ name: "index.html" }]) : res({ message: "Not Found" }, 404); }
+    if (method === "GET" && p.startsWith("/contents/")) { // a folder: its direct children
+      const dir = p.slice(10), kids = new Map();
+      for (const k of gh.files.keys()) if (k.startsWith(dir + "/")) { const rest = k.slice(dir.length + 1); kids.set(rest.split("/")[0], rest.includes("/") ? "dir" : "file"); }
+      return kids.size ? res([...kids].map(([name, type]) => ({ name, type }))) : res({ message: "Not Found" }, 404);
+    }
     if (method === "GET" && p.startsWith("/git/ref/heads/")) return res({ object: { sha: gh.head } });
     if (method === "GET" && p.startsWith("/git/commits/")) return res({ sha: p.split("/").pop(), tree: { sha: "tree-" + p.split("/").pop() } });
     if (method === "POST" && p === "/git/blobs") { assert.equal(body.encoding, "base64"); return res({ sha: "blob-" + body.content.length }, 201); }
@@ -51,7 +55,7 @@ globalThis.fetch = async (url, opt = {}) => {
     if (method === "PATCH" && p.startsWith("/git/refs/heads/")) {
       assert.equal(body.force, false);
       if (gh.moveFails > 0) { gh.moveFails--; gh.head = "c-other"; return res({ message: "Update is not a fast forward" }, 422); }
-      for (const e of gh.trees.at(-1).tree) gh.files.set(e.path, e.sha || e.content);
+      for (const e of gh.trees.at(-1).tree) { if (e.sha === null) { assert.ok(gh.files.has(e.path), "deletes only a file that is there: " + e.path); gh.files.delete(e.path); } else gh.files.set(e.path, e.sha || e.content); }
       gh.head = body.sha; return res({ object: { sha: body.sha } });
     }
     throw new Error("unexpected github " + method + " " + p);

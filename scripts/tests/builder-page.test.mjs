@@ -8,7 +8,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
-import { T, ai } from "./builder-fakes.mjs";
+import { T, ai, gh } from "./builder-fakes.mjs";
 import { SAMPLE } from "./builder-sample.mjs";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -144,6 +144,26 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.match(await p.evaluate(() => location.hash), /^#d=/);
     assert.equal(await overflow(), false);
   });
+  await check("self edit: change the live site in the chat, then publish", async () => {
+    const d = T.ls_drafts.at(-1), slug = "page-test-" + w;
+    Object.assign(d, { status: "published", published_slug: slug, self_edit: true, messages: [], prev_live: null, live: JSON.parse(JSON.stringify({ content: d.content, photos: d.photos, video: d.video })) });
+    gh.files.set(`clients/${slug}/CLIENT.md`, "טיוטה `" + d.id + "`");
+    await p.reload();
+    await p.waitForFunction(() => /האתר באוויר/.test(document.querySelector("#approveBox").textContent));
+    assert.equal(await p.isVisible("#compose"), true, "the chat is open again");
+    assert.equal(await p.isDisabled("#approveBox .btn"), true, "nothing to publish yet");
+    ai.queue.push({ reply: "עדכנו את הפתיחה.", set: [{ field: "intro", value: "פתיחה מעודכנת מהשיחה." }], services: null, towns: null });
+    await p.fill("#msg", "תשנו את הפתיחה");
+    await p.click("#send");
+    await p.waitForFunction(() => /יש שינויים שעוד לא באתר/.test(document.querySelector("#approveBox").textContent));
+    assert.equal(await p.textContent("#viewNote"), "השינויים שלכם · עוד לא באתר");
+    await p.click("#approveBox .btn:not(.quiet)");
+    await p.waitForFunction(() => /השינויים פורסמו/.test(document.querySelector("#log").textContent), null, { timeout: 8000 });
+    assert.equal(d.live.content.intro, "פתיחה מעודכנת מהשיחה."); assert.equal(d.edit_publishes, 1);
+    assert.match(await p.textContent("#approveBox"), /לחזור לגרסה הקודמת/);
+    assert.equal(await overflow(), false);
+  });
+
   await p.screenshot({ path: `/tmp/qa-page/builder-${w}.png`, fullPage: false }).catch(() => {});
   if (errs.length) console.log("errors:", errs.join(" | ").slice(0, 1500));
   await check("no errors", async () => assert.deepEqual(errs, []));

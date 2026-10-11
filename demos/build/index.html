@@ -198,7 +198,7 @@
   </section>
 
   <section class="view" aria-label="האתר שלכם">
-    <div class="viewbar"><span>טיוטה · מתעדכנת אחרי כל תשובה</span><a id="openDraft" href="#" target="_blank" rel="noopener">לפתוח בחלון מלא</a></div>
+    <div class="viewbar"><span id="viewNote">טיוטה · מתעדכנת אחרי כל תשובה</span><a id="openDraft" href="#" target="_blank" rel="noopener">לפתוח בחלון מלא</a></div>
     <div class="frame"><iframe id="frame" title="הטיוטה של האתר"></iframe></div>
   </section>
 </main>
@@ -256,6 +256,8 @@
     video_unsupported: 'הדפדפן הזה לא יכול להכין את הסרטון. נסו מכרום או מספארי מעודכנים, או שלחו לנו את הסרטון בוואטסאפ.',
     video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
     video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
+    edit_limit: 'הגעתם למכסת השינויים של החודש. כתבו לנו בוואטסאפ ונעשה את השינוי.',
+    no_changes: 'אין שינויים לפרסם.',
   };
   const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.' + (code ? ' (' + code + ')' : ''); // the code helps us find it in the log
 
@@ -321,7 +323,7 @@
     $('#openDraft').href = draftUrl();
     frame.src = draftUrl();
     paint();
-    if (s.status === 'draft' || s.status === 'returned') setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
+    if (isEditable(s)) setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
   }
 
   // Reload the draft and keep the reader where they were.
@@ -332,8 +334,12 @@
     frame.src = draftUrl() + '&t=' + Date.now();
   }
 
+  // A draft, or a live site its owner may change (self edit).
+  const isEditable = (s) => s.status === 'draft' || s.status === 'returned' || Boolean(s.edit);
+
   function paint() {
-    const s = state, editable = s.status === 'draft' || s.status === 'returned';
+    const s = state, editable = isEditable(s);
+    $('#viewNote').textContent = s.edit ? (s.edit.dirty ? 'השינויים שלכם · עוד לא באתר' : 'כמו באתר עכשיו') : 'טיוטה · מתעדכנת אחרי כל תשובה';
     // progress
     const req = s.checklist.filter((i) => !i.optional), done = req.filter((i) => i.done).length;
     $('#progCount').textContent = done + ' מתוך ' + req.length;
@@ -401,9 +407,43 @@
       back.addEventListener('click', reopen); box.append(back);
     } else if (s.status === 'paid') {
       p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+    } else if (s.edit) {
+      const e = s.edit;
+      p(e.dirty ? 'יש שינויים שעוד לא באתר. עברו עליהם בתצוגה, ואם הכול נכון, פרסמו.' : 'האתר באוויר. כתבו בשיחה מה לשנות.');
+      const go = document.createElement('button'); go.type = 'button'; go.className = 'btn'; go.textContent = 'לפרסם את השינויים';
+      go.disabled = !e.dirty || s.missing.length > 0 || e.publishesLeft === 0; go.addEventListener('click', () => editAction('publish', go));
+      box.append(go);
+      if (e.dirty) {
+        const no = document.createElement('button'); no.type = 'button'; no.className = 'btn quiet'; no.textContent = 'לבטל את השינויים';
+        no.addEventListener('click', () => { if (confirm('לבטל את כל השינויים שעוד לא פורסמו?')) editAction('discard', no); });
+        box.append(no);
+      } else if (e.canUndo) {
+        const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'לחזור לגרסה הקודמת';
+        back.addEventListener('click', () => { if (confirm('לטעון את הגרסה הקודמת של האתר? היא תעלה לאתר רק אחרי שתפרסמו.')) editAction('undo', back); });
+        box.append(back);
+      }
+      if (s.missing.length) p('לפני פרסום חסרים: ' + s.missing.join(', ') + '.');
+      p('נשארו החודש: ' + e.messagesLeft + ' הודעות, ' + e.publishesLeft + ' פרסומים.').className = 'note';
     } else if (s.status === 'published') {
       p('האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
     }
+  }
+
+  // Self edit: publish the changes, drop them, or load the version before the last publish.
+  async function editAction(action, btn) {
+    btn.disabled = true;
+    const r = await call(action, { body: { rev: state.rev } });
+    btn.disabled = false;
+    if (!r.ok) {
+      const f = bubble('fail', say(r.data.error) + (r.data.missing ? ' ' + r.data.missing.join(', ') : ''));
+      if (r.data.error === 'edit_limit') f.append(' ', waLink('לוואטסאפ', 'היי, אשמח לעשות שינוי באתר שלי.'));
+      if (r.data.state) { state = r.data.state; paint(); }
+      return;
+    }
+    state = r.data.state;
+    if (action === 'publish') { openWork(state); bubble('sys', 'השינויים פורסמו. האתר יתעדכן בעוד כמה דקות.'); }
+    else if (action === 'discard') { openWork(state); bubble('sys', 'ביטלנו את השינויים. התצוגה חזרה למה שבאתר.'); }
+    else { paint(); refreshFrame(); markSite(); bubble('sys', 'טענו את הגרסה הקודמת. עברו עליה, ואם היא נכונה, פרסמו.'); }
   }
 
   /* ---------- chat ---------- */
@@ -424,7 +464,7 @@
     if (!r.ok) {
       mine.remove(); msg.value = text;
       const f = bubble('fail', say(r.data.error));
-      if (r.data.error === 'limit') f.append(' ', waLink('לוואטסאפ', 'היי, התחלתי לבנות אתר בבונה ואשמח להמשיך איתכם.'));
+      if (r.data.error === 'limit' || r.data.error === 'edit_limit') f.append(' ', waLink('לוואטסאפ', state && state.edit ? 'היי, אשמח לעשות שינוי באתר שלי.' : 'היי, התחלתי לבנות אתר בבונה ואשמח להמשיך איתכם.'));
       if (r.data.state) { state = r.data.state; if (r.data.error === 'conflict') openWork(state); else paint(); msg.value = text; }
       return;
     }
