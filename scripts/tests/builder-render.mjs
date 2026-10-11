@@ -12,9 +12,9 @@ if (!out) { console.error("usage: node scripts/tests/builder-render.mjs <dir>");
 const repo = path.resolve(new URL("../..", import.meta.url).pathname);
 fs.mkdirSync(path.join(out, "assets/photos"), { recursive: true });
 for (const f of ["leadbot.js", "leadform.js"]) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets", f), path.join(out, "assets", f));
-const photos = { portrait: "plumber-portrait.webp", work1: "plumber-siphon.webp", work2: "plumber-leak.webp", work3: "plumber-drain.webp" };
+const photos = { portrait: "plumber-portrait.webp", work1: "plumber-siphon.webp", work2: "plumber-leak.webp", work3: "plumber-drain.webp", before: "plumber-leak.webp", after: "plumber-siphon.webp" };
 for (const f of Object.values(photos)) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets/photos", f), path.join(out, "assets/photos", f));
-const site = P.render(SAMPLE, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
+const site = P.render({ ...SAMPLE, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
 for (const [name, html] of Object.entries(site)) fs.writeFileSync(path.join(out, name), html);
 for (const [name, body] of Object.entries(P.STATIC_FILES)) fs.writeFileSync(path.join(out, name), body);
 // The same site with a short video at the top, when ffmpeg is here to make one (VP9 in MP4: the test browser can't play H.264).
@@ -29,4 +29,6 @@ const bare = { ...P.emptyContent(), ...Object.fromEntries(Object.entries(SAMPLE)
 fs.writeFileSync(path.join(out, "bare.html"), P.render(bare, { mode: "site" })["index.html"]);
 // A draft at the very start: almost everything empty.
 fs.writeFileSync(path.join(out, "draft.html"), P.render({ ...P.emptyContent(), owner_name: "אורן לוי", whatsapp: "0526359513" }, { mode: "draft", assets: "assets/" })["index.html"]);
+// A draft with only the "before" photo: the frame shows, with the missing half marked.
+fs.writeFileSync(path.join(out, "draft-ba.html"), P.render({ ...SAMPLE }, { mode: "draft", assets: "assets/", photos: { before: "assets/photos/plumber-leak.webp" } })["index.html"]);
 console.log("rendered into " + out);

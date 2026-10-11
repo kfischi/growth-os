@@ -312,7 +312,7 @@ const BUILD_ORDER = `Order of the conversation (skip what is already filled, see
 3. services: what they do most, and price ranges if they want to show them.
 4. response_time: how fast they really get back to a customer. Then, in one question, the optional facts: hours, years, warranty.
 5. Propose headline_2 and intro from the facts.
-6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
+6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. A "לפני" and an "אחרי" photo of the same job make a before/after slider on the site; offer it once, with a short ba_title. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
 7. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
 After approval the content is locked; changes then go through us on WhatsApp.
 `;

@@ -33,6 +33,7 @@ export const FIELDS = {
   work1_title: { label: "כותרת לתמונת עבודה 1", max: 34, kind: "text" },
   work2_title: { label: "כותרת לתמונת עבודה 2", max: 34, kind: "text" },
   work3_title: { label: "כותרת לתמונת עבודה 3", max: 34, kind: "text" },
+  ba_title: { label: "כותרת ללפני ואחרי", max: 40, kind: "text", hint: "מה רואים ואיפה, למשל: ניקוי סתימה בכיור, חדרה" },
   video_title: { label: "כותרת לסרטון", max: 34, kind: "text", hint: "מה רואים בסרטון, למשל: פתיחת סתימה במטבח" },
 };
 
@@ -48,6 +49,8 @@ export const PHOTOS = {
   work1: { label: "עבודה 1", title: "work1_title" },
   work2: { label: "עבודה 2", title: "work2_title" },
   work3: { label: "עבודה 3", title: "work3_title" },
+  before: { label: "לפני", title: "ba_title" },  // with "after": a before/after slider on the site
+  after: { label: "אחרי", title: "ba_title" },
 };
 
 export function emptyContent() {
@@ -146,6 +149,24 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     const title = String(c[PHOTOS[s].title] || "").trim();
     return `<div class="detail"><div class="ring">${photo(s, title || `עבודה של ${name}`)}</div><span class="mono">פרט ${letters[i]}</span>${title ? `<h3>${h(title)}</h3>` : draft ? `<h3><span class="todo">כותרת לתמונה</span></h3>` : ""}</div>`;
   }).join("\n          ");
+  // Before and after: a slider once both photos are in. The draft shows the frame as soon as one is.
+  const hasBA = Boolean(photos.before && photos.after);
+  const baTitle = String(c.ba_title || "").trim();
+  const ba = hasBA || (draft && (photos.before || photos.after)) ? `
+<section class="ba-sec">
+  <div class="wrap">
+    <div class="head"><h2>לפני ואחרי</h2>${hasBA ? '<span class="mono">גוררים את הפס כדי להשוות</span>' : ""}</div>
+    <div class="ba${hasBA ? "" : " half"}" style="--pos:50%">
+      ${photo("after", "אחרי" + (baTitle ? ": " + baTitle : ""))}
+      <div class="ba-before">${photo("before", "לפני" + (baTitle ? ": " + baTitle : ""))}</div>
+      ${hasBA ? `<input class="ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+      <span class="ba-line" aria-hidden="true"></span>` : ""}
+      <span class="ba-tag b">לפני</span><span class="ba-tag a">אחרי</span>
+    </div>
+    ${baTitle ? `<p class="ba-cap">${h(baTitle)}</p>` : draft ? `<p class="ba-cap"><span class="todo">כותרת ללפני ואחרי</span></p>` : ""}
+  </div>
+</section>
+` : "";
   const portrait = photos.portrait ? photo("portrait", owner || name, ' style="object-position:50% 35%"')
     : draft ? photo("portrait", "") : `<div class="ps mono-letter" aria-hidden="true">${h(ownerFirst.slice(0, 1))}</div>`;
 
@@ -245,7 +266,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
     </div>
   </div>
 </section>
-
+${ba}
 <section>
   <div class="wrap">
     <div class="head"><h2>מה קורה כשפותחים קריאה</h2></div>
@@ -298,6 +319,7 @@ ${video ? `<script>${REEL_JS}</script>
       saved: (d) => ["תודה " + d.name.split(" ")[0] + "! הקריאה אצלי, ואישור בדרך אליכם בוואטסאפ.", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ", והמחיר הסופי אחרי אבחון." : "", d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : ""].filter(Boolean).join("\\n"),
     } : undefined,
   });
+  document.querySelectorAll(".ba").forEach((b) => { const r = b.querySelector(".ba-range"); if (r) r.addEventListener("input", () => b.style.setProperty("--pos", r.value + "%")); });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button")) bot.open(); }));
   if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
   if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
@@ -566,6 +588,18 @@ const CSS = `
     .order .hide-sm { display: none; }
   }
   @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+  .ba-sec { background: #fff; }
+  .ba { position: relative; overflow: hidden; aspect-ratio: 4 / 3; max-width: 880px; margin-inline: auto; border: 1px solid var(--rule); border-radius: 6px; direction: ltr; user-select: none; touch-action: pan-y; background: #eef2f9; }
+  .ba > .ps, .ba-before > .ps { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ba-before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); z-index: 1; }
+  .ba-range { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: ew-resize; z-index: 3; }
+  .ba-line { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 3px; margin-left: -1.5px; background: #fff; pointer-events: none; z-index: 4; }
+  .ba-line::after { content: "⇆"; position: absolute; top: 50%; left: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font: 700 17px/1 var(--body); box-shadow: 0 6px 18px rgba(15,29,58,.25); }
+  .ba-range:focus-visible + .ba-line::after { outline: 3px solid var(--signal); outline-offset: 3px; }
+  .ba-tag { position: absolute; top: 12px; z-index: 4; padding: 5px 12px; border-radius: 4px; font: 700 13px/1.2 var(--body); direction: rtl; pointer-events: none; }
+  .ba-tag.b { left: 12px; background: rgba(15,29,58,.72); color: #fff; }
+  .ba-tag.a { right: 12px; background: #fff; color: var(--ink); }
+  .ba-cap { text-align: center; color: var(--ink-soft); margin: 14px 0 0; }
   @media (max-width: 520px) {
     .order-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
     .order-top div:nth-child(3) { display: none; }
@@ -583,6 +617,9 @@ const DRAFT_CSS = `
   .todo { display: inline-block; border: 1.5px dashed currentColor; border-radius: 4px; padding: 0 .3em; opacity: .75; font-style: normal; }
   .ps.ph { display: grid; place-items: center; text-align: center; color: #e8efff; font: 600 14px/1.4 var(--body); border: 2px dashed rgba(232,239,255,.5); background: rgba(255,255,255,.06); }
   .badge .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: #eef2f9; }
+  .ba .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: #eef2f9; border-radius: 0; }
+  .ba.half > .ps.ph { padding-left: 50%; }
+  .ba.half .ba-before > .ps.ph { padding-right: 50%; }
 `;
 
 const LEGAL_CSS = `

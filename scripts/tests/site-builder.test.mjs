@@ -359,4 +359,18 @@ const calls = aiCalls.length;
 r = await J(await req("chat", { body: { message: "עוד", rev: E.rev }, ip: "5.5.5.5" })); assert.equal(r.error, "limit"); assert.equal(aiCalls.length, calls);
 cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status, 404, "a malformed key");
 
+// --- before and after: a slider on the site only with both photos; the draft shows the frame with one
+{
+  const both = P.render({ ...SAMPLE, ba_title: "סיפון <b>חדש</b>" }, { mode: "site", photos: { before: "assets/photos/before.jpg", after: "assets/photos/after.jpg" } })["index.html"];
+  assert.ok(both.includes('class="ba-range"') && both.includes("<h2>לפני ואחרי</h2>"));
+  assert.ok(both.includes("סיפון &lt;b&gt;חדש&lt;/b&gt;") && !both.includes("<b>חדש</b>"), "the caption is escaped");
+  assert.ok(both.includes('alt="לפני: סיפון &lt;b&gt;חדש&lt;/b&gt;"'));
+  const one = P.render(SAMPLE, { mode: "site", photos: { before: "assets/photos/before.jpg" } })["index.html"];
+  assert.ok(!one.includes("<section class=\"ba-sec\">"), "a site never shows half a before/after");
+  const draft = P.render(SAMPLE, { mode: "draft", photos: { after: "/x.jpg" } })["index.html"];
+  assert.ok(draft.includes("<section class=\"ba-sec\">") && draft.includes('class="ba half"') && !draft.includes('class="ba-range"'));
+  assert.ok(!P.render(SAMPLE, { mode: "draft" })["index.html"].includes("<section class=\"ba-sec\">"), "nothing until a photo is in");
+  assert.ok(P.PHOTOS.before && P.PHOTOS.after && P.FIELDS.ba_title.max === 40);
+}
+
 console.log("all site builder tests passed");
