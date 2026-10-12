@@ -422,7 +422,7 @@
           const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
           a.textContent = l.plan === 'three' ? 'לתשלום ב-3 תשלומים' : 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
         }
-      } else p('נשלח לכם קישור לתשלום בוואטסאפ, בדרך כלל באותו יום.');
+      } else p('נשלח לכם בוואטסאפ חשבונית ופרטים לתשלום, בדרך כלל באותו יום.');
       const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'רוצים לשנות משהו? חזרה לעריכה';
       back.addEventListener('click', reopen); box.append(back);
     } else if (s.status === 'paid') {
