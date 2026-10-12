@@ -453,7 +453,7 @@ fs.mkdirSync(OUT, { recursive: true });
 const out = path.join(OUT, "process.mp4");
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(dir, "list.txt"),
   "-vf", `fps=30,scale=${W}:${H}:flags=lanczos,format=yuv420p`, "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "30", "-tune", "animation", "-movflags", "+faststart", "-an", out]);
-execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "4", "-i", out, "-frames:v", "1", "-vf", "scale=960:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
+execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "118", "-i", out, "-frames:v", "1", "-vf", "scale=1280:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
 fs.rmSync(dir, { recursive: true, force: true });
 const secs = execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out]).toString().trim();
 console.log(`${out} · ${Number(secs).toFixed(1)} s · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · ${frames.length} frames`);
