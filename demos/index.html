@@ -151,6 +151,46 @@ img, svg { display: block; }
 .mini-table em.due { color: var(--brick); }
 .what-ai { margin-top: 24px; color: var(--slate); }
 
+/* how it works: the whole path, as one line of stops */
+.path { list-style: none; padding: 0; display: grid; gap: 0; position: relative; max-width: 980px; }
+.path::before { content: ""; position: absolute; inset-block: 26px 26px; inset-inline-start: 25px; inline-size: 2px; background: color-mix(in oklab, var(--mint) 45%, var(--paper)); }
+.stop { position: relative; display: grid; grid-template-columns: 52px minmax(0, 1fr) minmax(0, 260px); gap: 8px 22px; align-items: center; padding-block: 16px; }
+.stop-n { position: relative; z-index: 1; inline-size: 52px; block-size: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); font-weight: 800; font-size: 1.25rem; box-shadow: 0 0 0 6px var(--paper); }
+.stop:last-child .stop-n { background: var(--mint); }
+.stop h3 { font-size: clamp(1.2rem, 1.8vw, 1.45rem); font-weight: 700; letter-spacing: -.01em; }
+.stop p { color: var(--slate); max-width: 52ch; margin-top: 2px; }
+.stop-fig { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; }
+.stop-fig i { font-style: normal; font-size: .85rem; font-weight: 600; }
+.chip-fig { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); }
+.chip-fig.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.lock-fig { padding: 7px 14px; border-radius: 10px; background: var(--mist); }
+.lock-fig::before { content: ""; display: inline-block; inline-size: 9px; block-size: 9px; margin-inline-end: 8px; border-radius: 2px; background: var(--slate); box-shadow: 0 -5px 0 -2px var(--mist), 0 -5px 0 0 var(--slate); vertical-align: 0; }
+.q-fig { padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: var(--mist); }
+.a-fig { padding: 8px 12px; border-radius: 14px 14px 4px 14px; background: var(--mint); color: #fff; }
+.ph-fig { inline-size: 54px; block-size: 54px; border-radius: 10px; background: linear-gradient(135deg, color-mix(in oklab, var(--mint) 35%, var(--paper)), color-mix(in oklab, var(--plum) 30%, var(--paper))); }
+.ph-fig.vid { position: relative; background: var(--ink); }
+.ph-fig.vid::after { content: ""; position: absolute; inset: 0; margin: auto; inline-size: 0; block-size: 0; border-block: 9px solid transparent; border-inline-end: 14px solid #fff; }
+.ok-fig { padding: 9px 16px; border-radius: 999px; background: var(--ink); color: var(--paper); }
+.live-fig { padding: 7px 14px 7px 12px; border-radius: 999px; background: color-mix(in oklab, var(--mint) 14%, var(--paper)); color: var(--mint); }
+.live-fig::before { content: ""; display: inline-block; inline-size: 9px; block-size: 9px; border-radius: 50%; background: var(--mint); margin-inline-end: 8px; box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 25%, transparent); }
+.after { margin-top: clamp(36px, 6svh, 56px); padding: clamp(18px, 2.4vw, 28px); border-radius: 22px; background: var(--mist); }
+.after h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 14px; }
+.flow { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; counter-reset: f; }
+.flow li { counter-increment: f; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); font-size: .95rem; }
+.flow li::before { content: counter(f); inline-size: 22px; block-size: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--mint); color: #fff; font-size: .78rem; font-weight: 700; }
+
+/* what's in the site: three groups of features */
+.feats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); align-items: start; }
+.feat-group { min-width: 0; padding: clamp(18px, 2.2vw, 28px); border-radius: 22px; background: var(--paper); border: 1px solid var(--line); }
+.feat-group h3 { display: grid; gap: 4px; font-size: 1.3rem; font-weight: 700; letter-spacing: -.01em; margin-bottom: 14px; }
+.fg-n { font-size: .85rem; font-weight: 600; color: var(--mint); }
+.feat-group ul { list-style: none; padding: 0; display: grid; gap: 0; }
+.feat-group li { display: grid; gap: 2px; padding-block: 11px; border-top: 1px solid var(--line); }
+.feat-group li b { font-weight: 600; }
+.feat-group li span { color: var(--slate); font-size: .95rem; line-height: 1.45; }
+.ai { font-style: normal; display: inline-block; vertical-align: 2px; margin-inline-start: 6px; padding: 1px 8px; border-radius: 999px; font-size: .72rem; font-weight: 600; color: var(--plum); background: color-mix(in oklab, var(--plum) 12%, var(--paper)); white-space: nowrap; }
+.feat-group h3 .ai { justify-self: start; margin: 0; }
+
 /* how it works */
 .steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 32px); counter-reset: s; }
 .step { position: relative; padding-top: 22px; border-top: 2px solid var(--ink); }
@@ -238,27 +278,18 @@ img, svg { display: block; }
 .faq details[open] summary::after { content: "−"; }
 .faq details p { padding-bottom: 16px; color: var(--slate); }
 
-/* contact */
-.contact { background: var(--plum); color: #f3eef6; }
-.contact .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px clamp(32px, 5vw, 80px); align-items: start; }
-.contact .kicker { color: #7fe0cc; }
-.contact h2 { color: #fff; }
-.contact .sec-sub { color: color-mix(in oklab, #f3eef6 75%, var(--plum)); }
-.form { display: grid; gap: 16px; padding: clamp(20px, 2.6vw, 32px); border-radius: 24px; background: color-mix(in oklab, #fff 7%, var(--plum)); }
-.field { display: grid; gap: 6px; }
-.field label { font-size: .92rem; color: color-mix(in oklab, #f3eef6 80%, var(--plum)); }
-.field input { font: 400 1.1rem/1.3 var(--font); color: #fff; background: color-mix(in oklab, #fff 8%, var(--plum)); border: 1px solid color-mix(in oklab, #fff 18%, var(--plum));
-  border-radius: 12px; padding: 13px 14px; }
-.field input:focus { outline: 0; border-color: #7fe0cc; }
-.field input::placeholder { color: color-mix(in oklab, #fff 42%, var(--plum)); }
-.form-foot { display: flex; align-items: center; gap: 14px; }
-.form .btn { background: #fff; color: var(--plum); }
-.form .btn:hover { background: #e9fbf6; }
-.fdots { display: flex; gap: 6px; }
-.fdots i { inline-size: 9px; block-size: 9px; border-radius: 50%; background: color-mix(in oklab, #fff 22%, var(--plum)); transition: background-color .3s; }
-.fdots i.on { background: #7fe0cc; }
-.form-msg { min-height: 1.4em; font-size: .95rem; color: #ffd0cc; }
-.foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 28px; margin-top: 12px; border-top: 1px solid color-mix(in oklab, #fff 14%, var(--plum)); font-size: .88rem; color: color-mix(in oklab, #fff 60%, var(--plum)); }
+/* the end: one button to start, the chat, and a person for whoever wants one */
+.start { background: var(--plum); color: #f3eef6; }
+.start .kicker { color: #7fe0cc; }
+.start h2 { color: #fff; }
+.start .sec-sub { color: color-mix(in oklab, #f3eef6 75%, var(--plum)); }
+.start-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.start .btn { background: #fff; color: var(--plum); }
+.start .btn:hover { background: #e9fbf6; }
+.start .btn.ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px color-mix(in oklab, #fff 40%, var(--plum)); }
+.start-human { margin-top: 18px; color: color-mix(in oklab, #fff 70%, var(--plum)); font-size: .95rem; }
+.start-human a { color: #7fe0cc; font-weight: 600; }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 28px; margin-top: clamp(40px, 7svh, 64px); border-top: 1px solid color-mix(in oklab, #fff 14%, var(--plum)); font-size: .88rem; color: color-mix(in oklab, #fff 60%, var(--plum)); }
 
 /* phone dock */
 .dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 60%, transparent); }
@@ -270,7 +301,10 @@ img, svg { display: block; }
 @media (max-width: 960px) {
   .nav { display: none; }
   .bar .btn { margin-inline-start: auto; }
-  .hero .wrap, .contact .wrap { grid-template-columns: minmax(0, 1fr); }
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); }
+  .feats { grid-template-columns: minmax(0, 1fr); }
+  .stop { grid-template-columns: 52px minmax(0, 1fr); }
+  .stop-fig { grid-column: 2; }
   .parts, .steps { grid-template-columns: minmax(0, 1fr); }
   /* one phone at a time, swiped sideways */
   .watch-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); padding-bottom: 6px; scrollbar-width: none; }
@@ -311,9 +345,9 @@ img, svg { display: block; }
   <div class="wrap">
     <a class="brand" href="#top"><i></i><span>נחיתה רכה <small>· אתרים שבונים עסקים</small></span></a>
     <nav class="nav" aria-label="ניווט">
-      <a href="#what">מה מקבלים</a><a href="#how">איך זה עובד</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
+      <a href="#how">איך זה עובד</a><a href="#what">מה יש באתר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
-    <a class="btn sm" href="#contact">שיחת היכרות</a>
+    <a class="btn sm" href="build/">לבנות את האתר</a>
   </div>
 </header>
 
@@ -322,10 +356,10 @@ img, svg { display: block; }
     <div class="wrap">
       <div class="hero-text">
         <h1>אתרים <em>שבונים</em> עסקים.</h1>
-        <p class="hero-lead">אתר שעונה ללקוחות, גם כשאתם עסוקים.</p>
-        <p class="hero-sub">בניית דפי נחיתה עם מענה אוטומטי לעסקים קטנים כדי שלא תפספסו אף אחד.</p>
-        <div class="hero-ctas"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a><a class="btn ghost" href="#demos">לראות דוגמאות</a></div>
-        <ul class="hero-points"><li>מענה ללקוח תוך שניות, מהמספר העסקי שלכם</li><li>כל הפניות בטבלה אחת, עם תזכורת</li><li>באוויר תוך שבוע. הדומיין רשום על שמכם</li></ul>
+        <p class="hero-lead">אתר לעסק שלכם שעונה ללקוחות, גם כשאתם עסוקים.</p>
+        <p class="hero-sub">בונים אותו בעצמכם, בצ׳אט, בלי שיחות ובלי לחכות לאף אחד. רואים אותו נבנה מול העיניים, ומשלמים רק כשהוא מוכן.</p>
+        <div class="hero-ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn ghost" href="#how">איך זה עובד</a></div>
+        <ul class="hero-points"><li>לקוח פונה, ומקבל מענה בוואטסאפ תוך שניות</li><li>כל פנייה נשמרת, עם תזכורת לחזור</li><li>שאלה? הנציג החכם בפינה עונה עכשיו</li></ul>
       </div>
       <div class="day" id="day" role="group" aria-label="יום עבודה אחד: העסק היום מול אותו עסק עם אתר">
         <p class="day-cap"><b>אותו עסק. אותו יום. אותן חמש פניות.</b><span>מימין העסק היום, משמאל עם אתר</span></p>
@@ -339,50 +373,27 @@ img, svg { display: block; }
     </div>
   </section>
 
-  <section class="sec alt" id="what" aria-labelledby="t-what">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="kicker">מה מקבלים</p>
-        <h2 id="t-what">אתר, מענה אוטומטי בוואטסאפ, ומעקב אחרי כל פנייה.</h2>
-        <p class="sec-sub">לקוח פונה, מקבל תשובה מיד, ואתם יודעים בדיוק למי לחזור. אנחנו מקימים ומחברים הכול, ואתם ממשיכים לעבוד.</p>
-      </div>
-      <ol class="parts">
-        <li class="part reveal">
-          <span class="part-n">1</span>
-          <h3>אתר לעסק שלכם</h3>
-          <p>דף אחד שמותאם לטלפון: מה אתם עושים, איפה, תמונות מהעבודה וכפתור וואטסאפ. זה הקישור ששמים בגוגל, בפייסבוק ובקבוצות.</p>
-          <div class="part-fig" aria-hidden="true"><div class="mini-page"><i class="mp-bar"></i><b>אורן מים · אינסטלציה</b><span>חדרה והסביבה. חוזר אליכם היום.</span><i class="mp-btn">וואטסאפ</i></div></div>
-        </li>
-        <li class="part reveal">
-          <span class="part-n">2</span>
-          <h3>מענה אוטומטי בוואטסאפ</h3>
-          <p>לקוח השאיר פרטים? תוך שניות הוא מקבל הודעה מהמספר העסקי שלכם. אתם מקבלים התראה: שם, טלפון ומה הוא צריך.</p>
-          <div class="part-fig" aria-hidden="true"><div class="n-card"><span class="n-ic ok-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p><b>נשלח ללקוח</b><span>״קיבלנו את הפנייה. חוזרים אליכם היום.״ ✓✓</span></p></div></div>
-        </li>
-        <li class="part reveal">
-          <span class="part-n">3</span>
-          <h3>מעקב אחרי כל פנייה</h3>
-          <p>כל הפניות נשמרות בטבלה אחת. לא חזרתם ללקוח? מגיעה תזכורת. בסוף החודש דוח קצר: כמה פניות נכנסו ומאיפה.</p>
-          <div class="part-fig" aria-hidden="true"><div class="mini-table"><span><b>09:12</b> דנה · נזילה במטבח <em>חזרתם</em></span><span><b>13:05</b> אבי · דוד שמש <em class="due">תזכורת 16:00</em></span><span><b>19:20</b> מיכל · סתימה <em>מחר בבוקר</em></span></div></div>
-        </li>
-      </ol>
-      <p class="what-ai reveal">חבילת נוכחות כוללת את האתר. חבילת נציג AI כוללת את שלושתם, ועוד צ׳אט באתר שעונה ללקוחות על שאלות, כמו זה שבפינה למטה.</p>
-    </div>
-  </section>
-
   <section class="sec" id="how" aria-labelledby="t-how">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="kicker">איך זה עובד</p>
-        <h2 id="t-how">משיחה של 5 דקות ועד הפנייה הראשונה.</h2>
+        <h2 id="t-how">מהרגע שנכנסתם, ועד שהאתר שלכם באוויר.</h2>
+        <p class="sec-sub">הכול קורה כאן באתר. בלי שיחת היכרות, בלי טפסים ובלי לחכות שיחזרו אליכם.</p>
       </div>
-      <ol class="steps">
-        <li class="step reveal"><span class="step-n">1</span><h3>שיחה של 5 דקות</h3><p>מספרים לנו על העסק, על הלקוחות ועל השאלות שחוזרות.</p></li>
-        <li class="step reveal"><span class="step-n">2</span><h3>תוך שבוע באוויר</h3><p>אנחנו בונים את הדף, מחברים לוואטסאפ העסקי שלכם ובודקים איתכם מהטלפון. נציג AI: עד שבועיים.</p></li>
-        <li class="step reveal"><span class="step-n">3</span><h3>מעקב כל חודש</h3><p>דוח קצר: כמה פניות נכנסו ומאיפה. שינוי אחד בחודש כלול.</p></li>
+      <ol class="path">
+        <li class="stop reveal"><span class="stop-n">1</span><div><h3>בוחרים דוגמה מהתחום שלכם</h3><p>16 עסקים לדוגמה. נכנסים, משחקים עם הצ׳אט, ורואים בדיוק מה הלקוח שלכם יקבל.</p></div><span class="stop-fig" aria-hidden="true"><i class="chip-fig">אינסטלטור</i><i class="chip-fig">חשמלאי</i><i class="chip-fig on">מורה לנגינה</i></span></li>
+        <li class="stop reveal"><span class="stop-n">2</span><div><h3>נכנסים לבונה האתרים</h3><p>שם וטלפון, ומתחילים. הטיוטה פרטית: רק אתם רואים אותה, ואפשר לחזור אליה בכל זמן.</p></div><span class="stop-fig" aria-hidden="true"><i class="lock-fig">טיוטה פרטית</i></span></li>
+        <li class="stop reveal"><span class="stop-n">3</span><div><h3>עונים על שאלות</h3><p>שירותים, מחירים, אזורים ושעות. בוחרים מתשובות מוכנות, ומה שחסר כותבים במילים שלכם.</p></div><span class="stop-fig" aria-hidden="true"><i class="q-fig">באיזה אזור אתם עובדים?</i><i class="a-fig">השרון</i></span></li>
+        <li class="stop reveal"><span class="stop-n">4</span><div><h3>מעלים תמונות וסרטון</h3><p>תמונה שלכם, עבודות, לפני ואחרי, וסרטון קצר מהטלפון. הכול מתכווץ ומסתדר לבד.</p></div><span class="stop-fig" aria-hidden="true"><i class="ph-fig"></i><i class="ph-fig"></i><i class="ph-fig vid"></i></span></li>
+        <li class="stop reveal"><span class="stop-n">5</span><div><h3>רואים את האתר, ומאשרים</h3><p>האתר נבנה ליד הצ׳אט, תוך כדי שאתם עונים. משנים עד שזה בדיוק אתם, ובוחרים חבילה.</p></div><span class="stop-fig" aria-hidden="true"><i class="ok-fig">מאשרים את האתר</i></span></li>
+        <li class="stop reveal"><span class="stop-n">6</span><div><h3>משלמים, ומקבלים את האתר</h3><p>תשלום מאובטח וקבלה אוטומטית. אנחנו מעלים את האתר לאוויר, ושולחים לכם את הקישור ואת לוח הפניות.</p></div><span class="stop-fig" aria-hidden="true"><i class="live-fig">באוויר</i></span></li>
       </ol>
+      <div class="after reveal">
+        <h3>ומה קורה אחרי? ככה עובד יום רגיל:</h3>
+        <ol class="flow"><li>לקוח נכנס לאתר</li><li>שואל בצ׳אט, ומצרף תמונה</li><li>מקבל מענה בוואטסאפ תוך שניות</li><li>אתם מקבלים התראה עם כל הפרטים</li><li>לא חזרתם? מגיעה תזכורת</li><li>בסוף החודש: דוח קצר</li></ol>
+      </div>
       <div class="watch reveal" role="group" aria-labelledby="t-watch">
-        <h3 class="watch-h" id="t-watch">לראות איך זה עובד</h3>
+        <h3 class="watch-h" id="t-watch">לראות את זה בעיניים של הלקוח</h3>
         <div class="watch-row">
         <figure class="clip reel">
           <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/plumber-poster.webp" aria-label="הדגמה באתר של אינסטלטור: הצ׳אט מהלחיצה הראשונה ועד הסיכום בוואטסאפ"><source src="shared/video/walkthrough/plumber.mp4" type="video/mp4"></video>
@@ -401,16 +412,58 @@ img, svg { display: block; }
         </figure>
         </div>
       </div>
-      <p class="sec-cta reveal"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></p>
+      <p class="sec-cta reveal"><a class="btn" href="build/">לבנות את האתר שלי</a></p>
     </div>
   </section>
 
-  <section class="sec alt" id="demos" aria-labelledby="t-demos">
+  <section class="sec alt" id="what" aria-labelledby="t-what">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="kicker">מה יש באתר</p>
+        <h2 id="t-what">כלי עבודה אחד, מהשאלה הראשונה ועד הביקורת בגוגל.</h2>
+        <p class="sec-sub">האתר, הצ׳אט, הוואטסאפ ולוח הפניות עובדים יחד. ככה אף פנייה לא הולכת לאיבוד.</p>
+      </div>
+      <div class="feats">
+        <section class="feat-group reveal" aria-labelledby="fg1">
+          <h3 id="fg1"><span class="fg-n">באתר</span>מה הלקוח רואה</h3>
+          <ul>
+            <li><b>צ׳אט שיודע לשאול <em class="ai">נציג AI</em></b><span>שואל את השאלות של התחום שלכם, ומסכם את הפנייה בשבילכם.</span></li>
+            <li><b>״כמה זה יעלה?״</b><span>מחשבון שנותן ללקוח טווח מחיר לפי העבודה, לפני שהוא כותב.</span></li>
+            <li><b>טיפים ומדריכים מהתחום</b><span>מה עושים עד שמגיעים, ושאלות שחוזרות. ערך ללקוח, ותוכן שגוגל קורא.</span></li>
+            <li><b>לפני ואחרי, וסרטון קצר</b><span>העבודות שלכם, עם פס השוואה. הסרטון מהטלפון, בלי עריכה.</span></li>
+            <li><b>לשמור באנשי הקשר</b><span>הלקוח שומר אתכם בלחיצה, ומוצא אתכם גם בפעם הבאה.</span></li>
+          </ul>
+        </section>
+        <section class="feat-group reveal" aria-labelledby="fg2">
+          <h3 id="fg2"><span class="fg-n">הפניות</span>מה קורה כשמישהו פונה <em class="ai">נציג AI</em></h3>
+          <ul>
+            <li><b>מענה בוואטסאפ תוך שניות</b><span>מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp.</span></li>
+            <li><b>התראה עם כפתור ״טיפלתי״</b><span>שם, טלפון ומה צריך. לחיצה אחת, והפנייה מסומנת.</span></li>
+            <li><b>תמונה של התקלה</b><span>הלקוח מצרף בצ׳אט, ואתם רואים אותה לפני שיוצאים.</span></li>
+            <li><b>הלקוח בוחר מתי לחזור אליו</b><span>והתזכורת מגיעה לכם חמש דקות לפני.</span></li>
+            <li><b>לוח פניות</b><span>כל פנייה, ממי, מאיפה ומה קרה איתה.</span></li>
+          </ul>
+        </section>
+        <section class="feat-group reveal" aria-labelledby="fg3">
+          <h3 id="fg3"><span class="fg-n">להמשך</span>מה עוזר לעסק לגדול <em class="ai">נציג AI</em></h3>
+          <ul>
+            <li><b>קישור לכל קבוצה, עם קוד QR</b><span>רואים איזו קבוצה בפייסבוק, או איזה מגנט על המקרר, הביא פניות.</span></li>
+            <li><b>״זמינים עכשיו״</b><span>כותבים ״עסוק״ בוואטסאפ, והאתר מעדכן את הלקוחות לבד.</span></li>
+            <li><b>בקשה לביקורת בגוגל</b><span>אחרי עבודה, ורק באישור שלכם. פעם אחת לכל לקוח.</span></li>
+            <li><b>דוח חודשי</b><span>כמה נכנסו, כמה פנו, ומה הגיע מחוץ לשעות העבודה.</span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="what-ai reveal">בחבילת נוכחות: הדף, המחשבון, המדריכים, לפני ואחרי וכפתורי וואטסאפ וחיוג. בחבילת נציג AI: הכול.</p>
+    </div>
+  </section>
+
+  <section class="sec" id="demos" aria-labelledby="t-demos">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="kicker">דוגמאות</p>
         <h2 id="t-demos">ככה זה נראה בתחום שלכם.</h2>
-        <p class="sec-sub">16 עסקים לדוגמה, כל אחד בסגנון משלו. נכנסים, משאירים פנייה ורואים מה הלקוח מקבל.</p>
+        <p class="sec-sub">16 עסקים לדוגמה, כל אחד בסגנון משלו. נכנסים, משחקים עם הצ׳אט, ומשם מתחילים לבנות את שלכם.</p>
       </div>
       <div class="demo-grid">
         <a class="demo" href="plumber/"><span class="sw plumber has-photo"><img src="shared/photos/plumber-portrait.webp" alt="" loading="lazy" style="object-position:50% 40%"><b class="sw-name">אורן מים</b></span><span class="tx"><b>אינסטלטור</b><small>לדמו ←</small></span></a>
@@ -434,7 +487,7 @@ img, svg { display: block; }
     </div>
   </section>
 
-  <section class="sec" id="plans" aria-labelledby="t-plans">
+  <section class="sec alt" id="plans" aria-labelledby="t-plans">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="kicker">מחירים</p>
@@ -449,17 +502,17 @@ img, svg { display: block; }
           <p class="monthly"><bdi>150 ₪</bdi> לחודש</p>
           <ul class="inc"><li>דף מעוצב ומותאם לנייד</li><li>כפתור וואטסאפ וחיוג</li><li>חיבור לדומיין שלכם</li><li>אחסון ותחזוקה</li></ul>
           <p class="plan-links"><a href="presence/">לראות דף נוכחות לדוגמה</a></p>
-          <a class="btn ghost" data-wa data-plan="נוכחות" href="#contact">לפרטים בוואטסאפ</a>
+          <a class="btn ghost" href="build/">לבנות דף נוכחות</a>
         </article>
         <article class="plan featured reveal">
-          <span class="plan-tag">מה שראיתם בסרטון</span>
+          <span class="plan-tag">הכול כלול</span>
           <h3>נציג AI</h3>
           <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
           <p class="price"><b><bdi>2,250 ₪</bdi></b><span>הקמה, או 3 תשלומים של <bdi>750 ₪</bdi></span></p>
           <p class="monthly"><bdi>500 ₪</bdi> לחודש, מהחודש הרביעי<small>שלושת החודשים הראשונים כלולים בהקמה.</small></p>
           <ul class="inc"><li>כל מה שבנוכחות</li><li>מענה אוטומטי בוואטסאפ תוך שניות</li><li>התראה על כל פנייה ותזכורת מעקב</li><li>כל הפניות בטבלה אחת</li><li>צ׳אט באתר שעונה על שאלות ומסנן פניות</li><li>דוח חודשי ושינוי אחד בחודש</li></ul>
           <p class="plan-links"><a href="ai-agent/">לראות את הנציג בפעולה</a><a href="leads-demo/">לנסות את מערכת הלידים</a></p>
-          <a class="btn" data-wa data-plan="נציג AI" href="#contact">אני רוצה את זה</a>
+          <a class="btn" href="build/">לבנות את האתר שלי</a>
         </article>
       </div>
       <div class="addon reveal">
@@ -473,41 +526,38 @@ img, svg { display: block; }
     </div>
   </section>
 
-  <section class="sec alt" id="faq" aria-labelledby="t-faq">
+  <section class="sec" id="faq" aria-labelledby="t-faq">
     <div class="wrap">
       <div class="sec-head reveal">
         <p class="kicker">שאלות</p>
-        <h2 id="t-faq">מה ששואלים אותי הכי הרבה.</h2>
+        <h2 id="t-faq">מה ששואלים אותנו הכי הרבה.</h2>
       </div>
       <div class="faq reveal">
-        <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. אתם עונים על כמה שאלות בשיחה, ואנחנו מקימים, מחברים ובודקים הכול.</p></details>
+        <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים.</p></details>
+        <details><summary>משלמים לפני שרואים?</summary><p>לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים.</p></details>
+        <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם, ואפשר לחזור לקישור הפרטי ולהמשיך. אחרי האישור והתשלום אנחנו מעלים את האתר. בנציג AI יש גם חיבור לוואטסאפ העסקי, שלוקח עד שבועיים.</p></details>
         <details><summary>יש התחייבות?</summary><p>לא. מבטלים בהודעה של 30 יום מראש. מי שבחר בתשלומים ומבטל לפני התשלום השלישי משלים את יתרת ההקמה.</p></details>
         <details><summary>על שם מי הדומיין?</summary><p>על שמכם. הדומיין והאחסון רשומים אצלכם, והדף נשאר שלכם.</p></details>
-        <details><summary>ההודעות יוצאות מהמספר שלי?</summary><p>כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה כותבים יחד.</p></details>
-        <details><summary>כמה זמן עד שזה באוויר?</summary><p>בדרך כלל עד שבוע מהשיחה. חבילת נציג AI לוקחת עד שבועיים.</p></details>
+        <details><summary>ההודעות יוצאות מהמספר שלי?</summary><p>כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אתם מאשרים.</p></details>
+        <details><summary>אפשר לדבר עם בן אדם?</summary><p>כן. הנציג החכם בפינה עונה על רוב השאלות, ובכל שלב אפשר לכתוב לנו בוואטסאפ.</p></details>
       </div>
     </div>
   </section>
 
-  <section class="sec contact" id="contact" aria-labelledby="t-contact">
+  <section class="sec start" id="start" aria-labelledby="t-start">
     <div class="wrap">
       <div class="reveal">
-        <p class="kicker">שיחת היכרות</p>
-        <h2 id="t-contact">רוצים לראות איך זה ייראה אצלכם?</h2>
-        <p class="sec-sub">משאירים שלושה פרטים, והם מגיעים אלינו בוואטסאפ. נחזור אליכם לשיחה של 5 דקות, בלי התחייבות.</p>
+        <p class="kicker">מתחילים</p>
+        <h2 id="t-start">האתר שלכם מתחיל בשאלה אחת.</h2>
+        <p class="sec-sub">איך קוראים לעסק? משם הצ׳אט שואל, אתם בוחרים, והאתר נבנה מול העיניים. משלמים רק כשהוא מוכן.</p>
+        <div class="start-ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><button class="btn ghost" type="button" data-open-ai>לשאול את הנציג החכם</button></div>
+        <p class="start-human">מעדיפים לדבר עם בן אדם? <a data-wa-human href="#">כתבו לנו בוואטסאפ</a></p>
       </div>
-      <form class="form reveal" id="lead" novalidate>
-        <div class="field"><label for="f-name">שם</label><input id="f-name" name="name" type="text" autocomplete="name" placeholder="איך קוראים לכם"></div>
-        <div class="field"><label for="f-phone">טלפון</label><input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="050-0000000"></div>
-        <div class="field"><label for="f-trade">תחום העסק</label><input id="f-trade" name="trade" type="text" placeholder="אינסטלציה, הובלות, קליניקה"></div>
-        <div class="form-foot"><button class="btn" type="submit">לקבוע שיחת היכרות</button><span class="fdots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-        <p class="form-msg" id="lead-msg" role="status" aria-live="polite"></p>
-      </form>
       <footer class="foot"><span>נחיתה רכה · אתרים שבונים עסקים</span><span>העסקים בדוגמאות הם עסקים בדויים.</span></footer>
     </div>
   </section>
 </main>
-<div class="dock"><a class="btn" href="#contact">לשיחת היכרות של 5 דקות</a></div>
+<div class="dock"><a class="btn" href="build/">לבנות את האתר שלי</a></div>
 
 <script>
 (() => {
@@ -560,26 +610,14 @@ img, svg { display: block; }
     $$('.reveal').forEach((el) => io.observe(el));
   } else $$('.reveal').forEach((el) => el.classList.add('on'));
 
-  /* ---- plan buttons open WhatsApp with the plan named ---- */
-  $$('[data-wa]').forEach((a) => { a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('היי, ראיתי את המחירון ואשמח לשמוע על חבילת ' + a.dataset.plan + '.'); a.target = '_blank'; a.rel = 'noopener'; });
+  /* ---- the one human way in: WhatsApp, for whoever prefers a person ---- */
+  $$('[data-wa-human]').forEach((a) => { a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('היי, הגעתי מהאתר של נחיתה רכה ויש לי שאלה.'); a.target = '_blank'; a.rel = 'noopener'; });
 
   /* ---- phone dock: after the first screen, until the form ---- */
-  if ('IntersectionObserver' in window) { const dock = $('.dock'), seen = { hero: true, contact: false };
-    const io = new IntersectionObserver((es) => { es.forEach((e) => (seen[e.target.id] = e.isIntersecting)); const on = !seen.hero && !seen.contact; dock.classList.toggle('on', on); root.classList.toggle('dock-on', on && innerWidth <= 640); }, { threshold: .15 });
-    io.observe($('#hero')); io.observe($('#contact')); }
+  if ('IntersectionObserver' in window) { const dock = $('.dock'), seen = { hero: true, start: false };
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (seen[e.target.id] = e.isIntersecting)); const on = !seen.hero && !seen.start; dock.classList.toggle('on', on); root.classList.toggle('dock-on', on && innerWidth <= 640); }, { threshold: .15 });
+    io.observe($('#hero')); io.observe($('#start')); }
 
-  /* ---- the form: three details, three dots, then WhatsApp ---- */
-  const form = $('#lead'), dots = $$('.fdots i'), msg = $('#lead-msg');
-  const ok = [(v) => v.trim().length >= 2, (v) => /^[\d\s+\-]{9,14}$/.test(v.trim()), (v) => v.trim().length >= 2], inputs = $$('input', form);
-  const check = () => inputs.map((el, i) => { const good = ok[i](el.value); dots[i].classList.toggle('on', good); return good; });
-  inputs.forEach((el) => el.addEventListener('input', () => { check(); msg.textContent = ''; }));
-  form.addEventListener('submit', (e) => { e.preventDefault(); const res = check(), bad = res.indexOf(false);
-    if (bad > -1) { msg.textContent = ['חסר שם.', 'חסר מספר טלפון תקין.', 'חסר תחום העסק.'][bad]; inputs[bad].focus(); return; }
-    const text = `היי, הגעתי מהאתר ואשמח לשיחת היכרות של 5 דקות.\nשם: ${inputs[0].value.trim()}\nטלפון: ${inputs[1].value.trim()}\nתחום העסק: ${inputs[2].value.trim()}`;
-    msg.textContent = 'פותחים וואטסאפ עם הפרטים. לחצו שם על שליחה.';
-    window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
-    /* the same details also go to the site's own lead table, so a follow-up reminder comes if nobody answered */
-    if (window.LeadForm) LeadForm.send('/api/lead/kfir', { name: inputs[0].value.trim(), phone: inputs[1].value.trim(), service: 'שיחת היכרות', message: 'תחום העסק: ' + inputs[2].value.trim() }); });
 })();
 </script>
 <script src="shared/leadform.js"></script>

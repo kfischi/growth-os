@@ -1,6 +1,6 @@
 /* AiBot: the smart chat on the demo hub.
    Sends the conversation to /api/chat (Netlify Function -> Claude). The reply may end with markers that become buttons:
-     [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]
+     [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]  [[build]] (start the site builder)  [[go:SECTION]] (how, what, demos, plans, faq)
    If the function is missing, not configured or fails, it answers from a small scripted engine instead, so the page never breaks.
    Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat", pricingHref: "#plans", base: "" })
    pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down.
@@ -14,6 +14,7 @@
     handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית", music: "מורה לנגינה",
     "leads-demo": "דמו מערכת לידים", "ai-agent": "דמו נציג AI",
   };
+  const GO = { how: "איך זה עובד", what: "מה יש באתר", demos: "לדוגמאות", plans: "למחירון", faq: "לשאלות" };
   const CSS = `
   .ab-launch{position:fixed;z-index:60;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;
     background:var(--ab-accent,#0f6e7a);color:#fff;font:600 15px/1 var(--ab-font,system-ui,sans-serif);padding:12px 18px 12px 12px;border-radius:999px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
@@ -31,6 +32,7 @@
   .ab-msg.me{align-self:flex-end;background:var(--ab-accent,#0f6e7a);color:#fff;border-color:transparent}
   .ab-acts{display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start}
   .ab-acts a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px;border-radius:999px;border:1.5px solid var(--ab-accent,#0f6e7a);color:var(--ab-accent,#0f6e7a);background:#fff}
+  .ab-acts a.go{background:var(--ab-accent,#0f6e7a);color:#fff}
   .ab-acts a.wa{background:#1f9d55;border-color:#1f9d55;color:#fff}
   .ab-typing{align-self:flex-start;display:none;gap:4px;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid #e3e9ee}
   .ab-typing.on{display:flex}.ab-typing i{width:6px;height:6px;border-radius:50%;background:#90a0ad;animation:abBlink 1s infinite}.ab-typing i:nth-child(2){animation-delay:.15s}.ab-typing i:nth-child(3){animation-delay:.3s}
@@ -62,20 +64,22 @@
   function scripted(text, history) {
     const t = text.replace(/[״"'׳]/g, "");
     for (const [re, slug] of NICHES) if (re.test(t))
-      return `יש לנו דף לדוגמה בדיוק לתחום הזה, עם צ׳אט שמעביר כל פנייה לוואטסאפ ומסגרות לתמונות שלכם. שווה להציץ. [[demo:${slug}]]`;
-    if (/כמה זמן|תהליך|איך זה עובד|מתי/.test(t))
-      return "שיחה של 5 דקות, ותוך שבוע בערך הדף באוויר ומחובר לוואטסאפ שלכם. אחר כך מעקב קצר כל חודש. לא צריך להבין בטכנולוגיה.";
+      return `יש לנו דף לדוגמה בדיוק לתחום הזה. שווה להציץ, ומשם אפשר להתחיל לבנות את שלכם. [[demo:${slug}]] [[build]]`;
+    if (/כמה זמן|תהליך|איך זה עובד|איך בונים|מתי/.test(t))
+      return "בונים בעצמכם, בצ׳אט של בונה האתרים: עונים על שאלות, מעלים תמונות, ורואים את האתר נבנה. משלמים רק אחרי שאישרתם. [[build]] [[go:how]]";
     if (/מחיר|עולה|עלות|תשלום|כמה/.test(t))
       return "שתי חבילות. נוכחות: 1,500 ₪ הקמה ו-150 ₪ לחודש. נציג AI: 2,250 ₪ הקמה, אפשר בשלושה תשלומים של 750 ₪, ומהחודש הרביעי 500 ₪ לחודש. [[pricing]]";
     if (/נציג|בוט|צאט|AI|בינה/i.test(t))
       return "נציג AI עונה על שאלות של לקוחות באתר, מסנן פניות ושולח לכם סיכום של כל שיחה לוואטסאפ. כמו הצ׳אט הזה, רק עם המידע של העסק שלכם. [[demo:ai-agent]]";
     if (/איך|זמן|שבוע/.test(t))
-      return "שיחה של 5 דקות, ותוך שבוע בערך הדף באוויר ומחובר לוואטסאפ שלכם. אחר כך מעקב קצר כל חודש. לא צריך להבין בטכנולוגיה.";
+      return "בונים בעצמכם, בצ׳אט של בונה האתרים, מתי שנוח לכם. אחרי האישור והתשלום אנחנו מעלים את האתר. בנציג AI יש גם חיבור לוואטסאפ העסקי, עד שבועיים. [[build]]";
     if (/התחייב|לבטל|דומיין|על שם/.test(t))
       return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק בהודעה של 30 יום. הדומיין והאחסון רשומים על שמכם ונשארים שלכם, והמענה האוטומטי והנציג פועלים כל עוד יש תשלום חודשי.";
-    if (/דבר|שיחה|כפיר|וואטסאפ|טלפון|רוצה|מעוניין|מעוניינת|להתחיל/.test(t))
+    if (/להתחיל|לבנות|רוצה|מעוניין|מעוניינת|יאללה/.test(t))
+      return "מעולה. בונה האתרים שואל אתכם שאלה אחרי שאלה, ואתם רואים את האתר נבנה ליד. [[build]]";
+    if (/בן אדם|לדבר|שיחה|כפיר|וואטסאפ|טלפון/.test(t))
       return "בשמחה. לחצו כאן, וההודעה תגיע אלינו בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
-    return "אני יכול לספר על החבילות והמחירים, להראות דף לדוגמה לתחום שלכם, או להעביר אתכם לשיחה בוואטסאפ. מה מעניין אתכם?";
+    return "אני יכול להסביר איך זה עובד, לספר על המחירים, להראות דוגמה מהתחום שלכם, או לפתוח לכם את בונה האתרים. מה מעניין אתכם? [[go:how]] [[build]]";
   }
   function summary(history) {
     const said = history.filter((m) => m.role === "user").map((m) => m.content).slice(-3).join(" · ");
@@ -107,13 +111,13 @@
       document.body.append(launch, panel);
 
       const history = []; let busy = false, started = false, offline = false;
-      (cfg.chips || ["כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "איך זה עובד?", "אני רוצה שיחת היכרות"]).forEach((q) => {
+      (cfg.chips || ["איך בונים את האתר?", "כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "להתחיל לבנות"]).forEach((q) => {
         const b = el("button", null, q); b.type = "button"; b.addEventListener("click", () => ask(q)); chips.appendChild(b);
       });
 
       function bubble(text, who) { const m = el("div", "ab-msg" + (who === "me" ? " me" : ""), text); body.insertBefore(m, typing); body.scrollTop = body.scrollHeight; }
       function render(reply) {
-        const acts = []; const re = /\[\[(demo|pricing|whatsapp)(?::([^\]]*))?\]\]/g;
+        const acts = []; const re = /\[\[(demo|pricing|whatsapp|build|go)(?::([^\]]*))?\]\]/g;
         const text = reply.replace(re, (_, kind, arg) => { acts.push([kind, (arg || "").trim()]); return ""; }).trim();
         if (text) bubble(text, "bot");
         const row = el("div", "ab-acts");
@@ -121,6 +125,8 @@
           let a;
           if (kind === "demo" && DEMOS[arg]) { a = el("a", null, "לדמו: " + DEMOS[arg]); a.href = (cfg.base || "") + arg + "/"; }
           else if (kind === "pricing") { a = el("a", null, "למחירון"); a.href = cfg.pricingHref || "#pricing"; a.addEventListener("click", close); }
+          else if (kind === "build") { a = el("a", "go", "לבנות את האתר שלי"); a.href = (cfg.base || "") + "build/"; }
+          else if (kind === "go" && GO[arg] && document.getElementById(arg)) { a = el("a", null, GO[arg]); a.href = "#" + arg; a.addEventListener("click", close); }
           else if (kind === "whatsapp") { a = el("a", "wa", cfg.waLabel || "לשלוח בוואטסאפ"); a.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(arg || summary(history)); a.target = "_blank"; a.rel = "noopener"; }
           if (a) row.appendChild(a);
         });
