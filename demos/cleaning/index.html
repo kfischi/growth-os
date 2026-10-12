@@ -336,7 +336,7 @@
   const fmt = (n) => n.toLocaleString("he-IL");
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר",
+    name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר", hint: "נציג AI",
     greet: "היי, כאן שקד.\nכמה שאלות קצרות, ותקבלו הערכה של שעות ומחיר.",
     steps: [
       { key: "type", label: "סוג", ask: "מה מנקים?", chips: Object.keys(RATE) },

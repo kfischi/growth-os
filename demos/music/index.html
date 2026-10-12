@@ -382,7 +382,7 @@
   const ADULT = Math.max(...I.prog.map((x) => x[2]).slice(0, 2));
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: `${I.teacher.split(" ")[0]} · ${I.label}`, subtitle: "עונה מיד, גם באמצע שיעור", initial: I.initial, launcher: "לקבוע שיעור ניסיון",
+    name: `${I.teacher.split(" ")[0]} · ${I.label}`, subtitle: "עונה מיד, גם באמצע שיעור", initial: I.initial, launcher: "לקבוע שיעור ניסיון", hint: "נציג AI",
     greet: `היי, כאן ${I.teacher.split(" ")[0]}.\nכמה שאלות קצרות על שיעורי ${I.label}, ואחזור אליכם לקבוע שיעור ניסיון.`,
     steps: [
       { key: "style", label: "סגנון", ask: `מה הכי מעניין אתכם ב${I.label}?`, chips: I.styles },

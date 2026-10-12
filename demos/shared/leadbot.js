@@ -10,6 +10,7 @@
     whatsapp: "9725XXXXXXXX",            // number that receives the lead
     name: "…", subtitle: "…", initial: "…",
     launcher: "…",                        // floating button label
+    hint?: "נציג AI",                     // a label with an arrow bobbing above the button, until the chat is first opened
     greet: "…",                           // first message
     steps: [
       { key, ask: string | (data) => string,
@@ -80,7 +81,11 @@
   .lb-wa{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border-radius:var(--bot-radius-input,10px);padding:13px;background:#1f9d55;color:#fff;font:700 16px var(--bot-font)}
   .lb-restart{border:0;background:none;color:var(--bot-muted);font:13px var(--bot-font);text-decoration:underline;cursor:pointer;justify-self:start;padding:0}
   .lb-note{font-size:11.5px;color:var(--bot-muted);padding:0 14px 10px}
-  @media (prefers-reduced-motion:reduce){.lb-panel.open,.lb-msg{animation:none}.lb-typing i{animation:none}}
+  .lb-hint{position:absolute;bottom:calc(100% + 10px);left:50%;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;animation:lbBob 1.6s ease-in-out infinite}
+  .lb-hint b{white-space:nowrap;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 13px/1 var(--bot-font);padding:6px 11px;border:2px solid var(--bot-accent-fg);border-radius:var(--bot-radius-pill,999px);box-shadow:0 0 0 1.5px var(--bot-accent),0 8px 18px -8px rgba(0,0,0,.45)}
+  .lb-hint svg{width:22px;height:22px;overflow:visible}.lb-hint svg .h{stroke:var(--bot-accent-fg);stroke-width:6}.lb-hint svg .a{stroke:var(--bot-accent);stroke-width:3}
+  @keyframes lbBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-7px)}}
+  @media (prefers-reduced-motion:reduce){.lb-panel.open,.lb-msg{animation:none}.lb-typing i{animation:none}.lb-hint{animation:none;transform:translateX(-50%)}}
   @media (max-width:520px){.lb-launch .lb-label{display:none}.lb-launch{padding:10px}}
   `;
 
@@ -92,6 +97,13 @@
       launch.setAttribute("aria-expanded", "false");
       const dot = el("span", "lb-dot", cfg.initial || "?");
       launch.append(dot, el("span", "lb-label", cfg.launcher || "צ׳אט"));
+      let hint = null;
+      if (cfg.hint) {
+        hint = el("span", "lb-hint"); hint.setAttribute("aria-hidden", "true");
+        hint.append(el("b", null, cfg.hint));
+        hint.insertAdjacentHTML("beforeend", '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="h" d="M12 4v15M5 12l7 7 7-7"/><path class="a" d="M12 4v15M5 12l7 7 7-7"/></svg>');
+        launch.append(hint);
+      }
 
       const panel = el("section", "lb-panel"); panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", cfg.name);
       panel.id = "lb-panel"; launch.setAttribute("aria-controls", panel.id);
@@ -276,6 +288,7 @@
       // prefill: answers keyed by step key, used only when the chat has not started yet
       function open(prefill) {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
+        if (hint) { hint.remove(); hint = null; }
         if (!started) { pre = Object.assign({}, prefill); start(); }
         x.focus();
       }
