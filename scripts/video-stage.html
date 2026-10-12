@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>stage</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* The stage for scripts/process-video.mjs: 1920x1080. The real site runs in the iframe "app"; everything else
+     (the explanation panel, the step rail, the camera, the arrow, the cards, the phone) is drawn here. */
+  :root { --plum: #3d2442; --plum-2: #2a1830; --ink: #1d1b2e; --slate: #5d5a72; --mist: #ebe9f4; --paper: #f6f5fb; --mint: #0f7a6c; --mint-2: #7fd8c8; --line: #dcd8e8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+  body { background: radial-gradient(1200px 700px at 30% 40%, #f3f1f9, #e4e0ef); color: var(--ink); font-family: Rubik, system-ui, sans-serif; }
+
+  /* top: the brand and the ten steps */
+  .top { position: absolute; inset: 0 0 auto 0; height: 118px; display: flex; align-items: center; gap: 36px; padding: 0 48px; background: var(--plum); color: #fff; }
+  .brand { flex: none; display: grid; gap: 2px; }
+  .brand b { font: 900 34px/1 Rubik; letter-spacing: -.01em; }
+  .brand small { font: 500 17px Rubik; color: #d8cfe0; }
+  .rail { flex: 1; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .rail li { position: relative; display: grid; gap: 6px; justify-items: center; color: #b9adc4; font: 500 17px Rubik; transition: color .4s; }
+  .rail li i { width: 100%; height: 8px; border-radius: 4px; background: rgba(255,255,255,.14); overflow: hidden; }
+  .rail li i::after { content: ""; display: block; height: 100%; width: 0; background: var(--mint-2); transition: width .7s cubic-bezier(.65,0,.35,1); }
+  .rail li span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .rail li em { font: 700 14px Rubik; font-style: normal; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); }
+  .rail li.done { color: #e9e3ef; } .rail li.done i::after { width: 100%; } .rail li.done em { background: var(--mint); color: #fff; }
+  .rail li.on { color: #fff; } .rail li.on i::after { width: 50%; } .rail li.on em { background: var(--mint-2); color: var(--plum-2); }
+  .rail li.on span { font-weight: 700; }
+
+  /* the browser window with the real site */
+  .device { position: absolute; left: 48px; top: 150px; width: 1240px; border-radius: 18px; background: #fff; box-shadow: 0 40px 90px -40px rgba(42,24,48,.55), 0 0 0 1px rgba(42,24,48,.08); overflow: hidden; }
+  .chrome { height: 46px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #f1eff6; border-bottom: 1px solid var(--line); direction: ltr; }
+  .dots { display: flex; gap: 7px; } .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d6d1e2; }
+  .url { flex: 1; height: 30px; border-radius: 15px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; font: 500 16px Rubik; color: var(--slate); }
+  .url svg { width: 14px; height: 14px; flex: none; }
+  .url b { color: var(--ink); font-weight: 500; }
+  .view { position: relative; width: 1240px; height: 775px; overflow: hidden; background: #fff; }
+  .cam { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; transition: transform 1.05s cubic-bezier(.65,0,.35,1); will-change: transform; }
+  .cam iframe { width: 1280px; height: 800px; border: 0; display: block; background: #fff; }
+  .dim { position: absolute; inset: 0; pointer-events: none; background: rgba(29,27,46,0); transition: background .5s; }
+
+  /* the explanation, beside the window */
+  .panel { position: absolute; right: 48px; top: 150px; width: 560px; height: 821px; display: flex; flex-direction: column; gap: 22px; }
+  .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: var(--plum); color: #fff; font: 700 20px Rubik; }
+  .chip b { font-weight: 900; color: var(--mint-2); }
+  .panel h1 { margin: 0; font: 900 66px/1.02 Rubik; letter-spacing: -.02em; color: var(--plum-2); text-wrap: balance; }
+  .panel .text { margin: 0; font: 400 27px/1.45 Rubik; color: #3a3650; text-wrap: pretty; }
+  .now { margin-top: 6px; display: grid; gap: 8px; padding: 20px 22px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px -26px rgba(42,24,48,.5); border-inline-start: 6px solid var(--mint); }
+  .now span { font: 700 16px Rubik; color: var(--mint); letter-spacing: .06em; }
+  .now b { font: 700 30px/1.3 Rubik; color: var(--ink); min-height: 1.3em; }
+  .now.flash { animation: flash .6s ease-out; }
+  @keyframes flash { 0% { transform: translateX(-10px); opacity: .2; } 100% { transform: none; opacity: 1; } }
+  .next { margin-top: auto; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 18px; border: 2px dashed #c9c1d8; color: var(--slate); }
+  .next span { flex: none; font: 700 16px Rubik; letter-spacing: .06em; color: var(--slate); }
+  .next b { font: 700 26px Rubik; color: var(--plum); }
+  .next svg { width: 28px; height: 28px; margin-inline-start: auto; color: var(--plum); }
+  .next.pulse { animation: pulse 1.1s ease-in-out 2; border-color: var(--mint); }
+  @keyframes pulse { 50% { transform: scale(1.03); background: #fff; } }
+  .swap { animation: swap .7s cubic-bezier(.2,.8,.2,1); }
+  @keyframes swap { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+  /* the hand: an arrow that glides to the next thing to press, a ring on it, a ripple on the tap */
+  .arrow { position: absolute; z-index: 20; width: 74px; height: 74px; pointer-events: none; opacity: 0; transition: left .55s cubic-bezier(.2,.8,.2,1), top .55s cubic-bezier(.2,.8,.2,1), opacity .25s; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
+  .arrow.on { opacity: 1; } .arrow svg { width: 100%; height: 100%; animation: bob .6s ease-in-out infinite alternate; }
+  @keyframes bob { to { transform: translateY(var(--by, 9px)); } }
+  .glow { position: absolute; z-index: 19; pointer-events: none; border-radius: 16px; box-shadow: 0 0 0 4px var(--mint), 0 0 0 14px rgba(15,122,108,.22), 0 0 0 9999px rgba(29,27,46,.0); opacity: 0; transition: opacity .3s, left .45s, top .45s, width .45s, height .45s; }
+  .glow.on { opacity: 1; }
+  .tap { position: absolute; z-index: 21; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 4px solid var(--mint); background: rgba(15,122,108,.22); pointer-events: none; animation: tap .65s ease-out forwards; }
+  @keyframes tap { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+  .bubble { position: absolute; z-index: 22; max-width: 420px; padding: 12px 18px; border-radius: 14px; background: var(--plum-2); color: #fff; font: 700 24px/1.3 Rubik; box-shadow: 0 14px 30px -12px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; pointer-events: none; }
+  .bubble.on { opacity: 1; transform: none; }
+
+  /* the step card that sweeps over the window when a step starts */
+  .card { position: absolute; z-index: 15; left: 48px; top: 150px; width: 1240px; height: 821px; border-radius: 18px; display: grid; place-items: center; background: linear-gradient(135deg, var(--plum), var(--plum-2)); color: #fff; text-align: center; clip-path: inset(0 0 0 100%); transition: clip-path .7s cubic-bezier(.65,0,.35,1); }
+  .card.on { clip-path: inset(0 0 0 0); }
+  .card.off { clip-path: inset(0 100% 0 0); }
+  .card .n { font: 900 220px/0.9 Rubik; color: rgba(127,216,200,.95); letter-spacing: -.04em; }
+  .card h2 { margin: 6px 0 0; font: 900 84px/1 Rubik; letter-spacing: -.02em; }
+  .card p { margin: 18px 0 0; font: 500 30px Rubik; color: #d8cfe0; }
+
+  /* the owner's phone, for the WhatsApp messages */
+  .phone { position: absolute; z-index: 16; left: 430px; top: 160px; width: 470px; height: 860px; border-radius: 54px; background: #121016; padding: 14px; box-shadow: 0 50px 100px -40px rgba(0,0,0,.7); transform: translateY(120%); transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+  .phone.on { transform: none; }
+  .phone .scr { width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #efe7de; display: flex; flex-direction: column; }
+  .phone .bar { background: #075e54; color: #fff; padding: 46px 18px 14px; display: flex; align-items: center; gap: 12px; }
+  .phone .av { width: 44px; height: 44px; border-radius: 50%; background: var(--mint-2); color: var(--plum-2); display: grid; place-items: center; font: 900 20px Rubik; }
+  .phone .bar b { display: block; font: 700 21px Rubik; } .phone .bar small { font: 400 15px Rubik; opacity: .85; }
+  .phone .msgs { flex: 1; padding: 18px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .phone .m { align-self: flex-start; max-width: 88%; background: #fff; border-radius: 4px 14px 14px 14px; padding: 10px 14px 6px; font: 400 23px/1.45 Rubik; color: #111; box-shadow: 0 1px 1px rgba(0,0,0,.12); opacity: 0; transform: translateY(10px) scale(.98); transition: opacity .35s, transform .35s; white-space: pre-line; }
+  .phone .m.on { opacity: 1; transform: none; }
+  .phone .m time { display: block; text-align: left; font-size: 13px; color: #8a8a8a; margin-top: 4px; }
+  .phone .file { display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 10px; border-radius: 10px; background: #f3f0ea; font: 700 18px Rubik; }
+  .phone .file i { width: 34px; height: 40px; border-radius: 4px; background: #c9453a; color: #fff; font: 700 11px Rubik; font-style: normal; display: grid; place-items: center; }
+  .phone .btn { display: block; margin-top: 8px; text-align: center; padding: 10px; border-top: 1px solid #eee; color: #0a7cff; font: 700 19px Rubik; }
+
+  /* opening and closing */
+  .full { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(1400px 900px at 60% 30%, #4a2d50, var(--plum-2)); color: #fff; text-align: center; opacity: 0; transition: opacity .7s; pointer-events: none; }
+  .full.on { opacity: 1; }
+  .full .lines { display: grid; gap: 22px; justify-items: center; }
+  .full .l { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .full .l.on { opacity: 1; transform: none; }
+  .full .big { font: 900 112px/1 Rubik; letter-spacing: -.03em; }
+  .full .mid { font: 700 52px/1.2 Rubik; color: var(--mint-2); }
+  .full .small { font: 500 34px/1.35 Rubik; color: #d8cfe0; }
+  .full .grid { display: grid; grid-template-columns: repeat(5, 230px); gap: 16px; margin-top: 14px; }
+  .full .st { display: grid; gap: 10px; justify-items: center; padding: 22px 12px; border-radius: 18px; background: rgba(255,255,255,.07); opacity: 0; transform: translateY(20px) scale(.96); transition: opacity .45s, transform .45s cubic-bezier(.2,.8,.2,1), background .4s; }
+  .full .st.on { opacity: 1; transform: none; }
+  .full .st em { font: 900 40px Rubik; font-style: normal; color: var(--mint-2); }
+  .full .st b { font: 700 28px Rubik; }
+  .full .st.ok { background: rgba(15,122,108,.45); }
+  .full .st.ok em::after { content: " ✓"; color: #fff; }
+  .full .cta { display: inline-flex; align-items: center; gap: 18px; padding: 22px 40px; border-radius: 999px; background: var(--mint); font: 900 46px Rubik; }
+  .full .addr { font: 700 36px Rubik; color: #fff; direction: ltr; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><b>נחיתה רכה</b><small>ככה בונים את האתר שלכם</small></div>
+  <ol class="rail" id="rail"></ol>
+</header>
+
+<section class="device" id="device">
+  <div class="chrome"><span class="dots"><i></i><i></i><i></i></span>
+    <div class="url"><svg viewBox="0 0 24 24" fill="none" stroke="#0f7a6c" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="url"></span></div>
+  </div>
+  <div class="view" id="view"><div class="cam" id="cam"><iframe name="app" id="app" title="האתר"></iframe></div><div class="dim" id="dim"></div></div>
+</section>
+
+<aside class="panel" id="panel">
+  <div class="chip" id="chip">שלב <b id="sn">1</b> מתוך 10</div>
+  <h1 id="title"></h1>
+  <p class="text" id="text"></p>
+  <div class="now" id="nowBox"><span>עכשיו</span><b id="now"></b></div>
+  <div class="next" id="nextBox"><span>השלב הבא</span><b id="next"></b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+</aside>
+
+<div class="card" id="card"><div><div class="n" id="cardN"></div><h2 id="cardT"></h2><p id="cardS"></p></div></div>
+
+<div class="phone" id="phone"><div class="scr">
+  <div class="bar"><span class="av" id="phAv">נ</span><div><b id="phName">נחיתה רכה</b><small>מחובר/ת</small></div></div>
+  <div class="msgs" id="msgs"></div>
+</div></div>
+
+<div class="arrow" id="arrow"><svg viewBox="0 0 48 48"><path d="M24 44 L10 26 H19 V4 H29 V26 H38 Z" fill="#0f7a6c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div>
+<div class="glow" id="glow"></div>
+<div class="bubble" id="bubble"></div>
+
+<div class="full" id="full"><div class="lines" id="lines"></div></div>
+
+<script>
+  const STEPS = ["תחום", "דמו", "בונה", "תבנית", "צבעים", "שאלות", "תמונות", "בדיקה", "אישור", "באוויר"];
+  const $ = (id) => document.getElementById(id);
+  $("rail").innerHTML = STEPS.map((s, i) => `<li><i></i><span><em>${i + 1}</em>${s}</span></li>`).join("");
+  const S = window.stage = {};
+
+  // The address bar shows the real address of the page in the window.
+  const SHOW = (u) => {
+    if (u.pathname.startsWith("/__live")) return "<b>www.העסק-שלכם.co.il</b>";
+    return "service-pro-web.netlify.app<b>" + u.pathname.replace(/index\.html$/, "") + "</b>";
+  };
+  setInterval(() => { try { const u = new URL($("app").contentWindow.location.href); if (u.protocol.startsWith("http")) $("url").innerHTML = SHOW(u); } catch (e) {} }, 200);
+
+  S.step = (n, title, text, next) => {
+    document.querySelectorAll("#rail li").forEach((li, i) => { li.className = i + 1 < n ? "done" : i + 1 === n ? "on" : ""; });
+    $("sn").textContent = n; $("title").textContent = title; $("text").textContent = text;
+    $("next").textContent = next || "סיימנו"; $("now").textContent = "";
+    for (const id of ["chip", "title", "text", "nextBox"]) { const e = $(id); e.classList.remove("swap"); void e.offsetWidth; e.classList.add("swap"); }
+    $("nextBox").classList.remove("pulse");
+  };
+  S.now = (t) => { const b = $("nowBox"); $("now").textContent = t; b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); };
+  S.pulseNext = () => { const b = $("nextBox"); b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse"); };
+  S.allDone = () => document.querySelectorAll("#rail li").forEach((li) => { li.className = "done"; });
+
+  S.card = (n, title, sub) => { const c = $("card"); $("cardN").textContent = n; $("cardT").textContent = title; $("cardS").textContent = sub || ""; c.className = "card"; void c.offsetWidth; c.classList.add("on"); };
+  S.uncard = () => { const c = $("card"); c.classList.add("off"); setTimeout(() => { c.className = "card"; }, 750); };
+
+  S.cam = (tx, ty, s) => { $("cam").style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; };
+  S.dim = (on) => { $("dim").style.background = on ? "rgba(29,27,46,.0)" : "rgba(29,27,46,0)"; };
+
+  S.point = (r, say) => {
+    const a = $("arrow"), g = $("glow"), up = r.top < 260;
+    a.style.left = r.left + r.width / 2 - 37 + "px"; a.style.top = (up ? r.bottom + 10 : r.top - 82) + "px";
+    a.style.setProperty("--by", up ? "-9px" : "9px"); a.querySelector("svg").style.rotate = up ? "180deg" : "0deg";
+    Object.assign(g.style, { left: r.left - 7 + "px", top: r.top - 7 + "px", width: r.width + 14 + "px", height: r.height + 14 + "px", borderRadius: Math.min(20, r.height / 2 + 7) + "px" });
+    a.classList.add("on"); g.classList.add("on");
+    const b = $("bubble");
+    if (say) {
+      b.textContent = say; b.classList.add("on");
+      const bw = b.offsetWidth, bh = b.offsetHeight;
+      let x = r.left + r.width / 2 - bw / 2; x = Math.max(60, Math.min(1270 - bw, x));
+      const y = up ? r.bottom + 92 : r.top - 92 - bh;
+      b.style.left = x + "px"; b.style.top = Math.max(130, y) + "px";
+    } else b.classList.remove("on");
+  };
+  S.unpoint = () => { $("arrow").classList.remove("on"); $("glow").classList.remove("on"); $("bubble").classList.remove("on"); };
+  S.tap = (x, y) => { const d = document.createElement("div"); d.className = "tap"; d.style.left = x + "px"; d.style.top = y + "px"; document.body.appendChild(d); setTimeout(() => d.remove(), 700); };
+
+  S.phone = (on, name, av) => { if (name) { $("phName").textContent = name; $("phAv").textContent = av || name[0]; } $("phone").classList.toggle("on", on); if (!on) setTimeout(() => { $("msgs").innerHTML = ""; }, 900); };
+  S.msg = (html) => { const m = document.createElement("div"); m.className = "m"; m.innerHTML = html; $("msgs").append(m); requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add("on"))); };
+
+  // Full-screen lines, one after another.
+  S.full = (on) => $("full").classList.toggle("on", on);
+  S.lines = (html) => { $("lines").innerHTML = html; };
+  S.show = (sel) => document.querySelectorAll("#lines " + sel).forEach((e) => e.classList.add("on"));
+  S.showN = (sel, n) => { const e = document.querySelectorAll("#lines " + sel)[n]; if (e) e.classList.add("on"); };
+</script>
+</body>
+</html>
