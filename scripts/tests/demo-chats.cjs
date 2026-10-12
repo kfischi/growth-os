@@ -71,13 +71,36 @@ async function photoStep(b) {
     await p.close(); }
   return bad;
 }
+// The music demo, once per instrument: its own title, guides and chat, and an instrument that plays.
+async function musicInstruments(b) {
+  let bad = 0;
+  const WANT = { piano: 'פסנתר', keys: 'קלידים', guitar: 'גיטרה', bass: 'בס', drums: 'תופים' };
+  for (const [k, label] of Object.entries(WANT)) for (const [w, h] of [[390, 844], [1280, 900]]) {
+    const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+    await p.route(/fonts\.|wa\.me/, (r) => r.abort());
+    await p.goto(`http://localhost:8790/music/index.html?i=${k}`); await p.waitForTimeout(700);
+    const g = JSON.parse(fs.readFileSync(path.join(ROOT, 'shared/guides', `music-${k}.json`), 'utf8'));
+    const title = await p.textContent('h1'), cur = await p.textContent('.pick-inst [aria-current="page"]');
+    const items = await p.$$eval('#guides details', (x) => x.length);
+    const ctl = await p.$$('#play button'); if (ctl.length) await ctl[Math.min(2, ctl.length - 1)].click(); await p.waitForTimeout(300);
+    const played = (await p.textContent('#name')).trim();
+    await p.click('.lb-launch'); await p.waitForTimeout(2600);
+    const ask = await p.$eval('.lb-panel', (x) => [...x.querySelectorAll('.lb-msg')].map((m) => m.textContent).join(' | '));
+    const sw = await p.evaluate(() => document.documentElement.scrollWidth);
+    const ok = title.includes(label) && cur === label && items === g.items.length && played.length > 0 && ask.includes(label) && sw <= w && !errs.length;
+    if (!ok) bad++;
+    console.log(`${ok ? 'OK ' : 'BAD'} music ${k.padEnd(6)} ${w}px title=${title.includes(label)} guides=${items}/${g.items.length} played="${played}" chat=${ask.includes(label)} sw=${sw}${errs.length ? ' ' + errs[0] : ''}`);
+    await p.close();
+  }
+  return bad;
+}
 // The guides: every page loads its trade's items; #g-<id> opens one; the plumber's chat links to it when urgent.
 async function guidesCheck(b) {
   let bad = 0;
   for (const d of DEMOS) {
     const p = await b.newPage({ viewport: { width: 390, height: 844 } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
     await p.route(/fonts\.|wa\.me/, (r) => r.abort());
-    const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'shared/guides', d + '.json'), 'utf8'));
+    const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'shared/guides', (d === 'music' ? 'music-piano' : d) + '.json'), 'utf8'));
     const last = data.items.at(-1).id;
     await p.goto(`http://localhost:8790/${d}/index.html#g-${last}`); await p.waitForTimeout(900);
     const n = await p.$$eval('#guides details', (x) => x.length);
@@ -168,6 +191,7 @@ const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renov
     }
   }
   bad += await guidesCheck(b);
+  bad += await musicInstruments(b);
   bad += await estimates(b);
   bad += await photoStep(b);
   console.log(bad ? `${bad} FAILED` : 'ALL OK'); await b.close(); server.close(); process.exit(bad ? 1 : 0);

@@ -41,6 +41,7 @@
 ## 4. מה נבנה (לפי אזורים)
 
 ### דמואים (`demos/`)
+- המורה למוזיקה: עולם נפרד לכל כלי, לפי `?i=piano|keys|guitar|bass|drums`. משתנים המורה, השיעורים, הצ׳אט, הטיפים (`guides/music-<כלי>.json`) והכלי שמנגנים עליו (`music/instruments.js`).
 - 16 דפי נחיתה לעסקים בדויים, כל אחד בזהות משלו: plumber, movers, trainer, ac, electrician, cleaning, renovation, locksmith, pest, appliance, handyman, garden, tutor, psychologist, social-worker, music.
 - צ׳אט מתוסרט משותף: `shared/leadbot.js`. שאלות, בדיקת טלפון, סיכום ומעבר לוואטסאפ. הצ׳אט תומך בשלב תמונה (`photo: true`) ובשלבים מותנים (`show`).
 - `shared/estimate.js`: מחשבון "כמה זה יעלה?" ב-11 מקצועות. הכפתור שלו פותח את הצ׳אט עם התשובות כבר מולאו.

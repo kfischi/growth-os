@@ -60,6 +60,10 @@
 | מורה פרטית | https://service-pro-web.netlify.app/tutor/?utm_source=whatsapp |
 | פסיכולוגית | https://service-pro-web.netlify.app/psychologist/?utm_source=whatsapp |
 | עובדת סוציאלית | https://service-pro-web.netlify.app/social-worker/?utm_source=whatsapp |
-| מורה לנגינה | https://service-pro-web.netlify.app/music/?utm_source=whatsapp |
+| מורה לפסנתר | https://service-pro-web.netlify.app/music/?i=piano&utm_source=whatsapp |
+| מורה לקלידים | https://service-pro-web.netlify.app/music/?i=keys&utm_source=whatsapp |
+| מורה לגיטרה | https://service-pro-web.netlify.app/music/?i=guitar&utm_source=whatsapp |
+| מורה לבס | https://service-pro-web.netlify.app/music/?i=bass&utm_source=whatsapp |
+| מורה לתופים | https://service-pro-web.netlify.app/music/?i=drums&utm_source=whatsapp |
 
 בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.

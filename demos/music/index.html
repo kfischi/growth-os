@@ -76,6 +76,37 @@
   .k.b.on, .k.b:active { background: var(--felt); }
   .k:focus-visible { outline: 3px solid var(--felt); outline-offset: -3px; }
 
+  /* ---------- Which instrument: one demo, five teachers ---------- */
+  .pick-inst { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px 16px; background: #23252b; color: #c4c7cf; font-size: 14px; }
+  .pick-inst a { color: #eceef2; text-decoration: none; padding: 6px 13px; border-radius: 999px; border: 1px solid #4a4d55; font-weight: 500; }
+  .pick-inst a[aria-current="page"] { background: var(--felt); border-color: var(--felt); color: #fff; font-weight: 700; }
+  .visual { color: var(--ebony); direction: ltr; }
+  .visual svg { display: block; width: 100%; height: auto; max-height: 230px; }
+  /* guitar: five chord buttons over a neck with six strings */
+  .chords { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; direction: ltr; max-width: 420px; }
+  .chord { min-height: 52px; padding: 0 6px; border-radius: 10px; border: 2px solid var(--ebony); background: var(--ivory); color: var(--ebony); font: 700 20px var(--body); cursor: pointer; }
+  .chord[aria-pressed="true"] { background: var(--felt); border-color: var(--felt); color: #fff; }
+  .neck { position: relative; height: 112px; border-radius: 8px; background: linear-gradient(90deg, rgba(0,0,0,.18) 0 2px, transparent 2px) 0 0 / 16.66% 100%, linear-gradient(#6b4a37, var(--walnut)); display: grid; align-content: space-evenly; padding: 8px 0; box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
+  .neck .str { height: 2px; background: linear-gradient(90deg, #d8d2c8, #f3efe8); box-shadow: 0 1px 0 rgba(0,0,0,.4); }
+  .neck .str:nth-child(-n+3) { height: 3px; }
+  .neck.ring .str { animation: ring .5s ease-out; }
+  @keyframes ring { 0% { transform: translateY(1.5px); } 25% { transform: translateY(-1.5px); } 50% { transform: translateY(1px); } 75% { transform: translateY(-.5px); } 100% { transform: none; } }
+  /* bass: four strings by five frets, low E at the bottom */
+  .fretboard { direction: ltr; display: grid; grid-template-columns: 54px repeat(4, minmax(0, 1fr)); gap: 0; border-radius: 8px; overflow: hidden; background: linear-gradient(#3b2a20, #2b1e17); box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
+  .fret { all: unset; box-sizing: border-box; cursor: pointer; height: 44px; position: relative; border-inline-start: 3px solid #b9b2a6; display: grid; place-items: center; color: #eceef2; font: 700 15px var(--mono); }
+  .fret::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: #c9c2b6; transform: translateY(-50%); }
+  .fret.open { border-inline-start: 0; background: #23252b; }
+  .fret.open::before { left: 60%; }
+  .fret.on::after, .fret:active::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--felt); }
+  .fret:focus-visible { outline: 3px solid var(--felt); outline-offset: -3px; }
+  /* drums: six pads */
+  .pads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 560px; }
+  .pad { min-height: 80px; border-radius: 50%/38%; border: 0; background: radial-gradient(circle at 50% 40%, #3a3d45, var(--ebony)); color: #eceef2; font: 700 16px var(--body); cursor: pointer; box-shadow: inset 0 0 0 4px #4a4d55, 0 18px 30px -22px rgba(21,22,26,.8); }
+  .pad-hat, .pad-crash { background: radial-gradient(circle at 50% 45%, #e4e6ea, #8d919a); color: #15161a; box-shadow: inset 0 0 0 4px #b3b7bf, 0 18px 30px -22px rgba(21,22,26,.8); }
+  .pad.on, .pad:active { box-shadow: inset 0 0 0 4px var(--felt), 0 0 0 3px var(--felt); }
+  .pad:focus-visible, .chord:focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .neck.ring .str { animation: none; } }
+
   /* ---------- The programme: what you can learn ---------- */
   section { padding-block: 84px; }
   .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 28px; }
@@ -154,42 +185,36 @@
 </head>
 <body>
 <div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<nav class="pick-inst" aria-label="הדמו הזה מותאם לכלי">
+  <span>מורה ל:</span>
+  <a href="?i=piano" data-i="piano">פסנתר</a><a href="?i=keys" data-i="keys">קלידים</a><a href="?i=guitar" data-i="guitar">גיטרה</a><a href="?i=bass" data-i="bass">בס</a><a href="?i=drums" data-i="drums">תופים</a>
+</nav>
 
 <header class="hero staffpaper">
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span data-edit="name">מאיה לב</span><small>פסנתר · גיטרה</small></div>
+      <div class="logo"><span data-edit="name" id="t-logo">מאיה לב</span><small id="t-inst">פסנתר</small></div>
       <a href="#" data-wa="היי מאיה, הגעתי מהאתר ויש לי שאלה על שיעורי נגינה">וואטסאפ</a>
     </div>
     <div class="hero-grid">
       <div>
-        <p class="tag mono">כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים</p>
-        <h1><span data-edit="h1a">שיעורי פסנתר וגיטרה,</span> <em data-edit="h1b">מהשיר שאתם אוהבים</em></h1>
-        <p class="lead">לומדים לנגן את מה שבא לכם לשמוע, וקוראים תווים בדרך. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.</p>
+        <p class="tag mono" id="t-tag">כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים</p>
+        <h1><span data-edit="h1a" id="t-h1a">שיעורי פסנתר,</span> <em data-edit="h1b" id="t-h1b">מהשיר שאתם אוהבים</em></h1>
+        <p class="lead" id="t-lead">לומדים לנגן את מה שבא לכם לשמוע, וקוראים תווים בדרך. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.</p>
         <div class="ctas">
           <button class="btn btn-felt" type="button" data-open-bot>לקבוע שיעור ניסיון</button>
           <a class="btn btn-line" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
         </div>
       </div>
       <div class="score" aria-live="polite">
-        <svg viewBox="0 0 420 150" role="img" aria-label="חמשה. התו שמנגנים מופיע עליה.">
-          <g stroke="#c9ccd3" stroke-width="1.4">
-            <line x1="20" y1="40" x2="404" y2="40"/><line x1="20" y1="54" x2="404" y2="54"/><line x1="20" y1="68" x2="404" y2="68"/><line x1="20" y1="82" x2="404" y2="82"/><line x1="20" y1="96" x2="404" y2="96"/>
-          </g>
-          <!-- treble clef, drawn -->
-          <path d="M52 112 c-10 0 -12 -12 -4 -14 c8 -2 10 10 2 12 M50 110 C46 70 70 60 66 34 C64 20 52 24 54 38 C58 66 34 70 36 88 C38 104 62 104 64 88 C66 74 48 72 46 84" fill="none" stroke="#15161a" stroke-width="2.6" stroke-linecap="round"/>
-          <text x="86" y="62" font-family="David Libre, serif" font-size="22" fill="#15161a">4</text>
-          <text x="86" y="90" font-family="David Libre, serif" font-size="22" fill="#15161a">4</text>
-          <line x1="404" y1="40" x2="404" y2="96" stroke="#15161a" stroke-width="2"/>
-          <g id="notes"></g>
-        </svg>
-        <div class="cap mono"><span id="last">נגנו על הקלידים למטה</span><b id="name"></b></div>
+        <div class="visual" id="visual"></div>
+        <div class="cap mono"><span id="last">נגנו למטה</span><b id="name"></b></div>
       </div>
     </div>
   </div>
   <div class="wrap kb-wrap">
-    <div class="kb-label mono"><span>נסו לנגן ↓</span><span id="sound">צליל קצר, בלי הקלטה</span></div>
-    <div class="keys" id="keys" role="group" aria-label="קלידים לנגינה"></div>
+    <div class="kb-label mono"><span id="try">נסו לנגן ↓</span><span id="sound">צליל קצר, בלי הקלטה</span></div>
+    <div class="play" id="play"></div>
   </div>
 </header>
 
@@ -198,10 +223,7 @@
     <div class="wrap">
       <div class="head"><h2>מה לומדים</h2><span class="mono">מחירים לדוגמה · לשיעור של 45 דקות · לחיצה פותחת את הצ׳אט</span></div>
       <div class="programme">
-        <button class="item" type="button" data-instrument="פסנתר"><span class="no">I</span><span><b>פסנתר לילדים</b><span class="d">מגיל 6. שירים מוכרים, שתי ידיים, וקריאת תווים בקצב של הילד.</span></span><span class="p">150 ₪<small>לשיעור</small></span></button>
-        <button class="item" type="button" data-instrument="גיטרה"><span class="no">II</span><span><b>גיטרה</b><span class="d">מגיל 8. אקורדים ראשונים, פריטה וליווי לשירים. אפשר להתחיל עם גיטרה מושאלת.</span></span><span class="p">150 ₪<small>לשיעור</small></span></button>
-        <button class="item" type="button" data-who="מבוגר/ת"><span class="no">III</span><span><b>מבוגרים שתמיד רצו</b><span class="d">מתחילים מאפס או חוזרים אחרי שנים. בלי מבחנים, בקצב שלכם.</span></span><span class="p">170 ₪<small>לשיעור</small></span></button>
-        <button class="item" type="button" data-level="ממשיכים"><span class="no">IV</span><span><b>ממשיכים ומגמת מוזיקה</b><span class="d">תיאוריה, שמיעה והכנה לרסיטל או לבחינה.</span></span><span class="p">180 ₪<small>לשיעור</small></span></button>
+        <div id="t-prog"></div>
         <div class="prog-foot"><span><b>שיעור ניסיון:</b> 30 דקות, להכיר ולבדוק מה מתאים.</span><span><b>סוף שנה:</b> רסיטל קטן לתלמידים ולמשפחות.</span></div>
       </div>
     </div>
@@ -213,19 +235,19 @@
       <div class="teacher">
         <div class="portrait-card">
           <figure class="ps" data-slot="portrait" data-src="../shared/photos/music-portrait.webp" data-alt="מורה לנגינה ליד הפסנתר" data-pos="50 30" data-icon="person" data-label="תמונה שלכם"></figure>
-          <b data-edit="t-name">מאיה לב</b>
-          <span data-edit="t-role">מורה לפסנתר ולגיטרה · 14 שנה</span>
+          <b data-edit="t-name" id="t-name">מאיה לב</b>
+          <span data-edit="t-role" id="t-role">מורה לפסנתר · 14 שנה</span>
         </div>
         <div>
           <ul class="facts">
             <li><b>שיעור</b><span data-edit="f1">45 דקות, פעם בשבוע. מבוגרים יכולים גם פעם בשבועיים</span></li>
             <li><b>איפה</b><span data-edit="f2">בסטודיו בכרכור, או אצלכם בבית</span></li>
-            <li><b>כלים</b><span data-edit="f3">פסנתר, קלידים וגיטרה אקוסטית או קלאסית</span></li>
+            <li><b>כלים</b><span data-edit="f3" id="t-f3">פסנתר, קלידים וגיטרה אקוסטית או קלאסית</span></li>
             <li><b>בבית</b><span data-edit="f4">אחרי כל שיעור, הקלטה קצרה של מה לתרגל</span></li>
           </ul>
           <div class="shots">
             <figure><div class="ps" data-slot="studio" data-src="../shared/photos/music-studio.webp" data-alt="גיטרה ועמוד תווים בסטודיו" data-icon="home" data-label="הסטודיו"></div><figcaption data-edit="c1">הסטודיו בכרכור</figcaption></figure>
-            <figure><div class="ps" data-slot="lesson" data-src="../shared/photos/music-lesson.webp" data-alt="ידיים על קלידי הפסנתר" data-icon="camera" data-label="תמונה משיעור"></div><figcaption data-edit="c2">שיעור פסנתר</figcaption></figure>
+            <figure><div class="ps" data-slot="lesson" data-src="../shared/photos/music-lesson.webp" data-alt="ידיים על קלידי הפסנתר" data-icon="camera" data-label="תמונה משיעור"></div><figcaption data-edit="c2" id="t-c2">שיעור פסנתר</figcaption></figure>
           </div>
           <ol class="steps">
             <li><div><b>שיעור ניסיון</b><span>מכירים, מנגנים קצת, ובודקים איזה כלי מתאים.</span></div></li>
@@ -249,7 +271,7 @@
       <div class="head"><h2>מה המורה רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>ההורה או התלמיד עונים על כמה שאלות</b><span>איזה כלי, לאיזה גיל, ניסיון קודם ואיפה לומדים.</span></div></li>
+          <li><div><b>ההורה או התלמיד עונים על כמה שאלות</b><span id="t-own1">איזה סגנון, לאיזה גיל, ניסיון קודם ואיפה לומדים.</span></div></li>
           <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זה ילד בן 7 שמתחיל או מבוגר שחוזר לנגן.</span></div></li>
           <li><div><b>חוזרים וקובעים שיעור ניסיון</b><span>הצ׳אט עונה גם כשאתם באמצע שיעור.</span></div></li>
         </ol>
@@ -286,96 +308,102 @@
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="instruments.js"></script>
 <script>
-  PhotoSlots.init({ page: "music" });
+  // One demo, five worlds: each instrument has its own teacher, lessons, chat, guides and playable instrument.
+  // ?i=guitar picks one (a link per instrument for outreach); the default is piano.
+  const INST = {
+    piano: {
+      label: "פסנתר", teacher: "מאיה לב", initial: "מ", role: "מורה לפסנתר · 14 שנה",
+      h1a: "שיעורי פסנתר,", h1b: "מהשיר שאתם אוהבים",
+      lead: "לומדים לנגן את מה שבא לכם לשמוע, וקוראים תווים בדרך. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.",
+      tag: "כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים", try: "נסו לנגן ↓",
+      prog: [["פסנתר לילדים", "מגיל 6. שירים מוכרים, שתי ידיים, וקריאת תווים בקצב של הילד.", 150], ["מבוגרים שתמיד רצו", "מתחילים מאפס או חוזרים אחרי שנים. בלי מבחנים, בקצב שלכם.", 170], ["קלאסי ותווים", "יצירות, טכניקה וקריאה מהדף. הכנה לבחינות קונסרבטוריון.", 170], ["ממשיכים ומגמת מוזיקה", "תיאוריה, שמיעה והכנה לרסיטל או לבחינה.", 180]],
+      styles: ["שירים ופופ", "קלאסי", "ג׳אז ואלתור", "עוד לא יודעים"], f3: "פסנתר אקוסטי בסטודיו. לבית, פסנתר חשמלי מספיק להתחלה", c2: "שיעור פסנתר",
+      photos: { portrait: "music-portrait", studio: "music-studio", lesson: "music-lesson" },
+    },
+    keys: {
+      label: "קלידים", teacher: "נועה ברק", initial: "נ", role: "מורה לקלידים · 10 שנה",
+      h1a: "שיעורי קלידים,", h1b: "מליווי שירים ועד להקה",
+      lead: "אקורדים, ליווי ושירים שאתם אוהבים, על אורגנית או פסנתר חשמלי. מי שרוצה, ממשיך לסאונדים ולהקה. עונים על כמה שאלות בצ׳אט, ואחזור אליכם.",
+      tag: "חדרה, כרכור ועמק חפר · מגיל 8 ועד מבוגרים", try: "נסו לנגן, בצליל של פסנתר חשמלי ↓",
+      prog: [["קלידים למתחילים", "מגיל 8. אקורדים בשתי ידיים ושירים ראשונים כבר בחודש הראשון.", 140], ["ליווי שירה ושירים", "ללוות את עצמכם או מישהו ששר. שומעים שיר ומוצאים את האקורדים.", 150], ["קלידים בלהקה", "סאונדים, התפקיד שלכם בשיר, ונגינה עם מתופף וגיטרה.", 170], ["הפקה במחשב", "קלידי מידי, תוכנת הפקה ושיר ראשון שאתם מקליטים בעצמכם.", 180]],
+      styles: ["ליווי שירים", "להקה ובמה", "הפקה במחשב", "עוד לא יודעים"], f3: "אורגנית, פסנתר חשמלי וקלידי מידי", c2: "שיעור קלידים",
+      photos: { portrait: "music-portrait", studio: null, lesson: "music-lesson" },
+    },
+    guitar: {
+      label: "גיטרה", teacher: "יואב דגן", initial: "י", role: "מורה לגיטרה · 11 שנה",
+      h1a: "שיעורי גיטרה,", h1b: "מהאקורד הראשון לשיר שלם",
+      lead: "אקורדים, פריטה וליווי לשירים שאתם אוהבים: אקוסטית, חשמלית או קלאסית. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.",
+      tag: "חדרה, כרכור ועמק חפר · מגיל 8 ועד מבוגרים", try: "נסו אקורד ↓",
+      prog: [["גיטרה לילדים", "מגיל 8. אקורדים ראשונים ושירים שהם מכירים. אפשר להתחיל עם גיטרה מושאלת.", 150], ["אקוסטית לשירים", "פריטה, תופים ביד ימין, וליווי למדורה או לסלון.", 150], ["חשמלית ורוק", "ריפים, סולואים, מגבר ואפקטים. מה שאתם שומעים, לומדים לנגן.", 160], ["קלאסית", "תווים, פריטה באצבעות ויצירות. גם הכנה לבחינות.", 170]],
+      styles: ["אקוסטית", "חשמלית", "קלאסית", "עוד לא יודעים"], f3: "גיטרה אקוסטית, חשמלית וקלאסית. יש גיטרה להשאלה לחודש הראשון", c2: "שיעור גיטרה",
+      photos: { portrait: null, studio: "music-studio", lesson: null },
+    },
+    bass: {
+      label: "בס", teacher: "אלון רז", initial: "א", role: "מורה לגיטרה בס · 9 שנה",
+      h1a: "שיעורי גיטרה בס,", h1b: "להחזיק את השיר ביד",
+      lead: "קצב, גרוב ותפקידי בס לשירים שאתם אוהבים, ומשם לנגינה בהרכב. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.",
+      tag: "חדרה, כרכור ועמק חפר · מגיל 10 ועד מבוגרים", try: "נסו לנגן על הגריף ↓",
+      prog: [["בס למתחילים", "מגיל 10. מיתרים, קצב ושירים ראשונים, עם מטרונום מהשיעור הראשון.", 150], ["גרוב ופאנק", "אצבעות, סלאפ, ולהיות מדויקים מול המתופף.", 160], ["נגינה בהרכב", "לשמוע את הלהקה, לקרוא אקורדים ולבנות תפקיד משלכם.", 170], ["ממשיכים: הרמוניה", "תיאוריה, סולמות ומעברים, בשביל מי שכבר מנגן.", 180]],
+      styles: ["רוק ופופ", "פאנק וג׳אז", "מתחילים מאפס", "עוד לא יודעים"], f3: "בס ארבעה מיתרים ומגבר בסטודיו", c2: "שיעור בס",
+      photos: { portrait: null, studio: null, lesson: null },
+    },
+    drums: {
+      label: "תופים", teacher: "עידו שחר", initial: "ע", role: "מורה לתופים · 12 שנה",
+      h1a: "שיעורי תופים,", h1b: "ולא רק לדפוק חזק",
+      lead: "קצבים, ידיים ורגליים ביחד, ונגינה עם שירים אמיתיים על מערכת תופים בסטודיו. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.",
+      tag: "חדרה, כרכור ועמק חפר · מגיל 7 ועד מבוגרים", try: "נסו קצב ↓",
+      prog: [["תופים לילדים", "מגיל 7. קצבים בסיסיים, תיאום, ושירים שהם אוהבים.", 150], ["רוק ופופ", "גרובים, מילויים ונגינה מעל שירים, עם אוזניות ומטרונום.", 160], ["ג׳אז ולטיני", "מברשות, תיאום מתקדם וקצבים מהעולם.", 170], ["ממשיכים והרכב", "קריאת תווים לתופים, ונגינה עם בס וגיטרה.", 180]],
+      styles: ["רוק ופופ", "ג׳אז", "מתחילים מאפס", "עוד לא יודעים"], f3: "מערכת תופים אקוסטית בסטודיו. לבית, פד תרגול או מערכת חשמלית עם אוזניות", c2: "שיעור תופים",
+      where: ["בסטודיו", "אצלנו בבית, יש מערכת"],
+      photos: { portrait: null, studio: null, lesson: null },
+    },
+  };
+  const KIND = INST[new URLSearchParams(location.search).get("i")] ? new URLSearchParams(location.search).get("i") : "piano";
+  const I = INST[KIND];
+  const $ = (id) => document.getElementById(id);
+  document.title = `${I.teacher} · שיעורי ${I.label}`;
+  document.querySelector('meta[name="description"]').content = `שיעורי ${I.label} לילדים ולמבוגרים, בחדרה והסביבה או אצלכם בבית. שיעור ניסיון קצר לפני שמתחילים.`;
+  $("t-logo").textContent = I.teacher; $("t-inst").textContent = I.label; $("t-tag").textContent = I.tag;
+  $("t-h1a").textContent = I.h1a; $("t-h1b").textContent = I.h1b; $("t-lead").textContent = I.lead; $("try").textContent = I.try;
+  $("t-name").textContent = I.teacher; $("t-role").textContent = I.role; $("t-f3").textContent = I.f3; $("t-c2").textContent = I.c2;
+  $("t-own1").textContent = `איזה סגנון של ${I.label}, לאיזה גיל, ניסיון קודם ואיפה לומדים.`;
+  document.querySelectorAll(".pick-inst a").forEach((a) => { if (a.dataset.i === KIND) a.setAttribute("aria-current", "page"); });
+  $("t-prog").outerHTML = I.prog.map(([b, d, p], n) => `<button class="item" type="button" data-n="${n}"><span class="no">${["I", "II", "III", "IV"][n]}</span><span><b>${b}</b><span class="d">${d}</span></span><span class="p">${p} ₪<small>לשיעור</small></span></button>`).join("");
+  // photos: the sample ones only where they fit the instrument; the rest are frames for the teacher's own
+  document.querySelectorAll(".ps[data-slot]").forEach((f) => { const ph = I.photos[f.dataset.slot]; if (ph) f.dataset.src = `../shared/photos/${ph}.webp`; else delete f.dataset.src; });
+  document.querySelector('[data-slot="portrait"]').dataset.alt = `מורה ל${I.label}`;
+  document.querySelectorAll("[data-wa]").forEach((a) => { a.dataset.wa = `היי ${I.teacher.split(" ")[0]}, הגעתי מהאתר ויש לי שאלה על שיעורי ${I.label}`; });
+  PhotoSlots.init({ page: "music-" + KIND });
 
-  /* ---- the keyboard: two octaves from middle C, a short sound, and the note on the staff ---- */
-  (function () {
-    const NAMES = ["דו", "רה", "מי", "פה", "סול", "לה", "סי"];
-    const WHITE_SEMI = [0, 2, 4, 5, 7, 9, 11];
-    const keys = document.getElementById("keys"), notes = document.getElementById("notes");
-    const lastEl = document.getElementById("last"), nameEl = document.getElementById("name");
-    const whites = 14; keys.style.setProperty("--whites", whites);
-    let ctx = null, played = [];
-    const freq = (semi) => 261.63 * Math.pow(2, semi / 12);
-    function sound(f) {
-      try {
-        ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
-        const t = ctx.currentTime, g = ctx.createGain();
-        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
-        g.connect(ctx.destination);
-        [[1, "triangle", 1], [2, "sine", 0.35]].forEach(([m, type, v]) => {
-          const o = ctx.createOscillator(), og = ctx.createGain(); o.type = type; o.frequency.value = f * m; og.gain.value = v;
-          o.connect(og); og.connect(g); o.start(t); o.stop(t + 1.45);
-        });
-      } catch (e) { /* no sound is fine */ }
-    }
-    // staff position: E4 on the bottom line (y=96), each step of the scale is half a line gap (7px)
-    function show(step, sharp, label) {
-      const y = 96 - (step - 2) * 7;
-      played.push({ y, sharp, step }); if (played.length > 8) played.shift();
-      notes.innerHTML = played.map((n, i) => {
-        const x = 130 + i * 34;
-        const ledger = n.step <= 0 ? `<line x1="${x - 13}" x2="${x + 13}" y1="110" y2="110" stroke="#15161a" stroke-width="1.6"/>` : n.step >= 12 ? `<line x1="${x - 13}" x2="${x + 13}" y1="26" y2="26" stroke="#15161a" stroke-width="1.6"/>` : "";
-        const acc = n.sharp ? `<text x="${x - 22}" y="${n.y + 6}" font-size="18" fill="#15161a">♯</text>` : "";
-        const last = i === played.length - 1;
-        return `${ledger}${acc}<ellipse class="nh" cx="${x}" cy="${n.y}" rx="8.5" ry="6.2" transform="rotate(-18 ${x} ${n.y})" fill="${last ? "#8e2236" : "#15161a"}"/><line x1="${x + 8}" y1="${n.y}" x2="${x + 8}" y2="${n.y - 34}" stroke="${last ? "#8e2236" : "#15161a"}" stroke-width="1.8"/>`;
-      }).join("");
-      lastEl.textContent = "ניגנתם:"; nameEl.textContent = label;
-    }
-    function press(btn) {
-      sound(freq(+btn.dataset.semi)); show(+btn.dataset.step, btn.dataset.sharp === "1", btn.getAttribute("aria-label"));
-      btn.classList.add("on"); setTimeout(() => btn.classList.remove("on"), 180);
-    }
-    for (let i = 0; i < whites; i++) {
-      const oct = Math.floor(i / 7), d = i % 7, b = document.createElement("button");
-      b.type = "button"; b.className = "k w" + (i >= 10 ? " x2" : "");
-      b.dataset.semi = oct * 12 + WHITE_SEMI[d]; b.dataset.step = i; b.setAttribute("aria-label", NAMES[d]);
-      if (d === 0) b.textContent = "דו";
-      keys.appendChild(b);
-    }
-    // black keys sit between whites: after דו, רה, פה, סול, לה
-    for (let i = 0; i < whites - 1; i++) {
-      const d = i % 7; if (![0, 1, 3, 4, 5].includes(d)) continue;
-      const oct = Math.floor(i / 7), b = document.createElement("button");
-      b.type = "button"; b.className = "k b" + (i >= 9 ? " x2" : "");
-      b.dataset.semi = oct * 12 + WHITE_SEMI[d] + 1; b.dataset.step = i; b.dataset.sharp = "1";
-      b.setAttribute("aria-label", NAMES[d] + " דיאז");
-      b.style.left = `calc(10px + (100% - 20px) / ${whites} * ${i + 1})`;
-      keys.appendChild(b);
-    }
-    keys.addEventListener("pointerdown", (e) => { const b = e.target.closest(".k"); if (b) { e.preventDefault(); press(b); } });
-    keys.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.closest(".k")) { e.preventDefault(); press(e.target.closest(".k")); } });
-    // on a phone only the first ten white keys show, so the black keys follow that width
-    const mq = matchMedia("(max-width: 620px)");
-    function fit() { const n = mq.matches ? 10 : 14; keys.style.setProperty("--whites", n);
-      keys.querySelectorAll(".k.b").forEach((b) => { const i = +b.dataset.step; b.style.left = `calc(${mq.matches ? 6 : 10}px + (100% - ${mq.matches ? 12 : 20}px) / ${n} * ${i + 1})`; }); }
-    fit(); mq.addEventListener ? mq.addEventListener("change", fit) : mq.addListener(fit);
-  })();
+  Instruments.mount(KIND, { visual: $("visual"), control: $("play"), last: $("last"), name: $("name") });
 
-  const PRICE = { "פסנתר": "150", "גיטרה": "150", "עוד לא בטוחים": "150 עד 170" };
+  const ADULT = Math.max(...I.prog.map((x) => x[2]).slice(0, 2));
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "מאיה · פסנתר וגיטרה", subtitle: "עונה מיד, גם באמצע שיעור", initial: "מ", launcher: "לקבוע שיעור ניסיון",
-    greet: "היי, כאן מאיה.\nכמה שאלות קצרות, ואחזור אליכם לקבוע שיעור ניסיון.",
+    name: `${I.teacher.split(" ")[0]} · ${I.label}`, subtitle: "עונה מיד, גם באמצע שיעור", initial: I.initial, launcher: "לקבוע שיעור ניסיון",
+    greet: `היי, כאן ${I.teacher.split(" ")[0]}.\nכמה שאלות קצרות על שיעורי ${I.label}, ואחזור אליכם לקבוע שיעור ניסיון.`,
     steps: [
-      { key: "instrument", label: "כלי", ask: "על מה רוצים לנגן?", chips: ["פסנתר", "גיטרה", "עוד לא בטוחים"] },
+      { key: "style", label: "סגנון", ask: `מה הכי מעניין אתכם ב${I.label}?`, chips: I.styles },
       { key: "who", label: "מי לומד", ask: "מי לומד?", chips: ["ילד/ה, 6 עד 9", "ילד/ה, 10 עד 14", "נוער", "מבוגר/ת"] },
       { key: "level", label: "ניסיון", ask: "יש ניסיון קודם?", chips: ["מתחילים מאפס", "מנגנים קצת", "ממשיכים"] },
-      { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: ["בסטודיו", "אצלנו בבית"] },
+      { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: I.where || ["בסטודיו", "אצלנו בבית"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
-    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור של 45 דקות עולה בדרך כלל ${d.who === "מבוגר/ת" ? "170" : PRICE[d.instrument] || "150"} ₪. מתחילים בשיעור ניסיון של 30 דקות.\nלחצו למטה, ואחזור אליכם לקבוע.`,
-    summary: (d) => `פנייה מהאתר (דמו מורה לנגינה)\nכלי: ${d.instrument}\nמי לומד: ${d.who}\nניסיון: ${d.level}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור ${I.label} של 45 דקות עולה בדרך כלל ${d.who === "מבוגר/ת" ? ADULT : I.prog[0][2]} ₪. מתחילים בשיעור ניסיון של 30 דקות.\nלחצו למטה, ואחזור אליכם לקבוע.`,
+    summary: (d) => `פנייה מהאתר (דמו מורה ל${I.label})\nכלי: ${I.label}\nסגנון: ${d.style}\nמי לומד: ${d.who}\nניסיון: ${d.level}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
-  document.querySelectorAll("[data-instrument]").forEach((b) => b.addEventListener("click", () => bot.open({ instrument: b.dataset.instrument })));
-  document.querySelectorAll("[data-who]").forEach((b) => b.addEventListener("click", () => bot.open({ who: b.dataset.who })));
-  document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => bot.open({ level: b.dataset.level })));
-  Guides.load("../shared/guides/music.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+  $("ph-msg").firstChild.textContent = `פנייה מהאתר (דמו מורה ל${I.label})\nכלי: ${I.label}\nסגנון: ${I.styles[0]}\nמי לומד: ילד/ה, 6 עד 9\nניסיון: מתחילים מאפס\nאיפה: בסטודיו\nשם: שירן כהן\nטלפון: 052-7654321`;
+  // the lessons: the kids' one and the styles open the chat with the answer in; the adults' one, with "מבוגר/ת"
+  document.querySelectorAll(".programme .item").forEach((b) => b.addEventListener("click", () => {
+    const n = +b.dataset.n; bot.open(n === 0 ? { who: "ילד/ה, 6 עד 9" } : n === 1 && KIND === "piano" ? { who: "מבוגר/ת" } : {});
+  }));
+  Guides.load(`../shared/guides/music-${KIND}.json`, document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>
