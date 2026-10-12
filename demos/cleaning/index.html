@@ -278,6 +278,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="eyebrow">טיפים מהשטח, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
@@ -315,6 +322,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/estimate.js"></script>
 <script>
@@ -371,6 +379,7 @@
     cta: "לפתוח פנייה עם זה",
     onAsk: (prefill) => bot.open(prefill),
   });
+  Guides.load("../shared/guides/cleaning.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

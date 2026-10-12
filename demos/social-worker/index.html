@@ -314,6 +314,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>שאלות ותשובות</h2><p>מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap">
       <div class="head"><h2>מה יעל רואה בטלפון</h2><p>נסו את הצ׳אט, והטלפון יתעדכן.</p></div>
@@ -355,12 +362,13 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "social-worker" });
   const CRISIS = "במצב חירום או מחשבות על פגיעה עצמית: ער״ן 1201, או מד״א 101.";
   const WHEN = { "בוקר": "בשעות הבוקר", "אחר הצהריים": "אחר הצהריים", "ערב": "בשעות הערב" };
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "יעל שחר", subtitle: "עבודה סוציאלית קלינית", initial: "י", launcher: "לתאם שיחה",
     greet: "היי, כאן יעל. כמה שאלות קצרות כדי לתאם שיחת טלפון.\nאין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.\n" + CRISIS,
@@ -378,6 +386,7 @@
     note: "הדגמה: השאלות קבועות מראש. שום פרט לא נשמר באתר, הפנייה נשלחת רק בוואטסאפ.",
     onDone: LeadPhone("#ph-msg"),
   });
+  Guides.load("../shared/guides/social-worker.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

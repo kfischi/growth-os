@@ -3,6 +3,8 @@
 // render() escapes every value, so whatever the owner or the model typed can't break the page.
 import { israeliPhone } from "../leads.mjs";
 import { localBusiness } from "./schema.mjs";
+// The trade's guides (shared with the plumber demo): general know-how, no prices or promises of the owner.
+import GUIDES from "../../../shared/guides/plumber.json" with { type: "json" };
 export { GUIDE } from "./plumber-guide.mjs";
 //
 // Two modes:
@@ -111,6 +113,29 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @param opts.now       Date, for the "updated" line
  * @returns {{ "index.html": string, "privacy.html": string, "accessibility.html": string }}
  */
+// One guide item as plain HTML (<details> opens without JS). Every text is escaped.
+const GUIDE_KIND = { now: "דחוף", tip: "טיפ", faq: "שאלה נפוצה" };
+function guideItem(it) {
+  const body = [
+    ...(it.a ? String(it.a).split("\n").map((l) => `<p>${h(l)}</p>`) : []),
+    it.steps ? `<ol>${it.steps.map((x) => `<li>${h(x)}</li>`).join("")}</ol>` : "",
+    it.warn ? `<p class="gd-warn">${h(it.warn)}</p>` : "",
+  ].join("");
+  return `<details id="g-${h(it.id)}"><summary><span class="gd-kind${it.kind === "now" ? " now" : ""}">${GUIDE_KIND[it.kind] || ""}</span><span>${h(it.q)}</span></summary><div class="gd-body">${body}</div></details>`;
+}
+// Questions and answers for Google: the tips and the common questions, as text.
+export function faqSchema(items) {
+  return {
+    "@context": "https://schema.org", "@type": "FAQPage",
+    mainEntity: items.filter((it) => it.kind !== "now").map((it) => ({
+      "@type": "Question", name: it.q,
+      acceptedAnswer: { "@type": "Answer", text: [it.a, ...(it.steps || []), it.warn].filter(Boolean).join(" ") },
+    })),
+  };
+}
+// Opens the item a link points to (#g-<id>), also in browsers that don't do it on their own.
+const GUIDE_JS = `(function(){function o(){var m=/^#g-([\\w-]+)$/.exec(location.hash);if(!m)return;var d=document.getElementById("g-"+m[1]);if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView({block:"start"});}}addEventListener("hashchange",o);o();})();`;
+
 export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, now = new Date() } = {}) {
   const draft = mode === "draft";
   if (!draft) {
@@ -215,7 +240,7 @@ ${robots}<meta property="og:type" content="website">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>${CSS}${draft ? DRAFT_CSS : ""}</style>
+<style>${CSS}${GUIDE_CSS}${draft ? DRAFT_CSS : ""}</style>
 </head>
 <body>
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
@@ -293,6 +318,16 @@ ${ba}
   </div>
 </section>
 
+<section class="guides-sec" id="guides">
+  <div class="wrap">
+    <div class="head"><h2>מה עושים עד שמגיעים</h2><span class="mono">ועוד טיפים ושאלות שחוזרות</span></div>
+    <div class="gd">
+      ${GUIDES.items.filter((it) => it.kind === "now").map(guideItem).join("\n      ")}
+    </div>
+    <p class="gd-more"><a href="${draft ? "#" : "guides.html"}">לכל הטיפים והשאלות (${GUIDES.items.length})</a></p>
+  </div>
+</section>
+
 <section class="area">
   <div class="wrap row">
     <div>
@@ -323,7 +358,8 @@ ${video ? `<script>${REEL_JS}</script>
     steps: [
       { key: "issue", label: "תקלה", ask: "מה צריך?", chips: ${js(chips)} },
       { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
-      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"],
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "leak", text: "עד שנגיע: סגרו את הברז הראשי. אם המים קרובים לחשמל, הורידו קודם את המפסק בלוח." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "ישוב")} },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
@@ -347,14 +383,14 @@ ${video ? `<script>${REEL_JS}</script>
 `;
 
   const contact = callLocal ? `<a href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : "";
-  const legal = (title, body) => `<!doctype html>
+  const legal = (title, body, extraHead = "") => `<!doctype html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${h(title)} · ${h(name)}</title>
 ${robots}<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<style>${LEGAL_CSS}</style>
+<style>${LEGAL_CSS}</style>${extraHead}
 </head>
 <body>
 <main>
@@ -402,7 +438,17 @@ ${body}
 <p>אם משהו באתר לא נגיש לכם, נשמח לשמוע ולתקן. אפשר גם לפתוח קריאה בטלפון במקום בצ׳אט.</p>
 <p>אחראי נגישות: ${h(owner)}${contact ? " · " + contact : ""}</p>`);
 
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "contact.vcf": vcard(c) }) };
+  const guidesPage = legal("טיפים ושאלות נפוצות", `
+<p>מה עושים כשקורה משהו, איך מונעים את הפעם הבאה, ומה שואלים אותנו הכי הרבה. זה ידע כללי מהתחום. בכל מקרה של ספק, כתבו לנו.</p>
+<div class="gd">
+${GUIDES.items.map(guideItem).join("\n")}
+</div>
+<p><a class="gd-cta" href="./">לפתוח קריאה בצ׳אט</a></p>
+<script>${GUIDE_JS}</script>`, `
+<style>${GUIDE_CSS}</style>
+<script type="application/ld+json">${js(faqSchema(GUIDES.items))}</script>`);
+
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c) }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
@@ -609,6 +655,8 @@ const CSS = `
     .order .hide-sm { display: none; }
   }
   @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+  .guides-sec { background: #fff; }
+  .gd-more { margin: 16px 0 0; } .gd-more a { font-weight: 700; color: var(--blueprint); text-underline-offset: 4px; }
   .save-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: inherit; font-weight: 600; text-underline-offset: 4px; }
   .save-contact svg { width: 22px; height: 22px; flex: none; }
   .ba-sec { background: #fff; }
@@ -643,6 +691,27 @@ const DRAFT_CSS = `
   .ba .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: #eef2f9; border-radius: 0; }
   .ba.half > .ps.ph { padding-left: 50%; }
   .ba.half .ba-before > .ps.ph { padding-right: 50%; }
+`;
+
+// The guide items, on the main page and on guides.html. Fallbacks for the plainer legal pages.
+const GUIDE_CSS = `
+  .gd { display: grid; gap: 10px; }
+  .gd details { background: #fff; border: 1.5px solid var(--rule, #c9d4e6); border-radius: 6px; scroll-margin-top: 20px; }
+  .gd details[open] { border-color: var(--blueprint, #123a8c); }
+  .gd summary { list-style: none; display: flex; gap: 10px; align-items: baseline; padding: 14px 16px; cursor: pointer; font-weight: 700; font-size: 17px; line-height: 1.35; color: var(--ink, #0f1d3a); }
+  .gd summary::-webkit-details-marker { display: none; }
+  .gd summary::after { content: "+"; margin-inline-start: auto; font-weight: 400; font-size: 22px; line-height: 1; color: var(--ink-soft, #4b5873); }
+  .gd details[open] summary::after { content: "−"; }
+  .gd summary:focus-visible { outline: 3px solid var(--signal, #cc2e26); outline-offset: 2px; }
+  .gd-kind { flex: none; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #eef2f9; color: var(--ink, #0f1d3a); }
+  .gd-kind.now { background: var(--signal, #cc2e26); color: #fff; }
+  .gd-body { padding: 0 16px 16px; font-size: 16px; line-height: 1.65; color: var(--ink, #0f1d3a); }
+  .gd-body p { margin: 0 0 10px; }
+  .gd-body ol { margin: 0 0 12px; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 8px; }
+  .gd-body li { counter-increment: s; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .gd-body li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: var(--blueprint, #123a8c); color: #fff; }
+  .gd-warn { border-inline-start: 4px solid var(--signal, #cc2e26); padding: 8px 12px; background: #f3f6fb; }
+  .gd-cta { display: inline-block; margin-top: 18px; padding: 12px 18px; border-radius: 4px; background: var(--signal, #cc2e26); color: #fff; font-weight: 700; text-decoration: none; }
 `;
 
 const LEGAL_CSS = `

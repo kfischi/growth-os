@@ -368,6 +368,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה עושים עד שמגיעים, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap">
       <div class="head"><h2>מה הטכנאי רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
@@ -408,6 +415,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/estimate.js"></script>
 <script>
@@ -420,7 +428,8 @@
     steps: [
       { key: "appliance", label: "מכשיר", ask: "איזה מכשיר עושה בעיות?", chips: Object.keys(RANGES) },
       { key: "photo", label: "תמונה", ask: "יש תמונה של המכשיר או של מדבקת הדגם? כך מגיעים עם החלק הנכון.", photo: true },
-      { key: "fault", label: "תקלה", ask: (d) => `מה קורה עם ה${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"] },
+      { key: "fault", label: "תקלה", ask: (d) => `מה קורה עם ה${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"],
+        tip: { when: (v) => v === "דולף", id: "washer-flood", text: "בינתיים: כבו את המכשיר, נתקו אותו בידיים יבשות וסגרו את ברז המים שלו." } },
       { key: "code", label: "קוד שגיאה", ask: "יש קוד על הצג? כתבו אותו, למשל E21.\nאם אין, כתבו ״אין״.", input: "text", placeholder: "E21 או אין" },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -459,6 +468,7 @@
     cta: "לפתוח פנייה עם זה",
     onAsk: (prefill) => bot.open(prefill),
   });
+  Guides.load("../shared/guides/appliance.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

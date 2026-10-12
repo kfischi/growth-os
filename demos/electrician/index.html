@@ -250,6 +250,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="dymo">מה עושים עד שמגיעים, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
@@ -287,6 +294,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/estimate.js"></script>
 <script>
@@ -297,9 +305,11 @@
     name: "רז · חשמלאי", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ר", launcher: "תקלת חשמל?",
     greet: "היי, כאן רז.\nכמה שאלות קצרות, והקריאה תגיע אליי לוואטסאפ.",
     steps: [
-      { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES },
+      { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES,
+        tip: { when: (v) => v === "ריח שרוף או ניצוצות", id: "burning", text: "הורידו עכשיו את המפסק הראשי, ואל תגעו בשקע או במכשיר." } },
       { key: "photo", label: "תמונה", ask: "יש תמונה של הלוח או של מה שקרה? זה עוזר להבין לפני שמגיעים.", photo: true },
-      { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"] },
+      { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"],
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם קופץ מיד, עצרו." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
@@ -342,6 +352,7 @@
     cta: "לפתוח פנייה עם זה",
     onAsk: (prefill) => bot.open(prefill),
   });
+  Guides.load("../shared/guides/electrician.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

@@ -216,7 +216,7 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).sort();
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
@@ -406,6 +406,31 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.ok(site["index.html"].includes('href="contact.vcf"'));
   assert.ok(!("contact.vcf" in P.render(SAMPLE, { mode: "draft" })), "not in a draft");
   assert.match(P.HEADERS, /\/contact\.vcf\n  Content-Type: text\/vcard; charset=utf-8/);
+}
+
+// --- guides: the urgent ones on the main page, everything on guides.html with FAQPage for Google
+{
+  const G = JSON.parse((await import("node:fs")).readFileSync(new URL("../../demos/shared/guides/plumber.json", import.meta.url), "utf8"));
+  const site = P.render(SAMPLE, { mode: "site" });
+  const now = G.items.filter((x) => x.kind === "now");
+  assert.ok(now.every((x) => site["index.html"].includes(`id="g-${x.id}"`)), "the urgent guides are on the main page");
+  assert.ok(site["index.html"].includes('href="guides.html"'));
+  assert.ok(G.items.every((x) => site["guides.html"].includes(`id="g-${x.id}"`)));
+  const m = /<script type="application\/ld\+json">(.*?)<\/script>/s.exec(site["guides.html"]);
+  const faq = JSON.parse(m[1]); assert.equal(faq["@type"], "FAQPage"); assert.equal(faq.mainEntity.length, G.items.filter((x) => x.kind !== "now").length);
+  assert.ok(!("guides.html" in P.render(SAMPLE, { mode: "draft" })), "not in a draft");
+  assert.ok(site["index.html"].includes('id: "leak"'), "the chat links to the leak guide when it's urgent");
+  // every item in every trade has what the page needs
+  const dir = new URL("../../demos/shared/guides/", import.meta.url);
+  for (const f of (await import("node:fs")).readdirSync(dir)) {
+    const g = JSON.parse((await import("node:fs")).readFileSync(new URL(f, dir), "utf8"));
+    const ids = new Set();
+    for (const it of g.items) {
+      assert.ok(/^[a-z0-9-]+$/.test(it.id) && !ids.has(it.id), f + ": id " + it.id); ids.add(it.id);
+      assert.ok(["now", "tip", "faq"].includes(it.kind) && it.q && (it.a || it.steps), f + ": " + it.id);
+      assert.ok(!/₪|ש״ח/.test(JSON.stringify(it)), f + ": no prices in general guides");
+    }
+  }
 }
 
 console.log("all site builder tests passed");

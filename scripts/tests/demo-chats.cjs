@@ -2,7 +2,7 @@
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '../../demos'), CLIENTS = path.join(__dirname, '../../clients');
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.png': 'image/png' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.png': 'image/png', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
   const u = decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html');
   const base = u.startsWith('/clients/') ? CLIENTS : ROOT; const f = path.join(base, u.replace(/^\/clients\//, '/'));
@@ -69,6 +69,35 @@ async function photoStep(b) {
     if (!ok) bad++;
     console.log(`${ok ? 'OK ' : 'BAD'} photo client (capture) done=${done} sent=${!!sentLead} photo=${bytes ? bytes.length + 'B ' + dims.join('x') : 'none'} errs=${errs.length}${errs.length ? ' ' + errs[0] : ''}`);
     await p.close(); }
+  return bad;
+}
+// The guides: every page loads its trade's items; #g-<id> opens one; the plumber's chat links to it when urgent.
+async function guidesCheck(b) {
+  let bad = 0;
+  for (const d of DEMOS) {
+    const p = await b.newPage({ viewport: { width: 390, height: 844 } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+    await p.route(/fonts\.|wa\.me/, (r) => r.abort());
+    const data = JSON.parse(fs.readFileSync(path.join(ROOT, 'shared/guides', d + '.json'), 'utf8'));
+    const last = data.items.at(-1).id;
+    await p.goto(`http://localhost:8790/${d}/index.html#g-${last}`); await p.waitForTimeout(900);
+    const n = await p.$$eval('#guides details', (x) => x.length);
+    const open = await p.$eval(`#g-${last}`, (x) => x.open).catch(() => false);
+    let tip = 'n/a';
+    if (d === 'plumber') {
+      await p.goto(`http://localhost:8790/${d}/index.html`); await p.waitForTimeout(500);
+      await p.click('.lb-launch'); await p.waitForTimeout(2200);
+      await p.click('.lb-panel .lb-chips button >> nth=0'); await p.waitForTimeout(1800); // the issue
+      await p.click('.lb-panel .lb-chips button:has-text("בלי תמונה")'); await p.waitForTimeout(1800);
+      await p.click('.lb-panel .lb-chips button:has-text("עכשיו")'); await p.waitForTimeout(2600);
+      const link = await p.$('.lb-panel .lb-tip');
+      if (link) { await link.click(); await p.waitForTimeout(900); }
+      tip = link && !(await p.$('.lb-panel.open')) && (await p.$eval('#g-leak', (x) => x.open)) ? 'ok' : 'BAD';
+    }
+    const ok = n === data.items.length && open && tip !== 'BAD' && !errs.length;
+    if (!ok) bad++;
+    console.log(`${ok ? 'OK ' : 'BAD'} guides ${d.padEnd(14)} items=${n}/${data.items.length} hash=${open} chatTip=${tip}${errs.length ? ' ' + errs[0] : ''}`);
+    await p.close();
+  }
   return bad;
 }
 // The price calculator: every answer gives a sum (no NaN, never empty), and the button opens the chat
@@ -138,6 +167,7 @@ const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renov
       await p.close();
     }
   }
+  bad += await guidesCheck(b);
   bad += await estimates(b);
   bad += await photoStep(b);
   console.log(bad ? `${bad} FAILED` : 'ALL OK'); await b.close(); server.close(); process.exit(bad ? 1 : 0);

@@ -294,6 +294,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>שאלות ותשובות</h2><span class="small">מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap">
       <div class="head"><h2>מה המטפלת רואה</h2><span class="small">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
@@ -338,11 +345,12 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "psychologist" });
   const CRISIS = "במצב חירום או מחשבות על פגיעה עצמית: ער״ן 1201, או מד״א 101.";
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "תמר גלעד · פסיכולוגית", subtitle: "חוזרת אליכם לשיחת היכרות", initial: "ת", launcher: "לתאם שיחה",
     greet: "שלום, כאן תמר. כמה שאלות קצרות כדי לתאם שיחת היכרות.\nאין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.\n" + CRISIS,
@@ -360,6 +368,7 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לקליניקה שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
+  Guides.load("../shared/guides/psychologist.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

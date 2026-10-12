@@ -271,6 +271,12 @@
       </div>
     </div>
   </section>
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">טיפים מהשטח, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -281,6 +287,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "trainer" });
@@ -303,6 +310,7 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
   });
   document.querySelectorAll("[data-goal]").forEach((b) => b.addEventListener("click", () => bot.open({ goal: b.dataset.goal })));
+  Guides.load("../shared/guides/trainer.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

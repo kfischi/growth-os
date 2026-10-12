@@ -16,7 +16,9 @@
         chips?: [string | {label, value}],
         input?: "text" | "tel", placeholder?, optional?,
         photo?: true, skip?: "בלי תמונה",    // photo: the visitor may attach one photo (shrunk here), or skip
-        show?: (data) => boolean }            // show: ask this step only when it returns true
+        show?: (data) => boolean,             // show: ask this step only when it returns true
+        tip?: { when: (value) => boolean, text: "…", id: "leak" } }  // tip: after that answer, what to do now,
+                                                                     // with a link to the page's guide #g-<id> (shared/guides.js)
     ],
     summary: (data) => "text for WhatsApp",
     closing: (data) => "last bot message before the WhatsApp button",
@@ -55,6 +57,7 @@
   .lb-head small{opacity:.8;font-size:12.5px}
   .lb-head .lb-x{margin-inline-start:auto;width:34px;height:34px;border:0;border-radius:var(--bot-radius-pill,999px);background:transparent;color:inherit;font-size:22px;cursor:pointer}
   .lb-body{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .lb-tip{color:inherit;font-weight:700;text-underline-offset:3px}
   .lb-msg{max-width:86%;padding:10px 13px;border-radius:var(--bot-radius-msg,14px);white-space:pre-line;align-self:flex-start;background:var(--bot-them);color:var(--bot-them-fg,var(--bot-fg));animation:lbIn .2s ease-out}
   .lb-msg.me{align-self:flex-end;background:var(--bot-me);color:var(--bot-me-fg)}
   .lb-card{align-self:stretch;border:1px solid var(--bot-line);border-radius:var(--bot-radius-msg,14px);padding:12px 14px;background:var(--bot-card,var(--bot-bg));font-size:14px}
@@ -165,7 +168,15 @@
         data[s.key] = value;
         clearFoot();
         step++;
+        if (s.tip && s.tip.when(value)) return botSay(s.tip.text, () => { tipLink(s.tip); ask(); });
         ask();
+      }
+      // A link to the full guide on the page; the chat closes so the guide is in view, and keeps its place.
+      function tipLink(t) {
+        if (!t.id || !document.getElementById("g-" + t.id)) return;
+        const m = el("div", "lb-msg"); const a = el("a", "lb-tip", t.link || "המדריך המלא, צעד אחרי צעד");
+        a.href = "#g-" + t.id; a.addEventListener("click", () => close());
+        m.append(a); body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
       }
 
       // The photo: shrunk here to 1280px, JPEG, under 900KB, which also drops the location data.

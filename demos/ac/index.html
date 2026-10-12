@@ -245,6 +245,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה עושים עד שמגיעים, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap">
       <div class="head"><h2>מה הטכנאי רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
@@ -284,6 +291,7 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/estimate.js"></script>
 <script>
@@ -294,7 +302,8 @@
     name: "אלון · מיזוג אוויר", subtitle: "חוזרים אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?",
     greet: "היי, כאן אלון.\nארבע שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
-      { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES) },
+      { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES),
+        tip: { when: (v) => v === "מטפטף מים", id: "dripping", text: "בינתיים: כבו את המזגן ושימו מגבת מתחת. בדרך כלל זה ניקוז סתום." } },
       { key: "photo", label: "תמונה", ask: "יש תמונה של המזגן או של מדבקת הדגם? כך מגיעים עם החלק הנכון.", photo: true },
       { key: "unit", label: "מזגן", ask: "איזה מזגן?", chips: ["עילי בחדר", "עילי בסלון", "מיני מרכזי", "מרכזי"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: כפר סבא" },
@@ -332,6 +341,7 @@
     cta: "לפתוח פנייה עם זה",
     onAsk: (prefill) => bot.open(prefill),
   });
+  Guides.load("../shared/guides/ac.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

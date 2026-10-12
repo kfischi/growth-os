@@ -281,6 +281,13 @@
   </div>
 </section>
 
+<section class="guides" id="guides">
+  <div class="wrap">
+    <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה עושים עד שמגיעים, ואיך מונעים את הפעם הבאה</span></div>
+    <div data-guides></div>
+  </div>
+</section>
+
 <section class="area">
   <div class="wrap row">
     <div>
@@ -303,6 +310,7 @@
 <script src="../shared/reel.js"></script>
 <script src="../shared/estimate.js"></script>
 <script src="../shared/status.js"></script>
+<script src="../shared/guides.js"></script>
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
@@ -312,7 +320,8 @@
     steps: [
       { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
       { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
-      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"],
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "leak", text: "עד שנגיע: סגרו את הברז הראשי. אם המים קרובים לחשמל, הורידו קודם את המפסק בלוח." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
@@ -352,5 +361,6 @@
   });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
 </script>
+<script>Guides.load("../shared/guides/plumber.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });</script>
 </body>
 </html>
