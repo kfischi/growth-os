@@ -82,7 +82,21 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     // Waits for the next question; on a timeout, says which one and what the page showed instead.
     const nextQ = (re) => p.waitForFunction((src) => new RegExp(src).test(document.querySelector("#guide .q").textContent), re.source, { timeout: 30000 })
       .catch(async () => { throw new Error(`waited for ${re} but the question is "${await p.textContent("#guide .q").catch(() => "?")}", log ends "${(await p.textContent("#log")).slice(-80)}"`); });
-    assert.match(await p.textContent("#guide .q"), /איך קוראים לעסק/);
+    // first the design: a look, then a palette; the draft next to the chat changes with each tap
+    assert.match(await p.textContent("#guide .q"), /איך האתר ייראה/);
+    assert.equal(await p.locator("#guide .look").count(), 3);
+    assert.equal(await p.isHidden("#design"), true, "the same picker isn't shown twice");
+    await p.click('#guide .look[data-look="certificate"]');
+    await p.waitForSelector('#guide .look[data-look="certificate"][aria-pressed=true]');
+    await p.click('#guide .pal[data-palette="plum"]');
+    await p.waitForSelector('#guide .pal[data-palette="plum"][aria-pressed=true]');
+    assert.equal(T.ls_drafts.at(-1).content.look, "certificate"); assert.equal(T.ls_drafts.at(-1).content.palette, "plum");
+    await p.frameLocator("#frame").locator("body.look-certificate").waitFor({ state: "attached", timeout: 8000 });
+    assert.equal(await overflow(), false);
+    await p.screenshot({ path: `/tmp/qa-page/builder-design-${w}.png` }).catch(() => {});
+    await p.click("#guide > .btn");
+    await nextQ(/איך קוראים לעסק/);
+    assert.equal(await p.isHidden("#design"), false, "after the question, the design stays one tap away");
     await p.fill("#guide .other input", "אורן מים"); await p.click("#guide .other button");
     await nextQ(/באיזה אזור/);
     await p.click("#guide .chip >> nth=0"); // the first region

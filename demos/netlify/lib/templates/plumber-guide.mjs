@@ -38,6 +38,7 @@ export const GUIDE = {
   ],
 
   steps: [
+    { id: "style", type: "style", ask: "קודם כול, איך האתר ייראה? בוחרים תבנית וצבעים, ורואים את זה מיד באתר. אפשר להחליף בכל רגע." },
     { id: "business_name", type: "text", field: "business_name", ask: "איך קוראים לעסק? כמו שהלקוחות מכירים אתכם.", placeholder: "למשל: אורן מים" },
     { id: "region", type: "region", ask: "באיזה אזור אתם עובדים?" },
     { id: "towns", type: "towns", ask: "לאילו ישובים אתם מגיעים? סמנו, ומה שחסר תוסיפו." },

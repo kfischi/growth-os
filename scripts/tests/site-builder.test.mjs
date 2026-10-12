@@ -100,6 +100,19 @@ page = await draftPage(new Request(`${ORIGIN}/draft/${D.id}?a=${B.adminPreviewTo
 const evil = P.render({ ...SAMPLE, business_name: '<img src=x onerror=alert(1)>', services: [{ name: "</script><script>alert(2)</script>", detail: "", time: "", price: "1 ₪" }] }, { mode: "site", leads: null });
 assert.ok(!evil["index.html"].includes("<img src=x") && !evil["index.html"].includes("</script><script>alert(2)"), "owner text can't inject markup or close the script");
 assert.throws(() => P.render({ ...SAMPLE, intro: "" }, { mode: "site" }), /missing/);
+// Looks: every look and palette renders; an unknown one falls back to the first; the seal never invents a fact.
+for (const [lid, L] of Object.entries(P.LOOKS)) for (const pid of Object.keys(L.palettes)) {
+  const html = P.render({ ...SAMPLE, look: lid, palette: pid }, { mode: "site" })["index.html"];
+  assert.match(html, new RegExp(`<body class="look-${lid}">`)); assert.ok(html.includes(L.palettes[pid].accent), lid + " " + pid);
+}
+assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" })["index.html"], /<body class="look-blueprint">/);
+assert.match(P.render({ ...SAMPLE, look: "blueprint", palette: "teal" }, { mode: "site" })["index.html"], /--accent: #123a8c/, "a palette of another look falls back");
+{
+  const cert = (c) => P.render({ ...SAMPLE, ...c, look: "certificate" }, { mode: "site" })["index.html"].match(/<div class="seal"[\s\S]*?<\/div>/)[0];
+  assert.match(cert({ warranty: "12 חודשים" }), /12 חודשים/);
+  assert.ok(!/אחריות/.test(cert({ warranty: "", years: "" })), "no warranty on the seal unless the owner gave one");
+  assert.match(P.render({ ...SAMPLE, look: "van", business_name: "<i>x</i>" }, { mode: "site" })["index.html"], /vp-name">&lt;i&gt;x&lt;\/i&gt;/);
+}
 assert.match(P.render({ ...SAMPLE, years: "3" }, { mode: "site" })["index.html"], /<b>3 שנים<\/b>/);
 assert.match(P.render({ ...SAMPLE, years: "1" }, { mode: "site" })["index.html"], /שנה אחת · |<b>שנה אחת<\/b>/);
 assert.match(P.chatFacts(SAMPLE), /12 שנה בתחום/);
@@ -308,8 +321,17 @@ r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); asse
   cred = ""; ai.queue.length = 0;
   r = await J(await req("start", { body: { name: "דנה", phone: "0541234567", consent: true }, ip: "8.8.8.1" }));
   cred = r.id + ":" + r.key; const Q = T.ls_drafts.find((x) => x.id === r.id);
-  assert.equal(r.state.guide.steps[0].field, "business_name"); assert.match(r.state.greeting, /בוחרים תשובה/);
+  assert.equal(r.state.guide.steps[0].type, "style"); assert.equal(r.state.guide.steps[1].field, "business_name"); assert.match(r.state.greeting, /בוחרים תשובה/);
   const calls = aiCalls.length;
+  // the design: a look and one of its palettes, checked against the template's looks, no AI
+  assert.equal(r.state.looks.length, 3); assert.deepEqual(r.state.style, { look: "blueprint", palette: "blue" });
+  r = await J(await req("answer", { body: { style: { look: "van", palette: "teal" }, rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 200, JSON.stringify(r)); assert.deepEqual(r.changed, ["style"]); assert.deepEqual(r.state.style, { look: "van", palette: "teal" });
+  assert.equal(Q.content.look, "van"); assert.equal(Q.content.palette, "teal");
+  r = await J(await req("answer", { body: { style: { look: "van", palette: "blue" }, rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 422, "a palette of another look"); assert.equal(Q.content.palette, "teal");
+  r = await J(await req("answer", { body: { style: { look: "__proto__", palette: "x" }, rev: Q.rev }, ip: "8.8.8.1" }));
+  assert.equal(r.status, 422); assert.equal(Q.content.look, "van");
   r = await J(await req("answer", { body: { set: [{ field: "business_name", value: "דנה צנרת" }], rev: Q.rev }, ip: "8.8.8.1" }));
   assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(Q.content.business_name, "דנה צנרת"); assert.deepEqual(r.changed, ["business_name"]);
   r = await J(await req("answer", { body: { set: [{ field: "area", value: P.GUIDE.regions[2].label }], towns: P.GUIDE.regions[2].towns, rev: Q.rev }, ip: "8.8.8.1" }));

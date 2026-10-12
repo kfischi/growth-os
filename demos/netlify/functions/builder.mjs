@@ -2,7 +2,8 @@
 //   POST   /api/builder/start     { name, phone, consent, company? }      -> { id, key, state }
 //   GET    /api/builder/state                                             -> { state }
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
-//   POST   /api/builder/answer    { set, services, towns, rev }   an answer picked in the questionnaire, no AI -> { state }
+//   POST   /api/builder/answer    { set, services, towns, style, rev }   an answer picked in the questionnaire,
+//                                 or the design ({ look, palette }), no AI -> { state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
 //   DELETE /api/builder/photo?slot=portrait                               -> { state }
 //   POST   /api/builder/video     body: the first frame (JPEG/WebP) then the MP4; x-poster-length: frame bytes -> { state }
@@ -104,6 +105,7 @@ export default async (req, context) => {
         set: Array.isArray(body.set) ? body.set.slice(0, 10).filter((x) => x && typeof x.field === "string") : [],
         services: Array.isArray(body.services) ? body.services : null,
         towns: Array.isArray(body.towns) ? body.towns.slice(0, 40) : null,
+        style: body.style && typeof body.style === "object" ? { look: String(body.style.look || ""), palette: String(body.style.palette || "") } : null,
       };
       const { content, changed, errors } = applyUpdate(templateOf(d), d.content, update);
       if (errors.length) return json({ error: "bad_answer", errors, state: stateOf(d) }, 422);

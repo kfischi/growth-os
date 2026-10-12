@@ -98,6 +98,22 @@
   .prow input[type=text] { min-height: 40px; padding: 6px 10px; }
   .guide .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
   .linkish.skip { font-size: 14px; color: var(--slate); }
+  /* the design: three looks, each with its palettes */
+  .looks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .look { display: grid; gap: 6px; align-content: start; text-align: start; padding: 10px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; cursor: pointer; }
+  .look b { font-size: 15px; line-height: 1.2; }
+  .look small { font-size: 12px; color: var(--slate); line-height: 1.35; }
+  .look .mini { display: flex; gap: 3px; }
+  .look .mini i { flex: 1; height: 14px; border-radius: 3px; }
+  .look[aria-pressed=true] { border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint); }
+  .pals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .pal { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px 6px 8px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+  .pal .sw { display: inline-flex; width: 30px; height: 22px; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .pal .sw i { flex: 1; }
+  .pal[aria-pressed=true] { border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint); }
+  .styling .looks, .styling .pals { opacity: .55; pointer-events: none; }
+  .design-q { font-size: 13px; color: var(--slate); margin: 0 0 6px; }
+  @media (max-width: 420px) { .look small { display: none; } }
   .compose { border-top: 1px solid var(--line); padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
   .compose textarea { min-height: 48px; max-height: 140px; resize: none; }
   .compose .btn { padding-inline: 16px; }
@@ -207,6 +223,10 @@
       <textarea id="msg" rows="1" maxlength="800" placeholder="או כתבו לנו חופשי…" enterkeyhint="send"></textarea>
       <button class="btn" type="submit" id="send">שליחה</button>
     </form>
+    <details class="photos" id="design">
+      <summary>עיצוב: תבנית וצבעים</summary>
+      <div id="designBox" style="margin-top:10px"></div>
+    </details>
     <details class="photos" id="photos">
       <summary>תמונות וסרטון</summary>
       <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטון שלנו, ומותר לפרסם אותם באתר.</span></label>
@@ -370,6 +390,8 @@
     ret.hidden = !s.returnNote; ret.textContent = s.returnNote ? 'הערה מאיתנו: ' + s.returnNote : '';
     // compose and photos
     $('#compose').hidden = !editable; $('#photos').hidden = !editable;
+    $('#design').hidden = !editable || !s.looks;
+    if (s.looks) designPicker($('#designBox'));
     $('#rights').checked = $('#rights').checked || s.photoRights;
     paintGuide();
     paintSlots(editable);
@@ -478,6 +500,7 @@
   function stepDone(st, s, done) {
     const c = s.content;
     if (done.has(st.id)) return true;
+    if (st.type === 'style') return false;
     if (st.type === 'text' || st.type === 'pick') return Boolean(String(c[st.field] || '').trim());
     if (st.type === 'region') return Boolean(String(c.area || '').trim());
     if (st.type === 'towns') return (c.towns || []).length > 0;
@@ -513,6 +536,48 @@
     b.addEventListener('click', onClick); return b;
   }
 
+  // The design: a look, then one of its palettes. Each tap saves it and reloads the draft next to the chat.
+  let styleBusy = false;
+  async function setStyle(look, palette) {
+    if (styleBusy) return;
+    styleBusy = true; document.body.classList.add('styling');
+    const r = await call('answer', { body: { style: { look, palette }, rev: state.rev } });
+    styleBusy = false; document.body.classList.remove('styling');
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return; }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    paint();
+  }
+  function designPicker(box) {
+    box.textContent = '';
+    const cur = state.style, looks = state.looks;
+    const lookNow = looks.find((l) => l.id === cur.look) || looks[0];
+    box.append(el('p', 'design-q', 'תבנית'));
+    const grid = el('div', 'looks');
+    for (const l of looks) {
+      const b = el('button', 'look'); b.type = 'button'; b.dataset.look = l.id;
+      b.setAttribute('aria-pressed', String(l.id === lookNow.id));
+      const mini = el('span', 'mini'); mini.setAttribute('aria-hidden', 'true');
+      for (const c of l.palettes[0].swatch) { const i = el('i'); i.style.background = c; mini.append(i); }
+      b.append(mini, el('b', null, l.label), el('small', null, l.note));
+      b.addEventListener('click', () => { if (l.id !== cur.look) setStyle(l.id, l.palettes[0].id); });
+      grid.append(b);
+    }
+    box.append(grid, el('p', 'design-q', 'צבעים'));
+    const pals = el('div', 'pals');
+    for (const p of lookNow.palettes) {
+      const b = el('button', 'pal'); b.type = 'button'; b.dataset.palette = p.id;
+      b.setAttribute('aria-pressed', String(p.id === cur.palette));
+      const sw = el('span', 'sw'); sw.setAttribute('aria-hidden', 'true');
+      for (const c of p.swatch) { const i = el('i'); i.style.background = c; sw.append(i); }
+      b.append(sw, document.createTextNode(p.label));
+      b.addEventListener('click', () => { if (p.id !== cur.palette) setStyle(lookNow.id, p.id); });
+      pals.append(b);
+    }
+    box.append(pals);
+    return box;
+  }
+
   function paintGuide() {
     const s = state, g = s.guide;
     guideBox.textContent = '';
@@ -524,7 +589,18 @@
     guideBox.append(el('p', 'step', 'שאלה ' + (i + 1) + ' מתוך ' + steps.length), el('p', 'q', st.ask));
     const chips = el('div', 'chips');
 
-    if (st.type === 'text') {
+    if (st.type === 'style') {
+      if (!s.looks) { markDone('style'); return paintGuide(); }
+      $('#design').hidden = true; // the same picker is here in the question
+      const box = designPicker(el('div', 'design'));
+      const go = el('button', 'btn', 'ממשיכים'); go.type = 'button';
+      go.addEventListener('click', () => {
+        const l = s.looks.find((x) => x.id === s.style.look), p = l && l.palettes.find((x) => x.id === s.style.palette);
+        bubble('them', st.ask); bubble('me', (l ? l.label : '') + (p ? ', ' + p.label : ''));
+        markDone('style'); paint();
+      });
+      guideBox.append(box, go);
+    } else if (st.type === 'text') {
       guideBox.append(otherField(st.placeholder, (v) => answer(st, { set: [{ field: st.field, value: v }] }, v), 'שמירה'));
     } else if (st.type === 'pick') {
       for (const o of st.options) {

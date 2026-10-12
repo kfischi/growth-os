@@ -133,7 +133,7 @@ export function templateOf(d) {
 const clean = (s) => String(s ?? "").replace(/[\u0000-\u001f\u007f​-‏‪-‮<>]/g, " ").replace(/\s+/g, " ").trim();
 
 /**
- * Applies { set: [{field, value}], services: [...] | null, towns: [...] | null } to the content.
+ * Applies { set: [{field, value}], services: [...] | null, towns: [...] | null, style?: {look, palette} } to the content.
  * Bad values are not applied; each one comes back in errors as a Hebrew line the owner can read.
  */
 export function applyUpdate(t, content, update) {
@@ -175,6 +175,13 @@ export function applyUpdate(t, content, update) {
     if (long) errors.push(`${T.label}: "${long.slice(0, 20)}…" ארוך מדי.`);
     else if (list.length > T.max) errors.push(`${T.label}: עד ${T.max} ישובים.`);
     else { next.towns = list; changed.push("towns"); }
+  }
+  // The design: a look and one of its palettes (templates/looks.mjs), picked in the builder, never by the chat.
+  if (update && update.style && t.LOOKS) {
+    const { look, palette } = update.style;
+    const L = Object.hasOwn(t.LOOKS, look) ? t.LOOKS[look] : null;
+    if (!L || !Object.hasOwn(L.palettes, palette)) errors.push("העיצוב הזה לא קיים.");
+    else if (next.look !== look || next.palette !== palette) { next.look = look; next.palette = palette; changed.push("style"); }
   }
   return { content: next, changed, errors };
 }
@@ -269,6 +276,9 @@ export function publicState(d) {
     edit: editing(d) ? editState(d) : null,
     // The questionnaire (answers to pick from) while the site is being built, not while editing a live one.
     guide: !editing(d) && t.GUIDE ? t.GUIDE : null,
+    // The looks and palettes to pick from, and the current pick.
+    looks: t.catalog ? t.catalog() : null,
+    style: t.lookOf ? { look: t.lookOf(d.content).id, palette: t.lookOf(d.content).pid } : null,
     rev: d.rev,
   };
 }
@@ -313,6 +323,7 @@ const BUILD_ORDER = `Order of the conversation (skip what is already filled, see
 4. response_time: how fast they really get back to a customer. Then, in one question, the optional facts: hours, years, warranty.
 5. Propose headline_2 and intro from the facts.
 6. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. A "לפני" and an "אחרי" photo of the same job make a before/after slider on the site; offer it once, with a short ba_title. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
+The design (a look and its colours) is picked with the "עיצוב" buttons under the chat, not by you. If they ask to change colours or the layout, point them there.
 7. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
 After approval the content is locked; changes then go through us on WhatsApp.
 `;
@@ -322,7 +333,8 @@ const EDIT_ORDER = `The site is already live. The owner came back to change it.
 - After a change, say in one short sentence what changed, and that they see it on the page next to the chat.
 - Photos and the video: they replace them with the "תמונות" buttons under the chat. You may change the titles.
 - Nothing reaches the live site until they press "לפרסם את השינויים". When they say they're done, remind them to press it.
-- Something you can't do here (a new page, the design, the domain, the lead system): say we take care of it on WhatsApp.
+- The look and the colours: they change them with the "עיצוב" buttons under the chat.
+- Something you can't do here (a new page, the domain, the lead system): say we take care of it on WhatsApp.
 `;
 
 function systemPrompt(t, mode) {
