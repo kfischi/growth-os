@@ -6,7 +6,8 @@
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
 // POST  /api/leads  { link: "קבוצת השכונה" } -> { link }   |   { unlink: "k3p9" } -> { ok }   the owner's tagged links
 // POST  /api/leads  { available: "busy" | "free" | "auto", hours? } -> { availability }   the site's "available now" line
-import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS } from "../lib/leads.mjs";
+// POST  /api/leads  { testimonial: "<id>", hidden: true | false } -> { testimonial }   show or hide one on the site
+import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS, testimonialOn } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
 const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
@@ -24,7 +25,7 @@ export default async (req) => {
   const url = new URL(req.url);
   try {
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : null;
-    const linkAction = body && (body.link !== undefined || body.unlink !== undefined || body.available !== undefined);
+    const linkAction = body && (body.link !== undefined || body.unlink !== undefined || body.available !== undefined || body.testimonial !== undefined);
     if (req.method === "POST" && !linkAction) {
       if (!who.admin) return json({ error: "forbidden" }, 403);
       if (body.run === "reminders") return json(await runReminders());
@@ -44,6 +45,11 @@ export default async (req) => {
     const client = who.admin ? await getClient(slug) : who.client;
     if (!client) return json({ error: "unknown_client" }, 404);
 
+    if (linkAction && body.testimonial !== undefined) {
+      if (!/^[0-9a-f-]{36}$/.test(String(body.testimonial)) || typeof body.hidden !== "boolean") return json({ error: "bad_testimonial" }, 400);
+      const [t] = await db("PATCH", `ls_testimonials?id=eq.${q(body.testimonial)}&client_slug=eq.${q(client.slug)}`, { hidden: body.hidden }, "return=representation");
+      return t ? json({ testimonial: { id: t.id, hidden: t.hidden } }) : json({ error: "not_found" }, 404);
+    }
     if (linkAction && body.available !== undefined) {
       if (!["busy", "free", "auto"].includes(body.available)) return json({ error: "bad_available" }, 400);
       const hours = body.hours == null ? null : Math.min(Math.max(Math.round(Number(body.hours)) || 1, 1), AVAIL_MAX_HOURS);
@@ -73,8 +79,12 @@ export default async (req) => {
       } catch (e) { console.error("panel stats", e.message); }
       // A photo the visitor attached: the panel gets the private link, never the storage path.
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
+      // Testimonials on the site: all of them, hidden ones too, so the owner can bring one back.
+      const testimonials = testimonialOn(client)
+        ? await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=id,name,body,stars,hidden,created_at&order=created_at.desc&limit=100`).catch(() => [])
+        : null;
       const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, availability: avail });
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, availability: avail, testimonials });
     }
 
     if (req.method === "PATCH") {

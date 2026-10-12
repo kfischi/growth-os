@@ -5,13 +5,14 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [] };
+const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
   ls_clients: { package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", tpl_owner_reminder: "owner_reminder", tpl_monthly_report: "monthly_report", auto_reply: true, owner_alerts: true, reminders: true, monthly_report: true, remind_after_min: 60, work_start: 8, work_end: 20, work_days: [0,1,2,3,4,5] },
   ls_leads: () => ({ id: randomUUID(), status: "new", channel: "form", reminded_at: null, handled_at: null, last_inbound_at: null, note: null, created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
+  ls_testimonials: () => ({ id: randomUUID(), hidden: false, stars: null, created_at: new Date().toISOString() }),
 };
 function match(row, filters) {
   return filters.every(([col, op, val]) => {
@@ -387,6 +388,74 @@ assert.equal(sent.at(-1).text.body, "הוסרתם. לא תקבלו מאיתנו 
 const RL4 = await newLead("קווי", "04-6333333", "10.0.0.10");
 await tapDone("rv-9", "done:" + RL4.id); assert.equal(sent.at(-1).text.body, "סומן כטופל: קווי.");
 Object.assign(C0, { review_requests: false });
+
+// --- testimonials on the site: only an invited customer, once per enquiry, up at once, the owner can hide it
+const tstFn = (await import(F + "testimonial.mjs")).default;
+const tstList = (await import(F + "testimonials.mjs")).default;
+const listNow = async () => (await (await tstList(new Request("https://s/api/testimonials/oren"), ctx("oren"))).json()).items;
+const tPost = (body, ip = "10.1.0.1") => tstFn(post("/api/testimonial", body, { "x-nf-client-connection-ip": ip }), {});
+const tGet = (tstToken) => tstFn(new Request("https://s/r/" + tstToken), { params: { token: tstToken } });
+assert.deepEqual(await listNow(), [], "off: nothing");
+Object.assign(C0, { testimonials: true, tpl_testimonial_request: "testimonial_request" }); lib.forgetClient("oren");
+let TL = await newLead("נועה שחר", "0503333350", "10.0.0.20");
+await tapDone("ts-1", "done:" + TL.id);
+ask = sent.at(-1); assert.equal(ask.type, "interactive");
+assert.equal(ask.interactive.body.text, "סומן כטופל: נועה שחר. לשלוח לנועה בקשה לכתוב המלצה לאתר? היא עולה מיד, ואפשר להסתיר אותה. זו הודעה אחת, פעם אחת.");
+assert.deepEqual(ask.interactive.action.buttons.map((x) => x.reply.id), ["tst:" + TL.id, "noreview:" + TL.id]);
+assert.equal(TL.testimonial, "asked"); assert.equal(TL.review, undefined);
+await pickReply("ts-2", "tst:" + TL.id);
+const tr = sent.find((m) => m.template && m.template.name === "testimonial_request");
+assert.equal(tr.to, "972503333350");
+const [p1, p2, link] = tr.template.components[0].parameters.map((p) => p.text);
+assert.equal(p1, "נועה"); assert.equal(p2, "אורן מים"); assert.match(link, new RegExp("^https://service-pro-web\\.netlify\\.app/r/" + TL.id + "\\.[A-Za-z0-9_-]{22}$"));
+assert.equal(TL.testimonial, "sent"); assert.match(sent.at(-1).text.body, /^נשלח לנועה\./);
+const tstToken = link.split("/r/")[1];
+// the form opens only from the real link
+let pg = await tGet(tstToken); let html = await pg.text(); assert.equal(pg.status, 200); assert.match(html, /כמה מילים על אורן מים\?/); assert.match(html, /value="נועה"/); assert.match(html, /noindex/);
+html = await (await tGet(TL.id + ".AAAAAAAAAAAAAAAAAAAAAA")).text(); assert.match(html, /הקישור כבר לא פעיל/, "a forged signature");
+// plain words only, and nothing changes on a refusal
+let tres = await tPost({ token: tstToken, name: "נועה", text: "מומלץ מאוד! www.spam.co.il" }); assert.equal(tres.status, 422); assert.equal((await tres.json()).error, "contact");
+tres = await tPost({ token: tstToken, name: "נועה", text: "תתקשרו אליו 050-1234567 מעולה" }); assert.equal((await tres.json()).error, "contact");
+tres = await tPost({ token: tstToken, name: "נועה", text: "טוב" }); assert.equal((await tres.json()).error, "short");
+tres = await tPost({ token: tstToken, name: "נועה", text: "הגיע מהר ופתר את הסתימה בלי בלגן.", stars: 9 }); assert.equal((await tres.json()).error, "stars");
+assert.equal(TL.testimonial, "sent"); assert.equal(T.ls_testimonials.length, 0);
+const beforeT = sent.length;
+tres = await tPost({ token: tstToken, name: "נועה <b>ש.</b>", text: "הגיע תוך שעה ופתר את הסתימה בלי בלגן. ממליצה!", stars: 5 });
+let tj = await tres.json(); assert.equal(tres.status, 200, JSON.stringify(tj)); assert.equal(tj.site, "https://oren.co.il/");
+assert.equal(T.ls_testimonials.length, 1); const T1 = T.ls_testimonials[0];
+assert.equal(T1.name, "נועה b ש. /b"); assert.equal(T1.stars, 5); assert.equal(T1.lead_id, TL.id); assert.equal(TL.testimonial, "done");
+const alertT = sent.slice(beforeT).find((m) => m.type === "interactive");
+assert.equal(alertT.to, "972501111111"); assert.match(alertT.interactive.body.text, /^המלצה חדשה עלתה לאתר ★★★★★:/);
+assert.deepEqual(alertT.interactive.action.buttons.map((x) => x.reply.id), ["hidetst:" + T1.id]);
+// up on the site at once; once per enquiry
+assert.deepEqual((await listNow()).map((t) => [t.name, t.stars]), [["נועה b ש. /b", 5]]);
+tres = await tPost({ token: tstToken, name: "נועה", text: "עוד המלצה, שוב מאותו קישור, לא אמורה לעלות." }); assert.equal(tres.status, 410);
+assert.match(await (await tGet(tstToken)).text(), /הקישור כבר לא פעיל/);
+// the owner hides it from the alert; someone else can't
+await hook(wh(val({ messages: [{ from: "972509999999", id: "ts-3", type: "interactive", interactive: { type: "button_reply", button_reply: { id: "hidetst:" + T1.id, title: "x" } } }] })));
+assert.equal(T1.hidden, false);
+await pickReply("ts-4", "hidetst:" + T1.id); assert.equal(T1.hidden, true); assert.match(sent.at(-1).text.body, /^ההמלצה הוסתרה מהאתר/);
+assert.deepEqual(await listNow(), []);
+// and brings it back from the panel
+r = await api(post("/api/leads", { testimonial: T1.id, hidden: false }, { authorization: "Bearer oren:" + key }));
+assert.equal(r.status, 200); assert.equal(T1.hidden, false); assert.equal((await listNow()).length, 1);
+r = await api(get("", "Bearer oren:" + key)); out = await r.json(); assert.equal(out.testimonials.length, 1); assert.equal(out.testimonials[0].body, T1.body);
+// the same number is never asked again
+T.ls_leads.filter((l) => l.phone_intl === "972503333350").forEach((l) => { l.created_at = "2026-01-01T00:00:00Z"; });
+const TL2 = await newLead("נועה שחר", "0503333350", "10.0.0.21");
+await tapDone("ts-5", "done:" + TL2.id); assert.equal(sent.at(-1).text.body, "סומן כטופל: נועה שחר."); assert.equal(TL2.testimonial, undefined);
+// with Google reviews on too: three buttons, and one answer closes both questions
+Object.assign(C0, { review_requests: true, review_url: "https://g.page/r/oren-mayim/review" });
+const TL3 = await newLead("גיל רון", "0503333351", "10.0.0.22");
+await tapDone("ts-6", "done:" + TL3.id);
+assert.deepEqual(sent.at(-1).interactive.action.buttons.map((x) => x.reply.title), ["המלצה לאתר", "ביקורת בגוגל", "לא הפעם"]);
+await pickReply("ts-7", "review:" + TL3.id); assert.equal(TL3.review, "sent"); assert.equal(TL3.testimonial, "skipped");
+const TL4 = await newLead("דור לב", "0503333352", "10.0.0.23");
+await tapDone("ts-8", "done:" + TL4.id); await pickReply("ts-9", "noreview:" + TL4.id);
+assert.equal(TL4.review, "skipped"); assert.equal(TL4.testimonial, "skipped"); assert.equal(sent.at(-1).text.body, "בסדר, לא נשלח.");
+// a business that turned it off: the site shows nothing, the link stops working
+Object.assign(C0, { review_requests: false, testimonials: false }); lib.forgetClient("oren");
+assert.deepEqual(await listNow(), []);
 
 // --- helpers
 assert.equal(lib.israeliPhone("0771234567").intl, "972771234567");

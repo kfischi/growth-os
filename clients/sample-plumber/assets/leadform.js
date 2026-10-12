@@ -3,6 +3,8 @@
    LeadForm.visit(endpoint) counts the visit once per session, for the owner's report (functions/visit.mjs).
    It adds the page, the referrer and utm_source / utm_campaign by itself, and never throws.
    LeadForm.status(endpoint) fills every [data-avail] element with the "available now" line (functions/status.mjs).
+   LeadForm.testimonials(endpoint) fills every [data-testimonials] section from functions/testimonials.mjs,
+   and shows the section only when there is at least one. LeadForm.testimonialCard(t) makes one card.
    A tagged link from the owner's panel (?s=k3p9) becomes the source "t-k3p9" for the whole visit.
    Anything but { ok: true } means: open WhatsApp instead, so the enquiry still arrives.
    On a business's site: endpoint "https://service-pro-web.netlify.app/api/lead/<slug>". */
@@ -45,6 +47,30 @@
       const load = () => fetch(endpoint).then((r) => (r.ok ? r.json() : null)).then(paint).catch(() => {});
       paint(null); load();
       setInterval(() => { if (document.visibilityState === "visible") load(); }, 120000);
+    },
+    // Testimonials customers wrote (0010_testimonials.sql). Text only: every value goes in with textContent.
+    testimonialCard(t) {
+      const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+      const card = el("figure", "tst-card");
+      if (t.stars) { const st = el("span", "tst-stars", "★".repeat(t.stars) + "☆".repeat(5 - t.stars)); st.setAttribute("aria-label", t.stars + " מתוך 5"); card.append(st); }
+      card.append(el("blockquote", "tst-text", t.text));
+      const cap = el("figcaption", "tst-by"); cap.append(el("b", null, t.name));
+      if (t.at) { const d = new Date(t.at); if (!isNaN(d)) cap.append(el("span", null, d.toLocaleDateString("he-IL", { month: "long", year: "numeric" }))); }
+      card.append(cap);
+      return card;
+    },
+    // On a business's site: LeadForm.testimonials("https://service-pro-web.netlify.app/api/testimonials/<slug>").
+    testimonials(endpoint) {
+      const boxes = document.querySelectorAll("[data-testimonials]");
+      if (!boxes.length) return;
+      fetch(endpoint).then((r) => (r.ok ? r.json() : null)).then((d) => {
+        const items = (d && Array.isArray(d.items) ? d.items : []).slice(0, 12);
+        boxes.forEach((box) => {
+          const list = box.querySelector("[data-tst-list]") || box;
+          list.replaceChildren(...items.map((t) => window.LeadForm.testimonialCard(t)));
+          box.hidden = !items.length;
+        });
+      }).catch(() => {});
     },
     // Counts this visit once per browser session (functions/visit.mjs): a number only, no cookie.
     // On a business's site: LeadForm.visit("https://service-pro-web.netlify.app/api/visit/<slug>").

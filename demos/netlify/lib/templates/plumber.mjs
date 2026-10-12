@@ -322,6 +322,13 @@ ${ba}
   </div>
 </section>
 
+${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
+  <div class="wrap">
+    <div class="head"><h2>מה אומרים לקוחות</h2><span class="mono">כתבו אחרי העבודה</span></div>
+    <div class="tst-grid" data-tst-list></div>
+  </div>
+</section>
+` : ""}
 <section class="guides-sec" id="guides">
   <div class="wrap">
     <div class="head"><h2>מה עושים עד שמגיעים</h2><span class="mono">ועוד טיפים ושאלות שחוזרות</span></div>
@@ -381,6 +388,7 @@ ${video ? `<script>${REEL_JS}</script>
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button")) bot.open(); }));
   if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
   if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
+  if (SITE.leads && LeadForm.testimonials) LeadForm.testimonials(SITE.leads.replace("/api/lead/", "/api/testimonials/")); // what customers wrote, shown at once
 </script>
 </body>
 </html>
@@ -422,7 +430,10 @@ ${body}
     ? "במערכת מאובטחת שרק העסק ומי שמתחזק את האתר עבורו יכולים לגשת אליה. הודעות הוואטסאפ עוברות דרך השירות הרשמי של WhatsApp (Meta). הפרטים נשמרים עד שנתיים מיום הפנייה, ואז נמחקים."
     : "הפרטים מגיעים ישירות לוואטסאפ של העסק, דרך השירות של WhatsApp (Meta). האתר עצמו לא שומר אותם."}</p>
 
-<h2>לראות, לתקן או למחוק</h2>
+${leads ? `<h2>המלצות</h2>
+<p>אחרי עבודה אנחנו יכולים לבקש מכם המלצה, פעם אחת. אם תכתבו, היא מופיעה באתר עם השם שבחרתם והדירוג, בלי טלפון. אפשר לבקש להסיר אותה בכל זמן.</p>
+
+` : ""}<h2>לראות, לתקן או למחוק</h2>
 <p>אפשר לבקש לראות את הפרטים ששמרנו עליכם, לתקן אותם או למחוק אותם. כתבו לנו בוואטסאפ או התקשרו${contact ? ": " + contact : ""}.</p>`);
 
   const accessibility = legal("הצהרת נגישות", `
@@ -634,6 +645,12 @@ const CSS = `
   }
   @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
   .guides-sec { background: var(--surface); }
+  .tst-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
+  .tst-card { margin: 0; background: var(--surface); border: 1.5px solid var(--rule); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .tst-stars { color: var(--signal); letter-spacing: 3px; font-size: 18px; }
+  .tst-text { margin: 0; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+  .tst-by { margin-top: auto; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); font-size: 14px; }
+  .tst-by b { color: var(--ink); font-weight: 600; }
   .gd-more { margin: 16px 0 0; } .gd-more a { font-weight: 700; color: var(--accent); text-underline-offset: 4px; }
   .save-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: inherit; font-weight: 600; text-underline-offset: 4px; }
   .save-contact svg { width: 22px; height: 22px; flex: none; }

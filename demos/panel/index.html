@@ -114,6 +114,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .qr-dlg code { display: block; direction: ltr; text-align: right; font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
 .qr-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .links .err { margin: 6px 0 10px; }
+.tst li { grid-template-columns: 1fr auto; }
+.tst li p { grid-column: 1; margin: 2px 0 0; font-size: .95rem; white-space: pre-line; }
+.tst li.off { opacity: .55; }
+.tst li .n b { color: var(--fg, inherit); }
   .pic { display: inline-block; margin-top: 8px; }
   .pic img { display: block; max-width: 160px; max-height: 160px; border-radius: 10px; border: 1px solid var(--line, #ddd); }
 </style>
@@ -172,6 +176,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
         <button class="btn" type="submit">ליצור קישור</button>
       </form>
       <p class="err" id="link-err" role="alert"></p>
+    </details>
+
+    <details class="links tst" id="tst" hidden>
+      <summary>המלצות באתר <small id="tst-n"></small></summary>
+      <p class="hint">לקוח שסימנתם "טיפלתי" ואישרתם לו בקשה כותב המלצה, והיא עולה לאתר מיד. כאן אפשר להסתיר או להחזיר כל אחת.</p>
+      <ul id="tst-list"></ul>
+      <p class="err" id="tst-err" role="alert"></p>
     </details>
 
     <dialog class="qr-dlg" id="qr-dlg" aria-labelledby="qr-title">
@@ -304,6 +315,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
     renderLinks();
     renderAvail();
+    renderTestimonials();
 
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
@@ -343,6 +355,28 @@ button, input, select, textarea { font: inherit; color: inherit; }
       row.append(copy, qrb, del);
       const code = el('code', null, k.url);
       li.append(row, code);
+      return li;
+    }));
+  }
+  function renderTestimonials() {
+    const list = data.testimonials;
+    $('#tst').hidden = !Array.isArray(list);
+    if (!list) return;
+    const shown = list.filter((t) => !t.hidden).length;
+    $('#tst-n').textContent = list.length ? '(' + shown + ' באתר' + (list.length > shown ? ', ' + (list.length - shown) + ' מוסתרות' : '') + ')' : '';
+    if (!list.length) { $('#tst-list').replaceChildren(el('li', 'n', 'עוד אין המלצות.')); return; }
+    $('#tst-list').replaceChildren(...list.map((t) => {
+      const li = el('li', t.hidden ? 'off' : '');
+      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
+      const btn = el('button', 'ghost', t.hidden ? 'להחזיר לאתר' : 'להסתיר'); btn.type = 'button';
+      btn.setAttribute('aria-label', (t.hidden ? 'להחזיר לאתר את ההמלצה של ' : 'להסתיר את ההמלצה של ') + t.name);
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try { const r = await call('POST', { testimonial: t.id, hidden: !t.hidden }, adminQuery()); t.hidden = r.testimonial.hidden; $('#tst-err').textContent = ''; renderTestimonials(); }
+        catch (e) { btn.disabled = false; if (e.message !== 'unauthorised') $('#tst-err').textContent = 'לא הצלחנו לשנות. נסו שוב.'; }
+      });
+      const row = el('span', 'row'); row.append(btn);
+      li.append(head, row, el('p', null, t.body));
       return li;
     }));
   }

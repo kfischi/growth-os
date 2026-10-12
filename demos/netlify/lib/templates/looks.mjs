@@ -1,4 +1,4 @@
-// The looks of the plumber template: three layouts on the same content, each with its colour palettes.
+// The looks of the plumber template: three layouts on the same content, each with eight colour palettes.
 // The owner picks one in the builder ("עיצוב") and sees the draft change next to the chat.
 // A look is fonts, a few CSS overrides and the picture at the top of the page. A palette is only colours.
 // No yellow in any palette (house rule). Text on every colour keeps WCAG AA contrast.
@@ -63,6 +63,10 @@ export const LOOKS = {
       green: { label: "ירוק", hero: "#17493c", deep: "#0f342b", accent: "#17493c", signal: "#bf3f2b", paper: "#f2f6f3", tint: "#e9f0eb", ink: "#13241e", inkSoft: "#4c5e56", rule: "#c8d6cd", soft: "#a7c9b9", text: "#d3e5dc", linew: "#e6f2ec", psA: "#2c7a63", drop: "#8fd1b7" },
       graphite: { label: "גרפיט", hero: "#262c35", deep: "#191d23", accent: "#2f3a48", signal: "#c73c2c", paper: "#f3f4f6", tint: "#eceef1", ink: "#181c22", inkSoft: "#535b67", rule: "#cfd4db", soft: "#aab3c0", text: "#d6dbe2", linew: "#eceff3", psA: "#4a5668", drop: "#8fb4e6" },
       wine: { label: "בורדו", hero: "#5b1f2e", deep: "#3f1520", accent: "#6b2436", signal: "#1f6f6a", paper: "#f7f3f3", tint: "#f1e9ea", ink: "#2a1418", inkSoft: "#6a5257", rule: "#e0cfd2", soft: "#d9b3bc", text: "#ecd8dc", linew: "#f6e8eb", psA: "#8a3a4e", drop: "#e6a3b2" },
+      petrol: { label: "פטרול", hero: "#0f4c5c", deep: "#0a3540", accent: "#0f4c5c", signal: "#c4412d", paper: "#f1f6f7", tint: "#e6eff1", ink: "#0f2328", inkSoft: "#4a5f64", rule: "#c5d6da", soft: "#a3c8d1", text: "#d2e6eb", linew: "#e4f2f5", psA: "#1f7489", drop: "#8fd0e0" },
+      plum: { label: "שזיף", hero: "#4a2350", deep: "#33173a", accent: "#4a2350", signal: "#1f7a6c", paper: "#f6f2f7", tint: "#efe7f0", ink: "#24152a", inkSoft: "#5f4f66", rule: "#dccfe0", soft: "#d0b4d6", text: "#eadcee", linew: "#f5eaf7", psA: "#6e3a78", drop: "#d6a8e0" },
+      earth: { label: "חום אדמה", hero: "#5a3a22", deep: "#3f2817", accent: "#5a3a22", signal: "#2a6f8f", paper: "#f7f3ee", tint: "#efe8df", ink: "#2a1d12", inkSoft: "#665748", rule: "#ddd0c1", soft: "#d6bfa6", text: "#ecdfd0", linew: "#f6ece1", psA: "#80573a", drop: "#9fc9dc" },
+      night: { label: "לילה", hero: "#151b2e", deep: "#0d1120", accent: "#1f2942", signal: "#d0452f", paper: "#f3f4f7", tint: "#eaecf2", ink: "#141826", inkSoft: "#4f5568", rule: "#cdd1dc", soft: "#a7afc6", text: "#d4d9e6", linew: "#e9ecf5", psA: "#33406a", drop: "#8fa8e6" },
     },
   },
   certificate: {
@@ -76,6 +80,10 @@ export const LOOKS = {
       navy: { label: "כחול", accent: "#1e3a6b", deep: "#12264a", signal: "#a1342b", paper: "#f2f3f6", tint: "#e7eaf0", ink: "#161d2b", inkSoft: "#4d5668", rule: "#cdd3de", soft: "#aebbd3", text: "#d8dfec", linew: "#edf1f8" },
       plum: { label: "שזיף", accent: "#4a2a52", deep: "#321b38", signal: "#1f5f5b", paper: "#f5f1f3", tint: "#ece4ea", ink: "#23192a", inkSoft: "#5c4f61", rule: "#d9cfd9", soft: "#c8b3cc", text: "#e6dae8", linew: "#f4ecf5" },
       slate: { label: "צפחה", accent: "#2f3b45", deep: "#1e262d", signal: "#b4462a", paper: "#f1f3f3", tint: "#e6eaeb", ink: "#1b2126", inkSoft: "#525d66", rule: "#ccd3d6", soft: "#b0bcc4", text: "#d9e0e4", linew: "#eef2f4" },
+      burgundy: { label: "בורדו", accent: "#6b1f2e", deep: "#4a1520", signal: "#1f5f5b", paper: "#f7f2f0", tint: "#efe6e3", ink: "#2a1418", inkSoft: "#66525a", rule: "#e0d0d2", soft: "#dbb4bc", text: "#eedadf", linew: "#f7eaee" },
+      sea: { label: "ים", accent: "#1d5c63", deep: "#123f44", signal: "#a6402b", paper: "#f1f5f4", tint: "#e5eeec", ink: "#13272a", inkSoft: "#4c6064", rule: "#c8d8d8", soft: "#a9cdd0", text: "#d6e8ea", linew: "#ebf5f5" },
+      brown: { label: "חום", accent: "#5b4030", deep: "#3e2b20", signal: "#2c5f7a", paper: "#f5f1ea", tint: "#ece5da", ink: "#271c14", inkSoft: "#63574c", rule: "#dcd1c3", soft: "#d3bda8", text: "#ebdfd2", linew: "#f6eee4" },
+      charcoal: { label: "פחם", accent: "#262a30", deep: "#16191d", signal: "#9b2c2c", paper: "#f3f3f2", tint: "#e8e8e6", ink: "#17191c", inkSoft: "#55585e", rule: "#d2d3d4", soft: "#b4b8be", text: "#dcdfe2", linew: "#eff0f1" },
     },
   },
   van: {
@@ -89,6 +97,10 @@ export const LOOKS = {
       teal: { label: "טורקיז", hero: "#0e7470", deep: "#0a5552", accent: "#0e7470", signal: "#1c1d21", paper: "#ffffff", tint: "#f1f5f5", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e1e6e6", soft: "#c9ecea", text: "#e7f7f6", linew: "#ffffff" },
       royal: { label: "כחול רויאל", hero: "#2342b8", deep: "#182f88", accent: "#2342b8", signal: "#1c1d21", paper: "#ffffff", tint: "#f2f4fa", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e2e5ee", soft: "#d0d9fa", text: "#e8edfd", linew: "#ffffff" },
       graphite: { label: "גרפיט", hero: "#2b2e35", deep: "#1a1c21", accent: "#2b2e35", signal: "#b93427", paper: "#ffffff", tint: "#f3f3f5", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e3e4e8", soft: "#c4c7ce", text: "#e6e8ec", linew: "#ffffff" },
+      bottle: { label: "ירוק בקבוק", hero: "#1f6a45", deep: "#164f33", accent: "#1f6a45", signal: "#1c1d21", paper: "#ffffff", tint: "#f1f5f3", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e1e7e3", soft: "#c8e6d6", text: "#e6f5ec", linew: "#ffffff" },
+      purple: { label: "סגול", hero: "#5b2a86", deep: "#3f1d5e", accent: "#5b2a86", signal: "#1c1d21", paper: "#ffffff", tint: "#f4f1f8", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e5e0ec", soft: "#ddcdee", text: "#f1e9f8", linew: "#ffffff" },
+      fuchsia: { label: "פוקסיה", hero: "#b5245f", deep: "#861a46", accent: "#b5245f", signal: "#1c1d21", paper: "#ffffff", tint: "#f8f1f4", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#ece0e5", soft: "#f6cfdd", text: "#fdebf2", linew: "#ffffff" },
+      navy: { label: "נייבי", hero: "#1b2f5e", deep: "#111f40", accent: "#1b2f5e", signal: "#b93427", paper: "#ffffff", tint: "#f2f3f7", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e2e4ec", soft: "#c9d3ec", text: "#e6ebf7", linew: "#ffffff" },
     },
   },
 };

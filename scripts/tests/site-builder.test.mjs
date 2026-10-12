@@ -106,6 +106,16 @@ for (const [lid, L] of Object.entries(P.LOOKS)) for (const pid of Object.keys(L.
   assert.match(html, new RegExp(`<body class="look-${lid}">`)); assert.ok(html.includes(L.palettes[pid].accent), lid + " " + pid);
 }
 assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" })["index.html"], /<body class="look-blueprint">/);
+// Testimonials: a hidden section the page fills from the lead system, only with נציג AI; never in a draft.
+{
+  const withLeads = P.render(SAMPLE, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/oren" });
+  assert.match(withLeads["index.html"], /<section class="tst-sec" id="testimonials" data-testimonials hidden>/);
+  assert.match(withLeads["index.html"], /LeadForm\.testimonials\(SITE\.leads\.replace\("\/api\/lead\/", "\/api\/testimonials\/"\)\)/);
+  assert.match(withLeads["privacy.html"], /<h2>המלצות<\/h2>/);
+  assert.ok(!/data-testimonials/.test(P.render(SAMPLE, { mode: "site" })["index.html"]), "not in נוכחות");
+  assert.ok(!/data-testimonials/.test(P.render(SAMPLE, { mode: "draft", leads: null })["index.html"]));
+  assert.equal(Object.values(P.LOOKS).every((l) => Object.keys(l.palettes).length === 8), true, "eight palettes per look");
+}
 assert.match(P.render({ ...SAMPLE, look: "blueprint", palette: "teal" }, { mode: "site" })["index.html"], /--accent: #123a8c/, "a palette of another look falls back");
 {
   const cert = (c) => P.render({ ...SAMPLE, ...c, look: "certificate" }, { mode: "site" })["index.html"].match(/<div class="seal"[\s\S]*?<\/div>/)[0];

@@ -42,6 +42,7 @@ export async function db(method, path, body, prefer) {
 export const q = encodeURIComponent;
 
 const clientCache = new Map(); // per function instance, 60 seconds
+export const forgetClient = (slug) => clientCache.delete(slug); // after a settings change in this instance
 export async function getClient(slug) {
   if (!/^[a-z0-9-]{2,40}$/.test(slug || "")) return null;
   const hit = clientCache.get(slug);
@@ -259,6 +260,42 @@ export async function reviewBlocked(client, phoneIntl) {
   return rows.length > 0;
 }
 export const OPT_OUT = /^(הסר|הסירו|להסיר|הסרה|stop|unsubscribe)[.!]?$/i;
+
+/* ---------------- testimonials on the site (0010_testimonials.sql) ---------------- */
+
+// Off unless כפיר turned it on. Only a customer whose enquiry the owner marked "טיפלתי" is invited,
+// with the owner's OK, once per number; what they write shows on the site at once, and the owner can hide it.
+export const testimonialOn = (client) => !!client.testimonials;
+export async function testimonialBlocked(client, phoneIntl) {
+  const base = `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(phoneIntl)}`;
+  if ((await db("GET", `${base}&testimonial=in.(asked,sent,failed,done)&select=id&limit=1`)).length) return true;
+  return (await db("GET", `${base}&review=eq.optout&select=id&limit=1`)).length > 0; // "הסר" stops these too
+}
+const tstSig = (id) => createHmac("sha256", process.env.SUPABASE_SERVICE_KEY || "").update("testimonial:" + id).digest("base64url").slice(0, 22);
+export const testimonialLink = (id) => `${SITE}/r/${id}.${tstSig(id)}`;
+export function testimonialToken(token) {
+  const m = /^([0-9a-f-]{36})\.([A-Za-z0-9_-]{22})$/.exec(token || "");
+  return m && safeEqual(m[2], tstSig(m[1])) ? m[1] : null;
+}
+// What goes on a site without anyone checking it first: plain words only. No links, no e-mail, no phone numbers
+// (spam, and nobody's details end up on a page), no markup.
+export function checkTestimonial(input) {
+  const tidy = (v, n) => String(v ?? "").replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n + 1);
+  const name = tidy(input && input.name, 30), body = tidy(input && input.text, 400);
+  const stars = input && input.stars != null && input.stars !== "" ? Number(input.stars) : null;
+  if (name.length < 2 || name.length > 30) return { error: "name" };
+  if (body.length < 15) return { error: "short" };
+  if (body.length > 400) return { error: "long" };
+  if (stars !== null && !(Number.isInteger(stars) && stars >= 1 && stars <= 5)) return { error: "stars" };
+  const all = name + " " + body;
+  if (/https?:|www\.|\.(com|co\.il|net|org|io|ly)\b|@/i.test(all) || /\d[\d\s-]{6,}\d/.test(all)) return { error: "contact" };
+  return { row: { name, body, stars } };
+}
+// The visible ones for the site, newest first.
+export async function publicTestimonials(slug, limit = 12) {
+  const rows = await db("GET", `ls_testimonials?client_slug=eq.${q(slug)}&hidden=eq.false&select=name,body,stars,created_at&order=created_at.desc&limit=${limit}`);
+  return rows.map((t) => ({ name: t.name, text: t.body, stars: t.stars, at: t.created_at }));
+}
 
 /* ---------------- the lead flow ---------------- */
 
