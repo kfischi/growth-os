@@ -207,7 +207,7 @@ export default async (req, context) => {
         return json({ state: stateOf(saved), alert });
       }
       const pkg = body.package, plan = body.plan;
-      if (!(pkg === "presence" && plan === "full") && !(pkg === "ai" && (plan === "full" || plan === "three"))) return json({ error: "bad_package" }, 422);
+      if (!["presence", "ai"].includes(pkg) || plan !== "full") return json({ error: "bad_package" }, 422);
       const saved = await saveDraft(d, { status: "client_approved", package: pkg, plan, approved_at: new Date().toISOString(), return_note: null });
       const alert = await alertKfir(saved, "אתר חדש מחכה לאישור");
       return json({ state: stateOf(saved), alert });

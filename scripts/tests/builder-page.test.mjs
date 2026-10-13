@@ -170,11 +170,10 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   await check("approve", async () => {
     await p.click("#approveBox .btn");
     await p.waitForSelector("#approveDlg[open]");
-    await p.click("input[name=plan][value=three]");
     await p.click("#approveGo");
     await p.waitForFunction(() => /השלב הבא: תשלום/.test(document.querySelector("#approveBox").textContent));
     assert.equal(await p.isVisible("#compose"), false, "the chat is locked after approval");
-    const d = T.ls_drafts.at(-1); assert.equal(d.status, "client_approved"); assert.equal(d.plan, "three");
+    const d = T.ls_drafts.at(-1); assert.equal(d.status, "client_approved"); assert.equal(d.plan, "full");
   });
 
   await check("coming back later", async () => {

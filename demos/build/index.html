@@ -160,8 +160,6 @@
   .pkg input { margin-top: 4px; accent-color: var(--mint); width: 18px; height: 18px; }
   .pkg b { display: block; font-size: 17px; }
   .pkg span { color: var(--slate); font-size: 14px; }
-  .plans { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: 14px; }
-  .plans label { margin: 0; font-weight: 400; display: flex; gap: 6px; align-items: center; }
   .row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .row .btn { flex: 1; }
 
@@ -271,8 +269,7 @@
     <h2 id="t-approve">מאשרים את האתר</h2>
     <p>בוחרים חבילה. אחרי התשלום אנחנו עוברים על האתר ומעלים אותו לאוויר. עד אז אפשר עוד לבקש שינויים.</p>
     <div class="pkgs">
-      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,250 ₪ הקמה, ומהחודש הרביעי 500 ₪ לחודש.</span>
-        <div class="plans" id="aiPlans"><label><input type="radio" name="plan" value="full" checked> תשלום אחד</label><label><input type="radio" name="plan" value="three"> 3 תשלומים של 750 ₪</label></div></div></label>
+      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 1,900 ₪ הקמה, ו-390 ₪ לחודש.</span></div></label>
       <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
     </div>
     <p class="note">בלי התחייבות: מבטלים בהודעה של 30 יום. הדומיין והאתר רשומים על שמכם.</p>
@@ -460,7 +457,7 @@
       if (s.pay.length) {
         for (const l of s.pay) {
           const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
-          a.textContent = l.plan === 'three' ? 'לתשלום ב-3 תשלומים' : 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
+          a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
         }
       } else p('נשלח לכם בוואטסאפ חשבונית ופרטים לתשלום, בדרך כלל באותו יום.');
       const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'רוצים לשנות משהו? חזרה לעריכה';
@@ -930,11 +927,10 @@
   }
 
   /* ---------- approve ---------- */
-  document.querySelectorAll('input[name=pkg]').forEach((r) => r.addEventListener('change', () => { $('#aiPlans').hidden = $('input[name=pkg]:checked').value !== 'ai'; }));
   $('#approveForm').addEventListener('submit', async (e) => {
     if (e.submitter && e.submitter.value === 'cancel') return;
     e.preventDefault();
-    const pkg = $('input[name=pkg]:checked').value, plan = pkg === 'ai' ? $('input[name=plan]:checked').value : 'full';
+    const pkg = $('input[name=pkg]:checked').value, plan = 'full';
     $('#approveGo').disabled = true;
     const r = await call('approve', { body: { package: pkg, plan, rev: state.rev } });
     $('#approveGo').disabled = false;

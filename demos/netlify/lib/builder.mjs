@@ -9,7 +9,7 @@
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
 //   BUILDER_DAILY_MAX                    new drafts per day, all visitors together (default 40)
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
-//   PAY_URL_PRESENCE, PAY_URL_AI, PAY_URL_AI_THREE   payment pages, if set; otherwise payment is arranged on WhatsApp
+//   PAY_URL_PRESENCE, PAY_URL_AI   payment pages, if set; otherwise payment is arranged on WhatsApp
 //   BUILDER_AI_TIMEOUT_MS                how long one chat answer may take (default 25000)
 //   BUILDER_MODEL                        the chat's model (default claude-opus-5-5); claude-sonnet-5-5 or claude-haiku-5-5 answer faster
 //   BUILDER_EDIT_MESSAGES, BUILDER_EDIT_PUBLISHES   self edit: chat messages and publishes per site per month (60, 10)
@@ -278,7 +278,7 @@ export function draftLinks(d, key) {
 export function payLinks(pkg) {
   const env = process.env;
   const links = pkg === "ai"
-    ? [env.PAY_URL_AI && { plan: "full", url: env.PAY_URL_AI }, env.PAY_URL_AI_THREE && { plan: "three", url: env.PAY_URL_AI_THREE }]
+    ? [env.PAY_URL_AI && { plan: "full", url: env.PAY_URL_AI }]
     : [env.PAY_URL_PRESENCE && { plan: "full", url: env.PAY_URL_PRESENCE }];
   return links.filter((l) => l && /^https:\/\//.test(l.url));
 }
@@ -466,7 +466,7 @@ export async function chatTurn(d, message) {
 /* ---------------- approval and the alert to כפיר ---------------- */
 
 const PACKAGE_HE = { presence: "נוכחות", ai: "נציג AI" };
-const PLAN_HE = { full: "תשלום אחד", three: "3 תשלומים" };
+const PLAN_HE = { full: "תשלום אחד", three: "3 תשלומים" }; // "three" only on drafts approved before the setup became one payment
 
 // Reuses the lead system: the approval arrives to כפיר like a lead, with the WhatsApp alert and "טיפלתי".
 export async function alertKfir(d, what) {

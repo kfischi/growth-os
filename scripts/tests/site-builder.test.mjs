@@ -198,21 +198,21 @@ assert.ok(D.video, "back for the publish test");
 html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>מעלים ב״תמונות״/, "an empty slot is marked in the draft");
 
 /* ---------------- approve ---------------- */
-r = await J(await req("approve", { body: { package: "presence", plan: "three", rev: D.rev } })); assert.equal(r.error, "bad_package");
+r = await J(await req("approve", { body: { package: "ai", plan: "three", rev: D.rev } })); assert.equal(r.error, "bad_package", "the setup is one payment");
 const keep = D.content.intro; D.content.intro = "";
-r = await J(await req("approve", { body: { package: "ai", plan: "three", rev: D.rev } })); assert.equal(r.error, "missing"); assert.deepEqual(r.missing, ["פסקת פתיחה"]);
+r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(r.error, "missing"); assert.deepEqual(r.missing, ["פסקת פתיחה"]);
 D.content.intro = keep;
-process.env.PAY_URL_AI_THREE = "https://pay.example/ai3"; process.env.PAY_URL_AI = "javascript:alert(1)";
-r = await J(await req("approve", { body: { package: "ai", plan: "three", rev: D.rev } }));
+process.env.PAY_URL_AI = "javascript:alert(1)";
+r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "client_approved"); assert.equal(r.alert, "sent");
-assert.deepEqual(r.state.pay, [{ plan: "three", url: "https://pay.example/ai3" }], "only https payment links");
-const alertLead = T.ls_leads.at(-1); assert.equal(alertLead.client_slug, "kfir"); assert.equal(alertLead.service, "אתר חדש מחכה לאישור"); assert.match(alertLead.message, /אורן מים · נציג AI · 3 תשלומים/);
+assert.deepEqual(r.state.pay, [], "only https payment links");
+const alertLead = T.ls_leads.at(-1); assert.equal(alertLead.client_slug, "kfir"); assert.equal(alertLead.service, "אתר חדש מחכה לאישור"); assert.match(alertLead.message, /אורן מים · נציג AI · תשלום אחד/);
 assert.ok(sentWa.some((m) => m.to === "972526359513" && m.template.name === "owner_new_lead"));
 r = await J(await req("chat", { body: { message: "עוד שינוי", rev: D.rev } })); assert.equal(r.error, "locked");
 r = await J(await req("photo", { raw: webp, query: "?slot=work2", headers: { "x-photo-rights": "yes" } })); assert.equal(r.error, "locked");
 // back to editing and approve again
 r = await J(await req("reopen", { body: { rev: D.rev } })); assert.equal(D.status, "draft");
-r = await J(await req("approve", { body: { package: "ai", plan: "three", rev: D.rev } })); assert.equal(D.status, "client_approved");
+r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(D.status, "client_approved");
 
 /* ---------------- כפיר ---------------- */
 r = await J(await adm("GET", null, "", "wrong-admin-key-0000")); assert.equal(r.status, 401);

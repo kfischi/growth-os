@@ -38,13 +38,13 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | Package | Setup | Monthly |
 | --- | --- | --- |
 | נוכחות | 1,500 ₪ | 150 ₪ |
-| נציג AI (the page, the lead system and the AI chat) | 2,250 ₪, or 3 payments of 750 ₪ | 500 ₪ from the fourth month |
+| נציג AI (the page, the lead system and the AI chat) | 1,900 ₪, one payment | 390 ₪ |
 
 - Self edit (the owner changes the live site in the builder chat and publishes) is included in both packages as part of the monthly; publishing turns it on. There is no Sanity add-on.
 - Annual prepayment: 12 months for the price of 10.
-- No commitment: cancel with 30 days' notice. A client who pays setup in installments and stops before the third one pays the rest of the setup.
+- No commitment: cancel with 30 days' notice.
 - If the monthly payment stops, the page and the domain stay the client's. The automatic reply, the AI chat, the alerts and the leads table work only while the monthly payment runs.
-- There is no pilot price any more. The soft entry is the three-payment setup.
+- One setup payment, then a fixed monthly. No installments and no pilot price: the soft entry is the low setup.
 
 ## Niche demos
 
