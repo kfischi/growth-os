@@ -96,7 +96,8 @@ export default async (req) => {
         if (e.message.startsWith("not_configured")) return json({ error: "not_configured", detail: "GITHUB_TOKEN" }, 503);
         throw e;
       }
-      const saved = await saveDraft(draft, { status: "published", published_sha: sha, published_at: now, live: snapshot(draft) });
+      // Self edit comes with every package (it is part of the monthly), so a published site is open to its owner at once.
+      const saved = await saveDraft(draft, { status: "published", published_sha: sha, published_at: now, live: snapshot(draft), ...(draft.self_edit ? {} : { self_edit: true, messages: [] }) });
       // The site is in the repo already. If the lead system row fails, publishing again with the same slug finishes it.
       let leads;
       try { leads = await ensureLeadClient(saved, slug); } catch (e) { console.error("builder lead client", e.message); leads = { row: "failed" }; }

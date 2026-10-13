@@ -257,7 +257,9 @@ r = await J(await adm("POST", { action: "delete", id: D.id })); assert.equal(r.s
 
 /* ---------------- self edit: the owner changes the live site ---------------- */
 cred = good;
-r = await J(await req("chat", { body: { message: "תשנו את הכותרת", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked", "not before כפיר turns it on");
+assert.equal(D.self_edit, true, "publishing opens self edit: it comes with the monthly");
+r = await J(await adm("POST", { action: "self_edit", id: D.id, on: false })); assert.equal(r.status, 200); assert.equal(D.self_edit, false);
+r = await J(await req("chat", { body: { message: "תשנו את הכותרת", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(r.error, "locked", "not while כפיר has it off");
 assert.equal(r.state.edit, null);
 r = await J(await adm("POST", { action: "self_edit", id: D.id, on: true })); assert.equal(r.status, 200); assert.equal(D.self_edit, true);
 assert.deepEqual(D.live.content, D.content, "what the site shows now"); assert.deepEqual(D.messages, [], "a fresh chat for changes");
