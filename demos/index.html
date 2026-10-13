@@ -41,6 +41,12 @@ img, svg { display: block; }
 .nav { display: flex; gap: 22px; margin-inline-start: auto; }
 .nav a { text-decoration: none; font-size: .95rem; color: var(--slate); }
 .nav a:hover { color: var(--ink); }
+.menu-btn { display: none; inline-size: 44px; block-size: 44px; border: 1px solid var(--line); border-radius: 12px; background: #fff; cursor: pointer; padding: 0; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.menu-btn i { display: block; inline-size: 18px; block-size: 2px; border-radius: 2px; background: var(--ink); transition: transform .2s, opacity .2s; }
+.bar.open .menu-btn i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.bar.open .menu-btn i:nth-child(2) { opacity: 0; }
+.bar.open .menu-btn i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.menu-btn:focus-visible, .nav a:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 52px; padding: .8em 1.5em; border-radius: 999px; border: 0;
   background: var(--ink); color: var(--paper); font: 600 1.02rem/1 var(--font); text-decoration: none; cursor: pointer; transition: transform .2s, background-color .2s; }
 .btn:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--ink) 85%, var(--mint)); }
@@ -326,7 +332,13 @@ img, svg { display: block; }
 :root { --ab-accent: var(--mint); --ab-font: var(--font); }
 
 @media (max-width: 960px) {
-  .nav { display: none; }
+  /* the menu opens as a sheet under the bar */
+  .bar .wrap { gap: 10px; }
+  .nav { display: none; position: absolute; top: 100%; inset-inline: 0; flex-direction: column; gap: 0; padding: 6px var(--gut) 14px; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -28px rgba(29,27,46,.45); }
+  .bar.open .nav { display: flex; }
+  .nav a { padding: 14px 2px; font-size: 1.1rem; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--line); }
+  .nav a:last-child { border-bottom: 0; }
+  .menu-btn { display: inline-flex; }
   .bar .btn { margin-inline-start: auto; }
   .hero .wrap { grid-template-columns: minmax(0, 1fr); }
   .hero-reel { order: -1; }
@@ -372,10 +384,11 @@ img, svg { display: block; }
 <header class="bar">
   <div class="wrap">
     <a class="brand" href="#top"><i></i><span>נחיתה רכה <small>· אתרים שבונים עסקים</small></span></a>
-    <nav class="nav" aria-label="ניווט">
+    <nav class="nav" id="nav" aria-label="ניווט">
       <a href="#how">איך זה עובד</a><a href="#what">מה יש באתר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
     <a class="btn sm" href="build/">לבנות את האתר</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="תפריט"><i></i><i></i><i></i></button>
   </div>
 </header>
 
@@ -649,6 +662,16 @@ img, svg { display: block; }
     if (reduce || !('IntersectionObserver' in window)) { render(RUN); paint(0); $('.day-ctl', box).hidden = true; }
     else { render(0); new IntersectionObserver(([e]) => { e.isIntersecting ? play() : pause(); }, { threshold: .3 }).observe(box); }
     show();
+  })();
+
+  /* ---- the menu on phones ---- */
+  (function () {
+    const bar = $('.bar'), btn = $('.menu-btn', bar), nav = $('#nav');
+    const set = (on) => { bar.classList.toggle('open', on); btn.setAttribute('aria-expanded', String(on)); btn.setAttribute('aria-label', on ? 'סגירת התפריט' : 'תפריט'); };
+    btn.addEventListener('click', () => { const on = !bar.classList.contains('open'); set(on); if (on) $('a', nav).focus(); });
+    $$('a', nav).forEach((a) => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && bar.classList.contains('open')) { set(false); btn.focus(); } });
+    document.addEventListener('click', (e) => { if (bar.classList.contains('open') && !bar.contains(e.target)) set(false); });
   })();
 
   /* ---- the captions of the film at the top, from its cues (scripts/hero-video.mjs) ---- */

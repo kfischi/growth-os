@@ -77,7 +77,10 @@ const D = (sel) => draftFrame().locator(sel).first();
 
 /* ---------- the camera ---------- */
 let cam = { tx: 0, ty: 0, s: S0 };
-async function setCam(c, ms = 1100) { cam = c; await st("cam", c.tx, c.ty, c.s); await raw(Math.max(ms, 1100)); }
+// WIDE=1 keeps the camera wide all the way (the same timing, the whole page in frame): the home page's hero loop
+// is cut from that recording (scripts/hero-video.mjs), since a zoomed frame loses the page's sides.
+const WIDE = process.env.WIDE === "1";
+async function setCam(c, ms = 1100) { if (WIDE) c = { tx: 0, ty: 0, s: S0 }; cam = c; await st("cam", c.tx, c.ty, c.s); await raw(Math.max(ms, 1100)); }
 const wide = (ms) => setCam({ tx: 0, ty: 0, s: S0 }, ms);
 // Zooms so the box (in stage pixels, as Playwright measures it) fills the window, within limits.
 async function zoomTo(loc, { pad = 70, max = 1.9, ms = 1100 } = {}) {
@@ -451,10 +454,10 @@ const list = frames.map((f, i) => `file '${f.file}'\nduration ${Math.max(0.001, 
 fs.writeFileSync(path.join(dir, "list.txt"), list);
 fs.mkdirSync(OUT, { recursive: true });
 // The silent master: scripts/process-voice.mjs lays the narration and the music on it and writes the film the site plays.
-const out = path.join(ROOT, "../scripts/process-voice/film.mp4");
+const out = WIDE ? path.join(os.tmpdir(), "process-wide.mp4") : path.join(ROOT, "../scripts/process-voice/film.mp4");
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(dir, "list.txt"),
   "-vf", `fps=30,scale=${W}:${H}:flags=lanczos,format=yuv420p`, "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "30", "-tune", "animation", "-movflags", "+faststart", "-an", out]);
-execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "118", "-i", out, "-frames:v", "1", "-vf", "scale=1280:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
+if (!WIDE) execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "118", "-i", out, "-frames:v", "1", "-vf", "scale=1280:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
 fs.rmSync(dir, { recursive: true, force: true });
 const secs = execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out]).toString().trim();
 console.log(`${out} · ${Number(secs).toFixed(1)} s · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · ${frames.length} frames`);

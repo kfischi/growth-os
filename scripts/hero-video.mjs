@@ -6,10 +6,12 @@
 // Run: node scripts/hero-video.mjs   Needs ffmpeg.
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { execFileSync } from "node:child_process";
 
 const ROOT = path.resolve(new URL("../demos", import.meta.url).pathname);
-const SRC = path.join(ROOT, "../scripts/process-voice/film.mp4"); // the silent master, before the narration stretches it
+// The same film recorded with the camera kept wide (WIDE=1 node scripts/process-video.mjs), so no clip loses the page's sides.
+const SRC = process.argv[2] || path.join(os.tmpdir(), "process-wide.mp4");
 const OUT = path.join(ROOT, "shared/video/hero");
 // The browser window on the process video's 1920x1080 stage (scripts/video-stage.html), address bar included.
 const CROP = "1240:820:48:150";
