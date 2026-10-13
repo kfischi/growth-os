@@ -21,7 +21,7 @@ import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
   chatTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
-  editing, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
+  editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient,
 } from "../lib/builder.mjs";
 
@@ -31,6 +31,8 @@ const photoLimited = rateLimiter(30, 10 * 60 * 1000);
 const videoLimited = rateLimiter(6, 10 * 60 * 1000);
 const publishLimited = rateLimiter(6, 10 * 60 * 1000);
 const answerLimited = rateLimiter(120, 10 * 60 * 1000);
+const imageLimited = rateLimiter(4, 60 * 60 * 1000);    // made background images per IP per hour (each costs a few cents)
+const imageDraftLimited = rateLimiter(6, 24 * 60 * 60 * 1000); // and per draft per day
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
 const stateOf = (d) => ({ ...publicState(d), greeting: (editing(d) ? editGreeting : greeting)(first(d.owner_name)) });
@@ -91,7 +93,7 @@ export default async (req, context) => {
       const messages = [...(d.messages || []), { role: "user", content: message }, { role: "assistant", content: turn.reply }];
       const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
       const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
-      return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved) });
+      return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved), ...((turn.changed || []).length ? { draft: renderDraft(saved) } : {}) });
     }
 
     // The questionnaire: the owner picked or typed an answer. Same checks as the chat's changes, no AI call.
@@ -110,7 +112,22 @@ export default async (req, context) => {
       const { content, changed, errors } = applyUpdate(templateOf(d), d.content, update);
       if (errors.length) return json({ error: "bad_answer", errors, state: stateOf(d) }, 422);
       const saved = changed.length ? await saveDraft(d, { content }) : d;
-      return json({ changed, state: stateOf(saved) });
+      return json({ changed, state: stateOf(saved), ...(changed.length ? { draft: renderDraft(saved) } : {}) });
+    }
+
+    // A background photo made for the owner (no photo of their own). Only made here; the page saves it like an upload.
+    if (action === "hero-image" && req.method === "POST") {
+      if (!heroAI()) return json({ error: "not_configured" }, 503);
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (imageLimited(ip) || imageDraftLimited(d.id)) return json({ error: "rate_limited" }, 429);
+      const body = await req.json().catch(() => ({}));
+      try {
+        const img = await heroImage(d.content, typeof body.wish === "string" ? body.wish : "");
+        return json({ image: `data:${img.mime};base64,${img.data}` });
+      } catch (e) {
+        console.error("hero-image", e.message);
+        return json({ error: "image_failed" }, 502);
+      }
     }
 
     if (action === "photo") {
@@ -123,7 +140,7 @@ export default async (req, context) => {
         if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
         const old = ((before && before.photos) || {})[slot];
         if (old) await releaseMedia(row, [old.path]);
-        return json({ state: stateOf(row) });
+        return json({ state: stateOf(row), draft: renderDraft(row) });
       }
       if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
       if (req.headers.get("x-photo-rights") !== "yes") return json({ error: "no_rights" }, 422);
@@ -142,7 +159,7 @@ export default async (req, context) => {
       if (!saved.row) { await deletePhotos([photo.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const replaced = ((saved.before && saved.before.photos) || {})[slot];
       if (replaced) await releaseMedia(saved.row, [replaced.path]);
-      return json({ state: stateOf(saved.row) });
+      return json({ state: stateOf(saved.row), draft: renderDraft(saved.row) });
     }
 
     if (action === "video") {
@@ -152,7 +169,7 @@ export default async (req, context) => {
         if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
         const old = before && before.video;
         if (old) await releaseMedia(row, [old.path, old.poster.path]);
-        return json({ state: stateOf(row) });
+        return json({ state: stateOf(row), draft: renderDraft(row) });
       }
       if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
       if (req.headers.get("x-photo-rights") !== "yes") return json({ error: "no_rights" }, 422);
@@ -173,7 +190,7 @@ export default async (req, context) => {
       if (!saved.row) { await deletePhotos([film.path, poster.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const old = saved.before && saved.before.video;
       if (old) await releaseMedia(saved.row, [old.path, old.poster.path]);
-      return json({ state: stateOf(saved.row) });
+      return json({ state: stateOf(saved.row), draft: renderDraft(saved.row) });
     }
 
     if (action === "approve" && req.method === "POST") {

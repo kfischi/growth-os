@@ -120,6 +120,11 @@
   .compose .btn { padding-inline: 16px; }
   .photos { border-top: 1px solid var(--line); padding: 10px 12px 12px; }
   .photos summary { cursor: pointer; font-weight: 700; }
+  .gen { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: grid; gap: 8px; }
+  .gen p { margin: 0; font-size: .95rem; }
+  .gen label { font-size: .9rem; font-weight: 600; }
+  .gen[hidden] { display: none; }
+  .gen.busy #genGo { opacity: .6; pointer-events: none; }
   .slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
   .slot { position: relative; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; overflow: hidden; display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--slate); background: var(--paper); cursor: pointer; padding: 4px; }
   .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -232,6 +237,12 @@
       <summary>תמונות וסרטון</summary>
       <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטון שלנו, ומותר לפרסם אותם באתר.</span></label>
       <div class="slots" id="slots"></div>
+      <div class="gen" id="gen" hidden>
+        <p><b>אין לכם תמונה לרקע?</b> ניצור לכם אחת: המקום והעבודה, בלי אנשים ובלי כיתוב.</p>
+        <label for="genWish">מה לראות בה? (לא חובה)</label>
+        <input id="genWish" type="text" maxlength="200" placeholder="למשל: מקלחת מודרנית ונקייה, צנרת נחושת">
+        <button class="btn sm" type="button" id="genGo">ליצור תמונת רקע</button>
+      </div>
       <div class="vid" id="vid"></div>
     </details>
     <div class="approve" id="approveBox"></div>
@@ -275,7 +286,7 @@
   'use strict';
   const $ = (s) => document.querySelector(s);
   const API = '/api/builder/', STORE = 'nr-builder', WA = '972526359513';
-  const SLOTS = { portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', before: 'לפני', after: 'אחרי' };
+  const SLOTS = { hero: 'רקע לראש האתר', portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', before: 'לפני', after: 'אחרי' };
   const ERR = {
     not_configured: 'הבונה עוד לא פתוח. כתבו לנו בוואטסאפ ונבנה את האתר יחד.',
     busy_today: 'היום נפתחו כבר הרבה אתרים. נסו שוב מחר, או כתבו לנו בוואטסאפ.',
@@ -290,6 +301,7 @@
     too_long: 'ההודעה ארוכה מדי. אפשר לחלק אותה לכמה הודעות.',
     missing: 'חסרים עוד כמה פרטים לפני אישור.',
     no_rights: 'סמנו קודם שהתמונות שלכם ומותר לפרסם אותן.',
+    image_failed: 'לא הצלחנו ליצור תמונה הפעם. נסו שוב, או כתבו אחרת מה לראות בה.',
     too_big: 'התמונה גדולה מדי. נסו תמונה אחרת.',
     bad_type: 'אפשר להעלות רק תמונה (JPG או WebP).',
     not_found: 'הטיוטה לא נמצאה. אולי היא נמחקה אחרי 30 יום בלי שימוש.',
@@ -361,16 +373,20 @@
     bubble('them', s.greeting);
     for (const m of s.messages) bubble(m.role === 'user' ? 'me' : 'them', m.content);
     $('#openDraft').href = draftUrl();
-    frame.src = draftUrl();
+    frame.removeAttribute('srcdoc'); frame.src = draftUrl();
     paint();
     if (isEditable(s)) setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
   }
 
   // Reload the draft and keep the reader where they were.
-  function refreshFrame() {
+  // With the page the server sent back (html), the draft shows without a second request to the server.
+  function refreshFrame(html) {
     let y = 0;
     try { y = frame.contentWindow.scrollY; } catch (e) { /* not loaded */ }
     frame.addEventListener('load', () => { try { frame.contentWindow.scrollTo(0, y); } catch (e) { /* ignore */ } }, { once: true });
+    // A fresh page from the html (srcdoc wins over src, so a reload has to drop it first).
+    if (html) { frame.srcdoc = html; return; }
+    frame.removeAttribute('srcdoc');
     frame.src = draftUrl() + '&t=' + Date.now();
   }
 
@@ -396,6 +412,7 @@
     $('#rights').checked = $('#rights').checked || s.photoRights;
     paintGuide();
     paintSlots(editable);
+    $('#gen').hidden = !(editable && s.heroAI);
     paintVideo(editable);
     paintApprove();
   }
@@ -486,7 +503,7 @@
     state = r.data.state;
     if (action === 'publish') { openWork(state); bubble('sys', 'השינויים פורסמו. האתר יתעדכן בעוד כמה דקות.'); }
     else if (action === 'discard') { openWork(state); bubble('sys', 'ביטלנו את השינויים. התצוגה חזרה למה שבאתר.'); }
-    else { paint(); refreshFrame(); markSite(); bubble('sys', 'טענו את הגרסה הקודמת. עברו עליה, ואם היא נכונה, פרסמו.'); }
+    else { paint(); refreshFrame(r.data.draft); markSite(); bubble('sys', 'טענו את הגרסה הקודמת. עברו עליה, ואם היא נכונה, פרסמו.'); }
   }
 
   /* ---------- the questionnaire: pick an answer, type what isn't listed; no AI involved ---------- */
@@ -519,7 +536,7 @@
     if (r.data.state) state = r.data.state;
     if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return false; }
     bubble('them', st.ask); bubble('me', label);
-    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
     paint();
     return true;
   }
@@ -546,7 +563,7 @@
     styleBusy = false; document.body.classList.remove('styling');
     if (r.data.state) state = r.data.state;
     if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return; }
-    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
     paint();
   }
   function designPicker(box) {
@@ -719,12 +736,27 @@
     state = r.data.state;
     bubble('them', r.data.reply);
     paint();
-    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
     msg.focus({ preventScroll: true });
   });
 
   /* ---------- photos: resized and re-encoded here, which also drops the location data ---------- */
   // The rights box is easy to miss on a phone: asking at the moment of picking keeps the upload going.
+  // A background photo made for them: the server makes it, the page saves it like an upload (it is theirs to use).
+  $('#genGo').addEventListener('click', async () => {
+    const box = $('#gen');
+    if (box.classList.contains('busy')) return;
+    box.classList.add('busy'); $('#genGo').textContent = 'יוצרים תמונה, כחצי דקה…';
+    busy.add('hero'); paintSlots(isEditable(state));
+    const r = await call('hero-image', { body: { wish: $('#genWish').value } });
+    box.classList.remove('busy'); $('#genGo').textContent = 'ליצור תמונת רקע';
+    if (!r.ok || !r.data.image) { busy.delete('hero'); paint(); bubble('fail', say(r.data.error)); return; }
+    const blob = await (await fetch(r.data.image)).blob();
+    queue = queue.then(() => uploadPhoto('hero', blob)).catch(() => {});
+    await queue;
+    bubble('sys', 'יצרנו תמונת רקע לראש האתר. לא מתאימה? אפשר ליצור אחרת או להעלות תמונה שלכם.');
+  });
+
   function confirmRights() {
     if ($('#rights').checked) return true;
     if (confirm('התמונות והסרטון שלכם, ומותר לפרסם אותם באתר?')) { $('#rights').checked = true; return true; }
@@ -763,13 +795,13 @@
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame(); markSite();
+    refreshFrame(r.data.draft); markSite();
   }
 
   async function removePhoto(slot) {
     const r = await call('photo', { method: 'DELETE', query: '?slot=' + slot });
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    state = r.data.state; paint(); refreshFrame();
+    state = r.data.state; paint(); refreshFrame(r.data.draft);
   }
 
   /* ---------- the short video: the owner picks 10 seconds, the browser makes a small MP4 (H.264, no sound) ---------- */
@@ -886,7 +918,7 @@
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame(); markSite();
+    refreshFrame(r.data.draft); markSite();
   }
 
   async function removeVideo() {
@@ -894,7 +926,7 @@
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame();
+    refreshFrame(r.data.draft);
   }
 
   /* ---------- approve ---------- */

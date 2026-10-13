@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { SAMPLE } from "./builder-sample.mjs";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 
-import { T, storage, sentWa, aiCalls, ai, gh, DEF } from "./builder-fakes.mjs";
+import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls } from "./builder-fakes.mjs";
 // What the model was told about the draft in its last turn.
 const aiCallsState = () => { const m = aiCalls.at(-1).messages.at(-1).content; return typeof m === "string" ? m : m[0].text; };
 
@@ -132,7 +132,7 @@ const webp = Buffer.concat([Buffer.from("RIFF0000WEBPVP8 "), Buffer.alloc(200, 1
 const jpg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(200, 2)]);
 r = await J(await req("photo", { raw: webp, query: "?slot=portrait", headers: { "content-type": "image/webp" } })); assert.equal(r.error, "no_rights");
 r = await J(await req("photo", { raw: Buffer.from("<svg onload=alert(1)>"), query: "?slot=portrait", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 415);
-r = await J(await req("photo", { raw: webp, query: "?slot=hero", headers: { "x-photo-rights": "yes" } })); assert.equal(r.error, "bad_slot");
+r = await J(await req("photo", { raw: webp, query: "?slot=banner", headers: { "x-photo-rights": "yes" } })); assert.equal(r.error, "bad_slot");
 r = await J(await req("photo", { raw: Buffer.alloc(1_048_577, 0), query: "?slot=portrait", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 413);
 r = await J(await req("photo", { raw: webp, query: "?slot=portrait", headers: { "x-photo-rights": "yes" } }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.ok(D.photo_rights_at); assert.equal(storage.size, 1);
@@ -463,6 +463,25 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
       assert.ok(!/₪|ש״ח/.test(JSON.stringify(it)), f + ": no prices in general guides");
     }
   }
+}
+
+// A background photo at the top: the template washes it behind the text; the image model gets the rules.
+{
+  const t = await import("../../demos/netlify/lib/templates/plumber.mjs");
+  const lib = await import("../../demos/netlify/lib/builder.mjs");
+  const c = { ...t.emptyContent(), business_name: "אורן מים", trade: "אינסטלציה", area: "חדרה" };
+  const page = t.render(c, { mode: "draft", assets: "/shared/", photos: { hero: "assets/photos/hero.webp" } })["index.html"];
+  assert.ok(page.includes('class="hero has-bg"') && page.includes("--hero-img: url('assets/photos/hero.webp')"), "the hero shows the photo");
+  assert.ok(!t.render(c, { mode: "draft", assets: "/shared/" })["index.html"].includes('class="hero has-bg"'), "no photo, no background");
+  assert.ok(t.PHOTOS.hero, "hero is a photo slot");
+  delete process.env.GEMINI_API_KEY;
+  assert.equal(lib.heroAI(), false, "no key, no button");
+  process.env.GEMINI_API_KEY = "test";
+  const img = await lib.heroImage(c, "מקלחת נקייה <script>");
+  assert.equal(img.mime, "image/png");
+  const said = imageCalls.at(-1).contents[0].parts[0].text;
+  assert.ok(/No people/.test(said) && /No text/.test(said) && /No yellow/.test(said) && said.includes("אינסטלציה") && !said.includes("<script>"), "the prompt keeps the rules");
+  delete process.env.GEMINI_API_KEY;
 }
 
 console.log("all site builder tests passed");

@@ -27,6 +27,7 @@ function match(row, filters) {
   });
 }
 const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
+export const imageCalls = [];
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
   if (u.host === "api.anthropic.com") {
@@ -35,6 +36,10 @@ globalThis.fetch = async (url, opt = {}) => {
     if (ai.mode === "refusal") return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "refusal", content: [], usage: { input_tokens: 1, output_tokens: 0 } });
     const out = ai.queue.shift(); assert.ok(out, "an AI answer was queued");
     return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(out) }], usage: { input_tokens: 1, output_tokens: 1 } });
+  }
+  if (u.host === "generativelanguage.googleapis.com") { // the background image (heroImage)
+    imageCalls.push(JSON.parse(opt.body));
+    return res({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "iVBORw0KGgo=" } }] } }] });
   }
   if (u.host === "graph.facebook.com") { sentWa.push(JSON.parse(opt.body)); return res({ messages: [{ id: "wamid." + sentWa.length }] }); }
   if (u.host === "api.github.com") {

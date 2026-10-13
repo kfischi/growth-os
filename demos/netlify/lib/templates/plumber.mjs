@@ -50,6 +50,7 @@ export const SERVICES = {
 export const TOWNS = { min: 1, max: 12, itemMax: 22, label: "ישובים" };
 
 export const PHOTOS = {
+  hero: { label: "רקע לראש האתר", aspect: "16 / 9" },  // behind the top of the site, washed so the text stays readable
   portrait: { label: "תמונה של בעל העסק", aspect: "1 / 1" },
   work1: { label: "עבודה 1", title: "work1_title" },
   work2: { label: "עבודה 2", title: "work2_title" },
@@ -249,7 +250,7 @@ ${robots}<meta property="og:type" content="website">
 </head>
 <body class="look-${L.id}">
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
-<header class="hero">
+<header class="hero${photos.hero ? " has-bg" : ""}"${photos.hero ? ` style="--hero-img: url('${h(photos.hero)}')"` : ""}>
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="currentColor"/></svg><span>${v("business_name")}</span></div>
     ${callLocal ? `<a class="live mono" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}
@@ -268,7 +269,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>${leads ? `
       <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
-    ${video ? reel(video, String(c.video_title || "").trim()) : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe })}
+    ${video ? reel(video, String(c.video_title || "").trim()) : photos.hero ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe })}
   </div>
 </header>
 
@@ -556,6 +557,9 @@ const CSS = `
     background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
       linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
     background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
+  /* A photo behind the top: the text side is washed with the hero colour, so the text keeps its contrast. */
+  .hero.has-bg { background-image: linear-gradient(90deg, color-mix(in srgb, var(--hero) 15%, transparent) 0%, color-mix(in srgb, var(--hero) 55%, transparent) 30%, color-mix(in srgb, var(--hero) 93%, transparent) 47%, var(--hero) 58%), var(--hero-img);
+    background-size: cover, cover; background-position: center, center; }
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
   .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; min-width: 0; }
   .logo svg { width: 30px; height: 30px; flex: none; }
@@ -644,6 +648,11 @@ const CSS = `
   .ps { position: relative; overflow: hidden; margin: 0; background: var(--ps-b); }
   .ps img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
   @media (max-width: 880px) {
+    /* on a phone the photo is a band at the top, in full, and the text starts below it */
+    .hero.has-bg { background-image: linear-gradient(color-mix(in srgb, var(--hero) 60%, transparent) 0, transparent 20vw, transparent 40vw, var(--hero) 56.25vw), var(--hero-img);
+      background-size: 100% 100%, 100% auto; background-position: top, top; background-repeat: no-repeat; }
+    .hero.has-bg .hero-grid { padding-top: 36vw; }
+    .hero.has-bg .hero-grid > div:empty { display: none; }
     .field-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .lanyard { max-width: 300px; margin-inline: auto; }
     .hero-grid, .area .row { grid-template-columns: minmax(0, 1fr); }
     .reel { width: min(100%, 300px); }

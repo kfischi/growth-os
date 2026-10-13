@@ -205,6 +205,36 @@ export function photoType(buf) {
   return null;
 }
 
+// A background photo for the top of the site, made by Google's image model when the owner has none (GEMINI_API_KEY,
+// optional GEMINI_IMAGE_MODEL). It shows the work's world, never a person, a face, text or a logo, and no yellow:
+// a made-up face or sign on a real business's site would mislead its customers. Returns { mime, data } (base64);
+// the browser shrinks it and saves it like any photo it uploads.
+export const heroAI = () => Boolean(process.env.GEMINI_API_KEY);
+export async function heroImage(content, wish = "") {
+  const model = process.env.GEMINI_IMAGE_MODEL || "gemini-2.5-flash-image";
+  const clean = (x, n) => String(x || "").replace(/[\u0000-\u001f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
+  const prompt = [
+    "A wide, realistic, professional photograph for the background of the top of a small business website in Israel.",
+    `The business: ${clean(content.trade, 60) || "a home services business"}${content.area ? `, working in ${clean(content.area, 80)}` : ""}.`,
+    clean(wish, 200) ? `What the owner wants to see: ${clean(wish, 200)}.` : "Show the setting and the result of the work: the place, the tools and the materials.",
+    "No people, no faces, no hands. No text, letters, numbers, signs or logos anywhere. No yellow or golden tones.",
+    "Natural soft light, calm and clean, slightly out of focus on the right side so text can sit over it. Landscape 16:9.",
+  ].join(" ");
+  const ask = (withRatio) => fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseModalities: ["IMAGE"], ...(withRatio ? { imageConfig: { aspectRatio: "16:9" } } : {}) } }),
+    signal: AbortSignal.timeout(60000),
+  });
+  let res = await ask(true);
+  if (res.status === 400) res = await ask(false); // a model without the aspect ratio option
+  if (!res.ok) throw new Error("image " + res.status);
+  const out = await res.json();
+  const part = ((((out.candidates || [])[0] || {}).content || {}).parts || []).find((x) => x.inlineData && /^image\//.test(x.inlineData.mimeType || ""));
+  if (!part) throw new Error("image: none");
+  return { mime: part.inlineData.mimeType, data: part.inlineData.data };
+}
+
 // The browser already turned the owner's video into a short MP4 (H.264, no sound). Here: is it really an MP4?
 // An MP4 starts with a box whose type, at bytes 4 to 8, is "ftyp".
 export const isMp4 = (buf) => buf.length > 12 && buf.toString("ascii", 4, 8) === "ftyp";
@@ -279,6 +309,7 @@ export function publicState(d) {
     // The looks and palettes to pick from, and the current pick.
     looks: t.catalog ? t.catalog() : null,
     style: t.lookOf ? { look: t.lookOf(d.content).id, palette: t.lookOf(d.content).pid } : null,
+    heroAI: heroAI(),
     rev: d.rev,
   };
 }

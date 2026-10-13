@@ -80,7 +80,7 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 - `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
 - Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.
 - The home page has no form any more: visitors build in `build/`, and the builder alerts כפיר through `/api/lead/kfir` when a draft is approved.
-- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`. Never in the repo or the chat.
+- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, optional `GEMINI_API_KEY`. Never in the repo or the chat.
 - `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
 - The page shows "received" only when the lead is stored **and** the owner's WhatsApp alert went out. Otherwise `/api/lead` answers `alert_failed` and the page opens WhatsApp. Failures show in red in the panel and fail `/api/health` (`health.mjs`), which an uptime monitor checks every 5 minutes. Leads older than two years are deleted on the 1st of the month.
 
@@ -91,6 +91,7 @@ Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/b
 - Code: `demos/netlify/lib/builder.mjs` and `demos/netlify/functions/builder.mjs` (`/api/builder/:action`), `builder-admin.mjs`, `draft.mjs`.
 - Table: `ls_drafts`, plus the `builder` storage bucket, in `supabase/lead-system/0002_site_builder.sql`.
 - Templates: `demos/netlify/lib/templates/<id>.mjs`, holding the fields and `render()`. The first one is `plumber.mjs`, built from `clients/sample-plumber/`. Every value is escaped. Facts (years, warranty, prices, response time) come only from the owner.
+- Every change returns the rendered draft (`draft` in the answer), and the page writes it into the frame in place, so the draft updates without a second request.
 - The chat uses structured outputs (`output_config.format`), effort low, and fallbacks `"default"`. The history is stored as text only and only grows; the draft state goes into the last message only.
 - Extra secrets: `GITHUB_TOKEN`, fine-grained, this repo only, Contents: read and write. Optional: `PAY_URL_*`, `BUILDER_DAILY_MAX`.
 - The approval dialog in `demos/build/index.html` shows the prices. Keep it in sync with `#plans`.
@@ -101,6 +102,7 @@ Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/b
 - "Save to contacts": a published site gets `contact.vcf` (`vcard()` in the template, served as `text/vcard` by `_headers`) and a link to it. In the panel every tagged link has a QR code to download (SVG or PNG), drawn in the browser with `shared/vendor/qrcode-generator-2.0.4.js` (MIT).
 - Guides on client sites: the template shows the trade's urgent guides on the main page (the chat links there) and builds `guides.html` with all of them and FAQPage JSON-LD, from the same `shared/guides/<trade>.json`.
 - Schema.org: a published site gets LocalBusiness JSON-LD from the owner's facts (`templates/schema.mjs`: type by trade, phone, towns, hours when they parse, services with price ranges). Nothing invented: no address, no rating. The home page has its own ProfessionalService block.
+- Background photo at the top (optional): photo slot `hero`. On a computer it sits behind the top with the text side washed in the hero colour; on a phone it is a band in full above the text. With `GEMINI_API_KEY` in Netlify (optional `GEMINI_IMAGE_MODEL`, default `gemini-2.5-flash-image`) the builder offers "ליצור תמונת רקע": `/api/builder/hero-image` asks Google's image model for a 16:9 photo of the work's world (no people, faces, text, logos or yellow), and the page saves it like an upload. A few cents an image; limited per IP and per draft.
 - Before and after (optional): photo slots `before` and `after` plus `ba_title`. With both photos the site gets a slider (self-contained in the template); a draft shows the frame from the first photo.
 - An owner can add one short video (optional). The browser cuts 10 seconds and converts them to an H.264 MP4 with no sound, using Mediabunny (`demos/shared/vendor/`, loaded only when a video is picked). In the template it takes the drawing's place at the top. It plays only on screen, never for reduced motion or save-data, and has a pause button. Tests run the same conversion in VP9, because the test browser has no H.264 encoder.
 
