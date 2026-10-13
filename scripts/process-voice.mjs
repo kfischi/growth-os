@@ -1,12 +1,14 @@
 // The narration of the process film: lays one audio file per line of scripts/process-voice.json at its time, writes
 // the film with sound and the captions (WebVTT) from the same text.
-//   node scripts/process-voice.mjs <voice-dir> [out-dir]
+//   node scripts/process-voice.mjs <voice-dir | one-file> [out-dir]
 // <voice-dir> holds 01.mp3, 02.mp3 ... (or .wav/.m4a), one per line in order: recorded by a person or made with a
-// text-to-speech service from the "say" (or "text") of each line. A line that runs into the next one is sped up a
+// text-to-speech service from the "say" (or "text") of each line. Or one file with the whole script read in order,
+// a pause between lines (a blank line between them in ElevenLabs is enough): it is cut at its longest pauses. A line that runs into the next one is sped up a
 // little (up to 12%); beyond that the script stops and names the line to shorten.
 // Writes process-voice.mp4 and process.vtt to out-dir (default demos/shared/video/process). Needs ffmpeg.
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { execFileSync } from "node:child_process";
 
 const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
@@ -17,7 +19,49 @@ if (!voiceDir) { console.error("usage: node scripts/process-voice.mjs <voice-dir
 
 const probe = (f) => Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f]).toString());
 const filmEnd = probe(FILM);
-const files = lines.map((_, i) => {
+
+// One recording of the whole script: cut it in the middle of its longest pauses, one piece per line.
+function split(file) {
+  const err = execFileSync("sh", ["-c", 'ffmpeg -hide_banner -i "$0" -af silencedetect=noise=-38dB:d=0.35 -f null - 2>&1', file]).toString();
+  const gaps = [];
+  let start = null;
+  for (const m of err.matchAll(/silence_(start|end): ([\d.]+)/g)) {
+    if (m[1] === "start") start = Number(m[2]);
+    else if (start !== null) { gaps.push({ at: (start + Number(m[2])) / 2, len: Number(m[2]) - start }); start = null; }
+  }
+  const total = probe(file);
+  const inner = gaps.filter((g) => g.at > 0.5 && g.at < total - 0.5).sort((a, b) => a.at - b.at);
+  const n = lines.length - 1;
+  if (inner.length < n) throw new Error(`found ${inner.length + 1} parts in ${file}, the script has ${lines.length} lines: read it with a pause between lines`);
+  // Where each cut should fall if speech ran at an even pace (by the length of the text), then the pauses that sit
+  // closest to those places and are long, in order (a small dynamic programme: pauses inside a sentence lose).
+  const said = lines.map((l) => (l.say || l.text).length);
+  const sum = said.reduce((a, b) => a + b, 0);
+  const want = said.slice(0, -1).map((_, k) => total * said.slice(0, k + 1).reduce((a, b) => a + b, 0) / sum);
+  const unit = total / lines.length;
+  const cost = (k, g) => Math.abs(g.at - want[k]) / unit - 2 * Math.min(g.len, 1.5);
+  const best = inner.map(() => Array(n).fill(Infinity)), from = inner.map(() => Array(n).fill(-1));
+  inner.forEach((g, j) => {
+    best[j][0] = cost(0, g);
+    for (let k = 1; k < n; k++) for (let i = 0; i < j; i++) {
+      const c = best[i][k - 1] + cost(k, g);
+      if (c < best[j][k]) { best[j][k] = c; from[j][k] = i; }
+    }
+  });
+  let j = inner.reduce((b, _, i) => (best[i][n - 1] < best[b][n - 1] ? i : b), 0);
+  const cuts = [];
+  for (let k = n - 1; k >= 0; k--) { cuts.unshift(inner[j].at); j = from[j][k]; }
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "voice-"));
+  const edges = [0, ...cuts, total];
+  return lines.map((_, i) => {
+    const out = path.join(dir, String(i + 1).padStart(2, "0") + ".wav");
+    execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", file, "-ss", String(edges[i]), "-to", String(edges[i + 1]),
+      "-af", "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse", out]);
+    return out;
+  });
+}
+
+const files = fs.statSync(voiceDir).isFile() ? split(voiceDir) : lines.map((_, i) => {
   const base = path.join(voiceDir, String(i + 1).padStart(2, "0"));
   const f = [".mp3", ".wav", ".m4a"].map((x) => base + x).find((x) => fs.existsSync(x));
   if (!f) throw new Error("missing voice file for line " + (i + 1) + ": " + base + ".mp3");
