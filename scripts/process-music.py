@@ -1,6 +1,8 @@
-"""The background music of the process film, composed here so it is ours to use: a calm pad, a soft bass and a felt
-piano arpeggio in D major, 80 BPM, with a short intro and an ending that resolves. Deterministic: the same file every
-run. scripts/process-voice.mjs lays it under the voice and ducks it while she speaks.
+"""The background music of the process film, composed here so it is ours to use. Light and moving, to match the pace
+of the film and the voice: 112 BPM in D major, a soft kick and clap, offbeat hats and a shaker, a pulsing bass, a
+plucked sixteenth-note arpeggio and a pad underneath. It opens with two bars of pad and hats, gives the groove a
+breath every eight bars, and ends on a ringing chord. Deterministic: the same file every run.
+scripts/process-voice.mjs lays it under the voice and ducks it while she speaks.
 Run: python3 scripts/process-music.py [seconds] [out.wav]   Needs numpy."""
 import sys, wave
 import numpy as np
@@ -8,127 +10,160 @@ import numpy as np
 SR = 44100
 LENGTH = float(sys.argv[1]) if len(sys.argv) > 1 else 266.0
 OUT = sys.argv[2] if len(sys.argv) > 2 else "process-music.wav"
-BPM = 80
+BPM = 112
 BEAT = 60 / BPM
 BAR = 4 * BEAT
-rng = np.random.default_rng(7)
+S16 = BEAT / 4
+rng = np.random.default_rng(11)
 
 def hz(m):
     return 440.0 * 2 ** ((m - 69) / 12)
 
-# Two bars per chord: Dmaj7, Bm7, Gmaj7, Asus4 -> A. MIDI notes: bass root, then the chord tones for pad and keys.
+# One bar per chord: D, Bm7, G(add9), A(sus4 -> 3). Bass root, then the chord tones.
 CHORDS = [
-    (38, [62, 66, 69, 73]),   # Dmaj7
-    (35, [59, 62, 66, 69]),   # Bm7
-    (31, [59, 62, 66, 67]),   # Gmaj7 (B D F# G)
-    (33, [57, 62, 64, 69]),   # Asus4
-    (38, [62, 66, 69, 73]),
+    (38, [62, 66, 69, 74]),
     (35, [59, 62, 66, 69]),
-    (31, [59, 62, 66, 67]),
-    (33, [57, 61, 64, 69]),   # A
+    (31, [59, 62, 67, 69]),
+    (33, [57, 62, 64, 69]),
+    (38, [62, 66, 69, 73]),
+    (35, [59, 62, 66, 71]),
+    (31, [59, 62, 67, 71]),
+    (33, [57, 61, 64, 69]),
 ]
 n = int(LENGTH * SR)
-t_all = np.arange(n) / SR
 mix = np.zeros(n)
 
-def env_adsr(length, a, r):
-    e = np.ones(length)
-    ai, ri = int(a * SR), int(r * SR)
-    e[:ai] = np.linspace(0, 1, ai) ** 2
-    e[-ri:] *= np.linspace(1, 0, ri) ** 2
-    return e
-
-def add(at, sig):
+def add(at, sig, gain=1.0):
     i = int(at * SR)
-    if i >= n:
+    if i >= n or i < 0:
         return
     sig = sig[: n - i]
-    mix[i : i + len(sig)] += sig
+    mix[i : i + len(sig)] += sig * gain
+
+def ramp(m, a, r):
+    e = np.ones(m)
+    ai, ri = max(1, int(a * SR)), max(1, int(r * SR))
+    e[:ai] = np.linspace(0, 1, ai)
+    e[-ri:] *= np.linspace(1, 0, ri)
+    return e
+
+def highpass(x, k=3):
+    return x - np.convolve(x, np.ones(k) / k, mode="same")
+
+def kick():
+    m = int(0.42 * SR)
+    t = np.arange(m) / SR
+    f = 45 + 85 * np.exp(-t * 28)
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    s = np.sin(ph) * np.exp(-t * 7.5)
+    s[: int(0.003 * SR)] += rng.uniform(-0.4, 0.4, int(0.003 * SR))  # the beater
+    return s
+
+def clap():
+    m = int(0.3 * SR)
+    t = np.arange(m) / SR
+    s = np.zeros(m)
+    for d in (0.0, 0.011, 0.022):  # three hands, the clap's flutter
+        i = int(d * SR)
+        burst = highpass(rng.standard_normal(m - i), 5) * np.exp(-np.arange(m - i) / SR * 26)
+        s[i:] += burst
+    return s * 0.5
+
+def hat(open_=False):
+    m = int((0.16 if open_ else 0.05) * SR)
+    t = np.arange(m) / SR
+    s = highpass(highpass(rng.standard_normal(m), 2), 2)
+    return s * np.exp(-t * (18 if open_ else 70))
+
+def shaker():
+    m = int(0.07 * SR)
+    t = np.arange(m) / SR
+    s = highpass(rng.standard_normal(m), 3)
+    return s * np.sin(np.pi * np.minimum(1, t / 0.07)) * np.exp(-t * 30)
+
+def bass(note, dur):
+    m = int(dur * SR)
+    t = np.arange(m) / SR
+    f = hz(note)
+    s = np.sin(2 * np.pi * f * t) + 0.35 * np.sin(2 * np.pi * 2 * f * t) + 0.12 * np.sin(2 * np.pi * 3 * f * t)
+    return s * np.exp(-t * 3.0) * ramp(m, 0.004, 0.03)
+
+def pluck(note, vel):
+    m = int(0.9 * SR)
+    t = np.arange(m) / SR
+    f = hz(note)
+    s = np.zeros(m)
+    for k, amp, dec in ((1, 1.0, 6.0), (2, 0.5, 9.0), (3, 0.22, 13.0), (5, 0.08, 20.0)):
+        s += amp * np.sin(2 * np.pi * f * k * t) * np.exp(-dec * t)
+    return s * np.minimum(1, t / 0.003) * vel
 
 def pad(notes, dur):
-    m = int((dur + 1.6) * SR)
+    m = int((dur + 0.8) * SR)
     t = np.arange(m) / SR
     s = np.zeros(m)
     for note in notes:
-        for det in (-0.004, 0.0, 0.004):  # a slight chorus
+        for det in (-0.005, 0.005):
             f = hz(note) * (1 + det)
             ph = rng.uniform(0, 2 * np.pi)
-            for k, amp in ((1, 1.0), (2, 0.28), (3, 0.12), (4, 0.05)):
-                s += amp * np.sin(2 * np.pi * f * k * t + ph * k)
-    s *= 0.6 + 0.4 * np.sin(2 * np.pi * 0.11 * t) ** 2  # slow breathing
-    return s * env_adsr(m, 1.4, 1.6) / (len(notes) * 3)
+            s += np.sin(2 * np.pi * f * t + ph) + 0.18 * np.sin(4 * np.pi * f * t + ph)
+    return s * ramp(m, 0.25, 0.8) / (len(notes) * 2)
 
-def bass(note, dur):
-    m = int((dur + 0.4) * SR)
-    t = np.arange(m) / SR
-    f = hz(note)
-    s = np.sin(2 * np.pi * f * t) + 0.25 * np.sin(2 * np.pi * 2 * f * t)
-    return s * env_adsr(m, 0.08, 0.5)
-
-def key(note, vel):
-    m = int(2.6 * SR)
-    t = np.arange(m) / SR
-    f = hz(note)
-    s = np.zeros(m)
-    for k, amp, dec in ((1, 1.0, 1.1), (2, 0.45, 1.8), (3, 0.2, 2.8), (4, 0.08, 4.0)):
-        s += amp * np.sin(2 * np.pi * f * k * t) * np.exp(-dec * t)
-    s *= np.minimum(1, t / 0.006)  # a soft hammer
-    return s * vel
-
-INTRO = 2 * BAR          # pad only
-OUTRO_AT = LENGTH - 9.0  # the last chord rings out
-ARP = [0, 2, 1, 3, 2, 1, 3, 2]  # eighth notes over the chord tones
-step = 0
+INTRO = 2 * BAR
+END_AT = LENGTH - 6.5
+ARP = [0, 1, 2, 3, 2, 1, 3, 2, 0, 2, 1, 3, 2, 3, 1, 2]
+BASS = [0, None, 0, 0, None, 0, 12, 0]  # eighth notes: root, rests, an octave jump
+bar = 0
 at = 0.0
-while at < OUTRO_AT:
-    root, notes = CHORDS[step % len(CHORDS)]
-    dur = 2 * BAR
-    add(at, pad(notes, dur) * 0.55)
-    if at >= INTRO:
-        add(at, bass(root, BAR * 0.98) * 0.32)
-        add(at + BAR, bass(root, BAR * 0.98) * 0.28)
+while at + BAR <= END_AT:
+    root, notes = CHORDS[bar % len(CHORDS)]
+    add(at, pad(notes, BAR), 0.30)
+    groove = at >= INTRO
+    breath = groove and bar % 8 == 7  # the last bar of every eight: no kick, no bass, the arpeggio alone
+    for b in range(4):
+        x = at + b * BEAT
+        if groove and not breath:
+            add(x, kick(), 0.55)
+            if b in (1, 3):
+                add(x, clap(), 0.20)
+        add(x + BEAT / 2, hat(open_=(b == 3 and bar % 2 == 1)), 0.09 if groove else 0.06)
+    if groove:
         for i in range(16):
-            if (step // 4) % 2 == 1 and i % 2 == 1:
-                continue  # every other phrase, sparser
-            note = notes[ARP[i % 8]] + (12 if i in (6, 14) else 0)
-            vel = 0.16 * (1.0 if i % 4 == 0 else 0.7) * rng.uniform(0.85, 1.0)
-            add(at + i * BEAT / 2 + rng.uniform(0, 0.012), key(note, vel))
-    at += dur
-    step += 1
-# the ending: D major with the ninth, ringing out
-add(at, pad([62, 66, 69, 76], 7.0) * 0.6)
-add(at, bass(38, 7.0) * 0.3)
-for i, note in enumerate([62, 66, 69, 74, 76]):
-    add(at + i * 0.18, key(note, 0.14))
+            add(at + i * S16 + rng.uniform(0, 0.004), shaker(), 0.035 * (1.0 if i % 2 else 0.6))
+            note = notes[ARP[i] % 4] + (12 if i in (7, 15) else 0)
+            vel = 0.13 * (1.0 if i % 4 == 0 else 0.72) * rng.uniform(0.9, 1.0)
+            add(at + i * S16, pluck(note, vel))
+        if not breath:
+            for i, step in enumerate(BASS):
+                if step is not None:
+                    add(at + i * BEAT / 2, bass(root + step, BEAT / 2 * 0.95), 0.30)
+    at += BAR
+    bar += 1
+# the ending: D with the ninth, one last kick, ringing out
+add(at, kick(), 0.5)
+add(at, pad([62, 66, 69, 76], 5.0), 0.38)
+add(at, bass(38, 2.5), 0.3)
+for i, note in enumerate([62, 66, 69, 74, 76, 81]):
+    add(at + i * S16, pluck(note, 0.12))
 
-# A room: convolution with a decaying noise tail (about 2 seconds), mixed in lightly.
-ir_len = int(2.2 * SR)
-ir = rng.standard_normal(ir_len) * np.exp(-np.arange(ir_len) / SR * 3.2)
-ir[: int(0.012 * SR)] = 0
+# A small room, then a gentle top cut (about 7 kHz) and the fades.
+ir_len = int(1.2 * SR)
+ir = rng.standard_normal(ir_len) * np.exp(-np.arange(ir_len) / SR * 5.0)
+ir[: int(0.01 * SR)] = 0
 ir /= np.sqrt((ir ** 2).sum())
 size = 1 << int(np.ceil(np.log2(n + ir_len)))
-wet = np.fft.irfft(np.fft.rfft(mix, size) * np.fft.rfft(ir, size), size)[:n]
-out = 0.78 * mix + 0.35 * wet
-# gentle top cut: a one-pole low-pass at about 6 kHz
-a = np.exp(-2 * np.pi * 6000 / SR)
-y = np.empty_like(out)
-acc = 0.0
-for i in range(0, n, 4096):
-    seg = out[i : i + 4096]
-    res = np.empty_like(seg)
-    for j, v in enumerate(seg):
-        acc = (1 - a) * v + a * acc
-        res[j] = acc
-    y[i : i + 4096] = res
+spec = np.fft.rfft(mix, size)
+wet = np.fft.irfft(spec * np.fft.rfft(ir, size), size)
+f = np.fft.rfftfreq(size, 1 / SR)
+out = np.fft.irfft((spec + 0.3 * np.fft.rfft(wet, size)) / np.sqrt(1 + (f / 7000) ** 4), size)[:n]
 fade = np.ones(n)
-fi, fo = int(2.0 * SR), int(4.0 * SR)
+fi, fo = int(1.0 * SR), int(3.0 * SR)
 fade[:fi] = np.linspace(0, 1, fi)
 fade[-fo:] = np.linspace(1, 0, fo)
-y *= fade
-y /= np.abs(y).max() / 0.89
+out *= fade
+out /= np.abs(out).max() / 0.89
 with wave.open(OUT, "wb") as w:
     w.setnchannels(1)
     w.setsampwidth(2)
     w.setframerate(SR)
-    w.writeframes((y * 32767).astype("<i2").tobytes())
-print(f"{OUT}: {LENGTH:.1f} s")
+    w.writeframes((out * 32767).astype("<i2").tobytes())
+print(f"{OUT}: {LENGTH:.1f} s, {BPM} BPM")
