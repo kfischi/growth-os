@@ -8,7 +8,7 @@ Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SER
 /* ---------------- fakes ---------------- */
 export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [] };
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
-export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"]]), head: "c0", moveFails: 0, trees: [] };
+export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"], ["clients/sample-plumber/assets/a11y.js", "sha-a11y"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
   ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, video: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
   ls_leads: () => ({ id: randomUUID(), status: "new", created_at: new Date().toISOString() }),
@@ -40,7 +40,7 @@ globalThis.fetch = async (url, opt = {}) => {
   if (u.host === "api.github.com") {
     assert.equal(opt.headers.authorization, "Bearer ghp_test"); assert.ok(opt.signal, "github call has a timeout");
     const body = opt.body ? JSON.parse(opt.body) : null; const p = u.pathname.replace("/repos/kfischi/growth-os", ""); gh.calls.push([method, p]);
-    if (method === "GET" && p.startsWith("/contents/clients/sample-plumber/assets")) return res([{ name: "leadbot.js", type: "file", sha: "sha-bot" }, { name: "leadform.js", type: "file", sha: "sha-form" }, { name: "photos", type: "dir", sha: "x" }]);
+    if (method === "GET" && p.startsWith("/contents/clients/sample-plumber/assets")) return res([{ name: "leadbot.js", type: "file", sha: "sha-bot" }, { name: "leadform.js", type: "file", sha: "sha-form" }, { name: "a11y.js", type: "file", sha: "sha-a11y" }, { name: "photos", type: "dir", sha: "x" }]);
     if (method === "GET" && p.startsWith("/contents/") && p.endsWith(".md")) { const f = gh.files.get(p.slice(10)); return f ? res({ content: Buffer.from(f).toString("base64"), encoding: "base64" }) : res({ message: "Not Found" }, 404); }
     if (method === "GET" && p.startsWith("/contents/")) { // a folder: its direct children
       const dir = p.slice(10), kids = new Map();

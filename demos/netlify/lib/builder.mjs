@@ -518,7 +518,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
   }
 
   const assets = ghOk(await gh("GET", `/contents/clients/sample-plumber/assets?ref=${q(BRANCH())}`), "assets");
-  const shared = ["leadbot.js", "leadform.js"].map((name) => {
+  const shared = ["leadbot.js", "leadform.js", "a11y.js"].map((name) => {
     const f = assets.find((x) => x.name === name && x.type === "file");
     if (!f) throw new Error("missing template asset " + name);
     return { path: `${dir}/assets/${name}`, mode: "100644", type: "blob", sha: f.sha };

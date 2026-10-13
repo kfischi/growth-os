@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>נחיתה רכה · אתרים שבונים עסקים</title>
+<script src="shared/a11y.js" data-statement="accessibility/"></script>
 <meta name="description" content="אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"נחיתה רכה","slogan":"אתרים שבונים עסקים","description":"אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.","url":"https://service-pro-web.netlify.app/","telephone":"+972526359513","areaServed":{"@type":"Country","name":"ישראל"},"knowsLanguage":"he"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -361,7 +362,7 @@ img, svg { display: block; }
   .plans, .offers { grid-template-columns: minmax(0, 1fr); }
   .addon { grid-template-columns: minmax(0, 1fr); }
   .dock.on { display: block; }
-  :root.dock-on body .ab-launch { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  :root.dock-on body .ab-launch, :root.dock-on body .a11y-ui { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   :root.dock-on body .ab-panel { bottom: calc(150px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 180px)); }
   :root.in-hero .ab-launch { opacity: 0; pointer-events: none; }
 }
@@ -598,7 +599,7 @@ img, svg { display: block; }
         <div class="start-ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><button class="btn ghost" type="button" data-open-ai>לשאול את הנציג החכם</button></div>
         <p class="start-human">מעדיפים לדבר עם בן אדם? <a data-wa-human href="#">כתבו לנו בוואטסאפ</a></p>
       </div>
-      <footer class="foot"><span>נחיתה רכה · אתרים שבונים עסקים</span><span>העסקים בדוגמאות הם עסקים בדויים.</span></footer>
+      <footer class="foot"><span>נחיתה רכה · אתרים שבונים עסקים</span><span>העסקים בדוגמאות הם עסקים בדויים.</span><span><a href="privacy/">פרטיות ועוגיות</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
     </div>
   </section>
 </main>
@@ -607,7 +608,7 @@ img, svg { display: block; }
 <script>
 (() => {
   const root = document.documentElement, $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || root.classList.contains('a11y-still');
   const WA = '972526359513';
 
   /* ---- the film: one working day on two phones. Its own light runs from morning to dusk ---- */
@@ -644,6 +645,7 @@ img, svg { display: block; }
     const play = () => { if (run || held || reduce) return; run = true; last = performance.now(); raf = requestAnimationFrame(loop); show(); };
     const pause = () => { run = false; cancelAnimationFrame(raf); show(); };
     btn.addEventListener('click', () => { if (run) { held = true; pause(); } else { held = false; play(); } });
+    document.addEventListener('a11y-still', () => { held = true; pause(); });
     if (reduce || !('IntersectionObserver' in window)) { render(RUN); paint(0); $('.day-ctl', box).hidden = true; }
     else { render(0); new IntersectionObserver(([e]) => { e.isIntersecting ? play() : pause(); }, { threshold: .3 }).observe(box); }
     show();

@@ -239,7 +239,7 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).sort();
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;

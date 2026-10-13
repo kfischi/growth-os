@@ -244,6 +244,7 @@ ${robots}<meta property="og:type" content="website">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?${L.look.fonts}&display=swap" rel="stylesheet">
+<script src="${h(assets)}a11y.js" data-statement="${draft ? "" : "accessibility.html"}"></script>
 <style>${CSS}${LOOK_CSS[L.id]}:root { ${cssVars(L.look, L.p)} }${GUIDE_CSS}${draft ? DRAFT_CSS : ""}</style>
 </head>
 <body class="look-${L.id}">
@@ -402,6 +403,7 @@ ${video ? `<script>${REEL_JS}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${h(title)} · ${h(name)}</title>
 ${robots}<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<script src="assets/a11y.js" data-statement="accessibility.html"></script>
 <style>${LEGAL_CSS}</style>${extraHead}
 </head>
 <body>
@@ -433,7 +435,10 @@ ${body}
 ${leads ? `<h2>המלצות</h2>
 <p>אחרי עבודה אנחנו יכולים לבקש מכם המלצה, פעם אחת. אם תכתבו, היא מופיעה באתר עם השם שבחרתם והדירוג, בלי טלפון. אפשר לבקש להסיר אותה בכל זמן.</p>
 
-` : ""}<h2>לראות, לתקן או למחוק</h2>
+` : ""}<h2>עוגיות</h2>
+<p>האתר לא משתמש בעוגיות (cookies): לא לפרסום, לא למעקב ולא לסטטיסטיקה. בדפדפן שלכם נשמרות רק ההגדרות שבחרתם בתפריט הנגישות${leads ? ", וסימון שהביקור כבר נספר, עד שסוגרים את הלשונית" : ""}. הגופן של האתר נטען מ-Google Fonts, ולכן גוגל רואה את כתובת ה-IP שלכם.</p>
+
+<h2>לראות, לתקן או למחוק</h2>
 <p>אפשר לבקש לראות את הפרטים ששמרנו עליכם, לתקן אותם או למחוק אותם. כתבו לנו בוואטסאפ או התקשרו${contact ? ": " + contact : ""}.</p>`);
 
   const accessibility = legal("הצהרת נגישות", `
@@ -448,6 +453,9 @@ ${leads ? `<h2>המלצות</h2>
   <li>אפשר להגדיל את הטקסט בדפדפן עד 200% בלי לאבד תוכן.</li>
   <li>האתר נבדק בכלי בדיקת נגישות אוטומטי, ונבדק ידנית במקלדת ובטלפון.</li>
 </ul>
+
+<h2>תפריט הנגישות</h2>
+<p>בכפתור הנגישות העגול בפינה התחתונה אפשר להגדיל את הטקסט, לעבור לניגודיות גבוהה, להדגיש קישורים, לבחור גופן פשוט ולעצור כל תנועה בעמוד. הבחירה נשמרת במכשיר שלכם.</p>
 
 <h2>מצאתם בעיה?</h2>
 <p>אם משהו באתר לא נגיש לכם, נשמח לשמוע ולתקן. אפשר גם לפתוח קריאה בטלפון במקום בצ׳אט.</p>
@@ -510,12 +518,13 @@ const REEL_JS = `(function () {
   var v = document.querySelector(".reel video"), b = document.querySelector(".reel-toggle");
   if (!v || !b) return;
   var c = navigator.connection || {};
-  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches || c.saveData || /2g/.test(c.effectiveType || "");
+  var calm = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still") || c.saveData || /2g/.test(c.effectiveType || "");
   var wanted = !calm;
   function show() { var on = !v.paused; b.dataset.state = on ? "pause" : "play"; b.setAttribute("aria-label", on ? "לעצור את הסרטון" : "להפעיל את הסרטון"); }
   function play() { v.preload = "auto"; var p = v.play(); if (p && p.catch) p.catch(function () { show(); }); }
   v.addEventListener("play", show); v.addEventListener("pause", show);
   b.addEventListener("click", function () { wanted = v.paused; if (wanted) play(); else v.pause(); });
+  document.addEventListener("a11y-still", function () { wanted = false; v.pause(); }); // the accessibility menu (a11y.js)
   // Plays only while on screen, to save the visitor's battery and data.
   if ("IntersectionObserver" in window) new IntersectionObserver(function (e) { if (e[0].isIntersecting) { if (wanted) play(); } else v.pause(); }).observe(v);
   else if (wanted) play();

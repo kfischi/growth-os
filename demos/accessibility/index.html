@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>הצהרת נגישות · נחיתה רכה</title>
+<meta name="description" content="איך האתר של נחיתה רכה נבנה כדי שכולם יוכלו להשתמש בו, מה עוד לא מושלם, ואיך פונים אלינו.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap">
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<style>
+  :root { --paper: #f6f5fb; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --line: #dcd9e6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.75 'Rubik', 'Segoe UI', system-ui, sans-serif; }
+  .bar { border-bottom: 1px solid var(--line); background: #fff; }
+  .bar .in { max-width: 760px; margin: 0 auto; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { font-weight: 700; color: var(--plum); text-decoration: none; font-size: 1.1rem; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 96px; }
+  h1 { font-size: clamp(1.7rem, 5vw, 2.2rem); line-height: 1.2; margin: 0 0 6px; color: var(--plum); }
+  h2 { font-size: 1.2rem; line-height: 1.3; margin: 32px 0 6px; }
+  .meta { color: var(--slate); font-size: .92rem; margin: 0 0 22px; }
+  .lead { font-size: 1.08rem; }
+  ul { padding-inline-start: 1.2em; }
+  li { margin-block: 4px; }
+  a { color: var(--mint); font-weight: 500; }
+  a:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; margin-top: 8px; background: #fff; border: 1px solid var(--line); }
+  th, td { text-align: start; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; background: #efedf6; }
+  .tbl { overflow-x: auto; }
+  .box { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-top: 10px; }
+  footer { border-top: 1px solid var(--line); margin-top: 48px; padding-top: 18px; color: var(--slate); font-size: .92rem; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+</style>
+</head>
+<body>
+<header class="bar"><div class="in"><a class="brand" href="../">נחיתה רכה</a><a href="../">חזרה לאתר</a></div></header>
+<main>
+<h1>הצהרת נגישות</h1>
+<p class="meta">נחיתה רכה · עודכן: אוקטובר 2026</p>
+<p class="lead">חשוב לנו שכל אחד יוכל להשתמש באתר, כולל אנשים עם מוגבלות. האתר נבנה לפי התקן הישראלי 5568, שמבוסס על הנחיות WCAG 2.0 ברמה AA, ובהתאם לתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), 2013.</p>
+
+<h2>מה עשינו</h2>
+<ul>
+  <li>האתר עובד בטלפון, בטאבלט ובמחשב, ומתאים את עצמו לגודל המסך.</li>
+  <li>אפשר לעבור על כל האתר, על הצ׳אט ועל הבונה עם המקלדת בלבד, ותמיד רואים איפה נמצאים.</li>
+  <li>לתמונות יש תיאור לקוראי מסך, ולכפתורים ולשדות יש שמות ברורים.</li>
+  <li>הניגודיות בין הטקסט לרקע עומדת בדרישות התקן, גם בכל ערכות הצבעים של האתרים שאנחנו בונים.</li>
+  <li>אפשר להגדיל את הטקסט בדפדפן עד 200% בלי לאבד תוכן.</li>
+  <li>סרטונים מתנגנים בלי קול, רק כשהם על המסך, ויש להם כפתור עצירה. מי שביקש מהמכשיר להפחית תנועה לא יראה אותם זזים.</li>
+  <li>האתר נבדק בכלי בדיקה אוטומטי, וגם ידנית עם מקלדת ובטלפון.</li>
+</ul>
+
+<h2>תפריט הנגישות</h2>
+<p>בפינה התחתונה של כל עמוד יש כפתור נגישות עגול. אפשר לבחור בו:</p>
+<ul>
+  <li>טקסט גדול יותר, בארבעה גדלים.</li>
+  <li>ניגודיות גבוהה: טקסט שחור על רקע לבן.</li>
+  <li>הדגשת קישורים בקו תחתון.</li>
+  <li>גופן פשוט וקריא.</li>
+  <li>עצירת תנועה: כל האנימציות והסרטונים נעצרים.</li>
+</ul>
+<p>הבחירה נשמרת במכשיר שלכם, גם כשעוברים בין העמודים.</p>
+
+<h2>מה עוד לא מושלם</h2>
+<ul>
+  <li>בסרטון שמסביר את כל התהליך יש טקסט בתוך התמונה, שקורא מסך לא יכול להקריא. כל מה שמופיע בו כתוב גם בטקסט רגיל באתר, בחלק <a href="../#how">"איך זה עובד"</a>.</li>
+  <li>בדוגמה של מורה למוזיקה יש כלי נגינה לניסיון. הם בונוס למשחק, וכל המידע החשוב בעמוד נגיש גם בלעדיהם.</li>
+</ul>
+<p>אנחנו ממשיכים לבדוק ולשפר. אם נתקלתם במשהו שלא עובד לכם, נשמח לדעת.</p>
+
+<h2>נתקלתם בבעיה?</h2>
+<div class="box">
+  <p>רכז הנגישות של נחיתה רכה<br>
+  וואטסאפ או טלפון: <a href="tel:0526359513" dir="ltr">052-6359513</a> · <a href="https://wa.me/972526359513" target="_blank" rel="noopener">לכתוב בוואטסאפ</a></p>
+  <p>ספרו לנו באיזה עמוד, מה ניסיתם לעשות ובאיזה מכשיר. נחזור אליכם, ואם צריך נעזור לכם בדרך אחרת, למשל לבנות את האתר יחד בשיחה.</p>
+</div>
+
+<footer><span>נחיתה רכה · אתרים שבונים עסקים</span><a href="../privacy/">מדיניות פרטיות ועוגיות</a></footer>
+</main>
+</body>
+</html>
