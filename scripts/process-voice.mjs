@@ -91,7 +91,11 @@ lines.forEach((l, i) => {
   if (tempo > MAX_TEMPO) throw new Error(`line ${i + 1} is ${len.toFixed(1)} s and has ${room.toFixed(1)} s: shorten it or move the next line`);
   const ms = Math.round(l.at * 1000);
   parts.push(`[${i + 1}:a]aresample=48000,${tempo > 1 ? `atempo=${tempo.toFixed(3)},` : ""}adelay=${ms}|${ms}[a${i}]`);
-  cues.push({ from: l.at, to: l.at + len / tempo, text: l.text });
+  // A long line becomes one caption per sentence, timed by its share of the letters.
+  const said = len / tempo, parts = l.text.match(/[^.?!]+[.?!]*/g).map((x) => x.trim()).filter(Boolean);
+  const size = (x) => x.replace(/\s/g, "").length, all = parts.reduce((a, x) => a + size(x), 0);
+  let from = l.at;
+  for (const x of parts) { const to = from + said * size(x) / all; cues.push({ from, to, text: x }); from = to; }
   console.log(`${String(i + 1).padStart(2)}  ${l.at.toFixed(1).padStart(5)} s  ${(len / tempo).toFixed(1).padStart(4)} of ${room.toFixed(1)} s${tempo > 1 ? `  (x${tempo.toFixed(2)})` : ""}`);
 });
 
@@ -110,5 +114,5 @@ execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", FILM, ...files.flatMap
 fs.renameSync(tmp, out);
 
 const ts = (s) => new Date(Math.max(0, s) * 1000).toISOString().slice(11, 23);
-fs.writeFileSync(path.join(outDir, "process.vtt"), "WEBVTT\n\n" + cues.map((c, i) => `${i + 1}\n${ts(c.from)} --> ${ts(Math.min(c.to + 0.4, i + 1 < cues.length ? cues[i + 1].from : filmEnd))}\n${c.text}\n`).join("\n"));
+fs.writeFileSync(path.join(outDir, "process.vtt"), "WEBVTT\n\n" + cues.map((c, i) => `${i + 1}\n${ts(c.from)} --> ${ts(Math.min(c.to + 0.3, i + 1 < cues.length ? cues[i + 1].from : filmEnd))}\n${c.text}\n`).join("\n"));
 console.log(`\n${out} · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · captions process.vtt`);
