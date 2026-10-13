@@ -1,4 +1,4 @@
-// The loop at the top of the home page: real moments cut from the process video (demos/shared/video/process/process.mp4,
+// The loop at the top of the home page: real moments cut from the process video (its silent master scripts/process-voice/film.mp4,
 // recorded by scripts/process-video.mjs): the site, the AI chat, the builder's templates and colours, the questions,
 // the draft filling up, photos, approving, and an enquiry arriving on WhatsApp. Only the browser window is kept, so
 // it reads big. The captions are not burned in: the page shows them from CUES (written to hero-cues.json), synced to
@@ -9,7 +9,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 const ROOT = path.resolve(new URL("../demos", import.meta.url).pathname);
-const SRC = path.join(ROOT, "shared/video/process/process.mp4");
+const SRC = path.join(ROOT, "../scripts/process-voice/film.mp4"); // the silent master, before the narration stretches it
 const OUT = path.join(ROOT, "shared/video/hero");
 // The browser window on the process video's 1920x1080 stage (scripts/video-stage.html), address bar included.
 const CROP = "1240:820:48:150";

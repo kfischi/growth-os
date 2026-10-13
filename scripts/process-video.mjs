@@ -450,7 +450,8 @@ try {
 const list = frames.map((f, i) => `file '${f.file}'\nduration ${Math.max(0.001, ((frames[i + 1] || { t: Math.max(endT, f.t + 0.6) }).t - f.t)).toFixed(3)}`).join("\n") + `\nfile '${frames.at(-1).file}'\n`;
 fs.writeFileSync(path.join(dir, "list.txt"), list);
 fs.mkdirSync(OUT, { recursive: true });
-const out = path.join(OUT, "process.mp4");
+// The silent master: scripts/process-voice.mjs lays the narration and the music on it and writes the film the site plays.
+const out = path.join(ROOT, "../scripts/process-voice/film.mp4");
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", path.join(dir, "list.txt"),
   "-vf", `fps=30,scale=${W}:${H}:flags=lanczos,format=yuv420p`, "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "30", "-tune", "animation", "-movflags", "+faststart", "-an", out]);
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "118", "-i", out, "-frames:v", "1", "-vf", "scale=1280:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
