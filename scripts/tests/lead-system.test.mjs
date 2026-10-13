@@ -507,4 +507,31 @@ wk = await lib.runWeeklyReports(new Date("2026-07-12T06:00:00Z")); assert.equal(
 r = await api(get("", "Bearer oren:" + key)); out = await r.json();
 assert.ok(out.month && out.month.visits >= 3 && typeof out.month.afterHours === "number", JSON.stringify(out.month));
 
+// --- the WhatsApp assistant (0011_wa_agent.sql): off by default; on, it answers the customer and updates the owner
+{
+  const oren = T.ls_clients.find((c) => c.slug === "oren");
+  let before = sent.length;
+  await hook(wh(val({ messages: [{ from: "972502222222", id: "ag0", type: "text", text: { body: "יש לי עוד שאלה" } }] })));
+  assert.equal(sent.length, before, "off by default: no answer");
+  Object.assign(oren, { wa_agent: true, chat_facts: "שירותים ומחירים:\n- סתימה: 250 עד 450 ₪" });
+  aiReply = JSON.stringify({ reply: "כאן העוזר הדיגיטלי של אורן מים. באיזה רחוב בחדרה?", notify_owner: true, owner_note: "הלקוח בחדרה, נזילה מתחת לכיור." });
+  before = sent.length;
+  r = await hook(wh(val({ messages: [{ from: "972502222222", id: "ag1", type: "text", text: { body: "אני בחדרה, נזילה מתחת לכיור" } }] }))); assert.equal(r.status, 200);
+  const out = sent.slice(before);
+  const toLead = out.find((x) => x.to === "972502222222" && x.type === "text");
+  assert.ok(toLead && /העוזר הדיגיטלי/.test(toLead.text.body), JSON.stringify(out));
+  const toOwner = out.find((x) => x.to === "972501111111" && x.type === "template");
+  assert.ok(toOwner && JSON.stringify(toOwner).includes("עדכון בוואטסאפ"), "the owner hears about the new detail");
+  assert.ok(T.ls_messages.some((m) => m.kind === "agent" && m.lead_id), "the answer is logged as the assistant's");
+  // the same delivery again (Meta retry): no second answer
+  before = sent.length;
+  await hook(wh(val({ messages: [{ from: "972502222222", id: "ag1", type: "text", text: { body: "אני בחדרה, נזילה מתחת לכיור" } }] })));
+  assert.equal(sent.length, before, "a retried delivery is answered once");
+  // the owner writing is never answered by the assistant
+  before = sent.length;
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "ag2", type: "text", text: { body: "מה קורה" } }] })));
+  assert.ok(!sent.slice(before).some((x) => x.type === "text" && /העוזר הדיגיטלי/.test(x.text.body)));
+  oren.wa_agent = false;
+}
+
 console.log("all lead system tests passed");

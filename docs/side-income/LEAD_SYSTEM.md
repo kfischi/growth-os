@@ -356,3 +356,13 @@ node scripts/lead-system/new-client.mjs kfir "נחיתה רכה" 052-6359513 htt
 - פנייה שהלקוח מבקש למחוק: `delete from ls_leads where id = '...';`. אם יש לה תמונה, מוחקים אותה גם ב-Storage, בדלי `lead-photos`, בתיקייה של העסק.
 - פניות בנות יותר משנתיים נמחקות אוטומטית ב-1 לחודש, כמו שכתוב בדף הפרטיות של אתרי הלקוחות.
 - הריפו ציבורי: מפתחות, טוקנים, טלפונים אישיים ופרטי תשלום לא נכנסים אליו אף פעם.
+
+## The WhatsApp assistant (optional)
+
+`0011_wa_agent.sql`, `demos/netlify/lib/agent.mjs`. When a customer answers the automatic WhatsApp reply, an AI assistant answers them from the business's facts (`chat_facts`), in the 24 hours WhatsApp allows after their message. It introduces itself as the business's digital assistant, asks one thing at a time (what exactly, where, how urgent, when), never gives a price, time or arrival that isn't in the facts, and sends anything dangerous to 101/102. When the customer adds something the owner should know, the owner gets it through the usual alert template, with "עדכון בוואטסאפ" in front. At most 8 answers to one customer a day.
+
+Turn it on per business (נציג AI only), after the owner agreed:
+
+```sql
+update ls_clients set wa_agent = true where slug = '<slug>';
+```

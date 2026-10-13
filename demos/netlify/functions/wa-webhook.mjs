@@ -7,6 +7,7 @@
 //   - after "טיפלתי", if the business has review requests or testimonials on: the owner is asked, and one tap sends
 //     the customer one request (a Google review, or a testimonial for the site through a private link)
 //   - the owner taps "להסתיר" on a new testimonial: it comes off the site
+import { agentOn, agentReply } from "../lib/agent.mjs";
 import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
   sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink } from "../lib/leads.mjs";
 
@@ -123,17 +124,25 @@ async function onMessage(client, m) {
     return;
   }
 
-  const lead = (await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}&select=id&order=created_at.desc&limit=1`))[0];
+  const lead = (await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}&select=id,name,phone,phone_intl,service,review&order=created_at.desc&limit=1`))[0];
   const fresh = await logInbound({ client_slug: client.slug, lead_id: lead ? lead.id : null, kind: from === client.owner_phone ? "owner_reply" : "inbound", from_phone: from, wa_id: m.id, body: { type: m.type, text: clip(text, 1000) } });
   if (fresh && lead) await updateLead(lead.id, { last_inbound_at: new Date().toISOString() });
   // "הסר": no more review requests to this number from this business, ever.
   if (fresh && lead && from !== client.owner_phone && m.type === "text" && OPT_OUT.test(String(text).trim())) {
     await db("PATCH", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}`, { review: "optout" });
     await sendText(client, from, "הוסרתם. לא תקבלו מאיתנו הודעות כאלה יותר.", { kind: "optout", leadId: lead.id });
+    return;
+  }
+  // The WhatsApp assistant answers a customer who wrote back (0011_wa_agent.sql), if it is on for this business.
+  if (fresh && lead && from !== client.owner_phone && m.type === "text" && agentOn(client)) {
+    later.push(agentReply(client, lead).catch((e) => console.error("agent", e.message)));
   }
 }
 
-export default async (req) => {
+// Work that may take seconds (the assistant's answer) runs after Meta got its 200, so it never retries for it.
+const later = [];
+
+export default async (req, context) => {
   const url = new URL(req.url);
   if (req.method === "GET") {
     const ok = url.searchParams.get("hub.mode") === "subscribe" && process.env.WA_VERIFY_TOKEN &&
@@ -165,6 +174,8 @@ export default async (req) => {
     console.error("wa-webhook", e.message);
     return json({ error: "server" }, 500);
   }
+  const jobs = Promise.allSettled(later.splice(0));
+  if (context && typeof context.waitUntil === "function") context.waitUntil(jobs); else await jobs;
   return json({ ok: true });
 };
 
