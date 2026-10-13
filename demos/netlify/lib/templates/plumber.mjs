@@ -368,6 +368,8 @@ ${video ? `<script>${REEL_JS}</script>
   const BOT = ${js(bot)};
   const bot = LeadBot.init({
     whatsapp: SITE.whatsapp, name: BOT.name, subtitle: BOT.subtitle, initial: BOT.initial, launcher: BOT.launcher, greet: BOT.greet,
+    // נציג AI: a first look at the customer's photo, matched to this business's own price list (/api/estimate).
+    estimate: SITE.leads ? { endpoint: SITE.leads.split("/api/lead/")[0] + "/api/estimate", slug: SITE.leads.split("/").pop() } : undefined,
     steps: [
       { key: "issue", label: "תקלה", ask: "מה צריך?", chips: ${js(chips)} },
       { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
@@ -420,7 +422,7 @@ ${body}
 
   const privacy = legal("פרטיות", `
 <h2>מה אנחנו אוספים</h2>
-<p>כשפותחים קריאה בצ׳אט: שם, טלפון, סוג השירות, הדחיפות והישוב, ותמונה אם בחרתם לצרף. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>${leads ? "\n<p>אנחנו סופרים כמה פעמים נכנסו לאתר ומאיפה, כמספר בלבד: בלי עוגיות, בלי כתובת IP ובלי שום פרט שמזהה אתכם.</p>" : ""}
+<p>כשפותחים קריאה בצ׳אט: שם, טלפון, סוג השירות, הדחיפות והישוב, ותמונה אם בחרתם לצרף. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>${leads ? "\n<p>תמונה שצירפתם עוברת גם לבדיקה ראשונה אוטומטית (שירות הבינה המלאכותית של Anthropic), כדי לתת לכם הערכה מהמחירון של העסק. היא לא נשמרת שם.</p>" : ""}${leads ? "\n<p>אנחנו סופרים כמה פעמים נכנסו לאתר ומאיפה, כמספר בלבד: בלי עוגיות, בלי כתובת IP ובלי שום פרט שמזהה אתכם.</p>" : ""}
 
 <h2>למה</h2>
 <p>רק כדי לחזור אליכם בעניין הקריאה${leads ? ", לשלוח לכם אישור בוואטסאפ" : ""} ולתאם את העבודה. לא שולחים לכם פרסומות, ולא מוכרים או מעבירים את הפרטים לאף אחד לצורך שיווק.</p>

@@ -382,6 +382,7 @@
   const ISSUES = ["ננעלתי בחוץ", "החלפת צילינדר", "החלפת מנעול", "מפתח נשבר במנעול", "כספת או אחר"];
   const RANGES = { "ננעלתי בחוץ": "250 עד 450", "החלפת צילינדר": "250 עד 550", "החלפת מנעול": "350 עד 800", "מנעול נוסף או בריח": "400 עד 900", "מפתח נשבר במנעול": "200 עד 400" };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "מנעולן", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
     name: "עידו · מנעולן", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ע", launcher: "ננעלתם בחוץ?", hint: "נציג AI",
     greet: "היי, כאן עידו.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",

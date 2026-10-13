@@ -471,6 +471,7 @@
     "דשא": "דשא מתמחרים לפי מ״ר",
   };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "גינון", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
     name: "עומר · גינון", subtitle: "חוזר אליכם לקבוע סיור", initial: "ע", launcher: "מחיר לגינה?", hint: "נציג AI",
     greet: "היי, כאן עומר.\nכמה שאלות קצרות על הגינה, והפרטים יגיעו אליי לוואטסאפ.",

@@ -382,6 +382,7 @@
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "אינסטלציה", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
     name: "אורן · אינסטלטור", subtitle: "עונה מיד, גם כשאני בשטח", initial: "א", launcher: "לפתוח קריאה", hint: "נציג AI",
     greet: "היי, כאן אורן 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה אני עונה מיד. שלוש שאלות קצרות ואני חוזר אליכם.",

@@ -404,6 +404,7 @@
   const RANGES = { "ג׳וקים": "250 עד 400 ₪", "נמלים": "250 עד 400 ₪", "מכרסמים": "350 עד 700 ₪", "פשפש המיטה": "800 עד 1,800 ₪" };
   const SPRAY = ["ג׳וקים", "נמלים", "פשפש המיטה"];
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "הדברה", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
     name: "רון · שקט הדברה", subtitle: "חוזרים אליכם לקבוע", initial: "ר", launcher: "ראיתם מזיק?", hint: "נציג AI",
     greet: "היי, כאן רון.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",

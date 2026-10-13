@@ -423,6 +423,7 @@
   PhotoSlots.init({ page: "appliance" });
   const RANGES = { "מכונת כביסה": "250 עד 600", "מקרר": "300 עד 800", "מדיח כלים": "250 עד 550", "תנור": "250 עד 500", "מייבש": "250 עד 550" };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "תיקון מכשירי חשמל", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
     name: "רועי · מכשירי חשמל", subtitle: "חוזר אליכם לקבוע ביקור", initial: "ר", launcher: "תקלה במכשיר?", hint: "נציג AI",
     greet: "היי, כאן רועי.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",

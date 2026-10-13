@@ -17,6 +17,7 @@
         chips?: [string | {label, value}],
         input?: "text" | "tel", placeholder?, optional?,
         photo?: true, skip?: "בלי תמונה",    // photo: the visitor may attach one photo (shrunk here), or skip
+      estimate?: { endpoint, trade, prices?: { service: range }, slug?, issueKey? }  // a first look at that photo
         show?: (data) => boolean,             // show: ask this step only when it returns true
         tip?: { when: (value) => boolean, text: "…", id: "leak" } }  // tip: after that answer, what to do now,
                                                                      // with a link to the page's guide #g-<id> (shared/guides.js)
@@ -73,6 +74,8 @@
   .lb-form{display:none;gap:8px}.lb-form.on{display:flex}
   .lb-form input{flex:1;min-width:0;border:1.5px solid var(--bot-line);background:var(--bot-input,var(--bot-bg));color:var(--bot-fg);border-radius:var(--bot-radius-input,10px);padding:10px 12px;font:16px var(--bot-font)}
   .lb-form button{border:0;border-radius:var(--bot-radius-input,10px);padding:0 16px;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 15px var(--bot-font);cursor:pointer}
+  .lb-est{display:grid;gap:6px;border-inline-start:3px solid var(--bot-accent)}.lb-est p{margin:0}.lb-est-h{font-size:13px;color:var(--bot-accent)}
+  .lb-est small{color:var(--bot-muted,#5d5a72);font-size:12px}.lb-est-urgent{font-weight:700}
   .lb-photo{display:none;position:relative;align-items:center;justify-content:center;gap:8px;border-radius:var(--bot-radius-input,10px);padding:11px;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 15px var(--bot-font);cursor:pointer}
   .lb-photo.on{display:flex}.lb-photo input{position:absolute;inset:0;opacity:0;cursor:pointer}
   .lb-photo:focus-within{outline:3px solid var(--bot-focus,var(--bot-accent));outline-offset:2px}
@@ -217,8 +220,36 @@
         busy = false;
         const m = el("div", "lb-msg me pic"); const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; m.append(img);
         body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
-        data[s.key] = "צורפה תמונה"; clearFoot(); step++; ask();
+        data[s.key] = "צורפה תמונה"; clearFoot(); step++;
+        if (!cfg.estimate) return ask();
+        // A first look at the photo (/api/estimate): what it shows, the matching service and its range from the
+        // business's own list. Never a promised price; on any failure the chat simply goes on.
+        busy = true; typing.classList.add("on"); body.scrollTop = body.scrollHeight;
+        const est = await look(photo.blob);
+        typing.classList.remove("on"); busy = false;
+        if (est) { estimateCard(est); data.estimate = est.service ? est.service + (est.range ? " (" + est.range + ")" : "") : ""; }
+        ask();
       });
+      async function look(blob) {
+        const e = cfg.estimate;
+        try {
+          const image = await toDataUrl(blob);
+          const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 25000);
+          const r = await fetch(e.endpoint, { method: "POST", headers: { "content-type": "application/json" }, signal: ctl.signal,
+            body: JSON.stringify({ slug: e.slug, trade: e.trade, prices: e.prices, issue: data[e.issueKey || cfg.steps[0].key] || "", image }) });
+          clearTimeout(t);
+          const d = await r.json();
+          return r.ok && d.seen ? d : null;
+        } catch (x) { return null; }
+      }
+      function estimateCard(d) {
+        const m = el("div", "lb-msg lb-est");
+        m.append(el("b", "lb-est-h", "בדיקה ראשונה מהתמונה"), el("p", null, d.seen));
+        if (d.service) m.append(el("p", null, "נראה כמו: " + d.service + (d.range ? ". בדרך כלל " + d.range + (/₪/.test(d.range) ? "" : " ₪") + "." : ".")));
+        if (d.advice) m.append(el("p", d.urgent ? "lb-est-urgent" : null, d.advice));
+        m.append(el("small", null, "הערכה ראשונית בלבד. המחיר הסופי אחרי בדיקה במקום."));
+        body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
+      }
       const toDataUrl = (blob) => new Promise((r) => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.onerror = () => r(null); fr.readAsDataURL(blob); });
 
       form.addEventListener("submit", (e) => {
