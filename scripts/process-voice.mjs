@@ -92,10 +92,10 @@ lines.forEach((l, i) => {
   const ms = Math.round(l.at * 1000);
   parts.push(`[${i + 1}:a]aresample=48000,${tempo > 1 ? `atempo=${tempo.toFixed(3)},` : ""}adelay=${ms}|${ms}[a${i}]`);
   // A long line becomes one caption per sentence, timed by its share of the letters.
-  const said = len / tempo, parts = l.text.match(/[^.?!]+[.?!]*/g).map((x) => x.trim()).filter(Boolean);
-  const size = (x) => x.replace(/\s/g, "").length, all = parts.reduce((a, x) => a + size(x), 0);
+  const said = len / tempo, sentences = l.text.match(/[^.?!]+[.?!]*/g).map((x) => x.trim()).filter(Boolean);
+  const size = (x) => x.replace(/\s/g, "").length, all = sentences.reduce((a, x) => a + size(x), 0);
   let from = l.at;
-  for (const x of parts) { const to = from + said * size(x) / all; cues.push({ from, to, text: x }); from = to; }
+  for (const x of sentences) { const to = from + said * size(x) / all; cues.push({ from, to, text: x }); from = to; }
   console.log(`${String(i + 1).padStart(2)}  ${l.at.toFixed(1).padStart(5)} s  ${(len / tempo).toFixed(1).padStart(4)} of ${room.toFixed(1)} s${tempo > 1 ? `  (x${tempo.toFixed(2)})` : ""}`);
 });
 
@@ -103,14 +103,14 @@ fs.mkdirSync(outDir, { recursive: true });
 // The film keeps its name: the picture is copied as is, the sound replaced (a new recording by process-video.mjs is
 // silent again, so run this after it). Written next to it first, then moved over it.
 const out = path.join(outDir, "process.mp4"), tmp = out + ".tmp.mp4";
-const voice = parts.join(";") + ";" + lines.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${lines.length}:normalize=0`;
+const voice = parts.join(";") + ";" + lines.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${lines.length}:normalize=0,apad`;
 const m = files.length + 1;
 const mix = music
   // The voice is levelled alone, so the pauses stay quiet: levelling the whole mix would lift the music there.
   ? `${voice},loudnorm=I=-16:TP=-1.5:LRA=11,asplit[v][key];[${m}:a]aresample=48000,volume=0.16[bed];[bed][key]sidechaincompress=threshold=0.02:ratio=5:attack=40:release=700[duck];[v][duck]amix=inputs=2:normalize=0,alimiter=limit=0.9[a]`
   : `${voice},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
 execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", FILM, ...files.flatMap((f) => ["-i", f]), ...(music ? ["-i", music] : []),
-  "-filter_complex", mix, "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "96k", "-ac", "1", "-shortest", "-movflags", "+faststart", tmp]);
+  "-filter_complex", mix, "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "96k", "-ac", "1", "-t", filmEnd.toFixed(3), "-movflags", "+faststart", tmp]);
 fs.renameSync(tmp, out);
 
 const ts = (s) => new Date(Math.max(0, s) * 1000).toISOString().slice(11, 23);
