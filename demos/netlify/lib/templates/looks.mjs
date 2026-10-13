@@ -1,4 +1,4 @@
-// The looks of the plumber template: three layouts on the same content, each with eight colour palettes.
+// The looks of the plumber template: six layouts on the same content, each with eight colour palettes.
 // The owner picks one in the builder ("עיצוב") and sees the draft change next to the chat.
 // A look is fonts, a few CSS overrides and the picture at the top of the page. A palette is only colours.
 // No yellow in any palette (house rule). Text on every colour keeps WCAG AA contrast.
@@ -48,6 +48,45 @@ function vanPlate({ h, v, has, c, callLocal, prettyPhone, draft }) {
       ${num}
       <span class="vp-stripe" aria-hidden="true"></span>
       <span class="vp-area">${v("area")}</span>
+    </div>`;
+}
+
+
+// The work ticket: the business's own first services as the lines of an open job card. Nothing invented.
+function jobTicket({ h, v, has, c, draft }) {
+  const names = (Array.isArray(c.services) ? c.services : []).map((s) => String((s && s.name) || "").trim()).filter(Boolean).slice(0, 4);
+  const lines = names.length ? names.map((n, i) => `<li><i class="${i ? "" : "on"}"></i>${h(n)}</li>`).join("")
+    : draft ? `<li><i></i><span class="todo">השירותים שלכם</span></li>` : "";
+  return `<div class="ticket">
+      <div class="tk-head mono"><span>כרטיס עבודה</span><span class="tk-open">פתוח</span></div>
+      <b class="tk-name">${v("business_name")}</b>
+      ${lines ? `<ul class="tk-list">${lines}</ul>` : ""}
+      <div class="tk-foot mono">${has("response_time") ? `חוזרים תוך ${h(c.response_time)}` : v("trade")}<span>${v("area")}</span></div>
+    </div>`;
+}
+
+// The dispatch board: the business's status, area, hours and phone, as on a control-room screen.
+function dispatchBoard({ h, v, has, c, callLocal, prettyPhone, draft }) {
+  const num = callLocal ? `<a class="db-num" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>`
+    : draft ? `<span class="db-num"><span class="todo">טלפון</span></span>` : "";
+  const row = (k, val) => `<div class="db-row"><span>${k}</span><b>${val}</b></div>`;
+  return `<div class="board">
+      <div class="db-top mono"><span class="db-dot" aria-hidden="true"></span>מוקד ${v("business_name")}</div>
+      ${row("סטטוס", "מקבלים קריאות")}
+      ${has("response_time") ? row("זמן חזרה", h(c.response_time)) : ""}
+      ${row("אזור", v("area"))}
+      ${has("hours") ? row("שעות", h(c.hours)) : ""}
+      ${num}
+    </div>`;
+}
+
+// The mosaic: tiles in the palette's colours, the business's first letter on the big one.
+function mosaicTiles({ h, c }) {
+  const letter = String(c.business_name || "").trim().charAt(0) || "·";
+  const t = (cls) => `<i class="t ${cls}"></i>`;
+  return `<div class="mosaic" aria-hidden="true">
+      ${t("a")}${t("b")}${t("c")}<span class="t big">${h(letter)}</span>${t("d")}${t("a")}
+      ${t("c")}${t("b")}${t("d")}${t("a")}${t("c")}${t("b")}
     </div>`;
 }
 
@@ -101,6 +140,57 @@ export const LOOKS = {
       purple: { label: "סגול", hero: "#5b2a86", deep: "#3f1d5e", accent: "#5b2a86", signal: "#1c1d21", paper: "#ffffff", tint: "#f4f1f8", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e5e0ec", soft: "#ddcdee", text: "#f1e9f8", linew: "#ffffff" },
       fuchsia: { label: "פוקסיה", hero: "#b5245f", deep: "#861a46", accent: "#b5245f", signal: "#1c1d21", paper: "#ffffff", tint: "#f8f1f4", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#ece0e5", soft: "#f6cfdd", text: "#fdebf2", linew: "#ffffff" },
       navy: { label: "נייבי", hero: "#1b2f5e", deep: "#111f40", accent: "#1b2f5e", signal: "#b93427", paper: "#ffffff", tint: "#f2f3f7", ink: "#1c1d21", inkSoft: "#5a5d66", rule: "#e2e4ec", soft: "#c9d3ec", text: "#e6ebf7", linew: "#ffffff" },
+    },
+  },
+  ticket: {
+    label: "כרטיס עבודה",
+    note: "כמו כרטיס עבודה פתוח, עם השירותים שלכם. מעשי וברור",
+    fonts: "family=Assistant:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500",
+    dark: false,
+    visual: jobTicket,
+    palettes: {
+      blue: { label: "כחול עבודה", accent: "#1d4ea0", deep: "#143a78", signal: "#b3372a", paper: "#f6f4ee", tint: "#ece8dc", ink: "#1b2230", inkSoft: "#525b6b", rule: "#d9d4c6", soft: "#b8c9e8", text: "#dde6f6", linew: "#eef3fb" },
+      green: { label: "ירוק", accent: "#1f6648", deep: "#154a34", signal: "#b3372a", paper: "#f5f5ef", tint: "#eaeadf", ink: "#1a241f", inkSoft: "#4f5b55", rule: "#d6d8cb", soft: "#b6d6c6", text: "#dcefe5", linew: "#edf7f1" },
+      brick: { label: "לבנה", accent: "#a33a26", deep: "#7a2a1b", signal: "#1f4f7a", paper: "#f7f3ec", tint: "#efe7da", ink: "#2a1d18", inkSoft: "#62554f", rule: "#e0d5c5", soft: "#ebc3b8", text: "#f6e4df", linew: "#fbf0ec" },
+      charcoal: { label: "פחם", accent: "#2c3038", deep: "#1b1e23", signal: "#b3372a", paper: "#f5f4f1", tint: "#eae8e3", ink: "#1b1d21", inkSoft: "#55585f", rule: "#d8d6d0", soft: "#c2c5cc", text: "#e2e4e8", linew: "#f0f1f3" },
+      teal: { label: "טורקיז", accent: "#0d6b6b", deep: "#094d4d", signal: "#b3372a", paper: "#f3f6f4", tint: "#e6eeeb", ink: "#14262a", inkSoft: "#4c5f62", rule: "#cfdcd9", soft: "#b3dcdb", text: "#ddf1f0", linew: "#ecf8f7" },
+      violet: { label: "סגול", accent: "#5a3192", deep: "#40226b", signal: "#1d6b5c", paper: "#f6f4f8", tint: "#ebe7f1", ink: "#221a2e", inkSoft: "#5b536a", rule: "#dbd5e4", soft: "#d2c2ea", text: "#ece4f7", linew: "#f5f0fb" },
+      rust: { label: "חלודה", accent: "#8a4519", deep: "#653212", signal: "#1f4f7a", paper: "#f7f2eb", tint: "#efe5d8", ink: "#2a1e14", inkSoft: "#625548", rule: "#e0d3c2", soft: "#e5c6ab", text: "#f5e6d8", linew: "#fbf2ea" },
+      navy: { label: "נייבי", accent: "#1c2f5c", deep: "#111e3e", signal: "#b3372a", paper: "#f4f4f1", tint: "#e8e8e2", ink: "#171c28", inkSoft: "#505666", rule: "#d6d6ce", soft: "#c2cbe3", text: "#e1e7f4", linew: "#eff2f9" },
+    },
+  },
+  dispatch: {
+    label: "מוקד",
+    note: "מסך מוקד כהה: זמינים, זמן חזרה ומספר טלפון גדול",
+    fonts: "family=Heebo:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500",
+    dark: true,
+    visual: dispatchBoard,
+    palettes: {
+      teal: { label: "לילה וטורקיז", hero: "#0f1418", deep: "#0a0e11", accent: "#0f6b66", signal: "#0f6b66", paper: "#f3f5f5", tint: "#e7ecec", ink: "#121a1d", inkSoft: "#4b585c", rule: "#cdd8d8", soft: "#9fb4b6", text: "#d3e0e1", linew: "#7ee0d6", drop: "#5cd3c7" },
+      red: { label: "לילה ואדום", hero: "#141113", deep: "#0d0b0c", accent: "#b2321f", signal: "#b2321f", paper: "#f6f4f3", tint: "#ece8e6", ink: "#1d1715", inkSoft: "#5d5452", rule: "#ddd5d2", soft: "#b8aaa8", text: "#e6dbd9", linew: "#ff8f7c", drop: "#ff7a66" },
+      blue: { label: "לילה וכחול", hero: "#0e1220", deep: "#090c16", accent: "#2347b0", signal: "#2347b0", paper: "#f3f4f8", tint: "#e7e9f1", ink: "#141827", inkSoft: "#4e5468", rule: "#d0d4e1", soft: "#a6aec8", text: "#d6dbea", linew: "#8fb0ff", drop: "#7aa2ff" },
+      green: { label: "לילה וירוק", hero: "#0e1511", deep: "#09100c", accent: "#1d6b3f", signal: "#1d6b3f", paper: "#f3f6f3", tint: "#e6eee8", ink: "#131b16", inkSoft: "#4c5a51", rule: "#cddacf", soft: "#a1b8a8", text: "#d4e3d8", linew: "#7fe0a4", drop: "#69d494" },
+      violet: { label: "לילה וסגול", hero: "#13101c", deep: "#0c0a13", accent: "#5b34a6", signal: "#5b34a6", paper: "#f5f3f8", tint: "#ebe7f2", ink: "#1b1626", inkSoft: "#575069", rule: "#d9d3e4", soft: "#b2a8c8", text: "#e0daec", linew: "#c3a6ff", drop: "#b090ff" },
+      magenta: { label: "לילה ומג׳נטה", hero: "#160f15", deep: "#0e0a0e", accent: "#a3245c", signal: "#a3245c", paper: "#f7f3f5", tint: "#efe6ea", ink: "#21161c", inkSoft: "#5f515a", rule: "#e0d3d9", soft: "#c2a7b5", text: "#ecdbe3", linew: "#ff8fc0", drop: "#ff7ab3" },
+      steel: { label: "פלדה", hero: "#1a1e24", deep: "#111418", accent: "#3a4655", signal: "#b2321f", paper: "#f3f4f5", tint: "#e8eaec", ink: "#171a1e", inkSoft: "#51575f", rule: "#d3d7dc", soft: "#a9b1bc", text: "#d9dee4", linew: "#b6c4d6", drop: "#9fb4cc" },
+      ocean: { label: "לילה ותכלת", hero: "#0c1519", deep: "#080f12", accent: "#135c78", signal: "#135c78", paper: "#f2f5f7", tint: "#e5ecf0", ink: "#111b20", inkSoft: "#4a5861", rule: "#ccd8de", soft: "#9db5c0", text: "#d1e1e8", linew: "#7fd0f0", drop: "#66c3ea" },
+    },
+  },
+  mosaic: {
+    label: "פסיפס",
+    note: "אריחים צבעוניים ופינות מעוגלות. חם ונעים",
+    fonts: "family=Varela+Round&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500",
+    dark: false,
+    visual: mosaicTiles,
+    palettes: {
+      aqua: { label: "מים", accent: "#0f5f7a", deep: "#0a4458", signal: "#b3372a", paper: "#f7fafb", tint: "#e3f0f4", ink: "#13222a", inkSoft: "#4b5c64", rule: "#d2e2e8", soft: "#b5dbe8", text: "#dff0f6", linew: "#eef8fb", psA: "#7cc6dc" },
+      sage: { label: "מרווה", accent: "#2f6248", deep: "#204634", signal: "#b3372a", paper: "#f7f9f6", tint: "#e5eee7", ink: "#17221c", inkSoft: "#4e5d54", rule: "#d4e0d7", soft: "#bfd9c8", text: "#e2f0e6", linew: "#f0f8f2", psA: "#9fcab0" },
+      terracotta: { label: "טרקוטה", accent: "#9a3d22", deep: "#722c18", signal: "#1f5a72", paper: "#fbf8f5", tint: "#f4e8e0", ink: "#2a1c16", inkSoft: "#62544e", rule: "#e8dad0", soft: "#efc9b8", text: "#f8e6de", linew: "#fdf3ee", psA: "#e2a387" },
+      cobalt: { label: "קובלט", accent: "#2341a0", deep: "#182e74", signal: "#b3372a", paper: "#f8f9fc", tint: "#e6eaf6", ink: "#161c2e", inkSoft: "#4f5670", rule: "#d6dcee", soft: "#c2cdf0", text: "#e3e9fa", linew: "#f0f3fd", psA: "#8ea4e6" },
+      plum: { label: "שזיף", accent: "#6a2c6b", deep: "#4c1f4d", signal: "#1f6b5c", paper: "#fbf8fb", tint: "#f2e6f1", ink: "#26172a", inkSoft: "#5e5163", rule: "#e6d8e5", soft: "#e2c3e1", text: "#f5e5f4", linew: "#fbf1fa", psA: "#c993c7" },
+      slate: { label: "צפחה", accent: "#34495c", deep: "#233342", signal: "#b3372a", paper: "#f8f9fa", tint: "#e8ecef", ink: "#192129", inkSoft: "#525c66", rule: "#d9dfe4", soft: "#c3ced8", text: "#e5ebf0", linew: "#f1f4f7", psA: "#9fb2c3" },
+      rose: { label: "ורד", accent: "#9c2f4f", deep: "#742239", signal: "#1f5a72", paper: "#fcf8f9", tint: "#f5e5ea", ink: "#2a171d", inkSoft: "#63515a", rule: "#ebd7de", soft: "#f0c3d1", text: "#f9e5ec", linew: "#fdf2f5", psA: "#e39ab0" },
+      forest: { label: "יער", accent: "#2d5638", deep: "#1f3d27", signal: "#9c2f4f", paper: "#f7f9f6", tint: "#e3ece4", ink: "#17221a", inkSoft: "#4f5d52", rule: "#d3dfd5", soft: "#bcd6c2", text: "#e1efe4", linew: "#eff7f1", psA: "#8fbf9b" },
     },
   },
 };
@@ -207,5 +297,63 @@ export const LOOK_CSS = {
   .vp-num { font: 900 12cqi/.95 var(--display); letter-spacing: -.045em; direction: ltr; text-align: right; text-decoration: none; white-space: nowrap; color: inherit; }
   .vp-stripe { height: 12px; background: var(--deep); margin: 10px -24px 4px; }
   .vp-area { color: var(--hero-text); font-weight: 500; }
+`,
+  ticket: `
+  :root { --display: "Assistant", system-ui, sans-serif; --body: "Assistant", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px; }
+  h1, h2, h3, .logo { font-weight: 800; letter-spacing: -.01em; }
+  .hero { background-image: repeating-linear-gradient(0deg, transparent 0 31px, var(--rule) 31px 32px); border-bottom: 2px solid var(--accent); }
+  .hero h1 { color: var(--deep); }
+  .hero h1 span { background: none; color: inherit; padding: 0; box-shadow: inset 0 -.22em 0 color-mix(in srgb, var(--accent) 22%, transparent); }
+  .btn { border-radius: 4px; }
+  .btn-signal { background: var(--accent); }
+  .btn-ghost { border-color: var(--accent); color: var(--accent); }
+  .ticket { justify-self: center; width: min(100%, 420px); background: #fff; color: var(--ink); border: 1.5px solid var(--rule); border-radius: 6px; padding: 22px 24px 18px; transform: rotate(-1.5deg);
+    box-shadow: 0 24px 50px -30px rgba(0,0,0,.35); position: relative;
+    background-image: radial-gradient(circle at 0 64px, var(--hero) 9px, transparent 10px), radial-gradient(circle at 100% 64px, var(--hero) 9px, transparent 10px); }
+  .tk-head { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-soft); border-bottom: 2px dashed var(--rule); padding-bottom: 12px; }
+  .tk-open { color: #fff; background: var(--signal); padding: 2px 8px; border-radius: 3px; }
+  .tk-name { display: block; font: 800 clamp(22px, 3vw, 28px)/1.15 var(--display); margin: 14px 0 10px; color: var(--deep); overflow-wrap: anywhere; }
+  .tk-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .tk-list li { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .tk-list i { width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 3px; flex: none; }
+  .tk-list i.on { background: var(--accent); box-shadow: inset 0 0 0 3px #fff; }
+  .tk-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-soft); }
+  @media (max-width: 880px) { .ticket { transform: none; } }
+`,
+  dispatch: `
+  :root { --display: "Heebo", system-ui, sans-serif; --body: "Heebo", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --grid: color-mix(in srgb, var(--line-w) 7%, transparent); --bot-radius: 10px; --bot-radius-msg: 10px; --bot-radius-pill: 999px; --bot-radius-input: 8px; }
+  h1, h2, h3, .logo { font-weight: 900; letter-spacing: -.02em; }
+  .hero h1 span { background: none; padding: 0; color: inherit; }
+  .hero h1 span + br + span { color: var(--line-w); }
+  .btn { border-radius: 8px; }
+  .hero .btn-signal { background: var(--signal); }
+  .board { justify-self: center; width: min(100%, 440px); border: 1px solid var(--hero-line-strong); border-radius: 14px; padding: 18px 20px; display: grid; gap: 2px;
+    background: color-mix(in srgb, var(--deep) 70%, transparent); box-shadow: 0 0 0 6px color-mix(in srgb, var(--line-w) 6%, transparent); }
+  .db-top { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--hero-soft); padding-bottom: 10px; margin-bottom: 6px; border-bottom: 1px solid var(--hero-line); }
+  .db-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line-w); box-shadow: 0 0 0 0 var(--line-w); animation: dbPulse 2s ease-out infinite; }
+  @keyframes dbPulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--line-w) 60%, transparent); } 100% { box-shadow: 0 0 0 12px transparent; } }
+  @media (prefers-reduced-motion: reduce) { .db-dot { animation: none; } }
+  .db-row { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--hero-line); font-size: 15px; }
+  .db-row span { color: var(--hero-soft); font-family: var(--mono); font-size: 13px; }
+  .db-row b { color: var(--hero-text); font-weight: 700; text-align: left; overflow-wrap: anywhere; }
+  .db-num { margin-top: 12px; font: 900 clamp(30px, 5vw, 44px)/1 var(--display); color: #fff; text-decoration: none; letter-spacing: -.02em; direction: ltr; text-align: right; }
+`,
+  mosaic: `
+  :root { --display: "Varela Round", "Rubik", system-ui, sans-serif; --body: "Rubik", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 20px; --bot-radius-msg: 16px; --bot-radius-pill: 999px; --bot-radius-input: 14px; }
+  .hero { background-image: radial-gradient(circle at 18% 20%, var(--tint) 0 140px, transparent 141px), radial-gradient(circle at 92% 85%, color-mix(in srgb, var(--ps-a) 25%, transparent) 0 110px, transparent 111px); }
+  .hero h1 { color: var(--deep); }
+  .hero h1 span { background: none; color: inherit; padding: 0; }
+  .btn { border-radius: 999px; }
+  .btn-signal { background: var(--accent); }
+  .btn-ghost { border-color: var(--accent); color: var(--accent); }
+  .badge, .order, .live { border-radius: 16px; }
+  .mosaic { justify-self: center; width: min(100%, 420px); display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-flow: dense; gap: 10px; transform: rotate(3deg); }
+  .mosaic .t { aspect-ratio: 1; border-radius: 18px; display: block; }
+  .mosaic .a { background: var(--accent); } .mosaic .b { background: var(--ps-a); } .mosaic .c { background: var(--tint); border: 1px solid var(--rule); } .mosaic .d { background: var(--soft); }
+  .mosaic .big { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; background: var(--deep); color: #fff; display: grid; place-items: center; font: 400 clamp(64px, 9vw, 110px)/1 var(--display); }
+  @media (max-width: 880px) { .mosaic { width: min(100%, 300px); transform: none; } }
 `,
 };

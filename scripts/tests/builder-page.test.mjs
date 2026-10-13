@@ -84,7 +84,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
       .catch(async () => { throw new Error(`waited for ${re} but the question is "${await p.textContent("#guide .q").catch(() => "?")}", log ends "${(await p.textContent("#log")).slice(-80)}"`); });
     // first the design: a look, then a palette; the draft next to the chat changes with each tap
     assert.match(await p.textContent("#guide .q"), /איך האתר ייראה/);
-    assert.equal(await p.locator("#guide .look").count(), 3);
+    assert.equal(await p.locator("#guide .look").count(), 6);
     assert.equal(await p.isHidden("#design"), true, "the same picker isn't shown twice");
     await p.click('#guide .look[data-look="certificate"]');
     await p.waitForSelector('#guide .look[data-look="certificate"][aria-pressed=true]');

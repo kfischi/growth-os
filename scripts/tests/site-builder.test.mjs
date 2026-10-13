@@ -116,6 +116,19 @@ assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" 
   assert.ok(!/data-testimonials/.test(P.render(SAMPLE, { mode: "draft", leads: null })["index.html"]));
   assert.equal(Object.values(P.LOOKS).every((l) => Object.keys(l.palettes).length === 8), true, "eight palettes per look");
 }
+// Every palette keeps WCAG AA for its text (4.5:1); the soft labels on a dark hero at least 3:1 (they are small extras).
+{
+  const lum = (hex) => { const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+  for (const [lid, L] of Object.entries(P.LOOKS)) for (const [pid, p] of Object.entries(L.palettes)) {
+    const c = (k) => (k.startsWith("#") ? k : p[k]);
+    const pairs = [["ink", "paper"], ["inkSoft", "paper"], ["accent", "paper"], ["#ffffff", "signal"], ["#ffffff", "accent"], ["#ffffff", "deep"], ["text", "deep"]];
+    if (L.dark) pairs.push(["#ffffff", "hero"], ["text", "hero"]);
+    for (const [f, b] of pairs) assert.ok(ratio(c(f), c(b)) >= 4.5, `${lid} ${pid}: ${f} on ${b} is ${ratio(c(f), c(b)).toFixed(2)}`);
+    if (L.dark) assert.ok(ratio(c("soft"), c("hero")) >= 3, `${lid} ${pid}: soft on hero`);
+    assert.ok(!/^#(f[0-9a-f]|e[0-9a-f])(d|e|f)[0-9a-f]0[0-9a-f]/i.test(p.accent), `${lid} ${pid}: no yellow accent`);
+  }
+}
 assert.match(P.render({ ...SAMPLE, look: "blueprint", palette: "teal" }, { mode: "site" })["index.html"], /--accent: #123a8c/, "a palette of another look falls back");
 {
   const cert = (c) => P.render({ ...SAMPLE, ...c, look: "certificate" }, { mode: "site" })["index.html"].match(/<div class="seal"[\s\S]*?<\/div>/)[0];
@@ -336,7 +349,7 @@ r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); asse
   assert.equal(r.state.guide.steps[0].type, "style"); assert.equal(r.state.guide.steps[1].field, "business_name"); assert.match(r.state.greeting, /בוחרים תשובה/);
   const calls = aiCalls.length;
   // the design: a look and one of its palettes, checked against the template's looks, no AI
-  assert.equal(r.state.looks.length, 3); assert.deepEqual(r.state.style, { look: "blueprint", palette: "blue" });
+  assert.equal(r.state.looks.length, 6); assert.deepEqual(r.state.style, { look: "blueprint", palette: "blue" });
   r = await J(await req("answer", { body: { style: { look: "van", palette: "teal" }, rev: Q.rev }, ip: "8.8.8.1" }));
   assert.equal(r.status, 200, JSON.stringify(r)); assert.deepEqual(r.changed, ["style"]); assert.deepEqual(r.state.style, { look: "van", palette: "teal" });
   assert.equal(Q.content.look, "van"); assert.equal(Q.content.palette, "teal");
