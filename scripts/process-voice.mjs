@@ -18,6 +18,8 @@ const args = process.argv.slice(2);
 // --cuts=7.0,14.2,... : where each line ends in a single recording, when its pauses are too even to find them
 // (for example from aligning it to a reading of the same text). Otherwise they are found from the pauses.
 const given = (args.find((a) => a.startsWith("--cuts=")) || "").slice(7).split(",").filter(Boolean).map(Number);
+// --music=file.wav : a bed under the voice (scripts/process-music.py), quiet, and lower still while she speaks.
+const music = (args.find((a) => a.startsWith("--music=")) || "").slice(8);
 const [voiceDir, outDir = path.join(ROOT, "demos/shared/video/process")] = args.filter((a) => !a.startsWith("--"));
 if (!voiceDir) { console.error("usage: node scripts/process-voice.mjs <voice-dir> [out-dir]"); process.exit(1); }
 
@@ -97,8 +99,13 @@ fs.mkdirSync(outDir, { recursive: true });
 // The film keeps its name: the picture is copied as is, the sound replaced (a new recording by process-video.mjs is
 // silent again, so run this after it). Written next to it first, then moved over it.
 const out = path.join(outDir, "process.mp4"), tmp = out + ".tmp.mp4";
-const mix = parts.join(";") + ";" + lines.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${lines.length}:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
-execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", FILM, ...files.flatMap((f) => ["-i", f]),
+const voice = parts.join(";") + ";" + lines.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${lines.length}:normalize=0`;
+const m = files.length + 1;
+const mix = music
+  // The voice is levelled alone, so the pauses stay quiet: levelling the whole mix would lift the music there.
+  ? `${voice},loudnorm=I=-16:TP=-1.5:LRA=11,asplit[v][key];[${m}:a]aresample=48000,volume=0.16[bed];[bed][key]sidechaincompress=threshold=0.02:ratio=5:attack=40:release=700[duck];[v][duck]amix=inputs=2:normalize=0,alimiter=limit=0.9[a]`
+  : `${voice},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
+execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", FILM, ...files.flatMap((f) => ["-i", f]), ...(music ? ["-i", music] : []),
   "-filter_complex", mix, "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "96k", "-ac", "1", "-shortest", "-movflags", "+faststart", tmp]);
 fs.renameSync(tmp, out);
 
