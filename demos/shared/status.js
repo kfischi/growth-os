@@ -4,9 +4,9 @@
   Otherwise the working hours decide. Server side: functions/status.mjs, lib/leads.mjs availability().
 
   This file is for the demos, with no server. A real site uses LeadForm.status(endpoint) from leadform.js.
-  LeadStatus.init({ hours: { days: [0,1,2,3,4], start: 8, end: 18 }, demo: true }):
-      the line follows the hours, and [data-avail-try] gets two buttons that show what "עסוק" and "פנוי" do.
-  Each [data-avail] gets data-state ("free" | "busy" | "open" | "closed") for the page's own colours,
+  LeadStatus.init({ hours: { days: [0,1,2,3,4], start: 8, end: 18 }, area: "חדרה", demo: true }):
+      the line follows the hours, and [data-avail-try] gets buttons that show what "עסוק", "פנוי" and "חירום" do.
+  Each [data-avail] gets data-state ("urgent" | "free" | "busy" | "open" | "closed") for the page's own colours,
   and its last text node is replaced. With no answer it is hidden, so nothing wrong is ever shown.
 */
 (function () {
@@ -28,8 +28,10 @@
   }
   const busy = (until) => ({ state: "busy", text: `באמצע עבודה. חוזרים אליכם עד ${clock(until)}.` });
   const free = () => ({ state: "free", text: "פנויים עכשיו. אפשר לכתוב או להתקשר." });
+  const urgent = (area) => ({ state: "urgent", text: `זמינים עכשיו לקריאות דחופות${area ? " ב" + area : ""}. כתבו או התקשרו.` });
 
   function paint(s) {
+    if (s && s.state) document.dispatchEvent(new CustomEvent("lf-status", { detail: s })); // the chat button follows emergency mode
     document.querySelectorAll("[data-avail]").forEach((el) => {
       el.hidden = !s || !s.state;
       if (!s || !s.state) return;
@@ -49,6 +51,7 @@
         box.append(
           mk("עסוק", () => paint(busy(new Date(Date.now() + 3 * 3600000)))),
           mk("פנוי", () => paint(free())),
+          mk("חירום", () => paint(urgent(cfg.area))),
           mk("לפי השעות", auto),
         );
       });

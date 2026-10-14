@@ -35,21 +35,27 @@ async function photoStep(b) {
     const line = () => p.$eval('.avail-try [data-avail]', (e) => e.dataset.state + ' ' + e.textContent.trim());
     const a0 = await line(); await p.click('[data-avail-try] button:has-text("עסוק")'); const a1 = await line();
     await p.click('[data-avail-try] button:has-text("פנוי")'); const a2 = await line();
-    const ok = a0 === 'open זמינים 24/7.' && /^busy באמצע עבודה\. חוזרים אליכם עד \d\d:\d\d\.$/.test(a1) && a2.startsWith('free פנויים עכשיו');
+    await p.click('[data-avail-try] button:has-text("חירום")'); const a3 = await line(); const btn3 = (await p.textContent('.lb-launch .lb-label')).trim();
+    await p.click('[data-avail-try] button:has-text("לפי השעות")'); const btn4 = (await p.textContent('.lb-launch .lb-label')).trim();
+    const ok = a0 === 'open זמינים 24/7.' && /^busy באמצע עבודה\. חוזרים אליכם עד \d\d:\d\d\.$/.test(a1) && a2.startsWith('free פנויים עכשיו')
+      && a3 === 'urgent זמינים עכשיו לקריאות דחופות בחדרה והשרון. כתבו או התקשרו.' && btn3 === 'קריאה דחופה' && btn4 !== 'קריאה דחופה';
     if (!ok) bad++;
-    console.log(`${ok ? 'OK ' : 'BAD'} demo "available now" try: ${a0} | ${a1} | ${a2}`);
+    console.log(`${ok ? 'OK ' : 'BAD'} demo "available now" try: ${a0} | ${a1} | ${a2} | ${a3} | button ${btn3} -> ${btn4}`);
     await p.close(); }
   { const p = await b.newPage({ viewport: { width: 390, height: 844 } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
     await p.route(/fonts\.|wa\.me/, (r) => r.abort());
+    // the first look at the photo (/api/estimate): shown in the chat, and passed on to the business with the enquiry
+    await p.route(/\/api\/estimate/, (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ seen: 'מזגן עם טפטוף מים מהיחידה הפנימית.', service: 'ניקוי ותחזוקה', range: '250 עד 400 ₪', urgent: false, advice: '' }) }));
     await p.goto('http://localhost:8790/ac/index.html'); await p.waitForTimeout(600);
     const done = await chatWithPhoto(p, jpeg);
     const inChat = await p.$$eval('.lb-panel .lb-msg.me.pic img', (ims) => ims.filter((i) => i.naturalWidth > 0).length);
     const href = done ? decodeURIComponent(await p.getAttribute('.lb-panel .lb-wa', 'href') || '') : '';
     await p.waitForTimeout(800);
     const inPhone = await p.$$eval('.ph-pic img', (ims) => ims.filter((i) => i.naturalWidth > 0).length);
-    const ok = done && inChat === 1 && href.includes('יש לי תמונה של זה') && inPhone === 1 && !errs.length;
+    const look = await p.$('.lb-panel .lb-est') !== null && href.includes('מהתמונה: מזגן עם טפטוף מים מהיחידה הפנימית. נראה כמו: ניקוי ותחזוקה (250 עד 400 ₪).');
+    const ok = done && inChat === 1 && href.includes('יש לי תמונה של זה') && inPhone === 1 && look && !errs.length;
     if (!ok) bad++;
-    console.log(`${ok ? 'OK ' : 'BAD'} photo demo (ac) done=${done} chat=${inChat} wa=${href.includes('יש לי תמונה')} phone=${inPhone} errs=${errs.length}${errs.length ? ' ' + errs[0] : ''}`);
+    console.log(`${ok ? 'OK ' : 'BAD'} photo demo (ac) done=${done} chat=${inChat} wa=${href.includes('יש לי תמונה')} look=${look} phone=${inPhone} errs=${errs.length}${errs.length ? ' ' + errs[0] : ''}`);
     await p.close(); }
   { const p = await b.newPage({ viewport: { width: 390, height: 844 } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
     await p.route(/fonts\.|wa\.me/, (r) => r.abort());

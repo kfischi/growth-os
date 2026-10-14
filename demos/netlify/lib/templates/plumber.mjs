@@ -590,6 +590,7 @@ const CSS = `
   .avail-line .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--hero-line); padding: 6px 10px; border-radius: 4px; font-size: 13px; }
   .avail-line .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; }
   .avail-line .live[data-state="busy"] i { background: #ff8a7a; }
+  .avail-line .live[data-state="urgent"] { border-color: #ff8a7a; font-weight: 700; } .avail-line .live[data-state="urgent"] i { background: #ff5a4a; box-shadow: 0 0 0 3px rgba(255, 90, 74, .35); }
   .avail-line .live[data-state="closed"] i { background: #a9bce6; }
   .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--hero-line); padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; white-space: nowrap; }
   .live:hover { border-color: var(--hero-fg); }

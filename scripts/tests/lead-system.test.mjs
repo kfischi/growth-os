@@ -327,6 +327,28 @@ r = await api(post("/api/leads", { available: "busy", hours: 1 }, owner)); out =
 assert.ok(new Date(C0.avail_until) - Date.now() < 1.1 * 3600000);
 r = await api(post("/api/leads", { available: "maybe" }, owner)); assert.equal(r.status, 400);
 await api(post("/api/leads", { available: "auto" }, owner));
+// emergency mode: "חירום" from the owner, the site says it with the area, a lead meanwhile is marked urgent in the alert
+assert.deepEqual(lib.availabilityCommand("חירום"), { avail: "urgent", hours: 6 }); assert.deepEqual(lib.availabilityCommand("חירום 3"), { avail: "urgent", hours: 3 });
+C0.area = "חדרה והשרון";
+await hook(wh(val({ messages: [{ from: "972501111111", id: "in-urgent", type: "text", text: { body: "חירום" } }] })));
+assert.equal(C0.avail, "urgent"); assert.ok(new Date(C0.avail_until) - Date.now() > 5.9 * 3600000);
+assert.equal(sent.at(-1).text.body, "באתר כתוב עכשיו: זמינים עכשיו לקריאות דחופות בחדרה והשרון. כתבו או התקשרו. פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\".");
+assert.equal((await (await st("oren")).json()).state, "urgent");
+r = await lead(post("/api/lead/oren", { name: "רון", phone: "0503333331", service: "פיצוץ צינור", message: "דחיפות: עכשיו." }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.31" }), ctx("oren"));
+assert.ok((await r.json()).ok);
+assert.match(sent.at(-1).template.components[0].parameters[3].text, /^🚨 קריאה בזמן מצב חירום · דחיפות: עכשיו\.$/);
+r = await api(post("/api/leads", { available: "urgent" }, owner)); out = await r.json(); assert.equal(out.availability.state, "urgent");
+await api(post("/api/leads", { available: "auto" }, owner));
+r = await lead(post("/api/lead/oren", { name: "רון", phone: "0503333332", service: "סתימה", message: "דחיפות: השבוע." }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.32" }), ctx("oren"));
+assert.ok((await r.json()).ok); assert.ok(!/🚨/.test(sent.at(-1).template.components[0].parameters[3].text), "not after it ends");
+// the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
+r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
+r = await api(post("/api/leads", { job_value: -5 }, owner)); assert.equal(r.status, 400);
+r = await api(post("/api/leads", { job_value: "abc" }, owner)); assert.equal(r.status, 400);
+T.ls_leads.filter((l) => l.client_slug === "oren").slice(-1)[0].status = "won";
+r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+assert.equal(out.client.job_value, 450); assert.ok(out.month.won >= 1, "won this month");
+r = await api(post("/api/leads", { job_value: null }, owner)); assert.equal((await r.json()).job_value, null);
 
 // --- when to call back: the visitor's choice becomes a time; the alert says it, the reminder waits for it
 const cbNow = at("2026-07-07T07:00:00Z"); // Tuesday 10:00 in Israel

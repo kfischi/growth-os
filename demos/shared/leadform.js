@@ -65,7 +65,9 @@
         const last = [...el.childNodes].reverse().find((n) => n.nodeType === 3 && n.textContent.trim());
         if (last) last.textContent = s.text; else el.append(document.createTextNode(s.text));
       });
-      const load = () => fetch(endpoint).then((r) => (r.ok ? r.json() : null)).then(paint).catch(() => {});
+      // Emergency mode ("חירום"): the chat button says so too (leadbot.js listens).
+      const tell = (st) => { paint(st); if (st && st.state) document.dispatchEvent(new CustomEvent("lf-status", { detail: st })); };
+      const load = () => fetch(endpoint).then((r) => (r.ok ? r.json() : null)).then(tell).catch(() => {});
       paint(null); load();
       setInterval(() => { if (document.visibilityState === "visible") load(); }, 120000);
     },

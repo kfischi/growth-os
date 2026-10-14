@@ -5,12 +5,13 @@
 // PATCH /api/leads  { id, status?, note? }   -> { lead }
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
 // POST  /api/leads  { link: "קבוצת השכונה" } -> { link }   |   { unlink: "k3p9" } -> { ok }   the owner's tagged links
-// POST  /api/leads  { available: "busy" | "free" | "auto", hours? } -> { availability }   the site's "available now" line
+// POST  /api/leads  { available: "busy" | "free" | "urgent" | "auto", hours? } -> { availability }   the site's "available now" line
+// POST  /api/leads  { job_value: number | null } -> { job_value }   the owner's average job, for the panel's ₪ estimate
 // POST  /api/leads  { testimonial: "<id>", hidden: true | false } -> { testimonial }   show or hide one on the site
 import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, siteStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS, testimonialOn } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
-const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
+const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min, job_value: c.job_value ?? null });
 
 export default async (req) => {
   if (!configured()) return json({ error: "not_configured" }, 503);
@@ -25,7 +26,7 @@ export default async (req) => {
   const url = new URL(req.url);
   try {
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : null;
-    const linkAction = body && (body.link !== undefined || body.unlink !== undefined || body.available !== undefined || body.testimonial !== undefined);
+    const linkAction = body && (body.link !== undefined || body.unlink !== undefined || body.available !== undefined || body.testimonial !== undefined || body.job_value !== undefined);
     if (req.method === "POST" && !linkAction) {
       if (!who.admin) return json({ error: "forbidden" }, 403);
       if (body.run === "reminders") return json(await runReminders());
@@ -50,10 +51,18 @@ export default async (req) => {
       const [t] = await db("PATCH", `ls_testimonials?id=eq.${q(body.testimonial)}&client_slug=eq.${q(client.slug)}`, { hidden: body.hidden }, "return=representation");
       return t ? json({ testimonial: { id: t.id, hidden: t.hidden } }) : json({ error: "not_found" }, 404);
     }
+    // The owner's average job value, for the panel's estimate (0015_job_value.sql). null clears it.
+    if (linkAction && body.job_value !== undefined) {
+      const v = body.job_value === null || body.job_value === "" ? null : Math.round(Number(body.job_value));
+      if (v !== null && !(Number.isFinite(v) && v >= 0 && v <= 1000000)) return json({ error: "bad_value" }, 400);
+      await db("PATCH", `ls_clients?slug=eq.${q(client.slug)}`, { job_value: v });
+      client.job_value = v;
+      return json({ job_value: v });
+    }
     if (linkAction && body.available !== undefined) {
-      if (!["busy", "free", "auto"].includes(body.available)) return json({ error: "bad_available" }, 400);
+      if (!["busy", "free", "urgent", "auto"].includes(body.available)) return json({ error: "bad_available" }, 400);
       const hours = body.hours == null ? null : Math.min(Math.max(Math.round(Number(body.hours)) || 1, 1), AVAIL_MAX_HOURS);
-      const now = await setAvailability(client, body.available === "auto" ? { avail: null } : { avail: body.available, hours: hours || (body.available === "busy" ? 3 : null) });
+      const now = await setAvailability(client, body.available === "auto" ? { avail: null } : { avail: body.available, hours: hours || (body.available === "busy" ? 3 : body.available === "urgent" ? 6 : null) });
       return json({ availability: { ...now, manual: body.available !== "auto" } });
     }
     if (linkAction) {
@@ -74,7 +83,7 @@ export default async (req) => {
       try {
         const t = israelTime(), r = monthRange(`${t.year}-${String(t.month).padStart(2, "0")}`);
         const s = await periodStats(client, r.start, r.end); // to the end of the month, so today is in
-        month = { label: r.label, visits: s.visits, leads: s.total, afterHours: s.afterHours, handled: s.handled, open: s.open, conversion: s.conversion };
+        month = { label: r.label, visits: s.visits, leads: s.total, afterHours: s.afterHours, handled: s.handled, open: s.open, won: (s.byStatus && s.byStatus.won) || 0, conversion: s.conversion };
         links = await listLinks(client, s); // each tagged link with its visits and leads this month
       } catch (e) { console.error("panel stats", e.message); }
       // The last 30 days: visits and leads per day, devices, hours, clicks and sources (0013_stats.sql).

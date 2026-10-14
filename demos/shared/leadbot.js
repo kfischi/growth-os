@@ -47,6 +47,7 @@
   const CSS = `
   .lb-launch{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;z-index:60;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;
     background:var(--bot-accent);color:var(--bot-accent-fg);font:600 15px/1 var(--bot-font);padding:12px 18px 12px 12px;border-radius:var(--bot-radius-pill,999px);box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
+  .lb-launch.lb-urgent{box-shadow:0 0 0 3px #fff,0 0 0 6px #c62f22,0 10px 28px rgba(0,0,0,.25)}
   .lb-launch .lb-dot{width:30px;height:30px;border-radius:var(--bot-radius-pill,999px);background:var(--bot-accent-fg);color:var(--bot-accent);display:grid;place-items:center;font-weight:800}
   .lb-launch:focus-visible,.lb-panel button:focus-visible,.lb-panel input:focus-visible{outline:3px solid var(--bot-focus,var(--bot-accent));outline-offset:2px}
   .lb-panel{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;z-index:61;width:min(380px,calc(100% - 32px));height:min(560px,calc(100% - 120px));display:none;flex-direction:column;padding:0;margin:0;
@@ -99,7 +100,14 @@
       const launch = el("button", "lb-launch"); launch.type = "button";
       launch.setAttribute("aria-expanded", "false");
       const dot = el("span", "lb-dot", cfg.initial || "?");
-      launch.append(dot, el("span", "lb-label", cfg.launcher || "צ׳אט"));
+      const label = el("span", "lb-label", cfg.launcher || "צ׳אט");
+      launch.append(dot, label);
+      // Emergency mode on the site (lf-status from leadform.js or status.js): the button asks for an urgent call.
+      document.addEventListener("lf-status", (e) => {
+        const on = !!(e.detail && e.detail.state === "urgent");
+        launch.classList.toggle("lb-urgent", on);
+        label.textContent = on ? "קריאה דחופה" : cfg.launcher || "צ׳אט";
+      });
       let hint = null;
       if (cfg.hint) {
         hint = el("span", "lb-hint"); hint.setAttribute("aria-hidden", "true");
@@ -130,7 +138,7 @@
       if (cfg.note) panel.appendChild(el("div", "lb-note", cfg.note));
       document.body.append(launch, panel);
 
-      let step = 0, data = {}, pre = {}, busy = false, started = false, timers = [], photo = null;
+      let step = 0, data = {}, pre = {}, busy = false, started = false, timers = [], photo = null, estimateNote = "";
       const later = (ms, fn) => timers.push(setTimeout(fn, ms));
 
       function say(text, who) {
@@ -227,7 +235,13 @@
         busy = true; typing.classList.add("on"); body.scrollTop = body.scrollHeight;
         const est = await look(photo.blob);
         typing.classList.remove("on"); busy = false;
-        if (est) { estimateCard(est); data.estimate = est.service ? est.service + (est.range ? " (" + est.range + ")" : "") : ""; }
+        if (est) {
+          estimateCard(est);
+          // For the owner: what the photo shows and the matching service, so they come prepared (added to the lead below).
+          const rng = est.range ? " (" + est.range + (/₪/.test(est.range) ? "" : " ₪") + ")" : "";
+          estimateNote = [est.urgent ? "⚠️ נראה דחוף." : "", est.seen, est.service ? "נראה כמו: " + est.service + rng + "." : ""].filter(Boolean).join(" ");
+          data.estimate = est.service ? est.service + rng : "";
+        }
         ask();
       });
       async function look(blob) {
@@ -271,6 +285,7 @@
         if (cfg.capture && window.LeadForm) {
           typing.classList.add("on"); body.scrollTop = body.scrollHeight;
           const lead = cfg.capture.lead(data);
+          if (estimateNote) lead.message = [lead.message, "מהתמונה: " + estimateNote].filter(Boolean).join("\n");
           if (photo) lead.photo = await toDataUrl(photo.blob);
           const r = await LeadForm.send(cfg.capture.endpoint, lead, photo ? 20000 : 8000);
           typing.classList.remove("on");
@@ -295,7 +310,7 @@
           if (photo) { const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; card.appendChild(img); }
           body.insertBefore(card, typing); body.scrollTop = body.scrollHeight;
           // A WhatsApp link can't carry a photo: the text says it follows in the same chat.
-          const text = cfg.summary(data) + (photo ? "\nיש לי תמונה של זה, אשלח אותה כאן." : "");
+          const text = cfg.summary(data) + (estimateNote ? "\nמהתמונה: " + estimateNote : "") + (photo ? "\nיש לי תמונה של זה, אשלח אותה כאן." : "");
           const wa = el("a", "lb-wa", "לשלוח את הפנייה בוואטסאפ");
           wa.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(text);
           wa.target = "_blank"; wa.rel = "noopener";
@@ -311,7 +326,7 @@
         body.querySelectorAll(".lb-msg,.lb-card").forEach((n) => n.remove());
         if (photo) { URL.revokeObjectURL(photo.url); photo = null; }
         foot.querySelectorAll(".lb-wa,.lb-restart").forEach((n) => n.remove());
-        typing.classList.remove("on"); busy = false; step = 0; data = {}; pre = {};
+        typing.classList.remove("on"); busy = false; step = 0; data = {}; pre = {}; estimateNote = "";
         clearFoot(); start();
       }
       function start() { started = true; botSay(cfg.greet, ask); }

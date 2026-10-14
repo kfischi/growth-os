@@ -130,7 +130,7 @@ export function inWorkingHours(client, date = new Date()) {
 /* ---------------- "available now" (0007_availability.sql) ---------------- */
 
 // What the owner said ("עסוק", "פנוי") counts until avail_until; after that the working hours decide.
-// state: "free" | "busy" | "open" | "closed". text: one short line for the site, in the business's voice (plural).
+// state: "urgent" | "free" | "busy" | "open" | "closed". text: one short line for the site, in the business's voice (plural).
 const DAYS_HE = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 const clock = (d) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jerusalem", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
 export const AVAIL_MAX_HOURS = 12;
@@ -138,6 +138,10 @@ export const AVAIL_MAX_HOURS = 12;
 export function availability(client, now = new Date()) {
   const until = client.avail_until ? new Date(client.avail_until) : null;
   if (client.avail && until && until > now) {
+    if (client.avail === "urgent") {
+      const area = clip(client.area, 40);
+      return { state: "urgent", until: until.toISOString(), text: `זמינים עכשיו לקריאות דחופות${area ? " ב" + area : ""}. כתבו או התקשרו.` };
+    }
     return client.avail === "busy"
       ? { state: "busy", until: until.toISOString(), text: `באמצע עבודה. חוזרים אליכם עד ${clock(until)}.` }
       : { state: "free", until: until.toISOString(), text: "פנויים עכשיו. אפשר לכתוב או להתקשר." };
@@ -155,13 +159,15 @@ export function availability(client, now = new Date()) {
   return { state: "closed", until: null, text: "השאירו פרטים, ונחזור אליכם." };
 }
 
-// From the owner's WhatsApp: "עסוק", "עסוק 2" (hours), "פנוי", "אוטומטי", "סטטוס". Anything else: null.
+// From the owner's WhatsApp: "עסוק", "עסוק 2" (hours), "פנוי", "חירום" (6 hours, or "חירום 3"), "אוטומטי", "סטטוס". Anything else: null.
 export function availabilityCommand(text) {
   const t = String(text || "").trim().replace(/[.!?,׳'"]+$/g, "").replace(/\s+/g, " ");
   let m = /^(עסוק|עסוקה|עסוקים|בעבודה)(?: (\d{1,2}))?$/.exec(t);
   if (m) return { avail: "busy", hours: Math.min(Math.max(Number(m[2]) || 3, 1), AVAIL_MAX_HOURS) };
   m = /^(פנוי|פנויה|פנויים|זמין|זמינה|זמינים)(?: (\d{1,2}))?$/.exec(t);
   if (m) return { avail: "free", hours: m[2] ? Math.min(Math.max(Number(m[2]), 1), AVAIL_MAX_HOURS) : null };
+  m = /^(חירום|דחוף|דחופות|כוננות|כונן)(?: (\d{1,2}))?$/.exec(t);
+  if (m) return { avail: "urgent", hours: Math.min(Math.max(Number(m[2]) || 6, 1), AVAIL_MAX_HOURS) };
   if (/^(אוטומטי|רגיל|לפי השעות)$/.test(t)) return { avail: null };
   if (/^(סטטוס|מצב)$/.test(t)) return { status: true };
   return null;
@@ -232,7 +238,8 @@ async function waSend(client, to, payload, log) {
 // A template message: the only kind a business may start a conversation with.
 // buttonPayload fills the template's first quick-reply button (the owner's "טיפלתי").
 export function sendTemplate(client, to, name, params, { buttonPayload, kind, leadId } = {}) {
-  const components = [{ type: "body", parameters: params.map((p) => ({ type: "text", text: param(p) })) }];
+  // A parameter is a string (up to 200 characters) or { text, max } for a longer one; the whole body stays under 1024.
+  const components = [{ type: "body", parameters: params.map((p) => ({ type: "text", text: p && typeof p === "object" ? param(p.text, p.max) : param(p) })) }];
   if (buttonPayload) components.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: buttonPayload }] });
   return waSend(client, to, { type: "template", template: { name, language: { code: client.tpl_lang || "he" }, components } }, { kind, lead_id: leadId || null });
 }
@@ -445,6 +452,7 @@ export function callbackText(at, now = new Date()) {
 }
 
 export async function processLead(client, input, channel = "form") {
+  const urgentNow = availability(client).state === "urgent"; // the owner turned on emergency mode: the alert says so first
   const phone = israeliPhone(input.phone);
   if (!phone) return { ok: false, error: "bad_phone" };
   const name = clip(input.name, 60);
@@ -482,7 +490,7 @@ export async function processLead(client, input, channel = "form") {
       : Promise.resolve("off"),
     client.owner_alerts
       ? sendTemplate(client, client.owner_phone, client.tpl_owner_alert,
-        [name, phone.local, lead.service || "-", [clip(lead.message, 400), callAt ? "ביקשו שתחזרו " + callbackText(callAt) : "", photoNote].filter(Boolean).join(" · ") || "-",
+        [name, phone.local, lead.service || "-", { text: [urgentNow ? "🚨 קריאה בזמן מצב חירום" : "", clip(lead.message, 400), callAt ? "ביקשו שתחזרו " + callbackText(callAt) : "", photoNote].filter(Boolean).join(" · ") || "-", max: 480 },
           isTag(lead.source) ? sourceName(lead.source, await linkLabels(client.slug)) : sourceHe(lead.source)],
         { kind: "owner_alert", leadId: lead.id, buttonPayload: "done:" + lead.id })
       : Promise.resolve("off"),

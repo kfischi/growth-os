@@ -119,7 +119,7 @@ async function onMessage(client, m) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 100) } });
     if (!fresh) return;
     const now = cmd.status ? availability(client) : await setAvailability(client, cmd);
-    const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : "\"עסוק\" או \"פנוי\" משנים את זה.";
+    const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
     await sendText(client, from, `באתר כתוב עכשיו: ${now.text} ${tip}`, { kind: "owner_reply" });
     return;
   }

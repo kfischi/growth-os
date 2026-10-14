@@ -645,13 +645,13 @@ export async function ensureLeadClient(d, slug) {
   const t = templateOf(d);
   const rows = await db("GET", `ls_clients?slug=eq.${q(slug)}&select=slug`);
   if (rows.length) {
-    await db("PATCH", `ls_clients?slug=eq.${q(slug)}`, { name: d.content.business_name, chat_facts: t.chatFacts(d.content) });
+    await db("PATCH", `ls_clients?slug=eq.${q(slug)}`, { name: d.content.business_name, chat_facts: t.chatFacts(d.content), area: clip(d.content.area, 60) || null });
     return { row: "updated" };
   }
   const key = newKey();
   await db("POST", "ls_clients", {
     slug, name: d.content.business_name, package: "ai", owner_name: d.content.owner_name || null,
-    owner_phone: israeliPhone(d.content.whatsapp).intl, allowed_origins: [], chat_facts: t.chatFacts(d.content), key_hash: sha256(key),
+    owner_phone: israeliPhone(d.content.whatsapp).intl, allowed_origins: [], chat_facts: t.chatFacts(d.content), area: clip(d.content.area, 60) || null, key_hash: sha256(key),
   });
   return { row: "created", panel: `${SITE_ORIGIN}/panel/#k=${slug}:${key}` };
 }
