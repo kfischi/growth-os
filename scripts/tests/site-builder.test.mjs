@@ -252,7 +252,8 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
 assert.deepEqual(r.hosting, { state: "off" }, "without NETLIFY_TOKEN the site waits for a deploy by hand");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
-const paths = tree.tree.map((e) => e.path).sort();
+const paths = tree.tree.map((e) => e.path).filter((x) => !/\/service-[a-z0-9]+\.html$/.test(x)).sort();
+assert.equal(tree.tree.filter((e) => /\/service-[a-z0-9]+\.html$/.test(e.path)).length, D.content.services.length, "a page per service in the repo too");
 assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
@@ -525,6 +526,13 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.ok(sent.some((f) => f.startsWith("/assets/photos/portrait.")), "the photos too");
   assert.ok(!sent.includes("/CLIENT.md"), "the repo card is not served");
   assert.ok(sent.includes("/robots.txt") && sent.includes("/sitemap.xml"), "robots and a sitemap for Google");
+  const svc = sent.filter((f) => /^\/service-[a-z0-9]+\.html$/.test(f));
+  assert.equal(svc.length, D.content.services.length, "a page per service");
+  for (const f of svc) assert.ok(nl.bodies.get("/sitemap.xml").includes("https://oren-mayim.sites.example.co.il" + f), "in the sitemap: " + f);
+  const sp = nl.bodies.get(svc[0]);
+  assert.match(sp, /<link rel="canonical" href="https:\/\/oren-mayim.sites.example.co.il\/service-/); assert.ok(!/noindex/.test(sp), "service pages are for Google");
+  assert.match(sp, /"@type":"Service"/); assert.match(sp, /"@type":"BreadcrumbList"/); assert.match(sp, /href="\.\/\?q=/, "the chat opens with the service");
+  assert.match(nl.bodies.get("/index.html"), /<a class="svc-link" href="service-[a-z0-9]+\.html">/, "the price list links to them");
   assert.match(nl.bodies.get("/index.html"), /<link rel="canonical" href="https:\/\/oren-mayim.sites.example.co.il\/">/);
   assert.match(nl.bodies.get("/sitemap.xml"), /<loc>https:\/\/oren-mayim.sites.example.co.il\/guides.html<\/loc>/);
   assert.match(nl.bodies.get("/index.html"), /<p class="credit">האתר נבנה ב-<a href="https:\/\/service-pro-web.netlify.app\/\?utm_source=client&amp;utm_campaign=oren-mayim"/);

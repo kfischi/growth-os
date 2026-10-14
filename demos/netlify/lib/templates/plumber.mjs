@@ -120,6 +120,20 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @param opts.now       Date, for the "updated" line
  * @returns {{ "index.html": string, "privacy.html": string, "accessibility.html": string }}
  */
+// A service's page name: stable for the same name (so its address doesn't move when the list is reordered), ASCII only.
+export function servicePage(name) {
+  let x = 2166136261;
+  for (const ch of String(name || "").trim()) { x ^= ch.codePointAt(0); x = Math.imul(x, 16777619) >>> 0; }
+  return `service-${x.toString(36)}.html`;
+}
+// The trade's guides that speak about this service: the service's longer words found in the question or the answer.
+function guidesFor(name, items, max = 4) {
+  const words = String(name || "").split(/[\s,/·-]+/).map((w) => w.replace(/^[והבלמש](?=[\u05d0-\u05ea]{3,})/, "")).filter((w) => w.length >= 3);
+  if (!words.length) return [];
+  const text = (it) => [it.q, it.a, ...(it.steps || [])].join(" ");
+  return items.filter((it) => words.some((w) => text(it).includes(w))).slice(0, max);
+}
+
 // One guide item as plain HTML (<details> opens without JS). Every text is escaped.
 const GUIDE_KIND = { now: "דחוף", tip: "טיפ", faq: "שאלה נפוצה" };
 function guideItem(it) {
@@ -194,7 +208,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   ].filter(Boolean);
 
   const rows = services.length
-    ? services.map((s) => `<tr><td><b>${h(s.name)}</b>${s.detail ? `<small>${h(s.detail)}</small>` : ""}</td>${showTime ? `<td class="hide-sm">${h(s.time || "")}</td>` : ""}${showPrice ? `<td class="price">${h(s.price || "לפי הצעת מחיר")}</td>` : ""}<td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>`).join("\n          ")
+    ? services.map((s) => `<tr><td><b>${draft ? h(s.name) : `<a class="svc-link" href="${servicePage(s.name)}">${h(s.name)}</a>`}</b>${s.detail ? `<small>${h(s.detail)}</small>` : ""}</td>${showTime ? `<td class="hide-sm">${h(s.time || "")}</td>` : ""}${showPrice ? `<td class="price">${h(s.price || "לפי הצעת מחיר")}</td>` : ""}<td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>`).join("\n          ")
     : `<tr><td colspan="4"><span class="todo">${h(SERVICES.label)}</span></td></tr>`;
 
   const works = ["work1", "work2", "work3"].filter((s) => photos[s] || draft);
@@ -403,7 +417,10 @@ ${video ? `<script>${REEL_JS}</script>
     } : undefined,
   });
   document.querySelectorAll(".ba").forEach((b) => { const r = b.querySelector(".ba-range"); if (r) r.addEventListener("input", () => b.style.setProperty("--pos", r.value + "%")); });
-  document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button")) bot.open(); }));
+  document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", (e) => { if (!e.target.closest("button, a")) bot.open(); }));
+  // From a service's own page (?q=<service>): the chat opens with that service already picked.
+  const ASKED = new URLSearchParams(location.search).get("q");
+  if (ASKED && ${js(services.map((x) => x.name))}.includes(ASKED)) bot.open({ issue: ASKED });
   if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
   if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
   if (SITE.leads && LeadForm.testimonials) LeadForm.testimonials(SITE.leads.replace("/api/lead/", "/api/testimonials/")); // what customers wrote, shown at once
@@ -488,13 +505,60 @@ ${GUIDES.items.map(guideItem).join("\n")}
 <style>${GUIDE_CSS}</style>
 <script type="application/ld+json">${js(faqSchema(GUIDES.items))}</script>`, "guides.html", true);
 
+  // One page per service: the owner's own facts about it, the towns, the guides that speak about it, and a way in.
+  // Real content for a real search ("פתיחת סתימה בחדרה"), never a page per town with the name swapped.
+  const svcPages = draft ? {} : Object.fromEntries(services.filter((x) => String(x.name || "").trim()).map((x) => {
+    const file = servicePage(x.name), sname = String(x.name).trim();
+    const related = guidesFor(sname, GUIDES.items);
+    const others = services.filter((o) => o !== x && String(o.name || "").trim());
+    const wa = waIntl ? `https://wa.me/${waIntl}?text=${encodeURIComponent(`היי ${ownerFirst}, אשמח לפרטים על ${sname}.`)}` : "";
+    const sdesc = `${sname}${area ? " ב" + area : ""}${x.price ? ": " + String(x.price).trim() : ""}. ${x.detail ? String(x.detail).trim() + ". " : ""}${name}, ${trade}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
+    const rows = [
+      x.price ? `<tr><th>טווח מחיר</th><td>${h(x.price)}</td></tr>` : "",
+      x.time ? `<tr><th>זמן טיפול</th><td>${h(x.time)}</td></tr>` : "",
+      has("response_time") ? `<tr><th>זמן חזרה</th><td>${h(c.response_time)}</td></tr>` : "",
+      has("hours") ? `<tr><th>שעות פעילות</th><td>${h(c.hours)}</td></tr>` : "",
+      has("warranty") ? `<tr><th>אחריות</th><td>${h(c.warranty)}</td></tr>` : "",
+    ].filter(Boolean).join("");
+    const schema = {
+      "@context": "https://schema.org", "@graph": [
+        { "@type": "Service", name: sname, serviceType: trade || sname, ...(x.detail ? { description: String(x.detail).trim() } : {}),
+          provider: { "@type": "LocalBusiness", name, ...(call ? { telephone: "+" + call.intl } : {}), ...(site ? { url: site } : {}) },
+          ...(towns.length || area ? { areaServed: towns.length ? towns : area } : {}),
+          ...(site ? { url: site + file } : {}) },
+        ...(site ? [{ "@type": "BreadcrumbList", itemListElement: [
+          { "@type": "ListItem", position: 1, name, item: site },
+          { "@type": "ListItem", position: 2, name: sname, item: site + file },
+        ] }] : []),
+      ],
+    };
+    const body = `
+<p class="lead-in">${h(x.detail || `${sname}, ${trade}${area ? " ב" + area : ""}.`)}</p>
+${rows ? `<table class="svc-facts">${rows}</table>` : ""}
+<p class="svc-ctas"><a class="gd-cta" href="./?q=${encodeURIComponent(sname)}">לפתוח קריאה בצ׳אט</a>${wa ? ` <a class="svc-alt" href="${h(wa)}">וואטסאפ</a>` : ""}${callLocal ? ` <a class="svc-alt" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}</p>
+${x.price ? `<p class="svc-note">המחיר הוא טווח לפי מה שבדרך כלל קורה. המחיר הסופי נקבע אחרי שרואים את העבודה, ומסכמים אותו לפני שמתחילים.</p>` : ""}
+<h2>איך זה עובד</h2>
+<ol class="svc-steps"><li>מתארים בצ׳אט מה צריך ואיפה, ואפשר לצרף תמונה.</li><li>הפרטים מגיעים ל${h(ownerFirst === "אנחנו" ? name : ownerFirst)} בוואטסאפ${has("response_time") ? `, וחוזרים אליכם תוך ${h(c.response_time)}` : ""}.</li><li>קובעים שעה ומסכמים את המחיר לפני העבודה.</li></ol>
+${towns.length ? `<h2>איפה עובדים</h2>\n<p>${towns.map(h).join(" · ")}</p>` : ""}
+${related.length ? `<h2>טיפים ושאלות</h2>\n<div class="gd">\n${related.map(guideItem).join("\n")}\n</div>\n<p><a href="guides.html">לכל הטיפים</a></p>` : ""}
+${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}`;
+    const page = legal(`${sname}${area ? " ב" + area : ""}`, body, `
+<meta name="description" content="${h(sdesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
+<meta property="og:title" content="${h(sname)} · ${h(name)}">
+<meta property="og:description" content="${h(sdesc)}">
+<style>${GUIDE_CSS}${SERVICE_CSS}:root { --link: ${h(themeColor(L.look, L.p))}; }</style>
+<script type="application/ld+json">${js(schema)}</script>
+<script>${GUIDE_JS}</script>`, file, true);
+    return [file, page];
+  }));
+
   // For Google: every page worth finding, and where the list is. Only with the real address.
   const today = now.toISOString().slice(0, 10);
   const seo = site ? {
     "robots.txt": `User-agent: *\nAllow: /\n\nSitemap: ${site}sitemap.xml\n`,
-    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
+    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", ...Object.keys(svcPages), "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
   } : {};
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...seo }) };
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...svcPages, ...seo }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
@@ -627,6 +691,7 @@ const CSS = `
   .order td { padding: 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
   .order tr:last-child td { border-bottom: 0; }
   .order td b { font-weight: 600; }
+  .order td b a.svc-link { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
   .order td small { display: block; color: var(--ink-soft); font-size: 14px; }
   .order .price { font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .order button { border: 1.5px solid var(--accent); background: none; color: var(--accent); font: 600 14px var(--body); padding: 6px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
@@ -752,6 +817,21 @@ const GUIDE_CSS = `
   .gd-cta { display: inline-block; margin-top: 18px; padding: 12px 18px; border-radius: 4px; background: var(--signal, #cc2e26); color: #fff; font-weight: 700; text-decoration: none; }
 `;
 
+const SERVICE_CSS = `
+  .lead-in { font-size: 19px; }
+  .svc-facts { border-collapse: collapse; width: 100%; margin: 18px 0; background: #fff; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .svc-facts th, .svc-facts td { text-align: start; padding: 10px 14px; border-top: 1px solid var(--rule); }
+  .svc-facts tr:first-child th, .svc-facts tr:first-child td { border-top: 0; }
+  .svc-facts th { width: 38%; color: var(--soft); font-weight: 500; }
+  .svc-facts td { font-weight: 700; }
+  .svc-ctas { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .svc-alt { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--rule); border-radius: 10px; text-decoration: none; color: var(--ink); font-weight: 600; background: #fff; }
+  .svc-note { color: var(--soft); font-size: 15px; }
+  .svc-steps { padding-inline-start: 22px; } .svc-steps li { margin: 6px 0; }
+  .svc-more { list-style: none; padding: 0; display: grid; gap: 8px; }
+  .svc-more li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
+  .svc-more span { color: var(--soft); white-space: nowrap; }
+`;
 const LEGAL_CSS = `
   .legal-credit { max-width: 760px; margin: 0 auto; padding: 0 20px 40px; color: var(--soft); font-size: 13px; text-align: center; }
   .legal-credit p { margin: 0; } .legal-credit a { color: inherit; }

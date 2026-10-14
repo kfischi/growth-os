@@ -583,6 +583,9 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
       return r.ok && Array.isArray(r.data) ? r.data.filter((f) => f.type === "file").map((f) => `${dir}/${sub}/${f.name}`) : [];
     };
     const media = [...await listFiles("assets/photos"), ...(await listFiles("assets")).filter((p) => /\/hero(-poster)?\.\w+$/.test(p))];
+    // A service the owner renamed or removed: its old page goes too.
+    const top = await gh("GET", `/contents/${dir}?ref=${q(BRANCH())}`);
+    if (top.ok && Array.isArray(top.data)) media.push(...top.data.filter((f) => f.type === "file" && /^service-[a-z0-9]+\.html$/.test(f.name)).map((f) => `${dir}/${f.name}`));
     stale = media.filter((p) => !keep.has(p)).map((path) => ({ path, mode: "100644", type: "blob", sha: null }));
   }
 
