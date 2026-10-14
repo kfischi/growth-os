@@ -5,7 +5,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [] };
+const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
@@ -341,6 +341,36 @@ r = await api(post("/api/leads", { available: "urgent" }, owner)); out = await r
 await api(post("/api/leads", { available: "auto" }, owner));
 r = await lead(post("/api/lead/oren", { name: "רון", phone: "0503333332", service: "סתימה", message: "דחיפות: השבוע." }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.0.0.32" }), ctx("oren"));
 assert.ok((await r.json()).ok); assert.ok(!/🚨/.test(sent.at(-1).template.components[0].parameters[3].text), "not after it ends");
+// the owner teaches the chats and changes prices on WhatsApp (0016_owner_notes.sql, builder.mjs ownerPrice)
+assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 350-550"), { price: { service: "פתיחת סתימה", value: "350 עד 550 ₪" } });
+assert.deepEqual(lib.ownerCommand("מחיר דוד חשמל 1,200 עד 2,800 ₪"), { price: { service: "דוד חשמל", value: "1,200 עד 2,800 ₪" } });
+assert.deepEqual(lib.ownerCommand("מחיר החלפת ברז מ-250"), { price: { service: "החלפת ברז", value: "מ-250 ₪" } });
+assert.deepEqual(lib.ownerCommand("מחיר איתור נזילה בלי מחיר"), { price: { service: "איתור נזילה", value: "לפי הצעת מחיר" } });
+assert.equal(lib.ownerCommand("מחיר סתימה 550-350"), null, "a range backwards is not a price");
+assert.deepEqual(lib.ownerCommand("למד: לא עובדים בשבת"), { learn: "לא עובדים בשבת" });
+assert.deepEqual(lib.ownerCommand("מה למדת?"), { notes: true }); assert.deepEqual(lib.ownerCommand("שכח 2"), { forget: 2 });
+assert.equal(lib.ownerCommand("כמה עולה סתימה?"), null, "a question is not a command");
+{
+  const before = sent.length;
+  await hook(wh(val({ messages: [{ from: "972509999999", id: "in-learn-x", type: "text", text: { body: "למד: הכול חינם" } }] })));
+  assert.ok(!(C0.owner_notes || []).length, "only the owner teaches"); assert.equal(sent.length, before);
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-learn-1", type: "text", text: { body: "למד: לא עובדים בשבת ובחגים" } }] })));
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-learn-1", type: "text", text: { body: "למד: לא עובדים בשבת ובחגים" } }] }))); // Meta retries
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-learn-2", type: "text", text: { body: "לידיעה: חניה בתשלום על חשבון הלקוח" } }] })));
+  assert.deepEqual(C0.owner_notes.map((n) => n.text), ["לא עובדים בשבת ובחגים", "חניה בתשלום על חשבון הלקוח"], "once each");
+  assert.match(sent.at(-1).text.body, /^למדנו \(2\): חניה/);
+  assert.match(lib.factsOf(C0), /מה שבעל העסק עדכן[\s\S]*- לא עובדים בשבת ובחגים/, "the chats read it");
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-notes", type: "text", text: { body: "מה למדת" } }] })));
+  assert.match(sent.at(-1).text.body, /1\. לא עובדים בשבת ובחגים\n2\. חניה/);
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-forget", type: "text", text: { body: "שכח 1" } }] })));
+  assert.deepEqual(C0.owner_notes.map((n) => n.text), ["חניה בתשלום על חשבון הלקוח"]); assert.match(sent.at(-1).text.body, /^נמחק: לא עובדים/);
+  // a site not built in the builder: the price becomes something the chats know
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-price", type: "text", text: { body: "מחיר פתיחת סתימה 350-550" } }] })));
+  assert.equal(C0.owner_notes.at(-1).text, "מחיר פתיחת סתימה: 350 עד 550 ₪"); assert.match(sent.at(-1).text.body, /^רשמנו: פתיחת סתימה, 350 עד 550 ₪/);
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "in-prices", type: "text", text: { body: "מחירים" } }] })));
+  assert.match(sent.at(-1).text.body, /כדי לעדכן מחיר/);
+  C0.owner_notes = [];
+}
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
 r = await api(post("/api/leads", { job_value: -5 }, owner)); assert.equal(r.status, 400);

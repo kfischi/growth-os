@@ -113,6 +113,20 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.equal(await overflow(), false);
   });
 
+  await check("learn my business: a price list photo and text, read and filled in", async () => {
+    const { aiCalls } = await import("./builder-fakes.mjs");
+    ai.queue.push({ reply: "לקחנו מהמחירון את השעות. חסרים עוד השירותים.", set: [{ field: "hours", value: "א׳–ה׳ 8:00–18:00" }], services: null, towns: null });
+    await p.evaluate(() => { document.querySelector("#learn").open = true; });
+    await p.setInputFiles("#learnFiles", path.join(ROOT, "shared/photos/plumber-siphon.webp"));
+    assert.equal(await p.textContent("#learnCount"), "תמונה אחת");
+    await p.fill("#learnText", "שעות: א-ה 8-18");
+    await p.click("#learnGo");
+    await p.waitForFunction(() => /לקחנו מהמחירון/.test(document.querySelector("#log").textContent), null, { timeout: 10000 });
+    const sent = aiCalls.at(-1).messages.at(-1).content;
+    assert.equal(sent[0].type, "image", "the photo went to Claude"); assert.match(sent.at(-1).text, /שעות: א-ה 8-18/);
+    assert.equal(await p.inputValue("#learnText"), "", "cleared after");
+  });
+
   ai.queue.push(fill);
   await p.fill("#msg", "אורן מים, אינסטלציה בחדרה והשרון. הנה כל הפרטים");
   await p.click("#send");

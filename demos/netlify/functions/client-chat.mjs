@@ -4,7 +4,7 @@
 // When a visitor leaves a name and a phone, the model adds a [[lead:...]] marker. The marker is removed
 // here, the lead goes through the same flow as a form (stored, WhatsApp reply, owner alert with the summary).
 import Anthropic from "@anthropic-ai/sdk";
-import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp } from "../lib/leads.mjs";
+import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp, factsOf } from "../lib/leads.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 20, MAX_CHARS = 600;
@@ -28,7 +28,7 @@ Taking a lead:
   SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence with what they need, where and when. No "|" or "]" inside the fields. Never explain the marker.
 
 Facts about the business:
-${c.chat_facts || "(none yet: say the business will answer every question when they call back)"}`;
+${factsOf(c) || "(none yet: say the business will answer every question when they call back)"}`;
 
 function validMessages(m) {
   if (!Array.isArray(m) || m.length < 1 || m.length > MAX_TURNS) return false;

@@ -62,6 +62,23 @@ assert.deepEqual(D.messages.map((m) => m.role), ["user", "assistant"]); assert.e
 
 // stale rev (another tab) -> conflict, nothing saved
 r = await J(await req("chat", { body: { message: "חדרה", rev: 0 } })); assert.equal(r.status, 409); assert.equal(r.error, "conflict"); assert.equal(D.messages.length, 2);
+// "למדו את העסק שלי": a photo of the price list and pasted text fill the draft through the same checks
+{
+  const before = D.messages.length, svcBefore = JSON.stringify(D.content.services), revBefore = D.rev;
+  r = await J(await req("learn", { body: { rev: D.rev, images: ["data:text/html;base64,PHNjcmlwdD4="] } })); assert.equal(r.error, "bad_image", "images only");
+  r = await J(await req("learn", { body: { rev: D.rev } })); assert.equal(r.error, "empty");
+  ai.queue.push({ reply: "לקחנו מהמחירון 2 שירותים עם המחירים ואת השעות. חסר רק זמן החזרה.", set: [{ field: "hours", value: "א׳–ה׳ 8:00–18:00" }],
+    services: [{ name: "פתיחת סתימה", detail: "", time: "", price: "300 עד 450 ₪" }, { name: "החלפת ברז", detail: "", time: "", price: "מ-250 ₪" }], towns: null });
+  r = await J(await req("learn", { body: { rev: D.rev, text: "מחירון: פתיחת סתימה 300-450, החלפת ברז מ-250. שעות א-ה 8-18", images: ["data:image/png;base64,iVBORw0KGgo="] } }));
+  assert.equal(r.status, 200, JSON.stringify({ ...r, state: r.state && r.state.status })); assert.match(r.reply, /לקחנו מהמחירון/); assert.ok(r.draft && r.changed.includes("hours"));
+  const call = aiCalls.at(-1).messages.at(-1).content;
+  assert.equal(call[0].type, "image"); assert.equal(call[0].source.media_type, "image/png");
+  assert.match(call.at(-1).text, /<owner_material>מחירון: פתיחת סתימה 300-450/); assert.match(call.at(-1).text, /owner's own word/);
+  assert.deepEqual(D.content.services.map((x) => x.price), ["300 עד 450 ₪", "מ-250 ₪"]); assert.equal(D.content.hours, "א׳–ה׳ 8:00–18:00");
+  assert.equal(D.messages.length, before + 2); assert.match(D.messages.at(-2).content, /^שיתפנו חומר על העסק · 1 תמונות · טקסט: מחירון/, "the history keeps text only");
+  assert.ok(!JSON.stringify(D.messages).includes("iVBORw0KGgo"), "no image data in the stored history");
+  D.content.services = JSON.parse(svcBefore); D.content.hours = ""; D.messages.length = before; D.rev = revBefore; // back to where the test was
+}
 
 // the rest of the content in one turn: services, towns, phone in another format, an overlong field
 ai.queue.push({
@@ -570,6 +587,25 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.match(T.ls_leads.at(-1).service || "", /הדומיין oren-mayim.co.il מחובר/);
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.hosting.url, "https://oren-mayim.co.il/", "a publish after the swap keeps the new address");
   assert.equal(site.custom_domain, "oren-mayim.co.il");
+  // a price from the owner's WhatsApp ("מחיר <שירות> 350-550"): the live site, the repo and the deploy change at once
+  {
+    const C2 = { slug: "oren-mayim" }, notes = [], addNote = async (_c, t) => notes.push(t);
+    const svc0 = D.content.services[0].name, trees = gh.trees.length;
+    let msg = await lib.ownerPrice(C2, { service: svc0, value: "350 עד 550 ₪" }, { addNote });
+    assert.match(msg, /^עודכן: /, msg);
+    assert.equal(D.content.services[0].price, "350 עד 550 ₪"); assert.equal(D.live.content.services[0].price, "350 עד 550 ₪", "live too, so self edit starts from it");
+    assert.equal(gh.trees.length, trees + 1, "one commit"); assert.ok(nl.bodies.get("/index.html").includes("350 עד 550 ₪"), "deployed");
+    assert.equal(notes.length, 0, "a service on the site needs no note");
+    msg = await lib.ownerPrice(C2, { service: "שירות שלא קיים", value: "100 ₪" }, { addNote });
+    assert.match(msg, /^לא מצאנו את "שירות שלא קיים"/); assert.equal(gh.trees.length, trees + 1, "nothing published");
+    assert.match(await lib.pricesText(C2), new RegExp(svc0 + ": 350 עד 550 ₪"));
+    msg = await lib.ownerPrice({ slug: "no-site" }, { service: "שיעור", value: "200 ₪" }, { addNote });
+    assert.match(msg, /^רשמנו: /); assert.deepEqual(notes, ["מחיר שיעור: 200 ₪"], "no builder site: a note the chats read");
+    D.content = { ...D.content, services: [...D.content.services] }; D.content.services[1] = { ...D.content.services[1], price: "1 ₪" }; // an unpublished self edit
+    D.self_edit = true; msg = await lib.ownerPrice(C2, { service: svc0, value: "400 ₪" }, { addNote });
+    assert.match(msg, /שינויים מהבונה שעוד לא פורסמו/); assert.equal(D.content.services[0].price, "350 עד 550 ₪");
+    D.content = D.live.content; D.self_edit = false;
+  }
   // a domain that never points: given up after 30 days, the site stays where it is
   D.domain = "slow.co.il"; D.domain_state = "waiting"; D.domain_since = "2026-01-01T00:00:00Z";
   out = await lib.checkDomains(new Date("2026-03-01T00:00:00Z"), async () => false); assert.equal(D.domain_state, null);

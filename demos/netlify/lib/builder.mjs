@@ -474,6 +474,45 @@ export async function chatTurn(d, message) {
   return { content, changed, errors, reply };
 }
 
+/**
+ * "למדו את העסק שלי": the owner shares their own material (a price list, a flyer, a business card, a screenshot of
+ * their Facebook page, or pasted text) and Claude fills the draft from it, through the same fields and checks as the
+ * chat. What the material says counts as the owner's words; nothing beyond it is added. Returns like chatTurn.
+ * images: [{ media: "image/jpeg" | "image/webp" | "image/png", data: base64 }], at most 3.
+ */
+export async function learnTurn(d, { text = "", images = [] }) {
+  const t = templateOf(d);
+  const history = (d.messages || []).map((m) => ({ role: m.role, content: m.content }));
+  const content = [
+    ...images.slice(0, 3).map((im) => ({ type: "image", source: { type: "base64", media_type: im.media, data: im.data } })),
+    { type: "text", text: `<draft_state>${stateFor(d)}</draft_state>
+<owner_material>${clip(text, 4000)}</owner_material>
+The owner shared their own material about the business${images.length ? ` (${images.length} image${images.length > 1 ? "s" : ""} above)` : ""}. Fill the draft from it:
+- Every fact the material states (the business name, the trade, the area and towns, services with their prices as ranges or "from" prices, hours, years, warranty, response time) is the owner's own word: set it.
+- Services: the whole list, at most ${t.SERVICES.max}, the ones the material shows most; keep each price exactly as written there, as a range "X עד Y ₪" or "מ-X ₪". If the draft already has services, merge: keep the owner's earlier ones unless the material replaces them.
+- Nothing that isn't in the material or the draft. A price list in another currency or without a number: leave the price empty.
+- If an image isn't about the business (a selfie, a random photo), say so and change nothing.
+- reply: in at most 3 short sentences, what you took from it (for example "לקחנו 6 שירותים עם המחירים, השעות והאזור") and the one thing still missing, and ask them to check the page.` },
+  ];
+  const response = await ai().beta.messages.create({
+    model: MODEL(),
+    max_tokens: 4000,
+    output_config: { effort: "low", format: { type: "json_schema", schema: outputSchema(t) } },
+    ...modelOptions(MODEL()),
+    system: [{ type: "text", text: systemPrompt(t, editing(d) ? "edit" : "build"), cache_control: { type: "ephemeral" } }],
+    messages: [...history, { role: "user", content }],
+  });
+  if (response.stop_reason === "refusal") return { refused: true, reply: "את החומר הזה לא נוכל להכניס לאתר. אפשר לכתוב לנו את הפרטים בשיחה." };
+  if (response.stop_reason === "max_tokens") throw new Error("max_tokens");
+  let out;
+  try { out = JSON.parse(response.content.filter((b) => b.type === "text").map((b) => b.text).join("")); } catch { throw new Error("bad_json"); }
+  if (!out || typeof out.reply !== "string" || !out.reply.trim()) throw new Error("empty_reply");
+  const applied = applyUpdate(t, d.content, out);
+  let reply = out.reply.trim().slice(0, 1500);
+  if (applied.errors.length) reply += "\n\nלא עדכנו:\n" + applied.errors.join("\n");
+  return { ...applied, reply };
+}
+
 /* ---------------- approval and the alert to כפיר ---------------- */
 
 const PACKAGE_HE = { presence: "נוכחות", ai: "נציג AI" };
@@ -702,6 +741,41 @@ export async function checkDomains(now = new Date(), points = pointsHere) {
   }
   return { checked: rows.length, live };
 }
+
+/**
+ * The owner wrote "מחיר <service> 350-550" on WhatsApp. The live site changes: the service's price in the content,
+ * a publish (the repo and the hosting) and the chats' facts. Returns the reply for the owner.
+ * A site not built in the builder, or a service not on it: the price becomes a note the chats read (factsOf).
+ */
+export async function ownerPrice(client, { service, value }, { addNote } = {}) {
+  const d = (await db("GET", `ls_drafts?published_slug=eq.${q(client.slug)}&status=eq.published&select=*&limit=1`))[0];
+  const note = async () => { if (addNote) await addNote(client, `מחיר ${service}: ${value}`); return `רשמנו: ${service}, ${value}. הצ׳אט באתר ובוואטסאפ יודע מעכשיו.`; };
+  if (!d) return note();
+  const norm = (x) => String(x || "").replace(/[\s,.'"׳״()-]/g, "");
+  const list = d.content.services || [], want = norm(service);
+  let hits = list.filter((x) => norm(x.name) === want);
+  if (!hits.length) hits = list.filter((x) => norm(x.name).includes(want) || want.includes(norm(x.name)));
+  if (hits.length > 1) return `איזה מהם? ${hits.map((x) => x.name).join(" / ")}. כתבו שוב עם השם המלא.`;
+  if (!hits.length) return `לא מצאנו את "${service}" באתר. השירותים באתר: ${list.map((x) => x.name).join(", ")}. כתבו שוב עם אחד מהשמות.`;
+  if (editing(d) && isDirty(d)) return "יש באתר שינויים מהבונה שעוד לא פורסמו. פרסמו אותם קודם (או בטלו), ואז שלחו שוב את המחיר.";
+  const t = templateOf(d);
+  const next = list.map((x) => (x === hits[0] ? { ...x, price: value } : x));
+  const { content, errors } = applyUpdate(t, d.content, { services: next });
+  if (errors.length) return "לא הצלחנו לעדכן: " + errors.join(", ");
+  let saved = await saveDraft(d, { content, live: snapshot({ ...d, content }) });
+  const sha = await publishToRepo(saved, saved.published_slug, `Update clients/${saved.published_slug}: a price from the owner's WhatsApp\n\nDraft ${saved.id}.`);
+  saved = await saveDraft(saved, { published_sha: sha, published_at: new Date().toISOString() });
+  try { const h = await hostSite(saved, saved.published_slug); if (!h.off) saved = await saveDraft(saved, h); } catch (e) { console.error("price hosting", e.message); }
+  if (saved.package === "ai") await ensureLeadClient(saved, saved.published_slug).catch((e) => console.error("price lead client", e.message));
+  return `עודכן: ${hits[0].name}, ${value}. האתר והצ׳אט מתעדכנים תוך דקה.`;
+}
+
+export const pricesText = async (client) => {
+  const d = (await db("GET", `ls_drafts?published_slug=eq.${q(client.slug)}&status=eq.published&select=content&limit=1`))[0];
+  const list = d ? d.content.services || [] : [];
+  return list.length ? "המחירים באתר:\n" + list.map((x) => `- ${x.name}: ${x.price || "בלי מחיר"}`).join("\n") + "\nכדי לשנות: \"מחיר\", שם השירות והטווח, למשל \"מחיר " + list[0].name + " 300-500\"."
+    : "כדי לעדכן מחיר: \"מחיר\", שם השירות והטווח, למשל \"מחיר החלפת ברז 250-400\".";
+};
 
 /* ---------------- housekeeping ---------------- */
 

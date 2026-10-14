@@ -2,6 +2,7 @@
 //   POST   /api/builder/start     { name, phone, consent, company? }      -> { id, key, state }
 //   GET    /api/builder/state                                             -> { state }
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
+//   POST   /api/builder/learn     { text?, images?: [dataURL x3], rev }    -> { reply, changed, state, draft }   "למדו את העסק שלי"
 //   POST   /api/builder/answer    { set, services, towns, style, rev }   an answer picked in the questionnaire,
 //                                 or the design ({ look, palette }), no AI -> { state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
@@ -19,7 +20,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
 import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
-  chatTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
+  chatTurn, learnTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient, hostSite,
@@ -31,6 +32,7 @@ const photoLimited = rateLimiter(30, 10 * 60 * 1000);
 const videoLimited = rateLimiter(6, 10 * 60 * 1000);
 const publishLimited = rateLimiter(6, 10 * 60 * 1000);
 const answerLimited = rateLimiter(120, 10 * 60 * 1000);
+const learnLimited = rateLimiter(8, 60 * 60 * 1000);    // "learn my business" reads (images cost more than a chat turn)
 const imageLimited = rateLimiter(4, 60 * 60 * 1000);    // made background images per IP per hour (each costs a few cents)
 const imageDraftLimited = rateLimiter(6, 24 * 60 * 60 * 1000); // and per draft per day
 
@@ -91,6 +93,33 @@ export default async (req, context) => {
       if (use && use.messages >= EDIT_MESSAGES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
       const turn = await chatTurn(d, message);
       const messages = [...(d.messages || []), { role: "user", content: message }, { role: "assistant", content: turn.reply }];
+      const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
+      const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
+      return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved), ...((turn.changed || []).length ? { draft: renderDraft(saved) } : {}) });
+    }
+
+    // "למדו את העסק שלי": a price list, a flyer, a card or pasted text fills the draft (lib/builder.mjs learnTurn).
+    if (action === "learn" && req.method === "POST") {
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (learnLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const body = await req.json().catch(() => null);
+      if (!body || typeof body !== "object") return json({ error: "bad_json" }, 400);
+      if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
+      const text = clip(body.text, 4000);
+      const images = [];
+      for (const url of Array.isArray(body.images) ? body.images.slice(0, 3) : []) {
+        const m = typeof url === "string" && url.length <= 1_400_000 && /^data:(image\/(?:jpeg|webp|png));base64,([A-Za-z0-9+/=]+)$/.exec(url);
+        if (!m) return json({ error: "bad_image" }, 400);
+        images.push({ media: m[1], data: m[2] });
+      }
+      if (!text && !images.length) return json({ error: "empty" }, 400);
+      if ((d.messages || []).length >= MAX_MESSAGES) return json({ error: "limit", state: stateOf(d) }, 429);
+      const use = editing(d) ? editUsage(d) : null;
+      if (use && use.messages >= EDIT_MESSAGES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
+      const turn = await learnTurn(d, { text, images });
+      // The history keeps text only: what was shared, in a line, and the reply.
+      const shared = ["שיתפנו חומר על העסק", images.length ? `${images.length} תמונות` : "", text ? `טקסט: ${clip(text, 300)}` : ""].filter(Boolean).join(" · ");
+      const messages = [...(d.messages || []), { role: "user", content: shared }, { role: "assistant", content: turn.reply }];
       const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
       const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
       return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved), ...((turn.changed || []).length ? { draft: renderDraft(saved) } : {}) });

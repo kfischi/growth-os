@@ -2,14 +2,18 @@
 // In Meta: WhatsApp > Configuration > Webhook: this URL, the WA_VERIFY_TOKEN value, and subscribe to "messages".
 // GET  verifies the webhook once. POST carries delivery statuses and incoming messages:
 //   - the owner taps "טיפלתי" on an alert or a reminder: the lead is marked handled
-//   - the owner writes "עסוק" / "פנוי" / "אוטומטי" / "סטטוס": the site's "available now" line changes
+//   - the owner writes "עסוק" / "פנוי" / "חירום" / "אוטומטי" / "סטטוס": the site's "available now" line changes
+//   - the owner writes "מחיר <service> 350-550": the live site and its chats get the new price (builder.mjs ownerPrice);
+//     "מחירים" lists them; "למד: <fact>" teaches the chats, "מה למדת" lists, "שכח 3" removes (0016_owner_notes.sql)
 //   - a lead writes back: the message is logged and shown in the panel ("הסר" stops review requests)
 //   - after "טיפלתי", if the business has review requests or testimonials on: the owner is asked, and one tap sends
 //     the customer one request (a Google review, or a testimonial for the site through a private link)
 //   - the owner taps "להסתיר" on a new testimonial: it comes off the site
 import { agentOn, agentReply } from "../lib/agent.mjs";
+import { ownerPrice, pricesText } from "../lib/builder.mjs";
 import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
-  sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink } from "../lib/leads.mjs";
+  sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink,
+  ownerCommand, addNote, forgetNote, notesText } from "../lib/leads.mjs";
 
 async function clientByPhoneId(id) {
   const rows = await db("GET", `ls_clients?wa_phone_number_id=eq.${q(id)}&select=*`);
@@ -121,6 +125,20 @@ async function onMessage(client, m) {
     const now = cmd.status ? availability(client) : await setAvailability(client, cmd);
     const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
     await sendText(client, from, `באתר כתוב עכשיו: ${now.text} ${tip}`, { kind: "owner_reply" });
+    return;
+  }
+
+  // The owner teaches the business or changes a price. A price change publishes the site, so it runs after the answer to Meta.
+  const own = from === client.owner_phone && m.type === "text" ? ownerCommand(text) : null;
+  if (own) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 300) } });
+    if (!fresh) return;
+    const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
+    if (own.learn) { const notes = await addNote(client, own.learn); await reply(`למדנו (${notes.length}): ${own.learn}\nהצ׳אט באתר ובוואטסאפ יודע מעכשיו. "מה למדת" מראה את הכול.`); }
+    else if (own.notes) await reply(notesText(client));
+    else if (own.forget) { const gone = await forgetNote(client, own.forget); await reply(gone ? `נמחק: ${gone.text}` : "אין מספר כזה. \"מה למדת\" מראה את הרשימה."); }
+    else if (own.prices) await reply(await pricesText(client));
+    else if (own.price) later.push(ownerPrice(client, own.price, { addNote }).then(reply).catch(async (e) => { console.error("owner price", e.message); await reply("לא הצלחנו לעדכן את המחיר עכשיו. נסו שוב בעוד כמה דקות, או כתבו לנו."); }));
     return;
   }
 

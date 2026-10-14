@@ -125,6 +125,12 @@
   .gen label { font-size: .9rem; font-weight: 600; }
   .gen[hidden] { display: none; }
   .gen.busy #genGo { opacity: .6; pointer-events: none; }
+  .learn-hint { font-size: 14px; color: var(--slate); margin: 8px 0; }
+  .learn-file { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1.5px dashed var(--line); border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+  .learn-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .learn-file:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .learn-count { font-size: 14px; color: var(--slate); margin-inline-start: 8px; }
+  #learnText { margin: 6px 0 8px; }
   .slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
   .slot { position: relative; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; overflow: hidden; display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--slate); background: var(--paper); cursor: pointer; padding: 4px; }
   .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -236,6 +242,15 @@
       <textarea id="msg" rows="1" maxlength="800" placeholder="או כתבו לנו חופשי…" enterkeyhint="send"></textarea>
       <button class="btn" type="submit" id="send">שליחה</button>
     </form>
+    <details class="photos" id="learn">
+      <summary>למדו את העסק שלי</summary>
+      <p class="learn-hint">יש לכם מחירון, פלייר, כרטיס ביקור או עמוד בפייסבוק? צלמו או העלו עד 3 תמונות, או הדביקו טקסט. נקרא, נמלא את האתר, ואתם רק בודקים.</p>
+      <label class="learn-file"><input id="learnFiles" type="file" accept="image/*" multiple><span>להעלות תמונות</span></label>
+      <span class="learn-count" id="learnCount"></span>
+      <label for="learnText" class="hp">טקסט על העסק</label>
+      <textarea id="learnText" rows="3" maxlength="4000" placeholder="או הדביקו כאן: מחירון, תיאור מהפייסבוק, מהאתר הקודם…"></textarea>
+      <button class="btn sm" type="button" id="learnGo">ללמוד מזה</button>
+    </details>
     <details class="photos" id="design">
       <summary>עיצוב: תבנית וצבעים</summary>
       <div id="designBox" style="margin-top:10px"></div>
@@ -295,6 +310,7 @@
   const SLOTS = { hero: 'רקע לראש האתר', portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', before: 'לפני', after: 'אחרי' };
   const ERR = {
     not_configured: 'הבונה עוד לא פתוח. כתבו לנו בוואטסאפ ונבנה את האתר יחד.',
+    bad_image: 'את התמונה הזאת לא הצלחנו לקרוא. נסו צילום מסך שלה, או הדביקו טקסט.',
     busy_today: 'היום נפתחו כבר הרבה אתרים. נסו שוב מחר, או כתבו לנו בוואטסאפ.',
     rate_limited: 'יותר מדי ניסיונות בזמן קצר. נסו שוב בעוד כמה דקות.',
     bad_name: 'כתבו שם, לפחות שתי אותיות.',
@@ -750,6 +766,30 @@
     paint();
     if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
     msg.focus({ preventScroll: true });
+  });
+
+  /* ---------- "למדו את העסק שלי": material the owner already has fills the draft (/api/builder/learn) ---------- */
+  $('#learnFiles').addEventListener('change', () => {
+    const n = $('#learnFiles').files.length;
+    $('#learnCount').textContent = n ? (n > 3 ? 'נקרא את 3 הראשונות' : n === 1 ? 'תמונה אחת' : n + ' תמונות') : '';
+  });
+  const toDataUrl = (blob) => new Promise((ok, fail) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = fail; fr.readAsDataURL(blob); });
+  $('#learnGo').addEventListener('click', async () => {
+    const go = $('#learnGo'); if (go.disabled) return;
+    const files = [...$('#learnFiles').files].slice(0, 3), text = $('#learnText').value.trim();
+    if (!files.length && !text) { bubble('fail', 'העלו תמונה או הדביקו טקסט, ונלמד מזה.'); return; }
+    go.disabled = true; go.textContent = 'קוראים…';
+    let images = [];
+    try { images = await Promise.all(files.map(async (f) => toDataUrl(await shrink(f)))); }
+    catch (e) { go.disabled = false; go.textContent = 'ללמוד מזה'; bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו צילום מסך שלה.'); return; }
+    bubble('me', 'שיתפנו חומר על העסק' + (files.length ? ' · ' + files.length + ' תמונות' : '') + (text ? ' · טקסט' : ''));
+    const typing = document.createElement('div'); typing.className = 'typing'; typing.textContent = 'קוראים את החומר…'; $('#log').append(typing); $('#log').scrollTop = $('#log').scrollHeight;
+    const r = await call('learn', { body: { text, images, rev: state.rev } });
+    typing.remove(); go.disabled = false; go.textContent = 'ללמוד מזה';
+    if (!r.ok) { bubble('fail', say(r.data.error)); if (r.data.state) { state = r.data.state; paint(); } return; }
+    state = r.data.state; bubble('them', r.data.reply); paint();
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+    $('#learnFiles').value = ''; $('#learnText').value = ''; $('#learnCount').textContent = ''; $('#learn').open = false;
   });
 
   /* ---------- photos: resized and re-encoded here, which also drops the location data ---------- */

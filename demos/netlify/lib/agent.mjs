@@ -4,7 +4,7 @@
 // (address, when, what exactly) and hands the case to the owner: when something new and useful arrives, the owner
 // gets the update through the owner alert template. Off unless כפיר turned it on (wa_agent), נציג AI only.
 import Anthropic from "@anthropic-ai/sdk";
-import { db, q, sendText, sendTemplate, firstName, clip } from "./leads.mjs";
+import { db, q, sendText, sendTemplate, firstName, clip, factsOf } from "./leads.mjs";
 
 const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
 const DAILY = 8; // replies to one customer in 24 hours; after that the owner takes it from there
@@ -33,7 +33,7 @@ How to write:
 - Never ask for payment details, ID numbers or passwords.
 
 Facts about the business:
-${String(c.chat_facts || "").slice(0, 4000)}`;
+${factsOf(c).slice(0, 5000)}`;
 
 // The conversation with this customer, oldest first: what they wrote, our template reply, the assistant's answers.
 async function history(c, lead) {

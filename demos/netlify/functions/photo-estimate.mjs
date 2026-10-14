@@ -5,7 +5,7 @@
 // price: the range is copied from the list. For a paying business (slug) the list comes from ls_clients.chat_facts
 // and the one sent by the page is ignored; the demos send their own sample list. The photo is not stored here.
 import Anthropic from "@anthropic-ai/sdk";
-import { json, configured, getClient, corsHeaders, rateLimiter, clientIp } from "../lib/leads.mjs";
+import { json, configured, getClient, corsHeaders, rateLimiter, clientIp, factsOf } from "../lib/leads.mjs";
 
 const MODEL = process.env.ESTIMATE_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_IMAGE = 1_400_000; // a data URL of the chat's shrunk JPEG (under 900 KB) fits well under this
@@ -35,14 +35,15 @@ ${list}`;
 
 // The list of a paying business: the "services" lines of its chat facts. A demo sends { name: range }.
 function priceList(c, prices) {
-  if (c) return String(c.chat_facts || "").slice(0, 3000);
+  if (c) return factsOf(c).slice(0, 4000);
   return Object.entries(prices || {}).slice(0, 20).map(([n, r]) => `- ${String(n).slice(0, 60)}: ${String(r || "לפי הצעת מחיר").slice(0, 40)}`).join("\n");
 }
 // The range for the matched service, read from the same list, so it is always the business's own words.
 function rangeOf(c, prices, service) {
   if (!service) return null;
   if (!c) return Object.hasOwn(prices || {}, service) ? String(prices[service] || "") || null : null;
-  const line = String(c.chat_facts || "").split("\n").find((l) => l.includes(service));
+  // the newest line that names the service: what the owner taught on WhatsApp wins over the site's list
+  const line = factsOf(c).split("\n").reverse().find((l) => l.includes(service));
   const m = line && /(\d[\d,]*\s*(?:עד|-|–)\s*\d[\d,]*\s*₪)/.exec(line);
   return m ? m[1] : null;
 }

@@ -73,6 +73,8 @@ export function israeliPhone(raw) {
 }
 
 export const clip = (s, n) => String(s ?? "").replace(/\s+/g, " ").trim().slice(0, n);
+// The same, keeping line breaks (at most one empty line): free text may have them, template parameters may not.
+const clipLines = (s, n) => String(s ?? "").replace(/[^\S\n]+/g, " ").replace(/ ?\n ?/g, "\n").replace(/\n{3,}/g, "\n\n").trim().slice(0, n);
 
 // WhatsApp template parameters can't be empty and can't hold new lines, tabs or 4+ spaces.
 const param = (s, n = 200) => clip(s, n) || "-";
@@ -126,6 +128,54 @@ export function inWorkingHours(client, date = new Date()) {
   const t = israelTime(date);
   return (client.work_days || []).includes(t.day) && t.hour >= client.work_start && t.hour < client.work_end;
 }
+
+/* ---------------- what the owner taught (0016_owner_notes.sql) ---------------- */
+
+export const NOTES_MAX = 30;
+const notesOf = (c) => (Array.isArray(c.owner_notes) ? c.owner_notes : []).filter((n) => n && typeof n.text === "string");
+// What every chat of the business reads: the site's facts, then what the owner taught on WhatsApp (newest last).
+export function factsOf(c) {
+  const notes = notesOf(c);
+  return [String(c.chat_facts || "").trim(), notes.length ? "מה שבעל העסק עדכן (גובר על מה שלמעלה):\n" + notes.map((n) => "- " + n.text).join("\n") : ""].filter(Boolean).join("\n");
+}
+
+// The owner's WhatsApp words that teach the business or change a price. Anything else: null.
+//   "מחיר <service> 350-550" / "מחיר <service> 350 עד 550" / "מחיר <service> מ-300" / "מחיר <service> בלי מחיר"
+//   "מחירים"  ·  "למד: <fact>"  ·  "מה למדת"  ·  "שכח 3"
+export function ownerCommand(text) {
+  const t = String(text || "").trim().replace(/\s+/g, " ");
+  let m;
+  if (/^(מחירים|מחירון)[.?!]?$/.test(t)) return { prices: true };
+  if ((m = /^מחיר (.{2,46}?) (\d[\d,]{0,7}) ?(?:-|–|עד) ?(\d[\d,]{0,7}) ?(?:₪|ש"ח|ש״ח|שח|שקל)?$/.exec(t))) {
+    const [a, b] = [m[2], m[3]].map((x) => Number(x.replace(/,/g, "")));
+    if (a > 0 && b >= a) return { price: { service: m[1].trim(), value: `${a.toLocaleString("en-US")} עד ${b.toLocaleString("en-US")} ₪` } };
+  }
+  if ((m = /^מחיר (.{2,46}?) (?:מ-?|החל מ-?|מ ?)(\d[\d,]{0,7}) ?(?:₪|ש"ח|ש״ח|שח|שקל)?$/.exec(t))) return { price: { service: m[1].trim(), value: `מ-${Number(m[2].replace(/,/g, "")).toLocaleString("en-US")} ₪` } };
+  if ((m = /^מחיר (.{2,46}?) (?:בלי מחיר|לפי הצעה|לפי הצעת מחיר|להסיר)$/.exec(t))) return { price: { service: m[1].trim(), value: "לפי הצעת מחיר" } };
+  if ((m = /^(?:למד|לידיעה|תזכור|תזכרי)[:\s-]+(.{3,})$/.exec(t))) return { learn: clip(m[1], 200) };
+  if (/^מה למדת\??$/.test(t)) return { notes: true };
+  if ((m = /^(?:שכח|תשכח|מחק) (\d{1,2})$/.exec(t))) return { forget: Number(m[1]) };
+  return null;
+}
+
+export async function addNote(client, text, now = new Date()) {
+  const notes = [...notesOf(client), { text: clip(text, 200), at: now.toISOString() }].slice(-NOTES_MAX);
+  await db("PATCH", `ls_clients?slug=eq.${q(client.slug)}`, { owner_notes: notes });
+  client.owner_notes = notes; clientCache.delete(client.slug);
+  return notes;
+}
+export async function forgetNote(client, n) {
+  const notes = notesOf(client);
+  if (n < 1 || n > notes.length) return null;
+  const [gone] = notes.splice(n - 1, 1);
+  await db("PATCH", `ls_clients?slug=eq.${q(client.slug)}`, { owner_notes: notes });
+  client.owner_notes = notes; clientCache.delete(client.slug);
+  return gone;
+}
+export const notesText = (client) => {
+  const notes = notesOf(client);
+  return notes.length ? "מה שלימדתם את הצ׳אט:\n" + notes.map((n, i) => `${i + 1}. ${n.text}`).join("\n") + "\nכדי למחוק: \"שכח\" ואחריו המספר." : "עוד לא לימדתם כלום. כתבו למשל: \"למד: לא עובדים בשבת\".";
+};
 
 /* ---------------- "available now" (0007_availability.sql) ---------------- */
 
@@ -246,14 +296,14 @@ export function sendTemplate(client, to, name, params, { buttonPayload, kind, le
 
 // Free text. Works only within 24 hours of the person's last message to the business.
 export function sendText(client, to, text, { kind, leadId } = {}) {
-  return waSend(client, to, { type: "text", text: { body: clip(text, 1000), preview_url: false } }, { kind, lead_id: leadId || null });
+  return waSend(client, to, { type: "text", text: { body: clipLines(text, 1000), preview_url: false } }, { kind, lead_id: leadId || null });
 }
 
 // Up to three reply buttons, inside the 24 hours after the person wrote (the owner just tapped a button).
 export function sendButtons(client, to, text, buttons, { kind, leadId } = {}) {
   return waSend(client, to, {
     type: "interactive",
-    interactive: { type: "button", body: { text: clip(text, 1000) }, action: { buttons: buttons.slice(0, 3).map((b) => ({ type: "reply", reply: { id: b.id, title: clip(b.title, 20) } })) } },
+    interactive: { type: "button", body: { text: clipLines(text, 1000) }, action: { buttons: buttons.slice(0, 3).map((b) => ({ type: "reply", reply: { id: b.id, title: clip(b.title, 20) } })) } },
   }, { kind, lead_id: leadId || null });
 }
 
