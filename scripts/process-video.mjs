@@ -71,7 +71,8 @@ const raw = (ms) => p.waitForTimeout(ms);
 const wait = (ms) => p.waitForTimeout(Math.round(ms * PACE));
 const st = (fn, ...a) => p.evaluate(([fn, a]) => window.stage[fn](...a), [fn, a]);
 const app = () => p.frame({ name: "app" });
-const draftFrame = () => p.frames().find((f) => /\/draft\//.test(f.url()));
+// The draft: a /draft/ page at first, then written in place through srcdoc (build/index.html refreshFrame).
+const draftFrame = () => p.frames().find((f) => f.parentFrame() === app() && /\/draft\/|^about:srcdoc/.test(f.url()));
 const A = (sel) => app().locator(sel).first();
 const D = (sel) => draftFrame().locator(sel).first();
 
@@ -148,7 +149,7 @@ const STEPS = [
   ["בוחרים תחום", "נכנסים לאתר ובוחרים את התחום שלכם. יש 16 תחומים, ולכל אחד דמו משלו."],
   ["מסתכלים על הדמו", "עסק בדוי, באותה תבנית שתקבלו: השירותים, המחירים, האזורים, והצ׳אט שעונה ללקוחות."],
   ["נכנסים לבונה", "לוחצים \"לבנות את האתר שלי\". שם וטלפון, וזהו. בלי שיחת היכרות ובלי לחכות."],
-  ["בוחרים תבנית", "שלוש תבניות לאותו תוכן. לוחצים על אחת, והאתר מתחלף מיד."],
+  ["בוחרים תבנית", "שש תבניות לאותו תוכן. לוחצים על אחת, והאתר מתחלף מיד."],
   ["בוחרים צבעים", "לכל תבנית שמונה ערכות צבעים. לא סגור? אפשר להחליף גם אחר כך."],
   ["עונים על שאלות", "שאלה אחת בכל פעם. בוחרים תשובה מוכנה, ומה שחסר כותבים. האתר מתמלא תוך כדי."],
   ["מעלים תמונות", "תמונה שלכם ועד שלוש של העבודה. אפשר גם לפני ואחרי, וסרטון קצר."],
@@ -156,8 +157,11 @@ const STEPS = [
   ["מאשרים ובוחרים חבילה", "מרוצים? מאשרים, ובוחרים חבילה: נציג AI, או נוכחות בלבד."],
   ["האתר באוויר", "חשבונית ופרטי תשלום מגיעים בוואטסאפ. אחרי התשלום אנחנו מעלים את האתר, וכל פנייה מגיעה אליכם."],
 ];
+// When each step card shows, in the film's own seconds: the "at" of each line in scripts/process-voice.json.
+const marks = [];
 async function step(n) {
   const [title, text] = STEPS[n - 1];
+  if (frames.length) marks.push([n, Date.now() / 1000 - frames[0].t]);
   await st("unpoint");
   await st("card", String(n), title, n < 10 ? "השלב הבא: " + STEPS[n][0] : "");
   await wait(500);
@@ -259,13 +263,14 @@ try {
   /* ---------- 4. the template ---------- */
   await step(4);
   await zoomTo(A("#guide"), { max: 1.7, pad: 30 });
-  await now("שלוש תבניות לבחירה", 1500);
-  for (const [look, name] of [["van", "שלט על הרכב"], ["certificate", "תעודת אחריות"]]) {
+  await now("שש תבניות לבחירה", 1500);
+  const LOOKS = [["van", "שלט על הרכב"], ["ticket", "כרטיס עבודה"], ["dispatch", "מוקד"], ["mosaic", "פסיפס"], ["certificate", "תעודת אחריות"]];
+  for (const [i, [look, name]] of LOOKS.entries()) {
     await now(`לוחצים על "${name}"`, 300);
     await tap(A(`#guide .look[data-look="${look}"]`), name, { zoom: false });
     await A(`#guide .look[data-look="${look}"][aria-pressed=true]`).waitFor(); await draftReady();
-    await now("והאתר מתחלף מיד", 200);
-    await zoomTo(A("#frame"), { max: 1.15, pad: 10 }); await wait(2000);
+    if (!i) await now("והאתר מתחלף מיד", 200);
+    await zoomTo(A("#frame"), { max: 1.15, pad: 10 }); await wait(i ? 1100 : 1800);
     await zoomTo(A("#guide"), { max: 1.7, pad: 30 });
   }
   await endStep();
@@ -437,6 +442,7 @@ try {
 
   /* ---------- closing ---------- */
   await st("full", true);
+  marks.push(["end", Date.now() / 1000 - frames[0].t]);
   await st("lines", `<div class="l mid">10 שלבים, ואתם באוויר</div><div class="grid">${STEPS.map(([t], i) => `<div class="st on ok"><em>${i + 1}</em><b>${t}</b></div>`).join("")}</div>`);
   await wait(100); await st("show", ".l");
   await wait(3800);
@@ -460,4 +466,5 @@ execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "concat", "-safe", "0"
 if (!WIDE) execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-ss", "118", "-i", out, "-frames:v", "1", "-vf", "scale=1280:-2", "-c:v", "libwebp", "-quality", "78", path.join(OUT, "process-poster.webp")]);
 fs.rmSync(dir, { recursive: true, force: true });
 const secs = execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out]).toString().trim();
+if (marks.length) console.log("step cards at: " + marks.map(([n, t]) => `${n}:${t.toFixed(1)}`).join(" "));
 console.log(`${out} · ${Number(secs).toFixed(1)} s · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · ${frames.length} frames`);
