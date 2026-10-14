@@ -58,6 +58,6 @@ A נוכחות client has no row in the system: the page opens WhatsApp directly
 
 ## Rules
 
-- Accounts (domain, Netlify team or site ownership, WhatsApp Business) are registered in the client's name, or transferable to it.
+- The domain and WhatsApp Business are registered in the client's name. Hosting may be in כפיר's Netlify account (as the builder does) as long as the files can be handed over.
 - Never commit API keys, tokens or panel keys. The lead URL is public by design; secrets stay in Netlify environment variables.
 - Only facts the client confirmed go on the page.

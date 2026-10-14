@@ -30,7 +30,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 - **No overpromising.** Never promise "double your clients". The promise is "no enquiry gets lost".
 - **No yellow** in any palette. Aim for modern and premium, not cheap.
 - **Mobile first and RTL.** Every page passes `node scripts/qa-page.cjs <dir> [page]` before it ships.
-- **The client owns their assets.** Domain and hosting accounts are registered in the client's name.
+- **The client owns their assets.** The domain is registered in the client's name. Builder sites are hosted in כפיר's Netlify account; the site's files are in the repo and are handed over if the client leaves. Pages may say a site is built to the privacy law and the accessibility standard; never promise protection from fines.
 - **Paid clients use the official WhatsApp Cloud API.** Unofficial gateways such as Evolution API are for demos and internal use only, because they risk getting the number banned.
 
 ## Prices (source of truth: the `#plans` section of `demos/index.html`)
