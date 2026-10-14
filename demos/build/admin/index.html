@@ -36,6 +36,8 @@
   .item { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; align-items: start; }
   .item h2 { font-size: 18px; margin: 0; }
   .meta { color: var(--slate); font-size: 14px; }
+  .meta.dns code { direction: ltr; unicode-bidi: isolate; font-size: 13px; }
+  .meta a { color: inherit; }
   .tag { display: inline-block; border-radius: 6px; padding: 1px 8px; font-size: 13px; font-weight: 700; background: var(--mist); }
   .tag.client_approved { background: #dcefe9; color: #0b5a4f; }
   .tag.paid { background: var(--mint); color: #fff; }
@@ -118,6 +120,16 @@
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
       if (d.selfEdit) info.append(el('div', 'meta', 'עריכה עצמית פעילה' + (d.editDirty ? ' · יש שינויים שבעל העסק עוד לא פרסם' : '') + (d.edits ? ' · החודש: ' + d.edits.messages + ' הודעות, ' + d.edits.publishes + ' פרסומים' : '')));
+      if (d.site) {
+        const m3 = el('div', 'meta'); m3.append('כתובת: '); const a = el('a', '', d.site.replace(/^https:\/\/|\/$/g, '')); a.href = d.site; a.target = '_blank'; a.rel = 'noopener'; m3.append(a);
+        if (d.domainState === 'waiting') m3.append(' · הדומיין ' + d.domain + ' מחכה להפניה (בודקים כל שעה, ועוברים אליו לבד)');
+        info.append(m3);
+        if (d.dns) {
+          const t = el('div', 'meta dns'); t.append('אצל רשם הדומיין: ');
+          d.dns.forEach((x, i) => { if (i) t.append(' · '); t.append(el('code', '', x.type + ' ' + x.host + ' → ' + x.value)); });
+          info.append(t);
+        }
+      }
       const acts = el('div', 'acts');
       const result = el('div', 'result'); result.hidden = true;
       const act = (label, cls, fn) => { const b = el('button', 'btn ' + (cls || ''), label); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; try { await fn(result); } catch (e) { result.hidden = false; result.textContent = 'לא הצליח: ' + e.message; } b.disabled = false; }); acts.append(b); };
@@ -133,9 +145,17 @@
         res.append('נכתב: ' + r.folder + ' (commit ' + r.commit.slice(0, 7) + '). ');
         if (r.leads.row === 'created') { res.append('מערכת הלידים: נוצר לקוח. קישור לפאנל של בעל העסק (נשמר רק כאן, העתיקו עכשיו): '); res.append(el('code', '', r.leads.panel)); }
         else if (r.leads.row === 'failed') res.append('מערכת הלידים: יצירת הלקוח נכשלה. לפרסם שוב עם אותו שם ישלים את זה.');
-        res.append(' הצעד הבא: אתר ב-Netlify ו-netlify.json, לפי CLIENT_SITES.md.');
+        if (r.hosting.state === 'live') { res.append(' האתר באוויר: '); const a = el('a', '', r.hosting.url); a.href = r.hosting.url; a.target = '_blank'; a.rel = 'noopener'; res.append(a); }
+        else if (r.hosting.state === 'failed') res.append(' ההעלאה ל-Netlify נכשלה (' + r.hosting.detail + '). לפרסם שוב ינסה שוב.');
+        else res.append(' אין NETLIFY_TOKEN: את האתר מעלים ידנית, לפי CLIENT_SITES.md.');
         const i = drafts.findIndex((x) => x.id === d.id); if (i >= 0) drafts[i] = r.draft;
         notice(res); paint();
+      });
+      if (d.status === 'published' && d.site) act(d.domain ? 'להחליף דומיין' : 'לחבר דומיין של הלקוח', '', async () => {
+        const domain = prompt('הדומיין של הלקוח, למשל oren-mayim.co.il:', d.domain || '');
+        if (!domain) return;
+        const r = await call('POST', { action: 'domain', id: d.id, domain });
+        const i = drafts.findIndex((x) => x.id === d.id); if (i >= 0) drafts[i] = r.draft; paint();
       });
       if (d.status === 'published') act(d.selfEdit ? 'לכבות עריכה עצמית' : 'להפעיל עריכה עצמית', '', async () => {
         const on = !d.selfEdit;

@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { SAMPLE } from "./builder-sample.mjs";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 
-import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls } from "./builder-fakes.mjs";
+import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls, nl } from "./builder-fakes.mjs";
 // What the model was told about the draft in its last turn.
 const aiCallsState = () => { const m = aiCalls.at(-1).messages.at(-1).content; return typeof m === "string" ? m : m[0].text; };
 
@@ -250,6 +250,7 @@ gh.files.set("clients/oren-mayim/CLIENT.md", "טיוטה `" + D.id + "`");
 gh.moveFails = 1; // and someone pushed in between
 r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.status, "published"); assert.equal(D.published_slug, "oren-mayim"); assert.equal(r.folder, "clients/oren-mayim/");
+assert.deepEqual(r.hosting, { state: "off" }, "without NETLIFY_TOKEN the site waits for a deploy by hand");
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).sort();
 assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
@@ -497,6 +498,64 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const said = imageCalls.at(-1).contents[0].parts[0].text;
   assert.ok(/No people/.test(said) && /No text/.test(said) && /No yellow/.test(said) && said.includes("אינסטלציה") && !said.includes("<script>"), "the prompt keeps the rules");
   delete process.env.GEMINI_API_KEY;
+}
+
+/* ---------------- hosting: the site on the air by itself (Netlify API, lib/hosting.mjs) ---------------- */
+{
+  const H = await import("../../demos/netlify/lib/hosting.mjs");
+  const lib = await import("../../demos/netlify/lib/builder.mjs");
+  assert.equal(H.cleanDomain("https://www.Oren-Mayim.co.il/about?x=1"), "oren-mayim.co.il");
+  for (const bad of ["oren", "x.netlify.app", "a b.co.il", "-x.co.il", "javascript:alert(1)"]) assert.equal(H.cleanDomain(bad), null, bad);
+  process.env.SITES_DOMAIN = "sites.example.co.il";
+  assert.equal(H.cleanDomain("oren.sites.example.co.il"), null, "never our own domain");
+  process.env.NETLIFY_TOKEN = "nf-test";
+  const C = T.ls_clients.find((c) => c.slug === "oren-mayim");
+  if (D.live) Object.assign(D, { content: D.live.content, photos: D.live.photos || {}, video: D.live.video || null }); // nothing unpublished
+  Object.assign(D, { status: "published", self_edit: false, paid_at: D.paid_at || new Date().toISOString() }); // a live site, as after publishing
+  nl.taken.add("oren-mayim"); // someone on Netlify has the name: the next one is taken
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
+  assert.equal(r.status, 200, JSON.stringify(r));
+  assert.deepEqual(r.hosting, { state: "live", url: "https://oren-mayim.sites.example.co.il/" });
+  const site = [...nl.sites.values()][0];
+  assert.equal(nl.sites.size, 1); assert.equal(site.name, "oren-mayim-site"); assert.equal(site.custom_domain, "oren-mayim.sites.example.co.il");
+  assert.deepEqual(nl.records.map((x) => [x.type, x.hostname, x.value]), [["CNAME", "oren-mayim.sites.example.co.il", "oren-mayim-site.netlify.app"]]);
+  assert.equal(D.site_id, site.id); assert.equal(D.site_host, "oren-mayim.sites.example.co.il"); assert.equal(D.site_netlify, "oren-mayim-site.netlify.app");
+  const sent = Object.keys([...nl.deploys.values()].at(-1).files).sort();
+  for (const f of ["/index.html", "/_headers", "/assets/leadbot.js", "/assets/leadform.js", "/assets/a11y.js", "/guides.html", "/contact.vcf"]) assert.ok(sent.includes(f), "deployed " + f);
+  assert.ok(sent.some((f) => f.startsWith("/assets/photos/portrait.")), "the photos too");
+  assert.ok(!sent.includes("/CLIENT.md"), "the repo card is not served");
+  assert.equal(nl.uploads.length, new Set(Object.values([...nl.deploys.values()].at(-1).files)).size, "every new file uploaded once");
+  assert.ok(C.allowed_origins.includes("https://oren-mayim-site.netlify.app"));
+  assert.equal(C.allowed_origins[0], "https://oren-mayim.sites.example.co.il", "the lead system links to the main address");
+  assert.equal(lib.publicState(D).site, "https://oren-mayim.sites.example.co.il/", "the owner sees the address");
+  // again: the same site, and only what changed is uploaded
+  const before = nl.uploads.length;
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200);
+  assert.equal(nl.sites.size, 1, "no second site"); assert.equal(nl.uploads.length, before, "nothing changed, nothing uploaded");
+  assert.equal(nl.records.length, 1);
+
+  // the client's own domain
+  r = await J(await adm("POST", { action: "domain", id: D.id, domain: "x.netlify.app" })); assert.equal(r.error, "bad_domain");
+  r = await J(await adm("POST", { action: "domain", id: D.id, domain: "https://www.Oren-Mayim.co.il/" })); assert.equal(r.status, 200, JSON.stringify(r));
+  assert.equal(D.domain, "oren-mayim.co.il"); assert.equal(D.domain_state, "waiting");
+  assert.ok(site.domain_aliases.includes("oren-mayim.co.il") && site.domain_aliases.includes("www.oren-mayim.co.il"), "added at once, as an alias");
+  assert.equal(site.custom_domain, "oren-mayim.sites.example.co.il", "the main address stays until the DNS is right");
+  assert.deepEqual(r.draft.dns, [{ type: "A", host: "@", value: "75.2.60.5", note: "oren-mayim.co.il" }, { type: "CNAME", host: "www", value: "oren-mayim-site.netlify.app", note: "www.oren-mayim.co.il" }]);
+  // the hourly check: not yet, then yes
+  let out = await lib.checkDomains(new Date(), async () => false); assert.deepEqual(out, { checked: 1, live: 0 }); assert.equal(D.domain_state, "waiting");
+  T.ls_leads.forEach((l) => { l.created_at = "2026-01-01T00:00:00Z"; });
+  out = await lib.checkDomains(new Date(), async (dom, host) => dom === "oren-mayim.co.il" && host === "oren-mayim-site.netlify.app");
+  assert.deepEqual(out, { checked: 1, live: 1 });
+  assert.equal(site.custom_domain, "oren-mayim.co.il", "the swap"); assert.ok(site.domain_aliases.includes("oren-mayim.sites.example.co.il") && !site.domain_aliases.includes("oren-mayim.co.il"), "the old address redirects to the new one");
+  assert.equal(D.domain_state, "live"); assert.equal(D.site_host, "oren-mayim.co.il");
+  assert.equal(C.allowed_origins[0], "https://oren-mayim.co.il"); assert.ok(C.allowed_origins.includes("https://oren-mayim.sites.example.co.il"), "the old address still sends leads");
+  assert.match(T.ls_leads.at(-1).service || "", /הדומיין oren-mayim.co.il מחובר/);
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.hosting.url, "https://oren-mayim.co.il/", "a publish after the swap keeps the new address");
+  assert.equal(site.custom_domain, "oren-mayim.co.il");
+  // a domain that never points: given up after 30 days, the site stays where it is
+  D.domain = "slow.co.il"; D.domain_state = "waiting"; D.domain_since = "2026-01-01T00:00:00Z";
+  out = await lib.checkDomains(new Date("2026-03-01T00:00:00Z"), async () => false); assert.equal(D.domain_state, null);
+  delete process.env.NETLIFY_TOKEN; delete process.env.SITES_DOMAIN;
 }
 
 console.log("all site builder tests passed");

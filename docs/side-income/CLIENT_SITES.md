@@ -71,7 +71,7 @@ Netlify עובד היום בקרדיטים חודשיים לכל חשבון (Fre
    { "siteId": "<Project ID>", "tokenSecret": "NETLIFY_TOKEN_OREN_MAYIM" }
    ```
 6. מעכשיו כל שינוי ב-`clients/<slug>/` שממוזג עולה לבד, דרך `.github/workflows/deploy-clients.yml`. אפשר גם להריץ ידנית: Actions → Deploy client sites → Run workflow → שם התיקייה.
-7. **דומיין:** Domain management → Add a domain. הדומיין נקנה על שם הלקוח. אצל רשם הדומיין מכוונים את ה-DNS לפי מה ש-Netlify מציג, ו-HTTPS נוצר לבד.
+7. **(אתרים מהבונה: אוטומטי, ראו "אחסון וכתובת" ב-`SITE_BUILDER.md`.) דומיין:** Domain management → Add a domain. הדומיין נקנה על שם הלקוח. אצל רשם הדומיין מכוונים את ה-DNS לפי מה ש-Netlify מציג, ו-HTTPS נוצר לבד.
 8. **מערכת הלידים:** הכתובת של האתר נכנסת ל-`allowed_origins` של הלקוח (עם www ובלי www, ואת כתובת ה-netlify.app). ראו `LEAD_SYSTEM.md`.
 
 אם כל האתרים בחשבון שלך: אותו דבר, עם טוקן אחד בשם `NETLIFY_TOKEN`, ובלי `tokenSecret` ב-`netlify.json`.

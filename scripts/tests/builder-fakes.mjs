@@ -1,7 +1,7 @@
 // Fake backends for the site builder tests: Supabase (PostgREST and Storage), Anthropic, GitHub and WhatsApp.
 // Importing this file replaces globalThis.fetch. Used by site-builder.test.mjs and builder-page.test.mjs.
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", LEADS_ADMIN_KEY: " admin-key-0123456789\n", ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", BUILDER_DAILY_MAX: "5" });
 // LEADS_ADMIN_KEY carries the space and line break a paste into Netlify can add: the functions must trim it.
 
@@ -28,6 +28,8 @@ function match(row, filters) {
 }
 const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
 export const imageCalls = [];
+// Netlify (lib/hosting.mjs): sites, deploys by digest, uploads, the DNS zone of SITES_DOMAIN.
+export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0 };
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
   if (u.host === "api.anthropic.com") {
@@ -40,6 +42,40 @@ globalThis.fetch = async (url, opt = {}) => {
   if (u.host === "generativelanguage.googleapis.com") { // the background image (heroImage)
     imageCalls.push(JSON.parse(opt.body));
     return res({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "iVBORw0KGgo=" } }] } }] });
+  }
+  if (u.host === "service-pro-web.netlify.app" && u.pathname.startsWith("/shared/")) return new Response("/* " + u.pathname + " */");
+  if (u.host === "api.netlify.com") {
+    assert.equal(opt.headers.authorization, "Bearer nf-test"); assert.ok(opt.signal, "netlify call has a timeout");
+    const p = u.pathname.replace("/api/v1", ""), body = opt.body && !Buffer.isBuffer(opt.body) && typeof opt.body === "string" ? JSON.parse(opt.body) : null;
+    let m;
+    if (method === "POST" && p === "/sites") {
+      if (nl.taken.has(body.name) || [...nl.sites.values()].some((x) => x.name === body.name)) return res({ errors: { subdomain: ["must be unique"] } }, 422);
+      const site = { id: "site-" + (nl.sites.size + 1), name: body.name, default_domain: body.name + ".netlify.app", custom_domain: body.custom_domain || null, domain_aliases: [] };
+      nl.sites.set(site.id, site); return res(site, 201);
+    }
+    if ((m = /^\/sites\/([\w-]+)$/.exec(p))) {
+      const site = nl.sites.get(m[1]); if (!site) return res({ message: "Not Found" }, 404);
+      if (method === "GET") return res(site);
+      if (method === "PATCH") { Object.assign(site, body); return res(site); }
+    }
+    if (method === "POST" && /^\/sites\/[\w-]+\/ssl$/.test(p)) { nl.ssl++; return res({}); }
+    if (method === "POST" && (m = /^\/sites\/([\w-]+)\/deploys$/.exec(p))) {
+      assert.ok(nl.sites.has(m[1]));
+      const id = "dep-" + (nl.deploys.size + 1); nl.deploys.set(id, { site: m[1], files: body.files });
+      return res({ id, required: [...new Set(Object.values(body.files))].filter((h) => !nl.have.has(h)) });
+    }
+    if (method === "PUT" && (m = /^\/deploys\/([\w-]+)\/files(\/.+)$/.exec(p))) {
+      const dep = nl.deploys.get(m[1]); const path = decodeURIComponent(m[2]); assert.ok(dep && dep.files[path], "uploads only a file of the deploy: " + path);
+      assert.equal(opt.headers["content-type"], "application/octet-stream");
+      const h = createHash("sha1").update(opt.body).digest("hex"); assert.equal(h, dep.files[path], "the bytes match the digest");
+      nl.have.add(h); nl.uploads.push(path); return res({});
+    }
+    if (method === "GET" && p === "/dns_zones") return res(nl.zones);
+    if ((m = /^\/dns_zones\/(\w+)\/dns_records$/.exec(p))) {
+      if (method === "GET") return res(nl.records.filter((r) => r.zone === m[1]));
+      if (method === "POST") { nl.records.push({ zone: m[1], ...body }); return res(body, 201); }
+    }
+    throw new Error("unexpected netlify " + method + " " + p);
   }
   if (u.host === "graph.facebook.com") { sentWa.push(JSON.parse(opt.body)); return res({ messages: [{ id: "wamid." + sentWa.length }] }); }
   if (u.host === "api.github.com") {

@@ -3,11 +3,13 @@
 //   GET  /api/builder-admin?id=<id>               -> { draft, preview }   preview: a one-hour link to /draft/<id>
 //   POST /api/builder-admin { action: "paid",    id }            payment arrived (until the invoicing system's webhook does it)
 //   POST /api/builder-admin { action: "return",  id, note }      back to the owner for changes, with a note they see
-//   POST /api/builder-admin { action: "publish", id, slug }      writes clients/<slug>/ to the repo; for נציג AI also the lead system row
+//   POST /api/builder-admin { action: "publish", id, slug }      writes clients/<slug>/ to the repo, puts it on the air (Netlify), for נציג AI also the lead system row
+//   POST /api/builder-admin { action: "domain",  id, domain }    the client's own domain: added now, the main address once its DNS points here
 //   POST /api/builder-admin { action: "self_edit", id, on }      the owner may change the live site in the chat (0004_self_edit.sql)
 //   POST /api/builder-admin { action: "delete",  id }
 import { json, configured, authorise, db, q, clip } from "../lib/leads.mjs";
-import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, publishToRepo, ensureLeadClient, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia } from "../lib/builder.mjs";
+import { hostingOn, cleanDomain, addDomain, dnsSteps } from "../lib/hosting.mjs";
+import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, publishToRepo, ensureLeadClient, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia, hostSite, setOrigins } from "../lib/builder.mjs";
 
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/;
 
@@ -20,6 +22,8 @@ function view(d) {
     returnNote: d.return_note, slug: d.published_slug,
     selfEdit: Boolean(d.self_edit), editDirty: editing(d) ? isDirty(d) : false, edits: d.self_edit ? editUsage(d) : null,
     created: d.created_at, updated: d.updated_at, approved: d.approved_at, paid: d.paid_at, published: d.published_at,
+    site: d.site_host ? "https://" + d.site_host + "/" : null, domain: d.domain || null, domainState: d.domain_state || null,
+    dns: d.domain && d.domain_state === "waiting" && d.site_netlify ? dnsSteps(d.domain, { netlifyHost: d.site_netlify }) : null,
   };
 }
 
@@ -42,7 +46,7 @@ export default async (req) => {
         });
       }
       // Everything but the chat and the key hash: the list stays small.
-      const rows = await db("GET", "ls_drafts?select=id,status,template,package,plan,content,photos,video,photo_rights_at,owner_name,owner_phone,return_note,published_slug,self_edit,live,edit_month,edit_messages,edit_publishes,created_at,updated_at,approved_at,paid_at,published_at&order=created_at.desc&limit=200");
+      const rows = await db("GET", "ls_drafts?select=id,status,template,package,plan,content,photos,video,photo_rights_at,owner_name,owner_phone,return_note,published_slug,self_edit,live,site_host,site_netlify,domain,domain_state,edit_month,edit_messages,edit_publishes,created_at,updated_at,approved_at,paid_at,published_at&order=created_at.desc&limit=200");
       return json({ drafts: rows.map(view) });
     }
     if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -101,7 +105,26 @@ export default async (req) => {
       // The site is in the repo already. If the lead system row fails, publishing again with the same slug finishes it.
       let leads;
       try { leads = await ensureLeadClient(saved, slug); } catch (e) { console.error("builder lead client", e.message); leads = { row: "failed" }; }
-      return json({ draft: view(saved), commit: sha, folder: `clients/${slug}/`, leads });
+      // On the air: the Netlify site and its address the first time, a new deploy every time. Publishing again retries it.
+      let hosted = saved, hosting;
+      try {
+        const h = await hostSite(saved, slug);
+        if (h.off) hosting = { state: "off" };
+        else { hosted = await saveDraft(saved, h); await setOrigins(hosted); hosting = { state: "live", url: "https://" + hosted.site_host + "/" }; }
+      } catch (e) { console.error("builder hosting", e.message); hosting = { state: "failed", detail: clip(e.message, 200) }; }
+      return json({ draft: view(hosted), commit: sha, folder: `clients/${slug}/`, leads, hosting });
+    }
+
+    if (body.action === "domain") {
+      if (d.status !== "published" || !d.site_id) return json({ error: "wrong_status", status: d.status }, 409);
+      if (!hostingOn()) return json({ error: "not_configured", detail: "NETLIFY_TOKEN" }, 503);
+      const domain = cleanDomain(body.domain);
+      if (!domain) return json({ error: "bad_domain" }, 422);
+      const taken = await db("GET", `ls_drafts?domain=eq.${q(domain)}&id=neq.${q(d.id)}&select=id`);
+      if (taken.length) return json({ error: "domain_taken" }, 409);
+      await addDomain(d.site_id, domain);
+      const saved = await saveDraft(d, { domain, domain_state: "waiting", domain_since: now });
+      return json({ draft: view(saved) });
     }
 
     if (body.action === "self_edit") {

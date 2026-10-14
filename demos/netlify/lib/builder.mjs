@@ -6,6 +6,7 @@
 //   SUPABASE_URL, SUPABASE_SERVICE_KEY   the lead system's project (tables from 0001 and 0002_site_builder.sql)
 //   ANTHROPIC_API_KEY                    the chat
 //   GITHUB_TOKEN                         fine-grained token, this repo only, Contents: read and write (publishing)
+//   NETLIFY_TOKEN, SITES_DOMAIN           hosting: the site is created and deployed through the Netlify API (lib/hosting.mjs)
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
 //   BUILDER_DAILY_MAX                    new drafts per day, all visitors together (default 40)
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
@@ -17,6 +18,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";
 import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, adminKey, israelDay } from "./leads.mjs";
 import * as plumber from "./templates/plumber.mjs";
+import { hostingOn, ensureSite, deploy, pointsHere, makePrimary } from "./hosting.mjs";
 
 export const TEMPLATES = { plumber };
 export const SITE_ORIGIN = "https://service-pro-web.netlify.app";
@@ -310,6 +312,7 @@ export function publicState(d) {
     looks: t.catalog ? t.catalog() : null,
     style: t.lookOf ? { look: t.lookOf(d.content).id, palette: t.lookOf(d.content).pid } : null,
     heroAI: heroAI(),
+    site: d.status === "published" && d.site_host ? "https://" + d.site_host + "/" : null,
     rev: d.rev,
   };
 }
@@ -521,9 +524,9 @@ export function siteFiles(d, slug) {
 | --- | --- |
 | חבילה | ${PACKAGE_HE[d.package] || "-"} |
 | כתובת במערכת הלידים | ${d.package === "ai" ? "`" + slug + "`" : "-"} |
-| דומיין | עוד לא |
+| כתובת | נקבעת בפרסום (Netlify) |
 
-הצעדים הבאים: \`docs/side-income/CLIENT_SITES.md\` (אתר ב-Netlify, \`netlify.json\`, דומיין).
+האחסון והכתובת: \`demos/netlify/lib/hosting.mjs\` (נוצר ומתעדכן אוטומטית בכל פרסום).
 הריפו ציבורי: בלי טלפון אישי, סכומים או פרטי תשלום בכרטיס הזה.
 `;
   return { ...pages, _headers: t.HEADERS, "CLIENT.md": card, ...t.STATIC_FILES };
@@ -590,6 +593,44 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
   throw new Error("github: the branch kept moving, try again");
 }
 
+/* ---------------- hosting (Netlify API, lib/hosting.mjs) ---------------- */
+
+// Every file of the live site, as bytes: the pages, the shared scripts (the same files the home site serves) and the media.
+export async function siteBundle(d, slug) {
+  const { "CLIENT.md": _card, ...files } = siteFiles(d, slug); // the repo's card for כפיר, not a page of the site
+  await Promise.all(["leadbot.js", "leadform.js", "a11y.js"].map(async (name) => {
+    const r = await fetch(`${SITE_ORIGIN}/shared/${name}`, { signal: AbortSignal.timeout(15000) });
+    if (!r.ok) throw new Error(`shared ${name} ${r.status}`);
+    files[`assets/${name}`] = Buffer.from(await r.arrayBuffer());
+  }));
+  const media = Object.entries(d.photos || {}).map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
+  if (d.video) media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
+  for (const [p, to] of media) files[to] = await photoBytes(p);
+  return files;
+}
+
+/**
+ * Puts the site on the air: creates its Netlify site the first time (with its address), then deploys every file.
+ * Returns the draft fields to save, or { off } without NETLIFY_TOKEN (then the site waits for a deploy by hand).
+ */
+export async function hostSite(d, slug) {
+  if (!hostingOn()) return { off: true };
+  const site = await ensureSite(slug, d);
+  await deploy(site.siteId, await siteBundle(d, slug));
+  const host = d.domain_state === "live" && d.domain ? d.domain : site.host;
+  return { site_id: site.siteId, site_netlify: site.netlifyHost, site_sub: site.sub, site_host: host };
+}
+
+// The addresses a נציג AI site sends leads from, main address first (siteUrl() in leads.mjs links to the first).
+export async function setOrigins(d) {
+  if (d.package !== "ai" || !d.published_slug || !d.site_host) return;
+  const rows = await db("GET", `ls_clients?slug=eq.${q(d.published_slug)}&select=allowed_origins`);
+  if (!rows.length) return;
+  const ours = [d.site_host, d.site_sub, d.site_netlify, d.domain && "www." + d.domain, d.domain].filter(Boolean).map((h) => "https://" + h);
+  const all = [...new Set([...ours, ...(rows[0].allowed_origins || [])])];
+  await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { allowed_origins: all });
+}
+
 // The lead system row for a נציג AI site. A new row gets a new panel key, shown once to כפיר.
 export async function ensureLeadClient(d, slug) {
   if (d.package !== "ai") return { row: "not_needed" };
@@ -605,6 +646,29 @@ export async function ensureLeadClient(d, slug) {
     owner_phone: israeliPhone(d.content.whatsapp).intl, allowed_origins: [], chat_facts: t.chatFacts(d.content), key_hash: sha256(key),
   });
   return { row: "created", panel: `${SITE_ORIGIN}/panel/#k=${slug}:${key}` };
+}
+
+/**
+ * Hourly (reminders.mjs): every client domain still waiting for its DNS. Once it points at Netlify it becomes the
+ * site's main address, the lead system accepts it, and כפיר gets a WhatsApp alert. Gives up after 30 days.
+ */
+export async function checkDomains(now = new Date(), points = pointsHere) {
+  if (!hostingOn()) return { checked: 0 };
+  const rows = await db("GET", "ls_drafts?domain_state=eq.waiting&select=*&limit=50");
+  let live = 0;
+  for (const d of rows) {
+    try {
+      if (!d.site_id || !d.site_netlify) continue;
+      if (now - new Date(d.domain_since) > 30 * 86_400_000) { await saveDraft(d, { domain_state: null }); await alertKfir(d, `הדומיין ${d.domain} לא הופנה תוך 30 יום. האתר נשאר בכתובת ${d.site_host}`); continue; }
+      if (!(await points(d.domain, d.site_netlify))) continue;
+      await makePrimary(d.site_id, d.domain, [d.site_sub, d.site_netlify]);
+      const saved = await saveDraft(d, { domain_state: "live", site_host: d.domain });
+      await setOrigins(saved);
+      await alertKfir(saved, `הדומיין ${d.domain} מחובר. האתר עבר לכתובת החדשה`);
+      live++;
+    } catch (e) { console.error("domain", d.id, e.message); }
+  }
+  return { checked: rows.length, live };
 }
 
 /* ---------------- housekeeping ---------------- */

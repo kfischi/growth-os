@@ -82,7 +82,7 @@ Full guide: `docs/side-income/LEAD_SYSTEM.md`. Netlify Functions on the same sit
 - `POST /api/chat/<slug>` (`client-chat.mjs`): the AI chat on a client's site, from `ls_clients.chat_facts`. It turns a name and a phone into a lead.
 - Shared code: `demos/netlify/lib/leads.mjs`. The page side: `demos/shared/leadform.js` and the options of `aibot.js`.
 - The home page has no form any more: visitors build in `build/`, and the builder alerts כפיר through `/api/lead/kfir` when a draft is approved.
-- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, optional `GEMINI_API_KEY`. Never in the repo or the chat.
+- Secrets only in Netlify environment variables: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `WA_TOKEN_<SLUG>`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN`, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, `ANTHROPIC_API_KEY`, `GITHUB_TOKEN`, `NETLIFY_TOKEN`, optional `GEMINI_API_KEY`. Never in the repo or the chat.
 - `active = false` on a client stops the system when the monthly payment stops. The page keeps working.
 - The page shows "received" only when the lead is stored **and** the owner's WhatsApp alert went out. Otherwise `/api/lead` answers `alert_failed` and the page opens WhatsApp. Failures show in red in the panel and fail `/api/health` (`health.mjs`), which an uptime monitor checks every 5 minutes. Leads older than two years are deleted on the 1st of the month.
 
@@ -95,7 +95,8 @@ Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/b
 - Templates: `demos/netlify/lib/templates/<id>.mjs`, holding the fields and `render()`. The first one is `plumber.mjs`, built from `clients/sample-plumber/`. Every value is escaped. Facts (years, warranty, prices, response time) come only from the owner.
 - Every change returns the rendered draft (`draft` in the answer), and the page writes it into the frame in place, so the draft updates without a second request.
 - The chat uses structured outputs (`output_config.format`), effort low, and fallbacks `"default"`. The history is stored as text only and only grows; the draft state goes into the last message only.
-- Extra secrets: `GITHUB_TOKEN`, fine-grained, this repo only, Contents: read and write. Optional: `PAY_URL_*`, `BUILDER_DAILY_MAX`.
+- Extra secrets: `GITHUB_TOKEN`, fine-grained, this repo only, Contents: read and write. `NETLIFY_TOKEN` for hosting. Optional: `SITES_DOMAIN`, `PAY_URL_*`, `BUILDER_DAILY_MAX`.
+- **Hosting, automatic** (`lib/hosting.mjs`, `0012_hosting.sql`): with `NETLIFY_TOKEN`, every publish (כפיר's or the owner's self edit) also deploys the site straight from the function through the Netlify API (deploy by SHA1, only changed files). The first publish creates the Netlify site with the address `<slug>.<SITES_DOMAIN>` (our own domain on Netlify DNS; the CNAME and the certificate are made by themselves) or `<name>.netlify.app` without it. The addresses go into `allowed_origins`, main one first. A client's own domain: "לחבר דומיין של הלקוח" in `/build/admin/` adds it as an alias and shows the two DNS records; the hourly `checkDomains` in `reminders.mjs` makes it the main address once its DNS points at Netlify (the old address stays and redirects), updates the lead system and alerts כפיר; it gives up after 30 days. `CLIENT.md` is never deployed. Without the token, the manual way in `CLIENT_SITES.md`.
 - The approval dialog in `demos/build/index.html` shows the prices. Keep it in sync with `#plans`.
 - **Design** (`templates/looks.mjs`): six looks on the same content (שרטוט, תעודת אחריות, שלט על הרכב, כרטיס עבודה, מוקד, פסיפס), each with eight palettes, no yellow, all text at WCAG AA contrast. The owner picks one as the questionnaire's first question and sees the draft change; later through "עיצוב: תבנית וצבעים" under the chat, also in self edit. Stored in `content.look` and `content.palette`, sent to `/api/builder/answer` as `style`, no AI. The certificate's seal shows only the owner's own warranty or years.
 - **Payment, for now:** no card payment on the site. After approval the owner gets an invoice and payment details on WhatsApp (the invoice comes from a salaried-freelancer company, since כפיר has no עוסק), and כפיר marks it paid in `/build/admin/`.
@@ -110,7 +111,7 @@ Guide: `docs/side-income/SITE_BUILDER.md`. An owner chats at `/build/` (`demos/b
 
 ## Client sites
 
-A paying client gets a real site in `clients/<slug>/`, copied from the trade demo and cleaned of every demo mark. The worked example is `clients/sample-plumber/` (a fictional business, kept `noindex`). Each site is self-contained (its own `assets/`), hosted on its own Netlify site, preferably in the client's own free account, and deployed by `.github/workflows/deploy-clients.yml` from `clients/<slug>/netlify.json` and a token in GitHub secrets. Guide: `docs/side-income/CLIENT_SITES.md`.
+A paying client gets a real site in `clients/<slug>/`, copied from the trade demo and cleaned of every demo mark. The worked example is `clients/sample-plumber/` (a fictional business, kept `noindex`). Each site is self-contained (its own `assets/`), hosted on its own Netlify site. Builder sites are created and deployed automatically (see Hosting above). Hand-made sites go preferably in the client's own free account and are deployed by `.github/workflows/deploy-clients.yml` from `clients/<slug>/netlify.json` and a token in GitHub secrets. Guide: `docs/side-income/CLIENT_SITES.md`.
 
 ## Checks
 

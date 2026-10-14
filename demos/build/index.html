@@ -482,7 +482,11 @@
       if (s.missing.length) p('לפני פרסום חסרים: ' + s.missing.join(', ') + '.');
       p('נשארו החודש: ' + e.messagesLeft + ' הודעות, ' + e.publishesLeft + ' פרסומים.').className = 'note';
     } else if (s.status === 'published') {
-      p('האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
+      p(s.site ? 'האתר באוויר.' : 'האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
+    }
+    if (s.site) {
+      const l = p('הכתובת של האתר: '); const a = document.createElement('a'); a.href = s.site; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = s.site.replace(/^https:\/\/|\/$/g, ''); a.dir = 'ltr'; l.append(a);
     }
   }
 

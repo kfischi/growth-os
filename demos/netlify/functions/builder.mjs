@@ -22,7 +22,7 @@ import {
   chatTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
-  publishToRepo, ensureLeadClient,
+  publishToRepo, ensureLeadClient, hostSite,
 } from "../lib/builder.mjs";
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
@@ -255,8 +255,12 @@ export default async (req, context) => {
       });
       await releaseMedia(saved, d.prev_live ? mediaPaths(d.prev_live) : []); // two versions back: no longer needed
       if (saved.package === "ai") await ensureLeadClient(saved, saved.published_slug).catch((e) => console.error("builder lead client", e.message));
-      const alert = await alertKfir(saved, "בעל העסק פרסם שינוי באתר");
-      return json({ state: stateOf(saved), commit: sha, alert });
+      // The new version goes on the air at once; if Netlify fails, כפיר's alert says so and his next publish deploys it.
+      let hosted = saved, deployed = true;
+      try { const h = await hostSite(saved, saved.published_slug); if (!h.off) hosted = await saveDraft(saved, h); }
+      catch (e) { console.error("builder hosting", e.message); deployed = false; }
+      const alert = await alertKfir(hosted, deployed ? "בעל העסק פרסם שינוי באתר" : "בעל העסק פרסם שינוי, אבל ההעלאה ל-Netlify נכשלה. לפרסם שוב מהניהול");
+      return json({ state: stateOf(hosted), commit: sha, alert });
     }
 
     return json({ error: "not_found" }, 404);
