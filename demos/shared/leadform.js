@@ -1,6 +1,8 @@
 /* LeadForm: sends an enquiry to the lead system (netlify/functions/lead.mjs).
    LeadForm.send(endpoint, { name, phone, service, message }) -> Promise<{ ok, id?, error? }>
    LeadForm.visit(endpoint) counts the visit once per session, for the owner's report (functions/visit.mjs).
+   After it, LeadForm.act(name) counts a click that matters, once per visit: "wa", "call", "chat", "save", "build",
+   "demo". Links to WhatsApp, tel: and .vcf, and any element with data-act="<name>", are counted by themselves.
    It adds the page, the referrer and utm_source / utm_campaign by itself, and never throws.
    LeadForm.status(endpoint) fills every [data-avail] element with the "available now" line (functions/status.mjs).
    LeadForm.testimonials(endpoint) fills every [data-testimonials] section from functions/testimonials.mjs,
@@ -18,8 +20,27 @@
     return t;
   })();
   const source = () => params.get("utm_source") || tag;
+  let visitAt = "";
+  const beacon = (endpoint, body) => {
+    try {
+      const blob = new Blob([body], { type: "text/plain" });
+      if (navigator.sendBeacon && navigator.sendBeacon(endpoint, blob)) return;
+      fetch(endpoint, { method: "POST", body, keepalive: true, mode: "no-cors" }).catch(() => {});
+    } catch (e) { /* never in the visitor's way */ }
+  };
+  const actOf = (a) => {
+    if (a.dataset && a.dataset.act) return a.dataset.act;
+    const h = a.getAttribute("href") || "";
+    return /^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(h) ? "wa" : /^tel:/.test(h) ? "call" : /\.vcf(\?|$)/.test(h) ? "save" : /(^|\/)build\/?(#.*)?$/.test(h) ? "build" : "";
+  };
   window.LeadForm = {
     source,
+    // One click that counts, once per visit; nothing about the person, only "someone pressed WhatsApp today".
+    act(name) {
+      if (!visitAt || !/^[a-z]{2,10}$/.test(name || "")) return;
+      try { const k = "lf-act:" + name; if (sessionStorage.getItem(k)) return; sessionStorage.setItem(k, "1"); } catch (e) { /* count it */ }
+      beacon(visitAt, JSON.stringify({ act: name }));
+    },
     async send(endpoint, data, timeoutMs) {
       const body = Object.assign({
         page: location.href.split("#")[0], referrer: document.referrer,
@@ -75,17 +96,20 @@
     // Counts this visit once per browser session (functions/visit.mjs): a number only, no cookie.
     // On a business's site: LeadForm.visit("https://service-pro-web.netlify.app/api/visit/<slug>").
     visit(endpoint) {
+      if (!visitAt) {
+        visitAt = endpoint;
+        document.addEventListener("click", (e) => {
+          const a = e.target.closest && e.target.closest("a[href], [data-act]");
+          const name = a && actOf(a);
+          if (name) window.LeadForm.act(name);
+        }, true);
+      }
       try {
         const k = "lf-visit:" + endpoint;
         if (sessionStorage.getItem(k)) return;
         sessionStorage.setItem(k, "1");
       } catch (e) { /* private mode: count it anyway */ }
-      const body = JSON.stringify({ page: location.href.split("#")[0], referrer: document.referrer, source: source(), campaign: params.get("utm_campaign") || "" });
-      try {
-        const blob = new Blob([body], { type: "text/plain" });
-        if (navigator.sendBeacon && navigator.sendBeacon(endpoint, blob)) return;
-        fetch(endpoint, { method: "POST", body, keepalive: true, mode: "no-cors" }).catch(() => {});
-      } catch (e) { /* never in the visitor's way */ }
+      beacon(endpoint, JSON.stringify({ page: location.href.split("#")[0], referrer: document.referrer, source: source(), campaign: params.get("utm_campaign") || "" }));
     },
   };
 })();

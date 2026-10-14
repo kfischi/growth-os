@@ -321,6 +321,7 @@
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
         if (hint) { hint.remove(); hint = null; }
         if (!started) { pre = Object.assign({}, prefill); start(); }
+        if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat"); // counted once per visit, for the owner's statistics
         x.focus();
       }
       function close() { panel.classList.remove("open"); launch.setAttribute("aria-expanded", "false"); launch.focus(); }

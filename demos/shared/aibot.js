@@ -162,6 +162,7 @@
 
       function open() {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
+        if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat");
         if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של נחיתה רכה. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
         input.focus();
       }

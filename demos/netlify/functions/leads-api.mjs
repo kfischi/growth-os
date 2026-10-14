@@ -1,13 +1,13 @@
 // Netlify Function: the owner's panel (demos/panel/) reads and updates leads here.
 // Authorization: Bearer <slug>:<key>   (the owner, sees only their business)
 //                Bearer admin:<LEADS_ADMIN_KEY>   (כפיר, picks a business with ?client=<slug>)
-// GET   /api/leads?client=<slug>&days=90     -> { client, leads, messages, month }   month: this month so far
+// GET   /api/leads?client=<slug>&days=90     -> { client, leads, messages, month, stats }   month: this month so far; stats: the last 30 days
 // PATCH /api/leads  { id, status?, note? }   -> { lead }
 // POST  /api/leads  { run: "reminders" | "report", client?, month?: "YYYY-MM", send?: false }   admin only
 // POST  /api/leads  { link: "קבוצת השכונה" } -> { link }   |   { unlink: "k3p9" } -> { ok }   the owner's tagged links
 // POST  /api/leads  { available: "busy" | "free" | "auto", hours? } -> { availability }   the site's "available now" line
 // POST  /api/leads  { testimonial: "<id>", hidden: true | false } -> { testimonial }   show or hide one on the site
-import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS, testimonialOn } from "../lib/leads.mjs";
+import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, siteStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS, testimonialOn } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
 const PUBLIC_CLIENT = (c) => ({ slug: c.slug, name: c.name, package: c.package, active: c.active, remind_after_min: c.remind_after_min });
@@ -77,6 +77,9 @@ export default async (req) => {
         month = { label: r.label, visits: s.visits, leads: s.total, afterHours: s.afterHours, handled: s.handled, open: s.open, conversion: s.conversion };
         links = await listLinks(client, s); // each tagged link with its visits and leads this month
       } catch (e) { console.error("panel stats", e.message); }
+      // The last 30 days: visits and leads per day, devices, hours, clicks and sources (0013_stats.sql).
+      let stats = null;
+      try { stats = await siteStats(client, 30); } catch (e) { console.error("panel site stats", e.message); }
       // A photo the visitor attached: the panel gets the private link, never the storage path.
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
       // Testimonials on the site: all of them, hidden ones too, so the owner can bring one back.
@@ -84,7 +87,7 @@ export default async (req) => {
         ? await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=id,name,body,stars,hidden,created_at&order=created_at.desc&limit=100`).catch(() => [])
         : null;
       const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, availability: avail, testimonials });
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, stats, availability: avail, testimonials });
     }
 
     if (req.method === "PATCH") {

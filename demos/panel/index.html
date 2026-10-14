@@ -94,6 +94,33 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .avail-btns [aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .avail-btns [aria-pressed="true"] { color: #0f1514; } }
 .avail .hint { margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
+.sx { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
+.sx summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
+.sx summary small { color: var(--muted); font-weight: 400; }
+.sx h3 { font-size: .9rem; font-weight: 500; margin: 14px 0 6px; }
+.sx .hint { margin: 0 0 10px; color: var(--muted); font-size: .85rem; }
+.sx-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sx-tiles div { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+.sx-tiles b { display: block; font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+.sx-tiles span { color: var(--muted); font-size: .78rem; }
+.sx-bars { display: flex; align-items: flex-end; gap: 2px; height: 96px; border-bottom: 1px solid var(--line); direction: ltr; }
+.sx-bars i { flex: 1; min-width: 0; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 0; position: relative; }
+.sx-bars i.zero { background: transparent; }
+.sx-bars i:hover, .sx-bars i:focus-visible { background: var(--ink); outline: none; }
+.sx-bars.leads { height: 44px; }
+.sx-bars.leads i { background: var(--won); }
+.sx-axis { display: flex; justify-content: space-between; color: var(--muted); font-size: .72rem; direction: ltr; margin-top: 3px; }
+.sx-tip { min-height: 1.4em; font-size: .85rem; color: var(--ink); margin: 4px 0 0; }
+.sx-split { display: flex; height: 14px; border-radius: 7px; overflow: hidden; gap: 2px; background: var(--card); }
+.sx-split i:nth-child(1) { background: var(--accent); } .sx-split i:nth-child(2) { background: var(--won); } .sx-split i:nth-child(3) { background: var(--muted); }
+.sx-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .85rem; margin-top: 6px; }
+.sx-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px; }
+.sx-legend span:nth-child(1)::before { background: var(--accent); } .sx-legend span:nth-child(2)::before { background: var(--won); } .sx-legend span:nth-child(3)::before { background: var(--muted); }
+.sx ol { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.sx ol li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: .9rem; }
+.sx ol li em { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; }
+.sx ol li em i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+@media (max-width: 520px) { .sx-tiles { grid-template-columns: repeat(2, 1fr); } }
 .links { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
 .links summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
 .links summary small { color: var(--muted); font-weight: 400; }
@@ -167,6 +194,27 @@ button, input, select, textarea { font: inherit; color: inherit; }
       </div>
       <p class="hint">אפשר גם לכתוב "עסוק" או "פנוי" בוואטסאפ למספר של העסק. "עסוק 2" זה לשעתיים.</p>
     </div>
+
+    <details class="sx" id="sx" hidden>
+      <summary>סטטיסטיקות <small>30 הימים האחרונים</small></summary>
+      <p class="hint">מספרים בלבד: בלי עוגיות ובלי לדעת מי נכנס. כל לחיצה נספרת פעם אחת בביקור.</p>
+      <div class="sx-tiles" id="sx-tiles"></div>
+      <h3>כניסות לאתר, לפי יום</h3>
+      <div class="sx-bars" id="sx-days" role="list" aria-label="כניסות לפי יום"></div>
+      <div class="sx-axis"><span id="sx-from"></span><span>היום</span></div>
+      <h3>פניות, לפי יום</h3>
+      <div class="sx-bars leads" id="sx-leads" role="list" aria-label="פניות לפי יום"></div>
+      <p class="sx-tip" id="sx-tip" aria-live="polite"></p>
+      <h3>מאיזה מכשיר</h3>
+      <div class="sx-split" id="sx-dev" aria-hidden="true"></div>
+      <div class="sx-legend" id="sx-dev-l"></div>
+      <h3>באילו שעות נכנסים</h3>
+      <div class="sx-bars" id="sx-hours" role="list" aria-label="כניסות לפי שעה"></div>
+      <div class="sx-axis"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+      <p class="hint" id="sx-peak"></p>
+      <h3>מאיפה הגיעו</h3>
+      <ol id="sx-src"></ol>
+    </details>
 
     <details class="links" id="links" hidden>
       <summary>קישורים לשיתוף <small id="links-n"></small></summary>
@@ -314,6 +362,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
       $('#s-conv').textContent = m.conversion == null ? '-' : m.conversion + '%';
     }
 
+    renderStats();
     renderLinks();
     renderAvail();
     renderTestimonials();
@@ -329,6 +378,48 @@ button, input, select, textarea { font: inherit; color: inherit; }
   function sourceName(s) {
     const link = /^t-[a-z0-9]{4}$/.test(s || '') && (data.links || []).find((x) => 't-' + x.code === s);
     return link ? link.label : SOURCE[s] || s || 'ישיר';
+  }
+
+  // The last 30 days (0013_stats.sql): visits and leads per day, clicks, devices, hours, sources. Numbers only.
+  const ACT_HE = { wa: 'לחיצות על וואטסאפ', call: 'לחיצות על חיוג', chat: 'פתחו את הצ׳אט', save: 'שמרו באנשי הקשר', build: 'התחילו לבנות אתר', demo: 'פתחו דמו' };
+  function renderStats() {
+    const st = data.stats;
+    $('#sx').hidden = !st;
+    if (!st) return;
+    const tile = (n, label) => { const d = el('div'); d.append(el('b', null, String(n)), el('span', null, label)); return d; };
+    const tiles = [tile(st.visits, 'כניסות'), tile(st.leads, 'פניות')];
+    for (const [k, label] of Object.entries(ACT_HE)) if (st.acts[k] || ['wa', 'call', 'chat'].includes(k)) tiles.push(tile(st.acts[k] || 0, label));
+    $('#sx-tiles').replaceChildren(...tiles);
+    const fmtDay = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });
+    const bars = (box, items, val, say) => {
+      const max = Math.max(1, ...items.map(val));
+      box.replaceChildren(...items.map((x, i) => {
+        const b = el('i'); const v = val(x);
+        b.style.height = (v / max * 100) + '%'; if (!v) b.className = 'zero';
+        b.tabIndex = 0; b.setAttribute('role', 'listitem'); b.setAttribute('aria-label', say(x, i));
+        const show = () => { $('#sx-tip').textContent = say(x, i); };
+        b.addEventListener('mouseenter', show); b.addEventListener('focus', show);
+        return b;
+      }));
+    };
+    bars($('#sx-days'), st.daily, (d) => d.visits, (d) => fmtDay(d.day) + ': ' + d.visits + ' כניסות, ' + d.leads + ' פניות');
+    bars($('#sx-leads'), st.daily, (d) => d.leads, (d) => fmtDay(d.day) + ': ' + d.visits + ' כניסות, ' + d.leads + ' פניות');
+    $('#sx-from').textContent = fmtDay(st.daily[0].day);
+    $('#sx-tip').textContent = '';
+    const dev = [['mobile', 'נייד'], ['desktop', 'מחשב'], ['tablet', 'טאבלט']];
+    const pct = (n) => st.deviceTotal ? Math.round(n / st.deviceTotal * 100) : 0;
+    $('#sx-dev').replaceChildren(...dev.map(([k]) => { const i = el('i'); i.style.flex = String(st.devices[k] || 0); return i; }));
+    $('#sx-dev-l').replaceChildren(...dev.map(([k, label]) => el('span', null, label + ' ' + pct(st.devices[k] || 0) + '%')));
+    bars($('#sx-hours'), st.hours, (n) => n, (n, h) => String(h).padStart(2, '0') + ':00 עד ' + String((h + 1) % 24).padStart(2, '0') + ':00: ' + n + ' כניסות');
+    const top = st.hours.map((n, h) => [n, h]).filter(([n]) => n).sort((a, b) => b[0] - a[0]).slice(0, 3).map(([, h]) => String(h).padStart(2, '0') + ':00');
+    $('#sx-peak').textContent = top.length ? 'השעות העמוסות: ' + top.join(', ') + '. כדאי להיות זמינים אז.' : '';
+    const most = Math.max(1, ...st.sources.map((x) => x.visits));
+    $('#sx-src').replaceChildren(...st.sources.map((x) => {
+      const li = el('li'); li.append(el('span', null, sourceName(x.source)), el('b', null, String(x.visits)));
+      const bar = el('em'); const fill = el('i'); fill.style.width = (x.visits / most * 100) + '%'; bar.append(fill); li.append(bar);
+      return li;
+    }));
+    if (!st.sources.length) $('#sx-src').replaceChildren(el('li', null, 'עוד אין כניסות.'));
   }
 
   function renderLinks() {

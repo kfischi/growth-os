@@ -5,7 +5,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [] };
+const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
@@ -45,6 +45,12 @@ globalThis.fetch = async (url, opt = {}) => {
     const b = JSON.parse(opt.body); assert.match(b.p_day, /^\d{4}-\d{2}-\d{2}$/);
     const row = T.ls_visits.find((v) => v.client_slug === b.p_slug && v.day === b.p_day && v.source === b.p_source);
     if (row) row.visits++; else T.ls_visits.push({ client_slug: b.p_slug, day: b.p_day, source: b.p_source, visits: 1 });
+    return new Response(null, { status: 204 });
+  }
+  if (u.pathname === "/rest/v1/rpc/ls_add_stat") { // 0013_stats.sql
+    const b = JSON.parse(opt.body); assert.ok(["device", "hour", "act"].includes(b.p_kind));
+    const row = T.ls_stats.find((v) => v.client_slug === b.p_slug && v.day === b.p_day && v.kind === b.p_kind && v.label === b.p_label);
+    if (row) row.n++; else T.ls_stats.push({ client_slug: b.p_slug, day: b.p_day, kind: b.p_kind, label: b.p_label, n: 1 });
     return new Response(null, { status: 204 });
   }
   const table = u.pathname.split("/").pop(); const rows = T[table]; assert.ok(rows, table);
@@ -479,6 +485,23 @@ await vreq("nope", { ip: "8.8.8.9" });
 await vreq("oren", { ip: "9.9.9.9", body: { page: "https://oren.co.il/?utm_source=facebook", referrer: "https://oren.co.il/", source: "facebook" } }); assert.equal(count("facebook"), 1, "utm_source wins over the site's own pages");
 await vreq("oren", { ip: "9.9.9.10", origin: "https://service-pro-web.netlify.app", body: { page: "https://service-pro-web.netlify.app/plumber/", referrer: "" } }); assert.equal(count("direct"), 1);
 assert.ok(!JSON.stringify(T.ls_visits).includes("5.5.5.5"), "no IP is stored");
+// with each visit: the device and the hour; a click that counts, once per visit, only a known one
+const stat = (kind, label) => (T.ls_stats.find((v) => v.client_slug === "oren" && v.day === today && v.kind === kind && v.label === label) || {}).n || 0;
+const visitsToday = T.ls_visits.filter((v) => v.client_slug === "oren" && v.day === today).reduce((n, v) => n + v.visits, 0);
+assert.equal(stat("device", "mobile"), visitsToday, "every counted visit, from an iPhone"); assert.equal(T.ls_stats.filter((v) => v.kind === "hour").reduce((n, v) => n + v.n, 0), visitsToday);
+assert.equal(lib.deviceOf("Mozilla/5.0 (iPad; CPU OS 17_0)"), "tablet"); assert.equal(lib.deviceOf("Mozilla/5.0 (Windows NT 10.0)"), "desktop"); assert.equal(lib.deviceOf("Mozilla/5.0 (Linux; Android 14; Pixel) Mobile"), "mobile");
+await vreq("oren", { body: { act: "wa" } }); await vreq("oren", { body: { act: "wa" } }); await vreq("oren", { ip: "5.5.5.6", body: { act: "wa" } });
+assert.equal(stat("act", "wa"), 2, "one WhatsApp click per visitor"); assert.equal(count("google.com"), 1, "a click is not a visit");
+await vreq("oren", { body: { act: "<script>" } }); await vreq("oren", { ip: "7.7.7.8", origin: "https://evil.com", body: { act: "call" } });
+assert.ok(!T.ls_stats.some((v) => v.label === "<script>" || (v.kind === "act" && v.label === "call")), "only known clicks, only from the site");
+assert.ok(!JSON.stringify(T.ls_stats).includes("5.5.5"), "no IP in the statistics");
+// the panel's 30 days
+{
+  const st = await lib.siteStats({ slug: "oren" }, 30);
+  assert.equal(st.daily.length, 30); assert.equal(st.daily.at(-1).day, today);
+  assert.equal(st.daily.at(-1).visits, visitsToday); assert.equal(st.acts.wa, 2); assert.equal(st.devices.mobile, visitsToday); assert.equal(st.deviceTotal, visitsToday);
+  assert.equal(st.hours.reduce((a, b) => a + b, 0), visitsToday); assert.ok(st.sources.some((x) => x.source === "google.com"));
+}
 
 // --- the monthly report: visits, leads, outside working hours, handled, where from
 T.ls_visits.push({ client_slug: "oren", day: "2026-07-03", source: "google.com", visits: 40 }, { client_slug: "oren", day: "2026-07-20", source: "direct", visits: 20 }, { client_slug: "oren", day: "2026-08-01", source: "direct", visits: 999 });

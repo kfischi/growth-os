@@ -583,6 +583,59 @@ export async function recordVisit(client, input, now = new Date()) {
   await db("POST", "rpc/ls_add_visit", { p_slug: client.slug, p_day: israelDay(now), p_source: source || "direct" });
 }
 
+/* ---------------- site statistics (0013_stats.sql): numbers per day, never a person ---------------- */
+
+export const ACTS = ["wa", "call", "chat", "save", "build", "demo"];
+export const deviceOf = (ua) => (/iPad|Tablet|PlayBook|Silk|(Android(?!.*Mobile))/i.test(ua || "") ? "tablet" : /Mobi|iPhone|iPod|Android/i.test(ua || "") ? "mobile" : "desktop");
+const addStat = (slug, day, kind, label) => db("POST", "rpc/ls_add_stat", { p_slug: slug, p_day: day, p_kind: kind, p_label: label });
+
+// With every counted visit: the kind of device and the hour, in Israel.
+export async function recordVisitStats(client, ua, now = new Date()) {
+  const day = israelDay(now);
+  await Promise.all([addStat(client.slug, day, "device", deviceOf(ua)), addStat(client.slug, day, "hour", String(israelTime(now).hour).padStart(2, "0"))]);
+}
+// A click that counts (a WhatsApp link, a call, opening the chat ...): one per visit, sent by LeadForm.act().
+export async function recordAct(client, act, now = new Date()) {
+  if (!ACTS.includes(act)) return false;
+  await addStat(client.slug, israelDay(now), "act", act);
+  return true;
+}
+
+// The panel's statistics: the last `days` days, ending today (Israel), oldest first.
+export async function siteStats(client, days = 30, now = new Date()) {
+  const dayList = [];
+  for (let i = days - 1; i >= 0; i--) dayList.push(israelDay(new Date(now - i * 86_400_000)));
+  const from = dayList[0];
+  const since = new Date(`${from}T00:00:00Z`).getTime() - 3 * 3600 * 1000; // the lead query is in UTC: a little early, then filtered by Israel day
+  const [visits, stats, leads] = await Promise.all([
+    db("GET", `ls_visits?client_slug=eq.${q(client.slug)}&day=gte.${from}&select=day,visits,source&limit=10000`),
+    db("GET", `ls_stats?client_slug=eq.${q(client.slug)}&day=gte.${from}&select=day,kind,label,n&limit=20000`),
+    db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&created_at=gte.${q(new Date(since).toISOString())}&select=created_at,source&limit=5000`),
+  ]);
+  const at = Object.fromEntries(dayList.map((d, i) => [d, i]));
+  const daily = dayList.map((day) => ({ day, visits: 0, leads: 0 }));
+  const sources = {}, devices = { mobile: 0, tablet: 0, desktop: 0 }, hours = Array(24).fill(0), acts = Object.fromEntries(ACTS.map((a) => [a, 0]));
+  for (const v of visits) {
+    if (at[v.day] == null) continue;
+    daily[at[v.day]].visits += v.visits || 0;
+    sources[v.source || "direct"] = (sources[v.source || "direct"] || 0) + (v.visits || 0);
+  }
+  for (const x of stats) {
+    if (at[x.day] == null) continue;
+    if (x.kind === "device" && x.label in devices) devices[x.label] += x.n;
+    else if (x.kind === "hour") hours[Number(x.label)] += x.n;
+    else if (x.kind === "act" && x.label in acts) acts[x.label] += x.n;
+  }
+  for (const l of leads) { const i = at[israelDay(new Date(l.created_at))]; if (i != null) daily[i].leads++; }
+  const total = (o) => Object.values(o).reduce((a, b) => a + b, 0);
+  return {
+    days, daily, devices, hours, acts,
+    sources: Object.entries(sources).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([source, visits]) => ({ source, visits })),
+    visits: total(Object.fromEntries(daily.map((d) => [d.day, d.visits]))), leads: daily.reduce((n, d) => n + d.leads, 0),
+    deviceTotal: total(devices),
+  };
+}
+
 /* ---------------- what a period brought: the monthly report, the weekly update and the panel ---------------- */
 
 // From start (inclusive) to end (exclusive), both ISO strings with their offset.
