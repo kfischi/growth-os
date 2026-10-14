@@ -114,6 +114,9 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @param opts.photos    { slot: url } for the slots that have a photo
  * @param opts.leads     the lead system endpoint, or null (נוכחות package, or a draft)
  * @param opts.video     { src, poster } for the short silent video at the top, or null (then the drawing shows)
+ * @param opts.url       the site's address ("https://<host>/"), known at deploy: canonical links, og:url, sitemap.xml
+ *                       and robots.txt. Without it (a draft, the repo copy) they are left out.
+ * @param opts.credit    { name, url } the line at the bottom: "האתר נבנה ב-<name> · אתרים שבונים עסקים", or null
  * @param opts.now       Date, for the "updated" line
  * @returns {{ "index.html": string, "privacy.html": string, "accessibility.html": string }}
  */
@@ -140,7 +143,7 @@ export function faqSchema(items) {
 // Opens the item a link points to (#g-<id>), also in browsers that don't do it on their own.
 const GUIDE_JS = `(function(){function o(){var m=/^#g-([\\w-]+)$/.exec(location.hash);if(!m)return;var d=document.getElementById("g-"+m[1]);if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView({block:"start"});}}addEventListener("hashchange",o);o();})();`;
 
-export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, now = new Date() } = {}) {
+export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, url = "", credit = null, now = new Date() } = {}) {
   const draft = mode === "draft";
   const L = lookOf(c);
   if (!draft) {
@@ -171,7 +174,12 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const photo = (slot, alt, extra = "") => photos[slot]
     ? `<figure class="ps has-img"><img src="${h(photos[slot])}" alt="${h(alt)}" loading="lazy" decoding="async"${extra}></figure>`
     : draft ? `<figure class="ps ph"><span>${h(PHOTOS[slot].label)}<br>מעלים ב״תמונות״</span></figure>` : "";
-  const desc = `${trade} ב${String(c.area || "").trim()}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. פותחים קריאה בצ׳אט.`;
+  const area = String(c.area || "").trim();
+  // The absolute address, only on the deployed site: what Google indexes as the one true page.
+  const site = !draft && /^https:\/\/[a-z0-9.-]+\/$/.test(url || "") ? url : "";
+  const ogPhoto = photos.hero || photos.work1 || photos.portrait;
+  const ogImage = site && ogPhoto && !/^https?:/.test(ogPhoto) ? site + ogPhoto : "";
+  const desc = `${trade} ב${area}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. פותחים קריאה בצ׳אט.`;
 
   const facts = [
     has("response_time") || draft ? `<div><b>${v("response_time")}</b><span>זמן חזרה</span></div>` : "",
@@ -222,6 +230,8 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     [`שלב 3 · תוך ${String(c.response_time || "").trim() || "…"}`, "אני חוזר וקובע", "קובעים שעה, ומסכמים את המחיר לפני העבודה."],
   ].map(([t, h3, p]) => `<div class="step"><span class="mono">${h(t)}</span><h3>${h(h3)}</h3><p>${h(p)}</p></div>`).join("\n      ");
 
+  // The line at the bottom of every page: who built the site, with a link home (the brand's name as the link, nothing more).
+  const creditLine = credit && credit.name ? `<p class="credit">האתר נבנה ב-<a href="${draft || !credit.url ? "#" : h(credit.url)}" rel="noopener">${h(credit.name)}</a> · אתרים שבונים עסקים</p>` : "";
   const chips = services.map((s) => s.name).concat("משהו אחר");
   const bot = {
     whatsapp: waIntl || "972500000000",
@@ -234,13 +244,17 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${h(name)} · ${h(trade)}${draft ? " · טיוטה" : ""}</title>
+<title>${h(trade)}${area ? " ב" + h(area) : ""} · ${h(name)}${draft ? " · טיוטה" : ""}</title>
 <meta name="description" content="${h(desc)}">
-${robots}<meta property="og:type" content="website">
+${robots}${site ? `<link rel="canonical" href="${h(site)}">
+<meta property="og:url" content="${h(site)}">
+` : ""}${ogImage ? `<meta property="og:image" content="${h(ogImage)}">
+<meta name="twitter:card" content="summary_large_image">
+` : ""}<meta property="og:type" content="website">
 <meta property="og:title" content="${h(name)} · ${h(trade)} ב${h(c.area || "")}">
 <meta property="og:description" content="${h(desc)}">
 <meta property="og:locale" content="he_IL">${draft ? "" : `
-<script type="application/ld+json">${js(localBusiness({ ...c, services, towns }, { phone: call ? "+" + call.intl : "", description: desc }))}</script>`}
+<script type="application/ld+json">${js(localBusiness({ ...c, services, towns }, { phone: call ? "+" + call.intl : "", description: desc, url: site, image: ogImage }))}</script>`}
 <meta name="theme-color" content="${h(themeColor(L.look, L.p))}">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -357,7 +371,7 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
 
 </main>
 
-<footer class="wrap"><div class="row"><span>${h(name)} · ${h(trade)} · ${year}</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="${draft ? "#" : "privacy.html"}">פרטיות</a> · <a href="${draft ? "#" : "accessibility.html"}">הצהרת נגישות</a></span></div></footer>
+<footer class="wrap"><div class="row"><span>${h(name)} · ${h(trade)} · ${year}</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="${draft ? "#" : "privacy.html"}">פרטיות</a> · <a href="${draft ? "#" : "accessibility.html"}">הצהרת נגישות</a></span></div>${creditLine}</footer>
 
 ${video ? `<script>${REEL_JS}</script>
 ` : ""}<script src="${h(assets)}leadform.js"></script>
@@ -399,13 +413,13 @@ ${video ? `<script>${REEL_JS}</script>
 `;
 
   const contact = callLocal ? `<a href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : "";
-  const legal = (title, body, extraHead = "") => `<!doctype html>
+  const legal = (title, body, extraHead = "", file = "", index = false) => `<!doctype html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${h(title)} · ${h(name)}</title>
-${robots}<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+${robots || (index ? "" : '<meta name="robots" content="noindex, follow">\n')}${site && file ? `<link rel="canonical" href="${h(site + file)}">\n` : ""}<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <script src="assets/a11y.js" data-statement="accessibility.html"></script>
 <style>${LEGAL_CSS}</style>${extraHead}
 </head>
@@ -415,7 +429,7 @@ ${robots}<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <h1>${h(title)}</h1>
 <p class="meta">${h(name)}, ${h(trade)} · עודכן: ${h(updated)}</p>
 ${body}
-</main>
+</main>${creditLine ? `\n<footer class="legal-credit">${creditLine}</footer>` : ""}
 </body>
 </html>
 `;
@@ -472,9 +486,15 @@ ${GUIDES.items.map(guideItem).join("\n")}
 <p><a class="gd-cta" href="./">לפתוח קריאה בצ׳אט</a></p>
 <script>${GUIDE_JS}</script>`, `
 <style>${GUIDE_CSS}</style>
-<script type="application/ld+json">${js(faqSchema(GUIDES.items))}</script>`);
+<script type="application/ld+json">${js(faqSchema(GUIDES.items))}</script>`, "guides.html", true);
 
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c) }) };
+  // For Google: every page worth finding, and where the list is. Only with the real address.
+  const today = now.toISOString().slice(0, 10);
+  const seo = site ? {
+    "robots.txt": `User-agent: *\nAllow: /\n\nSitemap: ${site}sitemap.xml\n`,
+    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
+  } : {};
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...seo }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
@@ -623,6 +643,8 @@ const CSS = `
   .area .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
   .area p { color: var(--on-deep-text); margin: 0 0 20px; }
   footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  footer .credit { margin: 14px 0 0; font-size: 12.5px; text-align: center; }
+  footer .credit a { color: inherit; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 20px; }
   .field { background-color: var(--deep); color: #fff; overflow: hidden;
     background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
@@ -730,6 +752,8 @@ const GUIDE_CSS = `
 `;
 
 const LEGAL_CSS = `
+  .legal-credit { max-width: 760px; margin: 0 auto; padding: 0 20px 40px; color: var(--soft); font-size: 13px; text-align: center; }
+  .legal-credit p { margin: 0; } .legal-credit a { color: inherit; }
   :root { --ink: #0c1f44; --soft: #4a5a78; --rule: #d9e1ee; --bg: #f3f6fb; --link: #1d4fb8; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.7 "IBM Plex Sans Hebrew", system-ui, sans-serif; }

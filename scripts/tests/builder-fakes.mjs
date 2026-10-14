@@ -29,7 +29,7 @@ function match(row, filters) {
 const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
 export const imageCalls = [];
 // Netlify (lib/hosting.mjs): sites, deploys by digest, uploads, the DNS zone of SITES_DOMAIN.
-export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0 };
+export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0, bodies: new Map() };
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
   if (u.host === "api.anthropic.com") {
@@ -68,7 +68,7 @@ globalThis.fetch = async (url, opt = {}) => {
       const dep = nl.deploys.get(m[1]); const path = decodeURIComponent(m[2]); assert.ok(dep && dep.files[path], "uploads only a file of the deploy: " + path);
       assert.equal(opt.headers["content-type"], "application/octet-stream");
       const h = createHash("sha1").update(opt.body).digest("hex"); assert.equal(h, dep.files[path], "the bytes match the digest");
-      nl.have.add(h); nl.uploads.push(path); return res({});
+      nl.have.add(h); nl.uploads.push(path); nl.bodies.set(path, Buffer.from(opt.body).toString("utf8")); return res({});
     }
     if (method === "GET" && p === "/dns_zones") return res(nl.zones);
     if ((m = /^\/dns_zones\/(\w+)\/dns_records$/.exec(p))) {

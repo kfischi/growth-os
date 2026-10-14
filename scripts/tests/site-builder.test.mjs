@@ -524,6 +524,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   for (const f of ["/index.html", "/_headers", "/assets/leadbot.js", "/assets/leadform.js", "/assets/a11y.js", "/guides.html", "/contact.vcf"]) assert.ok(sent.includes(f), "deployed " + f);
   assert.ok(sent.some((f) => f.startsWith("/assets/photos/portrait.")), "the photos too");
   assert.ok(!sent.includes("/CLIENT.md"), "the repo card is not served");
+  assert.ok(sent.includes("/robots.txt") && sent.includes("/sitemap.xml"), "robots and a sitemap for Google");
+  assert.match(nl.bodies.get("/index.html"), /<link rel="canonical" href="https:\/\/oren-mayim.sites.example.co.il\/">/);
+  assert.match(nl.bodies.get("/sitemap.xml"), /<loc>https:\/\/oren-mayim.sites.example.co.il\/guides.html<\/loc>/);
+  assert.match(nl.bodies.get("/index.html"), /<p class="credit">האתר נבנה ב-<a href="https:\/\/service-pro-web.netlify.app\/\?utm_source=client&amp;utm_campaign=oren-mayim"/);
+  assert.match(nl.bodies.get("/privacy.html"), /noindex, follow/, "the legal pages stay out of the results");
   assert.equal(nl.uploads.length, new Set(Object.values([...nl.deploys.values()].at(-1).files)).size, "every new file uploaded once");
   assert.ok(C.allowed_origins.includes("https://oren-mayim-site.netlify.app"));
   assert.equal(C.allowed_origins[0], "https://oren-mayim.sites.example.co.il", "the lead system links to the main address");
@@ -548,6 +553,8 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.deepEqual(out, { checked: 1, live: 1 });
   assert.equal(site.custom_domain, "oren-mayim.co.il", "the swap"); assert.ok(site.domain_aliases.includes("oren-mayim.sites.example.co.il") && !site.domain_aliases.includes("oren-mayim.co.il"), "the old address redirects to the new one");
   assert.equal(D.domain_state, "live"); assert.equal(D.site_host, "oren-mayim.co.il");
+  assert.match(nl.bodies.get("/index.html"), /<link rel="canonical" href="https:\/\/oren-mayim.co.il\/">/, "deployed again with the new address");
+  assert.match(nl.bodies.get("/robots.txt"), /Sitemap: https:\/\/oren-mayim.co.il\/sitemap.xml/);
   assert.equal(C.allowed_origins[0], "https://oren-mayim.co.il"); assert.ok(C.allowed_origins.includes("https://oren-mayim.sites.example.co.il"), "the old address still sends leads");
   assert.match(T.ls_leads.at(-1).service || "", /הדומיין oren-mayim.co.il מחובר/);
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.hosting.url, "https://oren-mayim.co.il/", "a publish after the swap keeps the new address");

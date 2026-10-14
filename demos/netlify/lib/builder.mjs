@@ -6,6 +6,7 @@
 //   SUPABASE_URL, SUPABASE_SERVICE_KEY   the lead system's project (tables from 0001 and 0002_site_builder.sql)
 //   ANTHROPIC_API_KEY                    the chat
 //   GITHUB_TOKEN                         fine-grained token, this repo only, Contents: read and write (publishing)
+//   BRAND_NAME, BRAND_URL                 the credit line at the bottom of client sites (default "Easy Landing", this site)
 //   NETLIFY_TOKEN, SITES_DOMAIN           hosting: the site is created and deployed through the Netlify API (lib/hosting.mjs)
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
 //   BUILDER_DAILY_MAX                    new drafts per day, all visitors together (default 40)
@@ -509,13 +510,20 @@ async function gh(method, path, body) {
 
 const ghOk = (r, what) => { if (!r.ok) throw new Error(`github ${what} ${r.status}: ${clip(r.data && r.data.message, 200)}`); return r.data; };
 
-export function siteFiles(d, slug) {
+// The line at the bottom of every client site, with a link home tagged with the site's name (BRAND_NAME, BRAND_URL).
+export const credit = (slug) => {
+  const base = (process.env.BRAND_URL || SITE_ORIGIN).replace(/\/$/, "");
+  return { name: process.env.BRAND_NAME || "Easy Landing", url: `${base}/?utm_source=client&utm_campaign=${encodeURIComponent(slug)}` };
+};
+
+// url: the site's address once it has one (hosting), for the canonical links and the sitemap.
+export function siteFiles(d, slug, url = "") {
   const t = templateOf(d);
   const photos = {};
   for (const [slot, p] of Object.entries(d.photos || {})) photos[slot] = `assets/photos/${slot}.${p.ext}`;
   const leads = d.package === "ai" ? `${SITE_ORIGIN}/api/lead/${slug}` : null;
   const video = d.video ? { src: "assets/hero.mp4", poster: `assets/hero-poster.${d.video.poster.ext}` } : null;
-  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video });
+  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video, url, credit: credit(slug) });
   const card = `# ${d.content.business_name}
 
 נבנה בבונה האתרים (${t.label}), טיוטה \`${d.id}\`. פורסם: ${new Date().toISOString().slice(0, 10)}.
@@ -596,8 +604,8 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
 /* ---------------- hosting (Netlify API, lib/hosting.mjs) ---------------- */
 
 // Every file of the live site, as bytes: the pages, the shared scripts (the same files the home site serves) and the media.
-export async function siteBundle(d, slug) {
-  const { "CLIENT.md": _card, ...files } = siteFiles(d, slug); // the repo's card for כפיר, not a page of the site
+export async function siteBundle(d, slug, url = "") {
+  const { "CLIENT.md": _card, ...files } = siteFiles(d, slug, url); // the repo's card for כפיר, not a page of the site
   await Promise.all(["leadbot.js", "leadform.js", "a11y.js"].map(async (name) => {
     const r = await fetch(`${SITE_ORIGIN}/shared/${name}`, { signal: AbortSignal.timeout(15000) });
     if (!r.ok) throw new Error(`shared ${name} ${r.status}`);
@@ -616,8 +624,8 @@ export async function siteBundle(d, slug) {
 export async function hostSite(d, slug) {
   if (!hostingOn()) return { off: true };
   const site = await ensureSite(slug, d);
-  await deploy(site.siteId, await siteBundle(d, slug));
   const host = d.domain_state === "live" && d.domain ? d.domain : site.host;
+  await deploy(site.siteId, await siteBundle(d, slug, `https://${host}/`));
   return { site_id: site.siteId, site_netlify: site.netlifyHost, site_sub: site.sub, site_host: host };
 }
 
@@ -662,8 +670,10 @@ export async function checkDomains(now = new Date(), points = pointsHere) {
       if (now - new Date(d.domain_since) > 30 * 86_400_000) { await saveDraft(d, { domain_state: null }); await alertKfir(d, `הדומיין ${d.domain} לא הופנה תוך 30 יום. האתר נשאר בכתובת ${d.site_host}`); continue; }
       if (!(await points(d.domain, d.site_netlify))) continue;
       await makePrimary(d.site_id, d.domain, [d.site_sub, d.site_netlify]);
-      const saved = await saveDraft(d, { domain_state: "live", site_host: d.domain });
+      let saved = await saveDraft(d, { domain_state: "live", site_host: d.domain });
       await setOrigins(saved);
+      // Again, with the new address in the canonical links and the sitemap, so Google moves with it.
+      try { const h = await hostSite(saved, saved.published_slug); if (!h.off) saved = await saveDraft(saved, h); } catch (e) { console.error("domain redeploy", d.id, e.message); }
       await alertKfir(saved, `הדומיין ${d.domain} מחובר. האתר עבר לכתובת החדשה`);
       live++;
     } catch (e) { console.error("domain", d.id, e.message); }
