@@ -32,4 +32,18 @@ fs.writeFileSync(path.join(out, "bare.html"), P.render(bare, { mode: "site" })["
 fs.writeFileSync(path.join(out, "draft.html"), P.render({ ...P.emptyContent(), owner_name: "אורן לוי", whatsapp: "0526359513" }, { mode: "draft", assets: "assets/" })["index.html"]);
 // A draft with only the "before" photo: the frame shows, with the missing half marked.
 fs.writeFileSync(path.join(out, "draft-ba.html"), P.render({ ...SAMPLE }, { mode: "draft", assets: "assets/", photos: { before: "assets/photos/plumber-leak.webp" } })["index.html"]);
-console.log("rendered into " + out);
+// Every trade's site, with the trade's own sample services, headline and intro (trade-<id>/, all pages), and its draft.
+import("../../demos/netlify/lib/templates/trades/index.mjs").then(async ({ TRADES }) => {
+  const { whenText } = await import("../../demos/netlify/lib/templates/plumber-guide.mjs");
+  for (const T of Object.values(TRADES)) {
+    const g = T.guide, when = whenText(g.response[1]);
+    const c = { ...P.emptyContent(T.id), business_name: "עסק לדוגמה", owner_name: "דנה כהן", area: "חדרה והסביבה", response_time: g.response[1], hours: g.hours[1],
+      whatsapp: "0526359513", headline_1: g.headlines[0].headline_1, headline_2: (g.headlines[0].headline_2 || "").replace("{when}", when),
+      intro: g.intros[0].intro.replace("{when}", when), services: g.services.slice(0, 5), towns: ["חדרה", "נתניה", "כפר יונה"] };
+    const dir = path.join(out, `trade-${T.id}`);
+    fs.mkdirSync(dir, { recursive: true }); fs.cpSync(path.join(out, "assets"), path.join(dir, "assets"), { recursive: true });
+    for (const [name, html] of Object.entries(P.render(c, { mode: "site", leads: null, photos: {} }))) fs.writeFileSync(path.join(dir, name), html);
+    fs.writeFileSync(path.join(dir, "draft.html"), P.render(c, { mode: "draft", assets: "assets/" })["index.html"]);
+  }
+  console.log("rendered into " + out);
+});

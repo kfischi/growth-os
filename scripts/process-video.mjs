@@ -409,7 +409,7 @@ try {
   await step(10);
   await wide(400);
   await now("חשבונית ופרטי תשלום מגיעים בוואטסאפ", 300);
-  await st("phone", true, "נחיתה רכה", "נ");
+  await st("phone", true, "Easy Landing", "E");
   await wait(1100);
   await st("msg", "היי אורן, קיבלנו את האישור.\nמצורפת חשבונית, ופרטי התשלום בהודעה הבאה.<div class=\"file\"><i>PDF</i>חשבונית לתשלום</div><time>10:42</time>");
   await wait(2600);
@@ -446,7 +446,7 @@ try {
   await st("lines", `<div class="l mid">10 שלבים, ואתם באוויר</div><div class="grid">${STEPS.map(([t], i) => `<div class="st on ok"><em>${i + 1}</em><b>${t}</b></div>`).join("")}</div>`);
   await wait(100); await st("show", ".l");
   await wait(3800);
-  await st("lines", `<div class="l big">נחיתה רכה</div><div class="l small">אתרים שבונים עסקים</div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div>`);
+  await st("lines", `<div class="l big">Easy Landing</div><div class="l small">אתרים שבונים עסקים</div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div>`);
   for (let i = 0; i < 4; i++) { await p.evaluate((i) => window.stage.showN(".l", i), i); await wait(500); }
   await wait(3800);
   endT = Date.now() / 1000;

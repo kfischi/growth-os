@@ -21,7 +21,14 @@ import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, a
 import * as plumber from "./templates/plumber.mjs";
 import { hostingOn, ensureSite, deploy, pointsHere, makePrimary } from "./hosting.mjs";
 
-export const TEMPLATES = { plumber };
+import { TRADES } from "./templates/trades/index.mjs";
+// One template per trade: the same site (templates/plumber.mjs) with the trade's fields, questionnaire and words.
+const tradeTemplate = (T) => Object.assign(Object.create(plumber), {
+  id: T.id, label: T.label, FIELDS: plumber.fieldsFor(T.id), GUIDE: plumber.guideFor(T),
+  emptyContent: () => plumber.emptyContent(T.id),
+  render: (c, o) => plumber.render({ ...c, trade_id: T.id }, o),
+});
+export const TEMPLATES = Object.fromEntries(Object.values(TRADES).map((T) => [T.id, T.id === "plumber" ? plumber : tradeTemplate(T)]));
 export const SITE_ORIGIN = "https://service-pro-web.netlify.app";
 export const BUCKET = "builder";
 export const MAX_MESSAGES = 80;       // stored chat messages per draft (40 turns), to cap the cost of one draft
@@ -373,7 +380,7 @@ const EDIT_ORDER = `The site is already live. The owner came back to change it.
 `;
 
 function systemPrompt(t, mode) {
-  return `You are the site builder of נחיתה רכה ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
+  return `You are the site builder of Easy Landing ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
 You talk with the owner of a ${t.label} business. Together you fill in the content of their one-page site. The page next to the chat shows the draft and updates after every answer. You never write HTML: you only set the fields below.
 
 Speak as the studio: "אנחנו", never a person's name, even if asked who is behind it.

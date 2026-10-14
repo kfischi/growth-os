@@ -19,7 +19,7 @@ for p in clients/*/index.html clients/*/privacy.html clients/*/accessibility.htm
 done
 echo "done"
 
-step "qa-page on what the site builder renders (full site, bare site, empty draft, with a video)"
+step "qa-page on what the site builder renders (full site, bare site, empty draft, with a video, every trade)"
 built=$(mktemp -d)
 node scripts/tests/builder-render.mjs "$built" >/dev/null || fail=1
 for page in index.html privacy.html accessibility.html guides.html bare.html draft.html draft-ba.html video.html; do
@@ -27,6 +27,13 @@ for page in index.html privacy.html accessibility.html guides.html bare.html dra
   out=$(node scripts/qa-page.cjs "$built" "$page" 2>&1 | tail -1)
   case "$out" in PASS*) ;; *) echo "FAIL builder $page: $out"; fail=1;; esac
 done
+for dir in "$built"/trade-*/; do
+  for page in index.html draft.html $(cd "$dir" && ls service-*.html | head -1); do
+    out=$(node scripts/qa-page.cjs "$dir" "$page" 2>&1 | tail -1)
+    case "$out" in PASS*) ;; *) echo "FAIL builder $(basename "$dir")/$page: $out"; fail=1;; esac
+  done
+done
+node scripts/tests/trade-chats.cjs "$built" | tail -1 || fail=1
 echo "done"
 
 step "Hebrew copy"
@@ -42,6 +49,7 @@ node scripts/tests/lead-system.test.mjs || fail=1
 step "site builder (API, against fakes)"
 node scripts/tests/site-builder.test.mjs 2>/dev/null || { node scripts/tests/site-builder.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
+node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }
 
 step "site builder page, in the browser (phone and desktop)"
 node scripts/tests/builder-page.test.mjs 2>/dev/null | grep -E "^FAIL|builder page" || fail=1

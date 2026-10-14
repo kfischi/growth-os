@@ -16,7 +16,7 @@ const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/;
 function view(d) {
   const t = templateOf(d);
   return {
-    id: d.id, status: d.status, template: d.template, package: d.package, plan: d.plan,
+    id: d.id, status: d.status, template: d.template, trade: t.label, package: d.package, plan: d.plan,
     business: d.content.business_name || "", owner: d.owner_name, phone: d.owner_phone ? "0" + d.owner_phone.slice(3) : "",
     missing: t.missing(d.content), photos: Object.keys(d.photos || {}).length, video: Boolean(d.video), rights: Boolean(d.photo_rights_at),
     returnNote: d.return_note, slug: d.published_slug,

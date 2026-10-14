@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>בונים אתר בשיחה · נחיתה רכה</title>
+<title>בונים אתר בשיחה · Easy Landing</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="עונים על כמה שאלות על העסק, ורואים את האתר נבנה מולכם. מאשרים, ורק אז משלמים.">
 <meta name="theme-color" content="#3d2442">
@@ -49,7 +49,7 @@
   form.card h2 { margin: 0 0 4px; font-size: 24px; }
   form.card p { margin: 0 0 18px; color: var(--slate); }
   label { display: block; font-weight: 500; margin: 14px 0 6px; }
-  input[type=text], input[type=tel], textarea { width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  input[type=text], input[type=tel], textarea, #fTrade { width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
   input:focus, textarea:focus { border-color: var(--mint); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--mint) 25%, transparent); }
   .check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; font-weight: 400; font-size: 14px; color: var(--slate); margin-top: 16px; }
   .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--mint); }
@@ -179,7 +179,7 @@
 </style>
 </head>
 <body>
-<header class="top"><div class="in"><a class="brand" href="/">נחיתה רכה</a><small>בונה האתרים</small></div></header>
+<header class="top"><div class="in"><a class="brand" href="/">Easy Landing</a><small>בונה האתרים</small></div></header>
 
 <main id="start" class="start" hidden>
   <section aria-labelledby="t-start">
@@ -190,11 +190,20 @@
       <li><span class="tick" aria-hidden="true">2</span><div><b>האתר שלכם מתמלא מולכם</b><span>בקישור פרטי, עם התמונות שלכם. מבקשים שינוי, והוא מתעדכן.</span></div></li>
       <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, ואנחנו מעלים לאוויר</b><span>אחרי האישור שלכם והתשלום, אנחנו עוברים על הכל ומעלים.</span></div></li>
     </ol>
-    <p class="note">כרגע: אתרים לאינסטלטורים. בתחום אחר? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%90%D7%AA%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a>, ונבנה יחד.</p>
+    <p class="note">התחום שלכם לא ברשימה? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%90%D7%AA%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a>, ונבנה יחד.</p>
   </section>
   <form id="startForm" class="card" novalidate>
     <h2>מתחילים</h2>
     <p>נשמור את הטיוטה. בכל שלב אפשר להעתיק קישור אישי ולחזור אליה ממכשיר אחר.</p>
+    <label for="fTrade">מה התחום שלכם?</label>
+    <select id="fTrade">
+      <option value="plumber">אינסטלטור</option><option value="electrician">חשמלאי</option><option value="ac">טכנאי מזגנים</option>
+      <option value="locksmith">מנעולן</option><option value="appliance">טכנאי מכשירי חשמל</option><option value="pest">מדביר</option>
+      <option value="handyman">הנדימן</option><option value="renovation">שיפוצים</option><option value="cleaning">ניקיון</option>
+      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="trainer">מאמן כושר</option>
+      <option value="tutor">מורה פרטי</option><option value="music">מורה למוזיקה</option><option value="psychologist">פסיכולוג/ית</option>
+      <option value="social-worker">עובד/ת סוציאלי/ת</option>
+    </select>
     <label for="fName">איך קוראים לכם?</label>
     <input id="fName" type="text" autocomplete="name" maxlength="40" required>
     <label for="fPhone">הנייד של העסק (וואטסאפ)</label>
@@ -329,13 +338,15 @@
   }
 
   /* ---------- start ---------- */
+  // ?t=<trade> from a demo's "build" button: the trade is already picked.
+  (() => { const t = new URLSearchParams(location.search).get('t'); if (t && $('#fTrade option[value="' + CSS.escape(t) + '"]')) $('#fTrade').value = t; })();
   $('#startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button[type=submit]'), err = $('#startErr');
     err.textContent = '';
     if (!$('#fConsent').checked) { err.textContent = say('no_consent'); return; }
     btn.disabled = true; btn.textContent = 'פותחים…';
-    const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value, template: 'plumber' } });
+    const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value, template: $('#fTrade').value } });
     btn.disabled = false; btn.textContent = 'לבנות את האתר';
     if (!r.ok) {
       err.textContent = say(r.data.error);

@@ -51,7 +51,7 @@ export function priceRange(text) {
  * @param o.image  an absolute URL of the owner's photo, or ""
  * @param o.url    the site's address, or ""
  */
-export function localBusiness(c, { phone = "", image = "", url = "", description = "" } = {}) {
+export function localBusiness(c, { phone = "", image = "", url = "", description = "", type = "" } = {}) {
   const s = (v) => String(v || "").trim();
   const towns = (c.towns || []).map(s).filter(Boolean);
   const hours = openingHours(c.hours);
@@ -65,7 +65,7 @@ export function localBusiness(c, { phone = "", image = "", url = "", description
   });
   return {
     "@context": "https://schema.org",
-    "@type": schemaType(c.trade),
+    "@type": type || schemaType(c.trade),
     name: s(c.business_name),
     ...(description ? { description } : {}),
     ...(url ? { url } : {}),

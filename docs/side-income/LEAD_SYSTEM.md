@@ -341,7 +341,7 @@ update ls_clients set testimonials = true where slug = '<slug>';
 הטופס בדף הבית שולח גם לטבלה, תחת `kfir`, ועדיין פותח וואטסאפ כמו קודם. כדי להפעיל:
 
 ```bash
-node scripts/lead-system/new-client.mjs kfir "נחיתה רכה" 052-6359513 https://service-pro-web.netlify.app
+node scripts/lead-system/new-client.mjs kfir "Easy Landing" 052-6359513 https://service-pro-web.netlify.app
 ```
 
 הדף נשלח מאותו אתר, אז אין צורך ב-allowed_origins. ההתראות לא יכולות להגיע למספר שמחובר ל-Cloud API עצמו: אם 052-6359513 הוא המספר של המערכת, מכניסים לבעל העסק מספר אחר. כדי שלא תצא הודעה אוטומטית לבעל עסק שכבר כתב לכפיר בוואטסאפ: `update ls_clients set auto_reply = false where slug = 'kfir';`. ההתראות והתזכורות נשארות.

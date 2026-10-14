@@ -24,6 +24,24 @@ const DRAWING = `<svg class="drawing" viewBox="0 0 520 420" aria-hidden="true">
       <text x="40" y="404">שרטוט: מטבח, דירה 3 חד׳ · גיליון 1/1</text>
     </svg>`;
 
+// The same blueprint sheet for any other trade: a floor plan with the owner's own first services as its notes.
+function planDrawing({ h, c }) {
+  const names = (Array.isArray(c.services) ? c.services : []).map((s) => String((s && s.name) || "").trim()).filter(Boolean);
+  const note = (i, fallback) => h((names[i] || fallback).slice(0, 26));
+  return `<svg class="drawing" viewBox="0 0 520 420" aria-hidden="true">
+      <path class="p" d="M60 60 H460 V360 H60 Z"/>
+      <path class="p" d="M60 210 H250 V360 M250 60 V150 M330 210 H460 M330 210 V360"/>
+      <g class="n"><circle cx="250" cy="150" r="9"/><circle cx="250" cy="210" r="9"/><circle cx="330" cy="210" r="9"/><circle cx="155" cy="135" r="9"/></g>
+      <path class="d" d="M60 384 H460"/><text x="240" y="378">8.40 מ׳</text>
+      <path class="d" d="M484 60 V360"/><text x="438" y="214">6.10 מ׳</text>
+      <circle class="s" cx="395" cy="285" r="6"/>
+      <text x="92" y="120">${note(0, "עבודה")}</text>
+      <text x="92" y="290">${note(1, String(c.trade || "").trim() || "תכנון")}</text>
+      <text class="st" x="352" y="270">${note(2, "כאן מתחילים")}</text>
+      <text x="40" y="410">שרטוט: ${h(String(c.trade || "").trim().slice(0, 20) || "תוכנית")} · גיליון 1/1</text>
+    </svg>`;
+}
+
 // The certificate's seal: the owner's own warranty, or years, or else just the trade. Nothing invented.
 function seal({ h, c, yearsHe }) {
   const w = String(c.warranty || "").trim(), y = String(c.years || "").trim(), trade = String(c.trade || "").trim();
@@ -66,13 +84,13 @@ function jobTicket({ h, v, has, c, draft }) {
 }
 
 // The dispatch board: the business's status, area, hours and phone, as on a control-room screen.
-function dispatchBoard({ h, v, has, c, callLocal, prettyPhone, draft }) {
+function dispatchBoard({ h, v, has, c, callLocal, prettyPhone, draft, words = {} }) {
   const num = callLocal ? `<a class="db-num" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>`
     : draft ? `<span class="db-num"><span class="todo">טלפון</span></span>` : "";
   const row = (k, val) => `<div class="db-row"><span>${k}</span><b>${val}</b></div>`;
   return `<div class="board">
       <div class="db-top mono"><span class="db-dot" aria-hidden="true"></span>מוקד ${v("business_name")}</div>
-      ${row("סטטוס", "מקבלים קריאות")}
+      ${row("סטטוס", h(words.status || "מקבלים קריאות"))}
       ${has("response_time") ? row("זמן חזרה", h(c.response_time)) : ""}
       ${row("אזור", v("area"))}
       ${has("hours") ? row("שעות", h(c.hours)) : ""}
@@ -96,7 +114,7 @@ export const LOOKS = {
     note: "דף שרטוט טכני עם רשת קווים",
     fonts: "family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500",
     dark: true,
-    visual: () => DRAWING,
+    visual: (a) => (a.tradeId && a.tradeId !== "plumber" ? planDrawing(a) : DRAWING),
     palettes: {
       blue: { label: "כחול", hero: "#123a8c", deep: "#0c2a68", accent: "#123a8c", signal: "#cc2e26", paper: "#f3f6fb", tint: "#eef2f9", ink: "#0f1d3a", inkSoft: "#4b5873", rule: "#c9d4e6", soft: "#a9bce6", text: "#d5def3", linew: "#e8efff", psA: "#2a56b8", drop: "#7fb2ff" },
       green: { label: "ירוק", hero: "#17493c", deep: "#0f342b", accent: "#17493c", signal: "#bf3f2b", paper: "#f2f6f3", tint: "#e9f0eb", ink: "#13241e", inkSoft: "#4c5e56", rule: "#c8d6cd", soft: "#a7c9b9", text: "#d3e5dc", linew: "#e6f2ec", psA: "#2c7a63", drop: "#8fd1b7" },

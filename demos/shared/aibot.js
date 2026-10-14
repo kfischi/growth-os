@@ -95,7 +95,7 @@
       launch.append(el("span", "ab-spark", "AI"), el("span", "ab-label", cfg.launcher || "שאלו את הנציג החכם"));
       const panel = el("section", "ab-panel"); panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "נציג חכם");
       const head = el("div", "ab-head");
-      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של נחיתה רכה"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
+      const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של Easy Landing"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
       const mode = el("span", "ab-mode", "AI");
       const x = el("button", "ab-x", "×"); x.type = "button"; x.setAttribute("aria-label", "סגירה");
       head.append(meta, mode, x);
@@ -163,7 +163,7 @@
       function open() {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
         if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat");
-        if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של נחיתה רכה. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
+        if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של Easy Landing. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
         input.focus();
       }
       function close() { panel.classList.remove("open"); launch.setAttribute("aria-expanded", "false"); }

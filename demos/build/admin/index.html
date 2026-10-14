@@ -115,7 +115,7 @@
       const info = el('div');
       const h = el('h2', '', d.business || '(בלי שם עדיין)'); info.append(h);
       const tag = el('span', 'tag ' + d.status, STATUS[d.status] || d.status);
-      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.owner, d.phone, d.package ? PKG[d.package] + (d.plan ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
+      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.trade, d.owner, d.phone, d.package ? PKG[d.package] + (d.plan ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
       const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
