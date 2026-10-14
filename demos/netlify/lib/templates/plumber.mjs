@@ -7,6 +7,7 @@ import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog } from "./looks.m
 export { LOOKS, lookOf, catalog };
 // The trade's guides (shared with the plumber demo): general know-how, no prices or promises of the owner.
 import GUIDES from "../../../shared/guides/plumber.json" with { type: "json" };
+import FONTS from "../../../shared/fonts/fonts.json" with { type: "json" };
 export { GUIDE } from "./plumber-guide.mjs";
 //
 // Two modes:
@@ -192,6 +193,15 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   // The absolute address, only on the deployed site: what Google indexes as the one true page.
   const site = !draft && /^https:\/\/[a-z0-9.-]+\/$/.test(url || "") ? url : "";
   const ogPhoto = photos.hero || photos.work1 || photos.portrait;
+  // The fonts come from the site itself (scripts/fetch-fonts.mjs): faster, and nothing goes to Google. A draft takes
+  // them from /shared/fonts; only the repo copy (no address yet) still links Google Fonts.
+  const font = FONTS[L.id];
+  const localFonts = Boolean(font) && (draft || Boolean(site));
+  const fontDir = draft ? assets + "fonts/" : "assets/fonts/";
+  // The @font-face rules go into the page (no stylesheet to wait for), with the body font preloaded.
+  const fontHead = localFonts
+    ? `${font.preload ? `<link rel="preload" href="${h(fontDir + font.preload)}" as="font" type="font/woff2" crossorigin>\n` : ""}<style>${String(font.faces || "").replace(/url\(([\w.-]+\.woff2)\)/g, (m, f) => `url(${fontDir}${f})`).replace(/<\//g, "")}</style>`
+    : `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?${L.look.fonts}&display=swap" rel="stylesheet">`;
   const ogImage = site && ogPhoto && !/^https?:/.test(ogPhoto) ? site + ogPhoto : "";
   const desc = `${trade} ב${area}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. פותחים קריאה בצ׳אט.`;
 
@@ -271,8 +281,7 @@ ${robots}${site ? `<link rel="canonical" href="${h(site)}">
 <script type="application/ld+json">${js(localBusiness({ ...c, services, towns }, { phone: call ? "+" + call.intl : "", description: desc, url: site, image: ogImage }))}</script>`}
 <meta name="theme-color" content="${h(themeColor(L.look, L.p))}">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?${L.look.fonts}&display=swap" rel="stylesheet">
+${fontHead}
 <script src="${h(assets)}a11y.js" data-statement="${draft ? "" : "accessibility.html"}"></script>
 <style>${CSS}${LOOK_CSS[L.id]}:root { ${cssVars(L.look, L.p)} }${GUIDE_CSS}${draft ? DRAFT_CSS : ""}</style>
 </head>
@@ -470,7 +479,7 @@ ${leads ? `<h2>המלצות</h2>
 <p>אחרי עבודה אנחנו יכולים לבקש מכם המלצה, פעם אחת. אם תכתבו, היא מופיעה באתר עם השם שבחרתם והדירוג, בלי טלפון. אפשר לבקש להסיר אותה בכל זמן.</p>
 
 ` : ""}<h2>עוגיות</h2>
-<p>האתר לא משתמש בעוגיות (cookies): לא לפרסום, לא למעקב ולא לסטטיסטיקה. בדפדפן שלכם נשמרות רק ההגדרות שבחרתם בתפריט הנגישות${leads ? ", וסימון שהביקור והלחיצות כבר נספרו, עד שסוגרים את הלשונית" : ""}. הגופן של האתר נטען מ-Google Fonts, ולכן גוגל רואה את כתובת ה-IP שלכם.</p>
+<p>האתר לא משתמש בעוגיות (cookies): לא לפרסום, לא למעקב ולא לסטטיסטיקה. בדפדפן שלכם נשמרות רק ההגדרות שבחרתם בתפריט הנגישות${leads ? ", וסימון שהביקור והלחיצות כבר נספרו, עד שסוגרים את הלשונית" : ""}. ${localFonts ? "הגופנים נטענים מהאתר עצמו, בלי שירות חיצוני." : "הגופן של האתר נטען מ-Google Fonts, ולכן גוגל רואה את כתובת ה-IP שלכם."}</p>
 
 <h2>לראות, לתקן או למחוק</h2>
 <p>אפשר לבקש לראות את הפרטים ששמרנו עליכם, לתקן אותם או למחוק אותם. כתבו לנו בוואטסאפ או התקשרו${contact ? ": " + contact : ""}.</p>`);
@@ -570,6 +579,9 @@ export const HEADERS = `# Netlify headers for this site. Applied however the sit
 
 /assets/*
   Cache-Control: public, max-age=604800
+
+/assets/fonts/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
 
 /contact.vcf
   Content-Type: text/vcard; charset=utf-8

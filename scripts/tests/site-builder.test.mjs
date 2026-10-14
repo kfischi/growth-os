@@ -526,6 +526,9 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.ok(sent.some((f) => f.startsWith("/assets/photos/portrait.")), "the photos too");
   assert.ok(!sent.includes("/CLIENT.md"), "the repo card is not served");
   assert.ok(sent.includes("/robots.txt") && sent.includes("/sitemap.xml"), "robots and a sitemap for Google");
+  const idx = nl.bodies.get("/index.html");
+  assert.ok(sent.some((f) => /^\/assets\/fonts\/[a-z]+\.css$/.test(f)) && /@font-face\{[^}]*url\(assets\/fonts\/[\w.-]+\.woff2\)/.test(idx) && /rel="preload"[^>]+\.woff2"/.test(idx) && !/fonts\.googleapis/.test(idx), "the fonts come from the site itself");
+  assert.match(nl.bodies.get("/privacy.html"), /הגופנים נטענים מהאתר עצמו/);
   const svc = sent.filter((f) => /^\/service-[a-z0-9]+\.html$/.test(f));
   assert.equal(svc.length, D.content.services.length, "a page per service");
   for (const f of svc) assert.ok(nl.bodies.get("/sitemap.xml").includes("https://oren-mayim.sites.example.co.il" + f), "in the sitemap: " + f);

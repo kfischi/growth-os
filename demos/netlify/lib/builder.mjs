@@ -614,6 +614,18 @@ export async function siteBundle(d, slug, url = "") {
     if (!r.ok) throw new Error(`shared ${name} ${r.status}`);
     files[`assets/${name}`] = Buffer.from(await r.arrayBuffer());
   }));
+  // The look's fonts (scripts/fetch-fonts.mjs): its stylesheet and every file it names, served by the site itself.
+  if (url) {
+    const t = templateOf(d), look = t.lookOf ? t.lookOf(d.content).id : null;
+    const css = look && await fetch(`${SITE_ORIGIN}/shared/fonts/${look}.css`, { signal: AbortSignal.timeout(15000) }).then((r) => (r.ok ? r.text() : null)).catch(() => null);
+    if (!css) throw new Error("fonts " + look);
+    files[`assets/fonts/${look}.css`] = css;
+    for (const name of new Set([...css.matchAll(/url\(([\w.-]+\.woff2)\)/g)].map((m) => m[1]))) {
+      const r = await fetch(`${SITE_ORIGIN}/shared/fonts/${name}`, { signal: AbortSignal.timeout(15000) });
+      if (!r.ok) throw new Error(`font ${name} ${r.status}`);
+      files[`assets/fonts/${name}`] = Buffer.from(await r.arrayBuffer());
+    }
+  }
   const media = Object.entries(d.photos || {}).map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
   if (d.video) media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
   for (const [p, to] of media) files[to] = await photoBytes(p);
