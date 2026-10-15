@@ -40,6 +40,8 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | נוכחות | 1,500 ₪ | 150 ₪ |
 | נציג AI (the page, the lead system and the AI chat) | 1,900 ₪, one payment | 390 ₪ |
 
+- All prices are **before VAT** (לפני מע״מ), and every page that shows a price says so. Grow charges them with VAT (`VAT_RATE`, default 0.18, in `lib/billing.mjs`), and the builder's payment step shows today's total with VAT.
+
 - Self edit (the owner changes the live site in the builder chat and publishes) is included in both packages as part of the monthly; publishing turns it on. There is no Sanity add-on.
 - Annual prepayment: 12 months for the price of 10.
 - No commitment: cancel with 30 days' notice.

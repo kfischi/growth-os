@@ -427,7 +427,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <span class="tag">מתאים לכם</span>
             <h3>נוכחות</h3>
             <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
-            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
             <p class="per" data-m="150"></p>
             <ul class="inc"><li>דף מעוצב ומותאם לנייד</li><li>כפתורי וואטסאפ וחיוג</li><li>מחשבון, מדריכים, לפני ואחרי</li><li>חיבור לדומיין שלכם</li><li>אחסון ותחזוקה</li></ul>
             <a class="btn line" href="../build/">לבנות דף נוכחות</a>
@@ -436,7 +436,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <span class="tag">מתאים לכם</span>
             <h3>נציג AI</h3>
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
-            <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
             <p class="per" data-m="390"></p>
             <ul class="inc"><li>כל מה שבנוכחות</li><li>מענה אוטומטי בוואטסאפ תוך שניות</li><li>התראה על כל פנייה ותזכורת מעקב</li><li>כל הפניות בטבלה אחת</li><li>צ׳אט באתר שעונה ומסנן פניות</li><li>דוח חודשי</li></ul>
             <a class="btn" href="../build/">לבנות את האתר שלי</a>
@@ -654,10 +654,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       const fit = $$('input', f).some((x) => x.checked && x.value === 'ai') ? 'ai' : 'p', p = PL[fit];
       $$('.plan').forEach((el) => el.classList.toggle('fits', el.dataset.plan === fit));
       $$('.plan .per').forEach((el) => { const m = +el.dataset.m;
-        el.innerHTML = period === 'm' ? `${nis(m)} לחודש<small>או ${nis(m * 10)} לשנה מראש</small>` : `${nis(m * 10)} לשנה<small>12 חודשים במחיר של 10, במקום ${nis(m * 12)}</small>`; });
+        el.innerHTML = period === 'm' ? `${nis(m)} לחודש<small>או ${nis(m * 10)} לשנה מראש. לפני מע״מ</small>` : `${nis(m * 10)} לשנה<small>12 חודשים במחיר של 10, במקום ${nis(m * 12)}. לפני מע״מ</small>`; });
       $('#fitName').textContent = p.name;
       $('#fitPrice').innerHTML = `${nis(p.setup)} הקמה`;
-      $('#fitPer').innerHTML = period === 'm' ? `ועוד ${nis(p.m)} לחודש` : `ועוד ${nis(p.m * 10)} לשנה, במקום ${nis(p.m * 12)}`;
+      $('#fitPer').innerHTML = period === 'm' ? `ועוד ${nis(p.m)} לחודש, לפני מע״מ` : `ועוד ${nis(p.m * 10)} לשנה, במקום ${nis(p.m * 12)}. לפני מע״מ`;
     };
     f.addEventListener('change', draw);
     $$('[data-period]', f).forEach((b) => b.addEventListener('click', () => { period = b.dataset.period;

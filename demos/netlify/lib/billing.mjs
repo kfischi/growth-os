@@ -20,8 +20,12 @@ export const NOTICE_DAYS = 30;
 export const RETRY_DAYS = 3, MAX_FAILS = 4;
 const PKG_HE = { presence: "נוכחות", ai: "נציג AI" };
 
-export const periodSum = (pkg, cycle) => PRICES[pkg].month * (cycle === "year" ? YEAR_MONTHS : 1);
-export const checkoutSum = (pkg, cycle) => PRICES[pkg].setup + (cycle === "year" ? periodSum(pkg, "year") : 0);
+// The prices are before VAT; Grow charges them with VAT (VAT_RATE, default 18%), and its invoice shows both.
+export const vatRate = () => { const v = Number(process.env.VAT_RATE); return Number.isFinite(v) && v >= 0 && v < 1 ? v : 0.18; };
+export const withVat = (n) => Math.round(n * (1 + vatRate()) * 100) / 100;
+const netPeriod = (pkg, cycle) => PRICES[pkg].month * (cycle === "year" ? YEAR_MONTHS : 1);
+export const periodSum = (pkg, cycle) => withVat(netPeriod(pkg, cycle));
+export const checkoutSum = (pkg, cycle) => withVat(PRICES[pkg].setup + (cycle === "year" ? netPeriod(pkg, "year") : 0));
 export function addPeriod(date, cycle) {
   const d = new Date(date);
   const day = d.getUTCDate();
@@ -190,7 +194,8 @@ export async function billingView(d) {
   return {
     on: growOn(),
     address: d.slug_wish ? { slug: d.slug_wish, host: hostFor(d.slug_wish), domain: d.domain_wish || null } : null,
-    prices: d.package ? { setup: PRICES[d.package].setup, month: PRICES[d.package].month, year: periodSum(d.package, "year") } : null,
+    // Before VAT, as the site shows them, and what is charged today with VAT for each plan.
+    prices: d.package ? { setup: PRICES[d.package].setup, month: PRICES[d.package].month, year: netPeriod(d.package, "year"), vat: vatRate(), today: { month: checkoutSum(d.package, "month"), year: checkoutSum(d.package, "year") } } : null,
     sub: b ? { state: b.state, cycle: b.cycle, amount: b.amount, next: b.next_charge_at, end: b.end_at || null, card: b.card_suffix || null } : null,
     invoices: payments.filter((p) => p.invoice_url).map((p) => ({ url: p.invoice_url, number: p.invoice_number, sum: Number(p.sum), date: p.paid_at })),
     publishing: d.status === "paid" ? (d.publish_error && (d.publish_tries || 0) >= 3 ? "stuck" : "working") : null,
