@@ -1,8 +1,9 @@
 // The whole process as one landscape video (1920x1080), hand in hand from the first click to the site in the air:
 // the trade, the demo, the builder, the template, the colours, the questions, the photos, the check, the approval,
-// and the site live with its first enquiry. The real pages run in a browser window on a stage (scripts/video-stage.html):
+// and the address, the card payment and the site live by itself with its first enquiry. The real pages run in a browser window on a stage (scripts/video-stage.html):
 // a panel explains every step and names the next one, a rail shows all ten, a camera zooms in on each action,
-// and an arrow shows what to press. The builder runs against the test fakes: no Supabase, no AI, no WhatsApp.
+// and an arrow shows what to press. The builder runs against the test fakes: no Supabase, no AI, no WhatsApp,
+// a fake Grow (its payment page is a plain stand-in, not Grow's own), and the publish goes to fake GitHub and Netlify.
 // Run: node scripts/process-video.mjs [out-dir]   (default demos/shared/video/process). Needs Playwright and ffmpeg.
 import http from "node:http";
 import fs from "node:fs";
@@ -10,7 +11,21 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
-import { T, storage } from "./tests/builder-fakes.mjs";
+import { T, storage, ai, nl } from "./tests/builder-fakes.mjs";
+// Payment and hosting as on the real site: a fake Grow behind lib/grow.mjs, the fake Netlify with our domain's zone.
+Object.assign(process.env, { GROW_USER_ID: "u-film", GROW_PAGE_CODE: "pc-film", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "easylanding.co.il" });
+nl.zones.push({ id: "z-film", name: "easylanding.co.il" });
+const grow = { processes: new Map(), n: 0 };
+const fakeFetch = globalThis.fetch;
+globalThis.fetch = async (url, opt = {}) => {
+  const u = new URL(url);
+  if (u.host !== "sandbox.meshulam.co.il") return fakeFetch(url, opt);
+  const f = Object.fromEntries(opt.body.entries()), name = u.pathname.split("/").pop();
+  const ok = (data) => new Response(JSON.stringify({ status: 1, data }));
+  if (name === "createPaymentProcess") { const id = String(++grow.n); grow.processes.set(id, { sum: Number(f.sum), paid: false, back: f.successUrl }); return ok({ url: "https://sandbox.meshulam.co.il/pay/" + id, processId: id, processToken: "t" + id }); }
+  if (name === "getPaymentProcessInfo") { const g = grow.processes.get(f.processId); return ok({ transactions: g.paid ? [{ transactionId: "tx" + f.processId, asmachta: "A1", sum: g.sum, cardToken: "card", cardSuffix: "4580" }] : [] }); }
+  return ok({});
+};
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
 
@@ -44,7 +59,7 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === "/__stage") { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(STAGE); }
   if (url.pathname === "/__live/") { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(liveSite()); }
   if ((m = /^\/__live\/p\/(.+)$/.exec(url.pathname))) { const b = storage.get(decodeURIComponent(m[1])); res.writeHead(b ? 200 : 404, { "content-type": "image/webp" }); return res.end(b); }
-  if ((m = /^\/api\/builder\/(\w+)$/.exec(url.pathname))) return send(await builder(request(), { params: { action: m[1] } }));
+  if ((m = /^\/api\/builder\/([\w-]+)$/.exec(url.pathname))) { const r = await builder(request(), { params: { action: m[1] } }); return send(r); }
   if ((m = /^\/draft\/([\w-]+)$/.exec(url.pathname))) return send(await draft(request(), { params: { id: m[1] } }));
   const f = path.join(ROOT, decodeURIComponent(url.pathname).replace(/\/$/, "/index.html"));
   if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
@@ -56,7 +71,27 @@ const ctx = await browser.newContext({ viewport: { width: W, height: H }, device
 await ctx.addInitScript(() => { window.NR_VIDEO_CODEC = "vp9"; });
 const p = await ctx.newPage();
 p.on("pageerror", (e) => console.log("page error:", e.message));
+p.on("console", (m) => { if (m.type() === "error") console.log("console:", m.text()); });
 await p.route(/wa\.me|\/api\/(chat|lead|visit|status)/, (r) => r.abort());
+// The card payment page: a plain stand-in (the real one is Grow's). Paying sends the owner back to the builder.
+await p.route(/^https:\/\/sandbox\.meshulam\.co\.il\/pay\/(\d+)/, (r) => {
+  const id = /pay\/(\d+)/.exec(r.request().url())[1], g = grow.processes.get(id);
+  if (r.request().method() === "POST" || new URL(r.request().url()).searchParams.get("go")) {
+    // Chrome won't let a public page send the frame to localhost, so the stage does it, as Grow's redirect would.
+    g.paid = true; r.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: "<!doctype html><title>תשלום מאובטח</title>" });
+    return p.evaluate((u) => { document.getElementById("app").src = u; }, g.back);
+  }
+  return r.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: `<!doctype html><html lang="he" dir="rtl"><meta charset="utf-8"><title>תשלום מאובטח</title>
+<style>body{margin:0;font:400 17px/1.5 Rubik,system-ui,sans-serif;background:#f3f4f7;color:#1b1d29;display:grid;place-items:center;min-height:100vh}
+.c{background:#fff;border-radius:16px;box-shadow:0 20px 50px -30px rgba(0,0,0,.4);padding:28px 30px;width:min(420px,92vw)}
+h1{font-size:20px;margin:0 0 4px}.s{color:#5b5f72;margin:0 0 18px;font-size:15px}.sum{font-size:30px;font-weight:700;margin:0 0 18px}
+label{display:block;font-size:14px;color:#5b5f72;margin:10px 0 4px}.f{border:1px solid #d5d8e2;border-radius:10px;padding:10px 12px;direction:ltr;text-align:left;font-family:monospace}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}a.pay{display:block;margin-top:20px;text-align:center;background:#1b1d29;color:#fff;border-radius:12px;padding:14px;text-decoration:none;font-weight:700}
+.lock{margin-top:12px;font-size:13px;color:#5b5f72;text-align:center}</style>
+<div class="c"><h1>תשלום מאובטח</h1><p class="s">Easy Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪ <small style="font-size:14px;font-weight:400">כולל מע״מ</small></p>
+<label>מספר כרטיס</label><div class="f">4580 •••• •••• 1234</div><div class="row"><div><label>תוקף</label><div class="f">12/28</div></div><div><label>CVV</label><div class="f">•••</div></div></div>
+<a class="pay" href="?go=1">לשלם</a><p class="lock">החשבונית נשלחת אליכם מיד אחרי התשלום</p></div></html>` });
+});
 await p.route(/^https:\/\/x\.supabase\.co\/storage\/v1\/object\/public\/builder\//, (r) => {
   const key = new URL(r.request().url()).pathname.replace("/storage/v1/object/public/builder/", "");
   const buf = storage.get(key);
@@ -140,7 +175,9 @@ async function goApp(url) {
   await wait(400);
 }
 async function waitPath(re) {
-  await p.waitForFunction((src) => { try { const w = document.getElementById("app").contentWindow; return new RegExp(src).test(w.location.pathname) && w.document.readyState === "complete"; } catch (e) { return false; } }, re.source, { timeout: 15000 });
+  // Through Playwright, not the stage: the payment page is on another origin, whose location the stage can't read.
+  for (const t = Date.now() + 15000; !re.test(new URL(app().url()).pathname); await p.waitForTimeout(100)) if (Date.now() > t) throw new Error("timeout waiting for " + re + " at " + app().url());
+  await app().waitForLoadState("load");
   await app().evaluate(() => document.fonts.ready); await wait(400);
 }
 
@@ -155,7 +192,7 @@ const STEPS = [
   ["מעלים תמונות", "תמונה שלכם ועד שלוש של העבודה. אפשר גם לפני ואחרי, וסרטון קצר."],
   ["בודקים את האתר", "גוללים ורואים הכול, בדיוק כמו שיעלה. רוצים שינוי? כותבים לנו בצ׳אט."],
   ["מאשרים ובוחרים חבילה", "מרוצים? מאשרים, ובוחרים חבילה: נציג AI, או נוכחות בלבד."],
-  ["האתר באוויר", "חשבונית ופרטי תשלום מגיעים בוואטסאפ. אחרי התשלום אנחנו מעלים את האתר, וכל פנייה מגיעה אליכם."],
+  ["כתובת, תשלום, באוויר", "בוחרים כתובת לאתר, משלמים בכרטיס, והאתר עולה לאוויר לבד. מאותו רגע כל פנייה מגיעה אליכם."],
 ];
 // When each step card shows, in the film's own seconds: the "at" of each line in scripts/process-voice.json.
 const marks = [];
@@ -210,10 +247,13 @@ try {
   await now("גוללים לדוגמאות", 300);
   const demosY = await app().evaluate(() => document.querySelector("#demos").getBoundingClientRect().top + scrollY - 40);
   await scrollApp(app(), demosY, 2000); await wait(900);
-  await zoomTo(A("#demos .demo-grid, #demos .demos, #demos"), { max: 1.25 });
+  await zoomTo(A("#demos"), { max: 1.25 });
   await wait(900);
-  await now("לוחצים על התחום שלכם, למשל אינסטלטור");
-  await tap(A('#demos a.demo[href="plumber/"]'), "אינסטלטור", { max: 1.6 });
+  await now("בוחרים תחום, והטלפון מראה את האתר שלו", 300);
+  await tap(A('#chips .chip[data-i="4"]'), "חשמלאי", { max: 1.6 }); await wait(1300);
+  await tap(A('#chips .chip[data-i="0"]'), "אינסטלטור", { zoom: false }); await wait(1300);
+  await now("ונכנסים לדמו המלא");
+  await tap(A("#toDemo"), "לדמו המלא", { max: 1.6 });
   await waitPath(/^\/plumber\/$/);
   await wide(600);
   await endStep();
@@ -243,7 +283,7 @@ try {
   await step(3);
   await goApp("/");
   await now("לוחצים \"לבנות את האתר שלי\"");
-  await tap(A('.hero a[href="build/"]'), "לבנות את האתר שלי", { max: 1.6 });
+  await tap(A('.hero .ctas a[href="build/"]'), "לבנות את האתר שלי", { max: 1.6 });
   await waitPath(/^\/build\/$/);
   await wide(500);
   await zoomTo(A("#startForm"), { max: 1.6, pad: 50 });
@@ -338,6 +378,9 @@ try {
   await nextQ(/פסקת פתיחה/);
   await now("ופסקת פתיחה", 400);
   await tap(app().locator("#guide .chip.card").nth(0), null, { zoom: false, hold: 800 });
+  await nextQ(/דף לכל אזור/);
+  await now("דף לכל אזור, מהמילים שלכם. לא חובה", 1600);
+  await tap(A("#guide button.skip:last-of-type"), "לדלג", { zoom: false, hold: 500 });
   await nextQ(/תמונות/);
   await showDraft(".hero h1", "הכותרת שבחרתם", 2200);
   await endStep();
@@ -398,25 +441,38 @@ try {
   await point(app().locator("#approveDlg .pkg").nth(1), "נוכחות: האתר, עם וואטסאפ ושיחה", 2400);
   await st("unpoint");
   await now("ומאשרים");
+  ai.queue.push({ names: ["oren-mayim", "oren-plumber", "instalator-hadera"] }); // the address suggestions (lib/builder.mjs suggestSlugs)
   await tap(A("#approveGo"), "מאשרים", { zoom: false });
-  await app().waitForFunction(() => /חשבונית/.test(document.querySelector("#approveBox").textContent + document.querySelector("#log").textContent), null, { timeout: 10000 }).catch(() => {});
-  await wait(500);
-  await zoomTo(A("#approveBox"), { max: 1.7, pad: 40 });
-  await now("זהו. מכאן אנחנו ממשיכים", 2400);
+  await A("#addrDlg[open] #addrList input[name=addr]").waitFor({ timeout: 15000 });
   await endStep();
 
-  /* ---------- 10. live ---------- */
+  /* ---------- 10. the address, the payment, live ---------- */
   await step(10);
+  await zoomTo(A("#addrDlg"), { max: 1.5, pad: 30 });
+  await now("בוחרים כתובת לאתר. היא עובדת מהיום הראשון", 2200);
+  await point(A("#addrList .pkg"), "oren-mayim.easylanding.co.il", 1800);
+  await st("unpoint");
+  await now("יש לכם דומיין משלכם? מחברים אותו אחרי התשלום", 2000);
+  await tap(A("#addrGo"), "לשמור את הכתובת", { zoom: false });
+  await app().waitForFunction(() => /הכתובת: oren-mayim/.test(document.querySelector("#approveBox").textContent), null, { timeout: 10000 });
+  await wait(500);
+  await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 });
+  await now("חודשי, או שנה מראש. המחיר לפני מע״מ, והסכום להיום כולל אותו", 2600);
+  await tap(app().locator("#approveBox .btn").filter({ hasText: "לתשלום מאובטח" }), "לתשלום מאובטח", { zoom: false });
+  await waitPath(/^\/pay\/\d+$/);
+  await wide(500);
+  await now("משלמים בכרטיס, בדף מאובטח. החשבונית נשלחת מיד", 2400);
+  await tap(A("a.pay"), "לשלם", { max: 1.6 });
+  await waitPath(/^\/build\/$/);
+  await wide(500);
+  await app().waitForFunction(() => /האתר באוויר/.test(document.querySelector("#approveBox").textContent), null, { timeout: 30000 });
+  marks.push(["live", Date.now() / 1000 - frames[0].t]);
+  await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 });
+  await now("האתר עלה לאוויר לבד, תוך דקה", 2200);
+  await app().evaluate(() => { const b = document.querySelector("#approveBox"); const h = [...b.querySelectorAll("h3")].find((x) => /הלקוחות הראשונים/.test(x.textContent)); if (h) b.scrollTop = h.offsetTop - 10; });
+  await wait(400);
+  await now("ואיך מביאים את הלקוחות הראשונים: גוגל, סטטוס וקבוצות", 2600);
   await wide(400);
-  await now("חשבונית ופרטי תשלום מגיעים בוואטסאפ", 300);
-  await st("phone", true, "Easy Landing", "E");
-  await wait(1100);
-  await st("msg", "היי אורן, קיבלנו את האישור.\nמצורפת חשבונית, ופרטי התשלום בהודעה הבאה.<div class=\"file\"><i>PDF</i>חשבונית לתשלום</div><time>10:42</time>");
-  await wait(2600);
-  await st("msg", "התשלום התקבל, תודה.\nהאתר שלכם באוויר:<span class=\"btn\">לפתוח את האתר</span><time>16:05</time>");
-  await wait(2800);
-  await st("phone", false);
-  await wait(700);
   await now("האתר באוויר, בכתובת שלכם", 300);
   await goApp("/__live/");
   await wait(1800);
