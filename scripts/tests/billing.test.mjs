@@ -143,6 +143,17 @@ assert.equal(r.billing.sub.state, "active"); assert.equal(r.billing.sub.card, "4
 assert.equal(r.billing.domain.state, "waiting"); assert.deepEqual(r.billing.domain.dns.map((x) => x.type), ["A", "CNAME"]);
 assert.ok(!JSON.stringify(r.billing).includes("card-1"), "the card token never goes to the page");
 assert.match(r.billing.panel, /panel/);
+// The launch kit: a tagged link per channel (made once), and texts from the owner's own facts.
+const L1 = r.billing.launch;
+assert.equal(L1.tracked, true); assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 3);
+assert.match(L1.gbp.link, /^https:\/\/oren-mayim\.sites\.example\.co\.il\/\?s=[a-z0-9]{4}$/);
+assert.notEqual(L1.gbp.link, L1.status.link, "each channel its own link");
+assert.match(L1.status.text, /^פתחתי אתר לעסק: אינסטלציה בחדרה, עמק חפר והשרון\. אפשר לראות שם מחירים, לשלוח תמונה ולפנות בכל שעה, ואני חוזר תוך 15 דק׳\.\n/);
+assert.match(L1.groups.text, /^היי לכולם, אני אורן, אינסטלציה ב.+, 12 שנה בתחום\./);
+assert.ok(L1.gbp.steps.some((x) => /^אזור שירות: /.test(x)));
+r = await J(await req(D, "state", { method: "GET" }));
+assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 3, "the links are made once");
+assert.equal(r.billing.launch.gbp.link, L1.gbp.link);
 r = await J(await req(D, "panel-seen", { body: {} })); assert.equal(r.billing.panel, null); assert.equal(D.panel_once, null);
 // "check now": the DNS isn't there yet
 r = await J(await req(D, "domain-check", { body: {} })); assert.ok(["waiting", "live"].includes(r.domain));

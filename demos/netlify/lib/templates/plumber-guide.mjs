@@ -42,6 +42,7 @@ export function guideFor(T) {
       ...(g.warranty ? [{ id: "warranty", type: "pick", field: "warranty", optional: true, ask: "נותנים אחריות על העבודה?", options: g.warranty }] : []),
       { id: "headline", type: "copy", ask: "איזו כותרת מתאימה לכם?", options: g.headlines },
       { id: "intro", type: "copy", ask: "ואיזו פסקת פתיחה? היא מופיעה מתחת לכותרת.", options: g.intros },
+      { id: "regions", type: "regions", optional: true, ask: "רוצים דף לכל אזור שאתם עובדים בו? מי שמחפש בגוגל את התחום באזור שלו מגיע ישר אליו. כתבו על כל אזור משפט או שניים משלכם: כמה אתם קרובים, מה עשיתם שם, מה נפוץ שם. אזור בלי מילים שלכם לא מקבל דף." },
       { id: "photos", type: "photos", ask: g.photosAsk || "נשאר להוסיף תמונות: אחת שלכם ועד שלוש של העבודה. יש לכם תמונה של אותה עבודה לפני ואחרי? באתר היא תופיע עם פס להשוואה. הכול בכפתור \"תמונות וסרטון\" מתחת לשיחה. לא חובה, אבל לקוחות סומכים על מי שהם רואים." },
     ],
   };

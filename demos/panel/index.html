@@ -410,6 +410,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (!st) return;
     const tile = (n, label) => { const d = el('div'); d.append(el('b', null, String(n)), el('span', null, label)); return d; };
     const tiles = [tile(st.visits, 'כניסות'), tile(st.leads, 'פניות')];
+    // Google search, 28 days (Search Console reports a few days late).
+    if (st.google) tiles.push(tile(st.google.impressions.toLocaleString('he-IL'), 'הופעות בגוגל'), tile(st.google.clicks.toLocaleString('he-IL'), 'כניסות מגוגל'));
     for (const [k, label] of Object.entries(ACT_HE)) if (st.acts[k] || ['wa', 'call', 'chat'].includes(k)) tiles.push(tile(st.acts[k] || 0, label));
     $('#sx-tiles').replaceChildren(...tiles);
     const fmtDay = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });

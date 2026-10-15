@@ -8,6 +8,7 @@
 // POST  /api/leads  { available: "busy" | "free" | "urgent" | "auto", hours? } -> { availability }   the site's "available now" line
 // POST  /api/leads  { job_value: number | null } -> { job_value }   the owner's average job, for the panel's ₪ estimate
 // POST  /api/leads  { testimonial: "<id>", hidden: true | false } -> { testimonial }   show or hide one on the site
+import { searchImpressions } from "../lib/search.mjs";
 import { json, configured, db, q, getClient, authorise, photoLink, rateLimiter, clientIp, clip, runReminders, buildReport, STATUS_HE, periodStats, siteStats, monthRange, israelTime, addLink, removeLink, listLinks, availability, setAvailability, AVAIL_MAX_HOURS, testimonialOn } from "../lib/leads.mjs";
 
 const limited = rateLimiter(120, 10 * 60 * 1000);
@@ -89,6 +90,8 @@ export default async (req) => {
       // The last 30 days: visits and leads per day, devices, hours, clicks and sources (0013_stats.sql).
       let stats = null;
       try { stats = await siteStats(client, 30); } catch (e) { console.error("panel site stats", e.message); }
+      // Google search (lib/search.mjs): appearances and clicks, 28 days, when Search Console is set up for the site.
+      if (stats) { try { const host = (client.allowed_origins || []).map((o) => o.replace(/^https:\/\//, "")).find(Boolean); stats.google = host ? await searchImpressions(host, 28) : null; } catch (e) { console.error("panel google", e.message); } }
       // A photo the visitor attached: the panel gets the private link, never the storage path.
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
       // Testimonials on the site: all of them, hidden ones too, so the owner can bring one back.

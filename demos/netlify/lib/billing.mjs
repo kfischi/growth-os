@@ -11,6 +11,7 @@ import { db, q, clip, israeliPhone } from "./leads.mjs";
 import { growOn, createPayment, processInfo, chargeToken } from "./grow.mjs";
 import { getDraft, saveDraft, alertKfir, publishDraft, PublishError, slugFree, hostFor } from "./builder.mjs";
 import { hostingOn, cleanDomain, addDomain, dnsSteps } from "./hosting.mjs";
+import { launchKit } from "./launch.mjs";
 
 // Keep in step with #plans in demos/index.html, the approval dialog in demos/build/index.html and the chats' prompts.
 export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 1900, month: 390 } };
@@ -203,6 +204,8 @@ export async function billingView(d) {
     domain: d.domain ? { name: d.domain, state: d.domain_state || "none", dns: d.domain_state === "waiting" && d.site_netlify ? dnsSteps(d.domain, { netlifyHost: d.site_netlify }) : null } : null,
     // The owner's panel link, shown until they say they saved it (only its key's hash stays in ls_clients).
     panel: d.panel_once || null,
+    // What brings the first visitors, once the site is live (lib/launch.mjs).
+    launch: d.status === "published" ? await launchKit(d).catch((e) => { console.error("launch kit", e.message); return null; }) : null,
   };
 }
 

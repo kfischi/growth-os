@@ -22,7 +22,7 @@ echo "done"
 step "qa-page on what the site builder renders (full site, bare site, empty draft, with a video, every trade)"
 built=$(mktemp -d)
 node scripts/tests/builder-render.mjs "$built" >/dev/null || fail=1
-for page in index.html privacy.html accessibility.html guides.html bare.html draft.html draft-ba.html video.html; do
+for page in index.html privacy.html accessibility.html guides.html area.html bare.html draft.html draft-ba.html video.html; do
   [ -f "$built/$page" ] || continue
   out=$(node scripts/qa-page.cjs "$built" "$page" 2>&1 | tail -1)
   case "$out" in PASS*) ;; *) echo "FAIL builder $page: $out"; fail=1;; esac
@@ -49,6 +49,8 @@ node scripts/tests/lead-system.test.mjs || fail=1
 step "site builder (API, against fakes)"
 node scripts/tests/site-builder.test.mjs 2>/dev/null || { node scripts/tests/site-builder.test.mjs; fail=1; }
 node scripts/tests/billing.test.mjs 2>/dev/null || { node scripts/tests/billing.test.mjs; fail=1; }
+node scripts/tests/area-pages.test.mjs 2>/dev/null || { node scripts/tests/area-pages.test.mjs; fail=1; }
+node scripts/tests/search.test.mjs 2>/dev/null || { node scripts/tests/search.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
 node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-chat.test.mjs; fail=1; }
 node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }

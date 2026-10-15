@@ -15,8 +15,14 @@ for (const f of ["leadbot.js", "leadform.js", "a11y.js"]) fs.copyFileSync(path.j
 fs.cpSync(path.join(repo, "demos/shared/fonts"), path.join(out, "assets/fonts"), { recursive: true }); // the drafts load their fonts from here
 const photos = { portrait: "plumber-portrait.webp", work1: "plumber-siphon.webp", work2: "plumber-leak.webp", work3: "plumber-drain.webp", before: "plumber-leak.webp", after: "plumber-siphon.webp" };
 for (const f of Object.values(photos)) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets/photos", f), path.join(out, "assets/photos", f));
-const site = P.render({ ...SAMPLE, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
+// Two areas with the owner's own words: each gets a page (area.html below is the first, for qa-page).
+const regions = [
+  { name: "חדרה", towns: ["חדרה"], response: "20 דק׳", note: "אני גר בחדרה ומגיע לרוב הקריאות בעיר תוך 20 דקות. בבניינים הישנים כאן החלפתי עשרות דודים וצנרת." },
+  { name: "עמק חפר", towns: ["עמק חפר", "כפר יונה"], response: "", note: "בעמק חפר אני עובד בעיקר במושבים: הרבה בתים פרטיים, צנרת חיצונית ודודי שמש על הגג." },
+];
+const site = P.render({ ...SAMPLE, regions, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
 for (const [name, html] of Object.entries(site)) fs.writeFileSync(path.join(out, name), html);
+fs.writeFileSync(path.join(out, "area.html"), site[P.areaPage("חדרה")]);
 for (const [name, body] of Object.entries(P.STATIC_FILES)) fs.writeFileSync(path.join(out, name), body);
 // The same site with a short video at the top, when ffmpeg is here to make one (VP9 in MP4: the test browser can't play H.264).
 try {

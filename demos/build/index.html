@@ -152,6 +152,15 @@
   .approve h3 { margin: 14px 0 6px; font-size: 15px; }
   .approve .pkgs { margin-bottom: 10px; }
   .approve .warn { color: #8a1c1c; font-weight: 600; }
+  .launch { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; background: #fff; }
+  .launch summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+  .launch ol { margin: 8px 0; padding-inline-start: 18px; font-size: 14px; color: var(--ink); }
+  .textbox, .linkbox { white-space: pre-line; background: var(--paper); border-radius: 8px; padding: 8px 10px; color: var(--ink) !important; overflow-wrap: anywhere; }
+  .regions { display: grid; gap: 10px; }
+  .region-card { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+  .region-card legend { font-weight: 700; font-size: 14px; padding: 0 4px; }
+  .region-card textarea { min-height: 72px; }
+  .region-card .count { color: var(--slate); font-size: 12px; }
   .approve .total { color: var(--ink); font-weight: 700; font-size: 15px; }
   .approve ul { margin: 0 0 8px; padding-inline-start: 18px; font-size: 14px; }
   .linkish { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; }
@@ -626,6 +635,7 @@
       const a = document.createElement('a'); a.className = 'btn'; a.href = b.panel; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'לפתוח את הפאנל'; box.append(a);
       box.append(btn('שמרתי את הקישור', async (x) => { x.disabled = true; const r = await call('panel-seen', { body: {} }); x.disabled = false; if (r.ok) setBilling(r.data); }, 'btn quiet'));
     }
+    if (b.launch) paintLaunch(box, b.launch);
     const sub = b.sub;
     if (sub) {
       box.append(h3('המנוי'));
@@ -643,6 +653,26 @@
       for (const i of b.invoices) { const li = document.createElement('li'); const a = document.createElement('a'); a.href = i.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = (i.number ? 'מס׳ ' + i.number + ' · ' : '') + nis(i.sum) + ' · ' + dateHe(i.date); li.append(a); ul.append(li); }
       box.append(ul);
     }
+  }
+
+  // The first visitors: Google Business Profile, a WhatsApp status, local groups. Each with its own link.
+  function paintLaunch(box, k) {
+    box.append(h3('להביא את הלקוחות הראשונים'));
+    const note = el('p', 'note', 'אתר חדש מתחיל להופיע בגוגל בהדרגה. בשבועות הראשונים רוב הכניסות מגיעות מכאן.'); box.append(note);
+    const copy = (text, label) => btn(label || 'להעתיק', async (x) => {
+      try { await navigator.clipboard.writeText(text); x.textContent = 'הועתק'; } catch (e) { x.textContent = 'לא הצלחנו להעתיק'; }
+      setTimeout(() => { x.textContent = label || 'להעתיק'; }, 2000);
+    }, 'btn quiet');
+    const card = (title, why) => { const d = el('details', 'launch'); const sm = el('summary', null, title); d.append(sm); if (why) d.append(el('p', null, why)); box.append(d); return d; };
+    const g = card('1. פרופיל עסק בגוגל', 'מה שמופיע בגוגל מפות ובחיפוש של התחום ליד הלקוח. חינם, ולרוב מאושר תוך כמה ימים.');
+    const ol = el('ol'); for (const s of k.gbp.steps) ol.append(el('li', null, s)); g.append(ol);
+    const go = document.createElement('a'); go.className = 'btn'; go.href = 'https://business.google.com/create'; go.target = '_blank'; go.rel = 'noopener'; go.textContent = 'לפתוח פרופיל בגוגל';
+    const lk = el('p', 'linkbox'); lk.append(ltr(k.gbp.link)); g.append(go, lk, copy(k.gbp.link, 'להעתיק את הקישור לאתר'));
+    const s = card('2. סטטוס בוואטסאפ', 'כל מי ששמר את המספר שלכם רואה אותו. שווה לחזור עליו פעם בשבועיים.');
+    s.append(el('p', 'textbox', k.status.text), copy(k.status.text));
+    const p = card('3. קבוצות של השכונה והעיר', 'רק בקבוצות שמותר בהן לפרסם, ולא יותר מפעם בכמה שבועות.');
+    p.append(el('p', 'textbox', k.groups.text), copy(k.groups.text));
+    if (k.tracked) box.append(el('p', 'note', 'לכל ערוץ קישור משלו, ובפאנל רואים כמה כניסות ופניות הגיעו מכל אחד.'));
   }
 
   async function openAddress() {
@@ -776,6 +806,7 @@
     if (st.type === 'headline') return Boolean(c.headline_2);
     if (st.type === 'copy') return st.id === 'headline' ? Boolean(c.headline_2) : Boolean(String(c[Object.keys(st.options[0])[0]] || '').trim());
     if (st.type === 'photos') return Object.keys(s.photos || {}).length > 0;
+    if (st.type === 'regions') return (c.regions || []).length > 0;
     return false;
   }
 
@@ -947,6 +978,45 @@
       const own = el('button', 'linkish skip', 'רוצים נוסח אחר? כתבו לנו בשיחה'); own.type = 'button';
       own.addEventListener('click', () => { msg.value = st.id === 'headline' ? 'אשמח לכותרת אחרת: ' : 'אשמח לפסקת פתיחה אחרת: '; msg.focus(); });
       guideBox.append(chips, own);
+    } else if (st.type === 'regions') {
+      // A card per area: its name, its towns (from the owner's list) and a few words of their own about it.
+      const MIN = 60, towns = c.towns || [];
+      const guess = String(c.area || '').split(/,|\s+ו(?=\S)/).map((x) => x.trim()).filter(Boolean).slice(0, 3);
+      const cards = (c.regions && c.regions.length ? c.regions : guess.map((n) => ({ name: n, towns: towns.filter((t) => t === n), note: '' })))
+        .map((r) => ({ name: r.name, towns: new Set(r.towns || []), note: r.note || '' }));
+      const list = el('div', 'regions');
+      const draw = () => {
+        list.textContent = '';
+        cards.forEach((r, n) => {
+          const card = el('fieldset', 'region-card');
+          const lg = el('legend', null, 'אזור ' + (n + 1)); card.append(lg);
+          const nm = el('input'); nm.type = 'text'; nm.maxLength = 30; nm.value = r.name; nm.placeholder = 'שם האזור, למשל: השרון'; nm.setAttribute('aria-label', 'שם האזור ' + (n + 1));
+          nm.addEventListener('input', () => { r.name = nm.value; });
+          const tc = el('div', 'chips');
+          for (const t of towns) tc.append(chip(t, r.towns.has(t), (e) => { r.towns.has(t) ? r.towns.delete(t) : r.towns.add(t); e.currentTarget.setAttribute('aria-pressed', String(r.towns.has(t))); }));
+          const ta = el('textarea'); ta.maxLength = 500; ta.rows = 3; ta.value = r.note; ta.setAttribute('aria-label', 'כמה מילים על העבודה ב' + (r.name || 'אזור ' + (n + 1)));
+          ta.placeholder = 'למשל: אני גר בחדרה ומגיע לרוב הקריאות תוך 20 דקות. החלפתי כאן עשרות דודים בבניינים הישנים.';
+          const cnt = el('small', 'count'); const upd = () => { cnt.textContent = ta.value.trim().length < MIN ? 'עוד ' + (MIN - ta.value.trim().length) + ' תווים לפחות' : ta.value.trim().length + '/500'; };
+          ta.addEventListener('input', () => { r.note = ta.value; upd(); }); upd();
+          const rm = el('button', 'linkish', 'להוריד את האזור'); rm.type = 'button'; rm.addEventListener('click', () => { cards.splice(n, 1); draw(); });
+          card.append(nm, el('p', 'design-q', 'הישובים באזור'), tc, ta, cnt, rm);
+          list.append(card);
+        });
+      };
+      draw();
+      const add = el('button', 'linkish', 'עוד אזור'); add.type = 'button';
+      add.addEventListener('click', () => { if (cards.length >= 5) { bubble('fail', 'עד 5 אזורים.'); return; } cards.push({ name: '', towns: new Set(), note: '' }); draw(); });
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', async () => {
+        const out = cards.filter((r) => r.name.trim()).map((r) => ({ name: r.name.trim(), towns: towns.filter((t) => r.towns.has(t)), note: r.note.trim(), response: '' }));
+        const short = out.find((r) => r.note.length < MIN), empty = out.find((r) => !r.towns.length);
+        if (!out.length) { bubble('fail', 'כתבו לפחות אזור אחד, או דלגו.'); return; }
+        if (empty) { bubble('fail', 'סמנו ישוב אחד לפחות ב' + empty.name + '.'); return; }
+        if (short) { bubble('fail', 'על ' + short.name + ' כתבו לפחות ' + MIN + ' תווים, או הורידו את האזור.'); return; }
+        if (await answer(st, { regions: out }, out.map((r) => r.name).join(', '))) { markDone('regions'); paint(); }
+      });
+      const r = el('div', 'row'); r.append(save, add);
+      guideBox.append(list, r);
     } else if (st.type === 'photos') {
       const open = el('button', 'btn', 'לתמונות'); open.type = 'button';
       open.addEventListener('click', () => { $('#photos').open = true; $('#photos').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });

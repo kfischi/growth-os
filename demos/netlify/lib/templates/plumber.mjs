@@ -53,6 +53,10 @@ export const SERVICES = {
   label: "שירותים ומחירים",
 };
 export const TOWNS = { min: 1, max: 12, itemMax: 22, label: "ישובים" };
+// A page per area the business really works in (published sites only): only from the owner's own words about it.
+// An area without a note of its own gets no page: a page per town with the name swapped is doorway spam to Google.
+export const REGIONS = { max: 5, nameMax: 30, townsMax: 12, noteMin: 60, noteMax: 500, responseMax: 14, label: "דפי אזורים" };
+export const regionsReady = (c) => (c.regions || []).filter((r) => r && String(r.name || "").trim() && (r.towns || []).length && String(r.note || "").trim().length >= REGIONS.noteMin).slice(0, REGIONS.max);
 
 export const PHOTOS = {
   hero: { label: "רקע לראש האתר", aspect: "16 / 9" },  // behind the top of the site, washed so the text stays readable
@@ -94,6 +98,7 @@ export function emptyContent(tradeId = "plumber") {
   c.trade_id = tradeOf(tradeId).id;
   c.services = [];
   c.towns = [];
+  c.regions = [];
   c.look = "blueprint"; c.palette = "blue";  // the design, picked in the builder (looks.mjs)
   return c;
 }
@@ -151,6 +156,7 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @returns {{ "index.html": string, "privacy.html": string, "accessibility.html": string }}
  */
 // A service's page name: stable for the same name (so its address doesn't move when the list is reordered), ASCII only.
+export function areaPage(name) { return servicePage(name).replace(/^service-/, "area-"); }
 export function servicePage(name) {
   let x = 2166136261;
   for (const ch of String(name || "").trim()) { x ^= ch.codePointAt(0); x = Math.imul(x, 16777619) >>> 0; }
@@ -204,6 +210,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const has = (k) => Boolean(String(c[k] || "").trim());
   const services = (c.services || []).slice(0, SERVICES.max);
   const towns = (c.towns || []).slice(0, TOWNS.max);
+  const areas = regionsReady(c);
   const wa = israeliPhone(c.whatsapp), call = israeliPhone(c.phone) || wa;
   const waIntl = wa ? wa.intl : "";
   const callLocal = call ? call.local : "";
@@ -411,6 +418,7 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
     <div>
       <div class="head"><h2>אזורי שירות</h2>${has("radius_note") ? `<span class="mono">${h(c.radius_note)}</span>` : ""}</div>
       <div class="towns">${towns.length ? towns.map((t) => `<span>${h(t)}</span>`).join("") : `<span class="todo">${h(TOWNS.label)}</span>`}</div>
+      ${areas.length ? `<p class="area-links">${areas.map((r) => `<a href="${draft ? "#" : areaPage(r.name)}">${h(trade)} ב${h(r.name)}</a>`).join("")}</p>` : ""}
     </div>
     <div>
       <p>${h(W.areaNote || (T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
@@ -425,9 +433,11 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
 <footer class="wrap"><div class="row"><span>${h(name)} · ${h(trade)} · ${year}</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="${draft ? "#" : "privacy.html"}">פרטיות</a> · <a href="${draft ? "#" : "accessibility.html"}">הצהרת נגישות</a></span></div>${creditLine}</footer>
 
 ${video ? `<script>${REEL_JS}</script>
-` : ""}<script src="${h(assets)}leadform.js"></script>
-<script src="${h(assets)}leadbot.js"></script>
+` : ""}<script src="${h(assets)}leadform.js" defer></script>
+<script src="${h(assets)}leadbot.js" defer></script>
 <script>
+// The chat's scripts load without holding up the page (defer); this runs once they are in.
+document.addEventListener("DOMContentLoaded", () => {
   const RANGES = ${js(ranges)};
   const SITE = ${js({ whatsapp: bot.whatsapp, leads })};
   const BOT = ${js(bot)};
@@ -466,6 +476,7 @@ ${video ? `<script>${REEL_JS}</script>
   if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
   if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
   if (SITE.leads && LeadForm.testimonials) LeadForm.testimonials(SITE.leads.replace("/api/lead/", "/api/testimonials/")); // what customers wrote, shown at once
+});
 </script>
 </body>
 </html>
@@ -594,13 +605,52 @@ ${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others
     return [file, page];
   }));
 
+  // One page per area the owner wrote about: their words about working there, its towns and how fast they come.
+  const areaPages = draft ? {} : Object.fromEntries(areas.map((r) => {
+    const file = areaPage(r.name), rname = String(r.name).trim(), rtowns = r.towns.slice(0, REGIONS.townsMax);
+    const resp = String(r.response || "").trim() || (has("response_time") ? String(c.response_time).trim() : "");
+    const title = `${trade} ב${rname}`;
+    const adesc = `${title}: ${rtowns.slice(0, 4).join(", ")}${rtowns.length > 4 ? " ועוד" : ""}. ${name}${resp ? `, חוזרים תוך ${resp}` : ""}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
+    const wa = waIntl ? `https://wa.me/${waIntl}?text=${encodeURIComponent(`היי ${ownerFirst}, אני מ${rtowns[0] || rname}, אשמח לפרטים.`)}` : "";
+    const rows = [
+      `<tr><th>ישובים</th><td>${rtowns.map(h).join(" · ")}</td></tr>`,
+      resp ? `<tr><th>זמן חזרה</th><td>${h(resp)}</td></tr>` : "",
+      has("hours") ? `<tr><th>שעות פעילות</th><td>${h(c.hours)}</td></tr>` : "",
+      has("warranty") ? `<tr><th>אחריות</th><td>${h(c.warranty)}</td></tr>` : "",
+    ].filter(Boolean).join("");
+    const others = areas.filter((o) => o !== r);
+    const schema = {
+      "@context": "https://schema.org", "@graph": [
+        { "@type": T.schema || "LocalBusiness", name, ...(call ? { telephone: "+" + call.intl } : {}), ...(site ? { url: site } : {}),
+          areaServed: rtowns.map((t) => ({ "@type": "City", name: t })) },
+        ...(site ? [{ "@type": "BreadcrumbList", itemListElement: [
+          { "@type": "ListItem", position: 1, name, item: site },
+          { "@type": "ListItem", position: 2, name: title, item: site + file },
+        ] }] : []),
+      ],
+    };
+    const body = `
+${String(r.note).trim().split(/\n+/).map((l) => `<p class="lead-in">${h(l)}</p>`).join("\n")}
+<table class="svc-facts">${rows}</table>
+<p class="svc-ctas"><a class="gd-cta" href="./">${h(W.open)} בצ׳אט</a>${wa ? ` <a class="svc-alt" href="${h(wa)}">וואטסאפ</a>` : ""}${callLocal ? ` <a class="svc-alt" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}</p>
+${services.length ? `<h2>מה עושים ב${h(rname)}</h2>\n<ul class="svc-more">${services.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}
+${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${areaPage(o.name)}">${h(trade)} ב${h(o.name)}</a></li>`).join("")}</ul>` : ""}`;
+    const page = legal(title, body, `
+<meta name="description" content="${h(adesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
+<meta property="og:title" content="${h(title)} · ${h(name)}">
+<meta property="og:description" content="${h(adesc)}">
+<style>${GUIDE_CSS}${SERVICE_CSS}:root { --link: ${h(themeColor(L.look, L.p))}; }</style>
+<script type="application/ld+json">${js(schema)}</script>`, file, true);
+    return [file, page];
+  }));
+
   // For Google: every page worth finding, and where the list is. Only with the real address.
   const today = now.toISOString().slice(0, 10);
   const seo = site ? {
     "robots.txt": `User-agent: *\nAllow: /\n\nSitemap: ${site}sitemap.xml\n`,
-    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", ...Object.keys(svcPages), "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
+    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", ...Object.keys(svcPages), ...Object.keys(areaPages), "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
   } : {};
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...svcPages, ...seo }) };
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...svcPages, ...areaPages, ...seo }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
@@ -629,6 +679,7 @@ export function chatFacts(c) {
     c.years && `${yearsHe(c.years)} בתחום.`,
     c.warranty && `אחריות: ${c.warranty}.`,
     `ישובים: ${(c.towns || []).join(", ")}.${c.radius_note ? " " + c.radius_note + "." : ""}`,
+    ...regionsReady(c).map((r) => `אזור ${r.name}: ${r.towns.join(", ")}${r.response ? `, חוזרים תוך ${r.response}` : ""}. ${String(r.note).replace(/\s+/g, " ").trim()}`),
     "שירותים:",
     ...(c.services || []).map((s) => `- ${s.name}${s.detail ? ` (${s.detail})` : ""}${s.price ? `: ${s.price}` : ""}${s.time ? `, ${s.time}` : ""}`),
     c.price_note && `${c.price_note}.`,
@@ -751,6 +802,8 @@ const CSS = `
   .area .head h2 { color: #fff; } .area .head .mono { color: var(--on-deep-soft); }
   .towns { display: flex; flex-wrap: wrap; gap: 8px; }
   .towns span { border: 1px solid var(--on-deep-line); padding: 8px 14px; border-radius: 4px; }
+  .area-links { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 0; }
+  .area-links a { color: #fff; font-weight: 600; text-underline-offset: 4px; }
   .area .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
   .area p { color: var(--on-deep-text); margin: 0 0 20px; }
   footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }

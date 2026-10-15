@@ -6,7 +6,7 @@ Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SER
 // LEADS_ADMIN_KEY carries the space and line break a paste into Netlify can add: the functions must trim it.
 
 /* ---------------- fakes ---------------- */
-export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [], ls_payments: [], ls_billing: [] };
+export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [], ls_payments: [], ls_billing: [], ls_links: [] };
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
 export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"], ["clients/sample-plumber/assets/a11y.js", "sha-a11y"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
@@ -30,6 +30,7 @@ function match(row, filters) {
 }
 const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
 export const imageCalls = [];
+export const indexNow = []; // the pings to IndexNow after a deploy (lib/search.mjs)
 // Netlify (lib/hosting.mjs): sites, deploys by digest, uploads, the DNS zone of SITES_DOMAIN.
 export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0, bodies: new Map() };
 globalThis.fetch = async (url, opt = {}) => {
@@ -46,6 +47,7 @@ globalThis.fetch = async (url, opt = {}) => {
     return res({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "iVBORw0KGgo=" } }] } }] });
   }
   if (u.host === "service-pro-web.netlify.app" && u.pathname.startsWith("/shared/")) return new Response("/* " + u.pathname + " */");
+  if (u.host === "api.indexnow.org") { indexNow.push(JSON.parse(opt.body)); return new Response("", { status: 202 }); }
   if (u.host === "api.netlify.com") {
     assert.equal(opt.headers.authorization, "Bearer nf-test"); assert.ok(opt.signal, "netlify call has a timeout");
     const p = u.pathname.replace("/api/v1", ""), body = opt.body && !Buffer.isBuffer(opt.body) && typeof opt.body === "string" ? JSON.parse(opt.body) : null;

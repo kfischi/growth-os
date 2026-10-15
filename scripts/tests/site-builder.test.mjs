@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { SAMPLE } from "./builder-sample.mjs";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 
-import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls, nl } from "./builder-fakes.mjs";
+import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls, nl, indexNow } from "./builder-fakes.mjs";
 // What the model was told about the draft in its last turn.
 const aiCallsState = () => { const m = aiCalls.at(-1).messages.at(-1).content; return typeof m === "string" ? m : m[0].text; };
 
@@ -557,6 +557,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.match(nl.bodies.get("/sitemap.xml"), /<loc>https:\/\/oren-mayim.sites.example.co.il\/guides.html<\/loc>/);
   assert.match(nl.bodies.get("/index.html"), /<p class="credit">האתר נבנה ב-<a href="https:\/\/service-pro-web.netlify.app\/\?utm_source=client&amp;utm_campaign=oren-mayim"/);
   assert.match(nl.bodies.get("/privacy.html"), /noindex, follow/, "the legal pages stay out of the results");
+  // Straight to the search engines: IndexNow gets every indexable page, with the key file served by the site.
+  const ping = indexNow.at(-1);
+  assert.equal(ping.host, "oren-mayim.sites.example.co.il"); assert.ok(sent.includes("/" + ping.key + ".txt"), "the key file is deployed");
+  assert.equal(nl.bodies.get("/" + ping.key + ".txt"), ping.key);
+  assert.ok(ping.urlList.includes("https://oren-mayim.sites.example.co.il/") && ping.urlList.some((u) => /service-/.test(u)) && !ping.urlList.some((u) => /privacy|accessibility/.test(u)), "the pages, not the legal ones");
   assert.equal(nl.uploads.length, new Set(Object.values([...nl.deploys.values()].at(-1).files)).size, "every new file uploaded once");
   assert.ok(C.allowed_origins.includes("https://oren-mayim-site.netlify.app"));
   assert.equal(C.allowed_origins[0], "https://oren-mayim.sites.example.co.il", "the lead system links to the main address");

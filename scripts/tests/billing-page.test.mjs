@@ -104,6 +104,8 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.match(await p.textContent("#log"), /התשלום התקבל/);
     // nothing wider than the screen
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "no sideways scroll");
+    assert.match(box, /להביא את הלקוחות הראשונים/); assert.match(box, /פרופיל עסק בגוגל/);
+    assert.match(box, /פתחתי אתר לעסק: אינסטלציה/);
     if (SHOTS) await p.screenshot({ path: `${SHOTS}/live-${w}.png`, fullPage: true });
   });
   await check("panel saved", async () => {
