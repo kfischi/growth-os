@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>כיוון א: פוסטר כחול · Easy Landing</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 1. The object: a street poster pasted on a wall, one colour, letters too big for the sheet.
+   2. The detail only this subject has: the enquiry itself, "פנייה נכנסת 21:47", answered in seconds, stamped on the poster.
+   3. The one bold move: a single saturated field of Klein blue with white type that runs off the edge. Everything below stays white and quiet. */
+:root {
+  --go: #ff6b3d;         /* the one action colour: warm against the blue, never yellow */
+  --go-ink: #0b1033;
+  --klein: #1b2fd6;      /* the poster */
+  --klein-deep: #0f1a8a; /* its shadow side */
+  --sheet: #ffffff;
+  --sky: #dfe6ff;        /* neutral, leaning blue */
+  --night: #0b1033;      /* ink */
+  --flare: #ff5a3c;      /* the one warm mark: a live enquiry */
+  --display: 'Rubik', 'Arial Black', system-ui, sans-serif;
+  --body: 'Rubik', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', 'Rubik', monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--sheet); color: var(--night); font: 400 1.0625rem/1.6 var(--body); overflow-x: clip; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--flare); outline-offset: 3px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-block-size: 52px; padding: 0 26px; border-radius: 0; font: 700 1.05rem var(--body); text-decoration: none; border: 0; }
+.btn.go { background: var(--go); color: var(--go-ink); box-shadow: 0 10px 24px -12px rgba(255,107,61,.8); }
+.btn.go:hover { filter: brightness(1.05); }
+.btn.white { background: var(--sheet); color: var(--klein); }
+.btn.line { box-shadow: inset 0 0 0 2px rgba(255,255,255,.7); color: var(--sheet); }
+.btn.blue { background: var(--klein); color: var(--sheet); }
+
+/* the poster */
+.poster { background: var(--klein); color: var(--sheet); position: relative; overflow: hidden; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 68px; }
+.brand { font: 900 1.25rem var(--display); letter-spacing: -.02em; text-decoration: none; }
+.bar .btn { min-block-size: 42px; padding: 0 16px; font-size: .95rem; }
+.hero { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 24px 48px; align-items: end; padding-block: clamp(24px, 6svh, 64px) clamp(48px, 9svh, 96px); }
+.hero > * { min-width: 0; }
+h1 { margin: 0; font: 900 clamp(4rem, 11vw, 10.5rem)/.86 var(--display); letter-spacing: -.055em; margin-inline-end: -.08em; }
+h1 span { display: block; }
+h1 .out { color: transparent; -webkit-text-stroke: 2px var(--sheet); }
+.lead { margin: 22px 0 6px; font: 700 clamp(1.3rem, 2.2vw, 1.8rem)/1.25 var(--body); max-width: 22ch; }
+.sub { margin: 0 0 24px; color: var(--sky); font-size: 1.1rem; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.reel-box { position: relative; transform: rotate(-3deg); }
+.vid-head { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-weight: 700; }
+.vid-head i { inline-size: 30px; block-size: 30px; border-radius: 50%; background: var(--sheet); display: grid; place-items: center; }
+.vid-head i::before { content: ""; margin-left: 3px; border-block: 6px solid transparent; border-left: 10px solid var(--klein); }
+.vid-head small { margin-inline-start: auto; font: 500 .85rem var(--mono); color: var(--sky); }
+.reel { margin: 0; }
+.reel-frame { position: relative; aspect-ratio: 1240 / 820; border: 10px solid var(--sheet); background: var(--sheet); box-shadow: 24px 24px 0 var(--klein-deep); }
+.reel-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.stamp { position: absolute; bottom: -22px; inset-inline-end: -10px; z-index: 4; background: var(--flare); color: var(--night); font: 500 .85rem/1.3 var(--mono); padding: 8px 12px; transform: rotate(5deg); }
+.stamp b { display: block; font: 700 1rem var(--body); }
+
+/* below the poster: white, quiet */
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 2px solid var(--night); }
+.facts p { margin: 0; padding: 28px 20px 28px 0; font: 700 clamp(1.1rem, 1.8vw, 1.4rem)/1.3 var(--body); border-inline-start: 2px solid var(--night); padding-inline-start: 20px; }
+.facts p:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.facts b { display: block; font: 900 clamp(2.4rem, 4.6vw, 3.6rem)/1 var(--display); color: var(--klein); letter-spacing: -.04em; margin-bottom: 6px; }
+.plans { padding-block: clamp(48px, 9svh, 96px); }
+.plans h2 { margin: 0 0 24px; font: 900 clamp(2rem, 4.4vw, 3.4rem)/1 var(--display); letter-spacing: -.04em; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border: 2px solid var(--night); }
+.card { padding: clamp(20px, 3vw, 36px); min-width: 0; }
+.card + .card { border-inline-start: 2px solid var(--night); background: var(--klein); color: var(--sheet); }
+.card h3 { margin: 0 0 4px; font: 900 1.6rem var(--display); }
+.card .for { margin: 0 0 18px; opacity: .85; }
+.price { margin: 0; font: 900 clamp(2.6rem, 5vw, 3.8rem)/1 var(--display); letter-spacing: -.03em; }
+.price small { font: 500 1rem var(--body); letter-spacing: 0; }
+.mo { margin: 6px 0 22px; font-weight: 700; }
+.card ul { margin: 0 0 24px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.card li::before { content: "— "; }
+.card + .card .btn.blue { background: var(--sheet); color: var(--klein); }
+.back { padding-block: 0 48px; color: #4a4f72; font-size: .95rem; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .reel-box { order: -1; transform: rotate(-2deg); margin-inline: 6px; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .facts p, .facts p:first-child { border-inline-start: 0; padding-inline-start: 0; border-top: 2px solid var(--night); }
+  .cards { grid-template-columns: minmax(0, 1fr); }
+  .card + .card { border-inline-start: 0; border-top: 2px solid var(--night); }
+  .reel-frame { border-width: 7px; box-shadow: 12px 12px 0 var(--klein-deep); }
+}
+@media (max-width: 420px) { h1 { font-size: 3.7rem; } .bar .btn { display: none; } }
+@media (prefers-reduced-motion: reduce) { .reel-box { transform: none; } }
+</style>
+</head>
+<body>
+<section class="poster">
+  <div class="wrap">
+    <header class="bar"><a class="brand" href="../">Easy Landing</a><a class="btn go" href="../build/">לבנות את האתר</a></header>
+    <div class="hero">
+      <div>
+        <h1><span>אתרים</span><span class="out">שבונים</span><span>עסקים.</span></h1>
+        <p class="lead">אתר לעסק שלכם שעונה ללקוחות, גם כשאתם עסוקים.</p>
+        <p class="sub">בונים אותו בעצמכם, בצ׳אט. משלמים רק כשהוא מוכן.</p>
+        <div class="ctas"><a class="btn go" href="../build/">לבנות את האתר שלי</a><a class="btn line" href="../film/">סרטון הסבר</a></div>
+      </div>
+      <div class="reel-box">
+        <p class="vid-head"><i aria-hidden="true"></i>צפו: ככה נבנה האתר<small>0:27</small></p>
+        <figure class="reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="../shared/video/hero/hero-poster.webp" aria-label="רגעים מהתהליך: האתר, הצ׳אט, התבניות, הצבעים, והפנייה שמגיעה בוואטסאפ"><source src="../shared/video/hero/hero.webm" type="video/webm"><source src="../shared/video/hero/hero.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+        </figure>
+        <p class="stamp" aria-hidden="true"><b>פנייה נכנסת</b>21:47 · נענתה בוואטסאפ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="facts">
+    <p><b>שניות</b>עד שהלקוח מקבל מענה בוואטסאפ</p>
+    <p><b>24/7</b>הצ׳אט עונה גם כשאתם בעבודה, בלילה ובשבת</p>
+    <p><b>16</b>תחומים, ולכל אחד אתר לדוגמה</p>
+  </div>
+  <section class="plans" aria-labelledby="t-plans">
+    <h2 id="t-plans">שתי חבילות. בלי התחייבות.</h2>
+    <div class="cards">
+      <article class="card"><h3>נוכחות</h3><p class="for">מקום אחד לשלוח אליו לקוחות.</p><p class="price"><bdi>1,500 ₪</bdi> <small>הקמה</small></p><p class="mo"><bdi>150 ₪</bdi> לחודש</p><ul><li>דף מעוצב ומותאם לנייד</li><li>כפתור וואטסאפ וחיוג</li><li>אחסון ותחזוקה</li></ul><a class="btn blue" href="../build/">לבנות דף נוכחות</a></article>
+      <article class="card"><h3>נציג AI</h3><p class="for">כל פנייה מקבלת מענה.</p><p class="price"><bdi>1,900 ₪</bdi> <small>הקמה</small></p><p class="mo"><bdi>390 ₪</bdi> לחודש</p><ul><li>כל מה שבנוכחות</li><li>מענה בוואטסאפ תוך שניות</li><li>התראה ותזכורת על כל פנייה</li><li>צ׳אט באתר שעונה על שאלות</li></ul><a class="btn go" href="../build/">לבנות את האתר שלי</a></article>
+    </div>
+  </section>
+  <p class="back">כיוון א מתוך שלושה. <a href="./">לכל הכיוונים</a> · <a href="../">לאתר של היום</a></p>
+</main>
+<script src="../shared/reel.js"></script>
+</body>
+</html>
