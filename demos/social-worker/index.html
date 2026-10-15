@@ -8,75 +8,88 @@
 <meta name="description" content="הדרכת הורים, טיפול רגשי במבוגרים ובמתבגרים וליווי משפחות במעברים. בקליניקה בעמק חפר או אונליין. מתחילים בשיחת היכרות.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Fredoka:wght@300;400;500;600&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Rubik:wght@400;500&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the family map a parent and I draw together on squared notebook paper at the first meeting: circles, squares and the lines between them.
-     Detail: הדרכת הורים של 50 דקות, מפגשים דו-שבועיים, פגישת היכרות, מעברים (גירושין, מעבר דירה, אובדן), the clinic in a moshav in עמק חפר.
-     Bold move: a large hand-drawn family map fills the hero, and one clay-pink line runs from it to my round portrait. */
+  /* Object: the family map (genogram) a parent and I draw together at the first meeting, pinned to the rose plaster wall of the meeting room,
+     next to the children's drawings.
+     Detail: circles and squares and the lines between them; הדרכת הורים של 50 דקות, מפגשים דו-שבועיים; מעברים: גירושין, מעבר דירה, אובדן;
+             a moshav in עמק חפר with a separate entrance; MSW.
+     Bold move: the map is the hero, and it answers "בשביל מי?": pick parents, yourself, a teenager or the whole family and that part of the map lights up in rose marker. */
   :root {
-    --ink: #17484d;            /* teal pen on paper */
-    --ink-deep: #0f3236;       /* dark sections, text */
-    --ink-soft: #4d6b6d;       /* secondary text */
-    --clay: #e3aba3;           /* soft clay-pink marker */
-    --clay-ink: #9b4a52;       /* the same marker where it has to be read */
-    --paper: #f0f2ee;          /* cool notebook paper */
-    --grid: #d6dfdb;           /* the squares on the paper */
-    --display: "Suez One", "Fredoka", system-ui, sans-serif;
-    --body: "Fredoka", "Rubik", system-ui, sans-serif;
+    --plaster: #f6ebe6;        /* the rose plaster wall, page background */
+    --plaster-deep: #ecd8cf;   /* the wall in shade, panels */
+    --sheet: #fffcfa;          /* the paper the map is drawn on */
+    --cardigan: #1d5759;       /* teal pen, the main ink */
+    --cardigan-deep: #133b3d;  /* text, the evening section */
+    --cardigan-soft: #4c615f;  /* secondary text */
+    --marker: #dc9a90;         /* rose marker, drawing only */
+    --marker-ink: #94404e;     /* the same marker where it has to be read */
+    --grid: #ead9d2;           /* faint squares on the sheet */
+    --display: "Fredoka", "Rubik", system-ui, sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
     --hand: "Amatic SC", "Fredoka", cursive;
-    --phone-frame: var(--ink-deep);
-    --bot-bg: #fbfcfa; --bot-fg: var(--ink-deep); --bot-line: #d3ddd9; --bot-muted: var(--ink-soft);
-    --bot-accent: var(--ink); --bot-accent-fg: #fff; --bot-them: #e6ece9; --bot-me: var(--clay); --bot-me-fg: var(--ink-deep);
-    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px; --bot-focus: var(--clay-ink);
-    --ps-a: #c4d6d1; --ps-b: #2f6a6e; --ps-ui: var(--ink-deep); --ps-edit: var(--clay-ink);
+    --phone-frame: var(--cardigan-deep);
+    --bot-bg: var(--sheet); --bot-fg: var(--cardigan-deep); --bot-line: #e6d6cf; --bot-muted: var(--cardigan-soft);
+    --bot-accent: var(--cardigan); --bot-accent-fg: #fff; --bot-them: #f3e6e0; --bot-me: var(--cardigan); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 18px; --bot-focus: var(--marker-ink);
+    --ps-a: #efd9d0; --ps-b: #2f6a6e; --ps-ui: var(--cardigan-deep); --ps-edit: var(--marker-ink);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink-deep); font-family: var(--body); font-weight: 400; font-size: 17.5px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--plaster); color: var(--cardigan-deep); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--clay-ink); outline-offset: 3px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.12; margin: 0; letter-spacing: -.005em; }
-  .hand { font-family: var(--hand); font-weight: 700; letter-spacing: .01em; }
+  :focus-visible { outline: 3px solid var(--marker-ink); outline-offset: 3px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.12; margin: 0; letter-spacing: -.01em; }
   .ltr { direction: ltr; unicode-bidi: isolate; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 12px 24px; font: 500 16.5px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; }
-  .btn-ink { background: var(--ink); color: #fff; }
-  .btn-ink:hover { background: var(--ink-deep); }
-  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
-  .btn-line:hover { background: #e2e9e6; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 24px; font: 500 16.5px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 16px; transition: background .2s, transform .2s; }
+  .btn-ink { background: var(--cardigan); color: #fff; box-shadow: 0 4px 0 var(--cardigan-deep); }
+  .btn-ink:hover { background: #17494b; transform: translateY(-1px); }
+  .btn-line { border: 2px solid var(--cardigan); color: var(--cardigan); background: transparent; }
+  .btn-line:hover { background: var(--sheet); }
 
-  .demo { background: var(--ink-deep); color: #b8cfcd; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--cardigan-deep); color: #bdd2d0; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero ---------- */
+  /* ---------- Top ---------- */
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 18px; }
-  .logo { font-family: var(--display); font-size: 25px; line-height: 1.1; }
-  .logo span + span { color: var(--clay-ink); margin-inline-start: .25em; }
-  .logo small { display: block; font-family: var(--body); font-size: 13px; color: var(--ink-soft); letter-spacing: .02em; }
-  .bar a { font-weight: 500; text-decoration: none; border-bottom: 2px solid var(--clay); padding-bottom: 1px; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo svg { width: 40px; height: 40px; flex: none; }
+  .logo b { display: block; font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1.05; }
+  .logo b span + span { color: var(--marker-ink); margin-inline-start: .25em; }
+  .logo small { display: block; font-size: 13px; color: var(--cardigan-soft); }
+  .bar a { font-weight: 500; text-decoration: none; border-bottom: 2.5px solid var(--marker); padding-bottom: 1px; white-space: nowrap; }
 
-  .hero { padding: 10px 0 64px; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 48px; align-items: center; }
+  /* ---------- Hero: the map on the wall ---------- */
+  .hero { padding: 12px 0 76px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: 56px; align-items: center; }
   .hero-copy { min-width: 0; }
-  .kicker { color: var(--ink-soft); font-size: 15px; margin: 0 0 14px; }
-  .hero h1 { font-size: clamp(38px, 4.6vw, 62px); margin: 0 0 20px; text-wrap: balance; }
-  .hero h1 em { font-style: normal; color: var(--ink); display: block; position: relative; }
-  .hero h1 em::after { content: ""; display: block; width: 4.2em; max-width: 70%; height: 10px; margin-top: 4px; background: var(--clay); border-radius: 0 0 60% 40% / 0 0 100% 100%; opacity: .85; }
-  .hero .lead { font-size: 19px; max-width: 34em; margin: 0 0 26px; color: var(--ink-soft); }
+  .kicker { display: inline-block; color: var(--marker-ink); font-family: var(--hand); font-size: 30px; line-height: 1; margin: 0 0 12px; }
+  .hero h1 { font-size: clamp(40px, 5vw, 66px); margin: 0 0 22px; text-wrap: balance; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; color: var(--cardigan); display: inline; background: linear-gradient(transparent 64%, rgba(220,154,144,.55) 64%, rgba(220,154,144,.55) 92%, transparent 92%); padding-inline: 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .hero .lead { font-size: 19px; max-width: 34em; margin: 0 0 28px; color: var(--cardigan-soft); }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .crisis { margin: 28px 0 0; max-width: 34em; padding: 13px 16px; background: var(--sheet); border-radius: 14px; border-inline-start: 5px solid var(--marker-ink); font-size: 15.5px; line-height: 1.5; box-shadow: 0 12px 26px -22px rgba(19,59,61,.5); }
+  .crisis a { font-weight: 500; color: var(--marker-ink); text-decoration-color: var(--marker); text-underline-offset: 3px; white-space: nowrap; }
 
-  .crisis { margin: 26px 0 0; max-width: 34em; padding: 12px 16px; border-inline-start: 4px solid var(--clay-ink); background: #fff; border-radius: 4px 14px 14px 4px; font-size: 15.5px; line-height: 1.5; }
-  .crisis a { font-weight: 600; text-decoration-color: var(--clay); text-underline-offset: 3px; white-space: nowrap; }
-
-  .map { position: relative; min-width: 0; aspect-ratio: 600 / 540; border-radius: 6px;
-    background-color: #f8f9f6;
+  .board { min-width: 0; position: relative; }
+  .map { position: relative; aspect-ratio: 600 / 520; background-color: var(--sheet);
     background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 24px 24px; background-position: -1px -1px;
-    box-shadow: 0 1px 0 rgba(15,50,54,.08), 0 24px 50px -36px rgba(15,50,54,.45); }
+    background-size: 26px 26px; background-position: -1px -1px; transform: rotate(-1.4deg); border-radius: 3px;
+    box-shadow: 0 1px 0 rgba(19,59,61,.06), 0 30px 50px -34px rgba(70,30,30,.45); }
+  .pin { position: absolute; z-index: 3; width: 18px; height: 18px; border-radius: 50%; top: -6px; box-shadow: 0 3px 5px rgba(0,0,0,.25), inset -3px -3px 0 rgba(0,0,0,.18); }
+  .pin.p1 { right: 46px; background: var(--cardigan); }
+  .pin.p2 { left: 46px; background: var(--marker); }
   .map svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: visible; }
-  .map .ps.portrait { position: absolute; left: 5%; top: 67%; width: 25%; aspect-ratio: 1; border-radius: 50%; box-shadow: 0 0 0 5px #f8f9f6, 0 0 0 7px var(--clay); z-index: 2; }
+  .map .ps.portrait { position: absolute; left: 5%; top: 68%; width: 24%; aspect-ratio: 1; border-radius: 50%; box-shadow: 0 0 0 5px var(--sheet), 0 0 0 7.5px var(--marker); z-index: 2; }
   .map .ps.portrait .ps-chip { display: none; }
-  .map-note { position: absolute; bottom: 10px; right: 14px; font-size: 12.5px; color: var(--ink-soft); background: rgba(248,249,246,.9); padding: 2px 8px; border-radius: 6px; }
+  .map-note { position: absolute; bottom: 10px; right: 14px; font-size: 12.5px; color: var(--cardigan-soft); background: rgba(255,252,250,.92); padding: 2px 8px; border-radius: 6px; }
+  .map [data-g] { transition: opacity .35s, stroke .35s, fill .35s; }
+  .map svg.picking [data-g]:not(.on) { opacity: .16; }
+  .map svg .on { stroke: var(--marker-ink); }
+  .map svg text.on { fill: var(--marker-ink); stroke: none; }
   .draw { stroke-dasharray: 1; stroke-dashoffset: 0; }
   @media (prefers-reduced-motion: no-preference) {
     .map .draw { stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.5,.1,.3,1) forwards; }
@@ -84,99 +97,132 @@
   }
   @keyframes draw { to { stroke-dashoffset: 0; } }
 
+  .pick { margin-top: 26px; background: var(--sheet); border-radius: 20px; padding: 16px 18px 18px; box-shadow: 0 16px 34px -28px rgba(19,59,61,.55); }
+  .pick-q { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0 0 10px; }
+  .pick-q b { font-family: var(--display); font-weight: 600; font-size: 19px; }
+  .pick-q span { font-size: 13.5px; color: var(--cardigan-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button { border: 1.5px solid #dcc6bd; background: var(--plaster); color: var(--cardigan-deep); font: 500 15px/1 var(--body); padding: 11px 15px; border-radius: 999px; cursor: pointer; transition: background .2s, border-color .2s; }
+  .chips button:hover { border-color: var(--marker-ink); }
+  .chips button[aria-pressed="true"] { background: var(--marker-ink); border-color: var(--marker-ink); color: #fff; }
+  .pick-out { display: flex; justify-content: space-between; align-items: center; gap: 12px 16px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e0cdc5; }
+  .pick-out p { margin: 0; flex: 1 1 260px; min-width: 0; font-size: 15.5px; }
+  .pick-out .btn { min-height: 46px; padding: 10px 18px; font-size: 15.5px; }
+
   /* ---------- Sections ---------- */
-  section { padding-block: 80px; }
-  .head { margin-bottom: 30px; max-width: 40em; }
-  .head h2 { font-size: clamp(32px, 4.2vw, 50px); }
-  .head p { margin: 10px 0 0; color: var(--ink-soft); }
+  section { padding-block: 88px; }
+  .head { margin-bottom: 36px; max-width: 42em; }
+  .head h2 { font-size: clamp(34px, 4.4vw, 54px); }
+  .head p { margin: 10px 0 0; color: var(--cardigan-soft); }
 
-  .areas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
-  .area { min-width: 0; padding: 22px 0 6px; padding-inline-end: 28px; }
-  .area + .area { padding-inline-start: 28px; border-inline-start: 1px solid var(--grid); }
-  .area .sym { display: block; width: 44px; height: 44px; margin-bottom: 12px; }
-  .area h3 { font-size: 25px; margin-bottom: 8px; }
-  .area p { margin: 0 0 10px; color: var(--ink-soft); font-size: 16.5px; }
+  /* the three areas, as notes pinned on the wall */
+  .areas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; }
+  .area { position: relative; min-width: 0; background: var(--sheet); padding: 30px 26px 22px; border-radius: 4px; box-shadow: 0 22px 36px -30px rgba(70,30,30,.5); }
+  .area:nth-child(1) { transform: rotate(-1.2deg); }
+  .area:nth-child(2) { transform: rotate(.9deg); margin-top: 22px; }
+  .area:nth-child(3) { transform: rotate(-.6deg); }
+  .area::before { content: ""; position: absolute; top: -7px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: var(--marker); box-shadow: 0 3px 4px rgba(0,0,0,.22), inset -3px -3px 0 rgba(0,0,0,.15); }
+  .area:nth-child(2)::before { background: var(--cardigan); }
+  .area .sym { display: block; width: 56px; height: 56px; margin-bottom: 14px; }
+  .area h3 { font-size: 27px; margin-bottom: 8px; }
+  .area p { margin: 0 0 12px; color: var(--cardigan-soft); font-size: 16.5px; }
   .area .facts { margin: 0; padding: 0; list-style: none; font-size: 15.5px; }
-  .area .facts li { padding: 6px 0; border-top: 1px dashed var(--grid); }
+  .area .facts li { padding: 7px 0; border-top: 1px dashed #e3d0c8; }
 
-  .start { background: #fff; }
-  .path { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; position: relative; margin: 0; padding: 0; list-style: none; }
-  .path::before { content: ""; position: absolute; top: 21px; right: 22px; left: 22px; border-top: 2px dashed var(--clay); }
+  .start { background: var(--plaster-deep); }
+  .path { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; position: relative; margin: 0; padding: 0; list-style: none; }
+  .path::before { content: ""; position: absolute; top: 25px; right: 26px; left: 26px; border-top: 2.5px dashed var(--marker); }
   .path li { position: relative; min-width: 0; }
-  .path .dot { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); display: grid; place-items: center; font-family: var(--display); font-size: 19px; color: var(--ink); position: relative; margin-bottom: 14px; }
-  .path li:last-child .dot { background: var(--ink); color: #fff; }
-  .path b { display: block; font-family: var(--display); font-weight: 400; font-size: 22px; line-height: 1.25; margin-bottom: 6px; }
-  .path span { color: var(--ink-soft); font-size: 16px; }
-  .privacy { margin: 34px 0 0; padding: 16px 20px; background: var(--paper); border-radius: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: center; max-width: 46em; }
-  .privacy svg { width: 30px; height: 30px; }
+  .path .dot { width: 52px; height: 52px; border-radius: 50%; background: var(--sheet); border: 2.5px solid var(--cardigan); display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 21px; color: var(--cardigan); position: relative; margin-bottom: 16px; }
+  .path li:nth-child(2) .dot { border-radius: 8px; }
+  .path li:last-child .dot { background: var(--cardigan); color: #fff; }
+  .path b { display: block; font-family: var(--display); font-weight: 600; font-size: 22px; line-height: 1.25; margin-bottom: 6px; }
+  .path span { color: var(--cardigan-soft); font-size: 16px; }
+  .privacy { margin: 40px 0 0; padding: 18px 22px; background: var(--sheet); border-radius: 18px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; max-width: 48em; }
+  .privacy svg { width: 34px; height: 34px; }
   .privacy p { margin: 0; font-size: 16px; }
 
-  .place-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, .9fr); gap: 22px; align-items: start; }
-  .shot { margin: 0; min-width: 0; }
-  .shot .ps { aspect-ratio: 4 / 5; border-radius: 14px; }
-  .shot:nth-child(2) { margin-top: 48px; }
-  .shot figcaption { margin-top: 8px; font-family: var(--hand); font-weight: 700; font-size: 25px; line-height: 1.1; color: var(--ink); }
-  .about { min-width: 0; align-self: center; }
+  /* the place */
+  .place { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 22px; }
+  .shot { margin: 0; min-width: 0; position: relative; }
+  .shot .ps { border-radius: 22px; }
+  .shot.big { grid-row: span 2; }
+  .shot.big .ps { aspect-ratio: 16 / 11; }
+  .shot.big .ps, .place .duo .ps { box-shadow: 0 26px 44px -34px rgba(70,30,30,.55); }
+  .duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; min-width: 0; }
+  .duo .ps { aspect-ratio: 4 / 5; }
+  .shot figcaption { margin-top: 8px; font-family: var(--hand); font-weight: 700; font-size: 27px; line-height: 1.05; color: var(--cardigan); }
+  .about { min-width: 0; background: var(--sheet); border-radius: 22px; padding: 22px 24px; }
   .about h3 { font-size: 26px; }
-  .about .cred { margin: 6px 0 16px; color: var(--ink-soft); font-size: 15.5px; }
-  .about dl { margin: 0; display: grid; gap: 0; }
-  .about dl div { padding: 10px 0; border-top: 1px dashed var(--grid); display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 10px; }
-  .about dt { color: var(--ink-soft); font-size: 15px; }
+  .about .cred { margin: 4px 0 12px; color: var(--cardigan-soft); font-size: 15px; }
+  .about dl { margin: 0; display: grid; }
+  .about dl div { padding: 9px 0; border-top: 1px dashed #e3d0c8; display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 10px; }
+  .about dt { color: var(--cardigan-soft); font-size: 15px; }
   .about dd { margin: 0; font-size: 16px; }
 
-  .prices { background: #fff; }
-  .price-sheet { max-width: 760px; }
-  .price-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--grid); }
-  .price-row b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.25; }
-  .price-row span { color: var(--ink-soft); font-size: 15.5px; }
-  .price-row .sum { font-size: 21px; font-weight: 500; color: var(--ink); white-space: nowrap; }
-  .price-note { margin: 18px 0 0; color: var(--ink-soft); font-size: 15.5px; }
+  /* prices */
+  .prices { background: var(--sheet); }
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; max-width: 900px; }
+  .price { min-width: 0; border: 2px solid var(--cardigan); border-radius: 22px; padding: 22px 24px; }
+  .price b { display: block; font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1.25; }
+  .price span { display: block; color: var(--cardigan-soft); font-size: 15.5px; }
+  .price .sum { margin-top: 14px; font-family: var(--display); font-weight: 500; font-size: 30px; color: var(--cardigan); }
+  .price-note { margin: 20px 0 0; color: var(--cardigan-soft); font-size: 15.5px; }
 
-  .owner { background: var(--ink-deep); color: #e4eeec; }
-  .owner .head p { color: #a6c0bd; }
+  /* what Yael sees */
+  .owner { background: var(--cardigan-deep); color: #e4eeec; }
+  .owner .head p { color: #a9c3c0; }
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
   .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
-  .owner li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
-  .owner li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--clay); display: grid; place-items: center; font-family: var(--display); color: var(--clay); }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--marker); display: grid; place-items: center; font-family: var(--display); font-weight: 600; color: #f1b9b0; }
+  .owner li:nth-child(2)::before { border-radius: 8px; }
   .owner li b { display: block; font-size: 20px; font-weight: 500; }
-  .owner li span { color: #a6c0bd; font-size: 16px; }
-  .owner .ph-cap { color: #a6c0bd; }
+  .owner li span { color: #a9c3c0; font-size: 16px; }
+  .owner .ph-cap { color: #a9c3c0; }
 
-  footer { padding-block: 34px 96px; color: var(--ink-soft); font-size: 14.5px; }
-  footer .row { display: flex; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; border-top: 1px solid var(--grid); padding-top: 18px; }
+  footer { padding-block: 34px 100px; color: var(--cardigan-soft); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; border-top: 1px solid #e3cfc7; padding-top: 18px; }
 
-  @media (max-width: 960px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; }
-    .map { max-width: 620px; width: 100%; margin-inline: auto; }
-    .place-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .about { grid-column: 1 / -1; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+    .board { max-width: 640px; width: 100%; margin-inline: auto; }
+    .areas { grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 640px; }
+    .area:nth-child(2) { margin-top: 0; }
+    .place { grid-template-columns: minmax(0, 1fr); }
+    .shot.big { grid-row: auto; }
     .owner-grid { grid-template-columns: minmax(0, 1fr); }
     .owner .phone { margin-inline: auto; }
   }
   @media (max-width: 760px) {
-    section { padding-block: 60px; }
-    .areas { grid-template-columns: minmax(0, 1fr); border-top: 0; }
-    .area, .area + .area { padding: 20px 0 8px; border-inline-start: 0; border-top: 2px solid var(--ink); }
-    .area { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; }
-    .area .sym { grid-row: span 3; margin: 2px 0 0; }
+    section { padding-block: 64px; }
+    .area { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 16px; padding: 26px 20px 18px; }
+    .area .sym { grid-row: span 3; width: 52px; height: 52px; margin: 2px 0 0; }
     .path { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-    .path::before { top: 22px; bottom: 22px; right: 21px; left: auto; border-top: 0; border-right: 2px dashed var(--clay); }
-    .path li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; }
+    .path::before { top: 26px; bottom: 26px; right: 25px; left: auto; border-top: 0; border-right: 2.5px dashed var(--marker); }
+    .path li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 16px; }
     .path .dot { margin: 0; }
+    .price-grid { grid-template-columns: minmax(0, 1fr); }
   }
   @media (max-width: 520px) {
-    body { font-size: 17px; }
-    .hero { padding-bottom: 48px; }
+    body { font-size: 16.5px; }
+    .hero { padding-bottom: 56px; }
+    .kicker { font-size: 26px; }
+    .hero h1 { font-size: clamp(34px, 10vw, 42px); }
     .hero .lead { font-size: 17.5px; }
     .ctas .btn { flex: 1 1 auto; }
-    .shot:nth-child(2) { margin-top: 28px; }
-    .shot figcaption { font-size: 22px; }
-    .price-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
-    .price-row b { font-size: 21px; }
+    .map { transform: rotate(-1deg); }
     .map-note { font-size: 11.5px; right: 8px; bottom: 6px; }
-    .map svg text { font-size: 33px; }
+    .map svg text { font-size: 34px; }
+    .map svg text.lab { font-size: 38px; }
+    .pick { padding: 14px 14px 16px; }
+    .chips button { font-size: 14.5px; padding: 10px 12px; }
+    .pick-out .btn { width: 100%; }
+    .duo { gap: 12px; }
+    .shot figcaption { font-size: 23px; }
     .about dl div { grid-template-columns: minmax(0, 1fr); gap: 0; }
   }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .map [data-g], .btn { transition: none; } }
 </style>
 </head>
 <body>
@@ -184,7 +230,10 @@
 
 <header>
   <div class="wrap bar">
-    <div class="logo"><span data-edit="name1">יעל</span><span data-edit="name2">שחר</span><small>עבודה סוציאלית קלינית · עמק חפר</small></div>
+    <div class="logo">
+      <svg viewBox="0 0 40 40" fill="none" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="12" height="12" stroke="#1d5759"/><circle cx="31" cy="11" r="6.5" stroke="#1d5759"/><path d="M15 11h9.5M20 11v12" stroke="#1d5759"/><circle cx="20" cy="30" r="6.5" stroke="#94404e"/></svg>
+      <div><b><span data-edit="name1">יעל</span><span data-edit="name2">שחר</span></b><small>עבודה סוציאלית קלינית · עמק חפר</small></div>
+    </div>
     <a href="#" data-wa="היי, הגעתי מהאתר ואשמח לתאם שיחת היכרות">וואטסאפ</a>
   </div>
 </header>
@@ -203,65 +252,78 @@
         <p class="crisis">במצב חירום או מחשבות על פגיעה עצמית: <a href="tel:1201">ער״ן 1201</a>, או <a href="tel:101">מד״א 101</a>.</p>
       </div>
 
-      <div class="map">
-        <svg viewBox="0 0 600 540" fill="none" aria-hidden="true">
-          <g stroke="#17484d" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- grandmother and the line down to mother -->
-            <circle class="draw" pathLength="1" cx="420" cy="44" r="20"/>
-            <path class="draw" pathLength="1" d="M420 64 V92"/>
-            <!-- parents and the line between them -->
-            <path class="draw" pathLength="1" d="M144 92 H220 V168 H144 Z"/>
-            <circle class="draw" pathLength="1" cx="420" cy="130" r="38"/>
-            <path class="draw" pathLength="1" d="M220 130 H382"/>
-            <!-- children -->
-            <path class="draw d2" pathLength="1" d="M301 130 V226"/>
-            <path class="draw d2" pathLength="1" d="M170 226 H430"/>
-            <path class="draw d2" pathLength="1" d="M170 226 V258 M300 226 V262 M430 226 V274"/>
-            <path class="draw d2" pathLength="1" d="M142 258 H198 V314 H142 Z"/>
-            <circle class="draw d2" pathLength="1" cx="300" cy="288" r="26"/>
-            <path class="draw d2" pathLength="1" d="M410 274 H450 V314 H410 Z"/>
-          </g>
-          <!-- my own notes, in clay-pink marker -->
-          <g stroke="#e3aba3" stroke-width="4" stroke-linecap="round" fill="none">
-            <path class="draw d3" pathLength="1" d="M110 244 C 104 198, 230 208, 300 208 S 500 198, 494 244 S 470 374, 300 372 S 116 384, 110 244"/>
-            <path class="draw d4" pathLength="1" d="M180 446 C 262 444, 304 420, 300 374"/>
-          </g>
-          <g font-family="Amatic SC, Fredoka, cursive" font-weight="700" text-anchor="middle" direction="rtl">
-            <text x="478" y="52" font-size="26" fill="#4d6b6d">סבתא</text>
-            <text x="182" y="74" font-size="28" fill="#17484d">אבא</text>
-            <text x="508" y="138" font-size="28" fill="#17484d">אמא</text>
-            <text x="170" y="350" font-size="25" fill="#17484d">בן 14</text>
-            <text x="300" y="342" font-size="25" fill="#17484d">בת 10</text>
-            <text x="430" y="342" font-size="25" fill="#17484d">בן 6</text>
-            <text x="478" y="198" font-size="27" fill="#9b4a52">מעבר דירה בקיץ</text>
-            <text x="440" y="420" font-size="30" fill="#9b4a52">מה הכי קשה עכשיו?</text>
-            <text x="440" y="452" font-size="25" fill="#4d6b6d">מתחילים מכאן</text>
-          </g>
-        </svg>
-        <figure class="ps portrait" data-slot="portrait" data-src="../shared/photos/social-worker-portrait.webp" data-alt="עובדת סוציאלית בחדר הפגישות" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure>
-        <span class="map-note">מפה לדוגמה, בלי פרטים אמיתיים</span>
+      <div class="board">
+        <div class="map">
+          <span class="pin p1" aria-hidden="true"></span><span class="pin p2" aria-hidden="true"></span>
+          <svg viewBox="0 0 600 520" fill="none" aria-hidden="true">
+            <g stroke="#1d5759" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+              <!-- grandmother and the line down to mother -->
+              <g data-g="f"><circle class="draw" pathLength="1" cx="420" cy="44" r="20"/><path class="draw" pathLength="1" d="M420 64 V92"/></g>
+              <!-- parents and the line between them -->
+              <g data-g="p f"><path class="draw" pathLength="1" d="M144 92 H220 V168 H144 Z"/><path class="draw" pathLength="1" d="M220 130 H382"/></g>
+              <g data-g="p s f"><circle class="draw" pathLength="1" cx="420" cy="130" r="38"/></g>
+              <!-- children -->
+              <g data-g="f"><path class="draw d2" pathLength="1" d="M301 130 V226"/><path class="draw d2" pathLength="1" d="M170 226 H430"/>
+                <path class="draw d2" pathLength="1" d="M300 226 V262 M430 226 V274"/>
+                <circle class="draw d2" pathLength="1" cx="300" cy="288" r="26"/><path class="draw d2" pathLength="1" d="M410 274 H450 V314 H410 Z"/></g>
+              <g data-g="t f"><path class="draw d2" pathLength="1" d="M170 226 V258"/><path class="draw d2" pathLength="1" d="M142 258 H198 V314 H142 Z"/></g>
+            </g>
+            <!-- my own notes, in rose marker -->
+            <g stroke="#dc9a90" stroke-width="4" stroke-linecap="round" fill="none">
+              <path data-g="f" class="draw d3" pathLength="1" d="M110 244 C 104 198, 230 208, 300 208 S 500 198, 494 244 S 470 374, 300 372 S 116 384, 110 244"/>
+              <path class="draw d4" pathLength="1" d="M180 444 C 262 442, 304 418, 300 374"/>
+            </g>
+            <g font-family="Amatic SC, Fredoka, cursive" font-weight="700" text-anchor="middle" direction="rtl">
+              <text data-g="f" x="478" y="52" font-size="26" fill="#4c615f">סבתא</text>
+              <text class="lab" data-g="p f" x="182" y="74" font-size="30" fill="#1d5759">אבא</text>
+              <text class="lab" data-g="p s f" x="508" y="138" font-size="30" fill="#1d5759">אמא</text>
+              <text data-g="t f" x="170" y="350" font-size="26" fill="#1d5759">בן 14</text>
+              <text data-g="f" x="300" y="342" font-size="26" fill="#1d5759">בת 10</text>
+              <text data-g="f" x="430" y="342" font-size="26" fill="#1d5759">בן 6</text>
+              <text x="478" y="198" font-size="27" fill="#94404e">מעבר דירה בקיץ</text>
+              <text x="440" y="420" font-size="31" fill="#94404e">מה הכי קשה עכשיו?</text>
+              <text x="440" y="452" font-size="25" fill="#4c615f">מתחילים מכאן</text>
+            </g>
+          </svg>
+          <figure class="ps portrait" data-slot="portrait" data-src="../shared/photos/social-worker-portrait.webp" data-alt="עובדת סוציאלית בחדר הפגישות" data-pos="62 40" data-icon="person" data-label="תמונה שלכם"></figure>
+          <span class="map-note">מפה לדוגמה, בלי פרטים אמיתיים</span>
+        </div>
+
+        <div class="pick">
+          <p class="pick-q"><b>בשביל מי?</b><span>בחרו, ותראו על המפה</span></p>
+          <div class="chips" role="group" aria-label="בשביל מי הפנייה">
+            <button type="button" aria-pressed="false" data-pick="p" data-who="הדרכת הורים" data-say="הדרכת הורים: שני ההורים, בלי הילד. 50 דקות, פעם בשבועיים.">הורים</button>
+            <button type="button" aria-pressed="false" data-pick="s" data-who="לעצמי" data-say="טיפול רגשי: פגישה שבועית של 50 דקות, בקליניקה או אונליין.">לעצמי</button>
+            <button type="button" aria-pressed="false" data-pick="t" data-who="למתבגר או מתבגרת" data-say="מתבגרים מגיל 13, בהסכמת ההורים. פגישה שבועית של 50 דקות.">מתבגר או מתבגרת</button>
+            <button type="button" aria-pressed="false" data-pick="f" data-who="למשפחה" data-say="גירושין, מעבר דירה, אובדן. פגישות משותפות של 50 עד 75 דקות.">כל המשפחה</button>
+          </div>
+          <div class="pick-out">
+            <p aria-live="polite" id="pick-say">שלושה תחומים, ובכולם מתחילים בשיחת היכרות.</p>
+            <button class="btn btn-ink" type="button" id="pick-go">לתאם שיחה</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <section id="areas">
     <div class="wrap">
-      <div class="head"><h2>במה אני עובדת</h2><p>שלושה תחומים. בכולם הפגישה הראשונה היא פגישת היכרות, ובסופה מחליטים יחד אם ואיך ממשיכים.</p></div>
+      <div class="head"><h2>במה אני עובדת</h2><p>בכל אחד מהם הפגישה הראשונה היא פגישת היכרות, ובסופה מחליטים יחד אם ואיך ממשיכים.</p></div>
       <div class="areas">
         <div class="area">
-          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#17484d" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="4" y="6" width="13" height="13"/><circle cx="33.5" cy="12.5" r="6.5"/><path d="M17 12.5h10.5M22 12.5V26"/><circle cx="22" cy="33" r="7" stroke="#9b4a52"/></svg>
+          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#1d5759" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="4" y="6" width="13" height="13"/><circle cx="33.5" cy="12.5" r="6.5"/><path d="M17 12.5h10.5M22 12.5V26"/><circle cx="22" cy="33" r="7" stroke="#94404e"/></svg>
           <h3>הדרכת הורים</h3>
           <p>שני ההורים, בלי הילד. מביאים מצב אחד מהבית ועובדים עליו.</p>
           <ul class="facts"><li>פגישה של 50 דקות</li><li>מפגשים דו-שבועיים</li><li>גם להורים שגרים בנפרד</li></ul>
         </div>
         <div class="area">
-          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#17484d" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="22" cy="22" r="11"/><path d="M22 4v4M22 36v4" stroke="#9b4a52"/></svg>
+          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#1d5759" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="22" cy="22" r="11"/><path d="M22 4v4M22 36v4" stroke="#94404e"/></svg>
           <h3>טיפול רגשי</h3>
           <p>למבוגרים ולמתבגרים מגיל 13. לחץ, דאגות, תקופה שקשה לעבור לבד.</p>
           <ul class="facts"><li>פגישה שבועית של 50 דקות</li><li>מתבגרים בהסכמת ההורים</li><li>בקליניקה או אונליין</li></ul>
         </div>
         <div class="area">
-          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#17484d" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="14" r="6"/><circle cx="33" cy="14" r="6"/><path d="M11 20v8h22v-8M22 28v6"/><path d="M6 38c8-4 24-4 32 0" stroke="#9b4a52"/></svg>
+          <svg class="sym" viewBox="0 0 44 44" fill="none" stroke="#1d5759" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="14" r="6"/><circle cx="33" cy="14" r="6"/><path d="M11 20v8h22v-8M22 28v6"/><path d="M6 38c8-4 24-4 32 0" stroke="#94404e"/></svg>
           <h3>ליווי משפחות</h3>
           <p>גירושין, מעבר דירה, אובדן. פגישות משותפות לבני המשפחה, ולפעמים גם לכל אחד בנפרד.</p>
           <ul class="facts"><li>פגישה של 50 עד 75 דקות</li><li>קצב לפי מה שקורה בבית</li><li>אפשר לשלב עם הדרכת הורים</li></ul>
@@ -272,14 +334,14 @@
 
   <section class="start">
     <div class="wrap">
-      <div class="head"><h2>איך מתחילים</h2><p>בלי טפסים ובלי לספר הכול מראש.</p></div>
+      <div class="head"><h2>איך מתחילים</h2><p>בלי טפסים, ובלי לספר הכול מראש.</p></div>
       <ol class="path">
         <li><span class="dot">1</span><div><b>כותבים כמה מילים</b><span>בצ׳אט באתר או בוואטסאפ. בשביל מי, איפה ומתי נוח לכם.</span></div></li>
         <li><span class="dot">2</span><div><b>שיחת טלפון קצרה</b><span>אני חוזרת אליכם, שומעת במה מדובר ועונה על שאלות.</span></div></li>
         <li><span class="dot">3</span><div><b>פגישת היכרות</b><span>בקליניקה או אונליין. בסופה מחליטים יחד אם ממשיכים.</span></div></li>
       </ol>
       <div class="privacy">
-        <svg viewBox="0 0 30 30" fill="none" stroke="#17484d" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="6" y="13" width="18" height="13" rx="3"/><path d="M10 13V9a5 5 0 0 1 10 0v4"/><circle cx="15" cy="19.5" r="1.6" fill="#17484d"/></svg>
+        <svg viewBox="0 0 30 30" fill="none" stroke="#1d5759" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="6" y="13" width="18" height="13" rx="3"/><path d="M10 13V9a5 5 0 0 1 10 0v4"/><circle cx="15" cy="19.5" r="1.6" fill="#1d5759"/></svg>
         <p>אין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה. הצ׳אט שואל רק מה שצריך כדי לתאם שיחה, ושום דבר לא נשמר באתר.</p>
       </div>
     </div>
@@ -288,9 +350,21 @@
   <section>
     <div class="wrap">
       <div class="head"><h2>הקליניקה במושב</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
-      <div class="place-grid">
-        <figure class="shot"><div class="ps" data-slot="room" data-src="../shared/photos/social-worker-room.webp" data-alt="חדר הפגישות" data-icon="home" data-label="חדר הפגישות"></div><figcaption data-edit="room-cap">חדר הפגישות, כניסה נפרדת</figcaption></figure>
-        <figure class="shot"><div class="ps" data-slot="garden" data-icon="sparkle" data-label="הגינה"></div><figcaption data-edit="garden-cap">הגינה, לפני שנכנסים</figcaption></figure>
+      <div class="place">
+        <figure class="shot big"><div class="ps" data-slot="room" data-src="../shared/photos/social-worker-work.webp" data-alt="עובדת סוציאלית ליד שולחן עגול בחדר הפגישות" data-pos="50 45" data-icon="home" data-label="חדר הפגישות"></div><figcaption data-edit="room-cap">חדר הפגישות, כניסה נפרדת</figcaption></figure>
+        <div class="duo">
+          <figure class="shot"><div class="ps" data-slot="wall" data-src="../shared/photos/social-worker-room.webp" data-alt="ציורי ילדים על לוח בחדר" data-pos="30 30" data-icon="camera" data-label="פינה בחדר"></div><figcaption data-edit="wall-cap">הקיר של הילדים</figcaption></figure>
+          <figure class="shot"><div class="ps" data-slot="garden" data-icon="sparkle" data-label="הגינה">
+            <svg class="ps-ph" viewBox="0 0 300 375" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="300" height="375" fill="#efd9d0"/>
+              <rect y="270" width="300" height="105" fill="#a9bfb0"/>
+              <path d="M120 375 L140 270 H160 L180 375 Z" fill="#e6cfc5"/>
+              <circle cx="230" cy="150" r="62" fill="#2f6a6e"/><circle cx="196" cy="186" r="44" fill="#1d5759"/><rect x="222" y="196" width="12" height="76" fill="#6b4b3e"/>
+              <g stroke="#fffcfa" stroke-width="5"><path d="M20 230 H110 M20 252 H110"/><path d="M30 214 V272 M60 214 V272 M90 214 V272"/></g>
+              <circle cx="70" cy="80" r="26" fill="#fffcfa" opacity=".7"/>
+            </svg>
+          </div><figcaption data-edit="garden-cap">הגינה, לפני שנכנסים</figcaption></figure>
+        </div>
         <div class="about">
           <h3 data-edit="about-name">יעל שחר</h3>
           <p class="cred">עובדת סוציאלית קלינית (<span class="ltr">MSW</span>), מס׳ רישום לדוגמה</p>
@@ -307,17 +381,17 @@
   <section class="prices">
     <div class="wrap">
       <div class="head"><h2>מחירים לדוגמה</h2><p>המחיר נאמר בשיחת הטלפון, לפני שקובעים.</p></div>
-      <div class="price-sheet">
-        <div class="price-row"><div><b>פגישה פרטנית</b><span>50 דקות, למבוגרים ולמתבגרים</span></div><span class="sum">350 עד 450 ₪</span></div>
-        <div class="price-row"><div><b>הדרכת הורים</b><span>לזוג הורים, 50 דקות</span></div><span class="sum">400 עד 500 ₪</span></div>
-        <p class="price-note">כדאי לבדוק החזר מול הביטוח המשלים שלכם.</p>
+      <div class="price-grid">
+        <div class="price"><b>פגישה פרטנית</b><span>50 דקות, למבוגרים ולמתבגרים</span><span class="sum">350 עד 450 ₪</span></div>
+        <div class="price"><b>הדרכת הורים</b><span>לזוג הורים, 50 דקות</span><span class="sum">400 עד 500 ₪</span></div>
       </div>
+      <p class="price-note">כדאי לבדוק החזר מול הביטוח המשלים שלכם.</p>
     </div>
   </section>
 
   <section class="guides" id="guides">
     <div class="wrap">
-      <div class="head"><h2>שאלות ותשובות</h2><p>מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו</p></div>
+      <div class="head"><h2>שאלות ותשובות</h2><p>מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו.</p></div>
       <div data-guides></div>
     </div>
   </section>
@@ -388,6 +462,21 @@
     onDone: LeadPhone("#ph-msg"),
   });
   Guides.load("../shared/guides/social-worker.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+
+  // "בשביל מי?": lights up that part of the family map, and the button opens the chat with the answer filled in.
+  (function () {
+    const svg = document.querySelector(".map svg"), say = document.getElementById("pick-say"), chips = document.querySelectorAll("[data-pick]");
+    let who = null;
+    chips.forEach((b) => b.addEventListener("click", () => {
+      const off = b.getAttribute("aria-pressed") === "true";
+      chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
+      svg.querySelectorAll("[data-g]").forEach((n) => n.classList.toggle("on", !off && n.dataset.g.split(" ").includes(b.dataset.pick)));
+      svg.classList.toggle("picking", !off);
+      if (off) { who = null; say.textContent = "שלושה תחומים, ובכולם מתחילים בשיחת היכרות."; return; }
+      b.setAttribute("aria-pressed", "true"); who = b.dataset.who; say.textContent = b.dataset.say;
+    }));
+    document.getElementById("pick-go").addEventListener("click", () => bot.open(who ? { who } : undefined));
+  })();
 </script>
 </body>
 </html>

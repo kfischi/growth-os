@@ -8,174 +8,252 @@
 <meta name="description" content="פסיכולוגית קלינית בחדרה ואונליין. טיפול פרטני, זוגי ולמתבגרים. מתחילים בשיחת היכרות קצרה בטלפון.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the quiet therapy room, its arched window, and the appointment card (כרטיס תור) you take home.
-     Detail: 50 דקות, פעם בשבוע, באותה שעה; שיחת היכרות; פרטני, זוגי, מתבגרים; לבדוק מול הביטוח.
-     Bold move: the window's light falls across the hero as one large soft four-pane shape behind the headline. */
+  /* Object: the therapy room seen through its tall arched window, and the appointment card you take home.
+     Detail: the 50-minute hour, once a week at the same time; the seating in the room (one chair, two chairs, a chair for a parent);
+             a free first phone call; checking the insurance; ער״ן 1201 always one tap away.
+     Bold move: one tall arched window holding the room, with its light thrown across the headline.
+     Motion: a single breathing circle the visitor starts by hand ("רגע לנשום"); nothing moves on its own. */
   :root {
-    --plaster: #eef1ee;        /* cool wall paint, leans to sage */
-    --sage: #8ea597;           /* armchair fabric */
-    --sage-pale: #dbe5df;
-    --pine: #1d3b38;           /* text, door, deep blue-green */
-    --pine-soft: #50665f;
-    --lake: #5d7f88;           /* dusk through the window */
-    --light: #fbfdfb;          /* window light */
+    --mist: #eef2ef;           /* wall paint, cool sage white */
+    --linen: #f9fbf8;          /* the curtain in daylight */
+    --dawn: #dce6e0;           /* pale sage panels */
+    --armchair: #7f9b8a;       /* the armchair fabric, drawing only */
+    --leaf: #2d5a48;           /* fiddle-leaf green, readable */
+    --lake: #46697a;           /* dusk through the window, readable */
+    --slate: #1c3135;          /* text and the evening sections */
+    --slate-soft: #4a5f61;     /* secondary text */
+    --line: #cbd8d0;
     --display: "Bellefair", "Times New Roman", serif;
-    --body: "Alef", "Arial Hebrew", Arial, sans-serif;
-    --phone-frame: var(--pine);
-    --bot-bg: var(--light); --bot-fg: var(--pine); --bot-line: #d3ddd7; --bot-muted: var(--pine-soft);
-    --bot-accent: var(--pine); --bot-accent-fg: #fff; --bot-them: #e7eee9; --bot-me: var(--lake); --bot-me-fg: #fff;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", Arial, sans-serif;
+    --phone-frame: var(--slate);
+    --bot-bg: var(--linen); --bot-fg: var(--slate); --bot-line: #d0dcd5; --bot-muted: var(--slate-soft);
+    --bot-accent: var(--slate); --bot-accent-fg: #fff; --bot-them: #e6eee9; --bot-me: var(--lake); --bot-me-fg: #fff;
     --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px;
-    --ps-a: #c9d8cf; --ps-b: #7f9a8c; --ps-ui: var(--pine); --ps-edit: var(--lake);
+    --ps-a: #c9d8cf; --ps-b: #7f9a8c; --ps-ui: var(--slate); --ps-edit: var(--lake);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--plaster); color: var(--pine); font-family: var(--body); font-size: 17.5px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--mist); color: var(--slate); font-family: var(--body); font-size: 17px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
   :focus-visible { outline: 3px solid var(--lake); outline-offset: 3px; }
-  .wrap { width: min(1140px, 100% - 32px); margin-inline: auto; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.08; letter-spacing: -.01em; margin: 0; }
-  .small { font-size: 14px; color: var(--pine-soft); }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 999px; }
-  .btn-pine { background: var(--pine); color: #fff; }
-  .btn-pine:hover { background: #142b28; }
-  .btn-line { border: 1.5px solid var(--pine); color: var(--pine); background: transparent; }
-  .btn-line:hover { background: var(--sage-pale); }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.08; margin: 0; }
+  .small { font-size: 14.5px; color: var(--slate-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 600 16px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .25s, transform .25s; }
+  .btn-slate { background: var(--slate); color: #fff; }
+  .btn-slate:hover { background: #10211f; transform: translateY(-1px); }
+  .btn-line { border: 1.5px solid var(--slate); color: var(--slate); background: transparent; }
+  .btn-line:hover { background: var(--dawn); }
 
-  .demo { background: var(--pine); color: #b8cac3; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--slate); color: #bccbc6; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero: the room, the window, the light ---------- */
-  .hero { position: relative; overflow: hidden; background: linear-gradient(170deg, #d3ddd7 0%, #dbe3de 50%, #d5ded9 100%); }
+  /* ---------- Hero: the window and its light ---------- */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(175deg, #d9e3dd 0%, #e3eae5 55%, var(--mist) 100%); }
   .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 20px; position: relative; z-index: 3; }
-  .logo { font-family: var(--display); font-size: 27px; line-height: 1.1; }
-  .logo small { display: block; font-family: var(--body); font-size: 13px; color: var(--pine-soft); }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 1.5px solid var(--sage); white-space: nowrap; }
+  .logo { font-family: var(--display); font-size: 28px; line-height: 1.05; }
+  .logo small { display: block; font-family: var(--body); font-size: 13px; color: var(--slate-soft); margin-top: 3px; }
+  .nav { display: flex; align-items: center; gap: 26px; font-size: 15px; }
+  .nav a { text-decoration: none; }
+  .nav a:hover { text-decoration: underline; text-underline-offset: 5px; text-decoration-color: var(--armchair); }
+  .nav .wa { font-weight: 600; border-bottom: 1.5px solid var(--armchair); }
+  .nav .wa:hover { text-decoration: none; }
 
-  /* the light: four panes thrown across the wall, mullions as soft shadow */
-  .light { position: absolute; z-index: 0; top: 4%; left: 6%; width: 74%; height: 112%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 22px;
-    transform: perspective(900px) rotateY(-24deg) skewY(-9deg); transform-origin: left top; filter: blur(8px); opacity: 1; pointer-events: none; }
-  .light i { background: linear-gradient(200deg, rgba(255,255,255,.95), rgba(255,255,255,.55) 55%, rgba(255,255,255,0)); border-radius: 220px 220px 8px 8px / 120px 120px 8px 8px; }
-  .light i:nth-child(n+3) { border-radius: 8px; background: linear-gradient(200deg, rgba(255,255,255,.7), rgba(255,255,255,0) 85%); }
+  .light { position: absolute; z-index: 0; top: 0; right: -4%; width: 66%; height: 108%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1.15fr 1fr; gap: 26px;
+    transform: perspective(1000px) rotateY(22deg) skewY(8deg); transform-origin: right top; filter: blur(10px); pointer-events: none; }
+  .light i { background: linear-gradient(160deg, rgba(255,255,255,.95), rgba(255,255,255,.5) 55%, rgba(255,255,255,0)); border-radius: 260px 260px 8px 8px / 140px 140px 8px 8px; }
+  .light i:nth-child(n+3) { border-radius: 8px; background: linear-gradient(160deg, rgba(255,255,255,.7), rgba(255,255,255,0) 85%); }
 
-  .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 56px; align-items: end; padding: 26px 0 72px; }
-  .cred { font-size: 14.5px; color: var(--pine-soft); margin: 0 0 16px; }
-  .hero h1 { font-size: clamp(46px, 6.6vw, 92px); max-width: 13ch; margin-bottom: 20px; text-wrap: balance; }
+  .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 64px; align-items: center; padding: 30px 0 84px; }
+  .hero-copy { min-width: 0; }
+  .cred { display: inline-flex; align-items: center; gap: 10px; font-size: 14.5px; color: var(--slate-soft); margin: 0 0 22px; }
+  .cred::before { content: ""; width: 28px; height: 1.5px; background: var(--armchair); }
+  .hero h1 { font-size: clamp(50px, 7vw, 100px); letter-spacing: -.015em; margin-bottom: 24px; text-wrap: balance; }
+  .hero h1 span { display: block; }
   .hero h1 em { font-style: normal; color: var(--lake); display: block; }
-  .lead { font-size: 19.5px; max-width: 34ch; margin: 0 0 26px; }
+  .lead { font-size: 19.5px; max-width: 33ch; margin: 0 0 30px; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  .privacy { margin: 16px 0 0; font-size: 15px; color: var(--pine-soft); }
+  .privacy { margin: 16px 0 0; font-size: 15px; color: var(--slate-soft); }
+  .crisis { margin: 30px 0 0; max-width: 540px; display: flex; gap: 14px; align-items: center; background: rgba(255,255,255,.72); border: 1px solid #d6e0da; border-radius: 16px; padding: 12px 16px; font-size: 15.5px; line-height: 1.5; }
+  .crisis svg { flex: none; width: 26px; height: 26px; }
+  .crisis a { font-weight: 600; text-decoration: none; border-bottom: 1.5px solid var(--lake); white-space: nowrap; }
 
-  .crisis { margin-top: 28px; max-width: 520px; display: grid; grid-template-columns: 4px minmax(0, 1fr); gap: 14px; align-items: stretch;
-    background: rgba(255,255,255,.62); border-radius: 14px; padding: 13px 16px; font-size: 15.5px; line-height: 1.5; }
-  .crisis::before { content: ""; background: var(--lake); border-radius: 4px; }
-  .crisis a { font-weight: 700; text-decoration: none; border-bottom: 1.5px solid var(--lake); white-space: nowrap; }
+  .window { position: relative; min-width: 0; width: 100%; max-width: 440px; justify-self: start; }
+  .arch { position: relative; aspect-ratio: 4 / 5.2; border-radius: 999px 999px 12px 12px; padding: 14px; background: var(--linen);
+    box-shadow: 0 1px 0 #fff inset, 0 50px 80px -46px rgba(28,49,53,.6); }
+  .arch .ps { width: 100%; height: 100%; border-radius: 999px 999px 5px 5px; }
+  .arch::after { content: ""; position: absolute; inset: 14px; border-radius: 999px 999px 5px 5px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), inset 0 -80px 80px -60px rgba(28,49,53,.35); pointer-events: none; z-index: 3; }
+  .sill { height: 18px; margin: 0 -22px; background: var(--linen); border-radius: 4px; box-shadow: 0 18px 30px -18px rgba(28,49,53,.5); }
+  .slip { position: absolute; z-index: 4; bottom: 54px; inset-inline-end: -54px; width: 230px; background: #fff; border-radius: 6px; padding: 16px 18px 14px; transform: rotate(3deg);
+    box-shadow: 0 2px 0 #e1e9e4, 0 26px 44px -26px rgba(28,49,53,.55); }
+  .slip::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 7px; background: var(--armchair); border-radius: 6px 6px 0 0; }
+  .slip span { display: block; font-size: 13px; color: var(--slate-soft); }
+  .slip b { display: block; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.15; margin: 4px 0 6px; }
 
-  /* arched window with the portrait inside */
-  .window { position: relative; width: 100%; max-width: 360px; justify-self: start; }
-  .arch { position: relative; aspect-ratio: 3 / 4.1; border-radius: 999px 999px 10px 10px; padding: 12px; background: var(--light);
-    box-shadow: 0 1px 0 #fff inset, 0 40px 70px -40px rgba(29,59,56,.55); }
-  .arch .ps { width: 100%; height: 100%; border-radius: 999px 999px 4px 4px; }
-  .sill { height: 16px; margin: 0 -18px; background: var(--light); border-radius: 4px; box-shadow: 0 16px 30px -18px rgba(29,59,56,.5); }
-  .who { margin-top: 18px; }
-  .who b { display: block; font-family: var(--display); font-weight: 400; font-size: 27px; line-height: 1.15; }
-  .who span { font-size: 14.5px; color: var(--pine-soft); }
+  /* the facts under the hero */
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--line); }
+  .facts div { min-width: 0; padding: 20px 22px; }
+  .facts div + div { border-inline-start: 1px solid var(--line); }
+  .facts span { display: block; font-size: 13px; color: var(--slate-soft); }
+  .facts b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.25; }
 
   /* ---------- Sections ---------- */
-  section { padding-block: 88px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 34px; }
-  .head h2 { font-size: clamp(38px, 5vw, 60px); }
+  section { padding-block: 96px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 40px; }
+  .head h2 { font-size: clamp(40px, 5.2vw, 64px); }
+  .head p { margin: 0; max-width: 38ch; color: var(--slate-soft); }
 
   /* how it goes + the appointment card */
-  .card-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 64px; align-items: center; }
-  .steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; counter-reset: s; }
-  .steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px; padding: 20px 0; border-top: 1px solid #d2ddd6; }
-  .steps li:last-child { border-bottom: 1px solid #d2ddd6; }
-  .steps li::before { counter-increment: s; content: counter(s); font-family: var(--display); font-size: 40px; line-height: 1; color: var(--sage); }
-  .steps b { display: block; font-size: 20px; margin-bottom: 2px; }
-  .steps span { color: var(--pine-soft); font-size: 16px; }
+  .card-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 72px; align-items: center; }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+  .steps li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 18px; padding: 24px 0; border-top: 1px solid var(--line); }
+  .steps li:last-child { border-bottom: 1px solid var(--line); }
+  .steps li::before { counter-increment: s; content: counter(s); font-family: var(--display); font-size: 52px; line-height: .9; color: var(--armchair); }
+  .steps b { display: block; font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .steps span { color: var(--slate-soft); font-size: 16.5px; }
 
-  .appt { position: relative; background: var(--light); border-radius: 6px; padding: 26px 28px 24px; transform: rotate(-2.2deg);
-    box-shadow: 0 2px 0 #dfe7e2, 0 30px 60px -34px rgba(29,59,56,.6); }
-  .appt::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 9px; background: var(--sage); border-radius: 6px 6px 0 0; }
-  .appt .ttl { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 1px solid #d2ddd6; padding-bottom: 12px; margin-bottom: 8px; }
-  .appt .ttl b { font-family: var(--display); font-weight: 400; font-size: 30px; }
-  .appt .ttl span { font-size: 13px; color: var(--pine-soft); }
+  .appt { position: relative; background: var(--linen); border-radius: 8px; padding: 28px 30px 24px; transform: rotate(-2deg);
+    box-shadow: 0 2px 0 #dfe7e2, 0 34px 60px -34px rgba(28,49,53,.6); }
+  .appt::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 9px; background: var(--armchair); border-radius: 8px 8px 0 0; }
+  .appt .ttl { display: flex; justify-content: space-between; align-items: center; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 6px; }
+  .appt .ttl b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; }
+  .appt .ttl span { font-size: 13px; color: var(--slate-soft); }
+  .clock { width: 84px; height: 84px; flex: none; }
   .appt dl { margin: 0; display: grid; }
-  .appt dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed #c8d5cd; align-items: baseline; }
-  .appt dt { font-size: 14px; color: var(--pine-soft); }
-  .appt dd { margin: 0; font-size: 19px; }
-  .appt .hand { font-family: var(--display); font-size: 25px; color: var(--lake); }
-  .appt .foot { font-size: 13.5px; color: var(--pine-soft); margin: 14px 0 0; }
+  .appt dl div { display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed #c4d3ca; align-items: baseline; }
+  .appt dt { font-size: 14px; color: var(--slate-soft); }
+  .appt dd { margin: 0; font-size: 18.5px; }
+  .appt .hand { font-family: var(--display); font-size: 26px; color: var(--lake); }
+  .appt .foot { font-size: 13.5px; color: var(--slate-soft); margin: 14px 0 0; }
 
-  /* what I work with + prices */
-  .work { background: var(--sage-pale); }
-  .work-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid #b9cac0; }
-  .work-grid article { padding: 26px 0 8px; padding-inline-end: 28px; min-width: 0; }
-  .work-grid article + article { border-inline-start: 1px solid #b9cac0; padding-inline-start: 28px; }
-  .work-grid h3 { font-size: 32px; margin-bottom: 8px; }
-  .work-grid p { margin: 0; color: var(--pine-soft); font-size: 16px; }
-  .prices { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+  /* who I work with: the seating in the room */
+  .work { background: var(--dawn); }
+  .seats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .seat { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: flex; flex-direction: column; background: var(--linen); border-radius: 22px; padding: 22px 24px 22px; border: 1px solid #d3ded7; transition: transform .3s, box-shadow .3s, border-color .3s; }
+  .seat:hover { transform: translateY(-3px); border-color: var(--armchair); box-shadow: 0 26px 40px -30px rgba(28,49,53,.55); }
+  .seat:focus-visible { outline: 3px solid var(--lake); outline-offset: 3px; }
+  .seat svg { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: var(--mist); border-radius: 14px; margin-bottom: 18px; }
+  .seat h3 { font-size: 34px; margin-bottom: 6px; }
+  .seat p { margin: 0 0 16px; color: var(--slate-soft); font-size: 16px; }
+  .seat .go { margin-top: auto; font-weight: 600; font-size: 15px; color: var(--leaf); }
+  .seat:hover .go { text-decoration: underline; text-underline-offset: 5px; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 18px 0 0; font-size: 14px; color: var(--slate-soft); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; vertical-align: -1px; margin-inline-end: 6px; }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: start; }
   .price-list { margin: 0; padding: 0; list-style: none; }
-  .price-list li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid #b9cac0; }
-  .price-list li span:last-child { white-space: nowrap; font-weight: 700; }
-  .price-list .lbl { font-size: 13.5px; color: var(--pine-soft); padding-bottom: 6px; border: 0; }
-  .ins { background: rgba(255,255,255,.55); border-radius: 14px; padding: 20px 22px; }
+  .price-list li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid #bfcfc6; }
+  .price-list li span:last-child { white-space: nowrap; font-family: var(--display); font-size: 24px; }
+  .price-list .lbl { font-size: 13.5px; color: var(--slate-soft); padding-bottom: 6px; }
+  .ins { background: var(--linen); border-radius: 18px; padding: 22px 24px; }
   .ins b { display: block; font-size: 18px; margin-bottom: 4px; }
-  .ins p { margin: 0; color: var(--pine-soft); font-size: 16px; }
+  .ins p { margin: 0; color: var(--slate-soft); font-size: 16px; }
 
   /* the clinic */
-  .rooms { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
-  .room .ps { border-radius: 28px; aspect-ratio: 4 / 5; }
-  .room:first-child .ps { aspect-ratio: 5 / 5.4; border-radius: 140px 140px 28px 28px; }
-  .room { margin: 0; min-width: 0; }
-  .room figcaption { margin-top: 10px; }
-  .room figcaption b { display: block; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.2; }
-  .room figcaption span { font-size: 15px; color: var(--pine-soft); }
-  .where { margin-top: 28px; color: var(--pine-soft); font-size: 16px; max-width: 60ch; }
+  .clinic { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr) minmax(0, 1fr); gap: 22px; align-items: end; }
+  .clinic figure { margin: 0; min-width: 0; }
+  .clinic .room .ps { aspect-ratio: 4 / 4.8; border-radius: 999px 999px 22px 22px; }
+  .clinic .entry .ps { aspect-ratio: 3 / 4; border-radius: 22px; }
+  .clinic figcaption { margin-top: 12px; }
+  .clinic figcaption b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+  .clinic figcaption span { font-size: 15px; color: var(--slate-soft); }
+  .about { min-width: 0; background: var(--linen); border-radius: 22px; padding: 26px 26px 18px; align-self: stretch; display: flex; flex-direction: column; }
+  .about .face { width: 112px; height: 112px; border-radius: 50%; margin-bottom: 16px; box-shadow: 0 0 0 5px var(--linen), 0 0 0 6.5px var(--armchair); }
+  .about .face .ps-chip { display: none; }
+  .about h3 { font-size: 34px; }
+  .about .c { margin: 4px 0 14px; font-size: 15px; color: var(--slate-soft); }
+  .about dl { margin: auto 0 0; }
+  .about dl div { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15.5px; }
+  .about dt { color: var(--slate-soft); }
+  .about dd { margin: 0; }
+
+  /* a minute to breathe, and the crisis lines */
+  .pause { background: var(--slate); color: #e5eeea; overflow: hidden; }
+  .pause-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .pause h2 { font-size: clamp(40px, 5vw, 60px); margin-bottom: 14px; }
+  .pause p { color: #b9cbc5; margin: 0 0 22px; max-width: 40ch; }
+  .lines { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; max-width: 460px; }
+  .lines a { display: block; text-decoration: none; border: 1.5px solid #4f6b6a; border-radius: 18px; padding: 14px 18px; transition: background .25s, border-color .25s; }
+  .lines a:hover { background: #24403f; border-color: #a9c3b7; }
+  .lines b { display: block; font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; color: #fff; }
+  .lines span { font-size: 14.5px; color: #b9cbc5; }
+  .pause .sm { font-size: 14.5px; color: #9fb4ad; margin: 16px 0 0; }
+
+  .breath { display: grid; justify-items: center; text-align: center; }
+  .orb-box { position: relative; width: 340px; height: 340px; display: grid; place-items: center; margin-bottom: 18px; }
+  .orb-ring { position: absolute; inset: 0; border-radius: 50%; border: 1.5px dashed #5a7774; }
+  .orb { width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #d3e3da, #8fab9a 60%, #6a8a7b); box-shadow: 0 0 80px 10px rgba(127,155,138,.22);
+    transition-property: transform; transition-timing-function: cubic-bezier(.45,.05,.35,1); }
+  .breath-n { position: absolute; font-family: var(--display); font-size: 46px; line-height: 1; color: var(--slate); }
+  .pause .breath-say { font-family: var(--display); font-size: 32px; line-height: 1.1; color: #fff; margin: 0; min-height: 35px; }
+  .pause .breath-sub { margin: 4px 0 14px; font-size: 15px; color: #b9cbc5; }
+  .breath-btn { border: 0; cursor: pointer; background: var(--linen); color: var(--slate); font: 600 15.5px/1 var(--body); padding: 13px 26px; border-radius: 999px; }
+  .breath-btn:hover { background: #fff; }
+  .breath-btn:focus-visible { outline-color: #fff; }
 
   /* what the therapist sees */
-  .owner { background: var(--pine); color: #e7efeb; }
-  .owner .small { color: #9fb5ad; }
-  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; }
-  .owner li b { display: block; font-size: 20px; }
-  .owner li span { color: #aac0b8; font-size: 16px; }
-  .owner .note { margin-top: 26px; padding-top: 18px; border-top: 1px solid #36534f; color: #c6d6d0; font-size: 15.5px; }
-  .owner .ph-cap { color: #9fb5ad; }
+  .owner { background: var(--dawn); }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 64px; align-items: center; }
+  .owner ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; }
+  .owner li { padding-inline-start: 22px; border-inline-start: 2px solid var(--armchair); }
+  .owner li b { display: block; font-size: 19.5px; font-weight: 600; }
+  .owner li span { color: var(--slate-soft); font-size: 16px; }
+  .owner .note { margin-top: 28px; font-size: 15px; color: var(--slate-soft); }
+  .owner .ph-cap { color: var(--slate-soft); }
 
-  footer { padding-block: 34px 96px; color: var(--pine-soft); font-size: 14.5px; }
-  footer .row { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid #d2ddd6; padding-top: 18px; }
+  footer { padding-block: 34px 100px; color: var(--slate-soft); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
 
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-top: 10px; }
-    .window { max-width: 300px; justify-self: center; }
-    .card-grid, .owner-grid, .prices { grid-template-columns: minmax(0, 1fr); gap: 40px; }
-    .appt { max-width: 400px; width: 100%; margin-inline: auto; }
+  @media (max-width: 960px) {
+    .nav .n { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 44px; padding-top: 10px; }
+    .window { max-width: 360px; justify-self: center; }
+    .slip { inset-inline-end: -30px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .facts div:nth-child(3) { border-inline-start: 0; }
+    .facts div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .card-grid, .owner-grid, .prices, .pause-grid { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+    .appt { max-width: 420px; width: 100%; margin-inline: auto; }
     .owner .phone { margin-inline: auto; }
-    .work-grid { grid-template-columns: minmax(0, 1fr); }
-    .work-grid article, .work-grid article + article { padding: 20px 0; border-inline-start: 0; border-bottom: 1px solid #b9cac0; }
-    .rooms { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .room:first-child { grid-column: 1 / -1; }
-    .room:first-child .ps { aspect-ratio: 4 / 3.4; border-radius: 160px 160px 24px 24px; }
+    .seats { grid-template-columns: minmax(0, 1fr); }
+    .seat { display: grid; grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 22px; align-items: center; }
+    .seat svg { grid-row: span 3; margin: 0; }
+    .clinic { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .about { grid-column: 1 / -1; }
   }
-  @media (max-width: 520px) {
-    body { font-size: 17px; }
-    section { padding-block: 64px; }
-    .light { left: -30%; width: 150%; top: 2%; height: 70%; gap: 16px; }
-    .hero h1 { font-size: 50px; }
-    .lead { font-size: 18px; }
+  @media (max-width: 560px) {
+    body { font-size: 16.5px; }
+    section { padding-block: 68px; }
+    .logo { font-size: 25px; }
+    .light { right: -40%; width: 150%; height: 64%; gap: 16px; }
+    .hero h1 { font-size: clamp(44px, 13.5vw, 56px); }
+    .lead { font-size: 17.5px; }
     .ctas .btn { flex: 1 1 auto; }
-    .window { max-width: 250px; }
-    .rooms { gap: 12px; }
-    .room .ps { border-radius: 20px; }
-    .room figcaption b { font-size: 21px; }
-    .room figcaption span { font-size: 13.5px; }
-    .appt { padding: 22px 20px 20px; width: calc(100% - 12px); transform: rotate(-1.2deg); }
-    .appt dl div { grid-template-columns: 76px minmax(0, 1fr); }
+    .window { max-width: 300px; justify-self: start; margin-inline-start: 6px; }
+    .slip { width: 196px; inset-inline-end: -26px; bottom: 34px; padding: 13px 14px 11px; }
+    .slip b { font-size: 21px; }
+    .facts div { padding: 14px 12px; }
+    .facts b { font-size: 19px; }
+    .steps li { grid-template-columns: 44px minmax(0, 1fr); gap: 12px; }
+    .steps li::before { font-size: 42px; }
+    .appt { padding: 24px 20px 20px; width: calc(100% - 10px); transform: rotate(-1.2deg); }
+    .appt dl div { grid-template-columns: 70px minmax(0, 1fr); }
+    .clock { width: 66px; height: 66px; }
+    .seat { grid-template-columns: minmax(0, 1fr); padding: 18px; }
+    .seat svg { grid-row: auto; margin-bottom: 14px; }
+    .seat h3 { font-size: 30px; }
+    .clinic { gap: 12px; }
+    .clinic figcaption b { font-size: 21px; }
+    .clinic figcaption span { font-size: 13.5px; }
+    .orb-box { width: 260px; height: 260px; }
+    .orb { width: 140px; height: 140px; }
+    .lines b { font-size: 36px; }
+    .lines a { padding: 12px 14px; }
   }
-  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .seat { transition: none; } }
 </style>
 </head>
 <body>
@@ -183,36 +261,49 @@
 
 <header class="hero">
   <div class="light" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-  <div class="wrap">
-    <div class="bar">
-      <div class="logo"><span data-edit="name1">תמר</span> <span data-edit="name2">גלעד</span><small data-edit="role">פסיכולוגית קלינית · חדרה ואונליין</small></div>
-      <a href="#" data-wa="שלום, הגעתי מהאתר ואשמח לתאם שיחת היכרות">וואטסאפ</a>
-    </div>
+  <div class="wrap bar">
+    <div class="logo"><span data-edit="name1">תמר</span> <span data-edit="name2">גלעד</span><small data-edit="role">פסיכולוגית קלינית · חדרה ואונליין</small></div>
+    <nav class="nav" aria-label="ניווט">
+      <a class="n" href="#start">איך מתחילים</a>
+      <a class="n" href="#work">מחירים</a>
+      <a class="n" href="#clinic">הקליניקה</a>
+      <a class="wa" href="#" data-wa="שלום, הגעתי מהאתר ואשמח לתאם שיחת היכרות">וואטסאפ</a>
+    </nav>
   </div>
   <div class="wrap hero-grid">
-    <div>
+    <div class="hero-copy">
       <p class="cred">פסיכולוגית קלינית, מס׳ רישיון לדוגמה</p>
       <h1><span data-edit="h1a">מקום שקט</span> <em data-edit="h1b">לדבר על מה שקשה.</em></h1>
       <p class="lead">טיפול פרטני, זוגי ולמתבגרים, בקליניקה בחדרה או אונליין. מתחילים בשיחת טלפון קצרה, כדי לראות אם זה מתאים.</p>
       <div class="ctas">
-        <button class="btn btn-pine" data-open-bot>לתאם שיחת היכרות</button>
+        <button class="btn btn-slate" data-open-bot>לתאם שיחת היכרות</button>
         <a class="btn btn-line" href="#" data-wa="שלום, הגעתי מהאתר ואשמח לתאם שיחת היכרות">לכתוב בוואטסאפ</a>
       </div>
       <p class="privacy">אין צורך לפרט כאן. את הפרטים נשמור לשיחה עצמה.</p>
-      <p class="crisis" role="note"><span>במצב חירום או מחשבות על פגיעה עצמית: ער״ן <a href="tel:1201">1201</a>, או מד״א <a href="tel:101">101</a>.</span></p>
+      <p class="crisis" role="note">
+        <svg viewBox="0 0 26 26" fill="none" stroke="#46697a" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M13 22s-8-4.8-8-10.4A4.6 4.6 0 0 1 13 8.8a4.6 4.6 0 0 1 8 2.8C21 17.2 13 22 13 22z"/></svg>
+        <span>במצב חירום או מחשבות על פגיעה עצמית: ער״ן <a href="tel:1201">1201</a>, או מד״א <a href="tel:101">101</a>.</span>
+      </p>
     </div>
     <div class="window">
-      <div class="arch"><figure class="ps" data-slot="portrait" data-src="../shared/photos/psychologist-portrait.webp" data-alt="פסיכולוגית בחדר הטיפולים" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure></div>
+      <div class="arch"><figure class="ps" data-slot="portrait" data-src="../shared/photos/psychologist-work.webp" data-alt="פסיכולוגית יושבת בכורסה בחדר הטיפולים, ליד חלון" data-pos="22 50" data-icon="person" data-label="תמונה שלכם"></figure></div>
       <div class="sill" aria-hidden="true"></div>
-      <div class="who"><b data-edit="who-name">תמר גלעד</b><span data-edit="who-role">פסיכולוגית קלינית, מס׳ רישיון לדוגמה</span></div>
+      <div class="slip"><span>הצעד הראשון</span><b>שיחת היכרות בטלפון</b><span>רבע שעה בערך · בלי עלות</span></div>
     </div>
   </div>
 </header>
 
+<div class="wrap facts">
+  <div><span>איפה</span><b>חדרה, או בזום מהבית</b></div>
+  <div><span>פגישה</span><b>50 דקות, פעם בשבוע</b></div>
+  <div><span>עם מי</span><b>מבוגרים, זוגות ונוער</b></div>
+  <div><span>סודיות</span><b>חובה לפי חוק</b></div>
+</div>
+
 <main>
-  <section>
+  <section id="start">
     <div class="wrap">
-      <div class="head"><h2>איך מתחילים</h2><span class="small">שלושה שלבים, בלי התחייבות בשלב הראשון</span></div>
+      <div class="head"><h2>איך מתחילים</h2><p>שלושה שלבים. בשלב הראשון אין שום התחייבות.</p></div>
       <div class="card-grid">
         <ol class="steps">
           <li><div><b>שיחת טלפון קצרה</b><span>רבע שעה בערך. מספרים בכמה מילים מה מביא אתכם, ושואלים כל מה שרוצים.</span></div></li>
@@ -220,7 +311,18 @@
           <li><div><b>פגישות קבועות</b><span>50 דקות, פעם בשבוע, באותו יום ובאותה שעה. ואם אני לא הכתובת, אעזור למצוא מטפל אחר.</span></div></li>
         </ol>
         <div class="appt" aria-label="כרטיס תור לדוגמה">
-          <div class="ttl"><b>כרטיס תור</b><span>תמר גלעד · חדרה</span></div>
+          <div class="ttl">
+            <div><b>כרטיס תור</b><span>תמר גלעד · חדרה</span></div>
+            <svg class="clock" viewBox="0 0 120 120" aria-hidden="true">
+              <circle cx="60" cy="60" r="52" fill="#fff" stroke="#cbd8d0" stroke-width="1.5"/>
+              <g stroke="#9fb3a7" stroke-width="2" stroke-linecap="round">
+                <path d="M60 14v7M60 99v7M14 60h7M99 60h7M83 20.2l-3.5 6.1M37 20.2l3.5 6.1M99.8 37l-6.1 3.5M20.2 37l6.1 3.5M99.8 83l-6.1-3.5M20.2 83l6.1-3.5M83 99.8l-3.5-6.1M37 99.8l3.5-6.1"/>
+              </g>
+              <path d="M60 8 A52 52 0 1 1 14.97 34" fill="none" stroke="#7f9b8a" stroke-width="7" stroke-linecap="round"/>
+              <text x="60" y="66" text-anchor="middle" font-family="Bellefair, serif" font-size="34" fill="#1c3135">50</text>
+              <text x="60" y="84" text-anchor="middle" font-family="Noto Sans Hebrew, Arial, sans-serif" font-size="12" fill="#4a5f61">דקות</text>
+            </svg>
+          </div>
           <dl>
             <div><dt>שם</dt><dd class="hand">דנה</dd></div>
             <div><dt>יום</dt><dd>שלישי, כל שבוע</dd></div>
@@ -234,14 +336,55 @@
     </div>
   </section>
 
-  <section class="work">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <!-- an armchair from above, facing down -->
+      <symbol id="chair" viewBox="0 0 44 40"><rect x="2" y="0" width="40" height="11" rx="5.5"/><rect x="0" y="6" width="9" height="32" rx="4.5"/><rect x="35" y="6" width="9" height="32" rx="4.5"/><rect x="8" y="10" width="28" height="27" rx="7" opacity=".82"/></symbol>
+    </defs>
+  </svg>
+
+  <section class="work" id="work">
     <div class="wrap">
-      <div class="head"><h2>עם מי אני עובדת</h2><span class="small">מחירים לדוגמה</span></div>
-      <div class="work-grid">
-        <article><h3>טיפול פרטני</h3><p>למבוגרים. חרדה ולחץ, מצב רוח, מעברים בחיים, אובדן.</p></article>
-        <article><h3>טיפול זוגי</h3><p>שני בני הזוג בחדר. תקשורת, משברים, החלטות משותפות.</p></article>
-        <article><h3>ילדים ונוער</h3><p>גילאי 12 עד 18, ופגישות עם ההורים לפי הצורך.</p></article>
+      <div class="head"><h2>עם מי אני עובדת</h2><p>ככה החדר מסודר בכל סוג של טיפול. לחיצה פותחת את הצ׳אט.</p></div>
+      <div class="seats">
+        <button class="seat" data-who="לעצמי">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <ellipse cx="160" cy="92" rx="118" ry="62" fill="#dce6e0"/>
+            <use href="#chair" x="66" y="70" width="52" height="47" fill="#46697a" transform="rotate(-90 92 93)"/>
+            <use href="#chair" x="202" y="70" width="52" height="47" fill="#7f9b8a" transform="rotate(90 228 93)"/>
+            <circle cx="160" cy="93" r="13" fill="#f9fbf8" stroke="#1c3135" stroke-width="1.5"/>
+          </svg>
+          <h3>טיפול פרטני</h3>
+          <p>למבוגרים. חרדה ולחץ, מצב רוח, מעברים בחיים, אובדן.</p>
+          <span class="go">לתאם שיחה ←</span>
+        </button>
+        <button class="seat" data-who="טיפול זוגי">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <ellipse cx="160" cy="92" rx="122" ry="64" fill="#dce6e0"/>
+            <use href="#chair" x="56" y="70" width="52" height="47" fill="#46697a" transform="rotate(-90 82 93)"/>
+            <use href="#chair" x="206" y="38" width="52" height="47" fill="#7f9b8a" transform="rotate(70 232 61)"/>
+            <use href="#chair" x="206" y="102" width="52" height="47" fill="#7f9b8a" transform="rotate(110 232 125)"/>
+            <circle cx="152" cy="93" r="13" fill="#f9fbf8" stroke="#1c3135" stroke-width="1.5"/>
+          </svg>
+          <h3>טיפול זוגי</h3>
+          <p>שני בני הזוג בחדר. תקשורת, משברים, החלטות משותפות.</p>
+          <span class="go">לתאם שיחה ←</span>
+        </button>
+        <button class="seat" data-who="לילד או נער">
+          <svg viewBox="0 0 320 180" aria-hidden="true">
+            <ellipse cx="160" cy="92" rx="118" ry="62" fill="#dce6e0"/>
+            <use href="#chair" x="66" y="70" width="52" height="47" fill="#46697a" transform="rotate(-90 92 93)"/>
+            <use href="#chair" x="202" y="70" width="52" height="47" fill="#7f9b8a" transform="rotate(90 228 93)"/>
+            <g fill="none" stroke="#7f9b8a" stroke-width="1.6" stroke-dasharray="4 4"><rect x="140" y="140" width="40" height="30" rx="8"/><rect x="140" y="12" width="40" height="30" rx="8"/></g>
+            <circle cx="160" cy="93" r="13" fill="#f9fbf8" stroke="#1c3135" stroke-width="1.5"/>
+          </svg>
+          <h3>ילדים ונוער</h3>
+          <p>גילאי 12 עד 18, ופגישות עם ההורים לפי הצורך.</p>
+          <span class="go">לתאם שיחה ←</span>
+        </button>
       </div>
+      <p class="legend"><span><i style="background:#46697a"></i>הכורסה של המטפלת</span><span><i style="background:#7f9b8a"></i>הכורסאות שלכם</span><span><i style="border:1.5px dashed #5f7d6c"></i>הורים, כשצריך</span></p>
+
       <div class="prices">
         <ul class="price-list">
           <li class="lbl"><span>מחירים לדוגמה, לפגישה של 50 דקות</span></li>
@@ -257,58 +400,81 @@
     </div>
   </section>
 
-  <section>
+  <section id="clinic">
     <div class="wrap">
-      <div class="head"><h2>הקליניקה</h2><span class="small">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-      <div class="rooms">
+      <div class="head"><h2>הקליניקה</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="clinic">
         <figure class="room">
-          <div class="ps" data-slot="room" data-src="../shared/photos/psychologist-room.webp" data-alt="חדר הטיפולים" data-icon="camera" data-label="החדר">
-            <svg class="ps-ph" viewBox="0 0 400 340" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <defs>
-                <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d7e2db"/><stop offset="1" stop-color="#c3d2c9"/></linearGradient>
-                <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ece7"/></linearGradient>
-              </defs>
-              <rect width="400" height="340" fill="url(#wall)"/>
-              <rect y="250" width="400" height="90" fill="#a9bdb1"/>
-              <path d="M150 40 a50 50 0 0 1 100 0 V170 H150 Z" fill="url(#win)"/>
-              <path d="M200 0 V170 M150 105 H250" stroke="#c3d2c9" stroke-width="5"/>
-              <path d="M150 250 L120 340 H330 L250 250 Z" fill="#ffffff" opacity=".35"/>
-              <!-- two armchairs facing each other, a small table between -->
-              <g fill="#5d7f88"><rect x="58" y="196" width="92" height="64" rx="18"/><rect x="50" y="172" width="22" height="88" rx="11"/><rect x="66" y="252" width="8" height="26" rx="3" fill="#3f5f63"/><rect x="134" y="252" width="8" height="26" rx="3" fill="#3f5f63"/></g>
-              <g fill="#7f9a8c"><rect x="250" y="196" width="92" height="64" rx="18"/><rect x="328" y="172" width="22" height="88" rx="11"/><rect x="258" y="252" width="8" height="26" rx="3" fill="#5c7768"/><rect x="326" y="252" width="8" height="26" rx="3" fill="#5c7768"/></g>
-              <rect x="180" y="226" width="40" height="6" rx="3" fill="#1d3b38"/><rect x="197" y="232" width="6" height="44" fill="#1d3b38"/>
-              <rect x="190" y="212" width="20" height="14" rx="3" fill="#ffffff" opacity=".85"/>
-            </svg>
-          </div>
+          <div class="ps" data-slot="room" data-src="../shared/photos/psychologist-room.webp" data-alt="כורסה ירוקה, עציץ ושולחן קטן בחדר הטיפולים" data-pos="50 55" data-icon="camera" data-label="החדר"></div>
           <figcaption><b data-edit="room-t">החדר</b><span data-edit="room-s">שתי כורסאות, חלון לגינה</span></figcaption>
         </figure>
-        <figure class="room">
-          <div class="ps" data-slot="entry" data-icon="home" data-label="הכניסה"></div>
+        <figure class="entry">
+          <div class="ps" data-slot="entry" data-icon="home" data-label="הכניסה">
+            <svg class="ps-ph" viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="300" height="400" fill="#dce6e0"/>
+              <rect y="330" width="300" height="70" fill="#c3d3c9"/>
+              <path d="M90 330 V140 a60 60 0 0 1 120 0 V330 Z" fill="#46697a"/>
+              <path d="M102 330 V146 a48 48 0 0 1 96 0 V330 Z" fill="#557a8a"/>
+              <path d="M150 98 V330" stroke="#46697a" stroke-width="3"/>
+              <circle cx="182" cy="236" r="5" fill="#f9fbf8"/>
+              <rect x="226" y="268" width="34" height="62" rx="4" fill="#7f9b8a"/><path d="M243 268 c-18 -30 -6 -62 0 -78 c6 16 18 48 0 78z" fill="#2d5a48"/>
+              <rect x="40" y="200" width="30" height="40" rx="3" fill="#f9fbf8" opacity=".7"/>
+            </svg>
+          </div>
           <figcaption><b data-edit="entry-t">הכניסה</b><span data-edit="entry-s">קומה ראשונה, בלי שלט על הדלת</span></figcaption>
         </figure>
-        <figure class="room">
-          <div class="ps" data-slot="shelf" data-icon="camera" data-label="הספרייה"></div>
-          <figcaption><b data-edit="shelf-t">הספרייה</b><span data-edit="shelf-s">פינה לחכות בה בשקט</span></figcaption>
-        </figure>
+        <div class="about">
+          <figure class="ps face" data-slot="shelf" data-src="../shared/photos/psychologist-portrait.webp" data-alt="תמר גלעד" data-pos="50 45" data-icon="person" data-label="תמונה שלכם"></figure>
+          <h3 data-edit="who-name">תמר גלעד</h3>
+          <p class="c" data-edit="who-role">פסיכולוגית קלינית, מס׳ רישיון לדוגמה</p>
+          <dl>
+            <div><dt>איפה</dt><dd>בניין מגורים שקט במרכז חדרה, עשר דקות מהתחנה</dd></div>
+            <div><dt>חניה</dt><dd>ברחוב</dd></div>
+            <div><dt>אונליין</dt><dd>בזום, באותה שעה קבועה</dd></div>
+          </dl>
+        </div>
       </div>
-      <p class="where">בניין מגורים שקט במרכז חדרה, עשר דקות מהתחנה. חניה ברחוב. מי שמעדיפים מהבית, נפגשים בזום באותה שעה קבועה.</p>
+    </div>
+  </section>
+
+  <section class="pause" id="pause">
+    <div class="wrap pause-grid">
+      <div>
+        <h2>קשה עכשיו?</h2>
+        <p>לא צריך לחכות לפגישה כדי לקבל עזרה. ער״ן זמינים בכל שעה, ובסכנה מיידית מתקשרים למד״א.</p>
+        <div class="lines">
+          <a href="tel:1201"><b>1201</b><span>ער״ן, עזרה ראשונה נפשית</span></a>
+          <a href="tel:101"><b>101</b><span>מד״א, חירום רפואי</span></a>
+        </div>
+        <p class="sm">ובינתיים, דקה אחת לנשום. תרגיל קצר, לא תחליף לעזרה.</p>
+      </div>
+      <div class="breath">
+        <div class="orb-box">
+          <span class="orb-ring" aria-hidden="true"></span>
+          <span class="orb" aria-hidden="true"></span>
+          <span class="breath-n" aria-hidden="true"></span>
+        </div>
+        <p class="breath-say" aria-live="polite">רגע לנשום</p>
+        <p class="breath-sub">שש נשימות, בערך דקה</p>
+        <button class="breath-btn" type="button">להתחיל</button>
+      </div>
     </div>
   </section>
 
   <section class="guides" id="guides">
     <div class="wrap">
-      <div class="head"><h2>שאלות ותשובות</h2><span class="small">מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו</span></div>
+      <div class="head"><h2>שאלות ותשובות</h2><p>מה שחוזרים ושואלים, ומה עושים כשקשה עכשיו.</p></div>
       <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap">
-      <div class="head"><h2>מה המטפלת רואה</h2><span class="small">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="head"><h2>מה המטפלת רואה</h2><p>נסו את הצ׳אט, והטלפון יתעדכן.</p></div>
       <div class="owner-grid">
         <div>
           <ul>
-            <li><b>הפונה עונה על שש שאלות קצרות</b><span>בשביל מי, כיוון כללי, איפה ומתי נוח, שם פרטי וטלפון. בלי טופס ארוך.</span></li>
+            <li><b>הפונה עונה על כמה שאלות קצרות</b><span>בשביל מי, כיוון כללי, איפה ומתי נוח, שם פרטי וטלפון. בלי טופס ארוך.</span></li>
             <li><b>הפנייה מגיעה לוואטסאפ, בלי פרטים רגישים</b><span>הצ׳אט לא שואל מה קרה. את זה מספרים בשיחה, למי שבחרו לספר.</span></li>
             <li><b>חוזרים לשיחת היכרות</b><span>הצ׳אט פתוח גם בערב ובסוף השבוע, כשאין מי שיענה לטלפון באמצע פגישה.</span></li>
           </ul>
@@ -369,7 +535,38 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לקליניקה שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
+  document.querySelectorAll("[data-who]").forEach((b) => b.addEventListener("click", () => bot.open({ who: b.dataset.who })));
   Guides.load("../shared/guides/psychologist.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+
+  // A minute to breathe: started by hand, six breaths, stops by itself. With reduced motion only the words change.
+  (function () {
+    const orb = document.querySelector(".orb"), say = document.querySelector(".breath-say"), n = document.querySelector(".breath-n"), btn = document.querySelector(".breath-btn");
+    const PHASES = [["נושמים פנימה", 4, 1.6], ["עוצרים רגע", 2, 1.6], ["נושפים לאט", 6, 1]];
+    let timer = 0, tick = 0, running = false;
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    function stop(done) {
+      running = false; clearTimeout(timer); clearInterval(tick);
+      orb.style.transitionDuration = "1.2s"; orb.style.transform = "";
+      say.textContent = done ? "יפה. אפשר שוב, מתי שרוצים." : "רגע לנשום";
+      n.textContent = ""; btn.textContent = done ? "עוד פעם" : "להתחיל";
+    }
+    function run() {
+      let i = 0, breaths = 0;
+      const step = () => {
+        if (!running) return;
+        if (i === 0 && breaths === 6) return stop(true);
+        const [word, secs, scale] = PHASES[i];
+        say.textContent = word;
+        if (!still()) { orb.style.transitionDuration = secs + "s"; orb.style.transform = "scale(" + scale + ")"; }
+        let left = secs; n.textContent = left;
+        clearInterval(tick); tick = setInterval(() => { left--; if (left > 0) n.textContent = left; }, 1000);
+        timer = setTimeout(() => { i = (i + 1) % 3; if (i === 0) breaths++; step(); }, secs * 1000);
+      };
+      step();
+    }
+    btn.addEventListener("click", () => { if (running) return stop(false); running = true; btn.textContent = "לעצור"; run(); });
+    document.addEventListener("a11y-still", () => { orb.style.transform = ""; });
+  })();
 </script>
 </body>
 </html>
