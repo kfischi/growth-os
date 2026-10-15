@@ -8,206 +8,203 @@
 <meta name="description" content="אחזקת גינות, גיזום, טפטוף ודשא בחדרה, עמק חפר והשרון. מספרים בצ׳אט מה יש בגינה, והפרטים מגיעים לגנן בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Varela+Round&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: a seed packet. Illustrated front with the crimped top seal, planting instructions on the back (מתי, מה כולל, מחיר), and a garden plan on graph paper.
-     Detail: the Israeli garden year (גיזום בחורף, שתילה בסתיו, השקיה בקיץ), טפטוף, מחשב השקיה, מ״ר of lawn, moshav names in עמק חפר.
-     Bold move: a giant rotated seed packet as the hero, with its back peeking out behind it. Everything else is quiet paper and green. */
+  /* Object: the gardener's planting wheel (גלגל עונות), a paper dial that turns month by month, with the task and the drip setting in its window.
+     Detail: the Israeli garden year: גיזום בחורף, שתילה בסתיו, דשא באביב, טפטוף פעמיים ביום בקיץ וכבוי בחורף; moshav names in עמק חפר; מ״ר of lawn.
+     Bold move: a giant paper wheel on a deep cypress-green field in the hero. On load it turns to this month under the pomegranate pointer. Everything below is quiet: pale dew paper, Bellefair over Alef. */
   :root {
-    --leaf: #1b4430;           /* deep leaf, text and packet body */
-    --sage: #a8bf9f;           /* dry-season foliage */
-    --mist: #eaf0e5;           /* pale sage paper (not cream) */
-    --soil: #6a4430;           /* turned soil, pruning */
-    --bloom: #d9503f;          /* pomegranate flower, the one accent */
-    --drip: #4f9fd0;           /* irrigation water */
-    --display: "Karantina", "Varela Round", system-ui, sans-serif;
-    --body: "Varela Round", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", "Varela Round", ui-monospace, monospace;
-    --leaf-soft: color-mix(in srgb, var(--leaf) 80%, var(--mist));
-    --line: color-mix(in srgb, var(--sage) 55%, var(--mist));
-    --phone-frame: var(--leaf);
-    --bot-bg: #fff; --bot-fg: var(--leaf); --bot-line: var(--line); --bot-muted: var(--leaf-soft);
-    --bot-accent: var(--leaf); --bot-accent-fg: #fff; --bot-them: #eef3ea; --bot-me: var(--leaf); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --bot-focus: var(--bloom);
-    --ps-a: #8fb08a; --ps-b: #3f6b4c; --ps-ui: var(--leaf); --ps-edit: var(--bloom);
+    --cypress: #183b2d;        /* deep cypress: the hero field, text */
+    --cypress-deep: #0f2a1f;
+    --dew: #f2f5ee;            /* morning dew paper, page background */
+    --wheel: #e7eedf;          /* the paper of the wheel */
+    --frond: #b9cfa5;          /* muted text on cypress */
+    --pomegranate: #c4382e;    /* the flower, the pointer, the one accent */
+    --drip: #2b6f9e;           /* irrigation water */
+    --soil: #7b5236;           /* turned soil, pruning */
+    --shoot: #3f7a45;          /* new planting */
+    --display: "Bellefair", "Alef", "Times New Roman", serif;
+    --body: "Alef", "Arial Hebrew", system-ui, sans-serif;
+    --ink-soft: #4a5f53;
+    --line: #d3ddcb;
+    --phone-frame: var(--cypress);
+    --bot-bg: #fff; --bot-fg: var(--cypress); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--cypress); --bot-accent-fg: #fff; --bot-them: #edf2e8; --bot-me: var(--cypress); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px; --bot-radius-input: 999px; --bot-focus: var(--pomegranate);
+    --ps-a: #a9c39a; --ps-b: #3f6b4c; --ps-ui: var(--cypress); --ps-edit: var(--pomegranate);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--mist); color: var(--leaf); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--dew); color: var(--cypress); font-family: var(--body); font-size: 17.5px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--bloom); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--body); font-size: 13.5px; letter-spacing: 0; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .9; letter-spacing: 0; margin: 0; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 400; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 10px; }
-  .btn-leaf { background: var(--leaf); color: #fff; }
-  .btn-leaf:hover { background: #10301f; }
-  .btn-line { border: 2px solid var(--leaf); color: var(--leaf); background: transparent; }
-  .btn-line:hover { background: #fff; }
+  :focus-visible { outline: 3px solid var(--pomegranate); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; letter-spacing: 0; }
+  h2 { font-size: clamp(40px, 5.4vw, 68px); line-height: 1; }
+  .eyebrow { font-size: 14.5px; color: var(--ink-soft); display: flex; gap: 10px; align-items: center; }
+  .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--pomegranate); flex: none; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 999px; transition: background .15s, transform .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-sprout { background: var(--dew); color: var(--cypress); }
+  .btn-sprout:hover { background: #fff; }
+  .btn-ghost { border: 2px solid rgba(242,245,238,.7); color: #fff; background: transparent; }
+  .btn-ghost:hover { background: rgba(255,255,255,.08); }
 
-  .demo { background: var(--leaf); color: #bcd0bf; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--cypress-deep); color: #c7d8bd; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero: the packet ---------- */
-  .hero { position: relative; overflow: hidden; }
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
-  .logo { font-family: var(--display); font-weight: 700; font-size: 40px; line-height: 1; }
-  .logo span + span { color: var(--bloom); margin-inline-start: 6px; }
-  .bar a { text-decoration: none; border-bottom: 2px solid var(--bloom); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 470px); gap: 40px; align-items: center; padding: 20px 0 90px; }
+  /* ---------- Hero: the wheel on the cypress field ---------- */
+  .hero { background: var(--cypress); color: #f2f5ee; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 70px; background: var(--dew); clip-path: ellipse(70% 100% at 50% 100%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 20px; position: relative; z-index: 2; }
+  .logo { font-family: var(--display); font-size: 34px; line-height: 1; }
+  .logo span + span { color: var(--frond); margin-inline-start: 8px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--frond); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 48px; align-items: center; padding: 10px 0 110px; position: relative; z-index: 2; }
   .hero-copy { min-width: 0; }
-  .now { display: inline-flex; gap: 8px; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px 5px 10px; margin-bottom: 20px; }
-  .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--bloom); flex: none; }
-  .hero h1 { font-size: clamp(64px, 9vw, 128px); margin-bottom: 18px; text-wrap: balance; }
-  .hero h1 em { font-style: normal; color: var(--soil); display: block; }
-  .hero p { font-size: 19px; max-width: 42ch; margin: 0 0 28px; color: var(--leaf-soft); }
-  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  .area { margin-top: 26px; color: var(--leaf-soft); }
+  .now { display: inline-flex; gap: 10px; align-items: center; border: 1px solid rgba(185,207,165,.45); border-radius: 999px; padding: 6px 16px 6px 12px; font-size: 15px; color: #e3ecda; }
+  .now i { width: 9px; height: 9px; border-radius: 50%; background: #e4675c; flex: none; }
+  .hero h1 { font-size: clamp(54px, 7.4vw, 104px); line-height: .95; margin: 26px 0 24px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--frond); display: block; }
+  .hero .lead { font-size: 19.5px; max-width: 40ch; margin: 0 0 30px; color: #d6e2cc; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .area { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+  .area li { font-size: 14.5px; color: #e3ecda; border-bottom: 1px dashed rgba(185,207,165,.5); padding-bottom: 2px; margin-inline-end: 10px; }
 
-  .packets { position: relative; min-width: 0; height: 600px; }
-  .packet { position: absolute; width: 380px; aspect-ratio: 380 / 560; border-radius: 6px 6px 10px 10px; box-shadow: 0 40px 60px -35px rgba(15,40,25,.6), 0 2px 0 rgba(0,0,0,.05); }
-  .packet::before { content: ""; position: absolute; inset: 0 0 auto; height: 22px; border-radius: 6px 6px 0 0; z-index: 2;
-    background: repeating-linear-gradient(90deg, rgba(0,0,0,.16) 0 2px, transparent 2px 6px); }
-  .packet.back { background: #fff; top: 10px; inset-inline-start: 0; transform: rotate(7deg); padding: 44px 26px 24px; color: var(--leaf); }
-  .packet.front { background: var(--leaf); top: 40px; inset-inline-end: 0; transform: rotate(-5deg); padding: 34px 20px 18px; color: #fff; display: flex; flex-direction: column; z-index: 1; }
-  .back h3 { font-size: 34px; margin-bottom: 10px; }
-  .back .rows { display: grid; gap: 0; font-size: 13px; }
-  .back .rows div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; border-top: 1px solid var(--line); padding: 7px 0; }
-  .back .rows span { color: var(--leaf-soft); }
-  .back .mini-cal { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; margin-top: 14px; }
-  .back .mini-cal i { height: 16px; border-radius: 2px; background: var(--line); }
-  .back .mini-cal i.p { background: var(--leaf); } .back .mini-cal i.w { background: var(--drip); } .back .mini-cal i.c { background: var(--soil); }
-  .front .tag { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-  .front .tag b { background: var(--bloom); color: #fff; font-weight: 400; font-size: 13px; padding: 3px 10px; border-radius: 999px; }
-  .front .tag span { font-family: var(--mono); font-size: 12px; color: var(--sage); }
-  .front .ps { flex: 1; margin: 12px 0; border-radius: 4px; min-height: 0; }
-  .front .ttl { font-family: var(--display); font-weight: 700; font-size: 72px; line-height: .85; }
-  .front .ttl span { color: var(--sage); }
-  .front .net { display: flex; justify-content: space-between; gap: 10px; border-top: 1px dashed rgba(255,255,255,.35); margin-top: 10px; padding-top: 8px; font-size: 13px; color: #d5e2d4; }
+  .wheel { position: relative; width: 100%; max-width: 560px; aspect-ratio: 1; margin-inline: auto; }
+  .wheel .dial { position: absolute; inset: 0; width: 100%; height: 100%; transition: transform 1.8s cubic-bezier(.25,.8,.25,1); filter: drop-shadow(0 30px 40px rgba(0,0,0,.35)); }
+  .wheel .dial .sec { cursor: pointer; }
+  .wheel .dial .sec:hover path.f { filter: brightness(.95); }
+  .wheel .dial .sec:focus-visible { outline: none; }
+  .wheel .dial .sec:focus-visible path.f { stroke: var(--pomegranate); stroke-width: 4; }
+  .wheel .pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+  .wheel .pointer b { background: var(--pomegranate); color: #fff; font-size: 14px; font-weight: 700; padding: 4px 14px; border-radius: 999px; }
+  .wheel .pointer i { width: 0; height: 0; border: 11px solid transparent; border-top: 14px solid var(--pomegranate); margin-top: -1px; }
+  .hub { position: absolute; top: 50%; left: 50%; width: 47%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: var(--cypress-deep); color: #fff; z-index: 2;
+    box-shadow: 0 0 0 6px var(--wheel), 0 0 0 7px #c5d3b9, 0 18px 30px -12px rgba(0,0,0,.6); display: grid; place-content: center; text-align: center; padding: 16px; }
+  .hub .m { font-family: var(--display); font-size: clamp(30px, 4.2vw, 46px); line-height: 1; }
+  .hub .t { font-size: clamp(13px, 1.5vw, 16px); color: #dbe7d1; margin-top: 8px; line-height: 1.35; max-width: 17ch; margin-inline: auto; }
+  .hub .w { margin-top: 10px; padding-top: 9px; border-top: 1px dashed rgba(185,207,165,.45); font-size: clamp(12px, 1.3vw, 14px); color: #a9d0ea; display: flex; gap: 6px; align-items: center; justify-content: center; }
+  .hub .w svg { width: 13px; height: 13px; flex: none; }
+  .wheel-note { text-align: center; font-size: 13.5px; color: var(--frond); margin-top: 16px; }
 
   /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(54px, 7vw, 88px); }
-  .head .mono { color: var(--leaf-soft); }
+  section { padding-block: 90px; }
+  .head { display: grid; gap: 12px; margin-bottom: 36px; max-width: 760px; }
+  .head p { margin: 0; color: var(--ink-soft); font-size: 18px; }
 
-  /* the garden year */
-  .year { background: #fff; border-block: 1px solid var(--line); }
-  .months { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; padding-top: 12px; }
-  .m { min-width: 0; border-radius: 6px; padding: 10px 8px 12px; background: var(--mist); border-top: 6px solid var(--c, var(--sage)); position: relative; }
-  .m b { display: block; font-size: 15px; }
-  .m span { display: block; font-size: 13px; line-height: 1.35; color: var(--leaf-soft); margin-top: 4px; }
-  .m.prune { --c: var(--soil); } .m.plant { --c: var(--leaf); } .m.water { --c: var(--drip); } .m.lawn { --c: var(--sage); }
-  .m.cur { outline: 2px solid var(--bloom); outline-offset: 2px; background: #fff; }
-  .m.cur::after { content: "החודש"; position: absolute; top: -12px; inset-inline-end: 8px; background: var(--bloom); color: #fff; font-size: 12px; padding: 1px 8px; border-radius: 999px; }
-  .legend { display: flex; gap: 8px 20px; flex-wrap: wrap; margin-top: 20px; font-size: 14px; color: var(--leaf-soft); }
-  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px; background: var(--c); }
+  /* services across the year */
+  .beds { background: #fff; border-radius: 28px; padding: 10px 28px; box-shadow: 0 30px 60px -50px rgba(24,59,45,.6); }
+  .cal-h, .bed { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 330px) minmax(0, 180px); gap: 28px; align-items: center; }
+  .cal-h { padding: 14px 0 8px; font-size: 12px; color: var(--ink-soft); }
+  .cal-h .strip span { text-align: center; }
+  .strip { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; direction: rtl; }
+  .strip i { height: 30px; border-radius: 6px; background: #eef2ea; position: relative; }
+  .strip i.on { background: var(--c); }
+  .strip i.cur { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--pomegranate); }
+  .bed { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 330px) minmax(0, 180px); gap: 28px; align-items: center; width: 100%; padding: 22px 0; border-top: 1px solid var(--line); }
+  .bed:hover .h3 { color: var(--shoot); }
+  .bed:focus-visible { outline: 3px solid var(--pomegranate); outline-offset: 4px; border-radius: 8px; }
+  .bed .h3 { display: block; font-family: var(--display); font-weight: 400; font-size: 38px; line-height: 1.05; transition: color .15s; }
+  .bed .d { display: block; margin: 4px 0 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.5; }
+  .bed .pr { text-align: left; font-weight: 700; font-size: 17px; line-height: 1.35; }
+  .bed .pr small { display: block; font-weight: 400; font-size: 13.5px; color: var(--ink-soft); }
+  .bed .go { display: block; font-size: 14px; color: var(--pomegranate); font-weight: 700; margin-top: 4px; }
+  .bed.keep { --c: var(--cypress); } .bed.prune { --c: var(--soil); } .bed.water { --c: var(--drip); } .bed.plant { --c: var(--shoot); } .bed.lawn { --c: #6d9c58; }
+  .note { color: var(--ink-soft); font-size: 15px; margin-top: 18px; }
 
-  /* services: packet backs */
-  .backs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .pk { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; position: relative; background: #fff; border-radius: 6px; padding: 38px 22px 20px; border: 1px solid var(--line); display: flex; flex-direction: column; }
-  .pk::before { content: ""; position: absolute; inset: 0 0 auto; height: 16px; border-radius: 6px 6px 0 0; background: var(--c, var(--leaf)); -webkit-mask: repeating-linear-gradient(90deg, #000 0 4px, rgba(0,0,0,.7) 4px 6px); mask: repeating-linear-gradient(90deg, #000 0 4px, rgba(0,0,0,.7) 4px 6px); }
-  .pk:hover { border-color: var(--leaf); }
-  .pk:focus-visible { outline: 3px solid var(--bloom); outline-offset: 2px; }
-  .pk.wide { grid-column: span 2; }
-  .pk h3 { font-size: 46px; }
-  .pk > p { margin: 6px 0 16px; color: var(--leaf-soft); font-size: 15.5px; }
-  .pk dl { margin: auto 0 0; display: grid; font-size: 14.5px; }
-  .pk dl div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; border-top: 1px solid var(--line); padding: 8px 0; }
-  .pk dt { color: var(--leaf-soft); }
-  .pk dd { margin: 0; }
-  .pk dd.pr { font-weight: 400; color: var(--leaf); font-size: 16px; }
-  .pk .go { margin-top: 12px; color: var(--bloom); font-size: 15px; }
-  .pk.prune { --c: var(--soil); } .pk.water { --c: var(--drip); } .pk.plant { --c: var(--leaf); } .pk.lawn { --c: var(--sage); } .pk.keep { --c: var(--bloom); }
-  .pk.wide .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: auto; }
-  .pk.wide .cols ul { margin: 0; padding: 0; list-style: none; font-size: 15px; }
-  .pk.wide .cols li { border-top: 1px solid var(--line); padding: 7px 0; }
-  .pk.wide .cols li::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--leaf); margin-inline-end: 8px; vertical-align: 2px; }
-  .note { color: var(--leaf-soft); font-size: 14.5px; margin-top: 18px; }
+  .calc { background: #fff; }
 
-  /* who comes: plant-label portrait + packets with photo fronts */
-  .who { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 56px; align-items: end; }
-  .stake { width: 100%; max-width: 280px; margin-inline: auto; }
-  .stake .label { background: #fff; padding: 14px 14px 20px; border-radius: 10px 10px 0 0; border: 1px solid var(--line); border-bottom: 0; }
-  .stake .ps { aspect-ratio: 1; border-radius: 6px; }
-  .stake .ps-chip { display: none; }
-  .stake b { display: block; font-family: var(--display); font-size: 48px; line-height: .9; margin-top: 14px; }
-  .stake small { display: block; color: var(--leaf-soft); font-size: 14.5px; }
-  .stake .spike { height: 90px; width: 100%; background: #fff; clip-path: polygon(0 0, 100% 0, 58% 100%, 42% 100%); border-inline: 1px solid var(--line); }
-  .stake .soil { height: 18px; border-radius: 50%; background: var(--soil); margin: -14px 18% 0; opacity: .85; }
-  .shelf { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; }
-  .sp { min-width: 0; position: relative; background: var(--leaf); color: #fff; border-radius: 4px 4px 8px 8px; padding: 26px 10px 14px; box-shadow: 0 30px 40px -30px rgba(15,40,25,.55); }
-  .sp::before { content: ""; position: absolute; inset: 0 0 auto; height: 14px; background: repeating-linear-gradient(90deg, rgba(0,0,0,.25) 0 2px, transparent 2px 6px); border-radius: 4px 4px 0 0; }
-  .sp:nth-child(1) { transform: rotate(-2deg); } .sp:nth-child(2) { transform: translateY(-14px) rotate(1.5deg); background: var(--soil); } .sp:nth-child(3) { transform: rotate(-1deg); }
-  .sp .ps { aspect-ratio: 4 / 5; border-radius: 3px; }
-  .sp b { display: block; font-family: var(--display); font-size: 32px; line-height: .95; margin-top: 10px; }
-  .sp small { display: block; color: #d5e2d4; font-size: 13.5px; line-height: 1.4; margin-top: 4px; }
-  .who-note { color: var(--leaf-soft); font-size: 15px; margin-top: 26px; }
+  /* who comes */
+  .who { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+  .big { position: relative; min-width: 0; }
+  .big .ps { aspect-ratio: 16 / 11; border-radius: 28px 28px 28px 140px; }
+  .card { position: absolute; bottom: -34px; inset-inline-start: 24px; z-index: 3; display: flex; gap: 14px; align-items: center; background: #fff; border-radius: 999px; padding: 8px 22px 8px 8px; box-shadow: 0 20px 40px -24px rgba(24,59,45,.6); max-width: calc(100% - 48px); }
+  .card .ps { width: 70px; height: 70px; border-radius: 50%; flex: none; }
+  .card .ps .ps-chip { display: none; }
+  .card b { display: block; font-family: var(--display); font-size: 28px; line-height: 1; }
+  .card small { display: block; color: var(--ink-soft); font-size: 14px; }
+  .seasons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; min-width: 0; }
+  .season { min-width: 0; }
+  .season .ps { aspect-ratio: 4 / 5.6; border-radius: 999px 999px 18px 18px; }
+  .season .tag { display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 700; color: #fff; background: var(--c); padding: 2px 10px; border-radius: 999px; }
+  .season b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.1; margin-top: 6px; }
+  .season small { display: block; color: var(--ink-soft); font-size: 13.5px; line-height: 1.4; margin-top: 2px; }
+  .facts { margin-top: 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+  .facts div { padding: 14px 0 0; min-width: 0; }
+  .facts div + div { padding-inline-start: 16px; border-inline-start: 1px solid var(--line); }
+  .facts b { display: block; font-family: var(--display); font-size: 30px; line-height: 1.05; }
+  .facts span { font-size: 14px; color: var(--ink-soft); }
 
-  /* before/after on graph paper */
-  .plan { background-color: #f4f8fb; background-image: linear-gradient(color-mix(in srgb, var(--drip) 22%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--drip) 22%, transparent) 1px, transparent 1px);
-    background-size: 26px 26px; border-block: 1px solid color-mix(in srgb, var(--drip) 30%, transparent); }
-  .ba-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 48px; align-items: center; }
-  .ps-ba.gard { aspect-ratio: 4 / 3; border-radius: 6px; border: 8px solid #fff; box-shadow: 0 40px 70px -45px rgba(15,40,25,.6); }
+  /* before and after */
+  .plan { background: var(--wheel); }
+  .ba-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 52px; align-items: center; }
+  .ps-ba.gard { aspect-ratio: 4 / 3; border-radius: 28px; box-shadow: 0 40px 70px -45px rgba(24,59,45,.7); }
   .ps-ba.gard .ps-chip { display: none; }
-  .ps-ba.gard [data-slot="before"] { --ps-a: #b9ab8e; --ps-b: #7a6a4f; }
   .ps-ba.gard [data-slot="after"] .ps-tools { left: auto; right: 12px; transform: none; top: 54px; }
   .ps-ba.gard [data-slot="before"] .ps-tools { left: 12px; transform: none; top: 54px; }
-  .ba-side h2 { font-size: clamp(48px, 6vw, 72px); margin: 10px 0 14px; }
-  .ba-side p { color: var(--leaf-soft); margin: 0 0 12px; }
-  .facts { display: grid; margin-top: 18px; font-size: 15px; background: #fff; border: 1px solid color-mix(in srgb, var(--drip) 30%, transparent); border-radius: 6px; padding: 4px 14px; }
-  .facts div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; }
-  .facts div + div { border-top: 1px dashed color-mix(in srgb, var(--drip) 40%, transparent); }
-  .facts span { color: var(--leaf-soft); }
+  .ba-side h2 { font-size: clamp(40px, 5vw, 60px); margin: 12px 0 14px; }
+  .ba-side p { color: var(--ink-soft); margin: 0 0 12px; }
+  .ba-facts { display: grid; margin-top: 18px; font-size: 15.5px; background: #fff; border-radius: 18px; padding: 6px 18px; }
+  .ba-facts div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; }
+  .ba-facts div + div { border-top: 1px dashed var(--line); }
+  .ba-facts span { color: var(--ink-soft); }
 
   /* what the gardener sees */
-  .owner { background: var(--leaf); color: #e4eee3; }
-  .owner .head .mono { color: var(--sage); }
+  .owner { background: var(--cypress); color: #e4eee3; }
+  .owner .head p { color: var(--frond); }
+  .owner .eyebrow { color: var(--frond); }
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
-  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
-  .owner li::before { counter-increment: s; content: counter(s); width: 46px; height: 46px; border-radius: 50%; border: 2px solid var(--sage); display: grid; place-items: center; font-family: var(--display); font-size: 28px; color: var(--sage); }
-  .owner li b { display: block; font-size: 19px; font-weight: 400; color: #fff; }
-  .owner li span { color: #b9cdb9; font-size: 15.5px; }
-  .owner .ph-cap { color: var(--sage); }
-  .owner .phone { --phone-frame: #0e2a1b; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 50px; height: 50px; border-radius: 50%; border: 1.5px solid var(--frond); display: grid; place-items: center; font-family: var(--display); font-size: 26px; color: #fff; }
+  .owner li b { display: block; font-size: 20px; color: #fff; }
+  .owner li span { color: #c3d6b8; font-size: 15.5px; }
+  .owner .ph-cap { color: var(--frond); }
+  .owner .phone { --phone-frame: var(--cypress-deep); }
 
-  footer { padding-block: 34px 90px; color: var(--leaf-soft); font-size: 14px; }
+  footer { padding-block: 34px 96px; color: var(--ink-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
 
-  @media (max-width: 980px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); padding-bottom: 60px; }
-    .packets { height: 560px; max-width: 470px; width: 100%; margin-inline: auto; }
-    .months { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 18px; }
-    .backs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  @media (max-width: 1000px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-bottom: 96px; }
+    .wheel { max-width: 500px; }
+    .cal-h, .bed { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); }
+    .bed .pr { grid-column: 1 / -1; text-align: right; }
+    .cal-h > span:last-child { display: none; }
     .who, .ba-wrap, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .who { gap: 64px; }
     .owner .phone { margin-inline: auto; }
   }
-  @media (max-width: 620px) {
+  @media (max-width: 680px) {
     section { padding-block: 64px; }
-    .hero-grid { padding-top: 6px; gap: 30px; }
-    .hero h1 { font-size: 66px; }
-    .hero p { font-size: 17.5px; }
-    .packets { height: 450px; max-width: 330px; }
-    .packet { width: 270px; }
-    .packet.front { top: 30px; padding: 28px 14px 14px; }
-    .packet.back { padding: 36px 18px 18px; transform: rotate(8deg); }
-    .back h3 { font-size: 28px; } .back .rows { font-size: 12px; } .back .rows div { grid-template-columns: 58px minmax(0, 1fr); padding: 5px 0; }
-    .front .ttl { font-size: 54px; }
-    .front .net { font-size: 12px; }
-    .months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .backs { grid-template-columns: minmax(0, 1fr); }
-    .pk.wide { grid-column: auto; }
-    .pk.wide .cols { grid-template-columns: minmax(0, 1fr); gap: 0; }
-    .shelf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
-    .sp:nth-child(3) { display: none; }
-    .sp b { font-size: 27px; }
-    .stake { max-width: 240px; }
+    .bar { padding-block: 14px; }
+    .logo { font-size: 30px; }
+    .hero-grid { padding-top: 4px; gap: 34px; }
+    .hero h1 { font-size: clamp(46px, 13vw, 58px); margin: 20px 0 16px; }
+    .hero .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .area { margin-top: 24px; }
+    .beds { padding: 4px 16px; border-radius: 22px; }
+    .cal-h { display: none; }
+    .bed { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 20px 0; }
+    .bed:first-of-type { border-top: 0; }
+    .bed .h3 { font-size: 32px; }
+    .strip i { height: 22px; border-radius: 4px; }
+    .strip.lab { display: grid; }
+    .big .ps { border-radius: 22px 22px 22px 90px; aspect-ratio: 4 / 3.4; }
+    .card { inset-inline-start: 12px; max-width: calc(100% - 24px); padding-inline-end: 16px; }
+    .card b { font-size: 24px; }
+    .seasons { gap: 8px; }
+    .season b { font-size: 19px; }
+    .season small { display: none; }
+    .facts b { font-size: 24px; }
+    .facts span { font-size: 13px; display: block; line-height: 1.35; }
+    .facts div + div { padding-inline-start: 10px; }
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .packet.front { animation: settle .9s cubic-bezier(.2,.8,.2,1) both; }
-    @keyframes settle { from { transform: translateY(30px) rotate(-11deg); opacity: 0; } }
-  }
+  .strip.lab { display: none; }
+  @media (max-width: 680px) { .bed .strip-wrap .strip.lab { display: grid; margin-bottom: 3px; } .strip.lab span { font-size: 10px; text-align: center; color: var(--ink-soft); } }
+  @media (prefers-reduced-motion: reduce) { .wheel .dial { transition: none; } }
 </style>
 </head>
 <body>
@@ -221,127 +218,66 @@
     </div>
     <div class="hero-grid">
       <div class="hero-copy">
-        <div class="now mono"><i></i><span id="now">עכשיו אוקטובר: זמן לשתול</span></div>
-        <h1><span data-edit="h1a">גינה מטופלת,</span> <em data-edit="h1b">בלי לרדוף אחרי הגנן.</em></h1>
-        <p>אחזקה קבועה, גיזום, טפטוף ודשא. מספרים בצ׳אט מה יש בגינה, ואני חוזר אליכם לקבוע סיור.</p>
+        <div class="now"><i aria-hidden="true"></i><span id="now">עכשיו אוקטובר: זמן לשתול</span></div>
+        <h1><span data-edit="h1a">הגינה שלכם,</span> <em data-edit="h1b">בכל עונה של השנה.</em></h1>
+        <p class="lead">אחזקה קבועה, גיזום, טפטוף ודשא. מספרים בצ׳אט מה יש בגינה, ואני חוזר אליכם לקבוע סיור.</p>
         <div class="ctas">
-          <button class="btn btn-leaf" data-open-bot>לבדוק מחיר</button>
-          <a class="btn btn-line" href="#" data-wa="היי, אשמח לתאם סיור בגינה">וואטסאפ ישיר</a>
+          <button class="btn btn-sprout" data-open-bot>לבדוק מחיר</button>
+          <a class="btn btn-ghost" href="#" data-wa="היי, אשמח לתאם סיור בגינה">וואטסאפ ישיר</a>
         </div>
-        <div class="area mono">חדרה · עמק חפר · השרון · מושבים וקיבוצים</div>
+        <ul class="area" aria-label="אזורי עבודה"><li>חדרה</li><li>עמק חפר</li><li>השרון</li><li>מושבים וקיבוצים</li></ul>
       </div>
 
-      <div class="packets">
-        <div class="packet back" aria-hidden="true">
-          <h3>הוראות לגינה</h3>
-          <div class="rows">
-            <div><span>עומק שתילה</span><b>פי שניים מגובה הגוש</b></div>
-            <div><span>מרווח</span><b>40 ס״מ בין שיחים</b></div>
-            <div><span>טפטוף</span><b>2 ליטר לשעה, פעמיים ביום בקיץ</b></div>
-            <div><span>גיזום</span><b>דצמבר עד פברואר</b></div>
-            <div><span>שתילה</span><b>אוקטובר עד דצמבר</b></div>
+      <div>
+        <div class="wheel" id="wheel">
+          <svg class="dial" id="dial" viewBox="-300 -300 600 600" role="group" aria-label="גלגל העונות: מה עושים בגינה בכל חודש"></svg>
+          <div class="pointer" aria-hidden="true"><b>החודש</b><i></i></div>
+          <div class="hub" aria-live="polite">
+            <div class="m" id="hub-m">אוקטובר</div>
+            <div class="t" id="hub-t">זמן לשתול</div>
+            <div class="w"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg><span id="hub-w">טפטוף: פעם ביומיים</span></div>
           </div>
-          <div class="mini-cal"><i class="c"></i><i class="c"></i><i class="w"></i><i></i><i class="w"></i><i class="w"></i><i class="w"></i><i class="w"></i><i></i><i class="p"></i><i class="p"></i><i class="c"></i></div>
         </div>
-        <div class="packet front">
-          <div class="tag"><b>זרעי גינה</b><span>2026</span></div>
-          <figure class="ps" data-slot="hero" data-icon="trowel" data-label="הגינה של משפחת לוי">
-            <svg class="ps-ph" viewBox="0 0 340 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="340" height="300" fill="#cfe3ee"/>
-              <circle cx="270" cy="62" r="26" fill="#fff" opacity=".7"/>
-              <path d="M0 150 C 70 120, 140 135, 200 125 S 300 110, 340 128 V300 H0z" fill="#8fb08a"/>
-              <path d="M0 190 C 90 170, 200 180, 340 165 V300 H0z" fill="#5f8a5f"/>
-              <rect x="0" y="232" width="340" height="68" fill="#6a4430"/>
-              <path d="M0 246 H340 M0 268 H340 M0 290 H340" stroke="#4f3222" stroke-width="3"/>
-              <g fill="#2f5a3e"><circle cx="40" cy="236" r="14"/><circle cx="100" cy="234" r="16"/><circle cx="165" cy="236" r="13"/><circle cx="228" cy="233" r="16"/><circle cx="294" cy="236" r="14"/></g>
-              <g fill="#e9604f"><circle cx="96" cy="226" r="4"/><circle cx="108" cy="232" r="3.5"/><circle cx="224" cy="226" r="4"/><circle cx="236" cy="232" r="3.5"/></g>
-              <g fill="#4f9fd0"><circle cx="20" cy="257" r="2.6"/><circle cx="70" cy="257" r="2.6"/><circle cx="130" cy="257" r="2.6"/><circle cx="195" cy="257" r="2.6"/><circle cx="260" cy="257" r="2.6"/><circle cx="320" cy="257" r="2.6"/></g>
-              <path d="M78 190 V120" stroke="#5a3b28" stroke-width="8"/>
-              <circle cx="78" cy="98" r="42" fill="#1b4430"/><circle cx="104" cy="118" r="26" fill="#245a3f"/>
-              <g fill="#e9604f"><circle cx="62" cy="92" r="6"/><circle cx="90" cy="80" r="6"/><circle cx="96" cy="112" r="6"/></g>
-            </svg>
-          </figure>
-          <div class="ttl"><span data-edit="pk-a">גינה</span> <span data-edit="pk-b" style="color:#fff">מסודרת</span></div>
-          <div class="net"><span>תכולה: גינה אחת</span><span>עמק חפר והשרון</span></div>
-        </div>
+        <p class="wheel-note">לחצו על חודש בגלגל · תוכנית השקיה לדוגמה</p>
       </div>
     </div>
   </div>
 </header>
 
 <main>
-  <section class="year">
-    <div class="wrap">
-      <div class="head"><h2>מה עושים בגינה, חודש אחרי חודש</h2><span class="mono">ככה נראית שנה באחזקה קבועה</span></div>
-      <div class="months" id="months">
-        <div class="m prune"><b>ינואר</b><span>גיזום עצים ושיחים</span></div>
-        <div class="m prune"><b>פברואר</b><span>גיזום ושתילת עצי פרי</span></div>
-        <div class="m water"><b>מרץ</b><span>בדיקת טפטוף ודליפות</span></div>
-        <div class="m lawn"><b>אפריל</b><span>דשא חדש ודישון</span></div>
-        <div class="m water"><b>מאי</b><span>מחשב השקיה לקיץ</span></div>
-        <div class="m water"><b>יוני</b><span>השקיה וכיסוח</span></div>
-        <div class="m water"><b>יולי</b><span>השקיה מוקדמת בבוקר</span></div>
-        <div class="m water"><b>אוגוסט</b><span>חיפוי נגד התאדות</span></div>
-        <div class="m lawn"><b>ספטמבר</b><span>הכנת ערוגות</span></div>
-        <div class="m plant"><b>אוקטובר</b><span>זמן לשתול</span></div>
-        <div class="m plant"><b>נובמבר</b><span>שתילה וכיוון השקיה לחורף</span></div>
-        <div class="m prune"><b>דצמבר</b><span>גיזום חורף</span></div>
-      </div>
-      <div class="legend"><span style="--c:var(--soil)">גיזום</span><span style="--c:var(--leaf)">שתילה</span><span style="--c:var(--drip)">השקיה</span><span style="--c:var(--sage)">דשא וערוגות</span></div>
-    </div>
-  </section>
-
   <section>
     <div class="wrap">
-      <div class="head"><h2>מה צריך בגינה?</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
-      <div class="backs">
-        <button class="pk keep wide" data-service="אחזקה קבועה">
-          <h3>אחזקה קבועה</h3>
-          <p>אותו גנן, באותו יום בשבוע. אתם רק נהנים מהגינה.</p>
-          <div class="cols">
-            <ul><li>כיסוח דשא וקיצוץ שוליים</li><li>ניכוש עשבים בערוגות</li><li>גיזום קל של שיחים</li><li>בדיקת טפטוף ומחשב השקיה</li></ul>
-            <dl>
-              <div><dt>מתי</dt><dd>כל שבועיים או פעם בחודש</dd></div>
-              <div><dt>מחיר</dt><dd class="pr">350 עד 900 ₪ לחודש, לפי גודל הגינה</dd></div>
-            </dl>
-          </div>
-          <span class="go">לבדוק מחיר לגינה שלכם</span>
+      <div class="head">
+        <span class="eyebrow">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span>
+        <h2>מה עושים, ובאיזה חודש</h2>
+        <p>לכל עבודה בגינה יש עונה. ככה זה נראה לאורך השנה.</p>
+      </div>
+      <div class="beds">
+        <div class="cal-h" aria-hidden="true"><span></span><div class="strip"><span>ינו</span><span>פבר</span><span>מרץ</span><span>אפר</span><span>מאי</span><span>יונ</span><span>יול</span><span>אוג</span><span>ספט</span><span>אוק</span><span>נוב</span><span>דצמ</span></div><span></span></div>
+        <button class="bed keep" data-service="אחזקה קבועה" data-months="1,2,3,4,5,6,7,8,9,10,11,12">
+          <span><b class="h3">אחזקה קבועה</b><span class="d">אותו גנן, באותו יום בשבוע: כיסוח, ניכוש, גיזום קל ובדיקת טפטוף.</span></span>
+          <span class="strip-wrap"></span>
+          <span class="pr">350 עד 900 ₪ לחודש<small>כל שבועיים או פעם בחודש</small><span class="go">לבדוק מחיר</span></span>
         </button>
-        <button class="pk prune" data-service="גיזום">
-          <h3>גיזום</h3>
-          <p>עצים, גדר חיה ושיחים שהשתלטו.</p>
-          <dl>
-            <div><dt>מתי</dt><dd>בעיקר בחורף, דצמבר עד פברואר</dd></div>
-            <div><dt>מחיר</dt><dd class="pr">400 עד 1,500 ₪</dd></div>
-          </dl>
-          <span class="go">לבדוק מחיר</span>
+        <button class="bed prune" data-service="גיזום" data-months="12,1,2">
+          <span><b class="h3">גיזום</b><span class="d">עצים, גדר חיה ושיחים שהשתלטו.</span></span>
+          <span class="strip-wrap"></span>
+          <span class="pr">400 עד 1,500 ₪<small>בעיקר דצמבר עד פברואר</small><span class="go">לבדוק מחיר</span></span>
         </button>
-        <button class="pk water" data-service="מערכת השקיה">
-          <h3>מערכת השקיה</h3>
-          <p>טפטוף, ממטרות ומחשב השקיה.</p>
-          <dl>
-            <div><dt>מתי</dt><dd>לפני הקיץ, מרץ עד מאי</dd></div>
-            <div><dt>מחיר</dt><dd class="pr">800 עד 2,500 ₪</dd></div>
-          </dl>
-          <span class="go">לבדוק מחיר</span>
+        <button class="bed water" data-service="מערכת השקיה" data-months="3,4,5">
+          <span><b class="h3">מערכת השקיה</b><span class="d">טפטוף, ממטרות ומחשב השקיה, לפני שהחום מגיע.</span></span>
+          <span class="strip-wrap"></span>
+          <span class="pr">800 עד 2,500 ₪<small>מרץ עד מאי</small><span class="go">לבדוק מחיר</span></span>
         </button>
-        <button class="pk plant" data-service="שתילה ועיצוב">
-          <h3>שתילה ועיצוב</h3>
-          <p>ערוגות, שיחים ועצי פרי.</p>
-          <dl>
-            <div><dt>מתי</dt><dd>בסתיו, אוקטובר עד דצמבר</dd></div>
-            <div><dt>מחיר</dt><dd class="pr">לפי הצעת מחיר</dd></div>
-          </dl>
-          <span class="go">לבדוק מחיר</span>
+        <button class="bed plant" data-service="שתילה ועיצוב" data-months="10,11,12">
+          <span><b class="h3">שתילה ועיצוב</b><span class="d">ערוגות, שיחים ועצי פרי. שותלים כשהגשם בדרך.</span></span>
+          <span class="strip-wrap"></span>
+          <span class="pr">לפי הצעת מחיר<small>אוקטובר עד דצמבר</small><span class="go">לבדוק מחיר</span></span>
         </button>
-        <button class="pk lawn" data-service="דשא">
-          <h3>דשא</h3>
-          <p>התקנת מרבדים וחידוש דשא קיים.</p>
-          <dl>
-            <div><dt>מתי</dt><dd>באביב ובתחילת הקיץ</dd></div>
-            <div><dt>מחיר</dt><dd class="pr">התקנה לפי מ״ר</dd></div>
-          </dl>
-          <span class="go">לבדוק מחיר</span>
+        <button class="bed lawn" data-service="דשא" data-months="4,5,6">
+          <span><b class="h3">דשא</b><span class="d">התקנת מרבדים וחידוש דשא קיים.</span></span>
+          <span class="strip-wrap"></span>
+          <span class="pr">התקנה לפי מ״ר<small>באביב ובתחילת הקיץ</small><span class="go">לבדוק מחיר</span></span>
         </button>
       </div>
       <p class="note">את המחיר הסופי נותנים אחרי סיור קצר בגינה, ולפני שמתחילים.</p>
@@ -350,31 +286,40 @@
 
   <section class="calc" id="calc">
     <div class="wrap">
-      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div class="head">
+        <span class="eyebrow">בוחרים, ורואים טווח עוד לפני שכותבים</span>
+        <h2>כמה זה יעלה?</h2>
+      </div>
       <div data-estimate></div>
     </div>
   </section>
 
-  <section style="padding-top:0">
+  <section>
     <div class="wrap">
-      <div class="head"><h2>מי מגיע לגינה</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="head">
+        <span class="eyebrow">כל תמונה כאן מתחלפת בתמונה שלכם</span>
+        <h2>מי מגיע לגינה</h2>
+        <p>פותחים את השער למי שמכירים מהתמונה.</p>
+      </div>
       <div class="who">
-        <div class="stake">
-          <div class="label">
-            <figure class="ps" data-slot="portrait" data-src="../shared/photos/garden-portrait.webp" data-alt="גנן גוזם שיח רימון בגינה" data-pos="50 35" data-icon="person" data-label="תמונה שלכם"></figure>
-            <b data-edit="g-name">עומר דהן</b>
-            <small data-edit="g-role">גנן, 11 שנים בשטח</small>
+        <div class="big">
+          <figure class="ps" data-slot="work" data-src="../shared/photos/garden-work.webp" data-alt="גנן כורע ליד עץ רימון וגוזם ענפים" data-pos="60 50" data-icon="trowel" data-label="תמונה מגינה"></figure>
+          <div class="card">
+            <figure class="ps" data-slot="portrait" data-src="../shared/photos/garden-portrait.webp" data-alt="גנן בגינה" data-pos="50 35" data-icon="person" data-label="תמונה שלכם"></figure>
+            <div><b data-edit="g-name">עומר דהן</b><small data-edit="g-role">גנן, 11 שנים בשטח</small></div>
           </div>
-          <div class="spike" aria-hidden="true"></div>
-          <div class="soil" aria-hidden="true"></div>
         </div>
         <div>
-          <div class="shelf">
-            <div class="sp"><figure class="ps" data-slot="g1" data-src="../shared/photos/garden-pomegranate.webp" data-alt="עץ רימון פורח ליד קיר אבן" data-icon="home" data-label="תמונה מגינה"></figure><b data-edit="g1">הגינה של משפחת לוי</b><small data-edit="g1s">אחזקה קבועה · אביחיל</small></div>
-            <div class="sp"><figure class="ps" data-slot="g2" data-src="../shared/photos/garden-pruning.webp" data-alt="גיזום ענפים במזמרה" data-icon="trowel" data-label="תמונה מגינה"></figure><b data-edit="g2">גדר חיה חדשה</b><small data-edit="g2s">גיזום ושתילה · כפר ויתקין</small></div>
-            <div class="sp"><figure class="ps" data-slot="g3" data-src="../shared/photos/garden-drip.webp" data-alt="צינור טפטוף בערוגה" data-icon="drop" data-label="תמונה מגינה"></figure><b data-edit="g3">טפטוף לערוגות</b><small data-edit="g3s">מחשב השקיה · פרדס חנה</small></div>
+          <div class="seasons">
+            <div class="season" style="--c:var(--soil)"><figure class="ps" data-slot="g2" data-src="../shared/photos/garden-pruning.webp" data-alt="גיזום ענפים במזמרה" data-icon="trowel" data-label="תמונה מגינה"></figure><span class="tag">חורף</span><b data-edit="g2">גדר חיה חדשה</b><small data-edit="g2s">גיזום ושתילה · כפר ויתקין</small></div>
+            <div class="season" style="--c:var(--pomegranate)"><figure class="ps" data-slot="g1" data-src="../shared/photos/garden-pomegranate.webp" data-alt="עץ רימון פורח ליד קיר אבן" data-icon="home" data-label="תמונה מגינה"></figure><span class="tag">אביב</span><b data-edit="g1">הרימון של משפחת לוי</b><small data-edit="g1s">אחזקה קבועה · אביחיל</small></div>
+            <div class="season" style="--c:var(--drip)"><figure class="ps" data-slot="g3" data-src="../shared/photos/garden-drip.webp" data-alt="צינור טפטוף בערוגה" data-icon="drop" data-label="תמונה מגינה"></figure><span class="tag">קיץ</span><b data-edit="g3">טפטוף לערוגות</b><small data-edit="g3s">מחשב השקיה · פרדס חנה</small></div>
           </div>
-          <p class="who-note">פותחים את השער למי שמכירים מהתמונה. גינות אמיתיות ופנים אמיתיות שוות יותר מכל סלוגן.</p>
+          <div class="facts">
+            <div><b data-edit="f-years">11 שנים</b><span>בגינות של האזור</span></div>
+            <div><b data-edit="f-day">יום קבוע</b><span>באחזקה, כל שבועיים או חודש</span></div>
+            <div><b data-edit="f-tour">סיור</b><span>ומחיר סגור לפני שמתחילים</span></div>
+          </div>
         </div>
       </div>
     </div>
@@ -383,17 +328,47 @@
   <section class="plan">
     <div class="wrap ba-wrap">
       <div class="ps-ba gard">
-        <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"></figure>
-        <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני"></figure></div>
+        <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי">
+          <svg class="ps-ph" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="300" fill="#cfe2ec"/>
+            <rect y="0" width="400" height="120" fill="#d9e8ef"/>
+            <path d="M0 120 H400 V150 H0z" fill="#d8cdb8"/>
+            <path d="M0 126 H400" stroke="#c4b79c" stroke-width="3"/>
+            <path d="M0 150 H400 V300 H0z" fill="#6d9c58"/>
+            <g fill="#78a862"><path d="M0 170 H400 V190 H0z"/><path d="M0 210 H400 V230 H0z"/><path d="M0 250 H400 V270 H0z"/></g>
+            <path d="M0 150 H400 V164 H0z" fill="#7b5236"/>
+            <path d="M0 158 H400" stroke="#2b6f9e" stroke-width="2"/>
+            <g fill="#2b6f9e"><circle cx="30" cy="158" r="3"/><circle cx="90" cy="158" r="3"/><circle cx="150" cy="158" r="3"/><circle cx="210" cy="158" r="3"/><circle cx="270" cy="158" r="3"/><circle cx="330" cy="158" r="3"/><circle cx="390" cy="158" r="3"/></g>
+            <g fill="#2f5a3e"><circle cx="40" cy="146" r="16"/><circle cx="120" cy="144" r="18"/><circle cx="200" cy="146" r="15"/><circle cx="280" cy="144" r="18"/><circle cx="360" cy="146" r="16"/></g>
+            <path d="M318 150 V70" stroke="#5a3b28" stroke-width="9"/>
+            <circle cx="318" cy="60" r="48" fill="#1f4a33"/><circle cx="346" cy="82" r="28" fill="#2c5f40"/>
+            <g fill="#c4382e"><circle cx="300" cy="50" r="6"/><circle cx="330" cy="40" r="6"/><circle cx="340" cy="78" r="6"/><circle cx="306" cy="82" r="5"/></g>
+          </svg>
+        </figure>
+        <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני">
+          <svg class="ps-ph" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="400" height="300" fill="#dde3e3"/>
+            <path d="M0 120 H400 V150 H0z" fill="#cfc6b4"/>
+            <path d="M0 150 H400 V300 H0z" fill="#b4a57f"/>
+            <g fill="#9a8a62"><circle cx="60" cy="230" r="30"/><circle cx="180" cy="260" r="40"/><circle cx="320" cy="220" r="34"/><circle cx="260" cy="290" r="30"/></g>
+            <g stroke="#6f7d4a" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M20 300 C 25 240, 10 200, 30 160"/><path d="M50 300 C 60 230, 40 190, 70 150"/><path d="M110 300 C 100 240, 130 200, 105 170"/><path d="M150 300 C 160 250, 140 210, 170 175"/>
+              <path d="M220 300 C 230 230, 210 190, 240 160"/><path d="M290 300 C 280 240, 310 210, 290 170"/><path d="M350 300 C 360 240, 340 200, 370 165"/><path d="M385 300 C 380 250, 395 220, 380 180"/>
+            </g>
+            <g fill="#5d6b3c"><circle cx="40" cy="140" r="26"/><circle cx="80" cy="128" r="30"/><circle cx="130" cy="144" r="22"/><circle cx="210" cy="132" r="34"/><circle cx="262" cy="146" r="24"/><circle cx="350" cy="130" r="36"/></g>
+            <path d="M318 150 V60" stroke="#6b5040" stroke-width="9"/>
+            <g fill="#4f5f36"><circle cx="300" cy="44" r="40"/><circle cx="340" cy="56" r="36"/><circle cx="320" cy="20" r="30"/><circle cx="270" cy="70" r="24"/></g>
+          </svg>
+        </figure></div>
         <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
         <span class="ps-ba-line" aria-hidden="true"></span>
         <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
       </div>
       <div class="ba-side">
-        <span class="mono" style="color:var(--leaf-soft)">תוכנית הגינה · לפני ואחרי</span>
+        <span class="eyebrow">לפני ואחרי · כאן יופיעו התמונות שלכם</span>
         <h2 data-edit="ba-title">גינה מוזנחת בבת חפר</h2>
         <p data-edit="ba-text">שלושה ימי עבודה, ומאז אחזקה פעם בחודש. גררו את הקו כדי להשוות.</p>
-        <div class="facts">
+        <div class="ba-facts">
           <div><span>שטח</span><b data-edit="f1">140 מ״ר</b></div>
           <div><span>משך</span><b data-edit="f2">שלושה ימים</b></div>
           <div><span>מה נעשה</span><b data-edit="f3">ניכוש, טפטוף, דשא</b></div>
@@ -404,14 +379,20 @@
 
   <section class="guides" id="guides">
     <div class="wrap">
-      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה עושים עד שמגיעים, ושאלות שחוזרות</span></div>
+      <div class="head">
+        <span class="eyebrow">מה עושים עד שמגיעים, ושאלות שחוזרות</span>
+        <h2>טיפים ומדריכים</h2>
+      </div>
       <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap">
-      <div class="head"><h2>מה הגנן רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="head">
+        <span class="eyebrow">נסו את הצ׳אט, והטלפון כאן יתעדכן</span>
+        <h2>מה הגנן רואה</h2>
+      </div>
       <div class="owner-grid">
         <ol>
           <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, גודל הגינה, כל כמה זמן, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
@@ -444,7 +425,7 @@
 <footer>
   <div class="wrap row">
     <span>עומר גנים · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
   </div>
 </footer>
 
@@ -455,12 +436,71 @@
 <script>
   PhotoSlots.init({ page: "garden" });
 
-  // the garden year: mark this month, and say it in the hero
+  // ---------- the garden wheel ----------
   (function () {
-    const months = document.querySelectorAll("#months .m"); const i = new Date().getMonth(); const m = months[i];
-    if (!m) return;
-    m.classList.add("cur");
-    document.getElementById("now").textContent = "עכשיו " + m.querySelector("b").textContent + ": " + m.querySelector("span").textContent;
+    const YEAR = [
+      ["ינואר", "prune", "גיזום עצים ושיחים", "כבוי, הגשם משקה"],
+      ["פברואר", "prune", "גיזום ושתילת עצי פרי", "כבוי, הגשם משקה"],
+      ["מרץ", "water", "בדיקת טפטוף ודליפות", "פעמיים בשבוע"],
+      ["אפריל", "lawn", "דשא חדש ודישון", "פעם ביומיים"],
+      ["מאי", "water", "מחשב השקיה לקיץ", "פעם ביום"],
+      ["יוני", "water", "השקיה וכיסוח", "פעמיים ביום"],
+      ["יולי", "water", "השקיה מוקדמת בבוקר", "פעמיים ביום"],
+      ["אוגוסט", "water", "חיפוי נגד התאדות", "פעמיים ביום"],
+      ["ספטמבר", "lawn", "הכנת ערוגות", "פעם ביום"],
+      ["אוקטובר", "plant", "זמן לשתול", "פעם ביומיים"],
+      ["נובמבר", "plant", "שתילה וכיוון ההשקיה לחורף", "פעמיים בשבוע"],
+      ["דצמבר", "prune", "גיזום חורף", "כבוי, הגשם משקה"],
+    ];
+    const FILL = { prune: "#ead9c9", water: "#d3e5f1", lawn: "#dcebcf", plant: "#c9e0cc" };
+    const INK = { prune: "#7b5236", water: "#2b6f9e", lawn: "#4f7d3c", plant: "#3f7a45" };
+    const ICON = {
+      prune: '<circle cx="6" cy="7" r="3"/><circle cx="6" cy="17" r="3"/><path d="M8.5 8.6L20 17M8.5 15.4L20 7"/>',
+      water: '<path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>',
+      lawn: '<path d="M3 20h18M6 20c0-5-2-8-3-9M10 20c0-6 1-10 3-12M15 20c0-4 2-7 5-8"/>',
+      plant: '<path d="M12 21v-9M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-4 3-6 7-6 0 4-3 6-7 6z"/>',
+    };
+    const svg = document.getElementById("dial"); if (!svg) return;
+    const P = (r, a) => { const t = a * Math.PI / 180; return [(r * Math.sin(t)).toFixed(2), (-r * Math.cos(t)).toFixed(2)]; };
+    const RO = 288, RI = 142;
+    let html = `<circle r="296" fill="#e7eedf"/><circle r="296" fill="none" stroke="#c5d3b9" stroke-width="2"/>`;
+    YEAR.forEach(([name, type], i) => {
+      const a0 = i * 30 - 15, a1 = i * 30 + 15;
+      const [x0, y0] = P(RO, a0), [x1, y1] = P(RO, a1), [x2, y2] = P(RI, a1), [x3, y3] = P(RI, a0);
+      html += `<g class="sec" data-i="${i}" tabindex="0" role="button" aria-label="${name}: ${YEAR[i][2]}">
+        <path class="f" d="M${x0} ${y0} A${RO} ${RO} 0 0 1 ${x1} ${y1} L${x2} ${y2} A${RI} ${RI} 0 0 0 ${x3} ${y3}Z" fill="${FILL[type]}" stroke="#e7eedf" stroke-width="3"/>
+        <text transform="rotate(${i * 30}) translate(0 -246)" text-anchor="middle" font-family="Alef, sans-serif" font-weight="700" font-size="21" fill="#183b2d">${name}</text>
+        <g transform="rotate(${i * 30}) translate(0 -196) scale(1.6) translate(-12 -12)" fill="none" stroke="${INK[type]}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[type]}</g>
+      </g>`;
+    });
+    for (let i = 0; i < 60; i++) { const [a, b] = P(296, i * 6), [c, d] = P(i % 5 ? 290 : 284, i * 6); html += `<path d="M${a} ${b} L${c} ${d}" stroke="#a9bba0" stroke-width="1.4"/>`; }
+    svg.innerHTML = html;
+
+    const hm = document.getElementById("hub-m"), ht = document.getElementById("hub-t"), hw = document.getElementById("hub-w");
+    let angle = 0;
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    function show(i) {
+      const [name, , task, water] = YEAR[i];
+      hm.textContent = name; ht.textContent = task; hw.textContent = "טפטוף: " + water;
+      let target = -i * 30, d = ((target - angle) % 360 + 540) % 360 - 180; angle += d;
+      svg.style.transform = `rotate(${angle}deg)`;
+    }
+    const cur = new Date().getMonth();
+    // one motion moment: the wheel turns to this month once the page loads
+    if (!still()) { angle = -cur * 30 + 140; svg.style.transition = "none"; svg.style.transform = `rotate(${angle}deg)`; svg.getBoundingClientRect(); svg.style.transition = ""; setTimeout(() => show(cur), 250); }
+    else show(cur);
+    svg.addEventListener("click", (e) => { const g = e.target.closest(".sec"); if (g) show(+g.dataset.i); });
+    svg.addEventListener("keydown", (e) => { const g = e.target.closest(".sec"); if (g && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); show(+g.dataset.i); } });
+    document.getElementById("now").textContent = "עכשיו " + YEAR[cur][0] + ": " + YEAR[cur][2];
+
+    // the month strips in the services list
+    const SHORT = ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"];
+    document.querySelectorAll(".bed[data-months]").forEach((b) => {
+      const on = b.dataset.months.split(",").map(Number);
+      const lab = '<span class="strip lab" aria-hidden="true">' + SHORT.map((s) => `<span>${s}</span>`).join("") + "</span>";
+      const cells = SHORT.map((s, i) => `<i class="${on.includes(i + 1) ? "on" : ""}${i === cur ? " cur" : ""}"></i>`).join("");
+      b.querySelector(".strip-wrap").innerHTML = lab + `<span class="strip" aria-hidden="true">${cells}</span>`;
+    });
   })();
 
   const RANGES = {
