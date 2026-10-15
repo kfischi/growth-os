@@ -6,13 +6,15 @@ Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SER
 // LEADS_ADMIN_KEY carries the space and line break a paste into Netlify can add: the functions must trim it.
 
 /* ---------------- fakes ---------------- */
-export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [] };
+export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [], ls_payments: [], ls_billing: [] };
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
 export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"], ["clients/sample-plumber/assets/a11y.js", "sha-a11y"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
   ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, video: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
   ls_leads: () => ({ id: randomUUID(), status: "new", created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
+  ls_payments: () => ({ id: randomUUID(), status: "pending", created_at: new Date().toISOString() }),
+  ls_billing: () => ({ state: "active", fails: 0, created_at: new Date().toISOString() }),
   ls_clients: () => ({ package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", auto_reply: true, owner_alerts: true }),
 };
 function match(row, filters) {

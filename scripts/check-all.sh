@@ -48,12 +48,14 @@ node scripts/tests/lead-system.test.mjs || fail=1
 
 step "site builder (API, against fakes)"
 node scripts/tests/site-builder.test.mjs 2>/dev/null || { node scripts/tests/site-builder.test.mjs; fail=1; }
+node scripts/tests/billing.test.mjs 2>/dev/null || { node scripts/tests/billing.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
 node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-chat.test.mjs; fail=1; }
 node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }
 
 step "site builder page, in the browser (phone and desktop)"
 node scripts/tests/builder-page.test.mjs 2>/dev/null | grep -E "^FAIL|builder page" || fail=1
+node scripts/tests/billing-page.test.mjs 2>/dev/null | grep -E "^FAIL|billing page"; [ "${PIPESTATUS[0]}" = 0 ] || fail=1
 
 step "functions bundle"
 for f in demos/netlify/functions/*.mjs; do

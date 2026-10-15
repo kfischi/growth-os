@@ -501,17 +501,17 @@ export function callbackText(at, now = new Date()) {
   return `${when} ב-${clock(at)}`;
 }
 
-export async function processLead(client, input, channel = "form") {
+export async function processLead(client, input, channel = "form", { dedupe = true } = {}) {
   const urgentNow = availability(client).state === "urgent"; // the owner turned on emergency mode: the alert says so first
   const phone = israeliPhone(input.phone);
   if (!phone) return { ok: false, error: "bad_phone" };
   const name = clip(input.name, 60);
   if (name.length < 2) return { ok: false, error: "bad_name" };
 
-  // The same person sending twice within 10 minutes is one enquiry.
+  // The same person sending twice within 10 minutes is one enquiry (not the builder's alerts to כפיר: each one counts).
   const since = new Date(Date.now() - 10 * 60_000).toISOString();
   const dup = await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${phone.intl}&created_at=gte.${q(since)}&select=id&limit=1`);
-  if (dup.length) return { ok: true, id: dup[0].id, duplicate: true };
+  if (dedupe && dup.length) return { ok: true, id: dup[0].id, duplicate: true };
   // (A double tap within the same second can still make two rows. Rare, and two alerts beat none.)
 
   const callAt = input.callback ? callbackAt(input.callback) : null;

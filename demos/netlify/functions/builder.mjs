@@ -11,6 +11,15 @@
 //   DELETE /api/builder/video                                             -> { state }
 //   POST   /api/builder/approve   { package, plan, rev }                  -> { state }
 //   POST   /api/builder/reopen    { rev }   back to editing, before payment -> { state }
+// Address, payment and the subscription (lib/billing.mjs; billing comes back as { billing } next to state):
+//   GET    /api/builder/address                    -> { suggestions: [{ slug, host }] }   free names for the address
+//   POST   /api/builder/address   { slug, domain?, rev } the pick; domain is the owner's own, connected after payment
+//   POST   /api/builder/pay       { cycle: "month" | "year" }  -> { url }   Grow's payment page (or a new card after a refusal)
+//   POST   /api/builder/pay-check  back from Grow: asks Grow about the checkout -> { state, billing }
+//   POST   /api/builder/domain-check  is the owner's domain pointing here yet?   -> { state, billing }
+//   POST   /api/builder/cancel | resume   the subscription, 30 days' notice    -> { billing }
+//   POST   /api/builder/panel-seen  the panel link was saved: forget it         -> { billing }
+//   POST   /api/builder/help      { message }   to כפיר on WhatsApp, from any step  -> { sent }
 // Self edit, on a published site whose owner may change it (0004_self_edit.sql):
 //   POST   /api/builder/publish   { rev }   puts the changes on the live site -> { state }
 //   POST   /api/builder/discard   { rev }   back to what the site shows now  -> { state }
@@ -23,8 +32,10 @@ import {
   chatTurn, learnTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
-  publishToRepo, ensureLeadClient, hostSite,
+  publishToRepo, ensureLeadClient, hostSite, suggestSlugs, connectDomain,
 } from "../lib/builder.mjs";
+import { billingView, chooseAddress, checkout, confirmPayment, cancel, resume } from "../lib/billing.mjs";
+import dns from "node:dns/promises";
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
 const chatLimited = rateLimiter(40, 10 * 60 * 1000);    // chat turns per IP
@@ -35,6 +46,10 @@ const answerLimited = rateLimiter(120, 10 * 60 * 1000);
 const learnLimited = rateLimiter(8, 60 * 60 * 1000);    // "learn my business" reads (images cost more than a chat turn)
 const imageLimited = rateLimiter(4, 60 * 60 * 1000);    // made background images per IP per hour (each costs a few cents)
 const imageDraftLimited = rateLimiter(6, 24 * 60 * 60 * 1000); // and per draft per day
+const addressLimited = rateLimiter(10, 60 * 60 * 1000);  // name suggestions (one short model call each)
+const payLimited = rateLimiter(10, 10 * 60 * 1000);
+const helpLimited = rateLimiter(4, 60 * 60 * 1000);
+const checkLimited = rateLimiter(20, 10 * 60 * 1000);
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
 const stateOf = (d) => ({ ...publicState(d), greeting: (editing(d) ? editGreeting : greeting)(first(d.owner_name)) });
@@ -78,7 +93,7 @@ export default async (req, context) => {
     d = await loadDraft(id, key);
     if (!d) return json({ error: "not_found" }, 404);
 
-    if (action === "state" && req.method === "GET") return json({ state: stateOf(d) });
+    if (action === "state" && req.method === "GET") return json({ state: stateOf(d), billing: await billingView(d) });
 
     if (action === "chat" && req.method === "POST") {
       if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
@@ -240,6 +255,69 @@ export default async (req, context) => {
       const saved = await saveDraft(d, { status: "client_approved", package: pkg, plan, approved_at: new Date().toISOString(), return_note: null });
       const alert = await alertKfir(saved, "אתר חדש מחכה לאישור");
       return json({ state: stateOf(saved), alert });
+    }
+
+    if (action === "address" && req.method === "GET") {
+      if (d.status !== "client_approved") return json({ error: "locked" }, 409);
+      if (addressLimited(ip)) return json({ error: "rate_limited" }, 429);
+      return json({ suggestions: await suggestSlugs(d) });
+    }
+
+    if (action === "address" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      if (d.status !== "client_approved" || d.paid_at) return json({ error: "locked", state: stateOf(d) }, 409);
+      if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
+      const r = await chooseAddress(d, { slug: body.slug, domain: body.domain });
+      if (r.error) return json({ error: r.error }, 422);
+      const saved = await saveDraft(d, r.patch);
+      // A domain nobody registered yet: say so now, before it is paid for.
+      let registered = null;
+      if (r.patch.domain_wish) registered = await dns.resolveNs(r.patch.domain_wish).then((x) => x.length > 0, (e) => (e.code === "ENOTFOUND" || e.code === "ENODATA" ? false : null));
+      return json({ state: stateOf(saved), billing: await billingView(saved), registered });
+    }
+
+    if (action === "pay" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      if (payLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const r = await checkout(d, { cycle: body.cycle, origin: new URL(req.url).origin });
+      if (r.error) return json({ error: r.error }, r.error === "not_configured" ? 503 : r.error === "pay_failed" ? 502 : 409);
+      return json({ url: r.url });
+    }
+
+    if (action === "pay-check" && req.method === "POST") {
+      if (checkLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const [pay] = await db("GET", `ls_payments?draft_id=eq.${encodeURIComponent(d.id)}&status=eq.pending&select=*&order=created_at.desc&limit=1`);
+      let paid = false;
+      if (pay) { try { paid = Boolean((await confirmPayment(pay)).paid); } catch (e) { console.error("pay check", e.message); } }
+      const fresh = (await getDraft(d.id)) || d;
+      return json({ paid, state: stateOf(fresh), billing: await billingView(fresh) });
+    }
+
+    if (action === "domain-check" && req.method === "POST") {
+      if (checkLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const r = await connectDomain(d);
+      const fresh = r.draft || d;
+      return json({ domain: r.state, state: stateOf(fresh), billing: await billingView(fresh) });
+    }
+
+    if (["cancel", "resume"].includes(action) && req.method === "POST") {
+      const r = await (action === "cancel" ? cancel(d) : resume(d));
+      if (r.error) return json({ error: r.error }, 409);
+      return json({ billing: await billingView(d) });
+    }
+
+    if (action === "panel-seen" && req.method === "POST") {
+      const saved = d.panel_once ? await saveDraft(d, { panel_once: null }) : d;
+      return json({ state: stateOf(saved), billing: await billingView(saved) });
+    }
+
+    if (action === "help" && req.method === "POST") {
+      const body = await req.json().catch(() => ({}));
+      const message = clip(body.message, 500);
+      if (message.length < 3) return json({ error: "empty" }, 422);
+      if (helpLimited(ip)) return json({ error: "rate_limited" }, 429);
+      const sent = await alertKfir(d, "בקשת עזרה מהבונה: " + message);
+      return json({ sent: sent === "sent" });
     }
 
     if (action === "reopen" && req.method === "POST") {

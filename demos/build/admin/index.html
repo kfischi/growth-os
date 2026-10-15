@@ -119,6 +119,8 @@
       const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
+      if (d.domainWish && !d.domain) info.append(el('div', 'meta', 'הדומיין של הלקוח, לחיבור אחרי הפרסום: ' + d.domainWish));
+      if (d.publishError) info.append(el('div', 'meta', 'הפרסום האוטומטי נכשל: ' + d.publishError + '. אפשר לפרסם מכאן.'));
       if (d.selfEdit) info.append(el('div', 'meta', 'עריכה עצמית פעילה' + (d.editDirty ? ' · יש שינויים שבעל העסק עוד לא פרסם' : '') + (d.edits ? ' · החודש: ' + d.edits.messages + ' הודעות, ' + d.edits.publishes + ' פרסומים' : '')));
       if (d.site) {
         const m3 = el('div', 'meta'); m3.append('כתובת: '); const a = el('a', '', d.site.replace(/^https:\/\/|\/$/g, '')); a.href = d.site; a.target = '_blank'; a.rel = 'noopener'; m3.append(a);

@@ -145,9 +145,23 @@
   .vid .pick:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
   .vprev { width: 100%; max-height: 46vh; background: var(--ink); border-radius: 10px; margin-bottom: 10px; }
   input[type=range] { width: 100%; accent-color: var(--mint); }
-  .approve { border-top: 1px solid var(--line); padding: 12px; }
+  .approve { border-top: 1px solid var(--line); padding: 12px; max-height: 46svh; overflow-y: auto; overscroll-behavior: contain; }
   .approve .btn { width: 100%; }
   .approve p { margin: 0 0 8px; font-size: 14px; color: var(--slate); }
+  .approve .btn + .btn, .approve .btn + p, .approve p + .btn { margin-top: 8px; }
+  .approve h3 { margin: 14px 0 6px; font-size: 15px; }
+  .approve .pkgs { margin-bottom: 10px; }
+  .approve .warn { color: #8a1c1c; font-weight: 600; }
+  .approve ul { margin: 0 0 8px; padding-inline-start: 18px; font-size: 14px; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; }
+  .approve .linkish { display: block; min-height: 32px; margin-top: 6px; }
+  .dns { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0 10px; direction: ltr; }
+  .dns th, .dns td { border: 1px solid var(--line); padding: 6px; text-align: left; overflow-wrap: anywhere; }
+  .addr-list { display: grid; gap: 8px; margin-bottom: 12px; }
+  .addr-list .pkg b { direction: ltr; text-align: right; overflow-wrap: anywhere; }
+  .suffix { display: flex; flex-direction: row; align-items: center; gap: 6px; direction: ltr; unicode-bidi: isolate; }
+  .suffix input { flex: 1; min-width: 0; }
+  .suffix span { color: var(--slate); font-size: 14px; white-space: nowrap; }
 
   .view { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--mist); }
   .viewbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; font-size: 14px; color: var(--slate); }
@@ -291,7 +305,7 @@
 <dialog id="approveDlg" aria-labelledby="t-approve">
   <form method="dialog" id="approveForm">
     <h2 id="t-approve">מאשרים את האתר</h2>
-    <p>בוחרים חבילה. אחרי התשלום אנחנו עוברים על האתר ומעלים אותו לאוויר. עד אז אפשר עוד לבקש שינויים.</p>
+    <p>בוחרים חבילה. אחר כך בוחרים כתובת לאתר ומשלמים, והאתר עולה לאוויר לבד. עד התשלום אפשר עוד לשנות.</p>
     <div class="pkgs">
       <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 1,900 ₪ הקמה, ו-390 ₪ לחודש.</span></div></label>
       <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
@@ -299,6 +313,35 @@
     <p class="note">בלי התחייבות: מבטלים בהודעה של 30 יום. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
     <p class="err" id="approveErr" role="alert"></p>
     <div class="row"><button class="btn" value="ok" id="approveGo">מאשרים</button><button class="btn quiet" value="cancel" formnovalidate>עוד לא</button></div>
+  </form>
+</dialog>
+
+<dialog id="addrDlg" aria-labelledby="t-addr">
+  <form method="dialog" id="addrForm">
+    <h2 id="t-addr">כתובת לאתר</h2>
+    <p>בוחרים כתובת. היא עובדת מהיום הראשון, ואפשר לחבר אליה דומיין משלכם.</p>
+    <div class="addr-list" id="addrList" role="radiogroup" aria-label="כתובות פנויות"><p>מחפשים כתובות פנויות…</p></div>
+    <label for="addrOwn">או כתובת אחרת (אותיות באנגלית, ספרות ומקף)</label>
+    <div class="suffix"><input id="addrOwn" autocomplete="off" inputmode="url" maxlength="40" spellcheck="false"><span id="addrSuffix"></span></div>
+    <label class="pkg" style="margin-top:14px"><input type="checkbox" id="addrHas"><div><b>יש לכם דומיין משלכם?</b><span>נחבר אותו אחרי התשלום.</span></div></label>
+    <div id="addrDomainBox" hidden>
+      <label for="addrDomain">הדומיין שלכם</label>
+      <input id="addrDomain" dir="ltr" autocomplete="off" inputmode="url" maxlength="80" placeholder="example.co.il" spellcheck="false">
+      <p class="note">אחרי התשלום נציג לכם שתי שורות להעתיק באתר של החברה שבה קניתם את הדומיין. החיבור לוקח בדרך כלל כמה שעות, ולפעמים עד 48 שעות. עד אז האתר עובד בכתובת שבחרתם כאן.</p>
+    </div>
+    <p class="err" id="addrErr" role="alert"></p>
+    <div class="row"><button class="btn" value="ok" id="addrGo">לשמור את הכתובת</button><button class="btn quiet" value="cancel" formnovalidate>ביטול</button></div>
+  </form>
+</dialog>
+
+<dialog id="helpDlg" aria-labelledby="t-help">
+  <form method="dialog" id="helpForm">
+    <h2 id="t-help">נתקעתם? כתבו לנו</h2>
+    <p>ההודעה מגיעה אלינו לוואטסאפ, עם הקישור לאתר שלכם. נחזור אליכם בהקדם.</p>
+    <label for="helpMsg">מה קרה?</label>
+    <textarea id="helpMsg" rows="4" maxlength="500" required></textarea>
+    <p class="err" id="helpErr" role="alert"></p>
+    <div class="row"><button class="btn" value="ok" id="helpGo">לשלוח</button><button class="btn quiet" value="cancel" formnovalidate>ביטול</button></div>
   </form>
 </dialog>
 
@@ -331,11 +374,17 @@
     video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
     video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
     edit_limit: 'הגעתם למכסת השינויים של החודש. כתבו לנו בוואטסאפ ונעשה את השינוי.',
+    slug_taken: 'הכתובת הזו תפוסה או לא תקינה. בחרו אחרת: אותיות באנגלית, ספרות ומקף.',
+    bad_domain: 'הדומיין לא נראה תקין. כתבו אותו כך: example.co.il',
+    domain_taken: 'הדומיין הזה כבר מחובר לאתר אחר אצלנו. אם הוא שלכם, כתבו לנו.',
+    no_address: 'קודם בוחרים כתובת לאתר.',
+    pay_failed: 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע, או כתבו לנו.',
+    no_subscription: 'אין כאן מנוי פעיל.',
     no_changes: 'אין שינויים לפרסם.',
   };
   const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.' + (code ? ' (' + code + ')' : ''); // the code helps us find it in the log
 
-  let cred = null, state = null, sending = false;
+  let cred = null, state = null, sending = false, billing = null;
   const busy = new Set(); let queue = Promise.resolve(); // photos go up one at a time
   const store = {
     get() { try { return localStorage.getItem(STORE); } catch (e) { return null; } },
@@ -390,9 +439,9 @@
     log.scrollTop = log.scrollHeight; return d;
   }
 
-  function openWork(s) {
+  function openWork(s, b) {
     $('#start').hidden = true; $('#work').hidden = false;
-    state = s;
+    state = s; if (b) billing = b;
     log.textContent = '';
     bubble('them', s.greeting);
     for (const m of s.messages) bubble(m.role === 'user' ? 'me' : 'them', m.content);
@@ -479,6 +528,25 @@
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'מאשרים את האתר';
       b.disabled = s.missing.length > 0; b.addEventListener('click', () => { $('#approveErr').textContent = ''; $('#approveDlg').showModal(); });
       box.append(b);
+    } else if (s.status === 'client_approved' && billing && billing.on) {
+      const a = billing.address;
+      box.append(h3('1. כתובת לאתר'));
+      if (a) {
+        const l = p('הכתובת: '); l.append(ltr(a.host));
+        if (a.domain) { const d = p('אחרי התשלום נחבר גם את '); d.append(ltr(a.domain)); }
+        box.append(btn('לשנות כתובת', openAddress, 'linkish'));
+      } else box.append(btn('לבחור כתובת', openAddress));
+      box.append(h3('2. תשלום'));
+      const pr = billing.prices;
+      if (pr) {
+        const pk = document.createElement('div'); pk.className = 'pkgs';
+        pk.append(cycleOpt('month', 'חודשי', 'היום ' + nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש.', true),
+          cycleOpt('year', 'שנה מראש', 'היום ' + nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10.', false));
+        box.append(pk);
+      }
+      const go = btn('לתשלום מאובטח', pay); go.disabled = !a; box.append(go);
+      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. החשבונית נשלחת אליכם מיד. בלי התחייבות: מבטלים בהודעה של 30 יום.').className = 'note';
+      box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
       p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
       if (s.pay.length) {
@@ -487,10 +555,11 @@
           a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
         }
       } else p('נשלח לכם בוואטסאפ חשבונית ופרטים לתשלום, בדרך כלל באותו יום.');
-      const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'רוצים לשנות משהו? חזרה לעריכה';
-      back.addEventListener('click', reopen); box.append(back);
+      box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'paid') {
-      p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+      if (billing && billing.publishing === 'working' && billing.address) { p('התשלום התקבל, תודה! האתר עולה לאוויר עכשיו. זה לוקח בדרך כלל פחות מדקה.'); watchPublish(); }
+      else if (billing && billing.publishing === 'stuck') p('התשלום התקבל. משהו נתקע בהעלאה לאוויר, ואנחנו כבר מטפלים בזה. נעדכן אתכם בוואטסאפ.');
+      else p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
     } else if (s.edit) {
       const e = s.edit;
       p(e.dirty ? 'יש שינויים שעוד לא באתר. עברו עליהם בתצוגה, ואם הכול נכון, פרסמו.' : 'האתר באוויר. כתבו בשיחה מה לשנות.');
@@ -515,7 +584,156 @@
       const l = p('הכתובת של האתר: '); const a = document.createElement('a'); a.href = s.site; a.target = '_blank'; a.rel = 'noopener';
       a.textContent = s.site.replace(/^https:\/\/|\/$/g, ''); a.dir = 'ltr'; l.append(a);
     }
+    if (s.status === 'published' && billing) paintLive(box);
+    if (s.status !== 'draft') box.append(btn('נתקעתם? כתבו לנו', () => { $('#helpErr').textContent = ''; $('#helpDlg').showModal(); }, 'linkish'));
   }
+
+  /* ---------- address, payment, subscription (lib/billing.mjs) ---------- */
+  const nis = (n) => Number(n).toLocaleString('he-IL') + ' ₪';
+  const dateHe = (iso) => new Date(iso).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  function h3(t) { const e = document.createElement('h3'); e.textContent = t; return e; }
+  function ltr(t) { const e = document.createElement('bdi'); e.dir = 'ltr'; e.textContent = t; return e; }
+  function btn(t, fn, cls) { const b = document.createElement('button'); b.type = 'button'; b.className = cls || 'btn'; b.textContent = t; b.addEventListener('click', () => fn(b)); return b; }
+  function cycleOpt(v, title, text, on) {
+    const l = document.createElement('label'); l.className = 'pkg';
+    l.innerHTML = '<input type="radio" name="cycle"><div><b></b><span></span></div>';
+    const i = l.querySelector('input'); i.value = v; i.checked = on;
+    l.querySelector('b').textContent = title; l.querySelector('span').textContent = text;
+    return l;
+  }
+  function setBilling(d) { if (d.state) state = d.state; if (d.billing) billing = d.billing; paint(); }
+
+  // The owner's site after payment: their own domain while it connects, the panel link once, the subscription, invoices.
+  function paintLive(box) {
+    const b = billing, p = (t, cls) => { const e = document.createElement('p'); e.textContent = t; if (cls) e.className = cls; box.append(e); return e; };
+    if (b.domain && b.domain.state === 'waiting') {
+      box.append(h3('מחברים את הדומיין שלכם'));
+      const l = p('באתר של החברה שבה קניתם את '); l.append(ltr(b.domain.name)); l.append(', בהגדרות ה-DNS, מוסיפים את שתי השורות האלה:');
+      const t = document.createElement('table'); t.className = 'dns';
+      t.innerHTML = '<thead><tr><th>Type</th><th>Host</th><th>Value</th></tr></thead><tbody></tbody>';
+      for (const r of b.domain.dns || []) { const tr = document.createElement('tr'); for (const v of [r.type, r.host, r.value]) { const td = document.createElement('td'); td.textContent = v; tr.append(td); } t.tBodies[0].append(tr); }
+      box.append(t);
+      p('זהו. החיבור לוקח בדרך כלל כמה שעות, ולפעמים עד 48 שעות. אנחנו בודקים לבד כל שעה, ומעבירים את האתר לדומיין ברגע שהוא מוכן. עד אז האתר עובד בכתובת שלמעלה.', 'note');
+      box.append(btn('לבדוק עכשיו', domainCheck, 'btn quiet'));
+    } else if (b.domain && b.domain.state === 'live') { const l = p('הדומיין מחובר: '); l.append(ltr(b.domain.name)); }
+    if (b.panel) {
+      box.append(h3('הפאנל שלכם'));
+      p('כאן רואים כל פנייה, עם תזכורות וסטטיסטיקות. הקישור אישי: שמרו אותו במועדפים ואל תשלחו אותו לאחרים.');
+      const a = document.createElement('a'); a.className = 'btn'; a.href = b.panel; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'לפתוח את הפאנל'; box.append(a);
+      box.append(btn('שמרתי את הקישור', async (x) => { x.disabled = true; const r = await call('panel-seen', { body: {} }); x.disabled = false; if (r.ok) setBilling(r.data); }, 'btn quiet'));
+    }
+    const sub = b.sub;
+    if (sub) {
+      box.append(h3('המנוי'));
+      p((sub.cycle === 'year' ? 'שנתי, ' + nis(sub.amount) + ' לשנה' : 'חודשי, ' + nis(sub.amount) + ' לחודש') + (sub.card ? ' · כרטיס שמסתיים ב-' + sub.card : ''));
+      if (sub.state === 'active') { p('החיוב הבא: ' + dateHe(sub.next)); box.append(btn('ביטול המנוי', cancelSub, 'linkish')); }
+      else if (sub.state === 'failed' || sub.state === 'suspended') {
+        p(sub.state === 'suspended' ? 'החיוב לא עבר כמה פעמים, ולכן המענה האוטומטי והצ׳אט מושהים. האתר עצמו עובד.' : 'החיוב האחרון לא עבר. ננסה שוב בעוד כמה ימים, או שתעדכנו כרטיס עכשיו.', 'warn');
+        box.append(btn('לעדכן כרטיס', pay));
+      } else if (sub.state === 'cancelling') { p('ביטלתם את המנוי. הוא פעיל עד ' + dateHe(sub.end) + '.'); box.append(btn('להמשיך את המנוי', resumeSub, 'btn quiet')); }
+      else if (sub.state === 'ended') p('המנוי הסתיים. האתר והדומיין שלכם נשארים.');
+    }
+    if (b.invoices && b.invoices.length) {
+      box.append(h3('חשבוניות'));
+      const ul = document.createElement('ul');
+      for (const i of b.invoices) { const li = document.createElement('li'); const a = document.createElement('a'); a.href = i.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = (i.number ? 'מס׳ ' + i.number + ' · ' : '') + nis(i.sum) + ' · ' + dateHe(i.date); li.append(a); ul.append(li); }
+      box.append(ul);
+    }
+  }
+
+  async function openAddress() {
+    $('#addrErr').textContent = ''; const list = $('#addrList');
+    list.innerHTML = '<p>מחפשים כתובות פנויות…</p>';
+    const a = billing && billing.address;
+    $('#addrOwn').value = ''; $('#addrHas').checked = Boolean(a && a.domain); $('#addrDomain').value = (a && a.domain) || ''; $('#addrDomainBox').hidden = !$('#addrHas').checked;
+    $('#addrDlg').showModal();
+    const r = await call('address', { method: 'GET' });
+    list.textContent = '';
+    const opts = r.ok ? r.data.suggestions : [];
+    if (a && !opts.some((o) => o.slug === a.slug)) opts.unshift({ slug: a.slug, host: a.host });
+    if (opts[0]) $('#addrSuffix').textContent = opts[0].host.slice(opts[0].slug.length);
+    opts.forEach((o, i) => {
+      const l = document.createElement('label'); l.className = 'pkg';
+      l.innerHTML = '<input type="radio" name="addr"><div><b></b></div>';
+      const inp = l.querySelector('input'); inp.value = o.slug; inp.checked = a ? o.slug === a.slug : i === 0;
+      l.querySelector('b').textContent = o.host; list.append(l);
+    });
+    if (!opts.length) list.innerHTML = '<p>כתבו כתובת למטה.</p>';
+  }
+  $('#addrHas').addEventListener('change', (e) => { $('#addrDomainBox').hidden = !e.target.checked; if (e.target.checked) $('#addrDomain').focus(); });
+  $('#addrOwn').addEventListener('input', () => { if ($('#addrOwn').value) document.querySelectorAll('input[name=addr]').forEach((i) => { i.checked = false; }); });
+  $('#addrForm').addEventListener('submit', async (e) => {
+    if (e.submitter && e.submitter.value === 'cancel') return;
+    e.preventDefault();
+    const own = $('#addrOwn').value.trim().toLowerCase(), picked = $('input[name=addr]:checked');
+    const slug = own || (picked && picked.value);
+    if (!slug) { $('#addrErr').textContent = 'בחרו כתובת, או כתבו אחת.'; return; }
+    const domain = $('#addrHas').checked ? $('#addrDomain').value.trim() : '';
+    if ($('#addrHas').checked && !domain) { $('#addrErr').textContent = 'כתבו את הדומיין, או בטלו את הסימון.'; return; }
+    $('#addrGo').disabled = true;
+    const r = await call('address', { body: { slug, domain, rev: state.rev } });
+    $('#addrGo').disabled = false;
+    if (!r.ok) { $('#addrErr').textContent = say(r.data.error); if (r.data.state) { state = r.data.state; paint(); } return; }
+    $('#addrDlg').close(); setBilling(r.data);
+    if (r.data.registered === false) bubble('sys', 'שימו לב: הדומיין ' + ((billing.address && billing.address.domain) || domain) + ' עוד לא רשום. רושמים אותו על שמכם אצל רשם דומיינים, ואנחנו נחבר אותו אחרי התשלום.');
+  });
+
+  async function pay(b) {
+    const c = document.querySelector('input[name=cycle]:checked');
+    b.disabled = true; const label = b.textContent; b.textContent = 'פותחים את דף התשלום…';
+    const r = await call('pay', { body: { cycle: c ? c.value : 'month' } });
+    if (r.ok && /^https:\/\//.test(r.data.url)) { location.href = r.data.url; return; }
+    b.disabled = false; b.textContent = label;
+    const f = bubble('fail', say(r.data.error)); f.append(' ', waLink('לוואטסאפ', 'היי, נתקעתי בתשלום על האתר שלי.'));
+  }
+
+  // Back from Grow: the payment may still be on its way (Grow's callback); ask a few times.
+  async function payCheck(n) {
+    const r = await call('pay-check', { body: {} });
+    if (r.ok) setBilling(r.data);
+    if (r.ok && (r.data.paid || (state && state.status !== 'client_approved'))) { bubble('sys', state.status === 'published' ? 'התשלום התקבל, והאתר באוויר!' : 'התשלום התקבל, תודה! האתר עולה לאוויר.'); return; }
+    if (n < 5) setTimeout(() => payCheck(n + 1), 4000);
+    else bubble('sys', 'עוד לא קיבלנו אישור מ-Grow. אם שילמתם, זה יגיע בדקות הקרובות, ונעדכן כאן ובוואטסאפ.');
+  }
+  let watching = false;
+  function watchPublish() {
+    if (watching) return; watching = true; let n = 0;
+    const tick = async () => {
+      const r = await call('state', { method: 'GET' });
+      if (r.ok) { setBilling(r.data); if (state.status === 'published') { watching = false; bubble('sys', 'האתר באוויר!'); return; } }
+      if (++n < 20) setTimeout(tick, 6000); else watching = false;
+    };
+    setTimeout(tick, 6000);
+  }
+  async function domainCheck(b) {
+    b.disabled = true; const r = await call('domain-check', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data);
+    bubble('sys', r.data.domain === 'live' ? 'הדומיין מחובר! האתר עבר לכתובת החדשה.' : 'עוד לא. לפעמים זה לוקח עד 48 שעות, ואנחנו ממשיכים לבדוק לבד.');
+  }
+  async function cancelSub(b) {
+    if (!confirm('לבטל את המנוי? הוא יישאר פעיל עוד 30 יום, ואחר כך המענה האוטומטי והצ׳אט ייכבו. האתר והדומיין נשארים שלכם.')) return;
+    b.disabled = true; const r = await call('cancel', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data); bubble('sys', 'המנוי בוטל. אפשר לחזור בכם עד סוף התקופה.');
+  }
+  async function resumeSub(b) {
+    b.disabled = true; const r = await call('resume', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data); bubble('sys', 'המנוי ממשיך.');
+  }
+  $('#helpForm').addEventListener('submit', async (e) => {
+    if (e.submitter && e.submitter.value === 'cancel') return;
+    e.preventDefault();
+    const msg = $('#helpMsg').value.trim();
+    if (msg.length < 3) { $('#helpErr').textContent = 'כתבו במשפט מה קרה.'; return; }
+    $('#helpGo').disabled = true;
+    const r = await call('help', { body: { message: msg } });
+    $('#helpGo').disabled = false;
+    if (!r.ok || !r.data.sent) { $('#helpErr').textContent = 'לא הצלחנו לשלוח. '; $('#helpErr').append(waLink('כתבו לנו בוואטסאפ', 'היי, נתקעתי בבונה: ' + msg)); return; }
+    $('#helpDlg').close(); $('#helpMsg').value = '';
+    bubble('sys', 'קיבלנו. נחזור אליכם בוואטסאפ בהקדם.');
+  });
 
   // Self edit: publish the changes, drop them, or load the version before the last publish.
   async function editAction(action, btn) {
@@ -991,8 +1209,11 @@
     $('#approveGo').disabled = false;
     if (!r.ok) { $('#approveErr').textContent = say(r.data.error) + (r.data.missing ? ' ' + r.data.missing.join(', ') : ''); if (r.data.state) { state = r.data.state; paint(); } return; }
     $('#approveDlg').close();
-    state = r.data.state; paint();
-    bubble('sys', 'האתר אושר. תודה!');
+    state = r.data.state;
+    const st = await call('state', { method: 'GET' }); if (st.ok) billing = st.data.billing;
+    paint();
+    bubble('sys', billing && billing.on ? 'האתר אושר. עכשיו בוחרים כתובת ומשלמים, והוא עולה לאוויר.' : 'האתר אושר. תודה!');
+    if (billing && billing.on && !billing.address) openAddress();
   });
 
   async function reopen() {
@@ -1038,8 +1259,11 @@
       return;
     }
     store.set(cred);
-    if (!m) history.replaceState(null, '', '#d=' + cred);
-    openWork(r.data.state);
+    const back = new URLSearchParams(location.search).get('pay');
+    history.replaceState(null, '', location.pathname + '#d=' + cred);
+    openWork(r.data.state, r.data.billing);
+    if (back === 'ok') payCheck(0);
+    else if (back === 'cancel') bubble('sys', 'התשלום לא הושלם. אפשר לנסות שוב מתי שתרצו.');
   }
   addEventListener('hashchange', () => location.reload());
   boot();
