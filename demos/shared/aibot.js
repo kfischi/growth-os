@@ -6,7 +6,8 @@
    pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down.
    On a paying business's site (netlify/functions/client-chat.mjs) also pass:
      endpoint: "https://service-pro-web.netlify.app/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
-     placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"). */
+     placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"), offlineWa (false: no WhatsApp button then).
+   A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>". */
 (function () {
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
@@ -150,7 +151,7 @@
             else if (r.status === 404 || r.status === 503 || r.status === 405) goOffline();
           } catch (e) { goOffline(); }
         }
-        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + " [[whatsapp:" + text + "]]"
+        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + (cfg.offlineWa === false ? "" : " [[whatsapp:" + text + "]]")
           // A business's own chat (endpoint set) must never fall back to the sales script above.
           : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + text + "]]"
           : scripted(text, history); }

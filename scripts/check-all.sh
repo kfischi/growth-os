@@ -49,6 +49,7 @@ node scripts/tests/lead-system.test.mjs || fail=1
 step "site builder (API, against fakes)"
 node scripts/tests/site-builder.test.mjs 2>/dev/null || { node scripts/tests/site-builder.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
+node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-chat.test.mjs; fail=1; }
 node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }
 
 step "site builder page, in the browser (phone and desktop)"

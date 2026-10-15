@@ -37,7 +37,7 @@ globalThis.fetch = async (url, opt = {}) => {
     if (ai.mode === "down") return res({ type: "error", error: { type: "overloaded_error", message: "Overloaded" } }, 529);
     if (ai.mode === "refusal") return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "refusal", content: [], usage: { input_tokens: 1, output_tokens: 0 } });
     const out = ai.queue.shift(); assert.ok(out, "an AI answer was queued");
-    return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(out) }], usage: { input_tokens: 1, output_tokens: 1 } });
+    return res({ id: "m", type: "message", role: "assistant", model: "x", stop_reason: "end_turn", content: [{ type: "text", text: typeof out === "string" ? out : JSON.stringify(out) }], usage: { input_tokens: 1, output_tokens: 1 } });
   }
   if (u.host === "generativelanguage.googleapis.com") { // the background image (heroImage)
     imageCalls.push(JSON.parse(opt.body));
