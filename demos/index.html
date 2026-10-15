@@ -374,7 +374,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <b>Easy Landing</b><small>אתרים שבונים עסקים</small>
     </a>
     <nav class="nav" id="nav" aria-label="ניווט">
-      <a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#try">נסו פנייה</a><a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#faq">שאלות</a>
+      <a href="#try">איך זה נראה</a><a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
     <a class="btn sm" href="build/">לבנות את האתר</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="תפריט"><i></i><i></i><i></i></button>
@@ -403,7 +403,111 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
-  <!-- 2 · pick your trade -->
+  <!-- 2 · an enquiry, from both sides -->
+  <section class="sec field" id="try" aria-labelledby="t-try">
+    <div class="wrap try-grid">
+      <div class="reveal">
+        <p class="kicker">נסו: שלחו פנייה</p>
+        <h2 id="t-try">ככה נראית פנייה, משני הצדדים<span class="dot">.</span></h2>
+        <p class="sub">כתבו שאלה כמו לקוח. רואים מה הלקוח מקבל, ומה מגיע אליכם.</p>
+        <form class="ask" id="ask">
+          <div class="ask-chips" role="group" aria-label="שאלות לדוגמה"><button type="button">כמה זה עולה?</button><button type="button">אפשר להגיע היום?</button><button type="button">אתם עובדים באזור שלי?</button></div>
+          <div class="ask-row"><label for="askText">השאלה שלכם</label><input id="askText" maxlength="70" autocomplete="off" placeholder="או כתבו שאלה משלכם"><button class="btn" type="submit">לשלוח</button></div>
+        </form>
+        <ol class="trail" id="trail">
+          <li>הלקוח שולח שאלה מהאתר</li>
+          <li>מענה בוואטסאפ, מהמספר של העסק</li>
+          <li>התראה אליכם, עם כפתור ״טיפלתי״</li>
+          <li>לא סימנתם? מגיעה תזכורת</li>
+        </ol>
+      </div>
+      <div class="reveal">
+        <span class="demo-tag">המחשה. לא נשלחת הודעה אמיתית</span>
+        <div class="duo">
+          <div class="dev-cust">
+            <p class="dev-label"><i aria-hidden="true"></i>הטלפון של הלקוח</p>
+            <div class="wa-phone" role="log" aria-label="וואטסאפ של הלקוח">
+              <div class="wa-top"><span class="av" id="waAv" aria-hidden="true"></span><span><b id="waName">אורן מים</b><small>חשבון עסקי</small></span></div>
+              <div class="wa-feed" id="feed"></div>
+            </div>
+          </div>
+          <div class="dev-owner">
+            <p class="dev-label"><i aria-hidden="true"></i>הטלפון שלכם</p>
+            <div class="lock" id="lock" role="log" aria-label="התראות בטלפון של בעל העסק">
+              <p class="clock" data-now>21:47</p>
+              <p class="day">התראות</p>
+            </div>
+          </div>
+        </div>
+        <p class="sim-note">המענה והתזכורות פועלים בחבילת נציג AI. את נוסח ההודעה אתם מאשרים.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · lost enquiries -->
+  <section class="sec" id="loss" aria-labelledby="t-loss">
+    <div class="wrap loss-grid">
+      <div class="reveal">
+        <p class="kicker">המספרים שלכם</p>
+        <h2 id="t-loss">כמה פניות הולכות לכם לאיבוד?</h2>
+        <p class="sub">הזיזו את הסמנים לפי העסק שלכם. החישוב לא נשמר.</p>
+        <form class="sliders" id="lossForm" onsubmit="return false">
+          <label for="lMissed">שיחות והודעות שלא עניתם להן ביום <output for="lMissed" id="oMissed">2</output></label>
+          <input type="range" id="lMissed" min="0" max="10" step="1" value="2">
+          <label for="lDays">ימי עבודה בחודש <output for="lDays" id="oDays">22</output></label>
+          <input type="range" id="lDays" min="10" max="30" step="1" value="22">
+          <label for="lRate">כמה מהן היו הופכות לעבודה <output for="lRate" id="oRate">30%</output></label>
+          <input type="range" id="lRate" min="5" max="80" step="5" value="30">
+          <label for="lValue">כמה שווה עבודה ממוצעת <output for="lValue" id="oValue">450 ₪</output></label>
+          <input type="range" id="lValue" min="100" max="5000" step="50" value="450">
+        </form>
+      </div>
+      <div class="result reveal" aria-live="polite">
+        <p class="lbl">בחודש, לפי המספרים שלכם</p>
+        <p class="big" id="rLeads">44</p>
+        <p class="big-cap">פניות בלי מענה</p>
+        <div class="split"><p>עבודות, בערך<b id="rJobs">13</b></p><p>שוות בערך<b id="rMoney">5,940 ₪</b></p></div>
+        <p class="note">אלה לקוחות שכבר פנו אליכם. אתר שעונה דואג שלא ילכו לאיבוד.</p>
+        <a class="btn" href="build/">לבנות אתר שעונה</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · how it works -->
+  <section class="sec field" id="how" aria-labelledby="t-how">
+    <div class="wrap">
+      <div class="head reveal">
+        <p class="kicker">איך זה עובד</p>
+        <h2 id="t-how">מהדוגמה הראשונה, ועד שהאתר באוויר<span class="dot">.</span></h2>
+      </div>
+      <ol class="steps reveal">
+        <li><span class="n">01</span><h3>בוחרים דוגמה מהתחום</h3><p>רואים מה הלקוחות שלכם יקבלו.</p></li>
+        <li><span class="n">02</span><h3>עונים על שאלות בצ׳אט</h3><p>שירותים, מחירים, אזורים ושעות.</p></li>
+        <li><span class="n">03</span><h3>מעלים תמונות</h3><p>ישר מהטלפון.</p></li>
+        <li><span class="n">04</span><h3>רואים ומאשרים</h3><p>האתר נבנה ליד הצ׳אט.</p></li>
+        <li><span class="n">05</span><h3>משלמים, והאתר באוויר</h3><p>בוחרים כתובת, משלמים בכרטיס, והאתר עולה לבד.</p></li>
+      </ol>
+      <a class="film-link reveal" href="film/"><span class="play-ic" aria-hidden="true"></span>כל התהליך בסרטון של 4.5 דקות</a>
+    </div>
+  </section>
+
+  <!-- 5 · what is on the site -->
+  <section class="sec" id="what" aria-labelledby="t-what">
+    <div class="wrap">
+      <div class="head reveal">
+        <p class="kicker">מה יש באתר</p>
+        <h2 id="t-what">מהשאלה הראשונה ועד הביקורת בגוגל<span class="dot">.</span></h2>
+      </div>
+      <div class="groups">
+        <section class="group reveal" aria-labelledby="g1"><h3 id="g1">מה הלקוח רואה</h3><ul><li>צ׳אט שמסכם כל פנייה <em class="ai">נציג AI</em></li><li>מחשבון ״כמה זה יעלה?״</li><li>מדריכים מהתחום, גם בשביל גוגל</li><li>לפני ואחרי, וסרטון קצר</li></ul></section>
+        <section class="group reveal" aria-labelledby="g2"><h3 id="g2">כשמישהו פונה <em class="ai">נציג AI</em></h3><ul><li>מענה בוואטסאפ, מהמספר שלכם</li><li>התראה עם כפתור ״טיפלתי״</li><li>הלקוח מצרף תמונה ובוחר מתי לחזור</li><li>כל הפניות בלוח אחד</li></ul></section>
+        <section class="group reveal" aria-labelledby="g3"><h3 id="g3">להמשך <em class="ai">נציג AI</em></h3><ul><li>קישור וקוד QR לכל קבוצה</li><li>כותבים ״עסוק״, והאתר מתעדכן</li><li>בקשה לביקורת בגוגל, באישורכם</li><li>דוח חודשי וסטטיסטיקות</li></ul></section>
+      </div>
+      <p class="groups-note reveal">בנוכחות: הדף, המחשבון, המדריכים, לפני ואחרי וכפתורי וואטסאפ וחיוג. בנציג AI: הכול.</p>
+    </div>
+  </section>
+
+  <!-- 6 · examples: pick your trade -->
   <section class="sec field" id="demos" aria-labelledby="t-trades">
     <div class="wrap pick">
       <div>
@@ -424,7 +528,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
-  <!-- 3 · prices -->
+  <!-- 7 · prices -->
   <section class="sec" id="plans" aria-labelledby="t-plans">
     <div class="wrap">
       <div class="head reveal">
@@ -482,109 +586,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
-  <!-- 4 · try an enquiry -->
-  <section class="sec field" id="try" aria-labelledby="t-try">
-    <div class="wrap try-grid">
-      <div class="reveal">
-        <p class="kicker">נסו: שלחו פנייה</p>
-        <h2 id="t-try">ככה נראית פנייה, משני הצדדים<span class="dot">.</span></h2>
-        <p class="sub">כתבו שאלה כמו לקוח. רואים מה הלקוח מקבל, ומה מגיע אליכם.</p>
-        <form class="ask" id="ask">
-          <div class="ask-chips" role="group" aria-label="שאלות לדוגמה"><button type="button">כמה זה עולה?</button><button type="button">אפשר להגיע היום?</button><button type="button">אתם עובדים באזור שלי?</button></div>
-          <div class="ask-row"><label for="askText">השאלה שלכם</label><input id="askText" maxlength="70" autocomplete="off" placeholder="או כתבו שאלה משלכם"><button class="btn" type="submit">לשלוח</button></div>
-        </form>
-        <ol class="trail" id="trail">
-          <li>הלקוח שולח שאלה מהאתר</li>
-          <li>מענה בוואטסאפ, מהמספר של העסק</li>
-          <li>התראה אליכם, עם כפתור ״טיפלתי״</li>
-          <li>לא סימנתם? מגיעה תזכורת</li>
-        </ol>
-      </div>
-      <div class="reveal">
-        <span class="demo-tag">המחשה. לא נשלחת הודעה אמיתית</span>
-        <div class="duo">
-          <div class="dev-cust">
-            <p class="dev-label"><i aria-hidden="true"></i>הטלפון של הלקוח</p>
-            <div class="wa-phone" role="log" aria-label="וואטסאפ של הלקוח">
-              <div class="wa-top"><span class="av" id="waAv" aria-hidden="true"></span><span><b id="waName">אורן מים</b><small>חשבון עסקי</small></span></div>
-              <div class="wa-feed" id="feed"></div>
-            </div>
-          </div>
-          <div class="dev-owner">
-            <p class="dev-label"><i aria-hidden="true"></i>הטלפון שלכם</p>
-            <div class="lock" id="lock" role="log" aria-label="התראות בטלפון של בעל העסק">
-              <p class="clock" data-now>21:47</p>
-              <p class="day">התראות</p>
-            </div>
-          </div>
-        </div>
-        <p class="sim-note">המענה והתזכורות פועלים בחבילת נציג AI. את נוסח ההודעה אתם מאשרים.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 5 · lost enquiries -->
-  <section class="sec" id="loss" aria-labelledby="t-loss">
-    <div class="wrap loss-grid">
-      <div class="reveal">
-        <p class="kicker">המספרים שלכם</p>
-        <h2 id="t-loss">כמה פניות הולכות לכם לאיבוד?</h2>
-        <p class="sub">הזיזו את הסמנים לפי העסק שלכם. החישוב לא נשמר.</p>
-        <form class="sliders" id="lossForm" onsubmit="return false">
-          <label for="lMissed">שיחות והודעות שלא עניתם להן ביום <output for="lMissed" id="oMissed">2</output></label>
-          <input type="range" id="lMissed" min="0" max="10" step="1" value="2">
-          <label for="lDays">ימי עבודה בחודש <output for="lDays" id="oDays">22</output></label>
-          <input type="range" id="lDays" min="10" max="30" step="1" value="22">
-          <label for="lRate">כמה מהן היו הופכות לעבודה <output for="lRate" id="oRate">30%</output></label>
-          <input type="range" id="lRate" min="5" max="80" step="5" value="30">
-          <label for="lValue">כמה שווה עבודה ממוצעת <output for="lValue" id="oValue">450 ₪</output></label>
-          <input type="range" id="lValue" min="100" max="5000" step="50" value="450">
-        </form>
-      </div>
-      <div class="result reveal" aria-live="polite">
-        <p class="lbl">בחודש, לפי המספרים שלכם</p>
-        <p class="big" id="rLeads">44</p>
-        <p class="big-cap">פניות בלי מענה</p>
-        <div class="split"><p>עבודות, בערך<b id="rJobs">13</b></p><p>שוות בערך<b id="rMoney">5,940 ₪</b></p></div>
-        <p class="note">אלה לקוחות שכבר פנו אליכם. אתר שעונה דואג שלא ילכו לאיבוד.</p>
-        <a class="btn" href="build/">לבנות אתר שעונה</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6 · how, what, questions -->
-  <section class="sec field" id="how" aria-labelledby="t-how">
-    <div class="wrap">
-      <div class="head reveal">
-        <p class="kicker">איך זה עובד</p>
-        <h2 id="t-how">מהדוגמה הראשונה, ועד שהאתר באוויר<span class="dot">.</span></h2>
-      </div>
-      <ol class="steps reveal">
-        <li><span class="n">01</span><h3>בוחרים דוגמה מהתחום</h3><p>רואים מה הלקוחות שלכם יקבלו.</p></li>
-        <li><span class="n">02</span><h3>עונים על שאלות בצ׳אט</h3><p>שירותים, מחירים, אזורים ושעות.</p></li>
-        <li><span class="n">03</span><h3>מעלים תמונות</h3><p>ישר מהטלפון.</p></li>
-        <li><span class="n">04</span><h3>רואים ומאשרים</h3><p>האתר נבנה ליד הצ׳אט.</p></li>
-        <li><span class="n">05</span><h3>משלמים, והאתר באוויר</h3><p>בוחרים כתובת, משלמים בכרטיס, והאתר עולה לבד.</p></li>
-      </ol>
-      <a class="film-link reveal" href="film/"><span class="play-ic" aria-hidden="true"></span>כל התהליך בסרטון של 4.5 דקות</a>
-    </div>
-  </section>
-
-  <section class="sec" id="what" aria-labelledby="t-what">
-    <div class="wrap">
-      <div class="head reveal">
-        <p class="kicker">מה יש באתר</p>
-        <h2 id="t-what">מהשאלה הראשונה ועד הביקורת בגוגל<span class="dot">.</span></h2>
-      </div>
-      <div class="groups">
-        <section class="group reveal" aria-labelledby="g1"><h3 id="g1">מה הלקוח רואה</h3><ul><li>צ׳אט שמסכם כל פנייה <em class="ai">נציג AI</em></li><li>מחשבון ״כמה זה יעלה?״</li><li>מדריכים מהתחום, גם בשביל גוגל</li><li>לפני ואחרי, וסרטון קצר</li></ul></section>
-        <section class="group reveal" aria-labelledby="g2"><h3 id="g2">כשמישהו פונה <em class="ai">נציג AI</em></h3><ul><li>מענה בוואטסאפ, מהמספר שלכם</li><li>התראה עם כפתור ״טיפלתי״</li><li>הלקוח מצרף תמונה ובוחר מתי לחזור</li><li>כל הפניות בלוח אחד</li></ul></section>
-        <section class="group reveal" aria-labelledby="g3"><h3 id="g3">להמשך <em class="ai">נציג AI</em></h3><ul><li>קישור וקוד QR לכל קבוצה</li><li>כותבים ״עסוק״, והאתר מתעדכן</li><li>בקשה לביקורת בגוגל, באישורכם</li><li>דוח חודשי וסטטיסטיקות</li></ul></section>
-      </div>
-      <p class="groups-note reveal">בנוכחות: הדף, המחשבון, המדריכים, לפני ואחרי וכפתורי וואטסאפ וחיוג. בנציג AI: הכול.</p>
-    </div>
-  </section>
-
+  <!-- 8 · questions -->
   <section class="sec field" id="faq" aria-labelledby="t-faq">
     <div class="wrap faq-grid">
       <div class="reveal">
@@ -602,6 +604,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
+  <!-- 9 · start -->
   <section class="sec end" id="start" aria-labelledby="t-start">
     <div class="wrap">
       <p class="kicker">מתחילים</p>
@@ -611,6 +614,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <p class="human">מעדיפים לדבר עם בן אדם? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%A9%D7%9C%20Easy%20Landing%20%D7%95%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A9%D7%90%D7%9C%D7%94." target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a></p>
     </div>
   </section>
+
 </main>
 <footer class="wrap foot"><span>Easy Landing · אתרים שבונים עסקים</span><span><a href="all/">כל הדוגמאות</a> · <a href="film/">סרטון הסבר</a> · <a href="privacy/">פרטיות ועוגיות</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
 <div class="dock"><a class="btn" href="build/">לבנות את האתר שלי</a></div>
