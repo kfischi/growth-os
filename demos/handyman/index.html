@@ -8,226 +8,233 @@
 <meta name="description" content="תליית טלוויזיה, הרכבת רהיטים, מדפים ותיקונים קטנים בחדרה, עמק חפר והשרון. שולחים את הרשימה בצ׳אט, ועושים הכול בביקור אחד.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the workshop pegboard, a shadow board where every tool hangs over its own painted outline.
-     Detail: the "רשימת סידורים" on the fridge whiteboard, and label-maker tape on every tool and every name.
-     Bold move: the hero is the pegboard itself. Each tool is a service, and lifting it off the hook opens the chat. */
+  /* Object: the green enamel toolbox, lid open, its trays sorted by job; next to it the list from the fridge.
+     Detail: minutes per job that add up to one visit (מדף 30 דק׳, שידה 75 דק׳), dowels and screws, the price range per job.
+     Bold move: one saturated enamel-green field with giant condensed type, and the fridge list ticking itself off into "ביקור אחד". */
   :root {
-    --board: #c49d77;          /* hardboard pegboard */
-    --board-deep: #5b3c24;     /* the holes and the painted outlines */
-    --charcoal: #1f2326;       /* tool bodies, text */
-    --charcoal-soft: #555d62;
-    --signal: #d43a24;         /* signal orange-red handles, the one accent */
-    --steel: #9ba4a9;
-    --concrete: #e8ebeb;       /* workshop floor, page background */
-    --marker: #1d4c9c;         /* whiteboard marker, only on the whiteboard */
-    --display: "Secular One", "IBM Plex Sans Hebrew", system-ui, sans-serif;
-    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", "IBM Plex Sans Hebrew", ui-monospace, monospace;
-    --hand: "Amatic SC", "Secular One", cursive;
-    --phone-frame: var(--charcoal);
-    --bot-bg: #fff; --bot-fg: var(--charcoal); --bot-line: #d9dddd; --bot-muted: var(--charcoal-soft);
-    --bot-accent: var(--charcoal); --bot-accent-fg: #fff; --bot-them: #eef0f0; --bot-me: var(--signal); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px; --bot-focus: var(--signal);
-    --ps-a: #a7b3b8; --ps-b: #33403f; --ps-ui: var(--charcoal); --ps-edit: var(--signal);
+    --enamel: #1f5c41;         /* the toolbox paint: the one field colour */
+    --enamel-deep: #143f2c;    /* inside the box */
+    --galvanized: #edf1ee;     /* page: zinc-plated steel */
+    --graphite: #1b2420;       /* text, tool bodies */
+    --graphite-soft: #4b5751;
+    --safety: #f0612b;         /* safety-orange handles and tape; always with graphite text */
+    --paper: #fdfdf9;          /* the fridge list */
+    --display: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif; /* labels: the body face, semi-condensed, tabular digits */
+    --phone-frame: var(--graphite);
+    --bot-bg: #fff; --bot-fg: var(--graphite); --bot-line: #d3dcd7; --bot-muted: var(--graphite-soft);
+    --bot-accent: var(--enamel); --bot-accent-fg: #fff; --bot-them: #e9f0ec; --bot-me: var(--graphite); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 8px; --bot-radius-msg: 8px; --bot-radius-pill: 6px; --bot-radius-input: 6px; --bot-focus: var(--safety);
+    --ps-a: #9fb8aa; --ps-b: #2e5442; --ps-ui: var(--graphite); --ps-edit: var(--safety);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--concrete); color: var(--charcoal); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--galvanized); color: var(--graphite); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--signal); outline-offset: 3px; }
+  :focus-visible { outline: 3px solid var(--safety); outline-offset: 3px; }
   .wrap { width: min(1200px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .03em; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; letter-spacing: -.01em; margin: 0; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 4px; }
-  .btn-dark { background: var(--charcoal); color: #fff; box-shadow: inset 0 -3px 0 rgba(0,0,0,.35); }
+  .mono, .where, .logo span, .min, .pr, .role, .total span, figcaption { font-stretch: 80%; font-variant-numeric: tabular-nums; }
+  .mono { font-family: var(--mono); font-size: 13.5px; font-weight: 600; }
+  h1, h2, h3 { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; line-height: .98; letter-spacing: -.005em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 6px; transition: transform .15s, box-shadow .15s; }
+  .btn:active { transform: translateY(2px); }
+  .btn-safety { background: var(--safety); color: var(--graphite); box-shadow: inset 0 -4px 0 rgba(0,0,0,.18); }
+  .btn-safety:hover { box-shadow: inset 0 -4px 0 rgba(0,0,0,.28), 0 10px 20px -10px rgba(0,0,0,.5); }
+  .btn-ghost { color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,.7); background: transparent; }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 2px #fff; background: rgba(255,255,255,.06); }
+  .btn-dark { background: var(--graphite); color: #fff; box-shadow: inset 0 -4px 0 rgba(0,0,0,.4); }
   .btn-dark:hover { background: #000; }
-  .btn-line { border: 2px solid var(--charcoal); color: var(--charcoal); background: transparent; }
-  .btn-line:hover { background: var(--charcoal); color: #fff; }
 
-  .demo { background: var(--charcoal); color: #b8c0c3; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--graphite); color: #b9c4be; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* label-maker tape */
-  .dymo { display: inline-block; background: var(--charcoal); color: #fff; font-family: var(--display); font-size: 15px; line-height: 1.2; letter-spacing: .04em;
-    padding: 5px 11px 4px; border-radius: 2px; text-shadow: 0 1px 0 rgba(255,255,255,.18), 0 -1px 0 rgba(0,0,0,.5);
-    box-shadow: 0 2px 0 rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.08); }
-  .dymo.red { background: var(--signal); }
-
-  /* ---------- Hero: the pegboard ---------- */
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 16px; gap: 12px; }
-  .logo { display: flex; align-items: center; gap: 8px; }
-  .logo .dymo { font-size: 20px; }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--signal); }
-  .board { position: relative; padding: clamp(18px, 3vw, 40px); border-radius: 3px;
-    background-color: var(--board);
-    background-image:
-      radial-gradient(circle at 50% 50%, var(--board-deep) 0 2.4px, rgba(91,60,36,.35) 2.9px, transparent 3.4px),
-      linear-gradient(100deg, rgba(255,255,255,.07), rgba(0,0,0,.05) 40%, rgba(255,255,255,.05) 70%, rgba(0,0,0,.06));
-    background-size: 26px 26px, 100% 100%;
-    background-position: 13px 13px, 0 0;
-    box-shadow: 0 0 0 10px #2a2e31, 0 0 0 12px #3a4044, 0 40px 60px -30px rgba(31,35,38,.6);
-    margin: 12px 0 0; }
-  .board-grid { display: grid; grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: clamp(20px, 3vw, 44px); align-items: center; }
-
-  .sign { position: relative; background: #fbfbfa; padding: 34px 32px 30px; min-width: 0;
-    box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 18px 30px -18px rgba(40,24,10,.55);
-    --screw: radial-gradient(circle, #c9cfd2 0 3px, #7d878c 3.5px 4.5px, transparent 5px); }
-  .sign::before { content: ""; position: absolute; inset: 9px; pointer-events: none;
-    background: var(--screw) top right / 12px 12px no-repeat, var(--screw) top left / 12px 12px no-repeat, var(--screw) bottom right / 12px 12px no-repeat, var(--screw) bottom left / 12px 12px no-repeat; }
-  .sign .mono { color: var(--charcoal-soft); }
-  .sign h1 { font-size: clamp(44px, 4.6vw, 64px); margin: 10px 0 16px; text-wrap: balance; }
-  .sign h1 em { font-style: normal; color: var(--signal); }
-  .sign p { margin: 0 0 22px; font-size: 18px; color: var(--charcoal-soft); max-width: 34ch; }
+  /* ---------- Hero: the enamel field ---------- */
+  .hero { background: var(--enamel); color: #fff; position: relative; overflow: hidden;
+    background-image: radial-gradient(130% 90% at 100% 0%, rgba(255,255,255,.08), transparent 55%), radial-gradient(rgba(0,0,0,.08) 1px, transparent 1.4px);
+    background-size: 100% 100%, 5px 5px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 16px; }
+  .logo { display: flex; align-items: baseline; gap: 10px; }
+  .logo b { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 36px; line-height: 1; }
+  .logo span { font-family: var(--mono); font-size: 15px; color: #c9ddd2; }
+  .bar a { font-weight: 700; text-decoration: none; color: #fff; border-bottom: 3px solid var(--safety); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(28px, 4vw, 64px); align-items: center; padding-block: 26px 80px; }
+  .hero-copy { min-width: 0; }
+  .where { font-family: var(--mono); font-size: 15px; font-weight: 600; color: #c9ddd2; }
+  .hero h1 { font-size: clamp(64px, 8.4vw, 128px); margin: 14px 0 22px; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; display: inline-block; background: var(--safety); color: var(--graphite); padding: .02em .14em .06em; margin-top: .06em; transform: rotate(-1.5deg); box-shadow: 0 10px 0 -4px rgba(0,0,0,.18); }
+  .hero .lead { font-size: 19px; color: #e1eee7; max-width: 38ch; margin: 0 0 26px; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .spec { display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: start; gap: 0; margin: 34px 0 0; padding: 0; list-style: none; border-top: 1px solid rgba(255,255,255,.22); }
+  .spec li { padding: 12px 0 0; padding-inline-end: 26px; min-width: 0; }
+  .spec li + li { padding-inline-start: 22px; border-inline-start: 1px solid rgba(255,255,255,.22); }
+  .spec b { display: block; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 34px; line-height: 1; }
+  .spec span { font-size: 14px; color: #c9ddd2; }
 
-  .tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px clamp(8px, 2vw, 26px); min-width: 0; }
-  .tool { all: unset; box-sizing: border-box; cursor: pointer; display: grid; justify-items: center; align-content: start; gap: 6px; padding: 4px 4px 12px; min-width: 0; text-align: center; border-radius: 4px; }
-  .tool svg { display: block; width: 100%; max-width: 190px; height: auto; overflow: visible; }
-  .tool .lift { transition: transform .28s cubic-bezier(.3,1.4,.5,1); transform-box: view-box; transform-origin: 80px 16px; }
-  .tool:hover .lift, .tool:focus-visible .lift { transform: translateY(-7px) rotate(-5deg); }
-  .tool:focus-visible { outline: 3px solid var(--charcoal); outline-offset: 2px; }
-  .tool .dymo { font-size: 14.5px; transform: rotate(-1.2deg); max-width: 100%; }
-  .tool:nth-child(even) .dymo { transform: rotate(1deg); }
-  .tool .pr { font-family: var(--mono); font-size: 12.5px; font-weight: 600; color: #2b1c10; background: rgba(251,251,250,.78); padding: 1px 7px; border-radius: 2px; white-space: nowrap; }
-  .board-hint { margin: 14px 0 0; text-align: center; font-family: var(--mono); font-size: 12.5px; color: #2b1c10; }
-  .board-hint span { background: rgba(251,251,250,.78); padding: 2px 8px; border-radius: 2px; }
-  .r { fill: var(--signal); } .rd { fill: #a92a18; } .d { fill: var(--charcoal); } .s { fill: var(--steel); } .sl { fill: #c8cfd2; } .w { fill: #f4f4f2; }
-  .hook { fill: none; stroke: #7c868b; stroke-width: 4; stroke-linecap: round; }
+  .stack { position: relative; min-width: 0; padding-bottom: 40px; }
+  .shot { position: relative; transform: rotate(1.6deg); background: #fff; padding: 10px 10px 12px; box-shadow: 0 40px 60px -30px rgba(0,0,0,.6); width: 92%; margin-inline-start: auto; }
+  .shot .ps { aspect-ratio: 8 / 5.4; }
+  .shot .ps-chip { display: none; }
+  .shot figcaption { font-family: var(--mono); font-size: 12px; color: var(--graphite-soft); margin-top: 8px; }
 
-  /* ---------- Sections ---------- */
-  section { padding-block: 88px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(38px, 5vw, 60px); }
-  .head .mono { color: var(--charcoal-soft); }
-  .lead { font-size: 18.5px; color: var(--charcoal-soft); max-width: 46ch; margin: 0; }
+  .note { position: absolute; inset-inline-end: 0; bottom: -10px; width: min(330px, 74%); background: var(--paper); color: var(--graphite); padding: 22px 22px 18px; transform: rotate(-2.2deg);
+    box-shadow: 0 30px 40px -24px rgba(0,0,0,.65);
+    background-image: repeating-linear-gradient(180deg, transparent 0 33px, #dde6e1 33px 34px); background-position: 0 50px; }
+  .note::before { content: ""; position: absolute; top: -14px; left: 50%; width: 34px; height: 34px; margin-left: -17px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.6), transparent 42%), var(--safety); box-shadow: 0 5px 8px -3px rgba(0,0,0,.5), inset 0 -3px 0 rgba(0,0,0,.18); }
+  .note h2 { font-size: 30px; margin-bottom: 6px; }
+  .note ol { list-style: none; margin: 0; padding: 0; }
+  .note li { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 34px; font-size: 15.5px; line-height: 1.25; }
+  .note li svg { width: 22px; height: 22px; }
+  .note li svg .box { fill: none; stroke: var(--graphite); stroke-width: 2; }
+  .note li svg .tick { fill: none; stroke: var(--safety); stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 30; stroke-dashoffset: 0; }
+  .note li .min { font-family: var(--mono); font-size: 12.5px; color: var(--graphite-soft); white-space: nowrap; }
+  .note .total { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-top: 2.5px solid var(--graphite); margin-top: 8px; padding-top: 10px; }
+  .note .total b { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 26px; line-height: 1; }
+  .note .total span { font-family: var(--mono); font-size: 12.5px; font-weight: 600; }
+  /* the one motion moment: the list ticks itself off, then the total lands */
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.a11y-still) .note li svg .tick { animation: tick .35s calc(.9s + var(--i) * .38s) ease-out both; }
+    html:not(.a11y-still) .note .total { animation: land .5s 3s cubic-bezier(.3,1.5,.5,1) both; }
+  }
+  @keyframes tick { from { stroke-dashoffset: 30; } to { stroke-dashoffset: 0; } }
+  @keyframes land { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
 
-  /* the fridge whiteboard */
-  .wb { position: relative; background: #fcfdfd; border-radius: 6px; padding: clamp(22px, 3.4vw, 44px);
-    box-shadow: 0 0 0 9px #c3cacd, 0 0 0 10px #8e989d, inset 0 0 40px rgba(29,76,156,.05), 0 36px 60px -36px rgba(31,35,38,.55); margin: 10px; }
-  .wb-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: clamp(26px, 4vw, 56px); align-items: start; }
-  .wb-title { font-family: var(--hand); font-size: 52px; line-height: 1; color: var(--marker); margin: 0 0 6px; }
-  .todo { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 2px; }
-  .todo li { font-family: var(--hand); font-size: 31px; line-height: 1.25; color: var(--marker); display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: center; }
-  .todo li::before { content: ""; width: 20px; height: 20px; border: 2.5px solid var(--marker); border-radius: 3px; transform: rotate(-3deg); }
-  .todo li.done span { text-decoration: line-through; text-decoration-color: var(--signal); text-decoration-thickness: 3px; }
-  .todo li.done::before { background: linear-gradient(45deg, transparent 44%, var(--signal) 45% 58%, transparent 59%), linear-gradient(-45deg, transparent 44%, var(--signal) 45% 58%, transparent 59%); }
-  .wb .lead { font-size: 16.5px; margin-bottom: 20px; }
-
-  .prints { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 28px); padding-top: 14px; }
-  .print { position: relative; min-width: 0; margin: 0; }
-  .print .ps { aspect-ratio: 4 / 5; box-shadow: 0 10px 18px -10px rgba(31,35,38,.55); }
-  .print:nth-child(1) .ps { transform: rotate(-1.6deg); }
-  .print:nth-child(2) .ps { transform: rotate(1.2deg); margin-top: 18px; }
-  .print:nth-child(3) .ps { transform: rotate(-.6deg); }
-  .magnet { position: absolute; top: -12px; left: 50%; z-index: 4; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), transparent 40%), var(--signal); box-shadow: 0 4px 6px -2px rgba(0,0,0,.45), inset 0 -3px 0 rgba(0,0,0,.2); pointer-events: none; }
-  .print:nth-child(2) .magnet { background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.5), transparent 40%), var(--marker); top: 6px; }
-  .print:nth-child(3) .magnet { background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.45), transparent 40%), var(--charcoal); }
-  .print figcaption { font-family: var(--hand); font-size: 27px; line-height: 1.1; color: var(--marker); margin-top: 12px; text-align: center; }
-  .print .ps-chip { display: none; }
+  /* ---------- The toolbox ---------- */
+  section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(46px, 6vw, 80px); }
+  .head p { margin: 0; color: var(--graphite-soft); max-width: 42ch; }
+  .box { position: relative; background: var(--enamel); border-radius: 14px; padding: 46px clamp(14px, 2.4vw, 30px) clamp(14px, 2.4vw, 30px);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.14), inset 0 -8px 0 rgba(0,0,0,.2), 0 40px 60px -36px rgba(20,63,44,.8); margin-top: 40px; }
+  .box::before { content: ""; position: absolute; top: -34px; left: 50%; width: 220px; height: 44px; margin-left: -110px; border: 9px solid #9aa6a0; border-bottom: 0; border-radius: 22px 22px 0 0; }
+  .box::after { content: ""; position: absolute; top: 14px; inset-inline: 22px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, #9aa6a0 0 10%, transparent 10% 90%, #9aa6a0 90%); }
+  .trays { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .tray { all: unset; box-sizing: border-box; cursor: pointer; position: relative; background: var(--enamel-deep); border-radius: 8px; padding: 18px 18px 18px; min-width: 0; color: #fff;
+    display: grid; grid-template-columns: minmax(0, 1fr) 96px; grid-template-rows: auto auto 1fr; gap: 2px 12px;
+    box-shadow: inset 0 8px 16px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,255,255,.08); transition: background .15s; }
+  .tray:hover { background: #0f3324; }
+  .tray:focus-visible { outline: 3px solid var(--safety); outline-offset: 3px; }
+  .tray svg { grid-column: 2; grid-row: 1 / 4; width: 96px; height: 108px; overflow: visible; align-self: center; }
+  .tray .lift { transition: transform .28s cubic-bezier(.3,1.4,.5,1); transform-box: view-box; transform-origin: 80px 90px; }
+  .tray:hover .lift, .tray:focus-visible .lift { transform: translateY(-8px) rotate(-6deg); }
+  .tray b { font-family: var(--display); font-stretch: 70%; font-weight: 800; font-size: 25px; line-height: 1.1; }
+  .tray .pr { font-family: var(--mono); font-weight: 600; font-size: 14px; color: #ffb08f; margin-top: 4px; }
+  .tray .t { font-size: 14px; color: #b9d0c3; align-self: end; margin-top: 10px; }
+  .tray .t::after { content: " ←"; color: var(--safety); }
+  .r { fill: var(--safety); } .rd { fill: #b8441b; } .d { fill: var(--graphite); } .s { fill: #9aa6a0; } .sl { fill: #c9d1cd; } .w { fill: #f4f4f2; }
+  .box-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; margin-top: 18px; color: #d6e7dd; font-size: 15px; }
+  .box-foot b { color: #fff; }
 
   /* prices */
   .prices { background: #fff; }
-  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 48px; align-items: start; }
-  .rows { display: grid; border-top: 2px solid var(--charcoal); }
-  .row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; padding: 18px 4px; border-bottom: 1px solid #d5dada; min-width: 0; }
-  .row:hover b { color: var(--signal); }
-  .row:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
-  .row b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.2; }
-  .row span { color: var(--charcoal-soft); font-size: 15px; }
-  .row .pr { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--charcoal); white-space: nowrap; text-align: left; }
-  .visit { background: var(--charcoal); color: #e9eded; padding: 28px 26px 26px; position: relative; border-radius: 3px; }
-  .visit .dymo { margin-bottom: 14px; }
-  .visit h3 { font-size: 29px; text-wrap: balance; color: #fff; margin-bottom: 10px; }
-  .visit p { margin: 0 0 14px; color: #b8c0c3; font-size: 15.5px; }
-  .visit .big { font-family: var(--mono); font-weight: 600; font-size: 22px; color: #fff; margin: 4px 0 4px; }
-  .visit .btn { background: var(--signal); color: #fff; width: 100%; margin-top: 8px; }
-  .visit .btn:hover { background: #c4351f; }
-  .fine { color: var(--charcoal-soft); font-size: 14.5px; margin: 16px 0 0; }
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 48px; align-items: start; }
+  .rows { display: grid; border-top: 3px solid var(--graphite); }
+  .row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 20px; align-items: center; padding: 18px 4px; border-bottom: 1px solid #d6ddd9; min-width: 0; }
+  .row:hover b { color: var(--enamel); }
+  .row:focus-visible { outline: 3px solid var(--safety); outline-offset: 2px; }
+  .row b { display: block; font-family: var(--display); font-stretch: 70%; font-weight: 800; font-size: 25px; line-height: 1.2; }
+  .row span { color: var(--graphite-soft); font-size: 15px; }
+  .row .pr { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--graphite); white-space: nowrap; text-align: left; background: var(--galvanized); padding: 4px 10px; border-radius: 4px; }
+  .visit { background: var(--safety); color: var(--graphite); padding: 28px 26px 26px; border-radius: 10px; position: relative; box-shadow: inset 0 -6px 0 rgba(0,0,0,.14); }
+  .visit .mono { font-weight: 600; }
+  .visit h3 { font-size: 40px; margin: 8px 0 12px; }
+  .visit p { margin: 0 0 14px; font-size: 16px; }
+  .visit .big { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 52px; line-height: 1; margin: 4px 0 6px; }
+  .visit .btn { width: 100%; margin-top: 6px; }
+  .fine { color: var(--graphite-soft); font-size: 14.5px; margin: 16px 0 0; }
 
   /* one job up close + who comes */
-  .close-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 330px); gap: 48px; align-items: start; }
-  .ps-ba.job { aspect-ratio: 4 / 3; box-shadow: 0 30px 50px -34px rgba(31,35,38,.7); border-radius: 3px; }
+  .close-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 48px; align-items: start; }
+  .ps-ba.job { aspect-ratio: 4 / 3; border-radius: 10px; box-shadow: 0 30px 50px -34px rgba(27,36,32,.7); }
   .ps-ba.job .ps-chip { display: none; }
+  .ps-ba.job .ps-ph { width: 100%; height: 100%; }
   .ps-ba.job [data-slot="after"] .ps-tools { left: auto; right: 12px; transform: none; top: 50px; }
   .ps-ba.job [data-slot="before"] .ps-tools { left: 12px; transform: none; top: 50px; }
-  .ps-ba.job [data-slot="before"] { --ps-a: #c9b8a6; --ps-b: #6e5b4b; }
   .ps-ba-tag { font-family: var(--body); }
   .job-cap { margin-top: 18px; }
-  .job-cap h3 { font-size: 28px; margin-bottom: 6px; }
-  .job-cap p { margin: 0; color: var(--charcoal-soft); font-size: 16px; max-width: 56ch; }
-  .who { min-width: 0; }
-  .who .ps { aspect-ratio: 4 / 5; border-radius: 3px; box-shadow: 0 0 0 8px #fff, 0 26px 40px -26px rgba(31,35,38,.7); }
+  .job-cap h3 { font-size: 34px; margin-bottom: 6px; }
+  .job-cap p { margin: 0; color: var(--graphite-soft); font-size: 16px; max-width: 58ch; }
+  .who { min-width: 0; background: #fff; border-radius: 10px; padding: 14px 14px 20px; box-shadow: 0 30px 50px -40px rgba(27,36,32,.6); }
+  .who .ps { aspect-ratio: 1; border-radius: 6px; }
   .who .ps-chip { display: none; }
-  .who-tags { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 22px 0 14px; }
-  .who-tags .dymo:first-child { font-size: 22px; transform: rotate(-1.5deg); }
-  .who-tags .dymo:last-child { transform: rotate(.8deg); font-size: 14px; }
-  .who p { margin: 0; color: var(--charcoal-soft); font-size: 15.5px; }
+  .who h3 { font-size: 34px; margin: 16px 4px 2px; }
+  .who .role { font-family: var(--mono); font-size: 12.5px; color: var(--enamel); margin: 0 4px 10px; display: block; font-weight: 600; }
+  .who p { margin: 0 4px; color: var(--graphite-soft); font-size: 15.5px; }
+  .who .mini { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; align-items: center; margin: 16px 4px 0; padding-top: 14px; border-top: 1px dashed #c7d1cb; }
+  .who .mini .ps { aspect-ratio: 1; border-radius: 6px; }
+  .who .mini span { font-size: 14px; color: var(--graphite-soft); }
 
   /* what Doron sees */
-  .owner { background: var(--charcoal); color: #e9eded; }
-  .owner .head .mono { color: #9aa4a8; }
+  .owner { background: var(--enamel-deep); color: #e4efe9; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #b9d0c3; }
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
   .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
-  .owner li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
-  .owner li::before { counter-increment: s; content: counter(s); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 600;
-    color: var(--charcoal); background: radial-gradient(circle, var(--charcoal) 0 3px, transparent 3.5px), var(--steel); color: transparent; box-shadow: inset 0 0 0 3px #c8cfd2; }
-  .owner li b { display: block; font-size: 20px; font-family: var(--display); font-weight: 400; }
-  .owner li span { color: #aab3b7; font-size: 15.5px; }
-  .owner .ph-cap { color: #9aa4a8; }
+  .owner li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 6px; display: grid; place-items: center; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 30px;
+    background: var(--safety); color: var(--graphite); }
+  .owner li b { display: block; font-size: 20px; color: #fff; }
+  .owner li span { color: #b9d0c3; font-size: 15.5px; }
+  .owner .ph-cap { color: #b9d0c3; }
 
-  footer { padding-block: 34px 90px; color: var(--charcoal-soft); font-size: 14px; }
-  footer .row-f { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cdd3d3; padding-top: 18px; }
+  footer { padding-block: 34px 96px; color: var(--graphite-soft); font-size: 14px; }
+  footer .row-f { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cdd6d1; padding-top: 18px; }
 
   @media (max-width: 960px) {
-    .board-grid { grid-template-columns: minmax(0, 1fr); }
-    .sign { max-width: 620px; }
-    .wb-grid, .price-grid, .close-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
-    .who { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 0 28px; align-items: center; }
-    .owner .phone { margin-inline: auto; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); padding-bottom: 64px; }
+    .stack { max-width: 560px; width: 100%; margin-inline: auto; }
+    .trays { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .price-grid, .close-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .who { max-width: 420px; }
     .visit { max-width: 520px; }
+    .owner .phone { margin-inline: auto; }
   }
   @media (max-width: 620px) {
     section { padding-block: 64px; }
     .bar { padding-block: 12px; }
-    .logo .dymo { font-size: 17px; }
-    .board { margin: 10px 2px 0; padding: 14px 12px 16px; box-shadow: 0 0 0 6px #2a2e31, 0 0 0 7px #3a4044, 0 30px 40px -24px rgba(31,35,38,.6); background-size: 22px 22px, 100% 100%; background-position: 11px 11px, 0 0; }
-    .sign { padding: 26px 20px 22px; }
-    .sign h1 { font-size: 46px; }
-    .sign p { font-size: 16.5px; }
+    .logo b { font-size: 30px; }
+    .hero-grid { padding-top: 14px; gap: 34px; }
+    .hero h1 { font-size: 68px; margin: 10px 0 16px; }
+    .hero .lead { font-size: 17px; }
     .ctas .btn { flex: 1 1 auto; }
-    .tools { gap: 4px 6px; }
-    .tool { padding: 2px 0 8px; gap: 4px; }
-    .tool .dymo { font-size: 12.5px; padding: 4px 6px 3px; letter-spacing: .01em; }
-    .tool .pr { font-size: 10.5px; padding: 1px 4px; }
-    .board-hint { margin-top: 6px; font-size: 11.5px; }
-    .wb { margin: 9px 4px; }
-    .wb-title { font-size: 44px; }
-    .todo li { font-size: 27px; }
-    .prints { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px 16px; }
-    .print:nth-child(3) { grid-column: 1 / -1; }
-    .print:nth-child(3) .ps { aspect-ratio: 16 / 10; }
-    .print:nth-child(2) .ps { margin-top: 0; }
-    .print figcaption { font-size: 24px; }
+    .spec { margin-top: 26px; }
+    .spec li { padding-inline-end: 12px; }
+    .spec li + li { padding-inline-start: 12px; }
+    .spec b { font-size: 26px; }
+    .spec span { font-size: 12.5px; }
+    .stack { padding-bottom: 0; }
+    .shot { width: 100%; padding: 7px 7px 9px; }
+    .note { position: relative; inset: auto; width: 92%; margin: -46px auto 0 0; padding: 20px 16px 14px; }
+    .note li { font-size: 15px; }
+    .box { padding: 40px 10px 12px; }
+    .box::before { width: 160px; margin-left: -80px; }
+    .trays { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .tray { display: flex; flex-direction: column; align-items: flex-start; padding: 12px 12px 14px; }
+    .tray svg { width: 60px; height: 66px; margin-bottom: 6px; }
+    .tray b { font-size: 21px; }
+    .tray .pr { font-size: 13px; }
+    .tray .t { display: none; }
+    .shot figcaption { visibility: hidden; }
     .row { grid-template-columns: minmax(0, 1fr); padding: 16px 2px; }
-    .row b { font-size: 21px; }
-    .row .pr { text-align: right; }
-    .who { grid-template-columns: minmax(0, 1fr); }
-    .who .ps { max-width: 280px; }
+    .row b { font-size: 22px; }
+    .row .pr { justify-self: start; }
+    .visit h3 { font-size: 34px; }
     .head { margin-bottom: 22px; }
   }
-  @media (prefers-reduced-motion: reduce) { .tool .lift { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .tray .lift, .btn { transition: none; } }
 </style>
 </head>
 <body>
 <div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=handyman">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
-<!-- shared tool drawings, used by the pegboard -->
+<!-- shared tool drawings, used by the toolbox trays -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
-    <filter id="outline" x="-10%" y="-10%" width="120%" height="120%"><feFlood flood-color="#4a2f1a" flood-opacity=".32"/><feComposite in2="SourceAlpha" operator="in"/></filter>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%"><feFlood flood-color="#000" flood-opacity=".35"/><feComposite in2="SourceAlpha" operator="in"/><feGaussianBlur stdDeviation="3"/><feOffset dx="4" dy="6"/></filter>
     <g id="t-drill">
       <rect x="10" y="57" width="16" height="4" class="sl"/>
       <rect x="24" y="48" width="18" height="22" rx="4" class="d"/>
@@ -247,18 +254,17 @@
       <path d="M76 164 h8 l-2.5 12 h-3 z" class="s"/>
     </g>
     <g id="t-level">
-      <rect x="4" y="32" width="152" height="36" rx="4" class="d"/>
-      <rect x="4" y="32" width="14" height="36" rx="3" class="r"/><rect x="142" y="32" width="14" height="36" rx="3" class="r"/>
-      <circle cx="80" cy="40" r="4.5" fill="#5b3c24"/>
-      <rect x="58" y="47" width="44" height="16" rx="7" fill="#a9ddd2"/>
-      <ellipse cx="82" cy="55" rx="8" ry="4.5" fill="#f4fbf9"/>
-      <rect x="72" y="47" width="2" height="16" class="d"/><rect x="88" y="47" width="2" height="16" class="d"/>
-      <rect x="28" y="50" width="16" height="10" rx="2" class="s"/><rect x="116" y="50" width="16" height="10" rx="2" class="s"/>
+      <rect x="4" y="72" width="152" height="36" rx="4" class="d"/>
+      <rect x="4" y="72" width="14" height="36" rx="3" class="r"/><rect x="142" y="72" width="14" height="36" rx="3" class="r"/>
+      <rect x="58" y="82" width="44" height="16" rx="7" fill="#a9ddd2"/>
+      <ellipse cx="82" cy="90" rx="8" ry="4.5" fill="#f4fbf9"/>
+      <rect x="72" y="82" width="2" height="16" class="d"/><rect x="88" y="82" width="2" height="16" class="d"/>
+      <rect x="28" y="85" width="16" height="10" rx="2" class="s"/><rect x="116" y="85" width="16" height="10" rx="2" class="s"/>
     </g>
     <g id="t-roll">
       <rect x="26" y="32" width="96" height="36" rx="11" class="w"/>
       <path d="M26 56 h96 v1 q0 11 -11 11 h-74 q-11 0 -11 -11 z" class="r"/>
-      <path d="M122 50 h16 v42 h-58 v22" fill="none" stroke="#9ba4a9" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M122 50 h16 v42 h-58 v22" fill="none" stroke="#9aa6a0" stroke-width="6" stroke-linejoin="round"/>
       <rect x="70" y="112" width="20" height="62" rx="9" class="d"/>
     </g>
     <g id="t-wrench">
@@ -266,7 +272,7 @@
       <rect x="71" y="74" width="18" height="84" rx="6" class="s"/>
       <rect x="71" y="98" width="18" height="44" rx="6" class="r"/>
       <circle cx="80" cy="162" r="17" class="s"/>
-      <circle cx="80" cy="162" r="8" fill="#5b3c24"/>
+      <circle cx="80" cy="162" r="8" fill="#143f2c"/>
     </g>
     <g id="t-ham">
       <rect x="22" y="32" width="24" height="30" rx="3" class="d"/>
@@ -275,54 +281,54 @@
       <rect x="70" y="56" width="20" height="112" rx="9" class="r"/>
       <rect x="67" y="128" width="26" height="44" rx="11" class="d"/>
     </g>
+    <!-- the TV wall, before and after -->
+    <symbol id="tvwall" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <rect width="800" height="600" fill="#e8ebe6"/>
+      <rect y="470" width="800" height="130" fill="#b99a78"/>
+      <g stroke="#a68664" stroke-width="2" opacity=".6"><path d="M0 510 H800 M0 555 H800"/><path d="M180 470 V510 M520 510 V555 M330 555 V600"/></g>
+      <rect y="462" width="800" height="10" fill="#fff"/>
+      <rect x="620" y="300" width="70" height="170" rx="6" fill="#d9dfd9"/>
+      <g fill="#3f7a5a"><ellipse cx="640" cy="250" rx="18" ry="50" transform="rotate(-20 640 250)"/><ellipse cx="675" cy="240" rx="18" ry="58" transform="rotate(16 675 240)"/><ellipse cx="656" cy="226" rx="15" ry="66"/></g>
+    </symbol>
   </defs>
 </svg>
 
-<header>
+<header class="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span class="dymo" data-edit="name1">דורון</span><span class="dymo red" data-edit="name2">הנדימן</span></div>
+      <div class="logo"><b data-edit="name1">דורון</b><span data-edit="name2">הנדימן · תיקונים לבית</span></div>
       <a href="#" data-wa="היי, הגעתי מהאתר ויש לי כמה סידורים בבית">וואטסאפ</a>
     </div>
-    <div class="board">
-      <div class="board-grid">
-        <div class="sign">
-          <div class="mono">חדרה · עמק חפר · השרון</div>
-          <h1><span data-edit="h1a">כל הסידורים הקטנים</span> <em data-edit="h1b">בביקור אחד.</em></h1>
-          <p>מדף, ארון מאיקאה, טלוויזיה, ברז שמטפטף. שולחים לי את הרשימה, ואני מגיע עם הכלים הנכונים.</p>
-          <div class="ctas">
-            <button class="btn btn-dark" data-open-bot>לשלוח רשימה</button>
-            <a class="btn btn-line" href="#" data-wa="היי, אשמח לקבוע ביקור של הנדימן">וואטסאפ ישיר</a>
-          </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="where">חדרה · עמק חפר · השרון</div>
+        <h1><span data-edit="h1a">כל הרשימה.</span> <em data-edit="h1b">ביקור אחד.</em></h1>
+        <p class="lead">מדף, ארון מאיקאה, טלוויזיה, ברז שמטפטף. שולחים לי את הרשימה, ואני מגיע עם הכלים הנכונים ועושה הכול ברצף.</p>
+        <div class="ctas">
+          <button class="btn btn-safety" data-list>לשלוח רשימה</button>
+          <a class="btn btn-ghost" href="#" data-wa="היי, אשמח לקבוע ביקור של הנדימן">וואטסאפ ישיר</a>
         </div>
-        <div>
-          <div class="tools">
-            <button class="tool" data-job="מדפים ותמונות" aria-label="מדפים ותמונות, 150 עד 300 ₪">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-drill" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-drill"/></g></svg>
-              <span class="dymo">מדפים ותמונות</span><span class="pr">150 עד 300 ₪</span>
-            </button>
-            <button class="tool" data-job="הרכבת רהיטים" aria-label="הרכבת רהיטים, 200 עד 500 ₪">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-screw" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-screw"/></g></svg>
-              <span class="dymo">הרכבת רהיטים</span><span class="pr">200 עד 500 ₪</span>
-            </button>
-            <button class="tool" data-job="תליית טלוויזיה" aria-label="תליית טלוויזיה, 250 עד 450 ₪">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-level" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-level"/></g></svg>
-              <span class="dymo">תליית טלוויזיה</span><span class="pr">250 עד 450 ₪</span>
-            </button>
-            <button class="tool" data-job="תיקוני צבע" aria-label="תיקוני צבע, לפי שעת עבודה">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-roll" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-roll"/></g></svg>
-              <span class="dymo">תיקוני צבע</span><span class="pr">לפי שעה</span>
-            </button>
-            <button class="tool" data-job="החלפת ברז או ניאגרה" aria-label="ברז או ניאגרה, לפי שעת עבודה">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-wrench" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-wrench"/></g></svg>
-              <span class="dymo">ברז או ניאגרה</span><span class="pr">לפי שעה</span>
-            </button>
-            <button class="tool" data-job="תיקונים קטנים" aria-label="תיקונים קטנים, לפי שעת עבודה">
-              <svg viewBox="0 0 160 180" aria-hidden="true"><use href="#t-ham" filter="url(#outline)" transform="translate(5 4)"/><path class="hook" d="M80 4 V22 C80 31 92 31 92 22"/><g class="lift"><use href="#t-ham"/></g></svg>
-              <span class="dymo">תיקונים קטנים</span><span class="pr">לפי שעה</span>
-            </button>
-          </div>
-          <p class="board-hint"><span>לוחצים על כלי, והצ׳אט נפתח</span></p>
+        <ul class="spec">
+          <li><b>14</b><span>שנה בתחזוקת בתים</span></li>
+          <li><b>1</b><span>ביקור לכל הרשימה</span></li>
+          <li><b>מחיר סגור</b><span>לפני שמתחילים</span></li>
+        </ul>
+      </div>
+      <div class="stack">
+        <figure class="shot">
+          <div class="ps" data-slot="hero" data-src="../shared/photos/handyman-work.webp" data-alt="הנדימן תולה מדף עם פלס ומקדחה" data-pos="60 40" data-icon="wrench" data-label="תמונה שלכם בעבודה"></div>
+          <figcaption data-edit="hero-cap">מדף בסלון, חדרה · 30 דק׳</figcaption>
+        </figure>
+        <div class="note" role="img" aria-label="רשימת סידורים לדוגמה: חמש עבודות קטנות, בערך שעתיים וארבעים דקות, בביקור אחד">
+          <h2 aria-hidden="true">הרשימה על המקרר</h2>
+          <ol aria-hidden="true">
+            <li style="--i:0"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>מדף בסלון</span><span class="min">30 דק׳</span></li>
+            <li style="--i:1"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>שידה לחדר של נועה</span><span class="min">75 דק׳</span></li>
+            <li style="--i:2"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>ידית בארון במטבח</span><span class="min">10 דק׳</span></li>
+            <li style="--i:3"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>הניאגרה לא מפסיקה</span><span class="min">20 דק׳</span></li>
+            <li style="--i:4"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>שלוש תמונות במסדרון</span><span class="min">25 דק׳</span></li>
+          </ol>
+          <div class="total" aria-hidden="true"><b>ביקור אחד</b><span>סך הכול 160 דק׳</span></div>
         </div>
       </div>
     </div>
@@ -332,34 +338,24 @@
 <main>
   <section>
     <div class="wrap">
-      <div class="head"><h2>רשימת סידורים</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-      <div class="wb">
-        <div class="wb-grid">
-          <div>
-            <p class="wb-title">לעשות בבית</p>
-            <ul class="todo">
-              <li class="done"><span>מדף בסלון</span></li>
-              <li><span>להרכיב שידה לחדר של נועה</span></li>
-              <li><span>ידית בארון במטבח</span></li>
-              <li><span>הניאגרה לא מפסיקה</span></li>
-              <li><span>שלוש תמונות במסדרון</span></li>
-            </ul>
-            <p class="lead">לכל בית יש רשימה כזאת על המקרר. במקום שלושה ביקורים, שולחים לי את כולה, ואני אומר כמה זמן זה ייקח.</p>
-            <button class="btn btn-dark" data-list>לשלוח את הרשימה</button>
-          </div>
-          <div class="prints">
-            <figure class="print"><span class="magnet"></span><div class="ps" data-slot="j1" data-src="../shared/photos/handyman-room.webp" data-alt="תליית מדף עם פלס ומקדחה" data-icon="wrench" data-label="תמונה מעבודה"></div><figcaption data-edit="j1">מדפים במטבח, חדרה</figcaption></figure>
-            <figure class="print"><span class="magnet"></span><div class="ps" data-slot="j2" data-icon="box" data-label="תמונה מעבודה"></div><figcaption data-edit="j2">שידה מאיקאה, כפר ויתקין</figcaption></figure>
-            <figure class="print"><span class="magnet"></span><div class="ps" data-slot="j3" data-icon="home" data-label="תמונה מעבודה"></div><figcaption data-edit="j3">תמונות במסדרון, נתניה</figcaption></figure>
-          </div>
+      <div class="head"><h2>מה יש בארגז</h2><p>כל תא הוא סוג עבודה. לוחצים, והצ׳אט נפתח עם העבודה הזאת.</p></div>
+      <div class="box">
+        <div class="trays">
+          <button class="tray" data-job="מדפים ותמונות"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-drill" filter="url(#shadow)"/><use href="#t-drill"/></g></svg><b>מדפים ותמונות</b><span class="pr">150 עד 300 ₪</span><span class="t">כולל ברגים ודיבלים</span></button>
+          <button class="tray" data-job="הרכבת רהיטים"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-screw" filter="url(#shadow)"/><use href="#t-screw"/></g></svg><b>הרכבת רהיטים</b><span class="pr">200 עד 500 ₪</span><span class="t">ארון, מיטה, שידה</span></button>
+          <button class="tray" data-job="תליית טלוויזיה"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-level" filter="url(#shadow)"/><use href="#t-level"/></g></svg><b>תליית טלוויזיה</b><span class="pr">250 עד 450 ₪</span><span class="t">בטון או גבס, בפילוס</span></button>
+          <button class="tray" data-job="תיקוני צבע"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-roll" filter="url(#shadow)"/><use href="#t-roll"/></g></svg><b>תיקוני צבע</b><span class="pr">180 עד 250 ₪ לשעה</span><span class="t">חורים, כתמים, שפכטל</span></button>
+          <button class="tray" data-job="החלפת ברז או ניאגרה"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-wrench" filter="url(#shadow)"/><use href="#t-wrench"/></g></svg><b>ברז או ניאגרה</b><span class="pr">180 עד 250 ₪ לשעה</span><span class="t">החלפה, לא אינסטלציה</span></button>
+          <button class="tray" data-job="תיקונים קטנים"><svg viewBox="0 0 160 180" aria-hidden="true"><g class="lift"><use href="#t-ham" filter="url(#shadow)"/><use href="#t-ham"/></g></svg><b>תיקונים קטנים</b><span class="pr">180 עד 250 ₪ לשעה</span><span class="t">ידיות, צירים, מנעולי ארון</span></button>
         </div>
+        <div class="box-foot"><span>יש כמה דברים? <b>הכול נכנס לאותו ביקור</b>, בלי עוד דמי הגעה.</span><button class="btn btn-safety" data-list>לשלוח את הרשימה</button></div>
       </div>
     </div>
   </section>
 
   <section class="prices">
     <div class="wrap">
-      <div class="head"><h2>כמה זה עולה</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="head"><h2>כמה זה עולה</h2><p>מחירים לדוגמה. לחיצה על שורה פותחת את הצ׳אט.</p></div>
       <div class="price-grid">
         <div>
           <div class="rows">
@@ -371,12 +367,12 @@
           <p class="fine">את המחיר הסופי סוגרים איתכם לפני שמתחילים.</p>
         </div>
         <div class="visit">
-          <span class="dymo red">ביקור עם רשימה</span>
+          <span class="mono">ביקור עם רשימה</span>
           <h3>שלוש עבודות, ביקור אחד</h3>
           <p>שולחים את הרשימה מראש. אני מגיע עם כל הכלים, ועושים את הכול ברצף. משלמים לפי הזמן בפועל.</p>
           <div class="big">360 עד 750 ₪</div>
           <p>בדרך כלל שעתיים עד שלוש שעות עבודה.</p>
-          <button class="btn" data-list>לשלוח את הרשימה</button>
+          <button class="btn btn-dark" data-list>לשלוח את הרשימה</button>
         </div>
       </div>
     </div>
@@ -384,20 +380,35 @@
 
   <section class="calc" id="calc">
     <div class="wrap">
-      <div class="head"><h2>כמה זה יעלה?</h2><span class="mono">בוחרים, ורואים טווח עוד לפני שכותבים</span></div>
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים, ורואים טווח עוד לפני שכותבים.</p></div>
       <div data-estimate></div>
       <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
     </div>
   </section>
 
-  <section>
+  <section style="padding-top:0">
     <div class="wrap">
-      <div class="head"><h2>עבודה אחת מקרוב</h2><span class="mono">גוררים את הפס כדי לראות לפני ואחרי</span></div>
+      <div class="head"><h2>עבודה אחת מקרוב</h2><p>גוררים את הפס כדי לראות לפני ואחרי.</p></div>
       <div class="close-grid">
         <div>
           <div class="ps-ba job">
-            <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"></figure>
-            <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="wrench" data-label="תמונת לפני"></figure></div>
+            <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי"><svg class="ps-ph" role="img" aria-label="אחרי: מסך על זרוע והכבלים בתעלה" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><use href="#tvwall" width="800" height="600"/>
+              <rect x="300" y="210" width="40" height="70" rx="4" fill="#9aa6a0"/>
+              <rect x="170" y="120" width="300" height="175" rx="8" fill="#1b2420"/><rect x="180" y="130" width="280" height="155" rx="3" fill="#2b4a3c"/>
+              <path d="M190 280 L300 190 L360 240 L400 205 L450 280 Z" fill="#3a6a52" opacity=".7"/>
+              <rect x="314" y="295" width="12" height="167" rx="3" fill="#e2e6e1" stroke="#d3d9d4" stroke-width="2"/>
+              <rect x="150" y="390" width="340" height="72" rx="6" fill="#f2f3f0" stroke="#d6dbd6" stroke-width="2"/>
+              <path d="M320 425 h0" stroke="#9aa6a0" stroke-width="3"/>
+            </svg></figure>
+            <div class="ps-ba-before"><figure class="ps" data-slot="before" data-icon="wrench" data-label="תמונת לפני"><svg class="ps-ph" role="img" aria-label="לפני: מסך על שידה זמנית וכבלים על הקיר" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><use href="#tvwall" width="800" height="600"/>
+              <rect x="150" y="390" width="340" height="72" rx="6" fill="#cfc6b8"/>
+              <rect x="200" y="250" width="240" height="140" rx="6" fill="#1b2420" transform="rotate(-2 320 320)"/>
+              <rect x="300" y="380" width="40" height="12" fill="#3a3f3c"/>
+              <path d="M330 390 C 340 300, 420 300, 430 220 S 520 160, 560 120" fill="none" stroke="#2a2a2a" stroke-width="5"/>
+              <path d="M345 392 C 380 350, 470 380, 520 300 S 560 230, 600 230" fill="none" stroke="#5a5a5a" stroke-width="4"/>
+              <circle cx="240" cy="160" r="6" fill="#9a8f80"/><circle cx="400" cy="150" r="6" fill="#9a8f80"/><circle cx="300" cy="190" r="4" fill="#9a8f80"/>
+              <g fill="#8a7d6c" opacity=".5"><ellipse cx="220" cy="540" rx="40" ry="8"/></g>
+            </svg></figure></div>
             <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
             <span class="ps-ba-line" aria-hidden="true"></span>
             <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
@@ -408,26 +419,29 @@
           </div>
         </div>
         <div class="who">
-          <figure class="ps" data-slot="portrait" data-src="../shared/photos/handyman-portrait.webp" data-alt="הנדימן תולה מדף" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure>
-          <div>
-            <div class="who-tags"><span class="dymo" data-edit="who-name">דורון לוי</span><span class="dymo red" data-edit="who-role">14 שנה בתחזוקת בתים</span></div>
-            <p data-edit="who-text">אני מגיע בעצמי, עם רכב מלא כלים. אם צריך חלק, אני אומר לכם מראש מה לקנות, או מביא אותו.</p>
+          <figure class="ps" data-slot="portrait" data-src="../shared/photos/handyman-portrait.webp" data-alt="דורון, הנדימן" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure>
+          <h3 data-edit="who-name">דורון לוי</h3>
+          <span class="role" data-edit="who-role">14 שנה בתחזוקת בתים</span>
+          <p data-edit="who-text">אני מגיע בעצמי, עם רכב מלא כלים. אם צריך חלק, אני אומר לכם מראש מה לקנות, או מביא אותו.</p>
+          <div class="mini">
+            <div class="ps" data-slot="j1" data-src="../shared/photos/handyman-room.webp" data-alt="קידוח ופילוס של מדף" data-pos="50 40" data-icon="wrench" data-label="תמונה מעבודה"></div>
+            <span data-edit="j1">פלס לפני כל בורג. מדפים במטבח, חדרה.</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="guides" id="guides">
+  <section class="guides" id="guides" style="padding-top:0">
     <div class="wrap">
-      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה עושים עד שמגיעים, ושאלות שחוזרות</span></div>
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עד שאני מגיע, ושאלות שחוזרות.</p></div>
       <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap">
-      <div class="head"><h2>מה דורון רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="head"><h2>מה דורון רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
           <li><div><b>הלקוח שולח את הרשימה</b><span>מה העבודה, מה עוד צריך, מתי נוח ובאיזה ישוב. בלי טופס ארוך.</span></div></li>
@@ -459,7 +473,7 @@
 
 <footer>
   <div class="wrap row-f">
-    <span>דורון הנדימן · דף לדוגמה, העסק בדוי</span>
+    <span>דורון הנדימן · דף לדוגמה, העסק בדוי · <a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a></span>
     <a href="../">רוצים דף כזה לעסק שלכם?</a>
   </div>
 </footer>
