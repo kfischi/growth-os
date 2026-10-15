@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <style>
-  :root { --paper: #f6f5fb; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --mist: #ebe9f3; --line: #dcd9e6; --font: 'Rubik', 'Calibri', 'Segoe UI', system-ui, sans-serif; }
+  :root { --paper: #f8f9fa; --ink: #1f1022; --slate: #5b5063; --plum: #4a154b; --coral: #ff7f50; --mint: var(--plum); --mist: #f0ebf1; --line: #e2dbe4; --font: 'Rubik', 'Calibri', 'Segoe UI', system-ui, sans-serif; }
   * { box-sizing: border-box; }
   html { scroll-padding-top: 80px; }
   body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip; }
@@ -22,8 +22,8 @@
   .bar { position: sticky; top: 0; z-index: 5; background: rgba(246,245,251,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
   .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 64px; }
   .brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.1rem; color: var(--ink); text-decoration: none; }
-  .brand i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(15,122,108,.18); }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-block-size: 48px; padding: 0 22px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 1rem var(--font); text-decoration: none; border: 0; cursor: pointer; }
+  .brand i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px rgba(255,127,80,.22); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-block-size: 48px; padding: 0 22px; border-radius: 999px; background: var(--coral); color: var(--plum); font: 600 1rem var(--font); text-decoration: none; border: 0; cursor: pointer; }
   .btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
   .btn.sm { min-block-size: 40px; padding: 0 16px; font-size: .95rem; }
   .back::before { content: "→"; }
@@ -36,7 +36,7 @@
   .film-frame { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; background: var(--plum); box-shadow: 0 40px 90px -50px rgba(42,24,48,.75); }
   .film-frame video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; background: var(--plum); }
   .film-play { position: absolute; inset: 0; border: 0; padding: 0; background: linear-gradient(transparent 50%, rgba(29,27,46,.45)); cursor: pointer; display: grid; place-items: center; }
-  .film-play span { inline-size: clamp(72px, 10vw, 104px); block-size: clamp(72px, 10vw, 104px); border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 12px rgba(15,122,108,.25); display: grid; place-items: center; transition: transform .2s; }
+  .film-play span { inline-size: clamp(72px, 10vw, 104px); block-size: clamp(72px, 10vw, 104px); border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 12px rgba(255,127,80,.3); display: grid; place-items: center; transition: transform .2s; }
   .film-play span::before { content: ""; margin-left: 8px; border-block: 16px solid transparent; border-left: 26px solid #fff; }
   .film-play b { position: absolute; bottom: 16px; inset-inline-start: 18px; color: #fff; font-weight: 600; font-size: .95rem; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
   .film-play:hover span { transform: scale(1.06); }
@@ -63,7 +63,7 @@
   .go h2 { margin: 0 0 4px; font: 700 clamp(1.3rem, 2.4vw, 1.7rem)/1.25 var(--font); }
   .go p { margin: 0; color: #e6dcea; }
   .go .btns { display: flex; flex-wrap: wrap; gap: 10px; }
-  .go .btn { background: #fff; color: var(--plum); }
+  .go .btn { background: var(--coral); color: var(--plum); }
   .go .btn.ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); }
   .go :focus-visible { outline-color: #fff; }
 

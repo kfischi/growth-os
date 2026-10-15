@@ -15,7 +15,9 @@
    The detail only this subject has: real times and real notifications ("שיחה שלא נענתה", "✓✓").
    The one bold move: the film's own light turns from morning to dusk. Everything around it stays quiet. */
 :root {
-  --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #b23730;
+  /* the palette: deep purple for the brand and its words, coral only for what you press, a light page */
+  --paper: #f8f9fa; --mist: #f0ebf1; --ink: #1f1022; --slate: #5b5063; --plum: #4a154b; --coral: #ff7f50; --brick: #b23730;
+  --mint: var(--plum); /* the accent for words, lines and focus (named mint before the palette changed) */
   --line: color-mix(in oklab, var(--ink) 14%, var(--paper));
   --font: 'Rubik', 'Calibri', 'Segoe UI', system-ui, sans-serif;
   --gut: clamp(16px, 4.2vw, 64px); --wrap: 1240px;
@@ -36,7 +38,7 @@ img, svg { display: block; }
 .bar { position: sticky; top: 0; z-index: 30; background: color-mix(in oklab, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .bar .wrap { display: flex; align-items: center; gap: 28px; min-height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; }
-.brand i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 22%, transparent); }
+.brand i { inline-size: 12px; block-size: 12px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 22%, transparent); }
 .brand small { font-weight: 400; color: var(--slate); font-size: .9rem; }
 .nav { display: flex; gap: 22px; margin-inline-start: auto; }
 .nav a { text-decoration: none; font-size: .95rem; color: var(--slate); }
@@ -48,8 +50,8 @@ img, svg { display: block; }
 .bar.open .menu-btn i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 .menu-btn:focus-visible, .nav a:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 52px; padding: .8em 1.5em; border-radius: 999px; border: 0;
-  background: var(--ink); color: var(--paper); font: 600 1.02rem/1 var(--font); text-decoration: none; cursor: pointer; transition: transform .2s, background-color .2s; }
-.btn:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--ink) 85%, var(--mint)); }
+  background: var(--coral); color: var(--plum); font: 700 1.02rem/1 var(--font); text-decoration: none; cursor: pointer; transition: transform .2s, background-color .2s; }
+.btn:hover { transform: translateY(-1px); background: color-mix(in oklab, var(--coral) 88%, #fff); }
 .btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
 .btn.ghost:hover { box-shadow: inset 0 0 0 1.5px var(--ink); background: transparent; }
 .btn.sm { min-height: 42px; padding: .6em 1.15em; font-size: .95rem; }
@@ -90,7 +92,7 @@ img, svg { display: block; }
 /* a title above each video, so nobody takes it for a picture */
 .vid-head { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; font-size: clamp(1.05rem, 1.6vw, 1.25rem); line-height: 1.3; }
 .vid-head b { font-weight: 800; }
-.vid-ic { flex: none; inline-size: 34px; block-size: 34px; border-radius: 50%; background: var(--mint); display: grid; place-items: center; box-shadow: 0 0 0 6px rgba(15,122,108,.16); }
+.vid-ic { flex: none; inline-size: 34px; block-size: 34px; border-radius: 50%; background: var(--coral); display: grid; place-items: center; box-shadow: 0 0 0 6px rgba(255,127,80,.16); }
 .vid-ic::before { content: ""; margin-left: 3px; border-block: 7px solid transparent; border-left: 11px solid #fff; }
 .vid-len { margin-inline-start: auto; flex: none; padding: 3px 10px; border-radius: 999px; background: var(--mist); color: var(--slate); font-size: .85rem; font-weight: 600; }
 @media (max-width: 640px) { .hero-reel .reel-frame { border-radius: 14px; } .hero-cue { max-width: calc(100% - 80px); } .hero-cue span { white-space: normal; } }
@@ -197,13 +199,13 @@ img, svg { display: block; }
 .ph-fig.vid::after { content: ""; position: absolute; inset: 0; margin: auto; inline-size: 0; block-size: 0; border-block: 9px solid transparent; border-inline-end: 14px solid #fff; }
 .ok-fig { padding: 9px 16px; border-radius: 999px; background: var(--ink); color: var(--paper); }
 .live-fig { padding: 7px 14px 7px 12px; border-radius: 999px; background: color-mix(in oklab, var(--mint) 14%, var(--paper)); color: var(--mint); }
-.live-fig::before { content: ""; display: inline-block; inline-size: 9px; block-size: 9px; border-radius: 50%; background: var(--mint); margin-inline-end: 8px; box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 25%, transparent); }
-.nav-film::before { content: ""; display: inline-block; margin-inline-end: 6px; border-block: 5px solid transparent; border-left: 8px solid var(--mint); vertical-align: 1px; }
+.live-fig::before { content: ""; display: inline-block; inline-size: 9px; block-size: 9px; border-radius: 50%; background: var(--coral); margin-inline-end: 8px; box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 25%, transparent); }
+.nav-film::before { content: ""; display: inline-block; margin-inline-end: 6px; border-block: 5px solid transparent; border-left: 8px solid var(--coral); vertical-align: 1px; }
 /* the process film lives on its own page (film/); here, a card that opens it */
 .film-card { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); align-items: center; gap: 0; margin: 0 0 clamp(36px, 6svh, 60px); border-radius: 22px; overflow: hidden; background: var(--plum); color: #fff; text-decoration: none; box-shadow: 0 30px 70px -40px rgba(42,24,48,.6); }
 .fc-pic { position: relative; display: block; aspect-ratio: 16 / 9; }
 .fc-pic img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.fc-play { position: absolute; inset: 0; margin: auto; inline-size: clamp(60px, 8vw, 84px); block-size: clamp(60px, 8vw, 84px); border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 10px rgba(15,122,108,.3); display: grid; place-items: center; transition: transform .2s; }
+.fc-play { position: absolute; inset: 0; margin: auto; inline-size: clamp(60px, 8vw, 84px); block-size: clamp(60px, 8vw, 84px); border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 10px rgba(255,127,80,.3); display: grid; place-items: center; transition: transform .2s; }
 .fc-play::before { content: ""; margin-left: 6px; border-block: 13px solid transparent; border-left: 20px solid #fff; }
 .fc-tx { display: grid; gap: 6px; padding: clamp(18px, 3vw, 36px); }
 .fc-tx b { font-size: clamp(1.3rem, 2.4vw, 1.8rem); font-weight: 800; line-height: 1.2; }
@@ -318,8 +320,8 @@ img, svg { display: block; }
 .start h2 { color: #fff; }
 .start .sec-sub { color: color-mix(in oklab, #f3eef6 75%, var(--plum)); }
 .start-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
-.start .btn { background: #fff; color: var(--plum); }
-.start .btn:hover { background: #e9fbf6; }
+.start .btn { background: var(--coral); color: var(--plum); }
+.start .btn:hover { background: color-mix(in oklab, var(--coral) 88%, #fff); }
 .start .btn.ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px color-mix(in oklab, #fff 40%, var(--plum)); }
 .start-human { margin-top: 18px; color: color-mix(in oklab, #fff 70%, var(--plum)); font-size: .95rem; }
 .start-human a { color: #7fe0cc; font-weight: 600; }
