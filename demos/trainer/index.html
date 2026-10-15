@@ -5,257 +5,372 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>יעל ברק · אימון אישי</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
-<meta name="description" content="אימון אישי בחדרה, בבית או אונליין. שאלון קצר בצ׳אט, ואימון היכרות נקבע בוואטסאפ.">
+<meta name="description" content="אימון אישי בחדרה, בבית או בזום. תוכנית שבועית, מעקב התקדמות, ואימון היכרות שנקבע בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,500..900&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the chalkboard on the studio wall with the day's workout written on it.
-     Detail: sets, reps, rest in seconds, session length, the clock above the board.
-     Bold move: the whole hero is the board, with giant condensed chalk type. */
+  /* Object: the athletics track. Red tartan, white lane lines, lane numbers painted at the start line, and a race bib pinned on.
+     Detail: lanes 1 to 6, the training week from א׳ to ש׳, sets × reps, kg per week over 12 weeks with light weeks 4 and 8, 55 minutes.
+     Bold move: one saturated tartan-red field with giant extra-condensed white type and lane lines bending across the hero. */
   :root {
-    --board: #24352f;          /* slate-green chalkboard */
-    --board-deep: #1b2925;
-    --chalk: #f1efe8;          /* white chalk */
-    --chalk-dim: #a9b5ae;
-    --chalk-coral: #ff8a78;    /* coloured chalk for marks */
-    --chalk-sky: #9fd3e6;
-    --wall: #eef0ec;           /* studio wall */
-    --rubber: #1d2421;         /* floor mats, body text */
-    --display: "Karantina", "Rubik", sans-serif;
-    --body: "Rubik", system-ui, sans-serif;
+    --tartan: #b23a26;         /* the running track, the one loud colour */
+    --tartan-deep: #8e2c1c;
+    --lane: #ffffff;           /* painted lane lines */
+    --infield: #163a2c;        /* the grass inside the track */
+    --spike: #171a19;          /* spikes, body text */
+    --concrete: #f1f3f2;       /* stadium concrete, page background */
+    --stand: #5a6460;          /* the stands, muted text */
+    --display: "Noto Sans Hebrew", "Rubik", "Arial Hebrew", sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
-    --bot-bg: #fbfbf8; --bot-fg: var(--rubber); --bot-line: #d6ddd8; --bot-muted: #5d6b64;
-    --bot-accent: var(--board); --bot-accent-fg: var(--chalk); --bot-them: #e8eee9; --bot-me: var(--board); --bot-me-fg: var(--chalk);
-    --bot-font: var(--body); --bot-radius: 10px; --bot-radius-msg: 10px; --bot-radius-pill: 6px; --bot-radius-input: 6px;
+    --phone-frame: var(--spike);
+    --bot-bg: #fff; --bot-fg: var(--spike); --bot-line: #d9dedc; --bot-muted: var(--stand);
+    --bot-accent: var(--tartan); --bot-accent-fg: #fff; --bot-them: #eef1f0; --bot-me: var(--spike); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 8px; --bot-radius-msg: 8px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+    --ps-a: #c9524a; --ps-b: #6e2216; --ps-ui: var(--spike); --ps-edit: var(--tartan);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--wall); color: var(--rubber); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--concrete); color: var(--spike); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--chalk-coral); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .92; margin: 0; letter-spacing: .01em; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 6px; }
-  .btn-chalk { background: var(--chalk); color: var(--board-deep); }
-  .btn-chalk:hover { background: #fff; }
-  .btn-line { border: 2px solid var(--chalk-dim); color: var(--chalk); background: transparent; }
-  .btn-board { background: var(--board); color: var(--chalk); }
-  .btn-board:hover { background: var(--board-deep); }
+  :focus-visible { outline: 3px solid var(--spike); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .num { font-family: var(--mono); font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; line-height: .9; letter-spacing: -.005em; }
+  h2 { font-size: clamp(54px, 8vw, 104px); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 24px; font: 700 16px/1 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 4px; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-lane { background: var(--lane); color: var(--tartan-deep); }
+  .btn-ghost { background: transparent; color: var(--lane); box-shadow: inset 0 0 0 2px rgba(255,255,255,.75); }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); }
+  .btn-red { background: var(--tartan); color: #fff; }
+  .btn-red:hover { background: var(--tartan-deep); }
+  .btn-dark { background: var(--spike); color: #fff; }
 
-  .demo { background: var(--rubber); color: #c5cfc9; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--spike); color: #c9d0cd; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- The board ---------- */
-  .hero { background: var(--board); color: var(--chalk); position: relative; overflow: hidden;
-    background-image: radial-gradient(60% 50% at 25% 35%, rgba(255,255,255,.06), transparent 70%), radial-gradient(40% 40% at 80% 80%, rgba(255,255,255,.04), transparent 70%);
-    border-bottom: 14px solid #6f5a45; }
-  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
-    background-image: repeating-linear-gradient(-28deg, transparent 0 22px, rgba(255,255,255,.025) 22px 60px); }
-  .bar { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: 18px; z-index: 1; }
-  .logo { font-family: var(--display); font-size: 40px; line-height: 1; }
-  .logo span { color: var(--chalk-coral); }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--chalk-coral); }
-  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 56px; align-items: center; padding-block: 28px 72px; }
-  .kicker { color: var(--chalk-dim); }
-  .hero h1 { font-size: clamp(76px, 11vw, 150px); margin: 8px 0 18px; }
-  .hero h1 u { text-decoration: none; background: linear-gradient(transparent 80%, var(--chalk-coral) 80% 88%, transparent 88%); }
-  .hero p { font-size: 19px; max-width: 34ch; margin: 0 0 28px; color: #d9ded9; }
+  /* ---------- Hero: the track ---------- */
+  .hero { background: var(--tartan); color: var(--lane); position: relative; overflow: hidden; isolation: isolate; }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+    background-image: radial-gradient(rgba(0,0,0,.16) 1px, transparent 1.4px), radial-gradient(rgba(255,255,255,.07) 1px, transparent 1.4px);
+    background-size: 5px 5px, 7px 7px; background-position: 0 0, 2px 3px; }
+  .lanes { position: absolute; z-index: -1; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 38px; line-height: 1; white-space: nowrap; }
+  .logo small { font-family: var(--body); font-stretch: 100%; font-weight: 500; font-size: 14px; margin-inline-start: 10px; opacity: .9; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--lane); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 48px; align-items: end; padding: 26px 0 64px; }
+  .hero-copy { min-width: 0; }
+  .kicker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .kicker span { font-size: 14px; font-weight: 500; padding: 5px 11px; border: 1.5px solid rgba(255,255,255,.7); border-radius: 3px; }
+  .hero h1 { font-size: clamp(92px, 12.5vw, 184px); line-height: .82; transform: skewX(-7deg); transform-origin: bottom right; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; display: inline-block; white-space: nowrap; color: var(--tartan); background: var(--lane); padding: 0 .08em .04em; margin-top: .06em; }
+  .lead { font-size: 19px; max-width: 40ch; margin: 26px 0 24px; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .splits { display: grid; grid-template-columns: repeat(3, minmax(0, auto)); justify-content: start; gap: 0; margin-top: 32px; border-top: 2px solid rgba(255,255,255,.55); }
+  .splits div { padding: 10px 0 0; padding-inline-end: 28px; min-width: 0; }
+  .splits div + div { padding-inline-start: 22px; border-inline-start: 2px solid rgba(255,255,255,.35); }
+  .splits b { display: block; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 44px; line-height: 1; }
+  .splits span { font-size: 14px; }
 
-  .wod { border: 2px dashed rgba(241,239,232,.35); border-radius: 4px; padding: 22px 24px 18px; transform: rotate(-1deg); }
-  .wod-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 2px solid rgba(241,239,232,.5); padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-  .wod-top h2 { font-size: 46px; }
-  .wod-top .mono { color: var(--chalk-sky); }
-  .wod ol { list-style: none; margin: 0; padding: 0; }
-  .wod li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid rgba(241,239,232,.12); }
-  .wod li b { font-weight: 500; }
-  .wod li .mono { color: var(--chalk-dim); align-self: center; }
-  .wod .total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; }
-  .wod .total b { font-family: var(--display); font-size: 64px; line-height: 1; color: var(--chalk-coral); }
-  .wod .total span { color: var(--chalk-dim); font-size: 14px; }
+  .bib-photo { position: relative; min-width: 0; justify-self: center; width: min(360px, 100%); }
+  .bib-photo .ps { aspect-ratio: 3 / 4; border: 6px solid var(--lane); transform: rotate(2.5deg); box-shadow: 0 34px 50px -28px rgba(40,6,0,.75); }
+  .bib { position: absolute; z-index: 3; inset-inline-start: -26px; bottom: 26px; background: var(--lane); color: var(--spike); padding: 10px 18px 12px; transform: rotate(-5deg); box-shadow: 0 16px 30px -16px rgba(0,0,0,.6); text-align: center; min-width: 150px; }
+  .bib::before, .bib::after { content: ""; position: absolute; top: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--concrete); box-shadow: inset 0 0 0 1.5px #9aa3a0; }
+  .bib::before { right: 7px; } .bib::after { left: 7px; }
+  .bib small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--tartan); }
+  .bib b { display: block; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 54px; line-height: .95; }
+  .bib span { font-size: 13px; }
 
-  /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(54px, 7vw, 84px); }
-  .head .mono { color: #5d6b64; }
+  /* ---------- The week ---------- */
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 32px; }
+  .head p { margin: 0; max-width: 42ch; color: var(--stand); font-size: 16px; }
+  .week-wrap { background: var(--infield); color: #fff; position: relative; overflow: hidden; }
+  .week-wrap::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 70px, transparent 70px 140px); }
+  .week-wrap .head p { color: #bfd2c8; }
+  .week { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 3px solid #fff; border-bottom: 3px solid #fff; }
+  .day { min-width: 0; padding: 14px 12px 18px; border-inline-start: 2px solid rgba(255,255,255,.4); display: flex; flex-direction: column; gap: 8px; min-height: 230px; }
+  .day:first-child { border-inline-start: 0; }
+  .day .dn { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 40px; line-height: 1; }
+  .day .dn small { font-family: var(--body); font-stretch: 100%; font-size: 12px; font-weight: 500; color: #bfd2c8; margin-inline-start: 6px; }
+  .day .s { margin-top: auto; padding: 10px; border-radius: 3px; font-size: 14px; line-height: 1.35; }
+  .day .s b { display: block; font-size: 15.5px; }
+  .day .s .num { display: block; font-size: 12px; margin-top: 4px; opacity: .9; }
+  .s.with { background: var(--tartan); }
+  .s.self { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.45); }
+  .s.rest { background: transparent; color: #bfd2c8; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 16px; font-size: 14px; color: #d7e4dd; }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 2px; vertical-align: -2px; margin-inline-end: 6px; }
 
-  .goals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--rubber); }
-  .goals button { all: unset; cursor: pointer; padding: 20px 18px 24px 0; border-inline-start: 1px solid #c9d1cc; min-width: 0; }
-  .goals button:first-child { border-inline-start: 0; }
-  .goals button + button { padding-inline-start: 18px; }
-  .goals button:hover h3, .goals button:focus-visible h3 { color: var(--board); text-decoration: underline; text-decoration-color: var(--chalk-coral); text-decoration-thickness: 3px; text-underline-offset: 6px; }
-  .goals button:focus-visible { outline: 3px solid var(--chalk-coral); outline-offset: -3px; }
-  .goals h3 { font-size: 40px; margin: 6px 0 8px; }
-  .goals p { margin: 0; font-size: 15px; color: #45524c; }
-  .goals .mono { color: #5d6b64; }
+  /* ---------- 12 weeks: the progress ladder ---------- */
+  .ladder-box { margin-top: 64px; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 40px; align-items: end; }
+  .ladder-box h3 { font-size: clamp(44px, 5.4vw, 70px); }
+  .ladder-box p { color: #d7e4dd; margin: 14px 0 0; max-width: 38ch; }
+  .ladder { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; align-items: end; height: 240px; border-bottom: 3px solid #fff; }
+  .ladder li { position: relative; height: calc(var(--kg) / 45 * 100%); background: #fff; border-radius: 2px 2px 0 0; transform-origin: bottom; }
+  .ladder li.light { background: transparent; box-shadow: inset 0 0 0 2px rgba(255,255,255,.75); }
+  .ladder li span { position: absolute; bottom: calc(100% + 4px); left: 0; right: 0; text-align: center; font: 600 11px/1 var(--mono); color: #d7e4dd; }
+  .ladder li:last-child { background: var(--tartan); }
+  .ladder-x { display: flex; justify-content: space-between; font-size: 13px; color: #bfd2c8; margin-top: 8px; }
+  .js .ladder.wait li { transform: scaleY(.04); }
+  .ladder li { transition: transform .7s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--i) * 60ms); }
 
-  .plans-wrap { background: #e3e8e4; }
-  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .plan { background: #fbfbf8; border-top: 6px solid var(--board); padding: 22px; display: flex; flex-direction: column; }
-  .plan.main { border-top-color: var(--chalk-coral); }
+  /* ---------- Goals: lanes ---------- */
+  .goals { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 3px solid var(--spike); }
+  .goal { all: unset; box-sizing: border-box; cursor: pointer; padding: 18px 18px 24px; min-width: 0; border-inline-start: 2px solid #c7cecb; position: relative; transition: background .15s; }
+  .goal:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .goal .ln { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 64px; line-height: 1; color: var(--tartan); display: block; transform: skewX(-7deg); }
+  .goal h3 { font-size: 36px; margin: 8px 0 8px; }
+  .goal p { margin: 0 0 14px; font-size: 15.5px; color: var(--stand); }
+  .goal .go { font-weight: 700; font-size: 15px; border-bottom: 2px solid var(--tartan); }
+  .goal:hover h3, .goal:focus-visible h3 { color: var(--tartan); }
+  .goal:focus-visible { outline: 3px solid var(--tartan); outline-offset: -3px; }
+
+  /* ---------- From the studio: duotone strip ---------- */
+  .strip { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .shot { margin: 0; position: relative; min-width: 0; }
+  .shot .ps { aspect-ratio: 4 / 5; }
+  .shot:first-child .ps { aspect-ratio: auto; height: 100%; min-height: 380px; }
+  .shot .ps .ps-img { filter: grayscale(1) contrast(1.1) brightness(1.05); transition: filter .4s; }
+  .shot .tint { position: absolute; inset: 0; z-index: 1; background: var(--tartan); mix-blend-mode: multiply; pointer-events: none; transition: opacity .4s; }
+  .shot:hover .ps .ps-img { filter: none; } .shot:hover .tint { opacity: 0; }
+  .shot figcaption { position: absolute; z-index: 2; bottom: 12px; inset-inline-start: 12px; background: var(--lane); color: var(--spike); font-weight: 700; font-size: 14.5px; padding: 5px 10px; pointer-events: none; }
+  .shot figcaption [data-edit] { pointer-events: auto; }
+  .shot .ps-chip { display: none; }
+  .coach { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 26px; border-top: 3px solid var(--spike); }
+  .coach div { padding: 14px 16px 4px 0; min-width: 0; }
+  .coach div + div { padding-inline-start: 16px; border-inline-start: 2px solid #c7cecb; }
+  .coach b { display: block; font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 40px; line-height: 1; }
+  .coach span { font-size: 15px; color: var(--stand); }
+
+  /* ---------- Prices: race bibs ---------- */
+  .plans-wrap { background: #e4e8e6; }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+  .plan { background: #fff; padding: 30px 24px 24px; position: relative; display: flex; flex-direction: column; min-width: 0; box-shadow: 0 1px 0 #cfd6d3, 0 26px 40px -34px rgba(23,26,25,.5); transition: transform .2s; }
+  .plan:nth-child(1) { transform: rotate(-1.2deg); } .plan:nth-child(3) { transform: rotate(1deg); }
+  .plan:hover { transform: rotate(0) translateY(-4px); }
+  .plan .pins { position: absolute; inset: 10px 10px auto; display: flex; justify-content: space-between; pointer-events: none; }
+  .plan .pins i { width: 9px; height: 9px; border-radius: 50%; background: #e4e8e6; box-shadow: inset 0 0 0 1.5px #a7b0ad; }
+  .plan .band { margin: 0 -24px 16px; background: var(--spike); color: #fff; padding: 6px 24px; font-size: 13.5px; font-weight: 700; display: flex; justify-content: space-between; gap: 10px; }
+  .plan.main .band { background: var(--tartan); }
   .plan h3 { font-size: 40px; }
-  .plan .price { font-family: var(--display); font-size: 58px; line-height: 1; margin: 14px 0 2px; }
-  .plan .per { color: #5d6b64; font-size: 14px; margin-bottom: 14px; }
-  .plan ul { margin: 0 0 20px; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 15px; }
-  .plan li::before { content: "— "; color: var(--chalk-coral); font-weight: 700; }
+  .plan .price { font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 92px; line-height: .9; margin: 10px 0 0; letter-spacing: -.01em; }
+  .plan .per { color: var(--stand); font-size: 14.5px; margin-bottom: 14px; }
+  .plan ul { margin: 0 0 22px; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 15.5px; }
+  .plan li { padding-inline-start: 18px; position: relative; }
+  .plan li::before { content: ""; position: absolute; inset-inline-start: 0; top: .62em; width: 10px; height: 3px; background: var(--tartan); }
   .plan .btn { margin-top: auto; }
-  .fine { font-size: 13px; color: #5d6b64; margin-top: 12px; }
+  .fine { font-size: 14px; color: var(--stand); margin-top: 18px; }
 
-  .where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 3px solid var(--rubber); }
-  .where div { padding: 22px; min-width: 0; }
-  .where div + div { border-inline-start: 3px solid var(--rubber); }
-  .where h3 { font-size: 40px; margin-bottom: 6px; }
-  .where p { margin: 0; font-size: 15px; color: #45524c; }
+  /* ---------- Where ---------- */
+  .where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  .where div { padding: 0 22px 0 0; min-width: 0; }
+  .where div + div { padding-inline-start: 22px; border-inline-start: 2px solid #c7cecb; }
+  .where .ln { font-weight: 700; font-size: 14px; color: var(--tartan); }
+  .where h3 { font-size: 46px; margin: 4px 0 8px; }
+  .where p { margin: 0; font-size: 15.5px; color: var(--stand); }
 
-  footer { padding-block: 34px 90px; color: #5d6b64; font-size: 14px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--rubber); padding-top: 18px; }
+  /* ---------- What the trainer sees ---------- */
+  .owner { background: var(--spike); color: #e9eeec; }
+  .owner .head p { color: #a9b4b0; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 26px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); font-family: var(--display); font-stretch: 62.5%; font-weight: 900; font-size: 60px; line-height: .85; color: #f08e7c; transform: skewX(-7deg); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #a9b4b0; font-size: 15.5px; }
+  .owner .ph-cap { color: #a9b4b0; }
 
+  footer { padding-block: 34px 96px; color: var(--stand); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--spike); padding-top: 18px; }
 
-  /* ---------- Studio wall: magazine cover + stories (photo slots) ---------- */
-  :root { --ps-a: #557a6c; --ps-b: #1b2925; --ps-ui: var(--board); --ps-edit: var(--chalk-coral); }
-  .studio { background: var(--board); color: var(--chalk); overflow: hidden;
-    background-image: radial-gradient(60% 50% at 70% 30%, rgba(255,255,255,.05), transparent 70%); }
-  .studio .head .mono { color: var(--chalk-dim); }
-  .studio-grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 60px; align-items: center; }
-  .cover { position: relative; width: 100%; aspect-ratio: 3 / 4; transform: rotate(-2deg); box-shadow: 0 34px 60px -30px rgba(0,0,0,.8); }
-  .cover::before, .cover::after { content: ""; position: absolute; width: 80px; height: 24px; background: rgba(241,239,232,.55); top: -10px; z-index: 3; }
-  .cover::before { right: 20px; transform: rotate(5deg); } .cover::after { left: 20px; transform: rotate(-4deg); }
-  .cover .ps { position: absolute; inset: 0; }
-  .cover-ov { position: absolute; inset: 0; z-index: 2; pointer-events: none; display: flex; flex-direction: column; justify-content: space-between; padding: 14px 16px 18px; color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.45); }
-  .cover-ov [data-edit] { pointer-events: auto; }
-  .mast { font-family: var(--display); font-weight: 700; font-size: 104px; line-height: .8; letter-spacing: .01em; }
-  .mast small { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; line-height: 1.4; text-shadow: none; opacity: .9; margin-top: 8px; }
-  .cover-lines { display: grid; gap: 4px; }
-  .cover-lines b { font-family: var(--display); font-size: 46px; line-height: .9; color: var(--chalk-coral); }
-  .cover-lines span { font-size: 16px; font-weight: 500; }
-  .stories { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .story { position: relative; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 40px -26px rgba(0,0,0,.8); }
-  .story .ps { position: absolute; inset: 0; }
-  .story-ov { position: absolute; inset: 0; z-index: 2; pointer-events: none; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; color: #fff; }
-  .story-ov [data-edit] { pointer-events: auto; }
-  .bars { display: flex; gap: 4px; }
-  .bars i { flex: 1; height: 3px; border-radius: 2px; background: rgba(255,255,255,.4); }
-  .bars i.on { background: #fff; }
-  .who { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 12.5px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
-  .who::before { content: ""; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--chalk-coral); background: var(--board-deep); flex: none; }
-  .who small { opacity: .75; }
-  .story .cap { align-self: center; background: #fff; color: var(--rubber); font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 8px; text-align: center; max-width: 100%; }
-  .story .ps-chip, .cover .ps-chip { display: none; }
-  .studio-note { color: var(--chalk-dim); font-size: 15px; margin: 22px 0 0; }
-  @media (max-width: 900px) { .studio-grid { grid-template-columns: minmax(0, 1fr); gap: 44px; } .cover { max-width: 360px; margin-inline: auto; } }
-  @media (max-width: 520px) { .stories { gap: 8px; } .story { border-radius: 12px; } .who { font-size: 10.5px; } .who small { display: none; } .who::before { width: 18px; height: 18px; } .story .cap { font-size: 11.5px; padding: 4px 7px; } .mast { font-size: 84px; } }
-
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
-    .wod { max-width: 460px; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-bottom: 54px; }
+    .bib-photo { width: min(320px, 82%); }
+    .week { grid-template-columns: minmax(0, 1fr); border-bottom: 0; }
+    .day { flex-direction: row; align-items: center; min-height: 0; gap: 14px; padding: 10px 0; border-inline-start: 0; border-bottom: 2px solid rgba(255,255,255,.35); }
+    .day .dn { width: 64px; flex: none; }
+    .day .dn small { display: block; margin: 2px 0 0; }
+    .day .s { margin: 0; flex: 1; min-width: 0; }
+    .ladder-box { grid-template-columns: minmax(0, 1fr); gap: 26px; }
     .goals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .goals button:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
-    .goals button:nth-child(n+3) { border-top: 1px solid #c9d1cc; }
+    .goal:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .goal:nth-child(n+3) { border-top: 2px solid #c7cecb; }
+    .strip { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .shot:first-child { grid-column: 1 / -1; }
+    .shot:first-child .ps { min-height: 0; aspect-ratio: 4 / 3; }
+    .coach { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .coach div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .coach div:nth-child(n+3) { border-top: 2px solid #c7cecb; }
     .plans, .where { grid-template-columns: minmax(0, 1fr); }
-    .where div + div { border-inline-start: 0; border-top: 3px solid var(--rubber); }
+    .plan:nth-child(n) { transform: none; }
+    .where div, .where div + div { padding: 18px 0; border-inline-start: 0; border-top: 2px solid #c7cecb; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
   }
-  @media (max-width: 420px) {
-    .goals { grid-template-columns: minmax(0, 1fr); }
-    .goals button:nth-child(n) { border-inline-start: 0; padding-inline-start: 0; border-top: 1px solid #c9d1cc; }
-    .goals button:first-child { border-top: 0; }
-    .wod { padding: 18px 16px 14px; }
+  @media (max-width: 560px) {
+    section { padding-block: 62px; }
+    .hero h1 { font-size: clamp(76px, 24vw, 108px); }
+    .lead { font-size: 17px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .splits div { padding-inline-end: 12px; }
+    .splits div + div { padding-inline-start: 12px; }
+    .splits b { font-size: 36px; }
+    .splits span { font-size: 13px; }
+    .bib { inset-inline-start: -14px; min-width: 128px; padding: 8px 12px 10px; }
+    .bib b { font-size: 44px; }
+    .goal { padding: 14px 12px 18px; }
+    .goal:nth-child(odd) { padding-inline-start: 0; }
+    .goal .ln { font-size: 48px; }
+    .goal h3 { font-size: 30px; }
+    .goal p { font-size: 14.5px; }
+    .ladder { height: 180px; gap: 4px; }
+    .ladder li span { font-size: 9px; }
+    .plan .price { font-size: 80px; }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .ladder li, .btn, .plan, .shot .ps .ps-img, .shot .tint { transition: none; }
+    .js .ladder.wait li { transform: none; }
+  }
+  html.a11y-still .js .ladder.wait li, html.a11y-still .ladder.wait li { transform: none; }
 </style>
 </head>
 <body>
+<script>document.body.classList.add("js");</script>
 <div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=trainer">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
 <header class="hero">
+  <svg class="lanes" viewBox="0 0 1200 760" preserveAspectRatio="xMinYMax slice" aria-hidden="true">
+    <g fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="3">
+      <circle cx="-80" cy="980" r="560"/><circle cx="-80" cy="980" r="640"/><circle cx="-80" cy="980" r="720"/>
+      <circle cx="-80" cy="980" r="800"/><circle cx="-80" cy="980" r="880"/><circle cx="-80" cy="980" r="960"/><circle cx="-80" cy="980" r="1040"/>
+    </g>
+    <g stroke="#fff" stroke-opacity=".55" stroke-width="5"><path d="M480 980 V900 M560 980 V900"/></g>
+    <g fill="#fff" fill-opacity=".22" font-family="Noto Sans Hebrew, Rubik, sans-serif" font-weight="900" font-size="54" text-anchor="middle">
+      <text x="520" y="760" transform="rotate(-90 520 760)" dy="18">1</text>
+    </g>
+  </svg>
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span data-edit="name">יעל ברק</span><span>.</span></div>
+      <div class="logo"><span data-edit="name">יעל ברק</span><small>אימון אישי</small></div>
       <a href="#" data-wa="היי יעל, הגעתי מהאתר ואשמח לשמוע על אימון אישי">וואטסאפ</a>
     </div>
     <div class="hero-grid">
-      <div>
-        <div class="mono kicker">אימון אישי · סטודיו בחדרה, בבית או אונליין</div>
-        <h1>הפעם זה <u>נשאר</u>.</h1>
-        <p>ארבע שאלות קצרות בצ׳אט, ואני חוזרת אליכם לקבוע אימון היכרות. בלי מנוי שנתי ובלי התחייבות.</p>
+      <div class="hero-copy">
+        <div class="kicker"><span>חדרה, פרדס חנה, אור עקיבא</span><span>סטודיו, בבית או בזום</span></div>
+        <h1><span data-edit="h1a">הפעם</span> <em data-edit="h1b">זה נשאר.</em></h1>
+        <p class="lead">תוכנית לשבוע, משקל שעולה לאט, ומישהי שבודקת שהגעתם. ארבע שאלות בצ׳אט, ואני חוזרת אליכם לקבוע אימון היכרות.</p>
         <div class="ctas">
-          <button class="btn btn-chalk" data-open-bot>לקבוע אימון היכרות</button>
-          <a class="btn btn-line" href="#" data-wa="היי יעל, יש לי שאלה לפני שמתחילים">לשאול בוואטסאפ</a>
+          <button class="btn btn-lane" type="button" data-open-bot>לקבוע אימון היכרות</button>
+          <a class="btn btn-ghost" href="#" data-wa="היי יעל, יש לי שאלה לפני שמתחילים">לשאול בוואטסאפ</a>
+        </div>
+        <div class="splits">
+          <div><b>55</b><span>דקות לאימון</span></div>
+          <div><b>3</b><span>אימונים בשבוע</span></div>
+          <div><b>12</b><span>שבועות לתוכנית</span></div>
         </div>
       </div>
-      <div class="wod" aria-label="דוגמה לאימון">
-        <div class="wod-top"><h2>האימון של היום</h2><span class="mono">יום ג׳ · 07:00</span></div>
-        <ol>
-          <li><b>חימום ותנועתיות</b><span class="mono">10 דקות</span></li>
-          <li><b>סקוואט עם משקולת</b><span class="mono">4 סטים של 8</span></li>
-          <li><b>חתירה בכבל</b><span class="mono">3 סטים של 10</span></li>
-          <li><b>סבב מטבולי</b><span class="mono">12 דקות</span></li>
-          <li><b>מנוחה בין סטים</b><span class="mono">60 שניות</span></li>
-          <li><b>שחרור ומתיחות</b><span class="mono">8 דקות</span></li>
-        </ol>
-        <div class="total"><span>כל אימון בנוי לפי המטרה שלכם</span><b>55 דקות</b></div>
+      <div class="bib-photo">
+        <figure class="ps" data-slot="cover" data-src="../shared/photos/trainer-cover.webp" data-alt="מאמנת ומתאמנת באימון קטלבל בפארק" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure>
+        <div class="bib"><small>מאמנת</small><b data-edit="years">8 שנים</b><span data-edit="bib-line">של אימון אישי</span></div>
       </div>
     </div>
   </div>
 </header>
 
 <main>
-  <section>
+  <section class="week-wrap">
     <div class="wrap">
-      <div class="head"><h2>על מה עובדים?</h2><span class="mono">בוחרים מטרה, והצ׳אט נפתח</span></div>
-      <div class="goals">
-        <button data-goal="ירידה במשקל"><span class="mono">מטרה א׳</span><h3>ירידה במשקל</h3><p>אימוני כוח וסבולת, עם מעקב שבועי פשוט.</p></button>
-        <button data-goal="כוח ושרירים"><span class="mono">מטרה ב׳</span><h3>כוח ושרירים</h3><p>תוכנית מדורגת, עם טכניקה נכונה מהאימון הראשון.</p></button>
-        <button data-goal="חזרה לכושר אחרי הפסקה"><span class="mono">מטרה ג׳</span><h3>חזרה לכושר</h3><p>אחרי לידה, הפסקה ארוכה או תקופה עמוסה. מתחילים בקטן.</p></button>
-        <button data-goal="כושר כללי ובריאות"><span class="mono">מטרה ד׳</span><h3>כושר כללי</h3><p>להרגיש חזקים ביום יום, בכל גיל.</p></button>
+      <div class="head"><h2>השבוע שלכם</h2><p>ככה נראה שבוע לדוגמה. אצלכם הוא נבנה לפי המטרה, השעות והגוף שלכם.</p></div>
+      <div class="week" aria-label="שבוע אימונים לדוגמה">
+        <div class="day"><div class="dn">א׳<small>ראשון</small></div><div class="s with"><b>כוח, רגליים</b>סקוואט וגשר ירכיים<span class="num">4 × 8 · 07:00</span></div></div>
+        <div class="day"><div class="dn">ב׳<small>שני</small></div><div class="s self"><b>הליכה</b>בקצב שמדברים בו<span class="num">30 min</span></div></div>
+        <div class="day"><div class="dn">ג׳<small>שלישי</small></div><div class="s with"><b>כוח, גב וידיים</b>חתירה ולחיצה<span class="num">3 × 10 · 07:00</span></div></div>
+        <div class="day"><div class="dn">ד׳<small>רביעי</small></div><div class="s rest"><b>מנוחה</b>שינה טובה זה חצי מהעבודה</div></div>
+        <div class="day"><div class="dn">ה׳<small>חמישי</small></div><div class="s with"><b>כל הגוף</b>סבב מטבולי וליבה<span class="num">12 min · 18:30</span></div></div>
+        <div class="day"><div class="dn">ו׳<small>שישי</small></div><div class="s self"><b>תנועתיות בבית</b>סרטון קצר ששלחתי<span class="num">15 min</span></div></div>
+        <div class="day"><div class="dn">ש׳<small>שבת</small></div><div class="s rest"><b>מנוחה</b>או טיול עם המשפחה</div></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--tartan)"></i>אימון איתי</span><span><i style="box-shadow:inset 0 0 0 1.5px #fff;background:rgba(255,255,255,.12)"></i>לבד, לפי התוכנית</span><span><i style="box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)"></i>מנוחה</span></div>
+
+      <div class="ladder-box">
+        <div>
+          <h3>12 שבועות, צעד אחרי צעד</h3>
+          <p>דוגמה לתוכנית סקוואט. מעלים משקל רק כשהטכניקה נקייה. בשבוע 4 ובשבוע 8 מורידים עומס, והגוף מתאושש.</p>
+        </div>
+        <div>
+          <ol class="ladder wait" aria-label="משקל מתוכנן בקילו, משבוע 1 עד שבוע 12">
+            <li style="--kg:20;--i:0"><span>20</span></li><li style="--kg:22.5;--i:1"><span>22.5</span></li><li style="--kg:25;--i:2"><span>25</span></li><li class="light" style="--kg:20;--i:3"><span>20</span></li>
+            <li style="--kg:27.5;--i:4"><span>27.5</span></li><li style="--kg:30;--i:5"><span>30</span></li><li style="--kg:32.5;--i:6"><span>32.5</span></li><li class="light" style="--kg:25;--i:7"><span>25</span></li>
+            <li style="--kg:35;--i:8"><span>35</span></li><li style="--kg:37.5;--i:9"><span>37.5</span></li><li style="--kg:40;--i:10"><span>40</span></li><li style="--kg:42.5;--i:11"><span>42.5</span></li>
+          </ol>
+          <div class="ladder-x"><span>שבוע 1</span><span>קילו על המוט, לדוגמה</span><span>שבוע 12</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="studio">
+  <section>
     <div class="wrap">
-      <div class="head"><h2>מהסטודיו</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-      <div class="studio-grid">
-        <div class="cover">
-          <figure class="ps" data-slot="cover" data-src="../shared/photos/trainer-cover.webp" data-alt="מאמנת ומתאמנת באימון קטלבל בפארק" data-pos="50 40" data-icon="person" data-label="תמונה שלכם לשער"></figure>
-          <div class="cover-ov">
-            <div class="mast">בכושר<small data-edit="cover-issue">גיליון אוקטובר · חדרה</small></div>
-            <div class="cover-lines"><b data-edit="cover-name">יעל ברק</b><span data-edit="cover-line1">שמונה שנים של אימון אישי</span><span data-edit="cover-line2">ומה למדתי מ-300 מתאמנים</span></div>
-          </div>
-        </div>
-        <div>
-          <div class="stories">
-            <div class="story"><figure class="ps" data-slot="s1" data-src="../shared/photos/trainer-squat.webp" data-alt="מאמנת ומתאמנת בסקוואט" data-icon="dumbbell" data-label="סטורי מאימון"></figure><div class="story-ov"><div><div class="bars"><i class="on"></i><i></i><i></i></div><div class="who"><span data-edit="handle">yael.barak</span> <small>לפני 2 ש׳</small></div></div><span class="cap" data-edit="s1">סקוואט, סט רביעי</span></div></div>
-            <div class="story"><figure class="ps" data-slot="s2" data-src="../shared/photos/trainer-deadlift.webp" data-alt="אימון דדליפט עם מוט" data-icon="home" data-label="סטורי מהסטודיו"></figure><div class="story-ov"><div><div class="bars"><i class="on"></i><i class="on"></i><i></i></div><div class="who"><span>yael.barak</span> <small>לפני 5 ש׳</small></div></div><span class="cap" data-edit="s2">דדליפט, טכניקה לפני משקל</span></div></div>
-            <div class="story"><figure class="ps" data-slot="s3" data-src="../shared/photos/trainer-park.webp" data-alt="אימון קבוצתי בפארק" data-icon="person" data-label="סטורי עם מתאמן"></figure><div class="story-ov"><div><div class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="who"><span>yael.barak</span> <small>אתמול</small></div></div><span class="cap" data-edit="s3">אימון קבוצתי בפארק</span></div></div>
-          </div>
-          <p class="studio-note">מתאמנים בוחרים מאמנת שהם מרגישים שהם מכירים. תמונות אמיתיות מהסטודיו עושות את זה.</p>
-        </div>
+      <div class="head"><h2>על מה עובדים?</h2><p>בוחרים מסלול, והצ׳אט נפתח עם התשובה.</p></div>
+      <div class="goals">
+        <button class="goal" type="button" data-goal="ירידה במשקל"><span class="ln">1</span><h3>ירידה במשקל</h3><p>אימוני כוח וסבולת, ושקילה פעם בשבועיים. לא כל יום.</p><span class="go">להתחיל כאן</span></button>
+        <button class="goal" type="button" data-goal="כוח ושרירים"><span class="ln">2</span><h3>כוח ושרירים</h3><p>תוכנית מדורגת, עם טכניקה נכונה מהאימון הראשון.</p><span class="go">להתחיל כאן</span></button>
+        <button class="goal" type="button" data-goal="חזרה לכושר אחרי הפסקה"><span class="ln">3</span><h3>חזרה לכושר</h3><p>אחרי לידה, פציעה או תקופה עמוסה. מתחילים בקטן.</p><span class="go">להתחיל כאן</span></button>
+        <button class="goal" type="button" data-goal="כושר כללי ובריאות"><span class="ln">4</span><h3>כושר כללי</h3><p>לסחוב קניות, לשחק עם הילדים, לישון טוב. בכל גיל.</p><span class="go">להתחיל כאן</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מהסטודיו</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="strip">
+        <figure class="shot"><div class="ps" data-slot="s1" data-src="../shared/photos/trainer-squat.webp" data-alt="מאמנת ומתאמנת בסקוואט" data-pos="50 50" data-icon="dumbbell" data-label="תמונה מאימון"></div><span class="tint"></span><figcaption data-edit="s1">סקוואט, סט רביעי</figcaption></figure>
+        <figure class="shot"><div class="ps" data-slot="s2" data-src="../shared/photos/trainer-deadlift.webp" data-alt="אימון דדליפט עם מוט" data-pos="62 50" data-icon="home" data-label="תמונה מהסטודיו"></div><span class="tint"></span><figcaption data-edit="s2">טכניקה לפני משקל</figcaption></figure>
+        <figure class="shot"><div class="ps" data-slot="s3" data-src="../shared/photos/trainer-park.webp" data-alt="אימון קבוצתי בפארק" data-pos="40 50" data-icon="person" data-label="תמונה עם מתאמנים"></div><span class="tint"></span><figcaption data-edit="s3">שישי בבוקר בפארק</figcaption></figure>
+      </div>
+      <div class="coach">
+        <div><b data-edit="c1">8 שנים</b><span>של אימון אישי</span></div>
+        <div><b data-edit="c2">תעודה</b><span data-edit="c2b">מדריכת חדר כושר מוסמכת</span></div>
+        <div><b data-edit="c3">2 על 2</b><span>מטר, זה כל מה שצריך בבית</span></div>
+        <div><b data-edit="c4">וואטסאפ</b><span>בדיקה קצרה בימים שבלי אימון</span></div>
       </div>
     </div>
   </section>
 
   <section class="plans-wrap">
     <div class="wrap">
-      <div class="head"><h2>מסלולים</h2><span class="mono">מחירים לדוגמה</span></div>
+      <div class="head"><h2>מסלולים</h2><p>מחירים לדוגמה. אימון היכרות לפני שמחליטים.</p></div>
       <div class="plans">
         <div class="plan">
-          <span class="mono">מסלול 1</span><h3>אימון בודד</h3>
+          <span class="pins"><i></i><i></i></span>
+          <div class="band"><span>מסלול 1</span><span>בלי התחייבות</span></div>
+          <h3>אימון בודד</h3>
           <div class="price">220 ₪</div><div class="per">לאימון של 55 דקות</div>
-          <ul><li>בסטודיו או בבית</li><li>בלי התחייבות</li></ul>
-          <button class="btn btn-board" data-open-bot>לקבוע אימון</button>
+          <ul><li>בסטודיו או אצלכם בבית</li><li>משלמים על כל אימון</li></ul>
+          <button class="btn btn-dark" type="button" data-open-bot>לקבוע אימון</button>
         </div>
         <div class="plan main">
-          <span class="mono">מסלול 2 · הכי נבחר</span><h3>כרטיסייה של 10</h3>
+          <span class="pins"><i></i><i></i></span>
+          <div class="band"><span>מסלול 2</span><span>הכי נבחר</span></div>
+          <h3>כרטיסייה של 10</h3>
           <div class="price">1,900 ₪</div><div class="per">190 ₪ לאימון</div>
           <ul><li>תוכנית אישית ומעקב</li><li>תוקף של ארבעה חודשים</li><li>תוכנית לימים שבלי אימון</li></ul>
-          <button class="btn btn-board" data-open-bot>להתחיל באימון היכרות</button>
+          <button class="btn btn-red" type="button" data-open-bot>להתחיל באימון היכרות</button>
         </div>
         <div class="plan">
-          <span class="mono">מסלול 3</span><h3>אימון זוגי</h3>
+          <span class="pins"><i></i><i></i></span>
+          <div class="band"><span>מסלול 3</span><span>שניים ביחד</span></div>
+          <h3>אימון זוגי</h3>
           <div class="price">150 ₪</div><div class="per">לאדם, לאימון</div>
           <ul><li>עם בן או בת זוג, או חבר</li><li>אותה תוכנית, שני קצבים</li></ul>
-          <button class="btn btn-board" data-open-bot>לקבוע אימון</button>
+          <button class="btn btn-dark" type="button" data-open-bot>לקבוע אימון</button>
         </div>
       </div>
       <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו המסלולים והמחירים שלכם.</p>
@@ -264,18 +379,50 @@
 
   <section>
     <div class="wrap">
-      <div class="head"><h2>איפה מתאמנים</h2><span class="mono">חדרה, פרדס חנה, אור עקיבא</span></div>
+      <div class="head"><h2>איפה מתאמנים</h2><p>חדרה, פרדס חנה, אור עקיבא והסביבה.</p></div>
       <div class="where">
-        <div><h3>בסטודיו</h3><p>סטודיו פרטי בחדרה, עם חניה. רק אתם והמאמנת.</p></div>
-        <div><h3>אצלכם בבית</h3><p>מגיעה עם הציוד. צריך רק מקום של שני מטר על שני מטר.</p></div>
-        <div><h3>אונליין</h3><p>אימון בזום, עם תוכנית מותאמת למה שיש לכם בבית.</p></div>
+        <div><span class="ln">מסלול א׳</span><h3>בסטודיו</h3><p>סטודיו פרטי בחדרה, עם חניה. רק אתם והמאמנת.</p></div>
+        <div><span class="ln">מסלול ב׳</span><h3>אצלכם בבית</h3><p>אני מגיעה עם הציוד. צריך מקום של שני מטר על שני מטר.</p></div>
+        <div><span class="ln">מסלול ג׳</span><h3>בזום</h3><p>אימון חי מול המצלמה, עם מה שיש לכם בבית.</p></div>
       </div>
     </div>
   </section>
-  <section class="guides" id="guides">
+
+  <section class="guides" id="guides" style="padding-top:0">
     <div class="wrap">
-      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">טיפים מהשטח, ושאלות שחוזרות</span></div>
+      <div class="head"><h2>טיפים ומדריכים</h2><p>טיפים מהשטח, ושאלות שחוזרות.</p></div>
       <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה המאמנת רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>המתאמן עונה על ארבע שאלות</b><span>מטרה, ניסיון, איפה ובאילו שעות. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זו חזרה אחרי לידה או מישהו שמתאמן שנים.</span></div></li>
+          <li><div><b>חוזרים וקובעים אימון היכרות</b><span>הצ׳אט עונה גם כשאתם באמצע אימון, עם הטלפון בתיק.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אברהם</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לאימון אישי מהאתר (דמו)
+מטרה: חזרה לכושר אחרי הפסקה
+ניסיון: התאמנתי בעבר
+מקום: בסטודיו בחדרה
+שעות: בוקר
+שם: מיכל אברהם
+טלפון: 052-7654321<time>06:10</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למאמנת</div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -283,7 +430,7 @@
 <footer>
   <div class="wrap row">
     <span>יעל ברק · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
   </div>
 </footer>
 
@@ -309,9 +456,21 @@
     closing: (d) => `תודה ${d.name.split(" ")[0]}! אימון היכרות של 45 דקות ${PLACE[d.place]}, בשעות ה${d.time}. מדברים על המטרה, בודקים טכניקה ובונים תוכנית ראשונה.\nלחצו למטה, ונקבע מועד בוואטסאפ.`,
     summary: (d) => `פנייה לאימון אישי מהאתר (דמו)\nמטרה: ${d.goal}\nניסיון: ${d.level}\nמקום: ${d.place}\nשעות: ${d.time}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
+    onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-goal]").forEach((b) => b.addEventListener("click", () => bot.open({ goal: b.dataset.goal })));
   Guides.load("../shared/guides/trainer.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+
+  // The one motion moment: the 12 weeks rise once when they come into view.
+  (function () {
+    const ladder = document.querySelector(".ladder");
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    const show = () => ladder.classList.remove("wait");
+    if (still() || !("IntersectionObserver" in window)) return show();
+    document.addEventListener("a11y-still", show);
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { show(); io.disconnect(); } }, { threshold: .35 });
+    io.observe(ladder);
+  })();
 </script>
 </body>
 </html>

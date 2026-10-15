@@ -5,183 +5,253 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מאיה לב · שיעורי פסנתר וגיטרה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<script>(function () { var k = new URLSearchParams(location.search).get("i"); document.documentElement.dataset.i = /^(piano|keys|guitar|bass|drums)$/.test(k || "") ? k : "piano"; })();</script>
 <meta name="description" content="שיעורי פסנתר וגיטרה לילדים מגיל 6 ולמבוגרים, בכרכור או אצלכם בבית. שיעור ניסיון קצר לפני שמתחילים.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@500;700&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Assistant:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: a piano keyboard over a sheet of staff paper, and the concert programme of the end-of-year recital.
-     Detail: note names (דו רה מי), the staff with its ledger line, 45-minute lessons, ages, the felt strip under the keys.
-     Bold move: a real, playable keyboard across the hero; every note you play lands on the staff above it. */
+  /* Object: an LP record and its sleeve. The front cover, the record sliding out, the track list on the back and the liner notes.
+     Detail: side A and side B, track lengths (45:00 a lesson, 30:00 the trial), 33⅓, the catalogue number, chord names and note names.
+     Bold move: each instrument is its own record in one saturated sleeve colour; the record slides out of the sleeve and spins while you play. */
   :root {
-    --paper: #f3f4f6;          /* staff paper, cool white */
-    --ivory: #fcfcfa;          /* the white keys (not cream) */
-    --ebony: #15161a;          /* black keys, ink */
-    --graphite: #565a63;       /* pencil */
-    --felt: #8e2236;           /* the red felt under the keys, the one accent */
-    --walnut: #5b3b2b;         /* guitar body */
-    --rule: #c9ccd3;           /* staff lines */
-    --display: "David Libre", "Noto Serif Hebrew", serif;
-    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --sleeve: #1f3a68;         /* the cover colour of this record (piano: cobalt) */
+    --sleeve-deep: #172c50;
+    --spark: #e0563b;          /* the centre label and the note you just played */
+    --vinyl: #141518;          /* the record, ink */
+    --inner: #f3f4f7;          /* the paper inner sleeve, page background */
+    --groove: #5b6070;         /* muted text */
+    --felt: var(--spark);      /* used by instruments.js */
+    --ivory: #ffffff;          /* used by instruments.js (tab background) */
+    --display: "Suez One", "David Libre", serif;
+    --body: "Assistant", "Arial Hebrew", system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, monospace;
-    --phone-frame: var(--ebony);
-    --bot-bg: #fff; --bot-fg: var(--ebony); --bot-line: #dfe1e6; --bot-muted: var(--graphite);
-    --bot-accent: var(--felt); --bot-accent-fg: #fff; --bot-them: #eef0f3; --bot-me: var(--ebony); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px;
-    --ps-a: #d9dce3; --ps-b: #6f6470; --ps-ui: var(--ebony); --ps-edit: var(--felt);
+    --phone-frame: var(--vinyl);
+    --bot-bg: #fff; --bot-fg: var(--vinyl); --bot-line: #dcdfe6; --bot-muted: var(--groove);
+    --bot-accent: var(--sleeve); --bot-accent-fg: #fff; --bot-them: #eef0f4; --bot-me: var(--sleeve); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px;
+    --ps-a: #c9cfdc; --ps-b: var(--sleeve); --ps-ui: var(--vinyl); --ps-edit: var(--spark);
   }
+  /* one record per instrument */
+  html[data-i="keys"]   { --sleeve: #4b2a7b; --sleeve-deep: #3a1f61; --spark: #2b9c89; }
+  html[data-i="guitar"] { --sleeve: #7b3219; --sleeve-deep: #612612; --spark: #2f8a83; }
+  html[data-i="bass"]   { --sleeve: #0d4b52; --sleeve-deep: #093a40; --spark: #e7765f; }
+  html[data-i="drums"]  { --sleeve: #94192e; --sleeve-deep: #761223; --spark: #2f74c8; }
+
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ebony); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--inner); color: var(--vinyl); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid var(--spark); outline-offset: 2px; }
   .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--body); font-weight: 500; font-size: 13px; letter-spacing: .01em; } /* Hebrew labels: Plex Mono has no Hebrew */
-  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 700; }
-  h2 { font-size: clamp(32px, 4.4vw, 50px); line-height: 1.1; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 22px; font: 700 16px/1 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; }
-  .btn-felt { background: var(--felt); color: #fff; }
-  .btn-felt:hover { background: #761b2d; }
-  .btn-line { border: 2px solid var(--ebony); color: var(--ebony); background: transparent; }
-  .demo { background: var(--ebony); color: #c4c7cf; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .mono { font-family: var(--mono); font-weight: 500; direction: ltr; unicode-bidi: isolate; }
+  .label { font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+  h1, h2, h3 { margin: 0; font-family: var(--display); font-weight: 400; }
+  h2 { font-size: clamp(36px, 5vw, 60px); line-height: 1.05; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 24px; font: 700 17px/1 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: transform .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-paper { background: #fff; color: var(--sleeve); }
+  .btn-ring { background: transparent; color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,.8); }
+  .btn-ring:hover { background: rgba(255,255,255,.1); }
+  .demo { background: var(--vinyl); color: #c4c7cf; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
-  /* staff paper: five thin lines, repeated */
-  .staffpaper { background-image: repeating-linear-gradient(to bottom, transparent 0 34px, var(--rule) 34px 35px, transparent 35px 44px, var(--rule) 44px 45px, transparent 45px 54px, var(--rule) 54px 55px, transparent 55px 64px, var(--rule) 64px 65px, transparent 65px 74px, var(--rule) 74px 75px, transparent 75px 120px); }
 
-  /* ---------- Hero ---------- */
-  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
-  .logo { font-family: var(--display); font-weight: 700; font-size: 26px; white-space: nowrap; }
-  .logo small { font-family: var(--body); font-weight: 500; font-size: 13px; color: var(--graphite); margin-inline-start: 10px; }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--felt); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: 40px; align-items: center; padding: 20px 0 30px; }
-  .tag { color: var(--felt); margin-bottom: 14px; }
-  .hero h1 { font-size: clamp(38px, 5.6vw, 72px); line-height: 1.04; letter-spacing: -.01em; }
-  .hero h1 em { font-style: normal; color: var(--felt); }
-  .lead { font-size: 19px; color: var(--graphite); max-width: 38ch; margin: 18px 0 24px; }
+  /* ---------- The crate: pick a record ---------- */
+  .pick-inst { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px 16px; background: #22242a; color: #c4c7cf; font-size: 15px; }
+  .pick-inst a { display: inline-flex; align-items: center; gap: 7px; color: #eceef2; text-decoration: none; padding: 5px 13px 5px 11px; border-radius: 999px; border: 1px solid #4a4d55; font-weight: 600; }
+  .pick-inst a::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px rgba(255,255,255,.2); }
+  .pick-inst a[data-i="piano"] { --c: #3f68b0; } .pick-inst a[data-i="keys"] { --c: #8257c2; } .pick-inst a[data-i="guitar"] { --c: #c0582f; } .pick-inst a[data-i="bass"] { --c: #1f8f99; } .pick-inst a[data-i="drums"] { --c: #d0364f; }
+  .pick-inst a:hover { border-color: #9a9ea8; }
+  .pick-inst a[aria-current="page"] { background: #fff; border-color: #fff; color: var(--vinyl); font-weight: 800; }
+
+  /* ---------- Hero: the sleeve colour ---------- */
+  .hero { background: var(--sleeve); color: #fff; position: relative; overflow: hidden; padding-bottom: 120px; }
+  .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background: radial-gradient(90% 70% at 85% 0%, rgba(255,255,255,.12), transparent 60%), radial-gradient(60% 60% at 0% 100%, rgba(0,0,0,.22), transparent 70%); }
+  .bar { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-size: 28px; white-space: nowrap; line-height: 1.1; }
+  .logo small { font-family: var(--body); font-weight: 600; font-size: 14px; opacity: .85; margin-inline-start: 10px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid #fff; }
+  .hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding: 22px 0 10px; }
+  .hero-copy { min-width: 0; }
+  .tag { font-weight: 600; font-size: 15px; margin: 0 0 14px; opacity: .92; }
+  .hero h1 { font-size: clamp(44px, 6.4vw, 86px); line-height: 1; letter-spacing: -.01em; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; display: block; color: rgba(255,255,255,.78); font-size: .62em; line-height: 1.12; margin-top: 10px; }
+  .lead { font-size: 19.5px; max-width: 38ch; margin: 20px 0 26px; color: #fff; opacity: .92; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  /* the staff that shows what you played */
-  .score { background: var(--ivory); border: 1px solid #dfe1e6; border-radius: 6px; padding: 18px 22px 14px; box-shadow: 0 24px 50px -36px rgba(21,22,26,.5); min-width: 0; }
-  .score svg { display: block; width: 100%; height: auto; }
-  .score .cap { display: flex; justify-content: space-between; gap: 10px; color: var(--graphite); margin-top: 6px; }
-  .score .cap b { font-family: var(--display); color: var(--felt); font-size: 22px; font-weight: 700; letter-spacing: 0; }
-  .nh { transition: transform .18s ease-out, opacity .18s; }
-  /* the keyboard: lowest note on the left, like a real one */
-  .kb-wrap { padding-bottom: 46px; }
-  .kb-label { display: flex; justify-content: space-between; color: var(--graphite); margin-bottom: 8px; }
-  .keys { direction: ltr; position: relative; display: flex; height: 168px; background: var(--ebony); padding: 14px 10px 10px; border-radius: 10px 10px 14px 14px; box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
-  .keys::before { content: ""; position: absolute; left: 10px; right: 10px; top: 8px; height: 6px; background: var(--felt); border-radius: 2px; }
-  .k { all: unset; box-sizing: border-box; cursor: pointer; position: relative; }
-  .k.w { flex: 1 1 0; min-width: 0; background: var(--ivory); border: 1px solid #b9bcc4; border-top: 0; border-radius: 0 0 6px 6px; margin-inline: 1px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-family: var(--body); font-size: 12px; color: #8a8e97; }
-  .k.b { position: absolute; top: 14px; width: calc((100% - 20px) / var(--whites) * .62); height: 92px; background: linear-gradient(#2a2c32, var(--ebony) 70%); border-radius: 0 0 4px 4px; z-index: 2; transform: translateX(-50%); box-shadow: 0 3px 0 #000; }
-  .k.w.on, .k.w:active { background: #e8e0e3; box-shadow: inset 0 -6px 0 var(--felt); }
-  .k.b.on, .k.b:active { background: var(--felt); }
-  .k:focus-visible { outline: 3px solid var(--felt); outline-offset: -3px; }
 
-  /* ---------- Which instrument: one demo, five teachers ---------- */
-  .pick-inst { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px 16px; background: #23252b; color: #c4c7cf; font-size: 14px; }
-  .pick-inst a { color: #eceef2; text-decoration: none; padding: 6px 13px; border-radius: 999px; border: 1px solid #4a4d55; font-weight: 500; }
-  .pick-inst a[aria-current="page"] { background: var(--felt); border-color: var(--felt); color: #fff; font-weight: 700; }
-  .visual { color: var(--ebony); direction: ltr; }
-  .visual svg { display: block; width: 100%; height: auto; max-height: 230px; }
-  /* guitar: five chord buttons over a neck with six strings */
-  .chords { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; direction: ltr; max-width: 420px; }
-  .chord { min-height: 52px; padding: 0 6px; border-radius: 10px; border: 2px solid var(--ebony); background: var(--ivory); color: var(--ebony); font: 700 20px var(--body); cursor: pointer; }
-  .chord[aria-pressed="true"] { background: var(--felt); border-color: var(--felt); color: #fff; }
-  .neck { position: relative; height: 112px; border-radius: 8px; background: linear-gradient(90deg, rgba(0,0,0,.18) 0 2px, transparent 2px) 0 0 / 16.66% 100%, linear-gradient(#6b4a37, var(--walnut)); display: grid; align-content: space-evenly; padding: 8px 0; box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
+  /* the record and its sleeve */
+  .lp { position: relative; width: min(470px, 100%); aspect-ratio: 470 / 340; justify-self: center; min-width: 0; }
+  .cover { position: absolute; inset-block: 0; right: 0; height: 100%; aspect-ratio: 1; background: var(--inner); color: var(--sleeve); z-index: 2; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 30px 50px -24px rgba(0,0,0,.6); overflow: hidden; }
+  .cover::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.55), transparent 35%), radial-gradient(rgba(0,0,0,.035) 1px, transparent 1.4px) 0 0 / 4px 4px; }
+  .cover .cat { position: relative; z-index: 1; padding-inline-end: 40px; display: flex; justify-content: space-between; font-size: 12px; color: var(--groove); }
+  .cover .big { font-family: var(--display); font-size: clamp(48px, 6.2vw, 84px); padding-inline-end: 34px; line-height: .9; letter-spacing: -.02em; position: relative; z-index: 1; }
+  .cover .who { padding-inline-end: 40px; font-weight: 800; font-size: 17px; color: var(--vinyl); position: relative; z-index: 1; }
+  .cover .who small { display: block; font-weight: 600; font-size: 13.5px; color: var(--groove); }
+  .cover .stripes { position: absolute; z-index: 0; left: 16px; top: 0; bottom: 0; width: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .cover .stripes i { display: block; background: var(--spark); }
+  .cover .stripes i:nth-child(2) { background: var(--sleeve); }
+  .vinyl { position: absolute; top: 4%; left: 0; height: 92%; aspect-ratio: 1; border-radius: 50%; z-index: 1;
+    background:
+      conic-gradient(from 30deg, transparent 0 12%, rgba(255,255,255,.13) 16%, transparent 22% 58%, rgba(255,255,255,.1) 62%, transparent 68%),
+      repeating-radial-gradient(circle, #17181c 0 1.6px, #24262c 1.6px 3px);
+    box-shadow: 0 24px 40px -18px rgba(0,0,0,.7), inset 0 0 0 3px #0b0c0e;
+    animation: slide 1.1s .25s cubic-bezier(.2,.8,.2,1) both; }
+  .vinyl .lbl { position: absolute; inset: 31%; border-radius: 50%; background: var(--spark); color: #fff; display: grid; place-items: center; text-align: center; font-weight: 800; font-size: 13px; line-height: 1.2; padding: 8px; }
+  .vinyl .lbl::after { content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--vinyl); top: 50%; left: 50%; margin: -4.5px 0 0 -4.5px; }
+  .vinyl .lbl span { display: block; transform: translateY(-14px); }
+  .vinyl .lbl small { display: block; font-family: var(--mono); font-weight: 500; font-size: 10px; opacity: .9; transform: translateY(14px); }
+  .vinyl.spin { animation: spin 1.8s linear 1; }
+  @keyframes slide { from { transform: translateX(42%); } to { transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Side A: the deck you can play ---------- */
+  .deck { position: relative; z-index: 3; margin-top: -88px; background: #fff; border-radius: 22px; padding: 22px 26px 26px; box-shadow: 0 2px 0 #dcdfe6, 0 40px 70px -40px rgba(20,21,24,.45); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 40px; align-items: center; }
+  html[data-i="piano"] .deck, html[data-i="keys"] .deck { grid-template-columns: minmax(0, 1fr); }
+  html[data-i="piano"] .score, html[data-i="keys"] .score { width: min(560px, 100%); margin-inline: auto; }
+  .deck-head { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 6px 14px; flex-wrap: wrap; border-bottom: 1.5px solid #e3e5eb; padding-bottom: 10px; }
+  .deck-head b { font-family: var(--display); font-weight: 400; font-size: 24px; color: var(--sleeve); }
+  .deck-head span { color: var(--groove); font-size: 15px; }
+  .score { min-width: 0; }
+  .score .cap { display: flex; justify-content: space-between; gap: 10px; color: var(--groove); font-size: 15px; margin-top: 4px; }
+  .score .cap b { font-family: var(--display); font-weight: 400; color: var(--sleeve); font-size: 22px; }
+  .visual { color: var(--vinyl); direction: ltr; }
+  .visual svg { display: block; width: 100%; height: auto; max-height: 220px; }
+  .play { min-width: 0; }
+  .nh { transition: transform .18s ease-out, opacity .18s; }
+  /* keyboard: lowest note on the left, like a real one */
+  .keys { direction: ltr; position: relative; display: flex; height: 176px; background: var(--vinyl); padding: 14px 10px 10px; border-radius: 12px 12px 16px 16px; box-shadow: 0 30px 50px -30px rgba(20,21,24,.7); }
+  .keys::before { content: ""; position: absolute; left: 10px; right: 10px; top: 8px; height: 6px; background: var(--spark); border-radius: 2px; }
+  .k { all: unset; box-sizing: border-box; cursor: pointer; position: relative; }
+  .k.w { flex: 1 1 0; min-width: 0; background: #fff; border: 1px solid #b9bcc4; border-top: 0; border-radius: 0 0 6px 6px; margin-inline: 1px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-family: var(--body); font-size: 12px; color: #6b707b; }
+  .k.b { position: absolute; top: 14px; width: calc((100% - 20px) / var(--whites) * .62); height: 96px; background: linear-gradient(#2a2c32, var(--vinyl) 70%); border-radius: 0 0 4px 4px; z-index: 2; transform: translateX(-50%); box-shadow: 0 3px 0 #000; }
+  .k.w.on, .k.w:active { background: #eceef3; box-shadow: inset 0 -7px 0 var(--spark); }
+  .k.b.on, .k.b:active { background: var(--spark); }
+  .k:focus-visible { outline: 3px solid var(--spark); outline-offset: -3px; }
+  /* guitar */
+  .chords { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; direction: ltr; }
+  .chord { min-height: 54px; padding: 0 6px; border-radius: 999px; border: 2px solid var(--vinyl); background: #fff; color: var(--vinyl); font: 600 20px var(--mono); cursor: pointer; }
+  .chord:hover { border-color: var(--sleeve); color: var(--sleeve); }
+  .chord[aria-pressed="true"] { background: var(--sleeve); border-color: var(--sleeve); color: #fff; }
+  .neck { position: relative; height: 118px; border-radius: 10px; background: linear-gradient(90deg, rgba(0,0,0,.2) 0 3px, transparent 3px) 0 0 / 16.66% 100%, linear-gradient(#6b4a37, #4e3324); display: grid; align-content: space-evenly; padding: 8px 0; box-shadow: 0 30px 50px -30px rgba(20,21,24,.7); }
   .neck .str { height: 2px; background: linear-gradient(90deg, #d8d2c8, #f3efe8); box-shadow: 0 1px 0 rgba(0,0,0,.4); }
   .neck .str:nth-child(-n+3) { height: 3px; }
   .neck.ring .str { animation: ring .5s ease-out; }
   @keyframes ring { 0% { transform: translateY(1.5px); } 25% { transform: translateY(-1.5px); } 50% { transform: translateY(1px); } 75% { transform: translateY(-.5px); } 100% { transform: none; } }
-  /* bass: four strings by five frets, low E at the bottom */
-  .fretboard { direction: ltr; display: grid; grid-template-columns: 54px repeat(4, minmax(0, 1fr)); gap: 0; border-radius: 8px; overflow: hidden; background: linear-gradient(#3b2a20, #2b1e17); box-shadow: 0 30px 50px -30px rgba(21,22,26,.7); }
-  .fret { all: unset; box-sizing: border-box; cursor: pointer; height: 44px; position: relative; border-inline-start: 3px solid #b9b2a6; display: grid; place-items: center; color: #eceef2; font: 700 15px var(--mono); }
+  /* bass */
+  .fretboard { direction: ltr; display: grid; grid-template-columns: 54px repeat(4, minmax(0, 1fr)); border-radius: 10px; overflow: hidden; background: linear-gradient(#3b2a20, #2b1e17); box-shadow: 0 30px 50px -30px rgba(20,21,24,.7); }
+  .fret { all: unset; box-sizing: border-box; cursor: pointer; height: 46px; position: relative; border-inline-start: 3px solid #b9b2a6; display: grid; place-items: center; color: #eceef2; font: 700 15px var(--mono); }
   .fret::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: #c9c2b6; transform: translateY(-50%); }
   .fret.open { border-inline-start: 0; background: #23252b; }
   .fret.open::before { left: 60%; }
-  .fret.on::after, .fret:active::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--felt); }
-  .fret:focus-visible { outline: 3px solid var(--felt); outline-offset: -3px; }
-  /* drums: six pads */
-  .pads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 560px; }
-  .pad { min-height: 80px; border-radius: 50%/38%; border: 0; background: radial-gradient(circle at 50% 40%, #3a3d45, var(--ebony)); color: #eceef2; font: 700 16px var(--body); cursor: pointer; box-shadow: inset 0 0 0 4px #4a4d55, 0 18px 30px -22px rgba(21,22,26,.8); }
-  .pad-hat, .pad-crash { background: radial-gradient(circle at 50% 45%, #e4e6ea, #8d919a); color: #15161a; box-shadow: inset 0 0 0 4px #b3b7bf, 0 18px 30px -22px rgba(21,22,26,.8); }
-  .pad.on, .pad:active { box-shadow: inset 0 0 0 4px var(--felt), 0 0 0 3px var(--felt); }
-  .pad:focus-visible, .chord:focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
-  @media (prefers-reduced-motion: reduce) { .neck.ring .str { animation: none; } }
+  .fret.on::after, .fret:active::after { content: ""; position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--spark); }
+  .fret:focus-visible { outline: 3px solid var(--spark); outline-offset: -3px; }
+  /* drums */
+  .pads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .pad { min-height: 84px; border-radius: 50%/38%; border: 0; background: radial-gradient(circle at 50% 40%, #3a3d45, var(--vinyl)); color: #eceef2; font: 700 16px var(--body); cursor: pointer; box-shadow: inset 0 0 0 4px #4a4d55, 0 18px 30px -22px rgba(20,21,24,.8); }
+  .pad-hat, .pad-crash { background: radial-gradient(circle at 50% 45%, #e4e6ea, #8d919a); color: var(--vinyl); box-shadow: inset 0 0 0 4px #b3b7bf, 0 18px 30px -22px rgba(20,21,24,.8); }
+  .pad.on, .pad:active { box-shadow: inset 0 0 0 4px var(--spark), 0 0 0 3px var(--spark); }
+  .pad:focus-visible, .chord:focus-visible { outline: 3px solid var(--spark); outline-offset: 2px; }
 
-  /* ---------- The programme: what you can learn ---------- */
+  /* ---------- The track list ---------- */
   section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 28px; }
-  .head .mono { color: var(--graphite); }
-  .programme { background: var(--ivory); border: 1px solid #dfe1e6; padding: 30px 38px 14px; position: relative; box-shadow: 0 24px 50px -40px rgba(21,22,26,.5); }
-  .programme::before { content: "תוכנית"; position: absolute; top: -14px; inset-inline-start: 30px; background: var(--felt); color: #fff; font: 700 13px/1 var(--body); letter-spacing: .08em; padding: 7px 12px; }
-  .item { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 18px; align-items: baseline; width: 100%; padding: 18px 4px; border-bottom: 1px dotted #b9bcc4; }
-  .item:last-of-type { border-bottom: 0; }
-  .item:hover b { color: var(--felt); }
-  .item:focus-visible { outline: 3px solid var(--felt); outline-offset: 2px; }
-  .item .no { font-family: var(--display); font-size: 26px; color: var(--felt); }
-  .item b { display: block; font-family: var(--display); font-size: 24px; line-height: 1.2; }
-  .item .d { display: block; color: var(--graphite); font-size: 15.5px; margin-top: 3px; }
-  .item .p { font-family: var(--mono); font-size: 14px; white-space: nowrap; text-align: left; }
-  .item .p small { display: block; color: var(--graphite); font-size: 12px; }
-  .prog-foot { display: flex; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; border-top: 2px solid var(--ebony); padding: 14px 4px 6px; font-size: 15px; color: var(--graphite); }
-  .prog-foot b { color: var(--ebony); }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 26px; }
+  .head p { margin: 0; color: var(--groove); font-size: 16px; max-width: 46ch; }
+  .side { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; color: var(--sleeve); margin-bottom: 8px; }
+  .side::before { content: ""; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle, var(--inner) 0 2px, var(--spark) 2.5px 5px, var(--vinyl) 5.5px); }
+  .tracks { border-top: 3px solid var(--vinyl); }
+  .item { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 60px minmax(0, 1fr) auto 118px; gap: 20px; align-items: center; width: 100%; padding: 20px 6px; border-bottom: 1.5px solid #d8dbe2; transition: background .15s; }
+  .item:hover { background: #fff; }
+  .item:hover b { color: var(--sleeve); }
+  .item:focus-visible { outline: 3px solid var(--spark); outline-offset: -3px; }
+  .item .no { font-family: var(--mono); font-size: 15px; color: var(--groove); }
+  .item b { display: block; font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.2; }
+  .item .d { display: block; color: var(--groove); font-size: 16px; margin-top: 2px; }
+  .item .len { font-family: var(--mono); font-size: 15px; color: var(--groove); direction: ltr; }
+  .item .p { justify-self: end; text-align: center; background: var(--sleeve); color: #fff; border-radius: 999px; padding: 7px 14px; font-weight: 800; font-size: 17px; white-space: nowrap; }
+  .item .p small { font-weight: 600; font-size: 13px; opacity: .9; }
+  .tracks-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 24px; padding: 16px 6px 0; font-size: 16px; color: var(--groove); }
+  .tracks-foot b { color: var(--vinyl); }
 
-  /* ---------- The teacher ---------- */
-  .teacher { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 46px; align-items: start; }
-  .portrait-card { background: var(--ivory); padding: 14px 14px 18px; border: 1px solid #dfe1e6; box-shadow: 0 24px 50px -36px rgba(21,22,26,.5); transform: rotate(-1.5deg); }
-  .portrait-card .ps { aspect-ratio: 4 / 5; border-radius: 3px; }
-  .portrait-card b { display: block; font-family: var(--display); font-size: 28px; margin-top: 12px; }
-  .portrait-card span { color: var(--graphite); font-size: 15.5px; }
-  .facts { list-style: none; margin: 0 0 26px; padding: 0; }
-  .facts li { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 12px; padding: 10px 0; border-bottom: 1px solid #dfe1e6; }
-  .facts li > b { font-family: var(--display); color: var(--felt); font-size: 19px; }
-  .shots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  /* ---------- The back cover: the teacher ---------- */
+  .back { background: var(--sleeve); color: #fff; }
+  .back .side { color: #fff; }
+  .back .head p { color: rgba(255,255,255,.8); }
+  .back-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 50px; align-items: start; }
+  .portrait { position: relative; }
+  .pframe { position: relative; }
+  .portrait .ps { aspect-ratio: 4 / 5; border-radius: 4px; box-shadow: 0 30px 50px -28px rgba(0,0,0,.6); }
+  .portrait .disc { position: absolute; z-index: 2; width: 112px; height: 112px; border-radius: 50%; bottom: -22px; left: -22px; background: repeating-radial-gradient(circle, #17181c 0 1.6px, #24262c 1.6px 3px); box-shadow: 0 14px 30px -12px rgba(0,0,0,.7); pointer-events: none; }
+  .portrait .disc::after { content: ""; position: absolute; inset: 33%; border-radius: 50%; background: var(--spark); }
+  .portrait b { display: block; font-family: var(--display); font-weight: 400; font-size: 34px; margin-top: 30px; line-height: 1.1; }
+  .portrait > span { color: rgba(255,255,255,.82); font-size: 16px; }
+  .credits { list-style: none; margin: 0 0 30px; padding: 0; }
+  .credits li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.25); }
+  .credits li > b { font-weight: 800; color: #fff; opacity: .7; font-size: 15px; padding-top: 2px; }
+  .shots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
   .shots figure { margin: 0; min-width: 0; }
   .shots .ps { aspect-ratio: 4 / 3; border-radius: 4px; }
-  .shots figcaption { font-size: 14.5px; color: var(--graphite); margin-top: 6px; }
-  .steps { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; counter-reset: s; }
-  .steps li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; }
-  .steps li::before { counter-increment: s; content: counter(s); width: 34px; height: 34px; border-radius: 50%; background: var(--ebony); color: #fff; display: grid; place-items: center; font-family: var(--display); font-size: 18px; }
-  .steps b { display: block; }
-  .steps span { color: var(--graphite); font-size: 15.5px; }
+  .shots figcaption { font-size: 15px; color: rgba(255,255,255,.82); margin-top: 6px; }
+  .sideb { list-style: none; padding: 0; margin: 32px 0 0; display: grid; gap: 0; border-top: 1px solid rgba(255,255,255,.35); counter-reset: s; }
+  .sideb li { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.25); align-items: baseline; }
+  .sideb li::before { counter-increment: s; content: "B" counter(s); font-family: var(--mono); font-size: 14px; color: rgba(255,255,255,.75); direction: ltr; text-align: right; }
+  .sideb b { display: block; font-size: 19px; }
+  .sideb span { color: rgba(255,255,255,.82); font-size: 16px; }
+  .sideb .mono, .sideb .sm { font-size: 14px; color: rgba(255,255,255,.75); }
 
   /* ---------- What the teacher sees ---------- */
-  .owner { background: var(--ebony); color: #eceef2; }
-  .owner .head .mono { color: #a4a8b2; }
+  .owner { background: var(--vinyl); color: #eceef2; }
+  .owner .head p { color: #a4a8b2; }
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: o; }
-  .owner li { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 14px; }
-  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e58a9a; color: #e58a9a; display: grid; place-items: center; font-family: var(--display); font-size: 20px; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 44px; height: 44px; border-radius: 50%; background: repeating-radial-gradient(circle, #2a2c32 0 1.4px, #34373e 1.4px 2.8px); color: #fff; display: grid; place-items: center; font-family: var(--display); font-size: 20px; box-shadow: inset 0 0 0 2px #4a4d55; }
   .owner li b { display: block; font-size: 20px; }
-  .owner li span { color: #b4b8c2; font-size: 15.5px; }
+  .owner li span { color: #b4b8c2; font-size: 16px; }
   .owner .ph-cap { color: #a4a8b2; }
-  footer { padding-block: 34px 90px; color: var(--graphite); font-size: 14px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 18px; }
+  footer { padding-block: 34px 96px; color: var(--groove); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1.5px solid #d8dbe2; padding-top: 18px; }
 
   @media (max-width: 900px) {
-    .hero-grid, .teacher, .owner-grid { grid-template-columns: minmax(0, 1fr); }
-    .score { max-width: 520px; width: 100%; }
-    .portrait-card { max-width: 340px; margin-inline: auto; }
+    .hero-grid, .back-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .lp { width: min(420px, 100%); }
+    .deck { grid-template-columns: minmax(0, 1fr); }
+    .portrait { max-width: 360px; }
     .owner .phone { margin-inline: auto; }
+    .item { grid-template-columns: 44px minmax(0, 1fr) auto; }
+    .item .len { display: none; }
   }
   @media (max-width: 620px) {
-    .hero h1 { font-size: clamp(34px, 10vw, 46px); }
-    .lead { font-size: 17px; }
+    body { font-size: 17px; }
+    .hero { padding-bottom: 96px; }
+    .hero h1 { font-size: clamp(40px, 12vw, 52px); }
+    .lead { font-size: 17.5px; }
     .ctas .btn { flex: 1 1 auto; }
-    .keys { height: 150px; padding-inline: 6px; }
+    .lp { width: min(330px, 100%); }
+    .cover { padding: 12px 14px; }
+    .cover .big { font-size: clamp(40px, 13vw, 58px); }
+    .cover .who { font-size: 15px; }
+    .deck { padding: 16px 14px 18px; border-radius: 18px; margin-top: -72px; }
+    .keys { height: 156px; padding-inline: 6px; }
     .keys::before { left: 6px; right: 6px; }
-    .k.b { height: 82px; }
+    .k.b { height: 84px; }
     .k.x2 { display: none; }       /* one octave and a bit on a phone */
     .k.w { font-size: 11px; }
+    .chord { font-size: 17px; min-height: 48px; }
     section { padding-block: 60px; }
-    .programme { padding: 26px 16px 8px; }
-    .item { grid-template-columns: 34px minmax(0, 1fr); gap: 4px 12px; }
-    .item .p { grid-column: 2; text-align: right; }
-    .item b { font-size: 21px; }
-    .facts li { grid-template-columns: 88px minmax(0, 1fr); }
+    .item { grid-template-columns: 34px minmax(0, 1fr); gap: 4px 12px; padding: 16px 2px; }
+    .item .p { grid-column: 2; justify-self: start; font-size: 15.5px; padding: 5px 12px; margin-top: 6px; }
+    .item b { font-size: 22px; }
+    .tracks-foot { grid-template-columns: minmax(0, 1fr); }
+    .credits li { grid-template-columns: 76px minmax(0, 1fr); }
+    .portrait .disc { width: 84px; height: 84px; left: -8px; }
     .shots { gap: 10px; }
+    .sideb li { grid-template-columns: 40px minmax(0, 1fr); }
+    .sideb .mono, .sideb .sm { display: none; }
   }
-  @media (prefers-reduced-motion: reduce) { .nh { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .nh { transition: none; } .vinyl, .vinyl.spin, .neck.ring .str { animation: none; } .btn { transition: none; } }
+  html.a11y-still .vinyl, html.a11y-still .vinyl.spin { animation: none; }
 </style>
 </head>
 <body>
@@ -191,56 +261,70 @@
   <a href="?i=piano" data-i="piano">פסנתר</a><a href="?i=keys" data-i="keys">קלידים</a><a href="?i=guitar" data-i="guitar">גיטרה</a><a href="?i=bass" data-i="bass">בס</a><a href="?i=drums" data-i="drums">תופים</a>
 </nav>
 
-<header class="hero staffpaper">
+<header class="hero">
   <div class="wrap">
     <div class="bar">
       <div class="logo"><span data-edit="name" id="t-logo">מאיה לב</span><small id="t-inst">פסנתר</small></div>
       <a href="#" data-wa="היי מאיה, הגעתי מהאתר ויש לי שאלה על שיעורי נגינה">וואטסאפ</a>
     </div>
     <div class="hero-grid">
-      <div>
-        <p class="tag mono" id="t-tag">כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים</p>
+      <div class="hero-copy">
+        <p class="tag" id="t-tag">כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים</p>
         <h1><span data-edit="h1a" id="t-h1a">שיעורי פסנתר,</span> <em data-edit="h1b" id="t-h1b">מהשיר שאתם אוהבים</em></h1>
         <p class="lead" id="t-lead">לומדים לנגן את מה שבא לכם לשמוע, וקוראים תווים בדרך. עונים על כמה שאלות בצ׳אט, ואחזור אליכם לקבוע שיעור ניסיון.</p>
         <div class="ctas">
-          <button class="btn btn-felt" type="button" data-open-bot>לקבוע שיעור ניסיון</button>
-          <a class="btn btn-line" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
+          <button class="btn btn-paper" type="button" data-open-bot>לקבוע שיעור ניסיון</button>
+          <a class="btn btn-ring" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
         </div>
       </div>
-      <div class="score" aria-live="polite">
-        <div class="visual" id="visual"></div>
-        <div class="cap mono"><span id="last">נגנו למטה</span><b id="name"></b></div>
+      <div class="lp" aria-hidden="true">
+        <div class="vinyl" id="vinyl"><div class="lbl"><span id="v-label">פסנתר</span><small>33⅓ · A</small></div></div>
+        <div class="cover">
+          <div class="cat"><span class="mono">ML-045</span><span>צד א׳ · צד ב׳</span></div>
+          <div class="stripes"><i></i><i></i></div>
+          <div class="big" id="c-big">פסנתר</div>
+          <div class="who"><span id="c-who">מאיה לב</span><small id="c-sub">שיעורים פרטיים · כרכור</small></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="wrap kb-wrap">
-    <div class="kb-label mono"><span id="try">נסו לנגן ↓</span><span id="sound">צליל קצר, בלי הקלטה</span></div>
+</header>
+
+<div class="wrap">
+  <div class="deck" aria-live="polite">
+    <div class="deck-head"><b id="try">נסו לנגן ↓</b><span id="sound">צליל קצר, בלי הקלטה</span></div>
+    <div class="score">
+      <div class="visual" id="visual"></div>
+      <div class="cap"><span id="last">נגנו כאן</span><b id="name"></b></div>
+    </div>
     <div class="play" id="play"></div>
   </div>
-</header>
+</div>
 
 <main>
   <section>
     <div class="wrap">
-      <div class="head"><h2>מה לומדים</h2><span class="mono">מחירים לדוגמה · לשיעור של 45 דקות · לחיצה פותחת את הצ׳אט</span></div>
-      <div class="programme">
+      <span class="side">צד א׳</span>
+      <div class="head"><h2>מה לומדים</h2><p>מחירים לדוגמה לשיעור של 45 דקות. לחיצה על שיר פותחת את הצ׳אט.</p></div>
+      <div class="programme tracks">
         <div id="t-prog"></div>
-        <div class="prog-foot"><span><b>שיעור ניסיון:</b> 30 דקות, להכיר ולבדוק מה מתאים.</span><span><b>סוף שנה:</b> רסיטל קטן לתלמידים ולמשפחות.</span></div>
       </div>
+      <div class="tracks-foot"><span><b>שיעור ניסיון:</b> 30 דקות, להכיר ולבדוק מה מתאים.</span><span><b>סוף שנה:</b> רסיטל קטן לתלמידים ולמשפחות.</span></div>
     </div>
   </section>
 
-  <section class="staffpaper" style="padding-top:40px">
+  <section class="back">
     <div class="wrap">
-      <div class="head"><h2>מי מלמדת</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-      <div class="teacher">
-        <div class="portrait-card">
-          <figure class="ps" data-slot="portrait" data-src="../shared/photos/music-portrait.webp" data-alt="מורה לנגינה ליד הפסנתר" data-pos="50 30" data-icon="person" data-label="תמונה שלכם"></figure>
+      <span class="side">העטיפה האחורית</span>
+      <div class="head"><h2 id="t-who">מי מלמדת</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="back-grid">
+        <div class="portrait">
+          <div class="pframe"><figure class="ps" data-slot="portrait" data-src="../shared/photos/music-portrait.webp" data-alt="מורה לנגינה ליד הפסנתר" data-pos="50 30" data-icon="person" data-label="תמונה שלכם"></figure><span class="disc"></span></div>
           <b data-edit="t-name" id="t-name">מאיה לב</b>
           <span data-edit="t-role" id="t-role">מורה לפסנתר · 14 שנה</span>
         </div>
         <div>
-          <ul class="facts">
+          <ul class="credits">
             <li><b>שיעור</b><span data-edit="f1">45 דקות, פעם בשבוע. מבוגרים יכולים גם פעם בשבועיים</span></li>
             <li><b>איפה</b><span data-edit="f2">בסטודיו בכרכור, או אצלכם בבית</span></li>
             <li><b>כלים</b><span data-edit="f3" id="t-f3">פסנתר, קלידים וגיטרה אקוסטית או קלאסית</span></li>
@@ -250,10 +334,10 @@
             <figure><div class="ps" data-slot="studio" data-src="../shared/photos/music-studio.webp" data-alt="גיטרה ועמוד תווים בסטודיו" data-icon="home" data-label="הסטודיו"></div><figcaption data-edit="c1">הסטודיו בכרכור</figcaption></figure>
             <figure><div class="ps" data-slot="lesson" data-src="../shared/photos/music-lesson.webp" data-alt="ידיים על קלידי הפסנתר" data-icon="camera" data-label="תמונה משיעור"></div><figcaption data-edit="c2" id="t-c2">שיעור פסנתר</figcaption></figure>
           </div>
-          <ol class="steps">
-            <li><div><b>שיעור ניסיון</b><span>מכירים, מנגנים קצת, ובודקים איזה כלי מתאים.</span></div></li>
-            <li><div><b>שיר ראשון</b><span>בוחרים שיר שאוהבים, ומנגנים אותו כבר בחודש הראשון.</span></div></li>
-            <li><div><b>רסיטל בסוף השנה</b><span>מי שרוצה מנגן מול המשפחה. מי שלא, מקליט בבית.</span></div></li>
+          <ol class="sideb">
+            <li><div><b>שיעור ניסיון</b><span>מכירים, מנגנים קצת, ובודקים מה מתאים.</span></div><span class="mono">30:00</span></li>
+            <li><div><b>שיר ראשון</b><span>בוחרים שיר שאוהבים, ומנגנים אותו כבר בחודש הראשון.</span></div><span class="mono">45:00</span></li>
+            <li><div><b>רסיטל בסוף השנה</b><span>מי שרוצה מנגן מול המשפחה. מי שלא, מקליט בבית.</span></div><span class="sm">יוני</span></li>
           </ol>
         </div>
       </div>
@@ -262,14 +346,14 @@
 
   <section class="guides" id="guides">
     <div class="wrap">
-      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">טיפים מהשטח, ושאלות שחוזרות</span></div>
+      <div class="head"><h2>טיפים ומדריכים</h2><p>טיפים מהשטח, ושאלות שחוזרות.</p></div>
       <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap">
-      <div class="head"><h2>מה המורה רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="head"><h2>מה המורה רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
           <li><div><b>ההורה או התלמיד עונים על כמה שאלות</b><span id="t-own1">איזה סגנון, לאיזה גיל, ניסיון קודם ואיפה לומדים.</span></div></li>
@@ -284,7 +368,7 @@
                 <span class="ph-day">היום</span>
                 <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מורה לנגינה)
 כלי: פסנתר
-מי לומד: ילד/ה, 6 עד 9
+מי לומד: ילדים, 6 עד 9
 ניסיון: מתחילים מאפס
 איפה: בסטודיו
 שם: שירן כהן
@@ -302,7 +386,7 @@
 <footer>
   <div class="wrap row">
     <span>מאיה לב · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
   </div>
 </footer>
 
@@ -371,7 +455,10 @@
   $("t-name").textContent = I.teacher; $("t-role").textContent = I.role; $("t-f3").textContent = I.f3; $("t-c2").textContent = I.c2;
   $("t-own1").textContent = `איזה סגנון של ${I.label}, לאיזה גיל, ניסיון קודם ואיפה לומדים.`;
   document.querySelectorAll(".pick-inst a").forEach((a) => { if (a.dataset.i === KIND) a.setAttribute("aria-current", "page"); });
-  $("t-prog").outerHTML = I.prog.map(([b, d, p], n) => `<button class="item" type="button" data-n="${n}"><span class="no">${["I", "II", "III", "IV"][n]}</span><span><b>${b}</b><span class="d">${d}</span></span><span class="p">${p} ₪<small>לשיעור</small></span></button>`).join("");
+  $("t-prog").outerHTML = I.prog.map(([b, d, p], n) => `<button class="item" type="button" data-n="${n}"><span class="no">A${n + 1}</span><span><b>${b}</b><span class="d">${d}</span></span><span class="len">45:00</span><span class="p">${p} ₪ <small>לשיעור</small></span></button>`).join("");
+  // the record: its cover and centre label carry the instrument and the teacher
+  $("t-who").textContent = KIND === "piano" || KIND === "keys" ? "מי מלמדת" : "מי מלמד";
+  $("c-big").textContent = I.label; $("v-label").textContent = I.label; $("c-who").textContent = I.teacher;
   // photos: the sample ones only where they fit the instrument; the rest are frames for the teacher's own
   document.querySelectorAll(".ps[data-slot]").forEach((f) => { const ph = I.photos[f.dataset.slot]; if (ph) f.dataset.src = `../shared/photos/${ph}.webp`; else delete f.dataset.src; });
   document.querySelector('[data-slot="portrait"]').dataset.alt = `מורה ל${I.label}`;
@@ -387,23 +474,28 @@
     greet: `היי, כאן ${I.teacher.split(" ")[0]}.\nכמה שאלות קצרות על שיעורי ${I.label}, ואחזור אליכם לקבוע שיעור ניסיון.`,
     steps: [
       { key: "style", label: "סגנון", ask: `מה הכי מעניין אתכם ב${I.label}?`, chips: I.styles },
-      { key: "who", label: "מי לומד", ask: "מי לומד?", chips: ["ילד/ה, 6 עד 9", "ילד/ה, 10 עד 14", "נוער", "מבוגר/ת"] },
+      { key: "who", label: "מי לומד", ask: "מי לומד?", chips: ["ילדים, 6 עד 9", "ילדים, 10 עד 14", "נוער", "מבוגרים"] },
       { key: "level", label: "ניסיון", ask: "יש ניסיון קודם?", chips: ["מתחילים מאפס", "מנגנים קצת", "ממשיכים"] },
       { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: I.where || ["בסטודיו", "אצלנו בבית"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
-    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור ${I.label} של 45 דקות עולה בדרך כלל ${d.who === "מבוגר/ת" ? ADULT : I.prog[0][2]} ₪. מתחילים בשיעור ניסיון של 30 דקות.\nלחצו למטה, ואחזור אליכם לקבוע.`,
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור ${I.label} של 45 דקות עולה בדרך כלל ${d.who === "מבוגרים" ? ADULT : I.prog[0][2]} ₪. מתחילים בשיעור ניסיון של 30 דקות.\nלחצו למטה, ואחזור אליכם לקבוע.`,
     summary: (d) => `פנייה מהאתר (דמו מורה ל${I.label})\nכלי: ${I.label}\nסגנון: ${d.style}\nמי לומד: ${d.who}\nניסיון: ${d.level}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
-  $("ph-msg").firstChild.textContent = `פנייה מהאתר (דמו מורה ל${I.label})\nכלי: ${I.label}\nסגנון: ${I.styles[0]}\nמי לומד: ילד/ה, 6 עד 9\nניסיון: מתחילים מאפס\nאיפה: בסטודיו\nשם: שירן כהן\nטלפון: 052-7654321`;
-  // the lessons: the kids' one and the styles open the chat with the answer in; the adults' one, with "מבוגר/ת"
+  $("ph-msg").firstChild.textContent = `פנייה מהאתר (דמו מורה ל${I.label})\nכלי: ${I.label}\nסגנון: ${I.styles[0]}\nמי לומד: ילדים, 6 עד 9\nניסיון: מתחילים מאפס\nאיפה: בסטודיו\nשם: שירן כהן\nטלפון: 052-7654321`;
+  // the lessons: the kids' one and the styles open the chat with the answer in; the adults' one, with "מבוגרים"
   document.querySelectorAll(".programme .item").forEach((b) => b.addEventListener("click", () => {
-    const n = +b.dataset.n; bot.open(n === 0 ? { who: "ילד/ה, 6 עד 9" } : n === 1 && KIND === "piano" ? { who: "מבוגר/ת" } : {});
+    const n = +b.dataset.n; bot.open(n === 0 ? { who: "ילדים, 6 עד 9" } : n === 1 && KIND === "piano" ? { who: "מבוגרים" } : {});
   }));
+  // the record spins while you play (not for reduced motion or the accessibility menu's "stop motion")
+  const vinyl = $("vinyl");
+  const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+  $("play").addEventListener("pointerdown", () => { if (still()) return; vinyl.classList.remove("spin"); void vinyl.offsetWidth; vinyl.classList.add("spin"); });
+  $("play").addEventListener("click", (e) => { if (e.detail === 0 && !still()) { vinyl.classList.remove("spin"); void vinyl.offsetWidth; vinyl.classList.add("spin"); } });
   Guides.load(`../shared/guides/music-${KIND}.json`, document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
