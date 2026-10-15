@@ -241,7 +241,7 @@ h1 .two { color: var(--violet); }
 @keyframes blink { 50% { opacity: .3; } }
 .lock { display: grid; align-content: start; gap: 10px; block-size: 340px; padding: 40px 12px 14px; border-radius: 28px; background: linear-gradient(170deg, #2a2148, #17112e); border: 8px solid var(--ink); color: #fff; }
 .lock .clock { text-align: center; font: 300 2.4rem/1 var(--body); direction: ltr; font-variant-numeric: tabular-nums; }
-.lock .day { text-align: center; font-size: .78rem; color: #cfc8e6; margin-bottom: 6px; }
+.lock .lock-day { text-align: center; font-size: .78rem; color: #cfc8e6; margin-bottom: 6px; }
 .alert { display: grid; gap: 6px; padding: 11px 12px; border-radius: 16px; background: rgb(255 255 255 / .94); color: var(--ink); font-size: .84rem; line-height: 1.35; opacity: 0; transform: translateY(-10px); transition: opacity .45s var(--ease), transform .55s var(--ease); }
 .alert.in { opacity: 1; transform: none; }
 .alert .a-head { display: flex; justify-content: space-between; gap: 8px; font-size: .74rem; color: var(--silver-ink); }
@@ -325,6 +325,75 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .end .btn.ghost-end:hover { background: rgb(255 255 255 / .1); }
 .dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 60%, transparent); }
 .dock .btn { inline-size: 100%; }
+/* one working day on two phones (from the previous home page); its script moves the light from morning to dusk */
+.day { --bg: var(--lilac); --fg: var(--ink); --accent: var(--violet); --lost: #b23730; --dim: var(--ink-2); --font: var(--body); }
+.day-sec { padding-top: 0; }
+.day-sec .day { max-width: 900px; margin-inline: auto; }
+.day { min-width: 0; display: grid; gap: 12px; padding: clamp(16px, 2.2vw, 28px); border-radius: 28px; background: var(--bg); color: var(--fg); transition: background-color .2s; }
+.day-cap { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .9rem; color: var(--dim); }
+.day-cap b { color: var(--fg); font-weight: 600; }
+.day-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(12px, 2vw, 28px); }
+.ph { margin: 0; min-width: 0; display: grid; gap: 8px; }
+.ph-label { font-weight: 700; font-size: clamp(1rem, 1.4vw, 1.2rem); display: flex; align-items: center; gap: 8px; }
+.ph-label::before { content: ""; inline-size: 9px; block-size: 9px; border-radius: 50%; background: currentColor; }
+.ph-today .ph-label { color: var(--lost); }
+.ph-site .ph-label { color: var(--accent); }
+.ph-body { position: relative; block-size: min(52svh, 456px); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden;
+  border: 1.5px solid color-mix(in oklab, var(--fg) 22%, var(--bg)); border-radius: clamp(24px, 2.6vw, 36px); padding: 26px clamp(9px, 1.1vw, 14px) 12px;
+  background: color-mix(in oklab, var(--fg) 5%, var(--bg)); box-shadow: 0 0 0 5px color-mix(in oklab, var(--fg) 6%, var(--bg)); }
+.ph-body::before { content: ""; position: absolute; top: 10px; inset-inline: 0; margin-inline: auto; inline-size: 30%; block-size: 6px; border-radius: 6px; background: color-mix(in oklab, var(--fg) 20%, var(--bg)); }
+.ph-top { display: grid; justify-items: center; }
+.ph-time { font: 300 clamp(2rem, 3.4vw, 3.1rem)/1 var(--font); font-variant-numeric: tabular-nums; direction: ltr; }
+.ph-date { font-size: .76rem; color: var(--dim); }
+.ph-notes { list-style: none; padding: 0; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.n { display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(-6px); transition: grid-template-rows .55s cubic-bezier(.2, .8, .2, 1), opacity .45s, transform .55s cubic-bezier(.2, .8, .2, 1); }
+.n.in { grid-template-rows: 1fr; opacity: 1; transform: none; }
+.n.in .n-card { animation: arrive 1.4s ease-out; }
+.ph-today .n.done:not([data-i="3"]) .n-card { animation: miss 1.2s ease-out; }
+@keyframes arrive { from { background: color-mix(in oklab, var(--fg) 22%, var(--bg)); } }
+@keyframes miss { from { background: color-mix(in oklab, var(--lost) 30%, var(--bg)); } }
+.n-in { overflow: hidden; min-height: 0; }
+.n-card { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; padding: 8px 10px; border-radius: 13px; background: color-mix(in oklab, var(--fg) 9%, var(--bg)); }
+.n[data-ghost] .n-card { background: transparent; outline: 1px dashed color-mix(in oklab, var(--lost) 70%, var(--bg)); outline-offset: -1px; }
+.n-ic { inline-size: 26px; block-size: 26px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--fg) 14%, var(--bg)); }
+.n-ic svg { inline-size: 14px; block-size: 14px; fill: currentColor; }
+.n.done .n-ic { color: var(--bg); background: var(--accent); }
+.ph-today .n.done:not([data-i="3"]) .n-ic { background: var(--lost); }
+.n p { min-width: 0; display: grid; line-height: 1.25; }
+.n b { font-size: .82rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.n p span { font-size: .74rem; }
+.n .post, .n.done .pre { display: none; }
+.n.done .post { display: grid; }
+.n .lost { color: var(--lost); } .n .ok { color: var(--accent); } .n .dim { color: var(--dim); }
+.ph-today .n.in:not(.done)[data-kind="call"] .n-ic { animation: ring .4s ease-in-out infinite; color: var(--lost); }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+.ph-tally { margin-top: 8px; display: flex; align-items: baseline; justify-content: center; gap: .4em; font-size: .8rem; color: var(--dim); }
+.ph-tally b { font: 800 clamp(1.7rem, 2.4vw, 2.3rem)/1 var(--font); }
+.ph-today .ph-tally b { color: var(--lost); }
+.ph-site .ph-tally b { color: var(--accent); }
+.day-sub { min-height: 2.7em; text-align: center; font-weight: 600; font-size: clamp(1rem, 1.3vw, 1.15rem); line-height: 1.35; text-wrap: balance; transition: opacity .3s; }
+.day-sub.swap { opacity: 0; }
+.day-ctl { display: flex; align-items: center; gap: 12px; }
+.day-btn { flex: none; inline-size: 34px; block-size: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid color-mix(in oklab, var(--fg) 25%, var(--bg));
+  background: transparent; color: var(--fg); font: 600 .7rem/1 var(--font); cursor: pointer; }
+.day-bar { flex: 1; block-size: 2px; background: color-mix(in oklab, var(--fg) 18%, var(--bg)); overflow: hidden; border-radius: 2px; }
+.day-bar i { display: block; block-size: 100%; background: var(--accent); transform: scaleX(0); transform-origin: right; }
+.day-note { flex: none; font-size: .74rem; color: var(--dim); }
+@media (prefers-reduced-motion: reduce) { .n, .day-sub { transition: none; } .n-ic, .n-card { animation: none !important; } }
+@keyframes arrive { from { background: color-mix(in oklab, var(--fg) 22%, var(--bg)); } }
+@keyframes miss { from { background: color-mix(in oklab, var(--lost) 30%, var(--bg)); } }
+@keyframes ring { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+/* three phones playing a demo's chat, start to finish */
+.watch { margin-top: clamp(48px, 8svh, 80px); }
+.watch-h { font-size: 1.3rem; font-weight: 700; margin-bottom: 18px; }
+.watch-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 48px); }
+.clip { margin: 0; min-width: 0; }
+.clip .reel-frame { position: relative; aspect-ratio: 390 / 844; max-height: 640px; margin-inline: auto; border-radius: 34px; padding: 9px; background: var(--ink); box-shadow: 0 24px 50px -28px color-mix(in oklab, var(--ink) 70%, transparent); }
+.clip video { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 26px; background: var(--lilac); }
+.clip figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 12px; padding-inline: 6px; }
+.clip figcaption b { font-weight: 700; }
+.clip figcaption a { color: var(--violet); font-weight: 600; font-size: .95rem; }
+.watch-h { font: 700 1.3rem/1.3 var(--display); }
 /* the AI chat (shared/aibot.js) in the page's colours */
 :root { --ab-accent: var(--violet); --ab-font: var(--body); }
 
@@ -336,6 +405,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .nav a { padding: 14px 2px; font-size: 1.1rem; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--silver); }
   .nav a:last-child { border-bottom: 0; }
   .menu-btn { display: inline-flex; }
+  /* one phone at a time, swiped sideways */
+  .watch-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); padding-bottom: 6px; scrollbar-width: none; }
+  .watch-row::-webkit-scrollbar { display: none; }
+  .clip { flex: 0 0 min(74vw, 300px); scroll-snap-align: center; }
   .bar .btn { margin-inline-start: auto; }
   .hero .wrap, .pick, .price-grid, .try-grid, .loss-grid, .faq-grid { grid-template-columns: minmax(0, 1fr); }
   .steps { grid-template-columns: minmax(0, 1fr); border-top: 0; }
@@ -345,6 +418,15 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 }
 @media (max-width: 640px) {
   .sec { padding-block: 64px; }
+  .day { padding: 12px; border-radius: 22px; margin-inline: calc(var(--gut) * -.5); }
+  .day-split { gap: 8px; }
+  .ph-body { block-size: auto; min-block-size: 360px; border-radius: 22px; padding: 24px 6px 10px; }
+  .ph-time { font-size: 1.8rem; }
+  .n-card { gap: 6px; padding: 7px; border-radius: 11px; }
+  .n-ic { inline-size: 22px; block-size: 22px; } .n-ic svg { inline-size: 12px; block-size: 12px; }
+  .n b { font-size: .74rem; } .n p span { font-size: .68rem; }
+  .ph-tally { flex-direction: column; align-items: center; gap: 0; font-size: .7rem; }
+  .day-note, .day-cap span:last-child { display: none; }
   .bar .btn.sm { white-space: nowrap; padding: 0 .9em; font-size: .9rem; min-block-size: 40px; }
   .dock.on { display: block; }
   :root.dock-on body .ab-launch, :root.dock-on body .a11y-ui { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
@@ -403,6 +485,21 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
+  <!-- 1b · one working day on two phones -->
+  <section class="sec day-sec" aria-label="יום עבודה אחד">
+    <div class="wrap">
+      <div class="day reveal" id="day" role="group" aria-label="יום עבודה אחד: העסק היום מול אותו עסק עם אתר">
+        <p class="day-cap"><b>אותו עסק. אותו יום. אותן חמש פניות.</b><span>מימין העסק היום, משמאל עם אתר</span></p>
+        <div class="day-split">
+          <figure class="ph ph-today"><figcaption class="ph-label">העסק היום</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="search" data-ghost><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"/></svg></span><p class="pre"><b></b><span class="dim"></span></p><p class="post"><b>חיפשו אתכם בגוגל</b><span class="lost">אין איך לפנות. הלך הלאה</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">13:05. אתם על הסולם</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>וואטסאפ</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="lost">לא נקרא עד הערב</span></p></div></div></li><li class="n" data-i="0" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>שיחה שלא נענתה</b><span class="lost">09:12. אתם באמצע עבודה</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
+          <figure class="ph ph-site"><figcaption class="ph-label">עם אתר שעונה</figcaption><div class="ph-body"><div class="ph-top"><span class="ph-time" data-day-clock>07:58</span><span class="ph-date">יום שלישי</span></div><ol class="ph-notes"><li class="n" data-i="4" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">העסק סגור</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">השאיר פרטים. מחכה לבוקר</span></p></div></div></li><li class="n" data-i="3" data-kind="call"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></span><p class="pre"><b>שיחה נכנסת</b><span class="dim">מצלצל…</span></p><p class="post"><b>לקוח קבוע</b><span class="ok">נענתה</span></p></div></div></li><li class="n" data-i="2" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">אתם על הסולם</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">בטבלה, עם תזכורת לחזור</span></p></div></div></li><li class="n" data-i="1" data-kind="msg"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.9 2 11.7c0 2.4 1.1 4.6 3 6.2L4.2 21l3.9-1.6c1.2.4 2.5.6 3.9.6 5.5 0 10-3.9 10-8.7S17.5 3 12 3z"/></svg></span><p class="pre"><b>צ׳אט באתר</b><span class="dim">״כמה זה עולה?״</span></p><p class="post"><b>״כמה זה עולה?״</b><span class="ok">קיבל טווח מחיר ✓✓</span></p></div></div></li><li class="n" data-i="0" data-kind="site"><div class="n-in"><div class="n-card"><span class="n-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 5v9h14V9H5zm1-3.2a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8zm2.6 0a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></span><p class="pre"><b>פנייה מהאתר</b><span class="dim">שם, טלפון ומה צריך</span></p><p class="post"><b>פנייה מהאתר</b><span class="ok">מענה בוואטסאפ תוך שניות ✓✓</span></p></div></div></li></ol><p class="ph-tally"><b data-tally>0</b> מתוך 5 קיבלו מענה</p></div></figure>
+        </div>
+        <p class="day-sub" aria-live="polite">יום עבודה רגיל מתחיל.</p>
+        <div class="day-ctl"><button type="button" class="day-btn" aria-label="השהיה"><span aria-hidden="true">❚❚</span></button><span class="day-bar"><i></i></span><span class="day-note">המחשה, לא נתון סטטיסטי</span></div>
+      </div>
+    </div>
+  </section>
+
   <!-- 2 · an enquiry, from both sides -->
   <section class="sec field" id="try" aria-labelledby="t-try">
     <div class="wrap try-grid">
@@ -435,7 +532,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="dev-label"><i aria-hidden="true"></i>הטלפון שלכם</p>
             <div class="lock" id="lock" role="log" aria-label="התראות בטלפון של בעל העסק">
               <p class="clock" data-now>21:47</p>
-              <p class="day">התראות</p>
+              <p class="lock-day">התראות</p>
             </div>
           </div>
         </div>
@@ -487,6 +584,26 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <li><span class="n">04</span><h3>רואים ומאשרים</h3><p>האתר נבנה ליד הצ׳אט.</p></li>
         <li><span class="n">05</span><h3>משלמים, והאתר באוויר</h3><p>בוחרים כתובת, משלמים בכרטיס, והאתר עולה לבד.</p></li>
       </ol>
+      <div class="watch reveal" role="group" aria-labelledby="t-watch">
+        <h3 class="watch-h" id="t-watch">לראות את זה בעיניים של הלקוח</h3>
+        <div class="watch-row">
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/plumber-poster.webp" aria-label="הדגמה באתר של אינסטלטור: הצ׳אט מהלחיצה הראשונה ועד הסיכום בוואטסאפ"><source src="shared/video/walkthrough/plumber.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>אינסטלטור</b><a href="plumber/">לדמו המלא</a></figcaption>
+        </figure>
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/movers-poster.webp" aria-label="הדגמה באתר של חברת הובלות: הצ׳אט מהלחיצה הראשונה ועד הסיכום בוואטסאפ"><source src="shared/video/walkthrough/movers.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>הובלות</b><a href="movers/">לדמו המלא</a></figcaption>
+        </figure>
+        <figure class="clip reel">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/walkthrough/electrician-poster.webp" aria-label="הדגמה באתר של חשמלאי: הצ׳אט, הסיכום, והפנייה שמגיעה לוואטסאפ"><source src="shared/video/walkthrough/electrician.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>חשמלאי</b><a href="electrician/">לדמו המלא</a></figcaption>
+        </figure>
+        </div>
+      </div>
       <a class="film-link reveal" href="film/"><span class="play-ic" aria-hidden="true"></span>כל התהליך בסרטון של 4.5 דקות</a>
     </div>
   </section>
@@ -757,6 +874,47 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     let now = cues[0].text; span.textContent = now;
     v.addEventListener('timeupdate', () => { let c = cues[0]; for (const x of cues) if (v.currentTime >= x.at) c = x;
       if (c.text === now) return; now = c.text; span.classList.add('swap'); setTimeout(() => { span.textContent = now; span.classList.remove('swap'); }, 250); });
+  })();
+
+  const reduce = still();
+  /* ---- the film: one working day on two phones. Its own light runs from morning to dusk ---- */
+  (() => {
+    const box = $('#day'); if (!box) return;
+    const DAY = { bg: [241, 237, 253], fg: [23, 17, 46], accent: [84, 40, 224], lost: [178, 55, 48], dim: [93, 90, 114] };
+    const DUSK = { bg: [36, 24, 80], fg: [243, 240, 252], accent: [190, 172, 255], lost: [255, 150, 160], dim: [196, 188, 224] };
+    // the ground fades; the ink switches at the midpoint, so text never sits mid-grey on mid-grey
+    const paint = (k) => { for (const key in DAY) { const w = key === 'bg' ? k : k < .5 ? 0 : 1;
+      box.style.setProperty('--' + key, 'rgb(' + DAY[key].map((v, i) => Math.round(v + (DUSK[key][i] - v) * w)).join(' ') + ')'); } };
+    const RUN = 13600, HOLD = 5200, TOTAL = RUN + HOLD, T0 = 478, T1 = 1170, LEAD = 900, SPAN = 11500, RES = 1150;
+    const tIn = [552, 700, 785, 990, 1160].map((m) => LEAD + (m - T0) / (T1 - T0) * SPAN);
+    const subs = ['09:12. אתם באמצע עבודה, והטלפון מצלצל.', '11:40. לקוח שואל בוואטסאפ כמה זה עולה.', '13:05. אתם על הסולם. עוד שיחה.',
+      '16:30. לקוח קבוע מתקשר. את זה תפסתם.', '19:20. העסק סגור. מישהו מחפש אתכם בגוגל.'];
+    const SUB0 = 'יום עבודה רגיל מתחיל.', SUB_END = 'חמש פניות. בלי אתר: אחת נענתה. עם אתר: אף אחת לא אבדה.';
+    const clocks = $$('[data-day-clock]', box);
+    const sides = $$('.ph', box).map((ph) => ({ notes: [0, 1, 2, 3, 4].map((i) => $(`.n[data-i="${i}"]`, ph)), tally: $('[data-tally]', ph), site: ph.classList.contains('ph-site') }));
+    const sub = $('.day-sub', box), bar = $('.day-bar i', box), btn = $('.day-btn', box), icon = $('span', btn);
+    let t = 0, last = 0, run = false, held = false, subNow = SUB0, raf = 0, lastMin = -1, lastK = -1;
+    const setSub = (txt) => { if (txt === subNow) return; subNow = txt; sub.classList.add('swap'); setTimeout(() => { sub.textContent = txt; sub.classList.remove('swap'); }, 260); };
+    const render = (t) => {
+      const reset = t > TOTAL - 1300, clock = reset ? T0 : T0 + Math.min(1, Math.max(0, (t - LEAD) / SPAN)) * (T1 - T0);
+      let k = Math.min(1, Math.max(0, (clock - 1000) / 60)); if (t > TOTAL - 1300) k = Math.max(0, (TOTAL - t) / 1300);
+      if (Math.abs(k - lastK) > .004) { lastK = k; paint(k); }
+      const m = Math.round(clock); if (m !== lastMin) { lastMin = m; const s = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); clocks.forEach((c) => (c.textContent = s)); }
+      let beat = -1; const answered = [0, 0];
+      tIn.forEach((ti, i) => { const isIn = !reset && t >= ti, done = !reset && t >= ti + RES; if (isIn) beat = i;
+        sides.forEach((sd, j) => { sd.notes[i].classList.toggle('in', isIn); sd.notes[i].classList.toggle('done', done); if (done && (sd.site || i === 3)) answered[j]++; }); });
+      sides.forEach((sd, j) => { sd.tally.textContent = answered[j]; });
+      setSub(t >= RUN && !reset ? SUB_END : beat < 0 ? SUB0 : subs[beat]);
+      bar.style.transform = `scaleX(${(t / TOTAL).toFixed(4)})`; };
+    const show = () => { icon.textContent = run ? '❚❚' : '▶'; btn.setAttribute('aria-label', run ? 'השהיה' : 'המשך'); };
+    const loop = (now) => { if (!run) return; t += Math.min(64, now - last); last = now; if (t >= TOTAL) t = 0; render(t); raf = requestAnimationFrame(loop); };
+    const play = () => { if (run || held || reduce) return; run = true; last = performance.now(); raf = requestAnimationFrame(loop); show(); };
+    const pause = () => { run = false; cancelAnimationFrame(raf); show(); };
+    btn.addEventListener('click', () => { if (run) { held = true; pause(); } else { held = false; play(); } });
+    document.addEventListener('a11y-still', () => { held = true; pause(); });
+    if (reduce || !('IntersectionObserver' in window)) { render(RUN); paint(0); $('.day-ctl', box).hidden = true; }
+    else { render(0); new IntersectionObserver(([e]) => { e.isIntersecting ? play() : pause(); }, { threshold: .3 }).observe(box); }
+    show();
   })();
 
   /* ---- sections rise in once ---- */
