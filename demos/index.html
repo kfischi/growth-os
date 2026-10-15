@@ -55,6 +55,7 @@ button { font: inherit; color: inherit; }
 /* buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-block-size: 54px; padding: 0 1.6em; border-radius: 14px; border: 0;
   background: var(--violet); color: #fff; font: 600 1.05rem/1 var(--body); text-decoration: none; cursor: pointer; transition: background-color .2s, transform .2s var(--ease); }
+.btn:not(.line) { box-shadow: 0 12px 26px -12px rgb(84 40 224 / .75), 0 2px 6px -2px rgb(84 40 224 / .35); }
 .btn:hover { background: var(--violet-deep); transform: translateY(-1px); }
 .btn.line { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--silver); }
 .btn.line:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
@@ -98,6 +99,8 @@ h1 > span { display: block; }
 h1 .two { color: var(--violet); }
 .hero-sub { font-size: clamp(1.1rem, 1.55vw, 1.3rem); color: var(--ink-2); max-width: 40ch; text-wrap: pretty; }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.zero { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 8px 16px 8px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink); font-size: .97rem; font-weight: 500; }
+.zero svg { flex: none; inline-size: 22px; block-size: 22px; }
 .facts { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .95rem; color: var(--ink-2); }
 .facts li { display: flex; align-items: center; gap: 8px; }
 .facts li::before { content: ""; inline-size: 14px; block-size: 1.5px; background: var(--fuchsia); }
@@ -183,6 +186,9 @@ h1 .two { color: var(--violet); }
 .plan.fits { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet), 0 30px 60px -42px rgb(84 40 224 / .55); transform: translateY(-4px); }
 .plan .tag { position: absolute; top: -12px; inset-inline-start: 20px; padding: 3px 12px; border-radius: 999px; background: var(--fuchsia); color: #fff; font-size: .8rem; font-weight: 600; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s var(--ease); }
 .plan.fits .tag { opacity: 1; transform: none; }
+.plan-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
+.rec { flex: none; inline-size: max-content; padding: 4px 12px; border-radius: 999px; background: var(--violet); color: #fff; font-size: .82rem; font-weight: 600; }
+.plan[data-plan="ai"] { border-color: var(--lilac-2); background: linear-gradient(180deg, var(--lilac) 0, #fff 120px); }
 .plan h3 { font: 800 1.6rem/1.1 var(--display); letter-spacing: -.02em; }
 .plan-for { color: var(--ink-2); font-size: .97rem; }
 .amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
@@ -469,8 +475,9 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <div class="hero-text">
         <p class="live"><i aria-hidden="true"></i>פנייה נכנסת <span class="mono" data-now>21:47</span> · נענתה בוואטסאפ</p>
         <h1 id="t-hero"><span>אתם בעבודה.</span><span class="two">האתר עונה ללקוחות<span class="dot">.</span></span></h1>
-        <p class="hero-sub">כל פנייה מקבלת מענה בוואטסאפ תוך שניות, נשמרת, ומגיעה אליכם עם תזכורת לחזור. בונים בצ׳אט, ומשלמים רק כשהאתר מוכן.</p>
+        <p class="hero-sub">כל פנייה מקבלת מענה בוואטסאפ תוך שניות, נשמרת, ומגיעה אליכם עם תזכורת לחזור. בונים לבד, בצ׳אט.</p>
         <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn line" href="film/">סרטון הסבר</a></div>
+        <p class="zero"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#5428e0"/><path d="M6.5 11.4l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>בונים ורואים את האתר בחינם. משלמים רק כשהוא מוכן ואישרתם.</p>
         <ul class="facts"><li>16 תחומים לדוגמה</li><li>בלי התחייבות</li><li>הדומיין על שמכם</li></ul>
       </div>
       <figure class="reel" data-cues="[{&quot;at&quot;: 0, &quot;text&quot;: &quot;אתר מקצועי לעסק שלכם&quot;}, {&quot;at&quot;: 3, &quot;text&quot;: &quot;נציג AI שעונה ללקוחות&quot;}, {&quot;at&quot;: 5.8, &quot;text&quot;: &quot;בוחרים תבנית&quot;}, {&quot;at&quot;: 9, &quot;text&quot;: &quot;ובוחרים צבעים&quot;}, {&quot;at&quot;: 11.8, &quot;text&quot;: &quot;עונים על כמה שאלות&quot;}, {&quot;at&quot;: 14.6, &quot;text&quot;: &quot;והאתר מתמלא מול העיניים&quot;}, {&quot;at&quot;: 17.4, &quot;text&quot;: &quot;מעלים תמונות&quot;}, {&quot;at&quot;: 20, &quot;text&quot;: &quot;מאשרים, ואנחנו מעלים לאוויר&quot;}, {&quot;at&quot;: 22.4, &quot;text&quot;: &quot;וכל פנייה מגיעה אליכם בוואטסאפ&quot;}]">
@@ -684,7 +691,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
           </article>
           <article class="plan reveal" data-plan="ai">
             <span class="tag">מתאים לכם</span>
-            <h3>נציג AI</h3>
+            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
             <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
             <p class="per" data-m="390"></p>
@@ -712,7 +719,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <div class="faq reveal">
         <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים.</p></details>
         <details><summary>משלמים לפני שרואים?</summary><p>לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים.</p></details>
-        <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. בנציג AI יש גם חיבור לוואטסאפ העסקי, שלוקח עד שבועיים.</p></details>
+        <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. בנציג AI מחברים גם את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ.</p></details>
         <details><summary>יש התחייבות?</summary><p>לא. מבטלים בהודעה של 30 יום מראש.</p></details>
         <details><summary>על שם מי הדומיין?</summary><p>על שמכם. האתר מאוחסן אצלנו, וכל הקבצים שלו שלכם: אם תעזבו, נעביר אותם אליכם.</p></details>
         <details><summary>ההודעות יוצאות מהמספר שלי?</summary><p>כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אתם מאשרים.</p></details>
