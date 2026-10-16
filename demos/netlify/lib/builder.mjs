@@ -26,7 +26,9 @@ import { applySocial } from "./social.mjs";
 
 import { TRADES } from "./templates/trades/index.mjs";
 // One template per trade: the same site (templates/plumber.mjs) with the trade's fields, questionnaire and words.
-const tradeTemplate = (T) => Object.assign(Object.create(plumber), {
+// A plain copy of the template module, not Object.create(namespace): bundled by esbuild (as on Netlify) the namespace
+// is an object of getters only, and assigning `id` over an inherited getter throws when the function loads.
+const tradeTemplate = (T) => ({ ...plumber,
   id: T.id, label: T.label, FIELDS: plumber.fieldsFor(T.id), GUIDE: plumber.guideFor(T),
   emptyContent: () => plumber.emptyContent(T.id),
   render: (c, o) => plumber.render({ ...c, trade_id: T.id }, o),
