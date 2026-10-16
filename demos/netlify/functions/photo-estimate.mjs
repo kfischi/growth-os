@@ -68,7 +68,8 @@ export default async (req, context) => {
     if (!allowed) return json({ error: "forbidden" }, 403);
     cors = allowed;
   }
-  if (!c && corsHeaders(req, null) === null) return json({ error: "forbidden" }, 403); // the demo list only from our pages
+  // The demo list only from our own pages, with an Origin: a script without one would get free vision answers.
+  if (!c && (!req.headers.get("origin") || corsHeaders(req, null) === null)) return json({ error: "forbidden" }, 403);
   const prices = c ? null : (body.prices && typeof body.prices === "object" ? body.prices : {});
   const list = priceList(c, prices);
   if (!list.trim()) return json({ error: "no_prices" }, 422, cors);

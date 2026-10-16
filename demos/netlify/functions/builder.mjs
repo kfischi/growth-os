@@ -21,7 +21,7 @@
 //   POST   /api/builder/pay       { cycle: "month" | "year" }  -> { url }   Grow's payment page (or a new card after a refusal)
 //   POST   /api/builder/pay-check  back from Grow: asks Grow about the checkout -> { state, billing }
 //   POST   /api/builder/domain-check  is the owner's domain pointing here yet?   -> { state, billing }
-//   POST   /api/builder/cancel | resume   the subscription, 30 days' notice    -> { billing }
+//   POST   /api/builder/cancel | resume   the subscription: no notice, runs to the end of what was paid -> { billing }
 //   POST   /api/builder/panel-seen  the panel link was saved: forget it         -> { billing }
 //   POST   /api/builder/help      { message }   to כפיר on WhatsApp, from any step  -> { sent }
 // Self edit, on a published site whose owner may change it (0004_self_edit.sql):

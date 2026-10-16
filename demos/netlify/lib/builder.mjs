@@ -9,12 +9,14 @@
 //   BRAND_NAME, BRAND_URL                 the credit line at the bottom of client sites (default "Easy Landing", this site)
 //   NETLIFY_TOKEN, SITES_DOMAIN           hosting: the site is created and deployed through the Netlify API (lib/hosting.mjs)
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
+//   BUILDER_SITE_URL                     this site's public address, for Grow's callback and return links (default service-pro-web.netlify.app)
+//   GEMINI_API_KEY, GEMINI_IMAGE_MODEL   optional: "ליצור תמונת רקע" (default gemini-2.5-flash-image)
 //   BUILDER_DAILY_MAX                    new drafts per day, all visitors together (default 40)
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
 //   GROW_USER_ID, GROW_PAGE_CODE        card payments and the monthly charge through Grow (lib/grow.mjs, lib/billing.mjs)
 //   PAY_URL_PRESENCE, PAY_URL_AI   fixed payment links, only without Grow; otherwise payment is arranged on WhatsApp
 //   BUILDER_AI_TIMEOUT_MS                how long one chat answer may take (default 25000)
-//   BUILDER_MODEL                        the chat's model (default claude-opus-5-5); claude-sonnet-5-5 or claude-haiku-5-5 answer faster
+//   BUILDER_MODEL                        the chat's model (default claude-sonnet-5-5); claude-opus-5-5 is slower, claude-haiku-5-5 faster
 //   BUILDER_EDIT_MESSAGES, BUILDER_EDIT_PUBLISHES   self edit: chat messages and publishes per site per month (60, 10)
 import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";

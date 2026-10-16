@@ -1,4 +1,4 @@
-// Grow (formerly Meshulam): card payments and the invoice for each one, through the "light server" API.
+// Grow (formerly Meshulam): card payments and the receipt (קבלה, the business is an עוסק פטור) for each one, through the "light server" API.
 //   GROW_USER_ID     the business's userId at Grow
 //   GROW_PAGE_CODE   the payment page's pageCode (a regular page, with card token saving allowed)
 //   GROW_API_KEY     optional, only for accounts Grow gave one

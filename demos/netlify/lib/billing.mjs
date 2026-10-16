@@ -5,7 +5,7 @@
 // added too, and the hourly check makes it the main address once its DNS points here. From then on the monthly
 // (or yearly) payment is charged on the token by the daily run (functions/billing.mjs). A refused card is tried
 // again after 3 days, the owner sees "לעדכן כרטיס" in the builder, and after 4 refusals the lead system pauses
-// (the page stays). Cancelling: 30 days' notice, then no more charges. כפיר gets a WhatsApp alert at every step
+// (the page stays). Cancelling: no notice, what was paid runs to its end, then no more charges. כפיר gets a WhatsApp alert at every step
 // that needs him, and never for one that went well by itself, except a new paid site.
 import { db, q, clip, israeliPhone } from "./leads.mjs";
 import { growOn, createPayment, processInfo, chargeToken } from "./grow.mjs";
