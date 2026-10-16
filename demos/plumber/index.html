@@ -9,7 +9,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0b3340">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Noto+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <link rel="stylesheet" href="oren.css">
 <style>
@@ -80,6 +80,84 @@
     .phone-col::before { inset-inline: -16px; }
     .avail-try { padding: 12px 14px; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: limescale with a breath of copper and cold-line blue, big tight type, the work video in a
+     large rounded frame under the copper pipe and its gauge, glass cards over it built from this page's own facts
+     (24/7 calls, the first three prices, what the chat does), the red main button glowing.
+     Signature: the needle climbs to 3 bar, then one drop forms at the pipe's joint and falls once. */
+  .hero { color: var(--ink); background-color: var(--limescale);
+    background-image: radial-gradient(52% 62% at 8% 12%, rgba(234,168,119,.30), transparent 70%), radial-gradient(46% 58% at 96% 2%, rgba(35,112,179,.13), transparent 70%), radial-gradient(40% 50% at 30% 100%, rgba(15,67,83,.08), transparent 70%); }
+  .hero::after { display: none; }
+  .hero .logo { color: var(--ink); }
+  .hero .bar nav a { color: var(--ink-soft); } .hero .bar nav a:hover { color: var(--ink); border-color: var(--copper); }
+  .hero .live { background: rgba(255,255,255,.78); color: var(--ink); box-shadow: inset 0 0 0 1px var(--grout), inset 0 1px 0 rgba(255,255,255,.6); }
+  .hero .live i { background: #1f9e6b; }
+  .hero .kicker { color: var(--copper-deep); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
+  .hero h1 em { color: var(--copper-deep); }
+  .hero .lead { color: var(--ink-soft); }
+  .hero .btn-hot { box-shadow: 0 18px 34px -14px rgba(200,48,42,.7), 0 2px 6px -2px rgba(200,48,42,.45), inset 0 1px 0 rgba(255,255,255,.22); }
+  .hero .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--grout), 0 10px 24px -18px rgba(11,51,64,.5); }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--copper-deep), 0 10px 24px -18px rgba(11,51,64,.5); }
+  .hero .meter { border-top-color: var(--grout); }
+  .hero .cell small { color: var(--ink-soft); }
+  .hero .odo { box-shadow: inset 0 0 0 1px rgba(234,168,119,.55), 0 10px 20px -12px rgba(11,51,64,.6); }
+  .hero .avail-try { background: rgba(255,255,255,.72); box-shadow: inset 0 0 0 1px var(--grout), inset 0 1px 0 rgba(255,255,255,.6), 0 24px 44px -34px rgba(11,51,64,.55); }
+  .hero .avail-try .live { color: var(--ink); background: transparent; box-shadow: none; }
+  .hero .try { color: var(--ink-soft); }
+  .hero .try button { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1px var(--grout); }
+  .hero .try button:hover { box-shadow: inset 0 0 0 1.5px var(--deepwater); }
+  .hero .try button[aria-pressed="true"] { background: var(--deepwater); color: #fff; box-shadow: none; }
+
+  /* the visual: the pipe and its gauge run over a large rounded frame, glass cards float on it */
+  .rig { --g: 116px; --top: 24%; width: min(100%, 520px); aspect-ratio: 1 / 1.02; padding: 0; margin: 44px 0 0; align-self: center; }
+  .reel { position: absolute; top: var(--top); inset-inline-start: 4%; inset-inline-end: 17%; bottom: 7%; }
+  .reel-frame { height: 100%; aspect-ratio: auto; border-radius: 34px; box-shadow: 0 0 0 1px rgba(142,68,25,.16), 0 54px 90px -48px rgba(11,51,64,.7), 0 18px 34px -26px rgba(142,68,25,.35); }
+  .reel figcaption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; }
+  .rig-pipe { top: calc(var(--top) - 30px); inset-inline-start: 0; inset-inline-end: 6%; box-shadow: 0 10px 16px -8px rgba(92,42,14,.55); }
+  .gauge { inset-inline-end: 3%; top: calc(var(--top) - 22px - var(--g) * 1.18); filter: drop-shadow(0 14px 18px rgba(92,42,14,.38)); }
+  .drip { position: absolute; z-index: 2; top: calc(var(--top) - 15px); inset-inline-start: 22%; width: 11px; height: 15px; margin-inline-start: 1px; opacity: 0; pointer-events: none;
+    border-radius: 50% 50% 50% 50% / 62% 62% 40% 40%; background: radial-gradient(circle at 38% 62%, #fff 0 14%, transparent 16%), linear-gradient(#8cc3e8, var(--cold-line));
+    box-shadow: 0 3px 6px -2px rgba(35,112,179,.6); transform-origin: 50% 0; animation: drip 1.5s cubic-bezier(.5,0,.75,0) 2.1s 1 both; }
+  @keyframes drip { 0% { opacity: 0; transform: translateY(-4px) scale(.2); } 30% { opacity: 1; transform: translateY(0) scale(.9, 1); }
+    55% { opacity: 1; transform: translateY(2px) scale(.85, 1.1); } 92% { opacity: 1; transform: translateY(46px) scale(.8, 1.15); } 100% { opacity: 0; transform: translateY(54px) scale(1.4, .3); } }
+
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; padding: 14px 16px; color: var(--ink); font-size: 14px; line-height: 1.35;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 28px 50px -28px rgba(11,51,64,.6), 0 6px 14px -10px rgba(142,68,25,.3);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-day { top: calc(var(--top) + 26px); inset-inline-start: -4%; display: grid; gap: 3px; animation-delay: .15s; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: #1f9e6b; box-shadow: 0 0 0 4px rgba(31,158,107,.16); }
+  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .g-day small { font-size: 12.5px; color: var(--ink-soft); }
+  .g-price { bottom: 0; inset-inline-end: 0; width: min(270px, 62%); padding: 14px 16px 10px; animation-delay: .3s; }
+  .g-price header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-bottom: 8px; margin-bottom: 2px; border-bottom: 1.5px solid var(--ink); }
+  .g-price header b { font: 800 15px/1.2 "Rubik", var(--body); }
+  .g-price header span { font-size: 11.5px; color: var(--ink-soft); }
+  .g-price ul { list-style: none; margin: 0; padding: 0; }
+  .g-price li { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-top: 1px dashed var(--grout); }
+  .g-price li:first-child { border-top: 0; }
+  .g-price li i { flex: none; width: 4px; height: 18px; border-radius: 2px; background: var(--sewer-line); }
+  .g-price li i.cold { background: var(--cold-line); } .g-price li i.hot { background: var(--hot-line); }
+  .g-price li span { flex: 1; min-width: 0; }
+  .g-price li b { font-weight: 700; color: var(--copper-deep); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .g-chat { top: 44%; inset-inline-end: -5%; width: min(50%, 232px); display: grid; gap: 6px; padding: 12px; animation-delay: .45s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: var(--bot-them); justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--deepwater); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 980px) { .rig { width: min(100%, 460px); margin: 40px auto 8px; } }
+  @media (max-width: 620px) {
+    .rig { --g: 92px; --top: 21%; width: 100%; aspect-ratio: 1 / 1.1; margin-top: 30px; }
+    .reel { inset-inline-start: 6%; inset-inline-end: 6%; bottom: 13%; }
+    .reel-frame { border-radius: 28px; }
+    .g-chat { display: none; }
+    .g-day { inset-inline-start: 0; top: calc(var(--top) + 18px); padding: 11px 13px; }
+    .g-price { width: 68%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; } .drip { display: none; } }
+  html.a11y-still .glass { animation: none; transition: none; } html.a11y-still .drip { display: none; }
 </style>
 </head>
 <body>
@@ -129,6 +207,17 @@
         </div>
         <figcaption class="mono">צילום מהשטח · חיתוך צינור לפני התקנה</figcaption>
       </figure>
+      <span class="drip" aria-hidden="true"></span>
+      <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלים קריאות</span><b>24/7</b><small>חדרה, עמק חפר והשרון</small></div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">יש נזילה מתחת לכיור, מה עושים?</p><p class="a">ספרו לי מה רואים, אפשר גם תמונה. הפרטים מגיעים אליי לוואטסאפ.</p></div>
+      <div class="glass g-price" aria-label="מחירון לדוגמה">
+        <header><b>מחירון פתוח</b><span>להמחשה</span></header>
+        <ul>
+          <li><i aria-hidden="true"></i><span>סתימה</span><b>250 עד 450 ₪</b></li>
+          <li><i class="cold" aria-hidden="true"></i><span>נזילה</span><b>300 עד 650 ₪</b></li>
+          <li><i class="hot" aria-hidden="true"></i><span>דוד חשמל או שמש</span><b>350 עד 2,800 ₪</b></li>
+        </ul>
+      </div>
     </div>
     <div class="hero-b">
       <div class="meter">
@@ -449,5 +538,20 @@
   });
 </script>
 <script>Guides.load("../shared/guides/plumber.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });</script>
+<script>
+  /* the glass cards lean a little with the pointer: desktop with a fine pointer only, never for reduced motion or a11y-still */
+  (() => {
+    const rig = document.querySelector(".rig"); if (!rig || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const cards = [...rig.querySelectorAll(".glass")], depth = [10, 16, 7];
+    const off = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    let raf = 0, x = 0, y = 0;
+    const paint = () => { raf = 0; cards.forEach((c, i) => { c.style.setProperty("--px", (x * depth[i]).toFixed(1) + "px"); c.style.setProperty("--py", (y * depth[i]).toFixed(1) + "px"); }); };
+    const hero = document.querySelector(".hero");
+    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse" || off()) return; const r = rig.getBoundingClientRect();
+      x = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)); y = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / r.height)); if (!raf) raf = requestAnimationFrame(paint); });
+    hero.addEventListener("pointerleave", () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); });
+    document.addEventListener("a11y-still", () => { x = y = 0; paint(); });
+  })();
+</script>
 </body>
 </html>

@@ -9,7 +9,7 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#16232c">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: an aluminium roller shutter on a living-room window: the slats with their little light slots, the box above with
@@ -246,6 +246,70 @@
   }
   html.a11y-still .hero::after, html.a11y-still .win .note { animation: none; }
   html.a11y-still .win .roll { animation: none; transform: translateY(-236px); }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: plaster with a breath of the strap's green and the daylight, big tight type, the drawn shutter in a
+     rounded frame (it still rolls up once) and glass cards over it (the kinds of shutters, the first jobs on the price list, the chat),
+     the main button glowing. */
+  .hero { background: var(--wall); color: var(--ink);
+    background-image: radial-gradient(55% 65% at 8% 12%, rgba(159,207,230,.45), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(13,107,99,.12), transparent 70%); }
+  .hero::after { background: repeating-linear-gradient(-24deg, transparent 0 34px, rgba(13,107,99,.035) 34px 52px); }
+  .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); column-gap: 56px; align-items: center; }
+  .kicker { color: var(--ink-soft); }
+  .kicker .now { color: var(--strap); font-weight: 700; }
+  .kicker .now i { background: repeating-linear-gradient(180deg, var(--strap) 0 2px, transparent 2px 4px); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
+  .hero h1 em { font-family: "Rubik", var(--body); font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.2; color: var(--ink-soft); }
+  .hero h1 em b { color: var(--strap); font-weight: 800; }
+  .lede { color: var(--ink-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-day { background: var(--strap); color: #fff; box-shadow: 0 16px 32px -14px rgba(13,107,99,.8), 0 2px 6px -2px rgba(13,107,99,.45); }
+  .hero .btn-day:hover { background: var(--strap-deep); }
+  .hero .btn-day:focus-visible { outline-color: var(--ink); }
+  .hero .btn-ghost { background: #fff; color: var(--ink); border: 0; box-shadow: inset 0 0 0 1.5px #c6cfd5; }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--strap); }
+  .hero .btn-ghost:focus-visible { outline-color: var(--strap); }
+  .facts { border-top: 1px solid #c6cfd5; padding-top: 22px; }
+  .facts div { border-inline-start-color: #c6cfd5; }
+  .facts dt { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--strap); }
+  .facts dd { color: var(--ink-soft); }
+  .win { align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .win .frame-l { position: absolute; inset: 3% 5% 3% 31%; border-radius: 34px; overflow: hidden; background: #e9eef2;
+    box-shadow: 0 0 0 1px #c6cfd5, 0 50px 90px -46px rgba(22,35,44,.6); }
+  .win .frame-l svg { width: 100%; height: 100%; }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,35,44,.55), 0 4px 12px -6px rgba(13,107,99,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-area { top: 6%; inset-inline-end: 0; display: grid; gap: 3px; }
+  .g-area span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-area span svg { width: 16px; height: 14px; flex: none; }
+  .g-area b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--ink); }
+  .win .note { top: 38%; inset-inline-end: 0; width: min(54%, 240px); display: grid; gap: 6px; border-radius: 20px; padding: 14px 16px; font-size: inherit; line-height: 1.4;
+    background: rgba(255,255,255,.82); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,35,44,.55), 0 4px 12px -6px rgba(13,107,99,.18); animation: lift .8s cubic-bezier(.2,.7,.2,1) both .3s; }
+  .note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .note .q { background: #edf1f4; justify-self: end; border-end-end-radius: 4px; }
+  .note .a { background: var(--strap); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 0; width: min(300px, 64%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #c6cfd5; font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--strap); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .win .note { width: min(62%, 220px); }
+  }
+  @media (max-width: 640px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; }
+    .hero h1 { font-size: clamp(42px, 11vw, 52px); }
+    .hero h1 em { font-size: 21px; }
+    .win { margin-top: 30px; max-width: 390px; }
+    .win .note { display: none; }
+    .win { aspect-ratio: 1 / .96; }
+    .win .frame-l { inset: 0 34% 0 2%; border-radius: 28px; }
+    .g-area { top: 9%; inset-inline-end: auto; inset-inline-start: 0; }
+    .g-jobs { bottom: 7%; width: 64%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; translate: none; } }
+  html.a11y-still .glass { animation: none; transition: none; translate: none; }
 </style>
 </head>
 <body>
@@ -278,7 +342,7 @@
     </dl>
 
     <div class="win" aria-hidden="true">
-      <svg viewBox="0 0 360 520" fill="none">
+      <div class="frame-l"><svg viewBox="0 0 360 520" fill="none" preserveAspectRatio="xMidYMid slice">
         <defs>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fcfe6"/><stop offset="1" stop-color="#e3f1f7"/></linearGradient>
           <linearGradient id="slatg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f6"/><stop offset=".55" stop-color="#cfd7dd"/><stop offset="1" stop-color="#a3afb9"/></linearGradient>
@@ -309,8 +373,10 @@
         <rect x="341" y="56" width="8" height="246" fill="#8a7d70"/>
         <rect x="333" y="296" width="24" height="56" rx="5" fill="#f1f4f6" stroke="#8c99a3" stroke-width="2"/>
         <rect x="340" y="308" width="10" height="20" rx="2" fill="#56636d"/>
-      </svg>
-      <div class="note"><span class="mono"><span>בני · תריסים</span><span class="ltr">07:46</span></span>קיבלתי את התמונה. <b>מגיע היום</b> עם רצועה חדשה.</div>
+      </svg></div>
+      <div class="glass g-area"><span><svg viewBox="0 0 16 14" fill="none"><rect x=".5" y=".5" width="15" height="3" rx="1" fill="#0d6b63"/><path d="M2 6h12M2 9h12M2 12h12" stroke="#0d6b63" stroke-width="1.6" stroke-linecap="round"/></svg>סוגי תריסים</span><b>ידני · חשמלי · ממ״ד</b></div>
+      <div class="glass note"><p class="q">התריס נתקע למטה, אפשר להגיע?</p><p class="a">שלחו תמונה בצ׳אט. אני חוזר עם זמן הגעה ומחיר סגור.</p></div>
+      <div class="glass g-jobs"><span class="h">מחירון לדוגמה · לתריס</span><div><b>תריס תקוע</b><span>250 עד 450 ₪</span></div><div><b>החלפת רצועה</b><span>180 עד 350 ₪</span></div><div><b>תריס חשמלי</b><span>350 עד 750 ₪</span></div></div>
     </div>
   </div>
 </header>
@@ -518,6 +584,25 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/shutters.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+<script>
+  /* The glass cards drift a few pixels with a fine pointer; never for touch, reduced motion or "עצירת תנועה". */
+  (() => {
+    const hero = document.querySelector(".hero"), cards = hero ? hero.querySelectorAll(".glass") : [];
+    if (!cards.length || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    let x = 0, y = 0, raf = 0;
+    const paint = () => { raf = 0; cards.forEach((c, i) => { const k = 4 + i * 3; c.style.setProperty("--px", (x * k).toFixed(1) + "px"); c.style.setProperty("--py", (y * k).toFixed(1) + "px"); }); };
+    hero.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || still()) return;
+      const r = hero.getBoundingClientRect();
+      x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5;
+      if (!raf) raf = requestAnimationFrame(paint);
+    });
+    const reset = () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); };
+    hero.addEventListener("pointerleave", reset);
+    document.addEventListener("a11y-still", reset);
+  })();
 </script>
 </body>
 </html>

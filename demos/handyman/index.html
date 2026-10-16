@@ -8,7 +8,7 @@
 <meta name="description" content="תליית טלוויזיה, הרכבת רהיטים, מדפים ותיקונים קטנים בחדרה, עמק חפר והשרון. שולחים את הרשימה בצ׳אט, ועושים הכול בביקור אחד.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,400..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,400..900&family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the green enamel toolbox, lid open, its trays sorted by job; next to it the list from the fridge.
@@ -226,6 +226,71 @@
     .head { margin-bottom: 22px; }
   }
   @media (prefers-reduced-motion: reduce) { .tray .lift, .btn { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: zinc with a breath of enamel green and safety orange, big tight type, the work photo in a rounded
+     frame and glass cards over it (the fridge list, the first prices, the chat), the main button glowing in enamel. */
+  .hero { background: var(--galvanized); color: var(--graphite); background-size: auto;
+    background-image: radial-gradient(55% 65% at 8% 12%, rgba(31,92,65,.16), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(240,97,43,.12), transparent 70%); }
+  .logo b { color: var(--enamel); } .logo span { color: var(--graphite-soft); }
+  .bar a { color: var(--enamel); }
+  .where { color: var(--enamel); }
+  .hero h1 { font-family: "Rubik", var(--body); font-stretch: normal; font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--graphite); }
+  .hero h1 em { background: none; color: var(--enamel); padding: 0; margin-top: 0; transform: none; box-shadow: none; display: block; }
+  .hero .lead { color: var(--graphite-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-safety { background: var(--enamel); color: #fff; box-shadow: 0 16px 32px -14px rgba(31,92,65,.8), 0 2px 6px -2px rgba(31,92,65,.45); }
+  .hero .btn-safety:hover { background: var(--enamel-deep); }
+  .hero .btn-ghost { background: #fff; color: var(--graphite); box-shadow: inset 0 0 0 1.5px #cdd6d1; }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--enamel); }
+  .spec { border-top-color: #cdd6d1; }
+  .spec li + li { border-inline-start-color: #cdd6d1; }
+  .spec b { font-family: "Rubik", var(--body); font-stretch: normal; font-weight: 800; font-size: 30px; color: var(--enamel); }
+  .spec span { color: var(--graphite-soft); }
+  .stack { padding: 0; aspect-ratio: 1 / 1; max-width: 560px; justify-self: center; width: 100%; }
+  .shot { position: absolute; inset: 8% 2% 14% 16%; width: auto; margin: 0; padding: 0; transform: none; border-radius: 34px; overflow: hidden; background: #dfe6e2;
+    box-shadow: 0 0 0 1px #d3dcd7, 0 50px 90px -46px rgba(20,63,44,.6); }
+  .shot .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
+  .shot figcaption { display: none; }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(20,63,44,.6), 0 4px 12px -6px rgba(20,63,44,.2); padding: 14px 16px; color: var(--graphite);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .note.glass { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(300px, 60%); padding: 16px 18px 14px; transform: none; background-image: none; border-radius: 22px; animation-delay: .15s; }
+  .note::before { display: none; }
+  .note h2 { font-family: "Rubik", var(--body); font-stretch: normal; font-weight: 800; font-size: 19px; letter-spacing: -.01em; margin-bottom: 4px; }
+  .note li { min-height: 30px; font-size: 14.5px; }
+  .note .total { border-top-width: 1.5px; }
+  .note .total b { font-family: "Rubik", var(--body); font-stretch: normal; font-weight: 800; font-size: 19px; color: var(--enamel); }
+  .g-price { top: 0; inset-inline-end: 0; width: min(240px, 46%); display: grid; gap: 2px; }
+  .g-price span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--graphite-soft); margin-bottom: 4px; }
+  /* the signature moment: a small spirit level, its bubble drifts and settles in the middle once */
+  .lvl { width: 46px; height: 14px; flex: none; overflow: visible; }
+  .lvl .lv-body { fill: var(--graphite); } .lvl .lv-end { fill: var(--safety); } .lvl .lv-vial { fill: #a9ddd2; } .lvl .lv-mark { stroke: var(--graphite); stroke-width: 1.2; } .lvl .lv-bub { fill: #f4fbf9; }
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.a11y-still) .lvl { animation: lvl-tilt 1.5s .7s cubic-bezier(.3,1.3,.5,1) both; transform-origin: 50% 50%; }
+    html:not(.a11y-still) .lvl .lv-bub { animation: lvl-bub 1.5s .7s cubic-bezier(.3,1.5,.4,1) both; }
+  }
+  @keyframes lvl-tilt { from { transform: rotate(-5deg); } to { transform: none; } }
+  @keyframes lvl-bub { from { transform: translateX(-6px); } 60% { transform: translateX(1.2px); } to { transform: none; } }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.5; }
+  .g-price p { font-variant-numeric: tabular-nums; }
+  .g-price p b { font: 800 14px/1.5 "Rubik", var(--body); color: var(--graphite); white-space: nowrap; }
+  .g-chat { top: 38%; inset-inline-end: -1%; width: min(44%, 210px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e9f0ec; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--enamel); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 960px) { .stack { max-width: 480px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .stack { aspect-ratio: auto; }
+    .shot { position: relative; inset: auto; width: 100%; aspect-ratio: 4 / 3.4; margin: 0; padding: 0; }
+    .g-chat { display: none; }
+    .g-price { top: 12px; inset-inline-end: auto; inset-inline-start: 10px; width: min(236px, 66%); padding: 11px 13px; }
+    .g-price p { font-size: 13px; white-space: nowrap; } .g-price p b { font-size: 13px; }
+    .spec b { font-size: 22px; white-space: nowrap; }
+    .note.glass { position: relative; inset: auto; width: 90%; margin: -48px 0 0 auto; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -319,7 +384,9 @@
           <div class="ps" data-slot="hero" data-src="../shared/photos/handyman-work.webp" data-alt="הנדימן תולה מדף עם פלס ומקדחה" data-pos="60 40" data-icon="wrench" data-label="תמונה שלכם בעבודה"></div>
           <figcaption data-edit="hero-cap">מדף בסלון, חדרה · 30 דק׳</figcaption>
         </figure>
-        <div class="note" role="img" aria-label="רשימת סידורים לדוגמה: חמש עבודות קטנות, בערך שעתיים וארבעים דקות, בביקור אחד">
+        <div class="glass g-price" aria-hidden="true"><span><svg class="lvl" viewBox="0 0 46 14"><rect class="lv-body" x="0" y="1" width="46" height="12" rx="3"/><rect class="lv-end" x="0" y="1" width="5" height="12" rx="2"/><rect class="lv-end" x="41" y="1" width="5" height="12" rx="2"/><rect class="lv-vial" x="14" y="3.5" width="18" height="7" rx="3.5"/><ellipse class="lv-bub" cx="23" cy="7" rx="3.4" ry="2.2"/><path class="lv-mark" d="M19 3.5v7M27 3.5v7"/></svg>מחיר סגור לפני שמתחילים</span><p>מדפים ותמונות <b>150 עד 300 ₪</b></p><p>הרכבת רהיטים <b>200 עד 500 ₪</b></p><p>תליית טלוויזיה <b>250 עד 450 ₪</b></p></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">יש לי מדף, שידה וברז. אפשר בביקור אחד?</p><p class="a">כן. שלחו את הרשימה, ואחזור אליכם עם מחיר לפני שמתחילים.</p></div>
+        <div class="note glass" role="img" aria-label="רשימת סידורים לדוגמה: חמש עבודות קטנות, בערך שעתיים וארבעים דקות, בביקור אחד">
           <h2 aria-hidden="true">הרשימה על המקרר</h2>
           <ol aria-hidden="true">
             <li style="--i:0"><svg viewBox="0 0 22 22"><rect class="box" x="2" y="2" width="18" height="18" rx="3"/><path class="tick" d="M5 11.5 l4 4 L18 4"/></svg><span>מדף בסלון</span><span class="min">30 דק׳</span></li>
@@ -526,6 +593,19 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/handyman.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+  /* the glass cards follow a fine pointer by a few pixels; never on touch, reduced motion or a11y-still */
+  (() => {
+    const box = document.querySelector(".stack"), hero = box && box.closest(".hero");
+    if (!hero || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cards = [...box.querySelectorAll(".glass")], still = () => document.documentElement.classList.contains("a11y-still");
+    let x = 0, y = 0, raf = 0;
+    const apply = () => { raf = 0; cards.forEach((c, i) => { const d = still() ? 0 : 5 + i * 3; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; }); };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    const clamp = (v) => Math.max(-1, Math.min(1, v));
+    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; const r = box.getBoundingClientRect(); x = clamp((e.clientX - r.left - r.width / 2) / r.width); y = clamp((e.clientY - r.top - r.height / 2) / r.height); queue(); });
+    hero.addEventListener("pointerleave", () => { x = y = 0; queue(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; queue(); });
+  })();
 </script>
 </body>
 </html>

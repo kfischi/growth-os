@@ -8,7 +8,7 @@
 <meta name="description" content="תיקון, ניקוי והתקנת מזגנים בשרון ובמרכז. מתארים את התקלה בצ׳אט, והפרטים מגיעים לטכנאי בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the thermostat readout on the wall unit, and the Israeli summer outside the window.
@@ -216,6 +216,55 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .issue { transition: none; } .issue:hover { transform: none; } }
   html.a11y-still .issue { transition: none; }
   html.a11y-still .issue:hover { transform: none; }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: it still cools, but from a pale summer haze to chilled paper with a breath of ice.
+     Big tight type, the photo in a rounded frame and glass cards over it (the room's readout, sample prices, the chat),
+     the main button glowing. */
+  .hero { background: #fff3ee; background-image: radial-gradient(55% 65% at 8% 12%, rgba(255,198,178,.75), transparent 70%), radial-gradient(45% 55% at 95% 0%, rgba(255,143,112,.22), transparent 70%); color: var(--night); }
+  .hero::before { background: var(--chill); background-image: radial-gradient(55% 65% at 8% 12%, rgba(191,230,245,.9), transparent 70%), radial-gradient(45% 55% at 95% 0%, rgba(12,107,151,.13), transparent 70%); }
+  .bar .wa { color: var(--glacier); border-bottom-color: var(--glacier); }
+  .hero .kicker { color: var(--glacier); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--night); }
+  .hero h1 em { font-weight: 800; color: var(--glacier); }
+  .hero .lead { color: var(--night-soft); }
+  .hero .btn-night { background: var(--glacier); color: #fff; box-shadow: 0 16px 32px -14px rgba(12,107,151,.8), 0 2px 6px -2px rgba(12,107,151,.45); }
+  .hero .btn-night:hover { background: #0a5a80; }
+  .hero .btn-glass { background: #fff; color: var(--night); box-shadow: inset 0 0 0 1.5px #cfe3ec; backdrop-filter: none; }
+  .hero .btn-glass:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--glacier); }
+  .facts { color: var(--night-soft); padding-top: 22px; border-top: 1px solid #cfe3ec; }
+  .facts b { font-family: "Rubik", var(--body); font-weight: 800; color: var(--night); }
+  .visual { position: relative; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .frame { position: absolute; inset: 8% 2% 14% 16%; z-index: 1; border-radius: 34px; overflow: hidden; background: var(--ice); box-shadow: 0 0 0 1px #cfe3ec, 0 50px 90px -46px rgba(13,36,54,.6); }
+  .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; box-shadow: none; }
+  .frame .modes { top: 16px; bottom: auto; inset-inline: 16px auto; }
+  .glass { position: absolute; z-index: 3; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: 0 26px 50px -28px rgba(13,36,54,.55); padding: 14px 16px; color: var(--night); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-temp { top: 0; inset-inline-end: 0; display: grid; gap: 2px; min-width: 150px; }
+  .g-temp > span, .g-temp small { font-size: 13px; color: var(--night-soft); }
+  .g-temp small b { color: #a5462a; font-family: var(--display); font-weight: 600; }
+  .g-temp .temp { font-size: 64px; line-height: .95; margin: 0; letter-spacing: -.04em; text-align: start; direction: ltr; }
+  .g-price { bottom: 0; inset-inline-start: 0; width: min(276px, 58%); display: grid; gap: 0; animation-delay: .15s; }
+  .g-price > span { font-size: 13px; color: var(--night-soft); padding-bottom: 6px; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #cfe3ec; font-size: 14.5px; min-width: 0; }
+  .g-price i { font-style: normal; font-weight: 700; white-space: nowrap; color: var(--glacier); }
+  .g-chat { top: 33%; inset-inline-end: -1%; width: min(52%, 236px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e6f4fa; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--glacier); color: #fff; justify-self: start; border-end-start-radius: 4px; }
+  @media (max-width: 920px) { .readout.visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) { .g-chat { display: none; } .frame { inset: 12% 0 22% 8%; } .g-price { width: 76%; } .g-temp { min-width: 0; padding: 10px 14px; } .g-temp .temp { font-size: 48px; } .frame .modes { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+  /* the signature: a thermostat needle that settles from 38° to 24° with the hero's own --cool */
+  .g-read { display: flex; align-items: flex-end; gap: 10px; }
+  .gauge { width: 64px; height: 42px; flex: none; margin-bottom: 4px; }
+  .gauge .needle { transform-box: view-box; transform-origin: 32px 36px; transform: rotate(calc(75deg - var(--cool, 1) * 105deg)); }
+  .glass { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(12,64,92,.5); translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  .g-price > span { display: flex; align-items: center; gap: 6px; color: var(--glacier); font-weight: 700; }
+  .g-price i, .g-temp .temp, .facts b { font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) { .glass { transition: none; translate: none; } }
+  html.a11y-still .glass { transition: none; translate: none; }
 </style>
 </head>
 <body>
@@ -242,13 +291,14 @@
           <li>אחריות <b data-edit="f3">6 חודשים</b></li>
         </ul>
       </div>
-      <div class="readout">
-        <div class="temp" aria-hidden="true"><span id="temp">24</span><sup>°</sup></div>
-        <div class="photo">
+      <div class="readout visual">
+        <div class="photo frame">
           <figure class="ps" data-slot="hero" data-src="../shared/photos/ac-work.webp" data-alt="טכנאי מנקה פילטר במזגן עילי בסלון" data-pos="45 40" data-icon="snow" data-label="תמונה מעבודה"></figure>
           <div class="modes" aria-hidden="true"><span class="on">קירור</span><span>ייבוש</span><span>מאוורר</span><span>חימום</span></div>
         </div>
-        <div class="outside"><span>בחוץ: <b class="ltr">38°</b></span><span>בסלון, אחרי ניקוי: <b class="ltr">24°</b></span></div>
+        <div class="glass g-temp" aria-hidden="true" data-depth="1.2"><span>בסלון, אחרי ניקוי</span><div class="g-read"><div class="temp"><span id="temp">24</span><sup>°</sup></div><svg class="gauge" viewBox="0 0 64 42"><defs><linearGradient id="gaugeArc" x1="0" x2="1"><stop offset="0" stop-color="#0c6b97"/><stop offset=".55" stop-color="#7fc6e3"/><stop offset="1" stop-color="#ff8f70"/></linearGradient></defs><path d="M6 36A26 26 0 0 1 58 36" fill="none" stroke="url(#gaugeArc)" stroke-width="5" stroke-linecap="round"/><path d="M6 36h3M32 10v3M58 36h-3" stroke="#3d566a" stroke-width="1.5" stroke-linecap="round" opacity=".5"/><line class="needle" x1="32" y1="36" x2="32" y2="15" stroke="#0d2436" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="36" r="4" fill="#0d2436"/><circle cx="32" cy="36" r="1.5" fill="#fff"/></svg></div><small>בחוץ: <b class="ltr">38°</b></small></div>
+        <div class="glass g-price" aria-hidden="true" data-depth=".7"><span><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 1.5v13M2.4 4.75l11.2 6.5M2.4 11.25l11.2-6.5M6 2.8 8 4.6l2-1.8M6 13.2l2-1.8 2 1.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>מחירים לדוגמה</span><p><b>לא מקרר</b><i>350 עד 550 ₪</i></p><p><b>מטפטף מים</b><i>250 עד 380 ₪</i></p><p><b>ניקוי ותחזוקה</b><i>250 עד 350 ₪</i></p></div>
+        <div class="glass g-chat" aria-hidden="true" data-depth="1.6"><p class="q">המזגן בסלון מטפטף, אפשר טכנאי?</p><p class="a">כן. מתארים כאן את התקלה, והטכנאי חוזר אליכם לקבוע מועד.</p></div>
       </div>
     </div>
   </div>
@@ -437,6 +487,23 @@
     };
     raf = requestAnimationFrame(step);
     addEventListener("a11y-still", () => { cancelAnimationFrame(raf); end(); });
+  })();
+
+  // Glass cards drift a few pixels with a fine pointer on desktop. Transform only; off for touch, reduced motion and "עצירת תנועה".
+  (function tilt() {
+    const area = document.querySelector(".hero .visual");
+    if (!area || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const cards = [...area.querySelectorAll(".glass")], hero = document.getElementById("hero");
+    const off = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    let raf = 0, x = 0, y = 0;
+    const paint = () => { raf = 0; cards.forEach((c) => { const d = +c.dataset.depth || 1; c.style.setProperty("--px", (x * 7 * d).toFixed(1) + "px"); c.style.setProperty("--py", (y * 6 * d).toFixed(1) + "px"); }); };
+    hero.addEventListener("pointermove", (e) => {
+      if (off() || e.pointerType !== "mouse") return;
+      const r = area.getBoundingClientRect();
+      x = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)); y = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / r.height));
+      if (!raf) raf = requestAnimationFrame(paint);
+    });
+    hero.addEventListener("pointerleave", () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); });
   })();
 
   Estimate.init(document.querySelector("[data-estimate]"), {
