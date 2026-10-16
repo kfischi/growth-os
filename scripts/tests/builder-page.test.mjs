@@ -263,11 +263,11 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     if (w < 860) await p.click("#tabSite");
     await p.frameLocator("#frame").locator(".vclips.n1 figcaption", { hasText: "ניקוי מרזב בחדרה" }).waitFor({ timeout: 8000 });
     if (w < 860) await p.click("#tabChat");
-    // back to a photo at the top: the video steps aside and the draft shows the drawing (no photo yet)
+    // back to a photo at the top: the video steps aside and the draft shows the trade's sample photo, labelled (no photo yet)
     await p.click('#heroPick label:has(input[value=photo])');
     await p.waitForFunction(() => !document.querySelector("#heroPhoto").hidden, null, { timeout: 8000 });
     if (w < 860) await p.click("#tabSite");
-    await p.frameLocator("#frame").locator(".hero .drawing, .hero .seal").first().waitFor({ state: "attached", timeout: 8000 });
+    await p.frameLocator("#frame").locator(".hero.has-bg .sample-tag").waitFor({ state: "attached", timeout: 8000 });
     assert.equal(await p.frameLocator("#frame").locator(".reel").count(), 0);
     if (w < 860) await p.click("#tabChat");
     assert.equal(await overflow(), false);

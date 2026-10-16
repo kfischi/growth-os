@@ -466,6 +466,8 @@ export const LOOK_CSS = {
   .badge, .order, .live { border-radius: 18px; }
   .order { border-width: 1px; }
   .facts b { color: var(--deep); font-family: var(--display); font-weight: 700; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .arch { position: relative; justify-self: center; width: min(100%, 330px); aspect-ratio: 3 / 4; border-radius: 999px 999px 26px 26px;
     background: linear-gradient(175deg, var(--tint), color-mix(in srgb, var(--ps-a) 55%, var(--tint))); border: 1px solid var(--rule);
     display: grid; place-items: center; align-content: center; gap: 6px; }
@@ -487,6 +489,8 @@ export const LOOK_CSS = {
   .btn-ghost { border-color: var(--accent); color: var(--accent); }
   .badge, .live { border-radius: 999px; }
   .order { border-width: 1px; border-radius: 6px; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .menu-card { justify-self: center; width: min(100%, 430px); background: #fff; color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
     padding: 30px 30px 24px; box-shadow: 0 0 0 8px var(--tint), 0 30px 60px -40px rgba(0,0,0,.35); display: grid; gap: 4px; text-align: center; }
   .mc-head { font-size: 13px; letter-spacing: .2em; color: var(--accent); }
@@ -509,6 +513,8 @@ export const LOOK_CSS = {
   .btn { border-radius: 999px; }
   .hero .btn-signal { background: #fff; color: var(--deep); }
   .badge, .order, .live { border-radius: 16px; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .appt { justify-self: center; width: min(100%, 400px); background: #fff; color: var(--ink); border-radius: 22px; padding: 22px 24px 20px;
     box-shadow: 0 30px 60px -30px rgba(0,0,0,.55); display: grid; gap: 12px; }
   .ap-top { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--ink-soft); }

@@ -222,7 +222,8 @@ ai.queue.push({ reply: "יופי של סרטון.", set: [{ field: "video_title"
 r = await J(await req("chat", { body: { message: "העליתי סרטון", rev: D.rev } })); assert.equal(r.status, 200);
 assert.match(aiCallsState(), /"video":true/, "the chat knows there is a video"); assert.match(B.renderDraft(D), /צילום מהשטח · פתיחת סתימה במטבח/);
 r = await J(await req("video", { method: "DELETE" })); assert.equal(D.video, null); assert.equal(storage.size, stored);
-assert.match(B.renderDraft(D), /class="drawing"/);
+assert.match(B.renderDraft(D), /class="sample-tag"/, "without the video the draft shows the sample photo");
+assert.ok(!/sample-tag|shared\/photos/.test(P.render(SAMPLE, { mode: "site" })["index.html"]), "a published site never shows the sample");
 
 /* ---------------- up to 5 short videos: "סרטונים מהעבודה" ---------------- */
 const creq = (headers = {}) => req("clip", { raw: vbody(jpg, mp4), ip: "4.4.4.4", headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length), "x-video-size": "720x1280", ...headers } });
@@ -268,7 +269,7 @@ r = await J(await req("answer", { body: { hero: "video", rev: D.rev } })); asser
 /* ---------------- six work photos: the draft marks only the first three empty frames ---------------- */
 r = await J(await req("photo", { raw: webp, query: "?slot=work5", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 200);
 assert.deepEqual([D.photos.work5.w, D.photos.work5.h], [257, 257], "the photo's size, read from its header");
-html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>מעלים ב״תמונות״/, "an empty slot is marked in the draft");
+html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /eg-photo"><img src="\/shared\/photos\/plumber-drain\.webp"/, "an empty slot shows the trade's sample photo in the draft");
 assert.ok(!html.includes("עבודה 4<br>מעלים"), "slots 4 to 6 only once filled"); assert.match(html, /work5-[0-9a-f]+\.webp" alt="[^"]*" width="257" height="257" loading="lazy"/);
 assert.match(html, /<div class="details n4">/, "1, 2, 3 (empty frames) and 5");
 
@@ -597,7 +598,8 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const c = { ...t.emptyContent(), business_name: "אורן מים", trade: "אינסטלציה", area: "חדרה" };
   const page = t.render(c, { mode: "draft", assets: "/shared/", photos: { hero: "assets/photos/hero.webp" } })["index.html"];
   assert.ok(page.includes('class="hero has-bg"') && page.includes("--hero-img: url('assets/photos/hero.webp')"), "the hero shows the photo");
-  assert.ok(!t.render(c, { mode: "draft", assets: "/shared/" })["index.html"].includes('class="hero has-bg"'), "no photo, no background");
+  const bare = t.render(c, { mode: "draft", assets: "/shared/" })["index.html"];
+  assert.ok(bare.includes("--hero-img: url('/shared/photos/plumber-siphon.webp')") && bare.includes('class="sample-tag"'), "no photo of theirs: the trade's sample, labelled");
   assert.ok(t.PHOTOS.hero, "hero is a photo slot");
   delete process.env.GEMINI_API_KEY;
   assert.equal(lib.heroAI(), false, "no key, no button");
