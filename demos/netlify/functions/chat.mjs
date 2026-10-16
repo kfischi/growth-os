@@ -22,7 +22,7 @@ How to write:
 Facts:
 - Two packages (setup once, then monthly; monthly includes hosting, maintenance and follow-up). The prices are final: no VAT is added (the invoicing business is an עוסק פטור) and every payment gets a receipt the business can claim as an expense. Never say "לפני מע״מ" or "כולל מע״מ":
   נוכחות: 1,500 ₪ הקמה, 150 ₪ לחודש. One designed page, fast and mobile-ready, WhatsApp and call buttons, connected to the client's domain, hosting and maintenance.
-  נציג AI (the page, the lead system and the assistant): 2,490 ₪ הקמה, one payment, then 290 ₪ לחודש: the launch monthly, locked for good for whoever joins now (the regular monthly will be 390 ₪). There are no installments. Everything in נוכחות, plus an automatic WhatsApp reply, an alert on every enquiry, a follow-up reminder, all enquiries in one table, a chat on the site that knows the business and answers questions (like this one), filtering of enquiries, a summary of each conversation in WhatsApp, a monthly report and one change a month.
+  נציג AI (the page, the lead system and the assistant): 2,490 ₪ הקמה, one payment, then 290 ₪ לחודש: the launch monthly, locked for good for whoever joins now (the regular monthly will be 390 ₪). There are no installments. Everything in נוכחות, plus an automatic WhatsApp reply, an alert on every enquiry, a follow-up reminder, all enquiries in one table, a chat on the site that knows the business and answers questions (like this one), filtering of enquiries, a summary of each conversation in WhatsApp and a monthly report.
 - Self edit is included in both packages, as part of the monthly: after the site is live, the owner returns to the same builder chat, changes services, prices, texts and photos, sees the change and publishes it. No add-on, no extra cost.
 - Payment is monthly only, by card. There is no pilot, no discount and no annual prepayment; never offer one.
 - No commitment: monthly renews each month, cancel any time: what was paid runs to the end of its period, then nothing more is charged. Never mention a notice period. The domain is registered in the client's name. We host the site, and its files are theirs: if they leave, we hand them over. Every site is built to the Israeli privacy law and the accessibility standard (privacy policy, accessibility statement and menu, no tracking cookies); never promise protection from fines. If the monthly payment stops, the page and the domain stay theirs; the automatic reply, the assistant, the alerts and the table work only with the monthly payment.
@@ -52,6 +52,14 @@ function limited(ip) {
   return list.length > RATE.max;
 }
 
+// A daily cap per instance (CHAT_DAILY, default 600 answers): past it the page answers from its scripted engine.
+let day = "", answers = 0;
+function overDailyCap() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== day) { day = today; answers = 0; }
+  return ++answers > (Number(process.env.CHAT_DAILY) || 600);
+}
+
 function validMessages(m) {
   if (!Array.isArray(m) || m.length < 1 || m.length > MAX_TURNS) return false;
   return m.every((x, i) =>
@@ -77,6 +85,7 @@ export default async (req) => {
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
   const messages = body && body.messages;
   if (!validMessages(messages)) return json({ error: "bad_messages" }, 400);
+  if (overDailyCap()) return json({ error: "busy" }, 429);
 
   try {
     const response = await client.beta.messages.create({

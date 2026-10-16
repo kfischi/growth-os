@@ -41,7 +41,7 @@
 ### 1. Supabase
 
 1. פותחים פרויקט חדש ב-supabase.com בשם `lead-system`. אזור: Frankfurt (הכי קרוב).
-2. SQL Editor → מדביקים את כל `supabase/lead-system/0001_lead_system.sql` → Run. אחר כך באותה דרך `0002_site_builder.sql` (בונה האתרים) `0003_reports.sql` (ספירת כניסות ועדכון שבועי) `0005_lead_photos.sql` (תמונה עם הפנייה) `0006_links.sql` (קישורים לשיתוף) `0007_availability.sql` ("זמינים עכשיו") `0008_callback.sql` (מתי לחזור) ו-`0009_reviews.sql` (בקשה לביקורת). אפשר להריץ כל קובץ שוב בלי נזק.
+2. SQL Editor → מדביקים את כל `supabase/lead-system/0001_lead_system.sql` → Run. אחר כך באותה דרך, לפי הסדר, כל הקבצים עד `0019`: `0002_site_builder.sql` (בונה האתרים) `0003_reports.sql` (ספירת כניסות ועדכון שבועי) `0004_self_edit.sql` (עריכה עצמית) `0005_lead_photos.sql` (תמונה עם הפנייה) `0006_links.sql` (קישורים לשיתוף) `0007_availability.sql` ("זמינים עכשיו") `0008_callback.sql` (מתי לחזור) `0009_reviews.sql` (בקשה לביקורת) `0010_testimonials.sql` (המלצות) `0011_wa_agent.sql` (העוזר בוואטסאפ) `0012_hosting.sql` (אחסון אוטומטי) `0013_stats.sql` (סטטיסטיקות) `0014_urgent.sql` (מצב חירום) `0015_job_value.sql` (שווי עבודה) `0016_owner_notes.sql` (בעל העסק מלמד את הצ׳אט) `0017_billing.sql` (תשלום ומנוי) `0018_terms.sql` (אישור התנאים) ו-`0019_videos.sql` (סרטונים מהעבודה). הקוד מניח שכולם רצו. אפשר להריץ כל קובץ שוב בלי נזק.
 3. Project Settings → API Keys: מעתיקים את ה-Project URL ואת ה-**secret key** (`sb_secret_...`).
 
 ה-secret key פותח את כל הטבלאות. הוא נכנס רק ל-Netlify. לא לצ׳אט, לא למייל ולא לריפו.
@@ -60,6 +60,10 @@ Site configuration → Environment variables:
 | `WA_TOKEN_<SLUG>` | טוקן הגישה של כל עסק (שלב 4). למשל `WA_TOKEN_OREN_MAYIM` |
 | `ANTHROPIC_API_KEY` | כבר נדרש לצ׳אט בדף הבית |
 | `HEALTH_KEY` | מחרוזת אקראית. נכנסת לכתובת של בדיקת התקינות (שלב 4 למטה) |
+| `WA_TOKEN` | לא חובה. טוקן ברירת מחדל לעסק שאין לו `WA_TOKEN_<SLUG>` |
+| `WA_GRAPH_VERSION` | לא חובה. גרסת ה-Graph API של Meta (ברירת מחדל `v23.0`) |
+| `CHAT_MODEL`, `ESTIMATE_MODEL`, `AGENT_MODEL` | לא חובה. המודל של הצ׳אטים, של המבט הראשון בתמונה ושל העוזר בוואטסאפ (ברירת מחדל `claude-opus-5-5`) |
+| `DEMO_CHAT_DAILY` | לא חובה. תקרה יומית לנציג החי בדמו האינסטלטור (ברירת מחדל 400) |
 
 מחרוזת אקראית: `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`.
 
@@ -120,7 +124,7 @@ node scripts/lead-system/new-client.mjs oren-mayim "אורן מים" 052-1234567
 
 מספר שכבר עובד באפליקציית WhatsApp Business: Meta מאפשרת היום לחבר אותו ל-Cloud API ולהמשיך לענות מהאפליקציה (Coexistence). זה עובר דרך תהליך הרשמה של ספק מורשה. לבדוק בלקוח הראשון אם זה זמין לנו. אם לא, משתמשים במספר נפרד לעסק.
 
-### 3. חמש תבניות לאישור ב-Meta
+### 3. התבניות לאישור ב-Meta (ארבע חובה, שלוש לפי מה שמודלק)
 
 WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. שפה: **Hebrew** (`he`). השמות בדיוק כמו כאן:
 

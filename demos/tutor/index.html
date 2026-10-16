@@ -316,8 +316,8 @@
         <div class="exam-top"><span>שם התלמיד: <i>&nbsp;</i></span><span>כיתה: <i>&nbsp;</i></span><span>יח״ל: 3 / 4 / <span class="circ">5</span></span></div>
         <button class="q" data-level="יסודי"><span class="n">שאלה 1</span><span><b>יסודי</b><span class="d">שברים, אחוזים, בעיות מילוליות. באנגלית: קריאה, אוצר מילים ושיעורי בית.</span></span><span class="score">שיעור<strong>140 עד 160 ₪</strong></span></button>
         <button class="q" data-level="חטיבת ביניים"><span class="n">שאלה 2</span><span><b>חטיבת ביניים</b><span class="d">משוואות, אלגברה וגאומטריה. הכנה למבחן לפני ההקבצה.</span></span><span class="score">שיעור<strong>150 עד 180 ₪</strong></span></button>
-        <button class="q" data-level="תיכון: 3 יח״ל"><span class="n">שאלה 3</span><span><b>תיכון, 3 יח״ל</b><span class="d">תרגול שאלות מבגרויות קודמות, לפי השאלון שלכם.</span></span><span class="score">שיעור<strong>160 עד 190 ₪</strong></span></button>
-        <button class="q" data-level="תיכון: 4 או 5 יח״ל"><span class="n">שאלה 4</span><span><b>תיכון, 4 או 5 יח״ל</b><span class="d">חדו״א, טריגונומטריה, וקטורים והסתברות. שאלון אחרי שאלון.</span></span><span class="score">שיעור<strong>180 עד 220 ₪</strong></span></button>
+        <button class="q" data-level="תיכון, 3 יח״ל"><span class="n">שאלה 3</span><span><b>תיכון, 3 יח״ל</b><span class="d">תרגול שאלות מבגרויות קודמות, לפי השאלון שלכם.</span></span><span class="score">שיעור<strong>160 עד 190 ₪</strong></span></button>
+        <button class="q" data-level="תיכון, 4 או 5 יח״ל"><span class="n">שאלה 4</span><span><b>תיכון, 4 או 5 יח״ל</b><span class="d">חדו״א, טריגונומטריה, וקטורים והסתברות. שאלון אחרי שאלון.</span></span><span class="score">שיעור<strong>180 עד 220 ₪</strong></span></button>
         <button class="q" data-subject="אנגלית"><span class="n">שאלה 5</span><span><b>אנגלית לבגרות</b><span class="d">הבנת הנקרא, כתיבה והכנה לבחינה בעל פה.</span></span><span class="score">שיעור<strong>160 עד 220 ₪</strong></span></button>
         <div class="exam-foot"><span><b>הכנה לבגרות:</b> חבילת שיעורים, לפי מספר השיעורים עד הבחינה.</span><span><b>שיעור כפול:</b> 90 דקות, לפני מבחן.</span></div>
       </div>
@@ -382,7 +382,7 @@
                 <span class="ph-day">היום</span>
                 <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מורה פרטית)
 מקצוע: מתמטיקה
-שכבה: תיכון: 4 או 5 יח״ל
+שכבה: תיכון, 4 או 5 יח״ל
 מטרה: בגרות
 איפה: בבית שלנו
 שם: רותם לוי
@@ -400,7 +400,7 @@
 <footer>
   <div class="wrap row">
     <span>נועה שגיא · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
   </div>
 </footer>
 
@@ -411,7 +411,7 @@
   PhotoSlots.init({ page: "tutor" });
   // the hero photo is the first thing on screen: load it at once, not lazily
   document.querySelectorAll(".frame .ps-img").forEach((i) => { i.loading = "eager"; i.fetchPriority = "high"; i.width = 625; i.height = 768; });
-  const RANGES = { "יסודי": "140 עד 160", "חטיבת ביניים": "150 עד 180", "תיכון: 3 יח״ל": "160 עד 190", "תיכון: 4 או 5 יח״ל": "180 עד 220" };
+  const RANGES = { "יסודי": "140 עד 160", "חטיבת ביניים": "150 עד 180", "תיכון, 3 יח״ל": "160 עד 190", "תיכון, 4 או 5 יח״ל": "180 עד 220" };
   const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "נועה · מורה פרטית", subtitle: "מתמטיקה ואנגלית", initial: "נ", launcher: "לבדוק שיעור", hint: "נציג AI",

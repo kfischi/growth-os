@@ -7,7 +7,7 @@
 //   POST /api/builder-admin { action: "domain",  id, domain }    the client's own domain: added now, the main address once its DNS points here
 //   POST /api/builder-admin { action: "self_edit", id, on }      the owner may change the live site in the chat (0004_self_edit.sql)
 //   POST /api/builder-admin { action: "delete",  id }
-import { json, configured, authorise, db, q, clip } from "../lib/leads.mjs";
+import { json, configured, authorise, db, q, clip, rateLimiter, clientIp } from "../lib/leads.mjs";
 import { hostingOn, cleanDomain, addDomain, dnsSteps } from "../lib/hosting.mjs";
 import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia, publishDraft, PublishError, versionPatch } from "../lib/builder.mjs";
 
@@ -26,12 +26,21 @@ function view(d) {
   };
 }
 
+// Wrong admin keys: after 20 from one IP in 10 minutes, that IP waits 10 minutes (per function instance).
+const wrongKey = rateLimiter(20, 10 * 60 * 1000);
+const lockedOut = new Map();
+
 export default async (req) => {
   const origin = req.headers.get("origin");
   if (origin) { try { if (new URL(origin).host !== new URL(req.url).host) return json({ error: "forbidden" }, 403); } catch { return json({ error: "forbidden" }, 403); } }
   if (!configured()) return json({ error: "not_configured" }, 503);
+  const ip = clientIp(req);
+  if ((lockedOut.get(ip) || 0) > Date.now()) return json({ error: "rate_limited" }, 429);
   const who = await authorise(req).catch(() => null);
-  if (!who || !who.admin) return json({ error: "unauthorised" }, 401);
+  if (!who || !who.admin) {
+    if (wrongKey(ip)) { lockedOut.set(ip, Date.now() + 10 * 60 * 1000); if (lockedOut.size > 5000) lockedOut.clear(); }
+    return json({ error: "unauthorised" }, 401);
+  }
 
   try {
     if (req.method === "GET") {
