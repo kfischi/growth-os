@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/renovation-drywall.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the kitchen wall itself, before and after: the same elevation drawn twice, raw and finished.
@@ -243,68 +244,66 @@
     .site .frame .mark { inset-inline-end: 0; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .proj svg { transition: none; } }
-  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top turns light: fresh plaster with a breath of glazed green, big tight type, the drawn kitchen wall in a large
-     rounded frame (its line still sweeps once and stays draggable) and glass cards at its edges (the written schedule,
-     the chat, the sample ranges), the main button glowing in glaze green. Signature: the laser level draws its line
-     under "לוח זמנים" once, like the beam hitting the wall. */
+  /* ---------- Smart luxury, photo first (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: fresh plaster with a breath of glazed green, big tight type, the photo from the site in a large
+     rounded frame and glass cards over it (the written schedule, the chat, the sample ranges), the main button glowing
+     in glaze green. The drawn kitchen wall, before and after, moves to its own band right under the top. */
   .hero { background: var(--plaster);
     background-image: radial-gradient(55% 65% at 8% 14%, rgba(29,92,88,.15), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(164,111,66,.08), transparent 70%), linear-gradient(180deg, #f8faf8, var(--plaster) 80%); }
+  .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); padding-block: 20px 72px; }
   .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--graphite); }
   .hero h1 em { color: var(--glaze); }
-  .hero h1 em::after { bottom: -.04em; transform-origin: right center; animation: beam .9s .35s cubic-bezier(.6,0,.2,1) both; }
-  .hero h1 em::before { content: ""; position: absolute; bottom: calc(-.04em - 3px); inset-inline-end: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--laser);
-    box-shadow: 0 0 0 4px rgba(23,184,103,.22), 0 0 12px 2px rgba(23,184,103,.7); animation: dot .9s .35s cubic-bezier(.6,0,.2,1) both; }
-  @keyframes beam { from { transform: scaleX(0); } }
-  @keyframes dot { 0% { inset-inline-end: 100%; opacity: 0; } 15% { opacity: 1; } }
+  .hero h1 em::after { bottom: -.04em; }
   .btn { border-radius: 999px; }
   .hero .btn-glaze { box-shadow: 0 16px 32px -14px rgba(19,63,60,.75), 0 2px 6px -2px rgba(19,63,60,.4); }
   .hero .btn-line { background: #fff; border: 0; box-shadow: inset 0 0 0 1.5px var(--seam); }
   .hero .btn-line:hover { background: #fff; color: var(--graphite); box-shadow: inset 0 0 0 1.5px var(--glaze); }
   .terms { border-top-color: var(--seam); }
-  .stage { position: relative; padding: 44px 0 62px; }
-  .ps-ba.reno { border-radius: 34px; margin-inline-end: 7%; box-shadow: 0 0 0 1px rgba(27,33,36,.08), 0 50px 90px -46px rgba(19,63,60,.6); }
-  .ps-ba.reno .ps-ba-tag { border-radius: 999px; top: 16px; }
-  .ps-ba.reno .ps-ba-tag.b { left: 18px; top: auto; bottom: 16px; }
-  .ps-ba.reno .ps-ba-tag.a { right: 18px; }
-  .drag-hint { top: 16px; bottom: auto; border-radius: 999px; padding: 4px 14px; }
-  .wall-cap { margin-top: 0; }
+  .terms b, .wall-cap b { font-variant-numeric: tabular-nums; }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
+  .hero-frame { position: absolute; inset: 7% 0 12% 13%; margin: 0; border-radius: 34px; overflow: hidden; background: var(--glaze-pale);
+    box-shadow: 0 0 0 1px rgba(27,33,36,.08), 0 50px 90px -46px rgba(19,63,60,.6); }
+  .hero-frame.ps { aspect-ratio: auto; }
+  .hero-frame .ps-chip { display: none; }
+  .hero-frame .ps-img { width: 100%; height: 100%; object-fit: cover; }
   .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
-    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,63,60,.6); padding: 14px 16px; color: var(--graphite); pointer-events: none;
-    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--tx, 0) var(--ty, 0); transition: translate .35s cubic-bezier(.2,.7,.2,1); }
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,63,60,.6); padding: 14px 16px; color: var(--graphite);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .lx-plan { top: 0; inset-inline-end: 0; width: 228px; display: grid; gap: 4px; animation-delay: .1s; }
+  .lx-plan { top: 0; inset-inline-end: 0; width: 220px; display: grid; gap: 4px; animation-delay: .1s; }
   .lx-k { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--graphite-soft); }
   .lx-k i { width: 8px; height: 8px; border-radius: 50%; background: var(--laser); box-shadow: 0 0 0 4px rgba(23,184,103,.18); }
   .lx-plan b { font: 800 16px/1.2 "Rubik", var(--body); }
   .lx-plan ol { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 5px; }
   .lx-plan li { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 12.5px; color: var(--graphite-soft); }
+  .lx-plan li span { min-width: 0; }
   .lx-plan li em { display: block; height: 8px; border-radius: 4px; background: var(--glaze); margin-inline-start: calc(var(--s) * 12.5%); width: calc(var(--w) * 12.5%); }
   .lx-plan li em.oak { background: var(--oak); }
-  .lx-plan li span { min-width: 0; }
-  .lx-chat { top: 40%; inset-inline-end: -2%; width: min(46%, 236px); display: grid; gap: 6px; animation-delay: .3s; }
+  .lx-chat { top: 42%; inset-inline-end: -3%; width: 214px; display: grid; gap: 6px; animation-delay: .3s; }
   .lx-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .lx-chat .q { background: #eef3f1; justify-self: end; border-end-end-radius: 4px; }
   .lx-chat .a { background: var(--glaze); color: #fff; border-end-start-radius: 4px; }
-  .lx-price { bottom: 18px; inset-inline-start: -10px; width: min(300px, 60%); display: grid; gap: 7px; font-size: 14px; animation-delay: .5s; }
+  .lx-price { bottom: 0; inset-inline-start: 0; width: min(290px, 62%); display: grid; gap: 7px; font-size: 14px; animation-delay: .5s; }
   .lx-price small { font-size: 12.5px; font-weight: 700; color: var(--graphite-soft); }
   .lx-price div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   .lx-price div + div { border-top: 1px dashed var(--seam); padding-top: 7px; }
   .lx-price b { font: 700 15px/1.2 "Rubik", var(--body); color: var(--glaze); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .wall-cap b, .terms b { font-variant-numeric: tabular-nums; }
-  @media (max-width: 980px) { .wall { max-width: 640px; width: 100%; justify-self: center; } }
+  /* the drawn wall, before and after, in its own band under the top */
+  .wall-sec { padding-block: 8px 24px; }
+  .wall-sec .wall { max-width: 900px; }
+  .ps-ba.reno { border-radius: 28px; box-shadow: 0 0 0 1px rgba(27,33,36,.08), 0 50px 90px -50px rgba(19,63,60,.55); }
+  .ps-ba.reno .ps-ba-tag, .drag-hint { border-radius: 999px; }
+  @media (max-width: 980px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } .visual { max-width: 440px; } .lx-chat { inset-inline-end: 0; } }
   @media (max-width: 620px) {
     .lx-chat { display: none; }
-    .stage { padding: 40px 0 64px; }
-    .ps-ba.reno { margin-inline: 0; border-radius: 26px; }
-    .lx-plan { width: 200px; padding: 11px 13px; }
-    .lx-price { inset-inline-start: 0; bottom: 0; width: 74%; padding: 11px 13px; }
+    .hero-frame { inset: 10% 0 18% 6%; }
+    .lx-plan { width: 196px; padding: 11px 13px; }
+    .lx-price { width: 78%; padding: 11px 13px; }
     .lx-price b { font-size: 14px; }
-    .ps-ba.reno .ps-ba-tag.b { bottom: auto; top: 16px; }
-    .drag-hint { top: auto; bottom: 74px; }
+    .ps-ba.reno { border-radius: 20px; margin-inline: 0; }
   }
-  @media (prefers-reduced-motion: reduce) { .glass, .hero h1 em::after, .hero h1 em::before { animation: none; } .glass { transition: none; } }
-  html.a11y-still .glass, html.a11y-still .hero h1 em::after, html.a11y-still .hero h1 em::before { animation: none; }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -335,8 +334,8 @@
         </ul>
       </div>
 
-      <div class="wall">
-        <div class="stage">
+      <div class="visual">
+        <figure class="hero-frame ps" data-slot="hero" data-src="../shared/photos/renovation-drywall.webp" data-alt="קבלן מקדח בקיר גבס" data-pos="50 40" data-icon="trowel" data-label="תמונה מהשטח"></figure>
         <div class="glass lx-plan" aria-hidden="true">
           <span class="lx-k"><i></i>לוח זמנים בכתב</span>
           <b>מטבח · שבעה שבועות</b>
@@ -344,131 +343,137 @@
         </div>
         <div class="glass lx-chat" aria-hidden="true"><p class="q">כמה עולה לשפץ מטבח?</p><p class="a">תלוי בגודל ובגימור. מתארים כאן, ואחרי סיור בבית מקבלים הצעה מפורטת.</p></div>
         <div class="glass lx-price" aria-hidden="true"><small>טווחים לדוגמה</small><div><span>מטבח</span><b>35,000 עד 80,000 ₪</b></div><div><span>חדר אמבטיה</span><b>25,000 עד 45,000 ₪</b></div></div>
-        <div class="ps-ba reno" id="ba">
-          <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי">
-            <div class="ps-ph" aria-hidden="true">
-              <svg viewBox="0 0 800 540" preserveAspectRatio="xMidYMid slice">
-                <defs>
-                  <pattern id="zl" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#f4f5f2"/><rect x="1.5" y="1.5" width="25" height="25" fill="#1d5c58"/><rect x="1.5" y="1.5" width="25" height="9" fill="#25706b" opacity=".55"/></pattern>
-                  <pattern id="tz" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#dcd9d2"/><circle cx="6" cy="8" r="2.4" fill="#1d5c58"/><circle cx="22" cy="18" r="1.6" fill="#a46f42"/><circle cx="33" cy="6" r="2" fill="#7c817f"/><circle cx="14" cy="31" r="2.8" fill="#bfc3bf"/><circle cx="31" cy="30" r="1.8" fill="#1b2124"/><circle cx="4" cy="22" r="1.3" fill="#a46f42"/></pattern>
-                  <linearGradient id="oakg" x1="0" x2="1"><stop offset="0" stop-color="#b8875a"/><stop offset=".5" stop-color="#a87a4e"/><stop offset="1" stop-color="#bd8f62"/></linearGradient>
-                  <radialGradient id="glow" cx=".5" cy="0" r=".9"><stop offset="0" stop-color="#fff6ea" stop-opacity=".5"/><stop offset="1" stop-color="#fff6ea" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect width="800" height="540" fill="#e8ece9"/>
-                <rect width="800" height="40" fill="#f5f6f4"/>
-                <rect y="440" width="800" height="100" fill="url(#tz)"/>
-                <rect y="436" width="800" height="6" fill="#cfd4d1"/>
-                <!-- window -->
-                <rect x="520" y="86" width="172" height="176" fill="#cfe1e2" stroke="#1b2124" stroke-width="5"/>
-                <path d="M606 86 V262" stroke="#1b2124" stroke-width="3"/>
-                <path d="M530 236 C 560 200, 600 220, 640 180 S 680 150, 690 160 V258 H526 Z" fill="#b8d0cd" opacity=".7"/>
-                <rect x="510" y="262" width="192" height="10" fill="#f7f7f5"/>
-                <path d="M556 262 h28 l-4 -24 h-20 z" fill="#1b2124"/>
-                <path d="M570 238 C 560 214, 548 206, 540 196 M570 238 C 574 212, 588 202, 598 194 M570 238 C 566 220, 570 206, 572 192" stroke="#2f6b5f" stroke-width="4" fill="none" stroke-linecap="round"/>
-                <!-- pendant lights -->
-                <path d="M200 0 V112 M380 0 V112" stroke="#1b2124" stroke-width="2"/>
-                <ellipse cx="200" cy="180" rx="120" ry="70" fill="url(#glow)"/><ellipse cx="380" cy="180" rx="120" ry="70" fill="url(#glow)"/>
-                <path d="M176 132 a24 22 0 0 1 48 0 z M356 132 a24 22 0 0 1 48 0 z" fill="#1b2124"/>
-                <!-- shelf with dishes -->
-                <rect x="70" y="196" width="250" height="10" fill="url(#oakg)"/>
-                <rect x="88" y="168" width="10" height="28" fill="#f7f7f5"/><rect x="100" y="164" width="10" height="32" fill="#f7f7f5"/><rect x="112" y="170" width="10" height="26" fill="#f7f7f5"/>
-                <path d="M150 196 h34 a17 17 0 0 0 -34 0z" fill="#1d5c58"/><path d="M196 196 h26 a13 13 0 0 0 -26 0z" fill="#e7e9e6"/>
-                <rect x="244" y="160" width="20" height="36" rx="3" fill="#7c8a86"/><rect x="272" y="172" width="30" height="24" rx="3" fill="#a46f42"/>
-                <!-- backsplash -->
-                <rect x="40" y="232" width="460" height="104" fill="url(#zl)"/>
-                <!-- worktop and cabinets -->
-                <rect x="30" y="336" width="480" height="14" fill="#f8f8f6"/><rect x="30" y="349" width="480" height="3" fill="#c7ccc9"/>
-                <rect x="40" y="352" width="460" height="84" fill="url(#oakg)"/>
-                <path d="M155 352 V436 M270 352 V436 M385 352 V436" stroke="#8a5f3a" stroke-width="2"/>
-                <path d="M120 366 h22 M235 366 h22 M350 366 h22 M465 366 h22" stroke="#1b2124" stroke-width="3.5" stroke-linecap="round"/>
-                <rect x="40" y="430" width="460" height="6" fill="#1b2124" opacity=".85"/>
-                <!-- tap and sink -->
-                <path d="M300 336 V300 a16 16 0 0 1 32 0 V312" stroke="#1b2124" stroke-width="5" fill="none" stroke-linecap="round"/>
-                <rect x="264" y="333" width="80" height="4" fill="#9aa3a5"/>
-                <!-- tall pantry -->
-                <rect x="718" y="70" width="70" height="366" fill="url(#oakg)"/><path d="M718 250 H788" stroke="#8a5f3a" stroke-width="2"/>
-                <path d="M732 230 v40" stroke="#1b2124" stroke-width="3.5" stroke-linecap="round"/>
-                <!-- bowl on worktop -->
-                <path d="M420 336 h50 a25 18 0 0 1 -50 0z" fill="#f2f3f0" stroke="#c7ccc9"/>
-                <circle cx="436" cy="330" r="7" fill="#c9553a"/><circle cx="452" cy="331" r="7" fill="#7c9a5c"/>
-              </svg>
-            </div>
-          </figure>
-          <div class="ps-ba-before">
-            <figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני">
-              <div class="ps-ph" aria-hidden="true">
-                <svg viewBox="0 0 800 540" preserveAspectRatio="xMidYMid slice">
-                  <defs>
-                    <pattern id="oldt" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#c9c3b8"/><rect x="1" y="1" width="28" height="28" fill="#aea494"/><path d="M4 26 L12 18" stroke="#c1b8a9" stroke-width="2"/></pattern>
-                    <pattern id="blk" width="60" height="30" patternUnits="userSpaceOnUse"><rect width="60" height="30" fill="#b9b8b3"/><path d="M0 29.5 H60 M30 0 V15 M0 15 H60 M0 15 V30 M60 15 V30" stroke="#9c9b96" stroke-width="1.5"/></pattern>
-                    <pattern id="screed" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#a7a9a5"/><circle cx="4" cy="5" r="1" fill="#8f918d"/><circle cx="13" cy="12" r="1.2" fill="#b7b9b5"/></pattern>
-                  </defs>
-                  <rect width="800" height="540" fill="#cdcbc5"/>
-                  <rect width="800" height="40" fill="#bdbcb7"/>
-                  <!-- exposed block where plaster came off -->
-                  <path d="M560 60 h200 v150 h-60 l-20 40 h-120 z" fill="url(#blk)"/>
-                  <path d="M80 70 h130 v60 h-40 l-30 26 h-60 z" fill="url(#blk)"/>
-                  <!-- old tiles, some missing -->
-                  <rect x="40" y="232" width="460" height="104" fill="url(#oldt)"/>
-                  <rect x="130" y="262" width="30" height="30" fill="#77746d"/><rect x="310" y="292" width="60" height="30" fill="#77746d"/><rect x="430" y="232" width="30" height="30" fill="#77746d"/>
-                  <path d="M200 240 l20 28 l-8 20 l24 30 M380 236 l-12 24 l18 20" stroke="#5f5c56" stroke-width="2" fill="none"/>
-                  <!-- floor -->
-                  <rect y="440" width="800" height="100" fill="url(#screed)"/>
-                  <!-- old cabinet carcass -->
-                  <rect x="40" y="350" width="300" height="90" fill="none" stroke="#5f5c56" stroke-width="5"/>
-                  <path d="M140 350 V440 M240 350 V440" stroke="#5f5c56" stroke-width="4"/>
-                  <rect x="30" y="338" width="320" height="12" fill="#8b8579"/>
-                  <!-- exposed pipes and wires -->
-                  <path d="M420 440 V300 h50 V250" stroke="#6d7d86" stroke-width="10" fill="none"/>
-                  <path d="M450 440 V320 h40" stroke="#8a6a5a" stroke-width="7" fill="none"/>
-                  <path d="M240 0 C 236 40, 250 70, 244 110" stroke="#1b2124" stroke-width="2.5" fill="none"/>
-                  <path d="M250 0 C 262 30, 270 52, 290 66" stroke="#9b3b2b" stroke-width="2.5" fill="none"/>
-                  <circle cx="244" cy="122" r="12" fill="#f3f1ec" stroke="#5f5c56" stroke-width="2"/>
-                  <!-- marker notes on the wall -->
-                  <g font-family="Noto Sans Hebrew, Arial, sans-serif" font-weight="700" fill="#b03a24" font-size="22">
-                    <text x="560" y="300" text-anchor="middle">כיור כאן</text>
-                    <text x="150" y="214" text-anchor="middle">שקע</text>
-                  </g>
-                  <path d="M520 316 h80 M560 316 v24" stroke="#b03a24" stroke-width="3"/>
-                  <path d="M140 222 l10 10 m0 -10 l-10 10" stroke="#b03a24" stroke-width="3"/>
-                  <!-- the laser level and its line at 90 cm -->
-                  <path d="M640 520 L676 400 L712 520 M676 400 V520" stroke="#1b2124" stroke-width="4" fill="none"/>
-                  <rect x="660" y="372" width="34" height="28" rx="3" fill="#1b2124"/><circle cx="668" cy="386" r="4" fill="#17b867"/>
-                  <rect x="0" y="383.5" width="800" height="3" fill="#17b867"/>
-                  <rect x="0" y="380" width="800" height="10" fill="#17b867" opacity=".18"/>
-                  <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#1b2124">
-                    <path d="M760 390 V440 M752 390 h16 M752 440 h16" stroke="#1b2124" stroke-width="2"/>
-                    <text x="748" y="420" text-anchor="end" direction="ltr">90 cm</text>
-                  </g>
-                  <!-- debris -->
-                  <path d="M520 440 c-6 -40, 10 -64, 40 -66 c30 2, 44 28, 36 66 z" fill="#e5e4df" stroke="#a9a8a2" stroke-width="2"/>
-                  <path d="M566 380 l8 -14 l8 14" stroke="#a9a8a2" stroke-width="2" fill="none"/>
-                  <rect x="120" y="470" width="60" height="40" fill="#5d6466"/><rect x="116" y="464" width="68" height="8" fill="#4a5153"/>
-                  <path d="M300 520 l60 -12 l10 20 z M380 510 l40 6 l-20 14 z" fill="#8f8c85"/>
-                </svg>
-              </div>
-            </figure>
-          </div>
-          <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
-          <span class="ps-ba-line" aria-hidden="true"></span>
-          <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
-          <span class="drag-hint" aria-hidden="true">גררו את הקו</span>
-        </div>
-        </div>
-        <div class="wall-cap">
-          <div><b data-edit="ba-title">מטבח בהרצליה, לפני ואחרי</b><br><span class="mono" data-edit="ba-text">שבעה שבועות, בלי חריגה בתקציב.</span></div>
-          <div class="facts">
-            <span>שטח <b data-edit="f1">12 מ״ר</b></span>
-            <span>משך <b data-edit="f2">שבעה שבועות</b></span>
-            <span>מה נעשה <b data-edit="f3">הריסה, ריצוף, נגרות</b></span>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </header>
 
 <main>
+  <section class="wall-sec" aria-label="מטבח לפני ואחרי">
+    <div class="wrap">
+      <div class="wall">
+        <div class="ps-ba reno" id="ba">
+            <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי">
+              <div class="ps-ph" aria-hidden="true">
+                <svg viewBox="0 0 800 540" preserveAspectRatio="xMidYMid slice">
+                  <defs>
+                    <pattern id="zl" width="28" height="28" patternUnits="userSpaceOnUse"><rect width="28" height="28" fill="#f4f5f2"/><rect x="1.5" y="1.5" width="25" height="25" fill="#1d5c58"/><rect x="1.5" y="1.5" width="25" height="9" fill="#25706b" opacity=".55"/></pattern>
+                    <pattern id="tz" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#dcd9d2"/><circle cx="6" cy="8" r="2.4" fill="#1d5c58"/><circle cx="22" cy="18" r="1.6" fill="#a46f42"/><circle cx="33" cy="6" r="2" fill="#7c817f"/><circle cx="14" cy="31" r="2.8" fill="#bfc3bf"/><circle cx="31" cy="30" r="1.8" fill="#1b2124"/><circle cx="4" cy="22" r="1.3" fill="#a46f42"/></pattern>
+                    <linearGradient id="oakg" x1="0" x2="1"><stop offset="0" stop-color="#b8875a"/><stop offset=".5" stop-color="#a87a4e"/><stop offset="1" stop-color="#bd8f62"/></linearGradient>
+                    <radialGradient id="glow" cx=".5" cy="0" r=".9"><stop offset="0" stop-color="#fff6ea" stop-opacity=".5"/><stop offset="1" stop-color="#fff6ea" stop-opacity="0"/></radialGradient>
+                  </defs>
+                  <rect width="800" height="540" fill="#e8ece9"/>
+                  <rect width="800" height="40" fill="#f5f6f4"/>
+                  <rect y="440" width="800" height="100" fill="url(#tz)"/>
+                  <rect y="436" width="800" height="6" fill="#cfd4d1"/>
+                  <!-- window -->
+                  <rect x="520" y="86" width="172" height="176" fill="#cfe1e2" stroke="#1b2124" stroke-width="5"/>
+                  <path d="M606 86 V262" stroke="#1b2124" stroke-width="3"/>
+                  <path d="M530 236 C 560 200, 600 220, 640 180 S 680 150, 690 160 V258 H526 Z" fill="#b8d0cd" opacity=".7"/>
+                  <rect x="510" y="262" width="192" height="10" fill="#f7f7f5"/>
+                  <path d="M556 262 h28 l-4 -24 h-20 z" fill="#1b2124"/>
+                  <path d="M570 238 C 560 214, 548 206, 540 196 M570 238 C 574 212, 588 202, 598 194 M570 238 C 566 220, 570 206, 572 192" stroke="#2f6b5f" stroke-width="4" fill="none" stroke-linecap="round"/>
+                  <!-- pendant lights -->
+                  <path d="M200 0 V112 M380 0 V112" stroke="#1b2124" stroke-width="2"/>
+                  <ellipse cx="200" cy="180" rx="120" ry="70" fill="url(#glow)"/><ellipse cx="380" cy="180" rx="120" ry="70" fill="url(#glow)"/>
+                  <path d="M176 132 a24 22 0 0 1 48 0 z M356 132 a24 22 0 0 1 48 0 z" fill="#1b2124"/>
+                  <!-- shelf with dishes -->
+                  <rect x="70" y="196" width="250" height="10" fill="url(#oakg)"/>
+                  <rect x="88" y="168" width="10" height="28" fill="#f7f7f5"/><rect x="100" y="164" width="10" height="32" fill="#f7f7f5"/><rect x="112" y="170" width="10" height="26" fill="#f7f7f5"/>
+                  <path d="M150 196 h34 a17 17 0 0 0 -34 0z" fill="#1d5c58"/><path d="M196 196 h26 a13 13 0 0 0 -26 0z" fill="#e7e9e6"/>
+                  <rect x="244" y="160" width="20" height="36" rx="3" fill="#7c8a86"/><rect x="272" y="172" width="30" height="24" rx="3" fill="#a46f42"/>
+                  <!-- backsplash -->
+                  <rect x="40" y="232" width="460" height="104" fill="url(#zl)"/>
+                  <!-- worktop and cabinets -->
+                  <rect x="30" y="336" width="480" height="14" fill="#f8f8f6"/><rect x="30" y="349" width="480" height="3" fill="#c7ccc9"/>
+                  <rect x="40" y="352" width="460" height="84" fill="url(#oakg)"/>
+                  <path d="M155 352 V436 M270 352 V436 M385 352 V436" stroke="#8a5f3a" stroke-width="2"/>
+                  <path d="M120 366 h22 M235 366 h22 M350 366 h22 M465 366 h22" stroke="#1b2124" stroke-width="3.5" stroke-linecap="round"/>
+                  <rect x="40" y="430" width="460" height="6" fill="#1b2124" opacity=".85"/>
+                  <!-- tap and sink -->
+                  <path d="M300 336 V300 a16 16 0 0 1 32 0 V312" stroke="#1b2124" stroke-width="5" fill="none" stroke-linecap="round"/>
+                  <rect x="264" y="333" width="80" height="4" fill="#9aa3a5"/>
+                  <!-- tall pantry -->
+                  <rect x="718" y="70" width="70" height="366" fill="url(#oakg)"/><path d="M718 250 H788" stroke="#8a5f3a" stroke-width="2"/>
+                  <path d="M732 230 v40" stroke="#1b2124" stroke-width="3.5" stroke-linecap="round"/>
+                  <!-- bowl on worktop -->
+                  <path d="M420 336 h50 a25 18 0 0 1 -50 0z" fill="#f2f3f0" stroke="#c7ccc9"/>
+                  <circle cx="436" cy="330" r="7" fill="#c9553a"/><circle cx="452" cy="331" r="7" fill="#7c9a5c"/>
+                </svg>
+              </div>
+            </figure>
+            <div class="ps-ba-before">
+              <figure class="ps" data-slot="before" data-icon="trowel" data-label="תמונת לפני">
+                <div class="ps-ph" aria-hidden="true">
+                  <svg viewBox="0 0 800 540" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                      <pattern id="oldt" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#c9c3b8"/><rect x="1" y="1" width="28" height="28" fill="#aea494"/><path d="M4 26 L12 18" stroke="#c1b8a9" stroke-width="2"/></pattern>
+                      <pattern id="blk" width="60" height="30" patternUnits="userSpaceOnUse"><rect width="60" height="30" fill="#b9b8b3"/><path d="M0 29.5 H60 M30 0 V15 M0 15 H60 M0 15 V30 M60 15 V30" stroke="#9c9b96" stroke-width="1.5"/></pattern>
+                      <pattern id="screed" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#a7a9a5"/><circle cx="4" cy="5" r="1" fill="#8f918d"/><circle cx="13" cy="12" r="1.2" fill="#b7b9b5"/></pattern>
+                    </defs>
+                    <rect width="800" height="540" fill="#cdcbc5"/>
+                    <rect width="800" height="40" fill="#bdbcb7"/>
+                    <!-- exposed block where plaster came off -->
+                    <path d="M560 60 h200 v150 h-60 l-20 40 h-120 z" fill="url(#blk)"/>
+                    <path d="M80 70 h130 v60 h-40 l-30 26 h-60 z" fill="url(#blk)"/>
+                    <!-- old tiles, some missing -->
+                    <rect x="40" y="232" width="460" height="104" fill="url(#oldt)"/>
+                    <rect x="130" y="262" width="30" height="30" fill="#77746d"/><rect x="310" y="292" width="60" height="30" fill="#77746d"/><rect x="430" y="232" width="30" height="30" fill="#77746d"/>
+                    <path d="M200 240 l20 28 l-8 20 l24 30 M380 236 l-12 24 l18 20" stroke="#5f5c56" stroke-width="2" fill="none"/>
+                    <!-- floor -->
+                    <rect y="440" width="800" height="100" fill="url(#screed)"/>
+                    <!-- old cabinet carcass -->
+                    <rect x="40" y="350" width="300" height="90" fill="none" stroke="#5f5c56" stroke-width="5"/>
+                    <path d="M140 350 V440 M240 350 V440" stroke="#5f5c56" stroke-width="4"/>
+                    <rect x="30" y="338" width="320" height="12" fill="#8b8579"/>
+                    <!-- exposed pipes and wires -->
+                    <path d="M420 440 V300 h50 V250" stroke="#6d7d86" stroke-width="10" fill="none"/>
+                    <path d="M450 440 V320 h40" stroke="#8a6a5a" stroke-width="7" fill="none"/>
+                    <path d="M240 0 C 236 40, 250 70, 244 110" stroke="#1b2124" stroke-width="2.5" fill="none"/>
+                    <path d="M250 0 C 262 30, 270 52, 290 66" stroke="#9b3b2b" stroke-width="2.5" fill="none"/>
+                    <circle cx="244" cy="122" r="12" fill="#f3f1ec" stroke="#5f5c56" stroke-width="2"/>
+                    <!-- marker notes on the wall -->
+                    <g font-family="Noto Sans Hebrew, Arial, sans-serif" font-weight="700" fill="#b03a24" font-size="22">
+                      <text x="560" y="300" text-anchor="middle">כיור כאן</text>
+                      <text x="150" y="214" text-anchor="middle">שקע</text>
+                    </g>
+                    <path d="M520 316 h80 M560 316 v24" stroke="#b03a24" stroke-width="3"/>
+                    <path d="M140 222 l10 10 m0 -10 l-10 10" stroke="#b03a24" stroke-width="3"/>
+                    <!-- the laser level and its line at 90 cm -->
+                    <path d="M640 520 L676 400 L712 520 M676 400 V520" stroke="#1b2124" stroke-width="4" fill="none"/>
+                    <rect x="660" y="372" width="34" height="28" rx="3" fill="#1b2124"/><circle cx="668" cy="386" r="4" fill="#17b867"/>
+                    <rect x="0" y="383.5" width="800" height="3" fill="#17b867"/>
+                    <rect x="0" y="380" width="800" height="10" fill="#17b867" opacity=".18"/>
+                    <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#1b2124">
+                      <path d="M760 390 V440 M752 390 h16 M752 440 h16" stroke="#1b2124" stroke-width="2"/>
+                      <text x="748" y="420" text-anchor="end" direction="ltr">90 cm</text>
+                    </g>
+                    <!-- debris -->
+                    <path d="M520 440 c-6 -40, 10 -64, 40 -66 c30 2, 44 28, 36 66 z" fill="#e5e4df" stroke="#a9a8a2" stroke-width="2"/>
+                    <path d="M566 380 l8 -14 l8 14" stroke="#a9a8a2" stroke-width="2" fill="none"/>
+                    <rect x="120" y="470" width="60" height="40" fill="#5d6466"/><rect x="116" y="464" width="68" height="8" fill="#4a5153"/>
+                    <path d="M300 520 l60 -12 l10 20 z M380 510 l40 6 l-20 14 z" fill="#8f8c85"/>
+                  </svg>
+                </div>
+              </figure>
+            </div>
+            <input class="ps-ba-range" type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+            <span class="ps-ba-line" aria-hidden="true"></span>
+            <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
+            <span class="drag-hint" aria-hidden="true">גררו את הקו</span>
+          </div>
+          <div class="wall-cap">
+            <div><b data-edit="ba-title">מטבח בהרצליה, לפני ואחרי</b><br><span class="mono" data-edit="ba-text">שבעה שבועות, בלי חריגה בתקציב.</span></div>
+            <div class="facts">
+              <span>שטח <b data-edit="f1">12 מ״ר</b></span>
+              <span>משך <b data-edit="f2">שבעה שבועות</b></span>
+              <span>מה נעשה <b data-edit="f3">הריסה, ריצוף, נגרות</b></span>
+            </div>
+          </div>
+      </div>
+    </div>
+  </section>
+
   <section class="sched" id="schedule">
     <div class="wrap">
       <div class="head"><h2>לוח הזמנים נחתם לפני הפטיש הראשון</h2><p>כל שלב, מי עובד ומתי. אם משהו זז, תדעו ביום שזה קורה, לא ביום המסירה.</p></div>
@@ -652,6 +657,8 @@
   })();
 
   PhotoSlots.init({ page: "renovation" });
+  // The top photo is the first thing seen: load it at once, with its real size.
+  { const im = document.querySelector(".hero-frame .ps-img"); if (im) { im.loading = "eager"; im.fetchPriority = "high"; im.width = 350; im.height = 380; } }
 
   // The one motion moment: the before/after line sweeps once across the wall, then rests.
   (function () {
@@ -728,27 +735,6 @@
     document.getElementById("calc").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }));
   Guides.load("../shared/guides/renovation.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
-</script>
-<script>
-  // Desktop with a fine pointer: the glass cards drift a few pixels with the pointer, each at its own depth. Never on touch, reduced motion or "עצירת תנועה".
-  (() => {
-    const v = document.querySelector(".stage"), hero = v && v.closest(".hero");
-    if (!hero) return;
-    const ok = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
-    const still = () => document.documentElement.classList.contains("a11y-still");
-    const cards = [...v.querySelectorAll(".glass")];
-    let x = 0, y = 0, raf = 0;
-    const paint = () => { raf = 0;
-      cards.forEach((c, i) => { const d = 5 + i * 3.5; c.style.setProperty("--tx", (-x * d).toFixed(2) + "px"); c.style.setProperty("--ty", (-y * d).toFixed(2) + "px"); }); };
-    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
-    hero.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || !ok.matches || still()) return;
-      const r = v.getBoundingClientRect(), cl = (n) => Math.max(-1, Math.min(1, n));
-      x = cl(((e.clientX - r.left) / r.width - .5) * 2); y = cl(((e.clientY - r.top) / r.height - .5) * 2); ask();
-    });
-    hero.addEventListener("pointerleave", () => { x = y = 0; ask(); });
-    document.addEventListener("a11y-still", () => { x = y = 0; ask(); });
-  })();
 </script>
 </body>
 </html>

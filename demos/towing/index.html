@@ -266,24 +266,25 @@
   .facts div { border-inline-start-color: #cfd5dd; }
   .facts dt { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
   .facts dd { color: var(--ink-soft); }
-  .visual { aspect-ratio: 1 / 1; max-width: 540px; width: 100%; justify-self: center; }
-  .frame { position: absolute; inset: 8% 2% 14% 14%; border-radius: 34px; overflow: hidden; background: var(--asphalt); box-shadow: 0 0 0 1px rgba(19,23,30,.08), 0 50px 90px -46px rgba(19,23,40,.7); }
+  .hero-grid { grid-template-areas: ". scene" "kick scene" "h1 scene" "lede scene" "cta scene" ". scene" "facts facts"; grid-template-rows: 1fr auto auto auto auto 1fr auto; }
+  .visual { aspect-ratio: 5 / 4; max-width: 560px; width: 100%; justify-self: center; margin-block: 12px; }
+  .frame { position: absolute; inset: 9% 0 15% 9%; border-radius: 34px; overflow: hidden; background: var(--asphalt); box-shadow: 0 0 0 1px rgba(19,23,30,.08), 0 50px 90px -46px rgba(19,23,40,.7); }
   .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   .glass { position: absolute; z-index: 3; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,23,40,.6); padding: 13px 16px; color: var(--ink); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 3px; }
+  .g-day { top: 0; inset-inline-start: 6%; display: grid; gap: 3px; animation-delay: .15s; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
   .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 4px rgba(214,51,31,.16); }
   .g-day b { font: 800 16px/1.25 "Rubik", var(--body); }
-  .g-price { bottom: 0; inset-inline-start: 0; width: min(260px, 58%); display: grid; animation-delay: .15s; }
+  .g-price { bottom: 0; inset-inline-start: 0; width: min(250px, 50%); display: grid; animation-delay: .3s; }
   .g-price > span { font-size: 13px; color: var(--ink-soft); padding-bottom: 6px; }
   .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px dashed #cfd5dd; font-size: 14.5px; }
   .g-price em { font-style: normal; font-weight: 700; white-space: nowrap; color: var(--signal-deep); font-variant-numeric: tabular-nums; }
-  .scene .note { top: 36%; bottom: auto; inset-inline-start: auto; inset-inline-end: -2%; width: min(52%, 236px); border-radius: 20px; padding: 12px 14px; animation: lift .8s cubic-bezier(.2,.7,.2,1) both .3s; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,23,40,.6); }
+  .scene .note { top: 0; bottom: auto; inset-inline-start: auto; inset-inline-end: -2%; width: min(46%, 236px); border-radius: 20px; padding: 12px 14px; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,23,40,.6); }
   .scene .note .who .ltr { font-variant-numeric: tabular-nums; }
-  @media (max-width: 980px) { .visual { max-width: 460px; margin-inline: auto; } .scene .note { inset-inline-end: 0; bottom: auto; } }
-  @media (max-width: 640px) { .g-price { display: none; } .frame { inset: 14% 0 20% 8%; } .scene .note { top: auto; bottom: 0; inset-inline: 0 auto; width: 74%; } }
+  @media (max-width: 980px) { .hero-grid { grid-template-areas: "kick" "h1" "lede" "cta" "scene" "facts"; grid-template-rows: none; } .visual { max-width: 460px; margin-inline: auto; } .scene .note { inset-inline-end: 0; } }
+  @media (max-width: 640px) { .g-price { display: none; } .frame { inset: 15% 0 22% 6%; } .g-day { inset-inline-start: 0; } .scene .note { top: auto; bottom: 0; inset-inline: auto 0; width: 70%; } }
   @media (prefers-reduced-motion: reduce) { .glass, .scene .note { animation: none; } }
   html.a11y-still .glass, html.a11y-still .scene .note { animation: none; }
 </style>

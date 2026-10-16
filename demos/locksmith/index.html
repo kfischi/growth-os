@@ -278,17 +278,17 @@
   .visual { grid-area: vis; position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; align-self: center; min-width: 0; }
   .frame { position: absolute; inset: 8% 2% 14% 15%; border-radius: 34px; overflow: hidden; background: var(--ps-a);
     box-shadow: 0 0 0 1px rgba(27,33,64,.08), 0 54px 90px -46px rgba(23,32,66,.75), 0 18px 34px -26px rgba(110,31,48,.35); }
-  .frame img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 30% 50%; }
+  .frame img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 16% 50%; }
   .gl { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; padding: 14px 16px; color: var(--ink); font-size: 14px; line-height: 1.35;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 28px 50px -28px rgba(23,32,66,.6), 0 6px 14px -10px rgba(110,31,48,.3);
     animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-day { top: 0; inset-inline-start: 0; display: grid; gap: 3px; animation-delay: .1s; }
+  .g-day { top: 41%; inset-inline-start: -3%; display: grid; gap: 3px; animation-delay: .1s; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
   .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--door); box-shadow: 0 0 0 4px rgba(110,31,48,.14); }
   .g-day b { font: 800 17px/1.2 var(--display); letter-spacing: -.01em; }
-  .g-price { bottom: 0; inset-inline-end: 0; width: min(282px, 62%); padding: 14px 16px 10px; animation-delay: .25s; }
+  .g-price { bottom: 0; inset-inline-start: 2%; width: min(262px, 56%); padding: 14px 16px 10px; animation-delay: .25s; }
   .g-price header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 1.5px solid var(--ink); }
   .g-price header b { font: 800 15px/1.2 var(--display); }
   .g-price header span { font-size: 11.5px; color: var(--ink-soft); }
@@ -297,7 +297,7 @@
   .g-price li:first-child { border-top: 0; }
   .g-price li span { min-width: 0; }
   .g-price li b { font-weight: 700; color: var(--door); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .g-note { top: 30%; inset-inline-end: -2%; width: min(46%, 224px); animation-delay: .4s; border-end-start-radius: 6px; }
+  .g-note { top: 12%; inset-inline-end: -2%; width: min(46%, 224px); animation-delay: .4s; border-end-start-radius: 6px; }
   .g-note .mono { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 11.5px; margin-bottom: 4px; }
   .g-note .ltr { font-family: var(--mono); font-variant-numeric: tabular-nums; }
   .g-note b { color: var(--door); }
@@ -314,8 +314,8 @@
     .visual { aspect-ratio: 1 / 1.08; margin-top: 30px; }
     .frame { inset: 9% 0 17% 6%; border-radius: 28px; }
     .g-note { display: none; }
-    .g-day { padding: 11px 13px; }
-    .g-price { width: min(290px, 80%); padding: 12px 14px 8px; }
+    .g-day { top: 0; inset-inline-start: auto; inset-inline-end: 0; padding: 11px 13px; }
+    .g-price { inset-inline-start: 0; width: min(290px, 80%); padding: 12px 14px 8px; }
     .g-price li { padding: 6px 0; }
     .facts { margin-top: 28px; padding: 18px 0 0; }
   }
@@ -354,7 +354,7 @@
 
     <div class="visual">
       <div class="frame"><img src="../shared/photos/locksmith-work.webp" width="800" height="500" alt="מנעולן בחדר מדרגות מפרק צילינדר מדלת דירה" fetchpriority="high" decoding="async"></div>
-      <div class="gl g-day" aria-hidden="true"><span><i></i>עונים גם בלילה ובשבת</span><b>חדרה · פרדס חנה · השרון</b></div>
+      <div class="gl g-day" aria-hidden="true"><span><i></i>עונים גם בלילה ובשבת</span><b>תוספת לילה ושבת: ‎150 ₪</b></div>
       <div class="gl g-note" aria-hidden="true"><span class="mono"><span>עידו · מנעולן</span><span class="ltr">02:41</span></span>קיבלתי. <b>חוזר אליכם עכשיו</b> עם זמן הגעה ומחיר.</div>
       <div class="gl g-price" aria-label="מחירים לדוגמה">
         <header><b>מחירון</b><span>להמחשה</span></header>

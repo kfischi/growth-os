@@ -230,7 +230,8 @@
     box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(24,59,45,.6), 0 8px 20px -12px rgba(24,59,45,.25); }
   .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   /* the season wheel now opens the first section, beside the calendar it explains */
-  .wheel-band { max-width: 470px; margin: 0 auto 30px; padding: 18px 0 26px; overflow: hidden; } /* the turning square of the dial stays inside */
+  .wheel-band { max-width: 470px; margin: 0 auto 30px; padding: 18px 0 26px; }
+  main { overflow-x: clip; } /* the turning square of the dial never widens the page */
   .wheel .dial { filter: drop-shadow(0 24px 30px rgba(24,59,45,.28)); }
   .hub { box-shadow: 0 0 0 6px var(--wheel), 0 0 0 7px #c5d3b9, 0 18px 30px -12px rgba(15,42,31,.55); }
   .hub .w { flex-wrap: wrap; }
@@ -248,7 +249,8 @@
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #eaf0e4; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--cypress); color: #fff; border-end-start-radius: 4px; }
-  @media (max-width: 1000px) { .visual { max-width: 500px; } }
+  .hero-grid { padding-bottom: 72px; }
+  @media (max-width: 1000px) { .visual { max-width: 500px; } .hero-grid { padding-bottom: 56px; } }
   @media (max-width: 560px) {
     .frame { inset: 10% 0 16% 8%; border-radius: 28px; }
     .g-chat { display: none; }

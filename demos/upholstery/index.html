@@ -266,18 +266,13 @@
   .busy b { font-weight: 700; }
   .busy b::before { background: var(--petrol); box-shadow: 0 0 0 4px rgba(11,79,108,.16); }
   .busy span { color: var(--graphite-soft); }
-  .g-price { top: 34%; inset-inline-end: -1%; width: min(54%, 236px); display: grid; gap: 7px; font-size: 14px; animation-delay: .3s; }
-  .g-price small { font-size: 12.5px; font-weight: 700; color: var(--graphite-soft); letter-spacing: .02em; }
-  .g-price div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-  .g-price div + div { border-top: 1px dashed var(--seam); padding-top: 7px; }
-  .g-price b { font: 700 15px/1.2 "Rubik", var(--body); color: var(--petrol); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .label { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(220px, 52%); border-radius: 18px; transform: rotate(-2deg); animation-delay: .5s; }
   .label::before { inset-inline-start: auto; inset-inline-end: 28px; height: 18px; top: -12px; background: var(--wine); width: 2px; border-radius: 2px; }
   .label .mono { font-variant-numeric: tabular-nums; }
   @keyframes lift-tag { from { opacity: 0; transform: translateY(18px) rotate(-2deg); } to { transform: rotate(-2deg); } }
   .label.glass { animation-name: lift-tag; }
-  @media (max-width: 960px) { .cushion-wrap { max-width: 440px; } .g-price { inset-inline-end: 0; } }
-  @media (max-width: 560px) { .g-price { display: none; } .cushion { inset: 10% 0 16% 8%; } .cushion-wrap { padding: 0; } .busy { max-width: 72%; } .label { width: 62%; } }
+  @media (max-width: 960px) { .cushion-wrap { max-width: 440px; } }
+  @media (max-width: 560px) { .cushion { inset: 10% 0 16% 8%; } .cushion-wrap { padding: 0; } .busy { max-width: 72%; } .label { width: 62%; } }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; } }
   html.a11y-still .glass { animation: none; }
   /* Photo first (the owner's update): the drawing of the sofa with its one clean stripe is the star, in the rounded frame. */
