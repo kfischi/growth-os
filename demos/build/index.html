@@ -6,14 +6,15 @@
 <title>בונים אתר בשיחה · Easy Landing</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="עונים על כמה שאלות על העסק, ורואים את האתר נבנה מולכם. מאשרים, ורק אז משלמים.">
-<meta name="theme-color" content="#3d2442">
+<meta name="theme-color" content="#5428e0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   /* Object: a job sheet that fills itself while you talk. Detail: the site's own fields, ticked one by one.
      Bold move: the live draft of the owner's own site, right next to the chat. */
   :root {
-    --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #b23730;
+    /* the home page's palette: violet for the brand and buttons, fuchsia the only ornament */
+    --paper: #fcfbff; --mist: #f1edfd; --ink: #17112e; --slate: #4a4462; --plum: #3a17b0; --mint: #5428e0; --brick: #b23730; --fuchsia: #c2136f; --silver-ink: #6b6680;
     --line: color-mix(in oklab, var(--ink) 14%, var(--paper));
     --font: "Rubik", "Calibri", "Segoe UI", system-ui, sans-serif;
   }
@@ -25,15 +26,17 @@
   button, input, textarea { font: inherit; color: inherit; }
   [hidden] { display: none !important; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 20px; border-radius: 10px; border: 0; background: var(--mint); color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; }
-  .btn:hover { background: #0b6a5d; }
+  .btn:not(.quiet) { box-shadow: 0 12px 26px -12px rgb(84 40 224 / .75), 0 2px 6px -2px rgb(84 40 224 / .35); }
+  .btn:hover { background: var(--plum); }
   .btn:disabled { opacity: .55; cursor: default; }
   .btn.quiet { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
   .btn.quiet:hover { border-color: var(--ink); }
 
-  .top { background: var(--plum); color: #fff; }
+  .top { background: color-mix(in oklab, var(--paper) 92%, transparent); color: var(--ink); border-bottom: 1px solid var(--line); }
   .top .in { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1400px; margin: 0 auto; }
-  .brand { font-weight: 900; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
-  .top small { color: #d9cde0; font-size: 14px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
+  .brand svg { flex: none; inline-size: 30px; block-size: 30px; }
+  .top small { color: var(--silver-ink); font-size: 14px; }
 
   /* ---------- start ---------- */
   .start { max-width: 1100px; margin: 0 auto; padding: 48px 16px 64px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 48px; align-items: start; }
@@ -232,7 +235,7 @@
 </style>
 </head>
 <body>
-<header class="top"><div class="in"><a class="brand" href="/">Easy Landing</a><small>בונה האתרים</small></div></header>
+<header class="top"><div class="in"><a class="brand" href="/"><svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#5428e0"/><path d="M9 8h12v3H12.5v2.6h7.5v2.8h-7.5V19H21v3H9z" fill="#fff"/><circle cx="23.5" cy="23.5" r="3" fill="#c2136f"/></svg>Easy Landing</a><small>בונה האתרים</small></div></header>
 
 <main id="start" class="start" hidden>
   <section aria-labelledby="t-start">
