@@ -7,7 +7,9 @@
    On a paying business's site (netlify/functions/client-chat.mjs) also pass:
      endpoint: "https://service-pro-web.netlify.app/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
      placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"), offlineWa (false: no WhatsApp button then).
-   A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>". */
+   A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>".
+   hint: true puts an arrow bobbing above the button and a soft pulse around it, until the chat is first opened
+   (none with reduced motion or html.a11y-still). */
 (function () {
   const DEMOS = {
     plumber: "אינסטלטור", movers: "הובלות", trainer: "מאמנת כושר", ac: "טכנאי מזגנים", electrician: "חשמלאי",
@@ -20,6 +22,13 @@
   const CSS = `
   .ab-launch{position:fixed;z-index:60;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;
     background:var(--ab-accent,#0f6e7a);color:#fff;font:600 15px/1 var(--ab-font,system-ui,sans-serif);padding:12px 18px 12px 12px;border-radius:999px;box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
+  .ab-launch.ab-call{animation:abPulse 2s ease-out infinite}
+  @keyframes abPulse{0%{box-shadow:0 14px 30px -12px rgba(0,0,0,.45),0 0 0 0 color-mix(in srgb,var(--ab-accent,#0f6e7a) 55%,transparent)}70%,100%{box-shadow:0 14px 30px -12px rgba(0,0,0,.45),0 0 0 16px transparent}}
+  .ab-hint{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:26px;height:26px;pointer-events:none;animation:abBob 1.6s ease-in-out infinite}
+  .ab-hint svg{width:100%;height:100%;overflow:visible}.ab-hint .h{stroke:#fff;stroke-width:7}.ab-hint .a{stroke:var(--ab-accent,#0f6e7a);stroke-width:3.5}
+  @keyframes abBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-7px)}}
+  @media (prefers-reduced-motion:reduce){.ab-launch.ab-call,.ab-hint{animation:none}}
+  html.a11y-still .ab-launch.ab-call,html.a11y-still .ab-hint{animation:none}
   .ab-launch .ab-spark{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--ab-accent,#0f6e7a);display:grid;place-items:center;font-weight:800;font-size:13px}
   .ab-panel{position:fixed;z-index:61;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;width:min(400px,calc(100% - 32px));height:min(600px,calc(100% - 120px));
     display:none;flex-direction:column;padding:0;margin:0;background:#fff;color:#0d1b2a;border:1px solid #dde4ea;border-radius:20px;box-shadow:0 30px 70px -25px rgba(0,0,0,.45);overflow:hidden;font:400 15px/1.55 var(--ab-font,system-ui,sans-serif)}
@@ -104,6 +113,13 @@
 
       const launch = el("button", "ab-launch"); launch.type = "button"; launch.setAttribute("aria-expanded", "false");
       launch.append(el("span", "ab-spark", "AI"), el("span", "ab-label", cfg.launcher || "שאלו את הנציג החכם"));
+      let hint = null;
+      if (cfg.hint) {
+        launch.classList.add("ab-call");
+        hint = el("span", "ab-hint"); hint.setAttribute("aria-hidden", "true");
+        hint.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="h" d="M12 3v16M5 12l7 7 7-7"/><path class="a" d="M12 3v16M5 12l7 7 7-7"/></svg>';
+        launch.append(hint);
+      }
       const panel = el("section", "ab-panel"); panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "נציג חכם");
       const head = el("div", "ab-head");
       const meta = el("div"); meta.append(el("b", null, cfg.name || "הנציג של Easy Landing"), el("small", null, cfg.subtitle || "עונה בעברית, על כל שאלה"));
@@ -173,6 +189,7 @@
 
       function open() {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
+        if (hint) { hint.remove(); hint = null; launch.classList.remove("ab-call"); }
         if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat");
         if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של Easy Landing. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
         input.focus();
