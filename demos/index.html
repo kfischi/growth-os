@@ -91,19 +91,18 @@ html.a11y-still .reveal { opacity: 1; transform: none; }
 .hero { padding-block: clamp(36px, 7svh, 84px) clamp(64px, 10svh, 112px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px clamp(32px, 5vw, 80px); align-items: center; }
 .hero-text { min-width: 0; display: grid; justify-items: start; gap: 22px; }
-.live { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink-2); font-size: .9rem; }
-.live i { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--fuchsia); box-shadow: 0 0 0 4px color-mix(in oklab, var(--fuchsia) 18%, transparent); }
-.live .mono { color: var(--ink); font-size: .85rem; }
-h1 { font: 800 clamp(2.9rem, 5.4vw, 5rem)/1 var(--display); letter-spacing: -.045em; }
+.tagline { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink); font-size: .92rem; font-weight: 500; }
+.tagline i { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--fuchsia); box-shadow: 0 0 0 4px color-mix(in oklab, var(--fuchsia) 18%, transparent); }
+h1 { font: 800 clamp(2.5rem, 4.4vw, 4.2rem)/1.04 var(--display); letter-spacing: -.04em; }
 h1 > span { display: block; }
 h1 .two { color: var(--violet); }
 .hero-sub { font-size: clamp(1.1rem, 1.55vw, 1.3rem); color: var(--ink-2); max-width: 40ch; text-wrap: pretty; }
+.hero-sub b { display: block; margin-bottom: 6px; color: var(--ink); font-weight: 700; }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
-.zero { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 8px 16px 8px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink); font-size: .97rem; font-weight: 500; }
-.zero svg { flex: none; inline-size: 22px; block-size: 22px; }
-.facts { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .95rem; color: var(--ink-2); }
-.facts li { display: flex; align-items: center; gap: 8px; }
-.facts li::before { content: ""; inline-size: 14px; block-size: 1.5px; background: var(--fuchsia); }
+.ticks { list-style: none; padding: 0; display: grid; gap: 10px; font-size: 1rem; font-weight: 500; color: var(--ink); }
+.ticks li { display: flex; align-items: center; gap: 10px; }
+.ticks li::before { content: ""; flex: none; inline-size: 22px; block-size: 22px; border-radius: 50%;
+  background: var(--violet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Cpath d='M6.5 11.4l3 3 6-6.4' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
 
 .reel { margin: 0; min-width: 0; }
 .vid-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 1.05rem; }
@@ -473,12 +472,11 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   <section class="hero" id="hero" aria-labelledby="t-hero">
     <div class="wrap">
       <div class="hero-text">
-        <p class="live"><i aria-hidden="true"></i>פנייה נכנסת <span class="mono" data-now>21:47</span> · נענתה בוואטסאפ</p>
-        <h1 id="t-hero"><span>אתם בעבודה.</span><span class="two">האתר עונה ללקוחות<span class="dot">.</span></span></h1>
-        <p class="hero-sub">כל פנייה מקבלת מענה בוואטסאפ תוך שניות, נשמרת, ומגיעה אליכם עם תזכורת לחזור. בונים לבד, בצ׳אט.</p>
+        <p class="tagline"><i aria-hidden="true"></i>נחיתה רכה · אתרים שבונים עסקים</p>
+        <h1 id="t-hero"><span>אתר חכם לעסק&nbsp;שלך&nbsp;–</span><span class="two">שלא מפספס אף&nbsp;לקוח<span class="dot">.</span></span></h1>
+        <p class="hero-sub"><b>בונים אתר. מקבלים מענה בוואטסאפ. סוגרים עבודות.</b>אתר מודרני מותאם לנייד, עם מערכת שעונה ללקוחות ושומרת כל פנייה מתי שאתה בעבודה. בונים בצ׳אט ב-5 דקות – ומשלמים רק כשהאתר מוכן.</p>
         <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn line" href="film/">סרטון הסבר</a></div>
-        <p class="zero"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#5428e0"/><path d="M6.5 11.4l3 3 6-6.4" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>בונים ורואים את האתר בחינם. משלמים רק כשהוא מוכן ואישרתם.</p>
-        <ul class="facts"><li>16 תחומים לדוגמה</li><li>בלי התחייבות</li><li>הדומיין על שמכם</li></ul>
+        <ul class="ticks"><li>מענה אוטומטי בוואטסאפ</li><li>אתר מודרני מותאם לנייד</li><li>אפס סיכון – משלמים רק כשהאתר מוכן</li></ul>
       </div>
       <figure class="reel" data-cues="[{&quot;at&quot;: 0, &quot;text&quot;: &quot;אתר מקצועי לעסק שלכם&quot;}, {&quot;at&quot;: 3, &quot;text&quot;: &quot;נציג AI שעונה ללקוחות&quot;}, {&quot;at&quot;: 5.8, &quot;text&quot;: &quot;בוחרים תבנית&quot;}, {&quot;at&quot;: 9, &quot;text&quot;: &quot;ובוחרים צבעים&quot;}, {&quot;at&quot;: 11.8, &quot;text&quot;: &quot;עונים על כמה שאלות&quot;}, {&quot;at&quot;: 14.6, &quot;text&quot;: &quot;והאתר מתמלא מול העיניים&quot;}, {&quot;at&quot;: 17.4, &quot;text&quot;: &quot;מעלים תמונות&quot;}, {&quot;at&quot;: 20, &quot;text&quot;: &quot;מאשרים, ואנחנו מעלים לאוויר&quot;}, {&quot;at&quot;: 22.4, &quot;text&quot;: &quot;וכל פנייה מגיעה אליכם בוואטסאפ&quot;}]">
         <figcaption class="vid-head"><b>צפו: ככה נבנה האתר</b><span class="len">27 שניות</span></figcaption>
