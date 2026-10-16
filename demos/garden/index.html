@@ -230,7 +230,7 @@
     box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(24,59,45,.6), 0 8px 20px -12px rgba(24,59,45,.25); }
   .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   /* the season wheel now opens the first section, beside the calendar it explains */
-  .wheel-band { max-width: 470px; margin: 0 auto 56px; }
+  .wheel-band { max-width: 470px; margin: 0 auto 30px; padding: 18px 0 26px; overflow: hidden; } /* the turning square of the dial stays inside */
   .wheel .dial { filter: drop-shadow(0 24px 30px rgba(24,59,45,.28)); }
   .hub { box-shadow: 0 0 0 6px var(--wheel), 0 0 0 7px #c5d3b9, 0 18px 30px -12px rgba(15,42,31,.55); }
   .hub .w { flex-wrap: wrap; }
@@ -253,7 +253,7 @@
     .frame { inset: 10% 0 16% 8%; border-radius: 28px; }
     .g-chat { display: none; }
     .g-price { top: auto; bottom: 0; inset-inline-end: auto; inset-inline-start: 0; width: 80%; }
-    .wheel-band { margin-bottom: 40px; }
+    .wheel-band { margin-bottom: 18px; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }

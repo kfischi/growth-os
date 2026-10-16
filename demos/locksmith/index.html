@@ -245,6 +245,82 @@
     .door .lit { animation: none; opacity: 1; }
     .btn { transition: none; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: stairwell plaster by day with a breath of the door's bordeaux and the night's blue, big tight
+     Rubik, the sample photo from the stairwell in a large rounded frame, glass cards from this page's own facts (night and
+     Shabbat calls and the area, the intercom's first three prices, Ido's reply that was on the door), the main button glowing.
+     The only motion: the cards rise in once. */
+  .top { background: rgba(236,235,242,.86); color: var(--ink); border-bottom-color: rgba(27,33,64,.08); }
+  .logo .n2 { color: var(--door); }
+  .top-a .btn-ghost { border-color: #cfcfdc; color: var(--ink); background: #fff; }
+  .top-a .btn-ghost:hover { background: #fff; border-color: var(--door); }
+  .btn-glow, .top-a .btn-glow { background: var(--door); color: #fff; box-shadow: 0 16px 32px -14px rgba(110,31,48,.75), 0 2px 6px -2px rgba(110,31,48,.4), inset 0 1px 0 rgba(255,255,255,.18); }
+  .btn-glow:hover { background: var(--door-deep); }
+  .btn-glow:focus-visible { outline-color: var(--door); }
+  .hero { background: var(--plaster); color: var(--ink);
+    background-image: radial-gradient(52% 62% at 8% 14%, rgba(110,31,48,.13), transparent 70%), radial-gradient(46% 56% at 96% 0%, rgba(23,32,66,.10), transparent 70%), radial-gradient(40% 50% at 40% 100%, rgba(255,138,107,.10), transparent 70%); }
+  .hero::before, .hero::after { display: none; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick vis" "h1 vis" "lede vis" "cta vis" "facts vis"; align-items: start; padding: 56px 0 72px; }
+  .kicker { color: var(--ink-soft); }
+  .kicker .now { color: var(--ink); }
+  .kicker .now i { background: var(--door); box-shadow: 0 0 0 4px rgba(110,31,48,.14); }
+  .hero h1 { font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; }
+  .hero h1 em { font-size: .5em; letter-spacing: -.02em; line-height: 1.2; color: var(--door); margin-top: 14px; }
+  .hero h1 em b { color: var(--door); }
+  .lede { color: var(--ink-soft); }
+  .hero .btn-ghost { background: #fff; color: var(--ink); border: 0; box-shadow: inset 0 0 0 1.5px #cfcfdc, 0 10px 24px -18px rgba(23,32,66,.5); }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--door), 0 10px 24px -18px rgba(23,32,66,.5); }
+  .facts { margin-top: 40px; padding: 22px 0 0; border-top: 1px solid #d4d4e2; }
+  .facts div { border-inline-start-color: #d4d4e2; }
+  .facts dt { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .facts dd { color: var(--ink-soft); }
+
+  .visual { grid-area: vis; position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; align-self: center; min-width: 0; }
+  .frame { position: absolute; inset: 8% 2% 14% 15%; border-radius: 34px; overflow: hidden; background: var(--ps-a);
+    box-shadow: 0 0 0 1px rgba(27,33,64,.08), 0 54px 90px -46px rgba(23,32,66,.75), 0 18px 34px -26px rgba(110,31,48,.35); }
+  .frame img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 30% 50%; }
+  .gl { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; padding: 14px 16px; color: var(--ink); font-size: 14px; line-height: 1.35;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 28px 50px -28px rgba(23,32,66,.6), 0 6px 14px -10px rgba(110,31,48,.3);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-day { top: 0; inset-inline-start: 0; display: grid; gap: 3px; animation-delay: .1s; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--door); box-shadow: 0 0 0 4px rgba(110,31,48,.14); }
+  .g-day b { font: 800 17px/1.2 var(--display); letter-spacing: -.01em; }
+  .g-price { bottom: 0; inset-inline-end: 0; width: min(282px, 62%); padding: 14px 16px 10px; animation-delay: .25s; }
+  .g-price header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 1.5px solid var(--ink); }
+  .g-price header b { font: 800 15px/1.2 var(--display); }
+  .g-price header span { font-size: 11.5px; color: var(--ink-soft); }
+  .g-price ul { list-style: none; margin: 0; padding: 0; }
+  .g-price li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #d4d4e2; }
+  .g-price li:first-child { border-top: 0; }
+  .g-price li span { min-width: 0; }
+  .g-price li b { font-weight: 700; color: var(--door); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .g-note { top: 30%; inset-inline-end: -2%; width: min(46%, 224px); animation-delay: .4s; border-end-start-radius: 6px; }
+  .g-note .mono { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 11.5px; margin-bottom: 4px; }
+  .g-note .ltr { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .g-note b { color: var(--door); }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "vis" "facts"; }
+    .visual { max-width: 460px; margin-top: 36px; }
+    .g-note { inset-inline-end: 0; }
+  }
+  @media (max-width: 640px) {
+    .top-a .btn-ghost { background: #fff; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "vis" "facts"; padding: 28px 0 48px; }
+    .hero h1 { font-size: clamp(42px, 12vw, 54px); }
+    .hero h1 em { font-size: 22px; }
+    .visual { aspect-ratio: 1 / 1.08; margin-top: 30px; }
+    .frame { inset: 9% 0 17% 6%; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-day { padding: 11px 13px; }
+    .g-price { width: min(290px, 80%); padding: 12px 14px 8px; }
+    .g-price li { padding: 6px 0; }
+    .facts { margin-top: 28px; padding: 18px 0 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .gl { animation: none; } }
+  html.a11y-still .gl { animation: none; }
 </style>
 </head>
 <body>
@@ -276,59 +352,18 @@
       <div><dt><span class="ltr">‎+150 ₪</span></dt><dd>בלילה ובשבת, וזה הכול</dd></div>
     </dl>
 
-    <div class="door" aria-hidden="true">
-      <svg viewBox="0 0 440 700" fill="none">
-        <defs>
-          <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a2a3e"/><stop offset=".55" stop-color="#6e1f30"/><stop offset="1" stop-color="#541726"/></linearGradient>
-          <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f7fb"/><stop offset=".5" stop-color="#b9bfd1"/><stop offset="1" stop-color="#7d849c"/></linearGradient>
-          <linearGradient id="beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4e9ff" stop-opacity=".22"/><stop offset=".6" stop-color="#e4e9ff" stop-opacity=".06"/><stop offset="1" stop-color="#e4e9ff" stop-opacity="0"/></linearGradient>
-          <radialGradient id="glowdot"><stop offset="0" stop-color="#ffd2c4"/><stop offset=".45" stop-color="#ff8a6b"/><stop offset="1" stop-color="#ff8a6b" stop-opacity="0"/></radialGradient>
-        </defs>
-        <!-- frame -->
-        <rect x="30" y="20" width="320" height="680" fill="#262c4a"/>
-        <rect x="30" y="20" width="320" height="680" stroke="#3a4270" stroke-width="2"/>
-        <!-- door leaf -->
-        <rect x="48" y="36" width="284" height="664" fill="url(#leaf)"/>
-        <g stroke="#4c1421" stroke-width="3">
-          <rect x="82" y="78" width="216" height="250" rx="6"/>
-          <rect x="82" y="372" width="216" height="290" rx="6"/>
-        </g>
-        <g stroke="#9c3a4f" stroke-width="1.5" opacity=".8">
-          <rect x="85" y="81" width="216" height="250" rx="6"/>
-          <rect x="85" y="375" width="216" height="290" rx="6"/>
-          <path d="M118 120 H264 M118 290 H264 M118 414 H264 M118 622 H264"/>
-        </g>
-        <!-- number plate -->
-        <rect x="150" y="146" width="80" height="44" rx="6" fill="url(#chrome)" stroke="#6b7290"/>
-        <text x="190" y="179" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="800" font-size="30" fill="#1b2140">12</text>
-        <!-- peephole -->
-        <circle cx="190" cy="236" r="13" fill="url(#chrome)" stroke="#6b7290"/>
-        <circle cx="190" cy="236" r="6" fill="#0f1630"/>
-        <circle cx="188" cy="234" r="2" fill="#8b93b8"/>
-        <!-- handle and cylinder -->
-        <rect x="70" y="392" width="30" height="150" rx="14" fill="url(#chrome)" stroke="#6b7290"/>
-        <path d="M85 430 H150 a10 10 0 0 1 0 20 H85 Z" fill="url(#chrome)" stroke="#6b7290"/>
-        <circle cx="85" cy="440" r="11" fill="#dfe2ec" stroke="#6b7290"/>
-        <circle cx="85" cy="500" r="11" fill="#9ea5bc" stroke="#5c6380"/>
-        <path d="M85 494 v12" stroke="#0f1630" stroke-width="3.5" stroke-linecap="round"/>
-        <!-- hinges -->
-        <rect x="328" y="120" width="8" height="40" rx="3" fill="#7d849c"/><rect x="328" y="560" width="8" height="40" rx="3" fill="#7d849c"/>
-        <!-- mezuzah on the right doorpost -->
-        <g transform="rotate(8 342 300)"><rect x="336" y="262" width="13" height="74" rx="5" fill="#c3c8d8" stroke="#6b7290"/><path d="M342.5 280 v14" stroke="#4d5375" stroke-width="2"/></g>
-        <!-- stairwell light switch, glowing -->
-        <rect x="378" y="380" width="40" height="58" rx="8" fill="#e9ebf2" stroke="#9aa1b8"/>
-        <rect x="386" y="390" width="24" height="38" rx="5" fill="#d4d8e5" stroke="#9aa1b8"/>
-        <circle cx="398" cy="409" r="14" fill="url(#glowdot)"/>
-        <circle cx="398" cy="409" r="3.5" fill="#fff4ef"/>
-        <!-- doormat -->
-        <rect x="80" y="680" width="220" height="20" rx="3" fill="#2a2440"/>
-        <!-- the dark before the light comes on -->
-        <rect class="dark" x="0" y="0" width="440" height="700" fill="#0f1630" opacity="0"/>
-        <circle class="dark" cx="398" cy="409" r="22" fill="url(#glowdot)" opacity="0"/>
-        <!-- light from the lamp above -->
-        <path class="lit" d="M130 20 L250 20 L330 700 L50 700 Z" fill="url(#beam)" opacity="0"/>
-      </svg>
-      <div class="note"><span class="mono"><span>עידו · מנעולן</span><span class="ltr">02:41</span></span>קיבלתי. <b>חוזר אליכם עכשיו</b> עם זמן הגעה ומחיר.</div>
+    <div class="visual">
+      <div class="frame"><img src="../shared/photos/locksmith-work.webp" width="800" height="500" alt="מנעולן בחדר מדרגות מפרק צילינדר מדלת דירה" fetchpriority="high" decoding="async"></div>
+      <div class="gl g-day" aria-hidden="true"><span><i></i>עונים גם בלילה ובשבת</span><b>חדרה · פרדס חנה · השרון</b></div>
+      <div class="gl g-note" aria-hidden="true"><span class="mono"><span>עידו · מנעולן</span><span class="ltr">02:41</span></span>קיבלתי. <b>חוזר אליכם עכשיו</b> עם זמן הגעה ומחיר.</div>
+      <div class="gl g-price" aria-label="מחירים לדוגמה">
+        <header><b>מחירון</b><span>להמחשה</span></header>
+        <ul>
+          <li><span>פתיחת דלת נעולה</span><b>250 עד 450 ₪</b></li>
+          <li><span>החלפת צילינדר</span><b>250 עד 550 ₪</b></li>
+          <li><span>החלפת מנעול</span><b>350 עד 800 ₪</b></li>
+        </ul>
+      </div>
     </div>
   </div>
 </header>
