@@ -17,7 +17,6 @@ import { launchKit } from "./launch.mjs";
 export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 1900, month: 390 } };
 export const CYCLES = ["month", "year"];
 const YEAR_MONTHS = 10; // the annual prepayment: 12 months for the price of 10
-export const NOTICE_DAYS = 30;
 export const RETRY_DAYS = 3, MAX_FAILS = 4;
 const PKG_HE = { presence: "נוכחות", ai: "נציג AI" };
 
@@ -214,8 +213,8 @@ export async function billingView(d) {
 export async function cancel(d, now = new Date()) {
   const b = await billingOf(d.id);
   if (!b || !["active", "failed"].includes(b.state)) return { error: "no_subscription" };
-  // 30 days' notice; a year paid ahead runs to its end.
-  const end = new Date(Math.max(now.getTime() + NOTICE_DAYS * DAY, b.cycle === "year" ? new Date(b.next_charge_at).getTime() : 0));
+  // No notice: what was paid runs to its end (the month, or the year paid ahead), and nothing more is charged.
+  const end = new Date(Math.max(now.getTime(), new Date(b.next_charge_at).getTime() || 0));
   await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { state: "cancelling", end_at: iso(end), updated_at: iso(now) });
   await alertKfir(d, `בעל העסק ביטל את המנוי. הוא פעיל עד ${end.toISOString().slice(0, 10)}`);
   return { end: iso(end) };
@@ -240,7 +239,7 @@ export async function runBilling(now = new Date(), charge = chargeToken) {
   for (const b of await db("GET", `ls_billing?state=eq.cancelling&end_at=lte.${q(iso(now))}&select=*&limit=200`)) {
     await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "ended", updated_at: iso(now) });
     const d = await getDraft(b.draft_id);
-    if (d) { await pauseLeads(d); await alertKfir(d, "המנוי הסתיים אחרי ההודעה של 30 יום. האתר נשאר, המערכת כבויה"); }
+    if (d) { await pauseLeads(d); await alertKfir(d, "המנוי הסתיים בסוף התקופה ששולמה. האתר נשאר, המערכת כבויה"); }
     out.ended++;
   }
   const due = await db("GET", `ls_billing?state=in.(active,failed,cancelling)&next_charge_at=lte.${q(iso(now))}&select=*&order=next_charge_at.asc&limit=200`);

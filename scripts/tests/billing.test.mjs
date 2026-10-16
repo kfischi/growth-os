@@ -145,14 +145,18 @@ assert.ok(!JSON.stringify(r.billing).includes("card-1"), "the card token never g
 assert.match(r.billing.panel, /panel/);
 // The launch kit: a tagged link per channel (made once), and texts from the owner's own facts.
 const L1 = r.billing.launch;
-assert.equal(L1.tracked, true); assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 3);
+assert.equal(L1.tracked, true); assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 7, "3 channels and the 4 networks (none given: all four)");
+assert.deepEqual(L1.social.map((x) => x.id), ["instagram", "facebook", "tiktok", "youtube"]);
+assert.ok(L1.social.every((x) => /^https:\/\/oren-mayim\.sites\.example\.co\.il\/\?s=[a-z0-9]{4}$/.test(x.link) && x.how), "a tagged link and where to paste it");
+assert.equal(new Set([L1.gbp.link, ...L1.social.map((x) => x.link)]).size, 5, "each network its own link");
+assert.ok(T.ls_links.some((l) => l.client_slug === "oren-mayim" && l.label === "ביו באינסטגרם"));
 assert.match(L1.gbp.link, /^https:\/\/oren-mayim\.sites\.example\.co\.il\/\?s=[a-z0-9]{4}$/);
 assert.notEqual(L1.gbp.link, L1.status.link, "each channel its own link");
 assert.match(L1.status.text, /^פתחתי אתר לעסק: אינסטלציה בחדרה, עמק חפר והשרון\. אפשר לראות שם מחירים, לשלוח תמונה ולפנות בכל שעה, ואני חוזר תוך 15 דק׳\.\n/);
 assert.match(L1.groups.text, /^היי לכולם, אני אורן, אינסטלציה ב.+, 12 שנה בתחום\./);
 assert.ok(L1.gbp.steps.some((x) => /^אזור שירות: /.test(x)));
 r = await J(await req(D, "state", { method: "GET" }));
-assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 3, "the links are made once");
+assert.equal(T.ls_links.filter((l) => l.client_slug === "oren-mayim").length, 7, "the links are made once");
 assert.equal(r.billing.launch.gbp.link, L1.gbp.link);
 r = await J(await req(D, "panel-seen", { body: {} })); assert.equal(r.billing.panel, null); assert.equal(D.panel_once, null);
 // "check now": the DNS isn't there yet
@@ -200,14 +204,14 @@ assert.equal(T.ls_clients.find((c) => c.slug === "oren-mayim").active, true, "th
 
 /* ---------------- cancelling ---------------- */
 r = await J(await req(D, "cancel", { body: {} }));
-assert.equal(r.billing.sub.state, "cancelling"); assert.ok(new Date(B.end_at) - Date.now() > 29 * 86_400_000, "30 days' notice");
+assert.equal(r.billing.sub.state, "cancelling"); assert.equal(B.end_at, new Date(B.next_charge_at).toISOString(), "runs to the end of what was paid");
 r = await J(await req(D, "resume", { body: {} })); assert.equal(B.state, "active"); assert.equal(B.end_at, null);
 await J(await req(D, "cancel", { body: {} }));
 const end = new Date(B.end_at);
-B.next_charge_at = new Date(end.getTime() + 86_400_000).toISOString(); // the next charge falls after the notice: never charged
+// the next charge falls on the end: it is never made
 const paysBefore = T.ls_payments.length;
 out = await L.runBilling(new Date(end.getTime() + 2 * 86_400_000));
-assert.equal(out.ended, 1); assert.equal(B.state, "ended"); assert.equal(T.ls_payments.length, paysBefore, "no charge after the notice");
+assert.equal(out.ended, 1); assert.equal(B.state, "ended"); assert.equal(T.ls_payments.length, paysBefore, "no charge after cancelling");
 assert.equal(T.ls_clients.find((c) => c.slug === "oren-mayim").active, false);
 r = await J(await req(D, "cancel", { body: {} })); assert.equal(r.error, "no_subscription");
 
