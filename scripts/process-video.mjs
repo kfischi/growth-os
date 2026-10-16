@@ -292,7 +292,7 @@ const STEPS = [
   ["בוחרים תחום.", "לכל תחום אתר לדוגמה משלו."],
   ["רואים את האתר לדוגמה.", "באותה תבנית שתקבלו."],
   ["נכנסים לבונה.", "שם וטלפון, וזהו."],
-  ["בוחרים תבנית.", "שש תבניות. האתר מתחלף מיד."],
+  ["בוחרים תבנית.", "כמה תבניות לכל תחום. האתר מתחלף מיד."],
   ["בוחרים צבעים.", "שמונה ערכות לכל תבנית."],
   ["עונים על כמה שאלות.", "האתר מתמלא תוך כדי."],
   ["מעלים תמונות.", "שלכם, ושל העבודה."],
@@ -445,7 +445,7 @@ try {
 
   /* ---------- 4. the template: the camera stays wide, so the tap and the site that changes are both in view ---------- */
   await step(4);
-  for (const [i, [look, name]] of [["van", "שלט על הרכב"], ["mosaic", "פסיפס"], ["certificate", "תעודת אחריות"]].entries()) {
+  for (const [i, [look, name]] of [["blueprint", "שרטוט"], ["van", "שלט על הרכב"], ["luxe", "יוקרה חכמה"]].entries()) {
     await tap(A(`#guide .look[data-look="${look}"]`), name, { zoom: false, hold: 300 });
     await cut(async () => { await A(`#guide .look[data-look="${look}"][aria-pressed=true]`).waitFor(); await draftReady(); });
     if (!i) { await now("והאתר מתחלף מיד"); mark("h-look"); }
@@ -454,7 +454,7 @@ try {
 
   /* ---------- 5. the colours ---------- */
   await step(5);
-  for (const [i, [pal, name]] of [["navy", "כחול"], ["green", "ירוק מסמך"]].entries()) {
+  for (const [i, [pal, name]] of [["ocean", "ים"], ["violet", "סגול"]].entries()) {
     await tap(A(`#guide .pal[data-palette="${pal}"]`), name, { zoom: false, hold: 300 });
     await cut(async () => { await A(`#guide .pal[data-palette="${pal}"][aria-pressed=true]`).waitFor(); await draftReady(); });
     if (!i) { await now("אפשר להחליף גם אחר כך"); mark("h-pal"); }
