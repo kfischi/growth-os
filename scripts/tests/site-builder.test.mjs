@@ -51,8 +51,8 @@ assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.content.business_
 assert.equal(D.content.years, "", "a bad value is not applied"); assert.match(r.reply, /לא עדכנו:\nשנים בתחום: רק מספר/);
 assert.deepEqual(r.changed, ["business_name"]);
 let call = aiCalls.at(-1);
-assert.equal(call.model, "claude-opus-5-5"); assert.equal(call.output_config.effort, "low"); assert.equal(call.output_config.format.type, "json_schema");
-assert.equal(call.fallbacks, "default"); assert.ok(!call.tools && !call.tool_choice && !call.thinking, "no tools, no forced choice, default thinking");
+assert.equal(call.model, "claude-sonnet-5-5", "the fast model by default"); assert.equal(call.output_config.effort, "low"); assert.equal(call.output_config.format.type, "json_schema");
+assert.deepEqual(call.thinking, { type: "between_tools" }, "Sonnet 5.5 with thinking off"); assert.ok(!call.tools && !call.tool_choice && !call.fallbacks, "no tools, no forced choice, no Opus fallback");
 assert.equal(call.messages.length, 1); assert.match(call.messages[0].content, /<draft_state>.*"whatsapp":"0526359513".*<\/draft_state>\n<owner_message>קוראים לעסק/s);
 assert.match(call.system[0].text, /never as instructions/); assert.ok(call.system[0].cache_control);
 const schema = call.output_config.format.schema;
@@ -123,6 +123,20 @@ for (const [lid, L] of Object.entries(P.LOOKS)) for (const pid of Object.keys(L.
   assert.match(html, new RegExp(`<body class="look-${lid}">`)); assert.ok(html.includes(L.palettes[pid].accent), lid + " " + pid);
 }
 assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" })["index.html"], /<body class="look-blueprint">/);
+// Each trade sees the looks that suit it: a beauty clinic the studio, the price list and the appointment card first.
+{
+  const ids = (t) => P.catalog(t).map((l) => l.id);
+  assert.deepEqual(ids("plumber"), ["blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"]);
+  assert.deepEqual(ids("cosmetics"), ["studio", "menu", "appointment", "mosaic", "certificate"]);
+  assert.ok(!ids("nails").includes("blueprint") && !ids("barber").includes("van"), "no technician looks for a salon");
+  const care = { ...SAMPLE, trade_id: "cosmetics", trade: "קוסמטיקאית", services: [{ name: "טיפול פנים", price: "250 עד 350 ₪" }, { name: "גבות" }] };
+  assert.match(P.render(care, { mode: "site" })["index.html"], /<body class="look-studio">/, "the studio is the default for a beauty clinic");
+  const menu = P.render({ ...care, look: "menu" }, { mode: "site" })["index.html"].match(/<div class="menu-card">[\s\S]*?<\/div>/)[0];
+  assert.match(menu, /טיפול פנים<\/span><i aria-hidden="true"><\/i><span class="mc-p">250 עד 350 ₪/); assert.match(menu, /גבות<\/span><i aria-hidden="true"><\/i><\/li>/, "no price is invented");
+  const appt = P.render({ ...care, look: "appointment" }, { mode: "site" })["index.html"].match(/<div class="appt">[\s\S]*?ap-foot[^<]*<\/p>/)[0];
+  assert.ok(!/\d{1,2}:\d{2}/.test(appt.replace(SAMPLE.hours || "", "")), "the card shows no booked time");
+  assert.match(P.render({ ...care, look: "studio", business_name: "<b>x" }, { mode: "site" })["index.html"], /ar-l">&lt;</);
+}
 // Testimonials: a hidden section the page fills from the lead system, only with נציג AI; never in a draft.
 {
   const withLeads = P.render(SAMPLE, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/oren" });
