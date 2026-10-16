@@ -7,30 +7,30 @@
 <style>
   /* The stage for scripts/process-video.mjs: 1920x1080. The real site runs in the iframe "app"; everything else
      (the explanation panel, the step rail, the camera, the arrow, the cards, the phone) is drawn here. */
-  :root { --plum: #3d2442; --plum-2: #2a1830; --ink: #1d1b2e; --slate: #5d5a72; --mist: #ebe9f4; --paper: #f6f5fb; --mint: #0f7a6c; --mint-2: #7fd8c8; --line: #dcd8e8; }
+  :root { --plum: #3a17b0; --plum-2: #17112e; --ink: #17112e; --slate: #4a4462; --mist: #f1edfd; --paper: #fcfbff; --mint: #5428e0; --mint-2: #e4dcfb; --line: #d8d6e3; --fuchsia: #c2136f; }
   * { box-sizing: border-box; }
   html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
-  body { background: radial-gradient(1200px 700px at 30% 40%, #f3f1f9, #e4e0ef); color: var(--ink); font-family: Rubik, system-ui, sans-serif; }
+  body { background: radial-gradient(1200px 700px at 30% 40%, #fcfbff, #ebe5fc); color: var(--ink); font-family: Rubik, system-ui, sans-serif; }
 
   /* top: the brand and the ten steps */
   .top { position: absolute; inset: 0 0 auto 0; height: 118px; display: flex; align-items: center; gap: 36px; padding: 0 48px; background: var(--plum); color: #fff; }
   .brand { flex: none; display: grid; gap: 2px; }
   .brand b { font: 900 34px/1 Rubik; letter-spacing: -.01em; }
-  .brand small { font: 500 17px Rubik; color: #d8cfe0; }
+  .brand small { font: 500 17px Rubik; color: #d8d6e3; }
   .rail { flex: 1; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-  .rail li { position: relative; display: grid; gap: 6px; justify-items: center; color: #b9adc4; font: 500 17px Rubik; transition: color .4s; }
+  .rail li { position: relative; display: grid; gap: 6px; justify-items: center; color: #b9addf; font: 500 17px Rubik; transition: color .4s; }
   .rail li i { width: 100%; height: 8px; border-radius: 4px; background: rgba(255,255,255,.14); overflow: hidden; }
   .rail li i::after { content: ""; display: block; height: 100%; width: 0; background: var(--mint-2); transition: width .7s cubic-bezier(.65,0,.35,1); }
   .rail li span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .rail li em { font: 700 14px Rubik; font-style: normal; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); }
-  .rail li.done { color: #e9e3ef; } .rail li.done i::after { width: 100%; } .rail li.done em { background: var(--mint); color: #fff; }
+  .rail li.done { color: #ebe5fc; } .rail li.done i::after { width: 100%; } .rail li.done em { background: var(--mint); color: #fff; }
   .rail li.on { color: #fff; } .rail li.on i::after { width: 50%; } .rail li.on em { background: var(--mint-2); color: var(--plum-2); }
   .rail li.on span { font-weight: 700; }
 
   /* the browser window with the real site */
   .device { position: absolute; left: 48px; top: 150px; width: 1240px; border-radius: 18px; background: #fff; box-shadow: 0 40px 90px -40px rgba(42,24,48,.55), 0 0 0 1px rgba(42,24,48,.08); overflow: hidden; }
-  .chrome { height: 46px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #f1eff6; border-bottom: 1px solid var(--line); direction: ltr; }
-  .dots { display: flex; gap: 7px; } .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d6d1e2; }
+  .chrome { height: 46px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #f6f3ff; border-bottom: 1px solid var(--line); direction: ltr; }
+  .dots { display: flex; gap: 7px; } .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d8d6e3; }
   .url { flex: 1; height: 30px; border-radius: 15px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; font: 500 16px Rubik; color: var(--slate); }
   .url svg { width: 14px; height: 14px; flex: none; }
   .url b { color: var(--ink); font-weight: 500; }
@@ -50,7 +50,7 @@
   .now b { font: 700 30px/1.3 Rubik; color: var(--ink); min-height: 1.3em; }
   .now.flash { animation: flash .6s ease-out; }
   @keyframes flash { 0% { transform: translateX(-10px); opacity: .2; } 100% { transform: none; opacity: 1; } }
-  .next { margin-top: auto; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 18px; border: 2px dashed #c9c1d8; color: var(--slate); }
+  .next { margin-top: auto; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 18px; border: 2px dashed #cfc6ee; color: var(--slate); }
   .next span { flex: none; font: 700 16px Rubik; letter-spacing: .06em; color: var(--slate); }
   .next b { font: 700 26px Rubik; color: var(--plum); }
   .next svg { width: 28px; height: 28px; margin-inline-start: auto; color: var(--plum); }
@@ -76,7 +76,7 @@
   .card.off { clip-path: inset(0 100% 0 0); }
   .card .n { font: 900 220px/0.9 Rubik; color: rgba(127,216,200,.95); letter-spacing: -.04em; }
   .card h2 { margin: 6px 0 0; font: 900 84px/1 Rubik; letter-spacing: -.02em; }
-  .card p { margin: 18px 0 0; font: 500 30px Rubik; color: #d8cfe0; }
+  .card p { margin: 18px 0 0; font: 500 30px Rubik; color: #d8d6e3; }
 
   /* the owner's phone, for the WhatsApp messages */
   .phone { position: absolute; z-index: 16; left: 430px; top: 160px; width: 470px; height: 860px; border-radius: 54px; background: #121016; padding: 14px; box-shadow: 0 50px 100px -40px rgba(0,0,0,.7); transform: translateY(120%); transition: transform .9s cubic-bezier(.2,.8,.2,1); }
@@ -101,7 +101,7 @@
   .full .l.on { opacity: 1; transform: none; }
   .full .big { font: 900 112px/1 Rubik; letter-spacing: -.03em; }
   .full .mid { font: 700 52px/1.2 Rubik; color: var(--mint-2); }
-  .full .small { font: 500 34px/1.35 Rubik; color: #d8cfe0; }
+  .full .small { font: 500 34px/1.35 Rubik; color: #d8d6e3; }
   .full .grid { display: grid; grid-template-columns: repeat(5, 230px); gap: 16px; margin-top: 14px; }
   .full .st { display: grid; gap: 10px; justify-items: center; padding: 22px 12px; border-radius: 18px; background: rgba(255,255,255,.07); opacity: 0; transform: translateY(20px) scale(.96); transition: opacity .45s, transform .45s cubic-bezier(.2,.8,.2,1), background .4s; }
   .full .st.on { opacity: 1; transform: none; }
@@ -121,7 +121,7 @@
 
 <section class="device" id="device">
   <div class="chrome"><span class="dots"><i></i><i></i><i></i></span>
-    <div class="url"><svg viewBox="0 0 24 24" fill="none" stroke="#0f7a6c" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="url"></span></div>
+    <div class="url"><svg viewBox="0 0 24 24" fill="none" stroke="#5428e0" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span id="url"></span></div>
   </div>
   <div class="view" id="view"><div class="cam" id="cam"><iframe name="app" id="app" title="האתר"></iframe></div><div class="dim" id="dim"></div></div>
 </section>
@@ -141,7 +141,7 @@
   <div class="msgs" id="msgs"></div>
 </div></div>
 
-<div class="arrow" id="arrow"><svg viewBox="0 0 48 48"><path d="M24 44 L10 26 H19 V4 H29 V26 H38 Z" fill="#0f7a6c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div>
+<div class="arrow" id="arrow"><svg viewBox="0 0 48 48"><path d="M24 44 L10 26 H19 V4 H29 V26 H38 Z" fill="#5428e0" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg></div>
 <div class="glow" id="glow"></div>
 <div class="bubble" id="bubble"></div>
 

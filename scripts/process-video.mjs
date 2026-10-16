@@ -183,7 +183,7 @@ async function waitPath(re) {
 
 /* ---------- a step: the card, then the panel ---------- */
 const STEPS = [
-  ["בוחרים תחום", "נכנסים לאתר ובוחרים את התחום שלכם. יש 16 תחומים, ולכל אחד דמו משלו."],
+  ["בוחרים תחום", "נכנסים לאתר ובוחרים את התחום שלכם. יש 21 תחומים בארבעה סוגים, ולכל אחד דמו משלו."],
   ["מסתכלים על הדמו", "עסק בדוי, באותה תבנית שתקבלו: השירותים, המחירים, האזורים, והצ׳אט שעונה ללקוחות."],
   ["נכנסים לבונה", "לוחצים \"לבנות את האתר שלי\". שם וטלפון, וזהו. בלי שיחת היכרות ובלי לחכות."],
   ["בוחרים תבנית", "שש תבניות לאותו תוכן. לוחצים על אחת, והאתר מתחלף מיד."],
@@ -249,8 +249,11 @@ try {
   await scrollApp(app(), demosY, 2000); await wait(900);
   await zoomTo(A("#demos"), { max: 1.25 });
   await wait(900);
+  await now("ארבעה סוגי עסקים, ובכל אחד התחומים שלו", 300);
+  await tap(A('#cats button[data-cat="care"]'), "תורים וטיפולים", { max: 1.6 }); await wait(1300);
+  await tap(A('#cats button[data-cat="urgent"]'), "תקלות דחופות", { zoom: false }); await wait(900);
   await now("בוחרים תחום, והטלפון מראה את האתר שלו", 300);
-  await tap(A('#chips .chip[data-id="electrician"]'), "חשמלאי", { max: 1.6 }); await wait(1300);
+  await tap(A('#chips .chip[data-id="electrician"]'), "חשמלאי", { zoom: false }); await wait(1300);
   await tap(A('#chips .chip[data-id="plumber"]'), "אינסטלטור", { zoom: false }); await wait(1300);
   await now("ונכנסים לדמו המלא");
   await tap(A("#toDemo"), "לדמו המלא", { max: 1.6 });

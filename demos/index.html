@@ -162,7 +162,8 @@ h1 .two { color: var(--violet); }
 .now b { color: var(--ink); }
 
 /* 3 · prices and the package builder */
-.price-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px clamp(24px, 4vw, 56px); align-items: start; }
+.price-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.price-grid .builder .needs { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
 .price-grid > * { min-width: 0; }
 .builder { padding: clamp(20px, 2.6vw, 32px); border-radius: 24px; background: #fff; border: 1px solid var(--silver); }
 .builder h3 { font-size: 1.3rem; font-weight: 700; letter-spacing: -.01em; }
@@ -199,8 +200,17 @@ h1 .two { color: var(--violet); }
 .per { font-weight: 600; min-block-size: 3.1em; }
 .per small { display: block; font-weight: 400; color: var(--silver-ink); font-size: .88rem; }
 .inc { list-style: none; padding: 12px 0 0; border-top: 1px solid var(--silver); display: grid; gap: 6px; font-size: .97rem; }
-.inc li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px; align-items: baseline; }
-.inc li::before { content: ""; inline-size: 10px; block-size: 1.5px; background: var(--violet); transform: translateY(-4px); }
+.inc li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.inc li { grid-template-columns: 20px minmax(0, 1fr); }
+.inc li::before { content: ""; inline-size: 20px; block-size: 20px; border-radius: 50%; transform: translateY(4px);
+  background: var(--violet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.8 10.3l2.7 2.7 5.6-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
+.inc-n { font-weight: 600; color: var(--ink); }
+.inc-n b { font: 800 1.35rem/1 var(--display); color: var(--violet); }
+/* the ticks come in one after another the first time the card is seen (none with reduced motion) */
+.inc.ticking li { opacity: 0; transform: translateX(8px); }
+.inc.ticking li::before { transform: translateY(4px) scale(0); }
+.inc.ticked li { opacity: 1; transform: none; transition: opacity .35s var(--ease) var(--d), transform .35s var(--ease) var(--d); }
+.inc.ticked li::before { transform: translateY(4px) scale(1); transition: transform .3s var(--ease) calc(var(--d) + .12s); }
 .plan .btn { justify-self: start; margin-top: 4px; }
 .terms { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--ink-2); font-size: .95rem; }
 .terms b { color: var(--ink); font-weight: 600; }
@@ -437,6 +447,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .groups, .why, .vs { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 640px) {
+  .price-grid .builder .needs { grid-template-columns: minmax(0, 1fr); }
   .sec { padding-block: 64px; }
   .day { padding: 12px; border-radius: 22px; margin-inline: calc(var(--gut) * -.5); }
   .day-split { gap: 8px; }
@@ -715,9 +726,31 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <p class="sub">הקמה פעם אחת, ותשלום חודשי שכולל אחסון, תחזוקה ומעקב.</p>
       </div>
       <div class="price-grid">
+        <div class="plans">
+          <article class="plan reveal" data-plan="p">
+            <span class="tag">מתאים לכם</span>
+            <h3>נוכחות</h3>
+            <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
+            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
+            <p class="per" data-m="150"></p>
+            <p class="inc-n"><b>9</b> דברים כלולים</p>
+            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>קישורים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
+            <a class="btn line" href="build/">לבנות דף נוכחות</a>
+          </article>
+          <article class="plan reveal" data-plan="ai">
+            <span class="tag">מתאים לכם</span>
+            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
+            <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
+            <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
+            <p class="per" data-m="390"></p>
+            <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
+            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>קישור מתויג לכל רשת וקבוצה: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
+            <a class="btn" href="build/">לבנות את האתר שלי</a>
+          </article>
+        </div>
         <form class="builder reveal" id="builder" onsubmit="return false" aria-labelledby="t-builder">
-          <h3 id="t-builder">מה העסק שלכם צריך?</h3>
-          <p>סמנו, ונראה לכם איזו חבילה מתאימה.</p>
+          <h3 id="t-builder">לא בטוחים? סמנו מה העסק צריך.</h3>
+          <p>ונראה לכם איזו חבילה מתאימה.</p>
           <ul class="needs">
             <li class="need"><label><input type="checkbox" value="p" checked><span>כפתורי וואטסאפ וחיוג</span><small>נוכחות</small></label></li>
             <li class="need"><label><input type="checkbox" value="p"><span>מחשבון ״כמה זה יעלה?״</span><small>נוכחות</small></label></li>
@@ -734,26 +767,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p id="fitPer"><bdi>150 ₪</bdi> לחודש</p>
           </div>
         </form>
-        <div class="plans">
-          <article class="plan reveal" data-plan="p">
-            <span class="tag">מתאים לכם</span>
-            <h3>נוכחות</h3>
-            <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
-            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
-            <p class="per" data-m="150"></p>
-            <ul class="inc"><li>דף מעוצב ומותאם לנייד</li><li>כפתורי וואטסאפ וחיוג</li><li>מחשבון, מדריכים, לפני ואחרי</li><li>חיבור לדומיין שלכם</li><li>אחסון ותחזוקה</li></ul>
-            <a class="btn line" href="build/">לבנות דף נוכחות</a>
-          </article>
-          <article class="plan reveal" data-plan="ai">
-            <span class="tag">מתאים לכם</span>
-            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
-            <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
-            <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
-            <p class="per" data-m="390"></p>
-            <ul class="inc"><li>כל מה שבנוכחות</li><li>מענה אוטומטי בוואטסאפ תוך שניות</li><li>התראה על כל פנייה ותזכורת מעקב</li><li>כל הפניות בטבלה אחת</li><li>צ׳אט באתר שעונה ומסנן פניות</li><li>דוח חודשי</li></ul>
-            <a class="btn" href="build/">לבנות את האתר שלי</a>
-          </article>
-        </div>
       </div>
       <div class="terms reveal">
         <p><b>שנה מראש:</b> 12 חודשים במחיר של 10.</p>
@@ -833,6 +846,13 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['music', 'מורה לנגינה', 'מאיה לב', 'שיעורי פסנתר, מהשיר שאתם אוהבים.', 'music-work', '50% 35%', '#f3f4f6', '#8e2236', '#8e2236', '#fff', '#15161a', 'learn'],
   ].map(([id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat]) => ({ id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat }));
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  /* the plans: each card's ticks come in line by line, once */
+  if (!still() && 'IntersectionObserver' in window) {
+    const lists = $$('.plan .inc');
+    lists.forEach((ul) => { ul.classList.add('ticking'); [...ul.children].forEach((li, i) => li.style.setProperty('--d', (i * 0.14) + 's')); });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (!e.isIntersecting) return; e.target.classList.add('ticked'); io.unobserve(e.target); }), { threshold: 0.35 });
+    lists.forEach((ul) => io.observe(ul));
+  }
   const chips = $('#chips'), screen = $('#screen'), stage = $('#stage');
   const cats = $('#cats');
   const chipsOf = (cat) => { chips.innerHTML = T.map((t, i) => t.cat !== cat ? '' : `<li><button class="chip" type="button" data-i="${i}" data-id="${t.id}" aria-pressed="${t === cur ? 'true' : 'false'}"><img src="${P}${t.photo}.webp" alt="" width="34" height="34" loading="lazy" style="object-position:${t.pos}">${esc(t.trade)}</button></li>`).join(''); };
