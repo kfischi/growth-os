@@ -8,7 +8,7 @@
 <meta name="description" content="מספרה בגבעתיים: תספורת, פייד, זקן, תספורת ילד וצבע. בוחרים בצ׳אט מה עושים ומתי נוח, ושי חוזר בוואטסאפ עם שעה פנויה.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the felt letterboard price list hung on the white tile wall above the mirror, white push-in letters in its grooves,
@@ -16,7 +16,7 @@
      Detail: clipper guard numbers (מספר 2 is about 6 mm), minutes per service, weeks between cuts, today, tomorrow, this week,
              morning, noon and evening.
      Bold move: one giant navy felt letterboard holding the price list, hung a degree off straight. Everything around it is quiet tile white.
-     Motion: none. No yellow: the pole's red, white and blue, and chrome. */
+     Motion: only the smart-luxury top (the cards lift in once, the pole turns once). No yellow: the pole's red, white and blue, and chrome. */
   :root {
     --felt: #16223a;           /* the letterboard felt, the one deep field */
     --felt-deep: #0e1729;
@@ -183,6 +183,57 @@
     .btn, .slot { transition: none; }
     .btn:hover { transform: none; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: the tile wall washed almost white with a breath of the pole's red and blue, big tight type, the station
+     photo in a large rounded mirror (a hairline of chrome inside) with glass cards over it (the hours, the first prices, the chat),
+     the main button glowing in felt navy. The one motion moment: the barber pole in the hours card turns once and stops. */
+  .wall { background-image: radial-gradient(50% 60% at 8% 10%, rgba(36,83,166,.12), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(180,24,45,.08), transparent 70%),
+    linear-gradient(rgba(214,222,228,.55) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(214,222,228,.55) 1.5px, transparent 1.5px);
+    background-size: 100% 100%, 100% 100%, 64px 32px, 64px 32px; }
+  .hero::after { background: linear-gradient(90deg, rgba(242,245,247,.3), rgba(242,245,247,.94) 58%); }
+  .hero { border-bottom: 0; }
+  .kicker { color: var(--pole-red); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--felt); }
+  .hero h1 em { color: var(--pole-red); font-size: .74em; letter-spacing: -.025em; margin-top: .14em; }
+  .lead { color: var(--ink-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-felt { box-shadow: 0 16px 32px -14px rgba(22,34,58,.8), 0 2px 6px -2px rgba(22,34,58,.45); }
+  .hero .btn-line { color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--grout); }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--felt); }
+  .facts { border-top: 1px solid var(--grout); }
+  .facts b { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .visual { position: relative; min-width: 0; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .mirror { position: absolute; inset: 8% 2% 14% 16%; padding: 0; border-radius: 34px; overflow: hidden; background: #dfe5ea;
+    box-shadow: 0 0 0 1px var(--grout), 0 50px 90px -46px rgba(14,23,41,.6), 0 8px 20px -12px rgba(22,34,58,.3); }
+  .mirror::after { content: ""; position: absolute; inset: 10px; border-radius: 26px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.55), inset 0 1px 0 rgba(255,255,255,.7); pointer-events: none; }
+  .mirror .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(14,23,41,.6), 0 4px 12px -6px rgba(22,34,58,.2); padding: 14px 16px; color: var(--ink);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: center; }
+  .g-day .mini-pole { grid-row: 1 / 4; width: 10px; height: 44px; border-radius: 5px; box-shadow: 0 0 0 2.5px var(--chrome);
+    background: repeating-linear-gradient(-35deg, var(--pole-red) 0 5px, #fff 5px 10px, var(--pole-blue) 10px 15px, #fff 15px 20px); background-size: 100% 200%; }
+  .g-day span { font-size: 13px; color: var(--ink-soft); }
+  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--felt); }
+  .g-day small { font-size: 12.5px; color: var(--ink-soft); }
+  @media (prefers-reduced-motion: no-preference) { html:not(.a11y-still) .g-day .mini-pole { animation: pole 1.8s .6s cubic-bezier(.3,.6,.3,1) both; } }
+  @keyframes pole { from { background-position: 0 0; } to { background-position: 0 -61px; } }
+  .g-price { inset-inline-start: 0; bottom: 0; width: min(290px, 64%); display: grid; gap: 1px; animation-delay: .15s; border-radius: 22px; }
+  .g-price .h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; padding-bottom: 7px; border-bottom: 1.5px solid var(--felt); }
+  .g-price .h b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--felt); }
+  .g-price .h span { font-size: 12.5px; color: var(--ink-soft); }
+  .g-price p { margin: 0; display: grid; grid-template-columns: auto minmax(10px, 1fr) auto; align-items: baseline; gap: 8px; font-size: 14.5px; line-height: 1.75; }
+  .g-price p i { border-bottom: 2px dotted var(--grout); align-self: center; }
+  .g-price p b { font: 800 14.5px/1.75 "Rubik", var(--body); color: var(--felt); white-space: nowrap; }
+  .g-chat { top: 36%; inset-inline-end: -1%; width: min(50%, 230px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eaeff3; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--felt); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 960px) { .visual { max-width: 480px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) { .g-chat { display: none; } .mirror { inset: 10% 0 18% 8%; } .mirror::after { inset: 7px; border-radius: 22px; } .g-price { width: 80%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -209,8 +260,13 @@
           <li><b>א׳ עד ו׳</b>שישי עד 14:00</li>
         </ul>
       </div>
-      <div class="mirror">
-        <figure class="ps" data-slot="cover" data-src="../shared/photos/barber-work.webp" data-alt="עמדת ספר: כיסא עור אדום מול מראה, מכונת תספורת, מספריים ומסרקים על השיש, ועמוד ספר על הקיר" data-pos="50 50" data-icon="camera" data-label="תמונה מהמספרה"></figure>
+      <div class="visual">
+        <div class="mirror">
+          <figure class="ps" data-slot="cover" data-src="../shared/photos/barber-work.webp" data-alt="עמדת ספר: כיסא עור אדום מול מראה, מכונת תספורת, מספריים ומסרקים על השיש, ועמוד ספר על הקיר" data-pos="50 50" data-icon="camera" data-label="תמונה מהמספרה"></figure>
+        </div>
+        <div class="glass g-day" aria-hidden="true"><i class="mini-pole"></i><span>מקבל פניות</span><b>א׳ עד ה׳ · 9:00 עד 20:00</b><small>שישי 8:00 עד 14:00</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">יש תור היום בערב?</p><p class="a">תגידו מה עושים ומתי נוח לכם. אני חוזר אליכם עם שעה פנויה.</p></div>
+        <div class="glass g-price" aria-hidden="true"><div class="h"><b>המחירון</b><span>טווח לדוגמה</span></div><p>תספורת גבר<i></i><b>70 עד 90 ₪</b></p><p>פייד<i></i><b>80 עד 100 ₪</b></p><p>תספורת וזקן<i></i><b>100 עד 130 ₪</b></p></div>
       </div>
     </div>
   </div>
@@ -368,6 +424,19 @@
   document.querySelectorAll("[data-cut]").forEach((b) => b.addEventListener("click", () => bot.open({ cut: b.dataset.cut })));
   document.querySelectorAll("[data-day]").forEach((b) => b.addEventListener("click", () => bot.open({ day: b.dataset.day, slot: b.dataset.slotTime })));
   Guides.load("../shared/guides/barber.json", document.querySelector("[data-guides]"), { onAsk: (it) => bot.open(it.id === "kid-first" ? { cut: "תספורת ילד" } : undefined) });
+  /* the glass cards follow a fine pointer by a few pixels; never on touch, reduced motion or a11y-still */
+  (() => {
+    const box = document.querySelector(".hero .visual"), hero = box && box.closest(".hero");
+    if (!hero || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cards = [...box.querySelectorAll(".glass")], still = () => document.documentElement.classList.contains("a11y-still");
+    let x = 0, y = 0, raf = 0;
+    const apply = () => { raf = 0; cards.forEach((c, i) => { const d = still() ? 0 : 5 + i * 3; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; }); };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    const clamp = (v) => Math.max(-1, Math.min(1, v));
+    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; const r = box.getBoundingClientRect(); x = clamp((e.clientX - r.left - r.width / 2) / r.width); y = clamp((e.clientY - r.top - r.height / 2) / r.height); queue(); });
+    hero.addEventListener("pointerleave", () => { x = y = 0; queue(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; queue(); });
+  })();
 </script>
 </body>
 </html>
