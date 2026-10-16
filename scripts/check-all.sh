@@ -61,9 +61,15 @@ node scripts/tests/builder-page.test.mjs 2>/dev/null | grep -E "^FAIL|builder pa
 node scripts/tests/billing-page.test.mjs 2>/dev/null | grep -E "^FAIL|billing page"; [ "${PIPESTATUS[0]}" = 0 ] || fail=1
 
 step "functions bundle"
+# Bundle each function as Netlify does (esbuild) and load the bundle: code that runs fine from source can still
+# throw when the bundle loads (a module namespace becomes an object of getters), and then every call answers 500.
+bundles=$(mktemp -d)
 for f in demos/netlify/functions/*.mjs; do
-  (cd demos && npx -y esbuild "${f#demos/}" --bundle --platform=node --format=esm --outfile=/dev/null --log-level=error) || { echo "FAIL $f"; fail=1; }
+  out="$bundles/$(basename "$f")"
+  (cd demos && npx -y esbuild "${f#demos/}" --bundle --platform=node --format=esm --outfile="$out" --log-level=error) || { echo "FAIL $f"; fail=1; continue; }
+  node -e 'import(process.argv[1]).catch((e) => { console.log("FAIL load " + process.argv[2] + ": " + e.message); process.exit(1); })' "$out" "$f" || fail=1
 done
+rm -rf "$bundles"
 echo "done"
 
 step "lint"
