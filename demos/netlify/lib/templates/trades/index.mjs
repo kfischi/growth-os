@@ -18,9 +18,12 @@ import tutor from "./tutor.mjs";
 import music from "./music.mjs";
 import psychologist from "./psychologist.mjs";
 import socialWorker from "./social-worker.mjs";
+import towing from "./towing.mjs";
+import cosmetics from "./cosmetics.mjs";
+import photographer from "./photographer.mjs";
 
-export const TRADES = Object.fromEntries([plumber, electrician, ac, locksmith, appliance, pest, handyman, renovation, cleaning,
-  garden, movers, trainer, tutor, music, psychologist, socialWorker].map((t) => [t.id, t]));
+export const TRADES = Object.fromEntries([plumber, electrician, ac, locksmith, towing, appliance, pest, handyman, renovation, cleaning,
+  garden, movers, cosmetics, photographer, trainer, tutor, music, psychologist, socialWorker].map((t) => [t.id, t]));
 export const tradeOf = (id) => TRADES[id] || TRADES.plumber;
 // For tests of a trade file before it is listed here (scripts/tests/trades.test.mjs <id>).
 export const register = (T) => { TRADES[T.id] = T; };

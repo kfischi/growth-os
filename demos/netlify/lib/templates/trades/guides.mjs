@@ -1,6 +1,9 @@
 // Every trade guide (shared/guides/*.json), imported once so the functions bundle carries them.
 // General know-how only: no prices or promises of a business (see shared/guides/README.md).
 import ac from "../../../../shared/guides/ac.json" with { type: "json" };
+import cosmetics from "../../../../shared/guides/cosmetics.json" with { type: "json" };
+import photographer from "../../../../shared/guides/photographer.json" with { type: "json" };
+import towing from "../../../../shared/guides/towing.json" with { type: "json" };
 import appliance from "../../../../shared/guides/appliance.json" with { type: "json" };
 import cleaning from "../../../../shared/guides/cleaning.json" with { type: "json" };
 import electrician from "../../../../shared/guides/electrician.json" with { type: "json" };
@@ -21,4 +24,4 @@ import socialWorker from "../../../../shared/guides/social-worker.json" with { t
 import trainer from "../../../../shared/guides/trainer.json" with { type: "json" };
 import tutor from "../../../../shared/guides/tutor.json" with { type: "json" };
 
-export const GUIDE_FILES = { "ac": ac, "appliance": appliance, "cleaning": cleaning, "electrician": electrician, "garden": garden, "handyman": handyman, "locksmith": locksmith, "movers": movers, "music-bass": musicBass, "music-drums": musicDrums, "music-guitar": musicGuitar, "music-keys": musicKeys, "music-piano": musicPiano, "pest": pest, "plumber": plumber, "psychologist": psychologist, "renovation": renovation, "social-worker": socialWorker, "trainer": trainer, "tutor": tutor, };
+export const GUIDE_FILES = { "ac": ac, "cosmetics": cosmetics, "photographer": photographer, "towing": towing, "appliance": appliance, "cleaning": cleaning, "electrician": electrician, "garden": garden, "handyman": handyman, "locksmith": locksmith, "movers": movers, "music-bass": musicBass, "music-drums": musicDrums, "music-guitar": musicGuitar, "music-keys": musicKeys, "music-piano": musicPiano, "pest": pest, "plumber": plumber, "psychologist": psychologist, "renovation": renovation, "social-worker": socialWorker, "trainer": trainer, "tutor": tutor, };

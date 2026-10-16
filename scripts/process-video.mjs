@@ -250,8 +250,8 @@ try {
   await zoomTo(A("#demos"), { max: 1.25 });
   await wait(900);
   await now("בוחרים תחום, והטלפון מראה את האתר שלו", 300);
-  await tap(A('#chips .chip[data-i="4"]'), "חשמלאי", { max: 1.6 }); await wait(1300);
-  await tap(A('#chips .chip[data-i="0"]'), "אינסטלטור", { zoom: false }); await wait(1300);
+  await tap(A('#chips .chip[data-id="electrician"]'), "חשמלאי", { max: 1.6 }); await wait(1300);
+  await tap(A('#chips .chip[data-id="plumber"]'), "אינסטלטור", { zoom: false }); await wait(1300);
   await now("ונכנסים לדמו המלא");
   await tap(A("#toDemo"), "לדמו המלא", { max: 1.6 });
   await waitPath(/^\/plumber\/$/);

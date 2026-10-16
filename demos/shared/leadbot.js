@@ -68,7 +68,7 @@
   .lb-typing{align-self:flex-start;display:none;gap:4px;padding:12px 14px;border-radius:var(--bot-radius-msg,14px);background:var(--bot-them)}
   .lb-typing.on{display:flex}.lb-typing i{width:6px;height:6px;border-radius:50%;background:var(--bot-muted);animation:lbBlink 1s infinite}.lb-typing i:nth-child(2){animation-delay:.15s}.lb-typing i:nth-child(3){animation-delay:.3s}
   @keyframes lbBlink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-  .lb-foot{flex:none;border-top:1px solid var(--bot-line);padding:10px 12px 12px;display:grid;gap:8px}
+  .lb-foot{flex:none;border-top:1px solid var(--bot-line);padding:10px 12px 12px;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
   .lb-chips{display:flex;flex-wrap:wrap;gap:6px}
   .lb-chips button{border:1.5px solid var(--bot-accent);background:transparent;color:var(--bot-chip-fg,var(--bot-fg));border-radius:var(--bot-radius-pill,999px);padding:7px 13px;font:600 14px/1.2 var(--bot-font);cursor:pointer}
   .lb-chips button:hover{background:var(--bot-accent);color:var(--bot-accent-fg)}

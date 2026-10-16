@@ -55,6 +55,9 @@
 | ניקיון | https://service-pro-web.netlify.app/cleaning/?utm_source=whatsapp |
 | שיפוצים | https://service-pro-web.netlify.app/renovation/?utm_source=whatsapp |
 | מנעולן | https://service-pro-web.netlify.app/locksmith/?utm_source=whatsapp |
+| גרר ושירותי דרך | https://service-pro-web.netlify.app/towing/?utm_source=whatsapp |
+| קוסמטיקה ויופי | https://service-pro-web.netlify.app/cosmetics/?utm_source=whatsapp |
+| צלם אירועים | https://service-pro-web.netlify.app/photographer/?utm_source=whatsapp |
 | הדברה | https://service-pro-web.netlify.app/pest/?utm_source=whatsapp |
 | טכנאי מכשירי חשמל | https://service-pro-web.netlify.app/appliance/?utm_source=whatsapp |
 | הנדימן | https://service-pro-web.netlify.app/handyman/?utm_source=whatsapp |

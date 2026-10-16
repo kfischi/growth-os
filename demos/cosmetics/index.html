@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מיה · קליניקת יופי</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="קליניקת יופי בכפר סבא: טיפולי פנים, הסרת שיער, גבות וריסים, מניקור ואיפור לאירוע. בוחרים טיפול בצ׳אט וקובעים תור בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Assistant:wght@400;600;700&family=Playpen+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the appointment card from the clinic's reception desk, with its punched hole and the fields filled in by hand,
+             and the reception book of the week behind it.
+     Detail: minutes per treatment, 48 hours for a patch test before tint, weeks between visits, SPF 30, morning, noon and evening slots.
+     Bold move: one deep mulberry field holding an oversized appointment card, tilted, filled in by hand.
+     Motion: none on its own. The card settles once when the page opens, never with reduced motion. */
+  :root {
+    --mulberry: #5b2140;       /* the treatment-bed towel, the one deep field */
+    --mulberry-deep: #451631;
+    --blush: #f1c9d6;          /* text and accents on the mulberry field */
+    --rosewood: #a8446b;       /* accent line, readable on white */
+    --porcelain: #f6f0f2;      /* the page: a cool porcelain white, not cream */
+    --linen: #ffffff;          /* the card stock */
+    --glaze: #c9dccf;          /* celadon glaze of the ceramic bowls */
+    --ink: #2f1f27;            /* text */
+    --ink-soft: #6c5961;       /* secondary text */
+    --line: #e4d6dc;
+    --display: "Miriam Libre", "Assistant", "Arial Hebrew", sans-serif;
+    --body: "Assistant", "Arial Hebrew", Arial, sans-serif;
+    --hand: "Playpen Sans Hebrew", "Assistant", "Arial Hebrew", sans-serif;
+    --phone-frame: var(--mulberry-deep);
+    --bot-bg: var(--linen); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--mulberry); --bot-accent-fg: #fff; --bot-them: #f3e7ec; --bot-me: var(--rosewood); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px;
+    --ps-a: #e9b8c9; --ps-b: #7a2e55; --ps-ui: var(--ink); --ps-edit: var(--rosewood);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--porcelain); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--rosewood); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.1; margin: 0; letter-spacing: -.01em; }
+  h2 { font-size: clamp(34px, 4.6vw, 54px); }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .hand { font-family: var(--hand); font-weight: 400; }
+  section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 36px; }
+  .head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 24px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 10px; transition: background .2s, transform .2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-blush { background: var(--blush); color: var(--mulberry-deep); }
+  .btn-blush:hover { background: #f8dbe4; }
+  .btn-line { box-shadow: inset 0 0 0 2px rgba(241,201,214,.7); color: #fff; background: transparent; }
+  .btn-line:hover { background: rgba(255,255,255,.08); }
+  .btn-mul { background: var(--mulberry); color: #fff; }
+  .btn-mul:hover { background: var(--mulberry-deep); }
+
+  .demo { background: var(--ink); color: #d9c9d0; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the mulberry field and the appointment card ---------- */
+  .hero { background: var(--mulberry); color: #fff; position: relative; overflow: hidden; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; }
+  .logo { font-family: var(--display); font-size: 34px; line-height: 1; font-weight: 700; }
+  .logo small { display: block; font: 600 14px/1.3 var(--body); color: var(--blush); margin-top: 6px; letter-spacing: .02em; }
+  .bar a { color: #fff; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--blush); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; padding: 34px 0 96px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 20px; color: var(--blush); font-weight: 600; font-size: 16px; }
+  .hero h1 { font-size: clamp(42px, 4.7vw, 64px); margin-bottom: 22px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--blush); display: block; }
+  .lead { font-size: 20px; max-width: 34ch; margin: 0 0 30px; color: #f7e9ee; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 38px 0 0; padding: 18px 0 0; border-top: 1px solid rgba(241,201,214,.35); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: #ecd6de; }
+  .facts b { display: block; font: 700 28px/1.1 var(--display); color: #fff; margin-bottom: 4px; }
+
+  .visual { position: relative; min-width: 0; padding-bottom: 70px; }
+  .frame { background: var(--porcelain); padding: 10px; border-radius: 8px; }
+  .frame .ps { aspect-ratio: 16 / 10; border-radius: 3px; }
+  .card { position: absolute; inset-inline-start: -28px; bottom: 0; width: min(330px, 78%); background: var(--linen); color: var(--ink); border-radius: 6px;
+    padding: 22px 22px 18px; box-shadow: 0 30px 50px -24px rgba(25,6,16,.65); transform: rotate(4deg); transform-origin: 30% 80%; animation: settle .9s cubic-bezier(.2,.8,.3,1) both .2s; }
+  @keyframes settle { from { transform: rotate(10deg) translateY(24px); opacity: 0; } to { transform: rotate(4deg); opacity: 1; } }
+  .card::before { content: ""; position: absolute; top: 14px; inset-inline-end: 16px; width: 14px; height: 14px; border-radius: 50%; background: var(--mulberry); box-shadow: inset 0 2px 0 rgba(0,0,0,.25); }
+  .card-h { display: flex; align-items: baseline; gap: 10px; border-bottom: 2px solid var(--mulberry); padding-bottom: 8px; margin-bottom: 6px; }
+  .card-h b { font: 700 22px/1 var(--display); color: var(--mulberry); }
+  .card-h span { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--ink-soft); }
+  .card dl { margin: 0; }
+  .card dl div { display: grid; grid-template-columns: 54px minmax(0, 1fr); align-items: baseline; border-bottom: 1px dashed #d6c3cb; padding: 7px 0 3px; }
+  .card dt { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+  .card dd { margin: 0; font-family: var(--hand); font-size: 19px; color: var(--mulberry); line-height: 1.3; }
+  .card-note { margin: 12px 0 0; font-size: 13px; color: var(--ink-soft); line-height: 1.45; }
+  .card-note .hand { color: var(--rosewood); font-size: 15px; }
+
+  /* ---------- The week: the reception book ---------- */
+  .book { background: var(--linen); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+  .book-grid { display: grid; grid-template-columns: 74px repeat(6, minmax(0, 1fr)); gap: 6px; }
+  .book-grid .dh { text-align: center; font: 700 15px/1.2 var(--body); padding: 4px 0 8px; border-bottom: 2px solid var(--mulberry); }
+  .book-grid .dh small { display: block; font-weight: 400; font-size: 12.5px; color: var(--ink-soft); }
+  .book-grid .rh { font-weight: 700; font-size: 15px; align-self: center; color: var(--ink-soft); }
+  .slot { min-height: 52px; min-width: 0; border: 1.5px solid var(--glaze); background: #f3f8f5; border-radius: 6px; font: 700 15px/1.2 var(--body); color: var(--mulberry); cursor: pointer; padding: 6px 4px; transition: background .15s, color .15s; }
+  .slot:hover { background: var(--mulberry); color: #fff; border-color: var(--mulberry); }
+  .shut { min-height: 52px; border-radius: 6px; background: repeating-linear-gradient(135deg, #f1e9ec 0 6px, #fbf7f8 6px 12px); display: grid; place-items: center; font-size: 13px; color: var(--ink-soft); }
+  .book-key { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 16px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--ink-soft); }
+  .book-key b { color: var(--ink); }
+
+  /* ---------- Treatments: the price card ---------- */
+  .menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 40px; }
+  .group { min-width: 0; border-top: 3px solid var(--mulberry); padding-top: 16px; }
+  .group-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+  .group h3 { font-size: 26px; }
+  .ask { border: 0; background: none; padding: 6px 0; font: 700 15px var(--body); color: var(--rosewood); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; white-space: nowrap; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .row b { font-weight: 700; font-size: 17px; }
+  .row .p { font-weight: 700; color: var(--mulberry); white-space: nowrap; }
+  .row small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 15px; }
+  .fine { margin: 26px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- The clinic ---------- */
+  .clinic { background: #efe4e8; }
+  .clinic-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+  .clinic-grid div { min-width: 0; padding: 6px 24px 6px 0; }
+  .clinic-grid div + div { border-inline-start: 1px solid #d8c4cc; padding-inline-start: 24px; }
+  .clinic-grid b { display: block; font: 700 clamp(30px, 3.4vw, 42px)/1.1 var(--display); color: var(--mulberry); margin-bottom: 6px; }
+  .clinic-grid span { font-size: 16px; color: var(--ink); }
+  .quiet { margin: 44px 0 0; display: flex; gap: 18px; align-items: center; max-width: 720px; font-size: 18px; }
+  .quiet::before { content: ""; flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--mulberry) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f1c9d6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 3h10v18H7z M11 18h2 M4 4l16 16'/%3E%3C/svg%3E") center / 24px no-repeat; }
+
+  /* ---------- Owner ---------- */
+  .owner { background: var(--mulberry-deep); color: #fff; }
+  .owner .head p { color: #e2c9d3; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 26px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--blush); color: var(--mulberry-deep); font: 700 20px/1 var(--display); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #e2c9d3; font-size: 16px; }
+  .owner .ph-cap { color: #e2c9d3; }
+
+  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--mulberry); padding-top: 18px; }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; padding-bottom: 64px; }
+    .visual { max-width: 560px; }
+    .card { inset-inline-start: auto; inset-inline-end: -6px; }
+    .menu { grid-template-columns: minmax(0, 1fr); }
+    .clinic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .clinic-grid div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .clinic-grid div:nth-child(n+3) { border-top: 1px solid #d8c4cc; padding-top: 18px; margin-top: 12px; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    section { padding-block: 64px; }
+    body { font-size: 17px; }
+    .hero h1 { font-size: clamp(40px, 11.5vw, 54px); }
+    .lead { font-size: 18px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 22px; }
+    .facts li { font-size: 13px; }
+    .visual { padding-bottom: 0; }
+    .card { position: relative; inset: auto; width: 88%; margin: -48px auto 0; transform: rotate(3deg); }
+    @keyframes settle { from { transform: rotate(8deg) translateY(20px); opacity: 0; } to { transform: rotate(3deg); opacity: 1; } }
+    .book { padding: 14px 10px; }
+    .book-grid { grid-template-columns: 50px repeat(6, minmax(0, 1fr)); gap: 4px; }
+    .book-grid .dh small { display: none; }
+    .book-grid .rh { font-size: 13px; }
+    .slot { font-size: 12.5px; padding: 4px 1px; min-height: 46px; }
+    .shut { min-height: 46px; font-size: 11px; }
+    .group h3 { font-size: 23px; }
+    .clinic-grid div { padding-inline-end: 12px; }
+    .clinic-grid div + div { padding-inline-start: 12px; }
+    .quiet { font-size: 16.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+    .btn, .slot { transition: none; }
+  }
+  html.a11y-still .card { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=cosmetics">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">מיה</span><small>קליניקת יופי · כפר סבא</small></div>
+      <a href="#" data-wa="היי מיה, הגעתי מהאתר ואשמח לקבוע תור">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">טיפולי פנים, שעווה, גבות וריסים, ציפורניים ואיפור</p>
+        <h1><span data-edit="h1a">הידיים שלי בטיפול.</span> <em data-edit="h1b">הצ׳אט עונה לכם בינתיים.</em></h1>
+        <p class="lead">בזמן טיפול אני לא עונה לטלפון. כאן בוחרים טיפול, שומעים טווח מחיר ומשאירים שעה שנוחה לכם. אני חוזרת לאשר בין טיפול לטיפול.</p>
+        <div class="ctas">
+          <button class="btn btn-blush" type="button" data-open-bot>לקבוע תור</button>
+          <a class="btn btn-line" href="#" data-wa="היי מיה, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">12 שנה</b>בקוסמטיקה</li>
+          <li><b>48 שעות</b>בדיקת רגישות לפני צבע</li>
+          <li><b>לקוחה אחת</b>בחדר, בלי המתנה</li>
+        </ul>
+      </div>
+      <div class="visual">
+        <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/cosmetics-work.webp" data-alt="חדר טיפולים: מגבות מקופלות, קערת קרמיקה, בקבוקי טיפוח ומיטת טיפולים" data-pos="50 50" data-icon="sparkle" data-label="תמונה מהקליניקה"></figure></div>
+        <div class="card" aria-label="כרטיס תור לדוגמה">
+          <div class="card-h"><b>מיה</b><span>כרטיס תור</span></div>
+          <dl>
+            <div><dt>טיפול</dt><dd>טיפול פנים קלאסי</dd></div>
+            <div><dt>יום</dt><dd>שלישי</dd></div>
+            <div><dt>שעה</dt><dd><span class="ltr">10:30</span></dd></div>
+          </dl>
+          <p class="card-note">לפני הטיפול: <span class="hand">בלי רטינול שלושה ימים</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="week">
+    <div class="wrap">
+      <div class="head"><h2>מתי נוח לכם?</h2><p>שעות הקליניקה. לוחצים על זמן שנוח לכם, והוא נכנס לפנייה. אני מאשרת יום ושעה בוואטסאפ.</p></div>
+      <div class="book">
+        <div class="book-grid" role="group" aria-label="שעות הקליניקה לפי ימים">
+          <span></span>
+          <div class="dh">א׳<small>ראשון</small></div><div class="dh">ב׳<small>שני</small></div><div class="dh">ג׳<small>שלישי</small></div>
+          <div class="dh">ד׳<small>רביעי</small></div><div class="dh">ה׳<small>חמישי</small></div><div class="dh">ו׳<small>שישי</small></div>
+          <span class="rh">בוקר</span>
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="בוקר" aria-label="ראשון בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="שני" data-slot-time="בוקר" aria-label="שני בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="בוקר" aria-label="שלישי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="רביעי" data-slot-time="בוקר" aria-label="רביעי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="בוקר" aria-label="חמישי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="שישי" data-slot-time="בוקר" aria-label="שישי בבוקר">בוקר</button>
+          <span class="rh">צהריים</span>
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="צהריים" aria-label="ראשון בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="שני" data-slot-time="צהריים" aria-label="שני בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="צהריים" aria-label="שלישי בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="רביעי" data-slot-time="צהריים" aria-label="רביעי בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="צהריים" aria-label="חמישי בצהריים">צהריים</button>
+          <span class="shut">סגור</span>
+          <span class="rh">ערב</span>
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="ערב" aria-label="ראשון בערב">ערב</button>
+          <span class="shut">סגור</span>
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="ערב" aria-label="שלישי בערב">ערב</button>
+          <span class="shut">סגור</span>
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="ערב" aria-label="חמישי בערב">ערב</button>
+          <span class="shut">סגור</span>
+        </div>
+        <ul class="book-key">
+          <li><b>בוקר</b> 9:00 עד 12:00</li>
+          <li><b>צהריים</b> 12:00 עד 16:00</li>
+          <li><b>ערב</b> 16:00 עד 20:00</li>
+          <li><b>שישי</b> 8:30 עד 13:00</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>הטיפולים</h2><p>מחירים לדוגמה. הטווח לפי המחירון, והמחיר הסופי אחרי ייעוץ קצר.</p></div>
+      <div class="menu">
+        <div class="group">
+          <div class="group-h"><h3>טיפול פנים</h3><button class="ask" type="button" data-treat="טיפול פנים">לקבוע טיפול פנים</button></div>
+          <div class="row"><b>טיפול פנים קלאסי</b><span class="p">250 עד 350 ₪</span><small>ניקוי, פילינג עדין, מסכה ועיסוי · 60 דקות</small></div>
+          <div class="row"><b>לעור רגיש או עם אקנה</b><span class="p">300 עד 420 ₪</span><small>ניקוי עמוק ומוצרים עדינים · 75 דקות</small></div>
+        </div>
+        <div class="group">
+          <div class="group-h"><h3>הסרת שיער</h3><button class="ask" type="button" data-treat="הסרת שיער">לקבוע שעווה</button></div>
+          <div class="row"><b>אזור קטן</b><span class="p">40 עד 80 ₪</span><small>שפם, סנטר או בית שחי · 15 דקות</small></div>
+          <div class="row"><b>רגליים</b><span class="p">120 עד 200 ₪</span><small>חצי רגל או רגל מלאה · 30 עד 45 דקות</small></div>
+        </div>
+        <div class="group">
+          <div class="group-h"><h3>גבות וריסים</h3><button class="ask" type="button" data-treat="גבות וריסים">לקבוע גבות</button></div>
+          <div class="row"><b>עיצוב גבות</b><span class="p">60 עד 90 ₪</span><small>בשעווה או בפינצטה · 20 דקות</small></div>
+          <div class="row"><b>צביעת גבות וריסים</b><span class="p">60 עד 120 ₪</span><small>אחרי בדיקת רגישות · 30 דקות</small></div>
+          <div class="row"><b>הרמת ריסים</b><span class="p">180 עד 260 ₪</span><small>כולל צבע · 60 דקות</small></div>
+        </div>
+        <div class="group">
+          <div class="group-h"><h3>ידיים ורגליים</h3><button class="ask" type="button" data-treat="מניקור / פדיקור">לקבוע מניקור</button></div>
+          <div class="row"><b>מניקור ג׳ל</b><span class="p">120 עד 170 ₪</span><small>הכנה, לק ג׳ל וטיפוח · 60 דקות</small></div>
+          <div class="row"><b>פדיקור</b><span class="p">150 עד 220 ₪</span><small>טיפול בכפות הרגליים ולק · 60 דקות</small></div>
+        </div>
+        <div class="group">
+          <div class="group-h"><h3>איפור</h3><button class="ask" type="button" data-treat="איפור לאירוע">לקבוע איפור</button></div>
+          <div class="row"><b>איפור לאירוע</b><span class="p">350 עד 550 ₪</span><small>כולל שיחת התאמה קצרה לפני · 60 דקות</small></div>
+          <div class="row"><b>ניסיון איפור</b><span class="p">200 עד 300 ₪</span><small>שבוע או שבועיים לפני האירוע · 45 דקות</small></div>
+        </div>
+      </div>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="clinic">
+    <div class="wrap">
+      <div class="head"><h2>בקליניקה</h2><p>קליניקה פרטית בכפר סבא, עם חניה ליד הבניין.</p></div>
+      <div class="clinic-grid">
+        <div><b data-edit="c1">12 שנה</b><span>קוסמטיקאית מוסמכת</span></div>
+        <div><b>48 שעות</b><span>בדיקת רגישות לפני כל צבע</span></div>
+        <div><b>חד־פעמי</b><span>סדין ופצירה חדשים לכל לקוחה</span></div>
+        <div><b>5 דקות</b><span>שיחה על העור לפני טיפול ראשון</span></div>
+      </div>
+      <p class="quiet">בזמן טיפול הטלפון בשקט. לכן יש כאן צ׳אט: הוא עונה על שאלות ואוסף פרטים, ואני חוזרת בין טיפול לטיפול.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לדעת לפני טיפול ואחריו. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה מיה רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוחה בוחרת טיפול ושעה</b><span>ושומעת טווח מחיר מהמחירון, בלי לחכות שתסיימו טיפול.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>איזה טיפול, באילו ימים, ואם זו פעם ראשונה.</span></div></li>
+          <li><div><b>בין טיפול לטיפול מאשרים תור</b><span>הודעה אחת, במקום חמש שיחות שלא נענו.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שירן כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לתור מהאתר (דמו)
+טיפול: גבות וריסים
+מחיר: ביקשה טווח
+ימים: א׳ עד ה׳
+שעות: ערב
+ביקור: פעם ראשונה
+שם: שירן כהן
+טלפון: 052-7654321<time>11:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לקוסמטיקאית</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>מיה קליניקת יופי · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "cosmetics" });
+  // The sample ranges, the same as the price list above. A range, never a promised price.
+  const RANGE = {
+    "טיפול פנים": "טיפול פנים: 250 עד 420 ₪, לפי סוג העור והטיפול.",
+    "הסרת שיער": "שעווה: 40 עד 200 ₪, לפי האזור.",
+    "גבות וריסים": "גבות וריסים: 60 עד 260 ₪, לפי הטיפול.",
+    "מניקור / פדיקור": "מניקור ג׳ל: 120 עד 170 ₪. פדיקור: 150 עד 220 ₪.",
+    "איפור לאירוע": "איפור לאירוע: 350 עד 550 ₪. ניסיון לפני: 200 עד 300 ₪.",
+  };
+  const UNSURE = "עוד לא החלטתי";
+  let picked = ""; // the treatment, for the price answer
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "מיה · קליניקת יופי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "מ", launcher: "לקבוע תור", hint: "נציג AI",
+    greet: "היי, כאן מיה. אני כנראה באמצע טיפול.\nכמה שאלות קצרות, והפרטים מגיעים אליי לוואטסאפ לקבוע תור.",
+    steps: [
+      { key: "treatment", label: "טיפול", ask: "איזה טיפול מעניין אתכם?", chips: ["טיפול פנים", "הסרת שיער", "גבות וריסים", "מניקור / פדיקור", "איפור לאירוע", UNSURE] },
+      { key: "price", label: "מחיר", ask: "רוצים לשמוע טווח מחיר?", chips: ["כן, כמה זה עולה?", "לא, רק לקבוע תור"],
+        show: (d) => { picked = d.treatment; return d.treatment !== UNSURE; },
+        tip: { when: (v) => v.startsWith("כן"), get text() { return (RANGE[picked] || "") + "\nזה טווח מהמחירון. המחיר הסופי אחרי ייעוץ קצר."; } } },
+      { key: "days", label: "ימים", ask: (d) => (d.treatment === UNSURE ? "אין בעיה, נחליט יחד. " : "") + "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "first", label: "ביקור", ask: "הייתם אצלי בעבר?", chips: ["פעם ראשונה", "כבר הייתי אצלך"],
+        tip: { when: (v) => v === "פעם ראשונה", text: "בפעם הראשונה נדבר חמש דקות על העור, על תרופות ועל רגישויות.", id: "first-treatment", link: "מה כדאי לדעת לפני" } },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה, ואחזור בין טיפול לטיפול לאשר יום ושעה.`,
+    summary: (d) => `פנייה לתור מהאתר (דמו)\nטיפול: ${d.treatment}${d.price ? "\nמחיר: " + (d.price.startsWith("כן") ? "ביקשו טווח" : "לא שאלו") : ""}\nימים: ${d.days}\nשעות: ${d.slot}\nביקור: ${d.first}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-treat]").forEach((b) => b.addEventListener("click", () => bot.open({ treatment: b.dataset.treat })));
+  document.querySelectorAll("[data-day]").forEach((b) => b.addEventListener("click", () => bot.open({ days: "יום " + b.dataset.day, slot: b.dataset.slotTime })));
+  Guides.load("../shared/guides/cosmetics.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

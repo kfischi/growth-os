@@ -162,7 +162,7 @@ async function estimates(b) {
   }
   return bad;
 }
-const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music'];
+const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer'];
 (async () => {
   const b = await chromium.launch(); let bad = 0;
   for (const d of DEMOS) {
