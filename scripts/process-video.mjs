@@ -165,7 +165,7 @@ h1{font-size:20px;margin:0 0 4px}.s{color:#5b5f72;margin:0 0 18px;font-size:15px
 label{display:block;font-size:14px;color:#5b5f72;margin:10px 0 4px}.f{border:1px solid #d5d8e2;border-radius:10px;padding:10px 12px;direction:ltr;text-align:left;font-family:monospace}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}a.pay{display:block;margin-top:20px;text-align:center;background:#1b1d29;color:#fff;border-radius:12px;padding:14px;text-decoration:none;font-weight:700}
 .lock{margin-top:12px;font-size:13px;color:#5b5f72;text-align:center}</style>
-<div class="c"><h1>תשלום מאובטח</h1><p class="s">Easy Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪ <small style="font-size:14px;font-weight:400">כולל מע״מ</small></p>
+<div class="c"><h1>תשלום מאובטח</h1><p class="s">Easy Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪</p>
 <label>מספר כרטיס</label><div class="f">4580 •••• •••• 1234</div><div class="row"><div><label>תוקף</label><div class="f">12/28</div></div><div><label>CVV</label><div class="f">•••</div></div></div>
 <a class="pay" href="?go=1">לשלם</a><p class="lock">החשבונית נשלחת אליכם מיד אחרי התשלום</p></div></html>` });
 });
@@ -560,7 +560,7 @@ try {
   await st("unpoint");
   await tap(A("#addrGo"), "לשמור את הכתובת", { zoom: false, hold: 300 });
   await cut(async () => { await app().waitForFunction(() => /הכתובת: oren-mayim/.test(document.querySelector("#approveBox").textContent), null, { timeout: 10000 }); await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 }); });
-  await now("המחיר לפני מע״מ. הסכום להיום כולל אותו", 800);
+  await now("המחיר סופי. היום משלמים רק את ההקמה", 800);
   await tap(A("#termsOk"), "מאשרים את התנאים", { zoom: false, hold: 300 });
   await tap(app().locator("#approveBox .btn").filter({ hasText: "לתשלום מאובטח" }), "לתשלום מאובטח", { zoom: false, hold: 350 });
   await cut(async () => { await waitPath(/^\/pay\/\d+$/); await wide(); });
@@ -724,12 +724,12 @@ try {
   await p.evaluate(() => window.stage.lines(`<div class="l mid">שתי חבילות. בלי התחייבות<span class="dot">.</span></div>
 <div class="plans">
   <div class="l plan"><h3>נוכחות</h3><div class="p">1,500 ₪ <small>הקמה</small></div><div class="m">+ 150 ₪ לחודש</div><div class="w">האתר, וואטסאפ וחיוג, דף לכל שירות</div></div>
-  <div class="l plan rec"><span class="tag">המומלץ שלנו</span><h3>נציג AI</h3><div class="p">1,900 ₪ <small>הקמה</small></div><div class="m">+ 390 ₪ לחודש</div><div class="w">הכול בנוכחות, ועוד הצ׳אט, המענה בוואטסאפ, הלוח והדוח</div></div>
+  <div class="l plan rec"><span class="tag">המומלץ שלנו</span><h3>נציג AI</h3><div class="p">2,490 ₪ <small>הקמה</small></div><div class="m">+ 290 ₪ לחודש, מחיר השקה נעול</div><div class="w">הכול בנוכחות, ועוד הצ׳אט, המענה בוואטסאפ, הלוח והדוח</div></div>
 </div>
-<div class="l fine">המחירים לפני מע״מ · מבטלים מתי שרוצים</div>`, true));
+<div class="l fine">המחירים סופיים · מבטלים מתי שרוצים</div>`, true));
   await st("full", true);
   await raw(80); await st("showN", ".l", 0); await raw(250); await st("showN", ".l", 1); await raw(250); await st("showN", ".l", 2); await raw(250); await st("showN", ".l", 3);
-  cue("שתי חבילות. בלי התחייבות. נוכחות: 1,500 ₪ הקמה, ועוד 150 ₪ לחודש. נציג AI: 1,900 ₪ הקמה, ועוד 390 ₪ לחודש. המחירים לפני מע״מ. מבטלים מתי שרוצים.");
+  cue("שתי חבילות. בלי התחייבות. נוכחות: 1,500 ₪ הקמה, ועוד 150 ₪ לחודש. נציג AI: 2,490 ₪ הקמה, ועוד 290 ₪ לחודש, מחיר השקה נעול. המחירים סופיים. מבטלים מתי שרוצים.");
   await hold(3200);
   beat("cta", "לבנות את האתר שלי", "big");
   await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div><div class="l tagline">Easy Landing · אתרים שבונים עסקים</div>`, true));

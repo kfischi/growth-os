@@ -70,9 +70,9 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   await check("the next steps", async () => {
     await p.waitForFunction(() => /1\. כתובת לאתר/.test(document.querySelector("#approveBox").textContent));
     assert.equal(await p.isDisabled("text=לתשלום מאובטח"), true, "an address first");
-    assert.match(await p.textContent("#approveBox"), /1,900 ₪ הקמה, ואחר כך 390 ₪ בחודש. לפני מע״מ/);
-    assert.match(await p.textContent("#approveBox"), /לתשלום היום, כולל מע״מ: 2,242 ₪/);
-    assert.match(await p.textContent("#approveBox"), /5,800 ₪: ההקמה ו-12 חודשים במחיר 10/);
+    assert.match(await p.textContent("#approveBox"), /2,490 ₪ הקמה, ואחר כך 290 ₪ בחודש\./); assert.doesNotMatch(await p.textContent("#approveBox"), /מע״מ/, "final prices, no VAT");
+    assert.match(await p.textContent("#approveBox"), /לתשלום היום: 2,490 ₪/);
+    assert.match(await p.textContent("#approveBox"), /5,390 ₪: ההקמה ו-12 חודשים במחיר 10/);
   });
   await check("address", async () => {
     ai.queue.push({ names: [slug, "oren-plumber" + n] });
@@ -93,7 +93,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   });
   await check("pay and go live", async () => {
     await p.check("#approveBox input[name=cycle][value=year]");
-    assert.match(await p.textContent("#approveBox"), /לתשלום היום, כולל מע״מ: 6,844 ₪/);
+    assert.match(await p.textContent("#approveBox"), /לתשלום היום: 5,390 ₪/);
     await p.click("text=לתשלום מאובטח");
     await p.waitForURL(/\/build\/#d=/);
     await p.waitForFunction(() => /האתר באוויר/.test(document.querySelector("#approveBox").textContent), null, { timeout: 30000 });
@@ -102,7 +102,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     const box = await p.textContent("#approveBox");
     assert.match(box, /מחברים את הדומיין שלכם/); assert.match(box, /עד 48 שעות/);
     assert.equal(await p.locator(".dns tbody tr").count(), 2);
-    assert.match(box, /הפאנל שלכם/); assert.match(box, /שנתי, 4,602 ₪ לשנה כולל מע״מ · כרטיס שמסתיים ב-4580/);
+    assert.match(box, /הפאנל שלכם/); assert.match(box, /שנתי, 2,900 ₪ לשנה · כרטיס שמסתיים ב-4580/);
     assert.match(await p.textContent("#log"), /התשלום התקבל/);
     // nothing wider than the screen
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "no sideways scroll");

@@ -14,15 +14,18 @@ import { hostingOn, cleanDomain, addDomain, dnsSteps } from "./hosting.mjs";
 import { launchKit } from "./launch.mjs";
 
 // Keep in step with #plans in demos/index.html, the approval dialog in demos/build/index.html and the chats' prompts.
-export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 1900, month: 390 } };
+export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 2490, month: 290 } };
+// The launch monthly of נציג AI (290) is kept for good by whoever subscribes now: the amount is fixed on the
+// subscription (ls_billing.amount) at the first payment, so a later price never reaches them.
 // Monthly only: no prepayment, so no refunds of unused months. BILLING_YEAR=1 turns the year ahead back on.
 export const cycles = () => (process.env.BILLING_YEAR === "1" ? ["month", "year"] : ["month"]);
 const YEAR_MONTHS = 10; // the annual prepayment: 12 months for the price of 10
 export const RETRY_DAYS = 3, MAX_FAILS = 4;
 const PKG_HE = { presence: "נוכחות", ai: "נציג AI" };
 
-// The prices are before VAT; Grow charges them with VAT (VAT_RATE, default 18%), and its invoice shows both.
-export const vatRate = () => { const v = Number(process.env.VAT_RATE); return Number.isFinite(v) && v >= 0 && v < 1 ? v : 0.18; };
+// The invoicing business is an עוסק פטור: no VAT, the prices are final and each payment gets a receipt.
+// If it ever charges VAT, set VAT_RATE (e.g. 0.18) and the builder shows the totals with VAT again.
+export const vatRate = () => { const v = Number(process.env.VAT_RATE); return Number.isFinite(v) && v >= 0 && v < 1 ? v : 0; };
 export const withVat = (n) => Math.round(n * (1 + vatRate()) * 100) / 100;
 const netPeriod = (pkg, cycle) => PRICES[pkg].month * (cycle === "year" ? YEAR_MONTHS : 1);
 export const periodSum = (pkg, cycle) => withVat(netPeriod(pkg, cycle));

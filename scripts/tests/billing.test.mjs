@@ -75,7 +75,8 @@ r = await J(await req(D, "address", { body: { slug: "oren-mayim", domain: "not a
 r = await J(await req(D, "address", { body: { slug: "oren-mayim", domain: "https://www.Oren-Mayim.co.il/", rev: D.rev } }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.slug_wish, "oren-mayim"); assert.equal(D.domain_wish, "oren-mayim.co.il");
 assert.deepEqual(r.billing.address, { slug: "oren-mayim", host: "oren-mayim.sites.example.co.il", domain: "oren-mayim.co.il" });
-assert.deepEqual(r.billing.prices, { setup: 1900, month: 390, year: 3900, vat: 0.18, today: { month: 2242, year: 6844 } }, "before VAT as on the site, and today's total with VAT");
+assert.deepEqual(r.billing.prices, { setup: 2490, month: 290, year: 2900, vat: 0, today: { month: 2490, year: 5390 } }, "the final prices as on the site: an עוסק פטור adds no VAT");
+{ const b = await import("../../demos/netlify/lib/billing.mjs"); process.env.VAT_RATE = "0.18"; assert.equal(b.checkoutSum("ai", "month"), 2938.2, "VAT_RATE adds VAT if it is ever set"); assert.equal(b.periodSum("ai", "year"), 3422); delete process.env.VAT_RATE; }
 // another draft can't take the same name while this one holds it
 const other = draft();
 r = await J(await req(other, "address", { body: { slug: "oren-mayim", rev: other.rev } })); assert.equal(r.error, "slug_taken");
@@ -91,13 +92,13 @@ r = await J(await req(D, "pay", { body: { cycle: "year", terms: true } }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.match(r.url, /^https:\/\/sandbox\.meshulam\.co\.il\/pay\//); assert.ok(D.terms_at, "when the terms were accepted");
 let [name, f] = grow.calls.at(-1);
 assert.equal(name, "createPaymentProcess");
-assert.equal(f.sum, "6844.00", "the setup and 10 months for the year, with VAT"); assert.equal(f.saveCardToken, "1"); assert.equal(f.paymentNum, "1");
+assert.equal(f.sum, "5390.00", "the setup and 10 months for the year"); assert.equal(f.saveCardToken, "1"); assert.equal(f.paymentNum, "1");
 assert.equal(f["pageField[fullName]"], "אורן לוי"); assert.equal(f["pageField[phone]"], "0526359513");
 assert.equal(f.notifyUrl, ORIGIN + "/api/grow-webhook"); assert.equal(f.invoiceNotifyUrl, ORIGIN + "/api/grow-webhook?type=invoice");
 assert.equal(f.successUrl, ORIGIN + "/build/?pay=ok"); assert.ok(!JSON.stringify(f).includes(KEY), "the draft's key never goes to Grow");
 assert.match(f.description, /^Easy Landing - נציג AI - הקמה ושנה מראש$/);
 let pay = T.ls_payments.at(-1);
-assert.equal(f.cField1, pay.id); assert.equal(pay.status, "pending"); assert.equal(pay.sum, 6844); assert.equal(pay.cycle, "year"); assert.equal(pay.process_id, "1");
+assert.equal(f.cField1, pay.id); assert.equal(pay.status, "pending"); assert.equal(pay.sum, 5390); assert.equal(pay.cycle, "year"); assert.equal(pay.process_id, "1");
 
 /* ---------------- the callback is never taken at its word ---------------- */
 r = await J(await hook(callback(pay)));
@@ -126,7 +127,7 @@ assert.ok(T.ls_clients.some((c) => c.slug === "oren-mayim" && c.active), "the le
 assert.match(D.panel_once, /\/panel\/#k=oren-mayim:/, "the owner's panel link waits for them");
 assert.match(T.ls_leads.at(-1).service, /אתר חדש שולם ופורסם לבד: https:\/\/oren-mayim\.sites\.example\.co\.il\//);
 let B = T.ls_billing.find((b) => b.draft_id === D.id);
-assert.equal(B.cycle, "year"); assert.equal(B.amount, 4602, "10 months with VAT"); assert.equal(B.card_token, "card-1"); assert.equal(B.card_suffix, "4580"); assert.equal(B.state, "active");
+assert.equal(B.cycle, "year"); assert.equal(B.amount, 2900, "10 months"); assert.equal(B.card_token, "card-1"); assert.equal(B.card_suffix, "4580"); assert.equal(B.state, "active");
 const nextYear = new Date(pay.paid_at); nextYear.setUTCFullYear(nextYear.getUTCFullYear() + 1);
 assert.equal(new Date(B.next_charge_at).toISOString().slice(0, 10), nextYear.toISOString().slice(0, 10), "the next charge in a year");
 // Grow calls again: settled once
@@ -142,7 +143,7 @@ assert.equal(r.ok, true); assert.equal(pay.invoice_number, "40021");
 /* ---------------- what the owner sees ---------------- */
 r = await J(await req(D, "state", { method: "GET" }));
 assert.equal(r.state.status, "published");
-assert.deepEqual(r.billing.invoices, [{ url: "https://sandbox.meshulam.co.il/doc/40021.pdf", number: "40021", sum: 6844, date: pay.paid_at }]);
+assert.deepEqual(r.billing.invoices, [{ url: "https://sandbox.meshulam.co.il/doc/40021.pdf", number: "40021", sum: 5390, date: pay.paid_at }]);
 assert.equal(r.billing.sub.state, "active"); assert.equal(r.billing.sub.card, "4580");
 assert.equal(r.billing.domain.state, "waiting"); assert.deepEqual(r.billing.domain.dns.map((x) => x.type), ["A", "CNAME"]);
 assert.ok(!JSON.stringify(r.billing).includes("card-1"), "the card token never goes to the page");
@@ -172,11 +173,11 @@ r = await J(await req(D, "help", { body: { message: "" } })); assert.equal(r.err
 
 /* ---------------- the monthly charge ---------------- */
 // switch this subscription to monthly to exercise the run
-Object.assign(B, { cycle: "month", amount: 390, next_charge_at: "2027-01-31T08:00:00.000Z" });
+Object.assign(B, { cycle: "month", amount: 290, next_charge_at: "2027-01-31T08:00:00.000Z" });
 let now = new Date("2027-01-31T09:00:00Z");
 let out = await L.runBilling(now);
 assert.equal(out.charged, 1); [name, f] = grow.calls.at(-1);
-assert.equal(name, "createTransactionWithToken"); assert.equal(f.cardToken, "card-1"); assert.equal(f.sum, "390.00");
+assert.equal(name, "createTransactionWithToken"); assert.equal(f.cardToken, "card-1"); assert.equal(f.sum, "290.00");
 assert.equal(new Date(B.next_charge_at).toISOString().slice(0, 10), "2027-02-28", "Jan 31 + a month is Feb 28");
 assert.equal(T.ls_payments.at(-1).kind, "month"); assert.equal(T.ls_payments.at(-1).status, "paid");
 out = await L.runBilling(now); assert.equal(out.charged, 0, "nothing due twice the same day");
@@ -185,7 +186,7 @@ out = await L.runBilling(now); assert.equal(out.charged, 0, "nothing due twice t
 grow.refuse = true; now = new Date("2027-02-28T09:00:00Z");
 const alerts0 = T.ls_leads.length;
 out = await L.runBilling(now); assert.equal(out.failed, 1); assert.equal(B.state, "failed"); assert.equal(B.fails, 1);
-assert.match(T.ls_leads.at(-1).service, /החיוב החודשי \(390 ₪\) לא עבר/); assert.equal(T.ls_leads.length, alerts0 + 1);
+assert.match(T.ls_leads.at(-1).service, /החיוב החודשי \(290 ₪\) לא עבר/); assert.equal(T.ls_leads.length, alerts0 + 1);
 assert.equal(new Date(B.next_charge_at).toISOString().slice(0, 10), "2027-03-03");
 for (const day of ["2027-03-03", "2027-03-06"]) { out = await L.runBilling(new Date(day + "T09:00:00Z")); assert.equal(out.failed, 1); }
 assert.equal(B.fails, 3); assert.equal(T.ls_leads.length, alerts0 + 1, "one alert for the first refusal, not every retry");
@@ -195,7 +196,7 @@ r = await J(await req(D, "state", { method: "GET" })); assert.equal(r.billing.su
 // the owner updates the card: the amount due, then everything is back
 grow.refuse = false;
 r = await J(await req(D, "pay", { body: { terms: true } })); assert.equal(r.status, 200, JSON.stringify(r));
-[name, f] = grow.calls.at(-1); assert.equal(f.sum, "390.00"); assert.equal(f.saveCardToken, "1");
+[name, f] = grow.calls.at(-1); assert.equal(f.sum, "290.00"); assert.equal(f.saveCardToken, "1");
 pay = T.ls_payments.at(-1); assert.equal(pay.kind, "card");
 grow.processes.get(pay.process_id).paid = true;
 // the callback never comes: the 15-minute run asks Grow itself
@@ -223,7 +224,7 @@ r = await J(await req(D, "cancel", { body: {} })); assert.equal(r.error, "no_sub
 const E = draft();
 await J(await req(E, "address", { body: { slug: "second-site", rev: E.rev } }));
 r = await J(await req(E, "pay", { body: { cycle: "month", terms: true } }));
-pay = T.ls_payments.at(-1); assert.equal(pay.sum, 2242, "monthly: the setup today, with VAT");
+pay = T.ls_payments.at(-1); assert.equal(pay.sum, 2490, "monthly: the setup today");
 grow.processes.get(pay.process_id).paid = true;
 const token = process.env.GITHUB_TOKEN; delete process.env.GITHUB_TOKEN; // the repo is down
 r = await J(await hook(callback(pay)));
@@ -233,7 +234,7 @@ r = await J(await req(E, "state", { method: "GET" })); assert.equal(r.billing.pu
 process.env.GITHUB_TOKEN = token;
 E.paid_at = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 out = await L.runPending(); assert.equal(out.published, 1); assert.equal(E.status, "published"); assert.equal(E.publish_error, null);
-B = T.ls_billing.find((b) => b.draft_id === E.id); assert.equal(B.cycle, "month"); assert.equal(B.amount, 460.2);
+B = T.ls_billing.find((b) => b.draft_id === E.id); assert.equal(B.cycle, "month"); assert.equal(B.amount, 290);
 
 /* ---------------- without Grow ---------------- */
 delete process.env.GROW_PAGE_CODE;

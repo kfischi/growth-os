@@ -350,8 +350,8 @@
     <h2 id="t-approve">מאשרים את האתר</h2>
     <p>בוחרים חבילה. אחר כך בוחרים כתובת לאתר ומשלמים, והאתר עולה לאוויר לבד. עד התשלום אפשר עוד לשנות.</p>
     <div class="pkgs">
-      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 1,900 ₪ הקמה, ו-390 ₪ לחודש, לפני מע״מ.</span></div></label>
-      <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש, לפני מע״מ.</span></div></label>
+      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,490 ₪ הקמה, ו-290 ₪ לחודש (מחיר השקה, נעול לתמיד).</span></div></label>
+      <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
     </div>
     <p class="note">בלי התחייבות: מבטלים מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
     <p class="err" id="approveErr" role="alert"></p>
@@ -604,11 +604,11 @@
       const pr = billing.prices;
       if (pr) {
         const pk = document.createElement('div'); pk.className = 'pkgs';
-        pk.append(cycleOpt('month', 'חודשי', nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש. לפני מע״מ.', true));
-        if (billing.annual) pk.append(cycleOpt('year', 'שנה מראש', nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10. לפני מע״מ.', false));
+        pk.append(cycleOpt('month', 'חודשי', nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש.' + (pr.vat ? ' לפני מע״מ.' : ''), true));
+        if (billing.annual) pk.append(cycleOpt('year', 'שנה מראש', nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10.' + (pr.vat ? ' לפני מע״מ.' : ''), false));
         box.append(pk);
         const total = p(''); total.className = 'total';
-        const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = 'לתשלום היום, כולל מע״מ: ' + nis(pr.today[c ? c.value : 'month']); };
+        const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = (pr.vat ? 'לתשלום היום, כולל מע״מ: ' : 'לתשלום היום: ') + nis(pr.today[c ? c.value : 'month']); };
         pk.addEventListener('change', showTotal); showTotal();
       }
       // The terms first (demos/terms/): paying means accepting them, and the server records when.
@@ -700,7 +700,7 @@
     const sub = b.sub;
     if (sub) {
       box.append(h3('המנוי'));
-      p((sub.cycle === 'year' ? 'שנתי, ' + nis(sub.amount) + ' לשנה' : 'חודשי, ' + nis(sub.amount) + ' לחודש') + ' כולל מע״מ' + (sub.card ? ' · כרטיס שמסתיים ב-' + sub.card : ''));
+      p((sub.cycle === 'year' ? 'שנתי, ' + nis(sub.amount) + ' לשנה' : 'חודשי, ' + nis(sub.amount) + ' לחודש') + ((billing.prices || {}).vat ? ' כולל מע״מ' : '') + (sub.card ? ' · כרטיס שמסתיים ב-' + sub.card : ''));
       if (sub.state === 'active') { p('החיוב הבא: ' + dateHe(sub.next)); box.append(btn('ביטול המנוי', cancelSub, 'linkish')); }
       else if (sub.state === 'failed' || sub.state === 'suspended') {
         p(sub.state === 'suspended' ? 'החיוב לא עבר כמה פעמים, ולכן המענה האוטומטי והצ׳אט מושהים. האתר עצמו עובד.' : 'החיוב האחרון לא עבר. ננסה שוב בעוד כמה ימים, או שתעדכנו כרטיס עכשיו.', 'warn');

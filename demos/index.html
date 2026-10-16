@@ -212,6 +212,10 @@ h1 .two { color: var(--violet); }
 .inc.ticked li { opacity: 1; transform: none; transition: opacity .35s var(--ease) var(--d), transform .35s var(--ease) var(--d); }
 .inc.ticked li::before { transform: translateY(4px) scale(1); transition: transform .3s var(--ease) calc(var(--d) + .12s); }
 .plan .btn { justify-self: start; margin-top: 4px; }
+.plan .pricelock { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 14px; background: var(--violet); color: #fff; font-size: .93rem; line-height: 1.45; }
+.plan .pricelock svg { flex: none; inline-size: 18px; block-size: 18px; margin-top: 2px; }
+.per s { color: var(--silver-ink); font-weight: 400; text-decoration-thickness: 1.5px; }
+.fine { margin-top: 18px; color: var(--ink-2); font-size: .95rem; font-weight: 500; }
 .terms { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--ink-2); font-size: .95rem; }
 .terms b { color: var(--ink); font-weight: 600; }
 
@@ -731,7 +735,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <span class="tag">מתאים לכם</span>
             <h3>נוכחות</h3>
             <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
-            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
+            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
             <p class="per" data-m="150"></p>
             <p class="inc-n"><b>9</b> דברים כלולים</p>
             <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>קישורים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
@@ -741,8 +745,9 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <span class="tag">מתאים לכם</span>
             <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
-            <p class="amount"><b><bdi>1,900 ₪</bdi></b><span>הקמה, פעם אחת, לפני מע״מ</span></p>
-            <p class="per" data-m="390"></p>
+            <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>נעילת מחיר השקה:</b> נרשמים עכשיו ונהנים מריטיינר קבוע של 290 ₪ לחודש, לתמיד!</span></p>
+            <p class="amount"><b><bdi>2,490 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="per" data-m="290" data-was="390"></p>
             <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
             <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>קישור מתויג לכל רשת וקבוצה: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
             <a class="btn" href="build/">לבנות את האתר שלי</a>
@@ -767,6 +772,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
           </div>
         </form>
       </div>
+      <p class="fine reveal">המחירים סופיים (כוללים קבלה מוכרת כהוצאה לעסק) · 0 ₪ מקדמה · משלמים רק כשהאתר מוכן</p>
       <div class="terms reveal">
         <p><b>בלי התחייבות:</b> מבטלים מתי שרוצים, והחיוב נעצר.</p>
         <p><b>משנים לבד:</b> כלול בתשלום החודשי.</p>
@@ -893,16 +899,16 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 
   /* ---- 3 · the package builder: AI items mean נציג AI; annual = 10 × the monthly for 12 months ---- */
   (() => {
-    const f = $('#builder'), PL = { p: { name: 'נוכחות', setup: 1500, m: 150 }, ai: { name: 'נציג AI', setup: 1900, m: 390 } };
+    const f = $('#builder'), PL = { p: { name: 'נוכחות', setup: 1500, m: 150 }, ai: { name: 'נציג AI', setup: 2490, m: 290 } };
     const nis = (n) => `<bdi>${n.toLocaleString('he-IL')} ₪</bdi>`;
     const draw = () => {
       const fit = $$('input', f).some((x) => x.checked && x.value === 'ai') ? 'ai' : 'p', p = PL[fit];
       $$('.plan').forEach((el) => el.classList.toggle('fits', el.dataset.plan === fit));
       $$('.plan .per').forEach((el) => { const m = +el.dataset.m;
-        el.innerHTML = `${nis(m)} לחודש<small>לפני מע״מ. מבטלים מתי שרוצים</small>`; });
+        const was = +el.dataset.was; el.innerHTML = (was ? `<s>${nis(was)}</s> ` : '') + `${nis(m)} לחודש<small>${was ? 'מחיר השקה, נעול לתמיד. ' : ''}מבטלים מתי שרוצים</small>`; });
       $('#fitName').textContent = p.name;
       $('#fitPrice').innerHTML = `${nis(p.setup)} הקמה`;
-      $('#fitPer').innerHTML = `ועוד ${nis(p.m)} לחודש, לפני מע״מ`;
+      $('#fitPer').innerHTML = `ועוד ${nis(p.m)} לחודש`;
     };
     f.addEventListener('change', draw);
     draw();
