@@ -1,4 +1,4 @@
-// The explainer film (1920x1080), fast: a hook over real demo sites, the ten steps of the build from the first click
+// The explainer film (1920x1080), at a calm pace with no dead time: a hook over real demo sites, the ten steps of the build from the first click
 // to the site in the air (the trade, the demo, the builder, the template, the colours, the questions, the photos, the
 // check, the approval, then the address, the card payment and the site live by itself), then "what you get": every
 // thing the site does once it is live, each in a few seconds with a big title, and the two packages at the end.
@@ -49,7 +49,7 @@ const W = 1920, H = 1080;
 const VIEW = { x: 48, y: 150 + 46, w: 1240, h: 775 }, APP = { w: 1280, h: 800 }, S0 = VIEW.w / APP.w;
 const WIDE = process.env.WIDE === "1";
 // A still frame lasts at most CAP seconds, or HOLD_CAP inside a hold for reading.
-const CAP = 0.9, HOLD_CAP = 1.8;
+const CAP = 2, HOLD_CAP = 3.5;
 
 /* ---------- the live site at the end: the approved draft, rendered as the real site is ---------- */
 const SLUG = "oren-mayim", SITE_URL = `https://${SLUG}.easylanding.co.il/`;
@@ -141,10 +141,10 @@ const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1, locale: "he-IL" });
 await ctx.addInitScript(() => {
   window.NR_VIDEO_CODEC = "vp9";
-  // The pages' own pauses (the chat's typing, a message's delay) run at double speed in the film. Not on the stage.
+  // The pages' own pauses (the chat's typing, a message's delay) run a little faster in the film. Not on the stage.
   if (location.pathname === "/__stage") return;
   const later = window.setTimeout;
-  window.setTimeout = function (fn, ms, ...a) { return later.call(this, fn, ms >= 250 ? ms * 0.5 : ms, ...a); };
+  window.setTimeout = function (fn, ms, ...a) { return later.call(this, fn, ms >= 250 ? ms * 0.75 : ms, ...a); };
 });
 const p = await ctx.newPage();
 p.on("pageerror", (e) => console.log("page error:", e.message));
@@ -193,7 +193,7 @@ const shots = [];
 await p.goto(BASE + "/__stage", { waitUntil: "networkidle" });
 await p.evaluate(() => document.fonts.ready);
 
-const PACE = 0.8; // scales the waits for reading; the camera keeps its own (short) timing
+const PACE = 1; // scales the waits for reading; the camera keeps its own (short) timing
 const raw = (ms) => p.waitForTimeout(ms);
 const wait = (ms) => p.waitForTimeout(Math.round(ms * PACE));
 const st = (fn, ...a) => p.evaluate(([fn, a]) => window.stage[fn](...a), [fn, a]);
@@ -209,7 +209,9 @@ const drops = [], holds = [], beats = [], cues = [], hits = [], marks = {};
 // Network waits are cut out of the film: what is on screen when they end follows straight after what was before.
 async function cut(fn) { const a = clock(); try { return await fn(); } finally { await raw(120); drops.push([a, clock()]); } }
 // A pause for reading: a still frame may last up to HOLD_CAP here.
-async function hold(ms) { const a = clock(); await raw(ms); holds.push([a, clock()]); }
+// READ stretches every reading pause: a calm pace a viewer can follow, while the dead time is still cut.
+const READ = 1.8;
+async function hold(ms) { const a = clock(); await raw(Math.round(ms * READ)); holds.push([a, clock()]); }
 const cue = (text) => { cues.push({ t: clock(), text }); };
 const mark = (name) => { marks[name] = clock(); };
 const beat = (id, title, k = "cut") => { beats.push({ id, t: clock(), title }); hits.push({ t: clock(), k }); };
@@ -248,10 +250,10 @@ async function tap(loc, say, { hold: ms = 550, zoom = true, max } = {}) {
   await st("unpoint");
   await loc.click();
 }
-// Typing at three times a person's speed.
+// Typing at about twice a person's speed.
 async function type(loc, text, say) {
   await tap(loc, say, { hold: 300 });
-  await loc.pressSequentially(text, { delay: 28 });
+  await loc.pressSequentially(text, { delay: 45 });
   await raw(150);
 }
 async function scrollApp(frame, to, ms) {
@@ -306,7 +308,7 @@ async function step(n) {
   await st("step", n, title, text);
   cue(`שלב ${n} מתוך 10: ${title} ${text}`);
   await raw(380);
-  await hold(500);
+  await hold(800);
   await st("uncard");
   await raw(300);
 }
@@ -335,7 +337,7 @@ async function feature(n) {
   await st("unpoint");
   await st("feature", n, FEATURES.length, title, text);
   cue(`${title} ${text}`);
-  await raw(250);
+  await hold(600);
 }
 
 /* ---------- WhatsApp on the stage's phone ---------- */
@@ -481,18 +483,18 @@ try {
   mark("h-fill");
   await showDraft(".order", "השירותים והמחירים באתר", 1000);
   await zoomTo(A("#guide"), { max: 1.6, pad: 30 });
-  await now("זמן חזרה, שעות, שנים ואחריות");
+  // The rest of the short questions (response time, hours, years, warranty, headline, intro, areas) are answered
+  // with one tap each: the film shows the first and cuts the others, so the step stays short.
+  await now("זמן חזרה, שעות, אחריות וכותרת: לוחצים ובוחרים");
   await tap(A("#guide .chip"), null, { zoom: false, hold: 220 }); await nextQ(/מתי אתם עובדים/);
-  await tap(app().locator("#guide .chip").nth(1), null, { zoom: false, hold: 200 }); await nextQ(/כמה שנים/);
-  await tap(app().locator("#guide .chip").nth(4), null, { zoom: false, hold: 200 }); await nextQ(/אחריות/);
-  await tap(app().locator("#guide .chip").nth(2), null, { zoom: false, hold: 200 }); await nextQ(/איזו כותרת/);
-  await now("כותרת ופסקת פתיחה, מוכנות");
-  await tap(app().locator("#guide .chip.card").nth(1), null, { zoom: false, hold: 300 });
-  await nextQ(/פסקת פתיחה/);
-  await tap(app().locator("#guide .chip.card").nth(0), null, { zoom: false, hold: 300 });
-  await nextQ(/דף לכל אזור/);
-  await tap(A("#guide button.skip:last-of-type"), "לדלג", { zoom: false, hold: 250 });
-  await nextQ(/אינסטגרם/);
+  await cut(async () => {
+    await app().locator("#guide .chip").nth(1).click(); await nextQ(/כמה שנים/);
+    await app().locator("#guide .chip").nth(4).click(); await nextQ(/אחריות/);
+    await app().locator("#guide .chip").nth(2).click(); await nextQ(/איזו כותרת/);
+    await app().locator("#guide .chip.card").nth(1).click(); await nextQ(/פסקת פתיחה/);
+    await app().locator("#guide .chip.card").nth(0).click(); await nextQ(/דף לכל אזור/);
+    await A("#guide button.skip:last-of-type").click(); await nextQ(/אינסטגרם/);
+  });
   await now("האינסטגרם, הפייסבוק והטיקטוק");
   for (const [net, v] of [["instagram", "@oren.mayim"], ["facebook", "OrenMayim"], ["tiktok", "@oren.mayim"]]) {
     const i = A(`#guide .socials input[data-net="${net}"]`);
