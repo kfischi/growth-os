@@ -4,68 +4,153 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>שקד · ניקיון בית ומשרד</title>
-<meta name="description" content="ניקיון בתים, משרדים ואחרי שיפוץ. בוחרים בצ׳אט מה צריך ומקבלים הערכת זמן ומחיר.">
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="ניקיון בתים, משרדים ואחרי שיפוץ בחדרה והשרון. אותה מנקה, כל שבוע, באותה שעה. בוחרים בצ׳אט מה צריך ומקבלים הערכת זמן ומחיר.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the before and after photo every cleaner sends a happy client.
-     Detail: rooms, hours, the checklist per room (מטבח, שירותים, חלונות).
-     Bold move: a drag slider over a drawn living room, from dusty to fresh. Everything else stays quiet. */
+  /* Object: a freshly wiped window, and the cleaner's fixed slot in the family calendar.
+     Detail: the same weekday and hour every week (שלישי, 8:00), the hours per visit, the checklist per room.
+     Bold move: the hero photo sits behind fogged glass, and one squeegee stroke wipes it clear. Everything else stays airy and quiet. */
   :root {
-    --suds: #f6fafa;           /* page */
-    --mist: #dceeec;
-    --deep: #0f3b3a;           /* text */
-    --deep-soft: #4b6967;
-    --fresh: #24a593;          /* clean surfaces, ticks */
-    --sponge: #ff7a8a;         /* the pink sponge */
-    --display: "Bellefair", "Alef", serif;
-    --body: "Alef", system-ui, sans-serif;
-    --phone-frame: var(--deep);
-    --bot-bg: #fff; --bot-fg: var(--deep); --bot-line: #d7e6e4; --bot-muted: var(--deep-soft);
-    --bot-accent: var(--deep); --bot-accent-fg: #fff; --bot-them: #eaf4f3; --bot-me: var(--fresh); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px;
+    --glass: #f3f8fc;          /* page: clean glass in daylight */
+    --rinse: #e2eef7;          /* soft panels */
+    --scrubs: #172c55;         /* her navy scrubs: text, buttons */
+    --scrubs-soft: #4a5b7d;
+    --glove: #2c78bd;          /* the light-blue glove: accent fills and lines */
+    --glove-ink: #1d62a0;      /* the same blue, dark enough for text */
+    --mint: #2b9a82;           /* the tick on a finished room */
+    --display: "Fredoka", "Varela Round", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Assistant", "Arial Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--scrubs);
+    --bot-bg: #fff; --bot-fg: var(--scrubs); --bot-line: #cfe0ee; --bot-muted: var(--scrubs-soft);
+    --bot-accent: var(--scrubs); --bot-accent-fg: #fff; --bot-them: #eaf3fa; --bot-me: var(--glove-ink); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 24px; --bot-radius-msg: 18px; --bot-focus: var(--glove);
+    --ps-a: #cfe3f2; --ps-b: #6f9cc6; --ps-ui: var(--scrubs); --ps-edit: var(--glove);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--suds); color: var(--deep); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--glass); color: var(--scrubs); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--sponge); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0; }
-  .eyebrow { font-size: 14px; letter-spacing: .02em; color: var(--deep-soft); }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 999px; }
-  .btn-deep { background: var(--deep); color: #fff; }
-  .btn-deep:hover { background: #082625; }
-  .btn-line { border: 1.5px solid var(--deep); color: var(--deep); background: transparent; }
+  :focus-visible { outline: 3px solid var(--glove); outline-offset: 3px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.08; margin: 0; letter-spacing: -.01em; }
+  .eyebrow { font-size: 15px; font-weight: 600; color: var(--glove-ink); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 999px; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-deep { background: var(--scrubs); color: #fff; box-shadow: 0 14px 28px -16px rgba(23,44,85,.8); }
+  .btn-deep:hover { background: #0e1f40; }
+  .btn-glass { background: #fff; color: var(--scrubs); box-shadow: inset 0 0 0 1.5px #c3d7e8; }
+  .btn-glass:hover { box-shadow: inset 0 0 0 1.5px var(--scrubs); }
 
-  .demo { background: var(--deep); color: #bcd3d1; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--scrubs); color: #c3d0e6; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero ---------- */
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 20px; }
-  .logo { font-family: var(--display); font-size: 32px; line-height: 1; }
-  .logo small { font-family: var(--body); font-size: 14px; color: var(--deep-soft); margin-inline-start: 8px; }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--sponge); }
-  .hero-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: end; padding-block: 26px 30px; }
-  .hero h1 { font-size: clamp(52px, 7.4vw, 104px); }
-  .hero p { font-size: 20px; margin: 0 0 22px; color: var(--deep-soft); max-width: 34ch; }
+  /* ---------- Hero: the window ---------- */
+  .hero { position: relative; overflow: hidden;
+    background: radial-gradient(120% 80% at 15% 0%, #ffffff 0, rgba(255,255,255,0) 60%), linear-gradient(180deg, var(--rinse), var(--glass) 70%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo svg { width: 34px; height: 34px; flex: none; }
+  .logo b { font-family: var(--display); font-weight: 600; font-size: 30px; line-height: 1; }
+  .logo small { font-size: 14.5px; color: var(--scrubs-soft); }
+  .bar a { font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px #c3d7e8; font-size: 16px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: clamp(28px, 5vw, 72px); align-items: center; padding-block: 18px 72px; }
+  .hero-copy { min-width: 0; }
+  .hero h1 { font-size: clamp(44px, 6.2vw, 84px); line-height: 1.04; margin: 14px 0 20px; }
+  .hero h1 em { font-style: normal; color: var(--glove-ink); display: block; }
+  .hero .lead { font-size: 20px; color: var(--scrubs-soft); max-width: 36ch; margin: 0 0 26px; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; padding: 0; margin: 30px 0 0; font-size: 15.5px; color: var(--scrubs-soft); }
+  .facts li { display: flex; align-items: center; gap: 8px; }
+  .facts li::before { content: ""; width: 18px; height: 18px; border-radius: 50%; flex: none; background: var(--mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.5l3 3L14.5 7' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+  .facts b { color: var(--scrubs); font-weight: 700; }
 
-  .ba { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 16 / 9; background: var(--mist); direction: ltr; user-select: none; touch-action: pan-y;
-    box-shadow: 0 40px 80px -45px rgba(15,59,58,.6); }
+  .window-wrap { position: relative; min-width: 0; max-width: 470px; width: 100%; justify-self: center; }
+  .window { position: relative; aspect-ratio: 5 / 5.6; border-radius: 240px 240px 22px 22px; overflow: hidden; background: var(--rinse);
+    box-shadow: 0 0 0 12px #fff, 0 0 0 13px #d3e3f0, 0 50px 80px -40px rgba(23,44,85,.55); }
+  .window .ps { position: absolute; inset: 0; }
+  .window .ps-chip { display: none; }
+  .fog { position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: rgba(236,244,250,.62); -webkit-backdrop-filter: blur(9px) saturate(.7); backdrop-filter: blur(9px) saturate(.7);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0 46%, #000 54% 100%); mask-image: linear-gradient(90deg, transparent 0 46%, #000 54% 100%);
+    -webkit-mask-size: 250% 100%; mask-size: 250% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: 100% 0; mask-position: 100% 0;
+    animation: wipe 1.9s .7s cubic-bezier(.55,.05,.35,1) forwards; }
+  .blade { position: absolute; z-index: 5; pointer-events: none; top: 6%; bottom: 6%; left: -25%; width: 14px; margin-left: -7px; border-radius: 8px;
+    background: linear-gradient(90deg, #0f2246, #2c4a85 60%, #0f2246); box-shadow: 0 0 0 3px rgba(255,255,255,.55), 0 10px 20px rgba(23,44,85,.35);
+    animation: blade 1.9s .7s cubic-bezier(.55,.05,.35,1) forwards; }
+  @keyframes wipe { to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
+  @keyframes blade { 0% { left: -25%; opacity: 1; } 92% { opacity: 1; } 100% { left: 125%; opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .fog, .blade { display: none; } }
+  html.a11y-still .fog, html.a11y-still .blade, body.ps-edit .fog, body.ps-edit .blade { display: none; }
+
+  .next { position: absolute; z-index: 6; inset-inline-start: -34px; bottom: 34px; width: 230px; background: #fff; border-radius: 20px; padding: 14px 16px 15px;
+    box-shadow: 0 24px 40px -22px rgba(23,44,85,.55), inset 0 0 0 1px #dbe7f1; }
+  .next small { display: block; font-size: 13px; font-weight: 700; color: var(--mint); letter-spacing: .02em; }
+  .next b { display: block; font-family: var(--display); font-size: 26px; font-weight: 600; line-height: 1.15; margin: 2px 0 2px; }
+  .next span { font-size: 14.5px; color: var(--scrubs-soft); }
+  .next .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--mint); margin-inline-end: 6px; vertical-align: middle; box-shadow: 0 0 0 4px rgba(43,154,130,.18); }
+  .drops { position: absolute; z-index: 6; top: 18px; inset-inline-end: -10px; width: 64px; height: 64px; pointer-events: none; }
+
+  /* ---------- Sections ---------- */
+  section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head h2 { font-size: clamp(36px, 4.8vw, 58px); }
+  .head p { margin: 0; color: var(--scrubs-soft); max-width: 40ch; }
+
+  /* the calendar: same day, same hour */
+  .cal-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 70px); align-items: center; }
+  .cal-copy h2 { font-size: clamp(36px, 4.8vw, 58px); margin-bottom: 18px; }
+  .cal-copy h2 span { color: var(--glove-ink); }
+  .points { list-style: none; padding: 0; margin: 0 0 26px; display: grid; gap: 14px; }
+  .points li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .points svg { width: 40px; height: 40px; }
+  .points b { display: block; font-size: 19px; }
+  .points span { color: var(--scrubs-soft); font-size: 16.5px; }
+  .cal { background: #fff; border-radius: 28px; padding: 22px 22px 18px; box-shadow: 0 40px 70px -46px rgba(23,44,85,.6), inset 0 0 0 1px #dce8f2; min-width: 0; }
+  .cal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .cal-top b { font-family: var(--display); font-weight: 600; font-size: 24px; }
+  .cal-top span { font-size: 14px; color: var(--scrubs-soft); }
+  .days { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+  .days .dn { text-align: center; font-size: 13.5px; font-weight: 700; color: var(--scrubs-soft); padding-bottom: 4px; }
+  .day { position: relative; min-height: 74px; border-radius: 14px; background: var(--glass); padding: 6px 8px; font-size: 13.5px; color: #6a7894; min-width: 0; }
+  .day.on { background: var(--scrubs); color: #fff; display: grid; align-content: space-between; justify-items: start; }
+  .day.on i { display: block; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; background: #9fbad6 url("../shared/photos/cleaning-portrait.webp") 78% 10% / 330% auto no-repeat; }
+  .day.on em { font-style: normal; font-weight: 700; font-size: 13.5px; }
+  .day.off { background: repeating-linear-gradient(-45deg, var(--glass) 0 6px, #e6eef6 6px 12px); }
+  .cal-foot { margin: 14px 2px 0; font-size: 14.5px; color: var(--scrubs-soft); }
+
+  /* what's included: the room checklist */
+  .incl { background: #fff; }
+  .rooms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-radius: 28px; overflow: hidden; box-shadow: inset 0 0 0 1px #dce8f2; }
+  .room { padding: 30px 28px 32px; min-width: 0; position: relative; }
+  .room + .room { border-inline-start: 1px solid #dce8f2; }
+  .room svg { width: 54px; height: 54px; display: block; margin-bottom: 14px; }
+  .room h3 { font-size: 28px; margin-bottom: 4px; }
+  .room .t { font-size: 14.5px; color: var(--glove-ink); font-weight: 700; margin-bottom: 14px; display: block; }
+  .room ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 16.5px; }
+  .room li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .room li::before { content: ""; width: 20px; height: 20px; margin-top: 4px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--mint);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.5l3 3L14.5 7' fill='none' stroke='%232b9a82' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+
+  /* before and after */
+  .ba-sec { padding-top: 92px; }
+  .ba-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+  .ba { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 16 / 10; background: var(--rinse); direction: ltr; user-select: none; touch-action: pan-y;
+    box-shadow: 0 0 0 10px #fff, 0 40px 80px -45px rgba(23,44,85,.6); }
   .ba svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
   .ba .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
   .ba .before svg { filter: saturate(.45) brightness(.86) sepia(.22); }
   .ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 3px; margin-left: -1.5px; background: #fff; pointer-events: none; }
-  .ba .knob { position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,.25);
-    display: grid; place-items: center; color: var(--deep); font-size: 18px; font-weight: 700; }
+  .ba .knob { position: absolute; top: 50%; left: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: var(--scrubs); box-shadow: 0 0 0 4px #fff, 0 8px 20px rgba(0,0,0,.25);
+    display: grid; place-items: center; color: #fff; font-size: 18px; font-weight: 700; }
   .ba .tag { position: absolute; top: 18px; padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; direction: rtl; }
-  .ba .tag.b { left: 18px; background: rgba(40,35,30,.65); color: #fff; }
-  .ba .tag.a { right: 18px; background: #fff; color: var(--deep); }
+  .ba .tag.b { left: 18px; background: rgba(40,35,30,.7); color: #fff; }
+  .ba .tag.a { right: 18px; background: #fff; color: var(--scrubs); }
   .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
-  .ba input:focus-visible + .handle .knob { outline: 3px solid var(--sponge); outline-offset: 3px; }
-  :root { --ps-a: #bfe3de; --ps-b: #24a593; --ps-ui: var(--deep); --ps-edit: var(--sponge); }
+  .ba input:focus-visible + .handle .knob { outline: 3px solid var(--glove); outline-offset: 5px; }
   .ba .ps { position: absolute; inset: 0; background: transparent; }
   .ba .ps-chip { display: none; }
   .ba [data-slot="after"] .ps-tools { left: auto; right: 14px; transform: none; top: 60px; }
@@ -73,106 +158,125 @@
   .ba .handle, .ba .tag { z-index: 4; }
   .ba input { z-index: 3; }
   body.ps-edit .ba input { pointer-events: none; }
-  .crew { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 48px; align-items: center; }
-  .crew-card { background: #fff; border-radius: 26px; padding: 14px 14px 20px; text-align: center; box-shadow: 0 30px 60px -40px rgba(15,59,58,.6); border: 1px solid #e1ecea; }
-  .crew-card .ps { aspect-ratio: 1; border-radius: 20px; }
-  .crew-card h3 { font-size: 34px; margin-top: 14px; }
-  .crew-card p { margin: 0; color: var(--deep-soft); font-size: 15px; }
-  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .tile { position: relative; }
-  .tile .ps { aspect-ratio: 1; border-radius: 18px; }
-  .tile b { position: absolute; z-index: 3; bottom: 10px; right: 10px; background: #fff; color: var(--deep); font-size: 13.5px; padding: 3px 10px; border-radius: 999px; }
+  .ba-copy h2 { font-size: clamp(34px, 4.2vw, 52px); margin-bottom: 14px; }
+  .ba-copy p { color: var(--scrubs-soft); margin: 0 0 14px; }
+  .ba-copy .hint { font-size: 15px; }
+
+  /* from this week: three photos */
+  .week { padding-top: 40px; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .tile { margin: 0; min-width: 0; }
+  .tile .ps { aspect-ratio: 4 / 3; border-radius: 22px; }
   .tile .ps-chip { display: none; }
-  .crew-note { color: var(--deep-soft); font-size: 15px; margin: 18px 0 0; }
-  @media (max-width: 900px) { .crew { grid-template-columns: minmax(0, 1fr); gap: 28px; } .crew-card { max-width: 280px; width: 100%; margin-inline: auto; } }
-  @media (max-width: 520px) { .tiles { gap: 8px; } .tile b { font-size: 11px; padding: 2px 7px; bottom: 6px; right: 6px; } }
-  .ba-cap { text-align: center; font-size: 14px; color: var(--deep-soft); margin: 12px 0 0; }
+  .tile figcaption { font-size: 15.5px; color: var(--scrubs-soft); margin-top: 10px; padding-inline: 4px; }
+  .tile figcaption b { color: var(--scrubs); }
 
-  /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(42px, 5.6vw, 68px); }
+  /* rates */
+  .rates { background: var(--scrubs); color: #fff; border-radius: 40px; margin-inline: 12px; }
+  .rates .head p { color: #b9c7e0; }
+  .rate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .rate { background: rgba(255,255,255,.06); border-radius: 26px; padding: 28px 26px; min-width: 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); display: flex; flex-direction: column; }
+  .rate.main { background: #fff; color: var(--scrubs); box-shadow: none; }
+  .rate small { font-size: 14px; font-weight: 700; color: #a9c8ea; }
+  .rate.main small { color: var(--mint); }
+  .rate h3 { font-size: 27px; margin-top: 4px; }
+  .rate .num { font-family: var(--display); font-weight: 600; font-size: 64px; line-height: 1; margin: 18px 0 6px; }
+  .rate .num span { font-size: 21px; font-family: var(--body); font-weight: 600; }
+  .rate p { margin: 0 0 22px; color: #c3d0e6; font-size: 16px; flex: 1; }
+  .rate.main p { color: var(--scrubs-soft); }
+  .rate .btn { align-self: flex-start; background: #fff; color: var(--scrubs); }
+  .rate.main .btn { background: var(--scrubs); color: #fff; }
+  .rates .fine { color: #b9c7e0; }
+  .fine { font-size: 14.5px; color: var(--scrubs-soft); margin: 16px 0 0; }
 
-  .rooms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .room { background: #fff; border-radius: 22px; padding: 24px; border: 1px solid #e1ecea; }
-  .room h3 { font-size: 34px; margin-bottom: 12px; }
-  .room ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 16.5px; }
-  .room li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; }
-  .room li::before { content: ""; width: 20px; height: 20px; margin-top: 4px; border-radius: 6px; background: var(--fresh)
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3L15 7' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 20px no-repeat; }
-
-  .rates { background: var(--mist); }
-  .rate-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; background: #fff; border-radius: 26px; overflow: hidden; }
-  .rate { padding: 28px; min-width: 0; }
-  .rate + .rate { border-inline-start: 1px solid #e1ecea; }
-  .rate h3 { font-size: 30px; }
-  .rate .num { font-family: var(--display); font-size: 54px; line-height: 1; margin: 14px 0 4px; }
-  .rate .num small { font-size: 22px; }
-  .rate p { margin: 0 0 18px; color: var(--deep-soft); font-size: 16px; }
-  .fine { font-size: 14px; color: var(--deep-soft); margin-top: 14px; }
+  .calc .head { margin-bottom: 26px; }
 
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner h2 { font-size: clamp(42px, 5.6vw, 68px); margin-bottom: 16px; }
-  .owner p { color: var(--deep-soft); max-width: 44ch; margin: 0 0 12px; }
-  .ph-cap { color: var(--deep-soft); }
+  .owner h2 { font-size: clamp(36px, 4.8vw, 58px); margin-bottom: 16px; }
+  .owner p { color: var(--scrubs-soft); max-width: 44ch; margin: 0 0 12px; }
+  .ph-cap { color: var(--scrubs-soft); }
 
-  footer { padding-block: 34px 90px; color: var(--deep-soft); font-size: 15px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfe0de; padding-top: 18px; }
+  footer { padding-block: 34px 96px; color: var(--scrubs-soft); font-size: 15px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfdeeb; padding-top: 18px; }
 
-  @media (max-width: 900px) {
-    .hero-top, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-    .rooms, .rate-grid { grid-template-columns: minmax(0, 1fr); }
-    .rate + .rate { border-inline-start: 0; border-top: 1px solid #e1ecea; }
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); padding-bottom: 56px; }
+    .window-wrap { max-width: 420px; }
+    .next { inset-inline-start: -12px; }
+    .cal-grid, .ba-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .rooms { grid-template-columns: minmax(0, 1fr); }
+    .room + .room { border-inline-start: 0; border-top: 1px solid #dce8f2; }
+    .rate-grid { grid-template-columns: minmax(0, 1fr); }
     .owner .phone { margin-inline: auto; }
   }
-  @media (max-width: 520px) {
-    .ba { aspect-ratio: 4 / 3.4; border-radius: 20px; }
+  @media (max-width: 560px) {
+    body { font-size: 17px; }
+    section { padding-block: 64px; }
+    .bar { padding-block: 14px; }
+    .logo b { font-size: 26px; }
+    .logo small { display: none; }
+    .hero h1 { font-size: 42px; margin: 10px 0 14px; }
+    .hero .lead { font-size: 17.5px; margin-bottom: 20px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { margin-top: 22px; font-size: 14.5px; gap: 8px 16px; }
+    .window-wrap { padding-inline: 14px; }
+    .next { inset-inline-start: 0; bottom: 18px; width: 196px; padding: 11px 13px 12px; border-radius: 16px; }
+    .next b { font-size: 22px; }
+    .next span { font-size: 13px; }
+    .drops { inset-inline-end: 4px; width: 50px; height: 50px; }
+    .cal { padding: 16px 12px 14px; border-radius: 22px; }
+    .days { gap: 4px; }
+    .day { min-height: 60px; padding: 5px; border-radius: 10px; font-size: 12px; }
+    .day.on i { width: 24px; height: 24px; }
+    .day.on em { font-size: 12px; }
+    .room { padding: 24px 20px 26px; }
+    .ba { aspect-ratio: 4 / 3.4; border-radius: 20px; box-shadow: 0 0 0 6px #fff, 0 30px 60px -40px rgba(23,44,85,.6); }
     .ba .tag { top: 12px; font-size: 13px; padding: 4px 10px; }
     .ba .tag.b { left: 12px; } .ba .tag.a { right: 12px; }
+    .tiles { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+    .tile:first-child { grid-column: 1 / -1; }
+    .tile:first-child .ps { aspect-ratio: 16 / 9; }
+    .tile figcaption { font-size: 14px; }
+    .rates { margin-inline: 0; border-radius: 28px; }
+    .rate .num { font-size: 54px; }
   }
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=cleaning">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfeaf3"/></linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#cfe3f3"/></linearGradient>
     <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
     <symbol id="room" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-      <rect width="1600" height="900" fill="#e9efec"/>
-      <rect y="640" width="1600" height="260" fill="#c9a983"/>
-      <g stroke="#b8956d" stroke-width="3" opacity=".6"><path d="M0 700 H1600 M0 770 H1600 M0 840 H1600"/><path d="M300 640 V700 M820 700 V770 M520 770 V840 M1240 640 V700 M1100 840 V900"/></g>
+      <rect width="1600" height="900" fill="#e9eff3"/>
+      <rect y="640" width="1600" height="260" fill="#c9ad8d"/>
+      <g stroke="#b8976f" stroke-width="3" opacity=".6"><path d="M0 700 H1600 M0 770 H1600 M0 840 H1600"/><path d="M300 640 V700 M820 700 V770 M520 770 V840 M1240 640 V700 M1100 840 V900"/></g>
       <rect y="628" width="1600" height="14" fill="#fff"/>
-      <!-- window -->
       <rect x="980" y="110" width="420" height="400" rx="6" fill="#fff"/>
       <rect x="996" y="126" width="388" height="368" fill="url(#sun)"/>
       <path d="M1190 126 V494 M996 310 H1384" stroke="#fff" stroke-width="12"/>
       <path d="M1000 494 L760 900 H1240 L1384 494 Z" fill="url(#beam)"/>
-      <!-- frame -->
       <rect x="230" y="150" width="260" height="190" rx="4" fill="#fff"/>
-      <rect x="246" y="166" width="228" height="158" fill="#9fcfc6"/>
-      <path d="M246 324 L320 240 L370 290 L420 220 L474 324 Z" fill="#5fa797"/>
+      <rect x="246" y="166" width="228" height="158" fill="#a7c9e4"/>
+      <path d="M246 324 L320 240 L370 290 L420 220 L474 324 Z" fill="#5f8fbf"/>
       <circle cx="430" cy="200" r="16" fill="#fff" opacity=".8"/>
-      <!-- lamp -->
-      <path d="M560 630 V330" stroke="#0f3b3a" stroke-width="6"/>
-      <path d="M500 330 H620 L590 250 H530 Z" fill="#f2f2ee" stroke="#d8dcd6" stroke-width="3"/>
-      <!-- sofa -->
-      <rect x="160" y="430" width="680" height="170" rx="40" fill="#5c8f8a"/>
-      <rect x="200" y="380" width="600" height="130" rx="34" fill="#6fa39d"/>
-      <rect x="130" y="450" width="90" height="170" rx="36" fill="#56857f"/>
-      <rect x="780" y="450" width="90" height="170" rx="36" fill="#56857f"/>
-      <rect x="250" y="400" width="140" height="100" rx="24" fill="#f0e9dd"/>
-      <rect x="610" y="400" width="140" height="100" rx="24" fill="#ff9aa6"/>
+      <path d="M560 630 V330" stroke="#172c55" stroke-width="6"/>
+      <path d="M500 330 H620 L590 250 H530 Z" fill="#f2f4f6" stroke="#d6dce2" stroke-width="3"/>
+      <rect x="160" y="430" width="680" height="170" rx="40" fill="#4f6f9c"/>
+      <rect x="200" y="380" width="600" height="130" rx="34" fill="#6283b0"/>
+      <rect x="130" y="450" width="90" height="170" rx="36" fill="#47658f"/>
+      <rect x="780" y="450" width="90" height="170" rx="36" fill="#47658f"/>
+      <rect x="250" y="400" width="140" height="100" rx="24" fill="#eef1f4"/>
+      <rect x="610" y="400" width="140" height="100" rx="24" fill="#9fd3c4"/>
       <rect x="190" y="600" width="18" height="40" fill="#3b3a36"/><rect x="790" y="600" width="18" height="40" fill="#3b3a36"/>
-      <!-- rug and table -->
-      <ellipse cx="560" cy="780" rx="420" ry="80" fill="#efe8db"/>
-      <ellipse cx="560" cy="780" rx="360" ry="60" fill="none" stroke="#d9cdb8" stroke-width="6"/>
-      <rect x="380" y="690" width="360" height="26" rx="10" fill="#f6f6f2" stroke="#dcdcd4" stroke-width="3"/>
-      <path d="M410 716 V790 M710 716 V790" stroke="#0f3b3a" stroke-width="8" stroke-linecap="round"/>
-      <!-- plant -->
-      <path d="M1420 640 L1440 520 H1520 L1540 640 Z" fill="#f2f2ee" stroke="#d8dcd6" stroke-width="3"/>
-      <g fill="#3f8f6e"><ellipse cx="1450" cy="440" rx="30" ry="80" transform="rotate(-25 1450 440)"/><ellipse cx="1510" cy="420" rx="30" ry="95" transform="rotate(18 1510 420)"/><ellipse cx="1480" cy="400" rx="26" ry="110"/></g>
+      <ellipse cx="560" cy="780" rx="420" ry="80" fill="#eef0ee"/>
+      <ellipse cx="560" cy="780" rx="360" ry="60" fill="none" stroke="#d5d9d6" stroke-width="6"/>
+      <rect x="380" y="690" width="360" height="26" rx="10" fill="#f6f7f8" stroke="#dcdfe2" stroke-width="3"/>
+      <path d="M410 716 V790 M710 716 V790" stroke="#172c55" stroke-width="8" stroke-linecap="round"/>
+      <path d="M1420 640 L1440 520 H1520 L1540 640 Z" fill="#f2f4f6" stroke="#d6dce2" stroke-width="3"/>
+      <g fill="#3f8f72"><ellipse cx="1450" cy="440" rx="30" ry="80" transform="rotate(-25 1450 440)"/><ellipse cx="1510" cy="420" rx="30" ry="95" transform="rotate(18 1510 420)"/><ellipse cx="1480" cy="400" rx="26" ry="110"/></g>
     </symbol>
   </defs>
 </svg>
@@ -180,97 +284,167 @@
 <header class="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span data-edit="name">שקד</span><small>ניקיון בית ומשרד</small></div>
+      <div class="logo">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 C 20 4, 33 18, 33 25 a13 13 0 0 1 -26 0 C 7 18, 20 4, 20 4 Z" fill="#2c78bd"/><path d="M14 25 a6 6 0 0 0 6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+        <b data-edit="name">שקד</b><small>ניקיון בית ומשרד</small>
+      </div>
       <a href="#" data-wa="היי שקד, הגעתי מהאתר ואשמח לשמוע על ניקיון">וואטסאפ</a>
     </div>
-    <div class="hero-top">
-      <div>
+    <div class="hero-grid">
+      <div class="hero-copy">
         <div class="eyebrow">בתים · משרדים · אחרי שיפוץ · חדרה והשרון</div>
-        <h1 data-edit="h1">חוזרים הביתה, והכול מבריק.</h1>
-      </div>
-      <div>
-        <p>בוחרים בצ׳אט מה צריך, ומקבלים הערכה של שעות ומחיר. הפרטים מגיעים אליי לוואטסאפ.</p>
+        <h1 data-edit="h1">אותה מנקה,<br>כל שבוע, <em>באותה שעה.</em></h1>
+        <p class="lead">חוזרים הביתה, והכול מבריק. בוחרים בצ׳אט מה צריך, ומקבלים הערכה של שעות ומחיר. הפרטים מגיעים אליי לוואטסאפ.</p>
         <div class="ctas">
           <button class="btn btn-deep" data-open-bot>הערכת מחיר בצ׳אט</button>
-          <a class="btn btn-line" href="#" data-wa="היי שקד, יש לי שאלה על ניקיון">וואטסאפ</a>
+          <a class="btn btn-glass" href="#" data-wa="היי שקד, יש לי שאלה על ניקיון">וואטסאפ</a>
         </div>
+        <ul class="facts">
+          <li><span><b>80 ₪</b> לשעה בניקיון קבוע</span></li>
+          <li><span>חומרים עליי</span></li>
+          <li><span>ימים א׳ עד ה׳</span></li>
+        </ul>
+      </div>
+      <div class="window-wrap">
+        <div class="window">
+          <figure class="ps" data-slot="portrait" data-src="../shared/photos/cleaning-portrait.webp" data-alt="מנקה מנגבת חלון גדול" data-pos="62 40" data-icon="person" data-label="תמונה שלכם"></figure>
+          <div class="fog" aria-hidden="true"></div>
+          <div class="blade" aria-hidden="true"></div>
+        </div>
+        <div class="next">
+          <small><span class="dot"></span>ביקור קבוע</small>
+          <b data-edit="next-day">שלישי, 8:00</b>
+          <span data-edit="next-who">שקד · 4 שעות · כל שבוע</span>
+        </div>
+        <svg class="drops" viewBox="0 0 64 64" aria-hidden="true"><g fill="#fff" stroke="#2c78bd" stroke-width="2"><path d="M40 6 l4 12 l12 4 l-12 4 l-4 12 l-4 -12 l-12 -4 l12 -4 Z"/><path d="M16 36 l2.5 7 l7 2.5 l-7 2.5 l-2.5 7 l-2.5 -7 l-7 -2.5 l7 -2.5 Z"/></g></svg>
       </div>
     </div>
-    <div class="ba" id="ba" style="--pos:50%">
-      <figure class="ps" data-slot="after" data-label="תמונת אחרי"><svg class="ps-ph" role="img" aria-label="הסלון אחרי ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
-        <g fill="#fff">
-          <path d="M1120 230 l8 -26 l8 26 l26 8 l-26 8 l-8 26 l-8 -26 l-26 -8 Z"/>
-          <path d="M560 690 l6 -18 l6 18 l18 6 l-18 6 l-6 18 l-6 -18 l-18 -6 Z" opacity=".9"/>
-          <path d="M300 560 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 Z" opacity=".85"/>
-        </g>
-      </svg></figure>
-      <div class="before">
-        <figure class="ps" data-slot="before" data-label="תמונת לפני"><svg class="ps-ph" role="img" aria-label="הסלון לפני ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
-          <!-- dust film on the window -->
-          <g fill="#8b8270" opacity=".35"><ellipse cx="1080" cy="220" rx="70" ry="40"/><ellipse cx="1300" cy="420" rx="80" ry="50"/><ellipse cx="1180" cy="380" rx="40" ry="60"/></g>
-          <!-- cobweb -->
-          <g stroke="#6d6a62" stroke-width="2" fill="none" opacity=".6" transform="translate(1600 0) scale(-1 1)"><path d="M0 0 L140 90 M0 0 L90 140 M0 0 L160 30 M0 0 L30 160"/><path d="M40 12 Q30 30 12 40 M80 26 Q60 60 26 80 M120 40 Q90 90 40 120"/></g>
-          <!-- clutter: laundry, cups, papers -->
-          <path d="M240 520 q60 -50 130 -10 q40 -40 90 10 q-30 40 -110 30 q-70 10 -110 -30 Z" fill="#8e8a9c"/>
-          <path d="M300 515 q40 -20 80 0" stroke="#6f6b7d" stroke-width="6" fill="none"/>
-          <g><rect x="470" y="652" width="34" height="40" rx="6" fill="#d9d2c4"/><rect x="520" y="660" width="30" height="32" rx="6" fill="#c7bfb0"/><rect x="600" y="664" width="80" height="28" rx="3" fill="#ece6d6" transform="rotate(-8 640 678)"/></g>
-          <!-- stains and crumbs -->
-          <g fill="#7d6a52" opacity=".55"><ellipse cx="460" cy="800" rx="60" ry="16"/><ellipse cx="700" cy="770" rx="34" ry="10"/><ellipse cx="1060" cy="860" rx="46" ry="12"/></g>
-          <g fill="#6b5a45" opacity=".6"><circle cx="880" cy="820" r="5"/><circle cx="905" cy="836" r="4"/><circle cx="930" cy="812" r="5"/><circle cx="300" cy="860" r="4"/><circle cx="1320" cy="760" r="5"/></g>
-          <!-- shoe prints -->
-          <g fill="#8a7155" opacity=".35"><ellipse cx="1150" cy="700" rx="14" ry="26" transform="rotate(20 1150 700)"/><ellipse cx="1210" cy="740" rx="14" ry="26" transform="rotate(20 1210 740)"/><ellipse cx="1260" cy="690" rx="14" ry="26" transform="rotate(20 1260 690)"/></g>
-          <!-- plant drooping leaves on floor -->
-          <ellipse cx="1390" cy="650" rx="22" ry="8" fill="#9a8a50" opacity=".6"/>
-        </svg></figure>
-      </div>
-      <input type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
-      <div class="handle"><span class="knob" aria-hidden="true">⇆</span></div>
-      <span class="tag b">לפני</span><span class="tag a">אחרי</span>
-    </div>
-    <p class="ba-cap">גררו את העיגול כדי להשוות. בכפתור "לנסות עם התמונות שלכם" מחליפים את הציור בתמונות לפני ואחרי מהעבודות שלכם.</p>
   </div>
 </header>
 
 <main>
-  <section>
-    <div class="wrap">
-      <div class="head"><h2>מה נכלל בניקיון</h2><span class="eyebrow">רשימה קבועה, כדי שלא יישכח כלום</span></div>
-      <div class="rooms">
-        <div class="room"><h3>מטבח</h3><ul><li>משטחים, כיריים וחזית הארונות</li><li>כיור וברזים, כולל אבנית</li><li>מיקרוגל מבפנים</li><li>רצפה, כולל מתחת לשולחן</li></ul></div>
-        <div class="room"><h3>שירותים ואמבטיה</h3><ul><li>אסלה, כיור ומקלחון</li><li>אריחים ופוגות</li><li>מראות וברזים</li><li>פח וחיטוי ידיות</li></ul></div>
-        <div class="room"><h3>חדרים וסלון</h3><ul><li>אבק על כל המשטחים והמדפים</li><li>שאיבה ושטיפה</li><li>החלפת מצעים, אם מבקשים</li><li>חלונות מבפנים</li></ul></div>
+  <section class="cal-sec">
+    <div class="wrap cal-grid">
+      <div class="cal-copy">
+        <h2>יום קבוע. שעה קבועה. <span>אותה שקד.</span></h2>
+        <ul class="points">
+          <li><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="8" width="30" height="27" rx="7" fill="#e2eef7"/><path d="M5 16 H35 M13 5 V11 M27 5 V11" stroke="#172c55" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="25" r="4" fill="#2c78bd"/></svg><div><b>לא מתאמים כל שבוע</b><span>קובעים פעם אחת, וזה ביומן.</span></div></li>
+          <li><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16" fill="#e2eef7"/><circle cx="20" cy="16" r="5.5" fill="#172c55"/><path d="M10 31 c2.5 -5 6 -7 10 -7 s7.5 2 10 7" fill="#172c55"/></svg><div><b>מכירה את הבית</b><span>יודעת איפה החומרים, מה לא להזיז ומה חשוב לכם.</span></div></li>
+          <li><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="9" width="28" height="22" rx="11" fill="#e2eef7"/><path d="M13 20 h14 M22 15 l5 5 l-5 5" fill="none" stroke="#172c55" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>צריכים להזיז?</b><span>הודעה בוואטסאפ, ומוצאים יום אחר באותו שבוע.</span></div></li>
+        </ul>
+        <button class="btn btn-deep" data-open-bot>לשריין יום קבוע</button>
+      </div>
+      <div class="cal" aria-label="דוגמה ליומן: ביקור קבוע בכל יום שלישי בשמונה בבוקר">
+        <div class="cal-top"><b>החודש שלכם</b><span>דוגמה</span></div>
+        <div class="days" aria-hidden="true">
+          <span class="dn">א׳</span><span class="dn">ב׳</span><span class="dn">ג׳</span><span class="dn">ד׳</span><span class="dn">ה׳</span><span class="dn">ו׳</span>
+          <span class="day">1</span><span class="day">2</span><span class="day on">3<i></i><em>8:00</em></span><span class="day">4</span><span class="day">5</span><span class="day off">6</span>
+          <span class="day">8</span><span class="day">9</span><span class="day on">10<i></i><em>8:00</em></span><span class="day">11</span><span class="day">12</span><span class="day off">13</span>
+          <span class="day">15</span><span class="day">16</span><span class="day on">17<i></i><em>8:00</em></span><span class="day">18</span><span class="day">19</span><span class="day off">20</span>
+          <span class="day">22</span><span class="day">23</span><span class="day on">24<i></i><em>8:00</em></span><span class="day">25</span><span class="day">26</span><span class="day off">27</span>
+        </div>
+        <p class="cal-foot">כל שלישי, 8:00 עד 12:00. ארבעה ביקורים בחודש, אותה מנקה.</p>
       </div>
     </div>
   </section>
 
-  <section style="padding-top:0">
-    <div class="wrap crew">
-      <div class="crew-card"><figure class="ps" data-slot="portrait" data-src="../shared/photos/cleaning-portrait.webp" data-alt="מנקה מנגבת חלון במשרד" data-pos="65 40" data-icon="person" data-label="תמונה שלכם"></figure><h3 data-edit="crew-name">שקד</h3><p data-edit="crew-role">מנקה בעצמה, בכל עבודה</p></div>
-      <div>
-        <div class="head" style="margin-bottom:16px"><h2>מהשבוע</h2><span class="eyebrow">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-        <div class="tiles">
-          <div class="tile"><figure class="ps" data-slot="t1" data-src="../shared/photos/cleaning-window.webp" data-alt="ניקוי חלונות במשרד" data-icon="sparkle" data-label="תמונה מעבודה"></figure><b data-edit="t1">חלונות במשרד, קומה 12</b></div>
-          <div class="tile"><figure class="ps" data-slot="t2" data-src="../shared/photos/cleaning-office.webp" data-alt="שטיפת רצפה במשרד" data-icon="drop" data-label="תמונה מעבודה"></figure><b data-edit="t2">משרד אחרי שעות העבודה</b></div>
-          <div class="tile"><figure class="ps" data-slot="t3" data-src="../shared/photos/cleaning-marble.webp" data-alt="ליטוש רצפת שיש בלובי" data-icon="home" data-label="תמונה מעבודה"></figure><b data-edit="t3">ליטוש שיש בלובי</b></div>
+  <section class="incl">
+    <div class="wrap">
+      <div class="head"><h2>מה נכלל בכל ביקור</h2><p>רשימה קבועה לכל חדר, כדי שלא יישכח כלום.</p></div>
+      <div class="rooms">
+        <div class="room">
+          <svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="4" width="46" height="46" rx="16" fill="#e2eef7"/><rect x="14" y="20" width="26" height="20" rx="3" fill="none" stroke="#172c55" stroke-width="2.4"/><path d="M14 27 H40 M21 15 v5 M33 15 v5" stroke="#172c55" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="33.5" r="2" fill="#2c78bd"/><circle cx="27" cy="33.5" r="2" fill="#2c78bd"/><circle cx="34" cy="33.5" r="2" fill="#2c78bd"/></svg>
+          <h3>מטבח</h3><span class="t">בערך שעה</span>
+          <ul><li>משטחים, כיריים וחזית הארונות</li><li>כיור וברזים, כולל אבנית</li><li>מיקרוגל מבפנים</li><li>רצפה, כולל מתחת לשולחן</li></ul>
         </div>
-        <p class="crew-note">נותנים מפתח למי שסומכים עליו. פנים מוכרות ותמונות אמיתיות מהבתים שניקיתם עושות את זה.</p>
+        <div class="room">
+          <svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="4" width="46" height="46" rx="16" fill="#e2eef7"/><path d="M13 29 H41 v3 a8 8 0 0 1 -8 8 H21 a8 8 0 0 1 -8 -8 Z" fill="none" stroke="#172c55" stroke-width="2.4" stroke-linejoin="round"/><path d="M17 29 V17 a4 4 0 0 1 8 0" fill="none" stroke="#172c55" stroke-width="2.4" stroke-linecap="round"/><circle cx="30" cy="18" r="2" fill="#2c78bd"/><circle cx="35" cy="22" r="1.6" fill="#2c78bd"/></svg>
+          <h3>שירותים ואמבטיה</h3><span class="t">בערך 45 דקות</span>
+          <ul><li>אסלה, כיור ומקלחון</li><li>אריחים ופוגות</li><li>מראות וברזים</li><li>פח וחיטוי ידיות</li></ul>
+        </div>
+        <div class="room">
+          <svg viewBox="0 0 54 54" aria-hidden="true"><rect x="4" y="4" width="46" height="46" rx="16" fill="#e2eef7"/><rect x="11" y="24" width="32" height="10" rx="4" fill="none" stroke="#172c55" stroke-width="2.4"/><path d="M14 24 v-4 a3 3 0 0 1 3 -3 h20 a3 3 0 0 1 3 3 v4 M14 34 v4 M40 34 v4" fill="none" stroke="#172c55" stroke-width="2.4" stroke-linecap="round"/><path d="M38 10 l1.5 4 l4 1.5 l-4 1.5 l-1.5 4 l-1.5 -4 l-4 -1.5 l4 -1.5 Z" fill="#2c78bd"/></svg>
+          <h3>חדרים וסלון</h3><span class="t">לפי מספר החדרים</span>
+          <ul><li>אבק על כל המשטחים והמדפים</li><li>שאיבה ושטיפה</li><li>החלפת מצעים, אם מבקשים</li><li>חלונות מבפנים</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ba-sec">
+    <div class="wrap ba-grid">
+      <div class="ba" id="ba" style="--pos:50%">
+        <figure class="ps" data-slot="after" data-label="תמונת אחרי"><svg class="ps-ph" role="img" aria-label="הסלון אחרי ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+          <g fill="#fff">
+            <path d="M1120 230 l8 -26 l8 26 l26 8 l-26 8 l-8 26 l-8 -26 l-26 -8 Z"/>
+            <path d="M560 690 l6 -18 l6 18 l18 6 l-18 6 l-6 18 l-6 -18 l-18 -6 Z" opacity=".9"/>
+            <path d="M300 560 l5 -15 l5 15 l15 5 l-15 5 l-5 15 l-5 -15 l-15 -5 Z" opacity=".85"/>
+          </g>
+        </svg></figure>
+        <div class="before">
+          <figure class="ps" data-slot="before" data-label="תמונת לפני"><svg class="ps-ph" role="img" aria-label="הסלון לפני ניקיון" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"><use href="#room" width="1600" height="900"/>
+            <g fill="#8b8270" opacity=".35"><ellipse cx="1080" cy="220" rx="70" ry="40"/><ellipse cx="1300" cy="420" rx="80" ry="50"/><ellipse cx="1180" cy="380" rx="40" ry="60"/></g>
+            <g stroke="#6d6a62" stroke-width="2" fill="none" opacity=".6" transform="translate(1600 0) scale(-1 1)"><path d="M0 0 L140 90 M0 0 L90 140 M0 0 L160 30 M0 0 L30 160"/><path d="M40 12 Q30 30 12 40 M80 26 Q60 60 26 80 M120 40 Q90 90 40 120"/></g>
+            <path d="M240 520 q60 -50 130 -10 q40 -40 90 10 q-30 40 -110 30 q-70 10 -110 -30 Z" fill="#8e8a9c"/>
+            <path d="M300 515 q40 -20 80 0" stroke="#6f6b7d" stroke-width="6" fill="none"/>
+            <g><rect x="470" y="652" width="34" height="40" rx="6" fill="#d9d2c4"/><rect x="520" y="660" width="30" height="32" rx="6" fill="#c7bfb0"/><rect x="600" y="664" width="80" height="28" rx="3" fill="#ece6d6" transform="rotate(-8 640 678)"/></g>
+            <g fill="#7d6a52" opacity=".55"><ellipse cx="460" cy="800" rx="60" ry="16"/><ellipse cx="700" cy="770" rx="34" ry="10"/><ellipse cx="1060" cy="860" rx="46" ry="12"/></g>
+            <g fill="#6b5a45" opacity=".6"><circle cx="880" cy="820" r="5"/><circle cx="905" cy="836" r="4"/><circle cx="930" cy="812" r="5"/><circle cx="300" cy="860" r="4"/><circle cx="1320" cy="760" r="5"/></g>
+            <g fill="#8a7155" opacity=".35"><ellipse cx="1150" cy="700" rx="14" ry="26" transform="rotate(20 1150 700)"/><ellipse cx="1210" cy="740" rx="14" ry="26" transform="rotate(20 1210 740)"/><ellipse cx="1260" cy="690" rx="14" ry="26" transform="rotate(20 1260 690)"/></g>
+            <ellipse cx="1390" cy="650" rx="22" ry="8" fill="#8a8a62" opacity=".6"/>
+          </svg></figure>
+        </div>
+        <input type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+        <div class="handle"><span class="knob" aria-hidden="true">⇆</span></div>
+        <span class="tag b">לפני</span><span class="tag a">אחרי</span>
+      </div>
+      <div class="ba-copy">
+        <h2>אותו סלון, ארבע שעות אחר כך</h2>
+        <p>אבק, כביסה על הספה, כתמים על הרצפה וחלון אפור. גררו את העיגול וראו את ההבדל.</p>
+        <p class="hint">בכפתור "לנסות עם התמונות שלכם" מחליפים את הציור בתמונות לפני ואחרי מהעבודות שלכם.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="week">
+    <div class="wrap">
+      <div class="head"><h2>מהשבוע</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="tiles">
+        <figure class="tile"><div class="ps" data-slot="t1" data-src="../shared/photos/cleaning-window.webp" data-alt="ניקוי חלונות במשרד" data-icon="sparkle" data-label="תמונה מעבודה"></div><figcaption><b data-edit="t1">חלונות במשרד, קומה 12</b></figcaption></figure>
+        <figure class="tile"><div class="ps" data-slot="t2" data-src="../shared/photos/cleaning-office.webp" data-alt="שטיפת רצפה במשרד" data-icon="drop" data-label="תמונה מעבודה"></div><figcaption><b data-edit="t2">משרד אחרי שעות העבודה</b></figcaption></figure>
+        <figure class="tile"><div class="ps" data-slot="t3" data-src="../shared/photos/cleaning-marble.webp" data-alt="ליטוש רצפת שיש בלובי" data-icon="home" data-label="תמונה מעבודה"></div><figcaption><b data-edit="t3">ליטוש שיש בלובי</b></figcaption></figure>
       </div>
     </div>
   </section>
 
   <section class="rates">
     <div class="wrap">
-      <div class="head"><h2>כמה זה עולה</h2><span class="eyebrow">מחירים לדוגמה</span></div>
+      <div class="head"><h2>כמה זה עולה</h2><p>מחירים לדוגמה, לפי שעה. משלמים לפי הזמן בפועל.</p></div>
       <div class="rate-grid">
-        <div class="rate"><h3>ניקיון שבועי</h3><div class="num">80 <small>₪ לשעה</small></div><p>אותה מנקה בכל פעם, ביום קבוע. מינימום שלוש שעות.</p><button class="btn btn-deep" data-open-bot>לבדוק מועד</button></div>
-        <div class="rate"><h3>ניקיון חד פעמי</h3><div class="num">90 <small>₪ לשעה</small></div><p>לפני חג, לפני אירוח או סתם כי הגיע הזמן.</p><button class="btn btn-deep" data-open-bot>הערכת מחיר</button></div>
-        <div class="rate"><h3>אחרי שיפוץ</h3><div class="num">110 <small>₪ לשעה</small></div><p>אבק בנייה, שאריות צבע וסיליקון. כולל חומרים מתאימים.</p><button class="btn btn-deep" data-open-bot>הערכת מחיר</button></div>
+        <div class="rate main"><small>הכי מבוקש</small><h3>ניקיון שבועי</h3><div class="num">80 <span>₪ לשעה</span></div><p>אותה מנקה בכל פעם, ביום קבוע. מינימום שלוש שעות.</p><button class="btn" data-open-bot>לבדוק מועד</button></div>
+        <div class="rate"><small>לפני חג או אירוח</small><h3>ניקיון חד פעמי</h3><div class="num">90 <span>₪ לשעה</span></div><p>לפני חג, לפני אירוח, או סתם כי הגיע הזמן.</p><button class="btn" data-open-bot>הערכת מחיר</button></div>
+        <div class="rate"><small>כולל חומרים מתאימים</small><h3>אחרי שיפוץ</h3><div class="num">110 <span>₪ לשעה</span></div><p>אבק בנייה, שאריות צבע וסיליקון.</p><button class="btn" data-open-bot>הערכת מחיר</button></div>
       </div>
       <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו המחירים שלכם.</p>
     </div>
   </section>
 
-  <section class="owner">
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>טיפים מהשטח, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner" style="padding-top:0">
     <div class="wrap owner-grid">
       <div>
         <h2>מה שקד מקבלת</h2>
@@ -301,13 +475,15 @@
 
 <footer>
   <div class="wrap row">
-    <span>שקד · דף לדוגמה, העסק בדוי</span>
+    <span>שקד · דף לדוגמה, העסק בדוי · <a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a></span>
     <a href="../">רוצים דף כזה לעסק שלכם?</a>
   </div>
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   // Before/after slider
   const ba = document.getElementById("ba"), range = ba.querySelector("input");
@@ -317,9 +493,9 @@
   const HOURS = { "עד 3 חדרים": [3, 4], "4 עד 5 חדרים": [4, 6], "6 חדרים ומעלה": [6, 8] };
   const RATE = { "דירה": 90, "בית פרטי": 90, "משרד": 90, "אחרי שיפוץ או מעבר": 110 };
   const fmt = (n) => n.toLocaleString("he-IL");
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר",
+    name: "שקד · ניקיון", subtitle: "הערכת זמן ומחיר", initial: "ש", launcher: "הערכת מחיר", hint: "נציג AI",
     greet: "היי, כאן שקד.\nכמה שאלות קצרות, ותקבלו הערכה של שעות ומחיר.",
     steps: [
       { key: "type", label: "סוג", ask: "מה מנקים?", chips: Object.keys(RATE) },
@@ -328,16 +504,41 @@
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => {
       let [lo, hi] = HOURS[d.size]; if (d.type === "אחרי שיפוץ או מעבר") { lo += 2; hi += 3; }
       const rate = d.freq === "פעם אחת" ? RATE[d.type] : Math.min(RATE[d.type], 80);
       return `תודה ${d.name.split(" ")[0]}! ${d.type}, ${d.size}: בערך ${lo} עד ${hi} שעות, כלומר ${fmt(lo * rate)} עד ${fmt(hi * rate)} ₪.\nלחצו למטה, ונקבע מועד בוואטסאפ.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה מנקים?", items: [
+      { label: "דירה", range: [90, 90], prefill: { type: "דירה" } },
+      { label: "בית פרטי", range: [90, 90], prefill: { type: "בית פרטי" } },
+      { label: "משרד", range: [90, 90], prefill: { type: "משרד" } },
+      { label: "אחרי שיפוץ או מעבר", range: [110, 110], prefill: { type: "אחרי שיפוץ או מעבר" }, note: "110 ₪ לשעה, כולל חומרים לאבק בנייה." },
+    ] },
+    factors: [
+      { ask: "מה הגודל?", options: [
+        { label: "עד 3 חדרים", mul: [3, 4], prefill: { size: "עד 3 חדרים" }, note: "בערך 3 עד 4 שעות." },
+        { label: "4 עד 5 חדרים", mul: [4, 6], prefill: { size: "4 עד 5 חדרים" }, note: "בערך 4 עד 6 שעות." },
+        { label: "6 חדרים ומעלה", mul: [6, 8], prefill: { size: "6 חדרים ומעלה" }, note: "בערך 6 עד 8 שעות." },
+      ] },
+      { ask: "כל כמה זמן?", options: [
+        { label: "פעם אחת", prefill: { freq: "פעם אחת" } },
+        { label: "כל שבוע", prefill: { freq: "כל שבוע" }, note: "בניקיון קבוע זה בדרך כלל לוקח פחות זמן מהפעם הראשונה." },
+        { label: "כל שבועיים", prefill: { freq: "כל שבועיים" } },
+      ] },
+    ],
+    note: "לפי שעות עבודה, לדוגמה. בסוף משלמים לפי הזמן בפועל.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/cleaning.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

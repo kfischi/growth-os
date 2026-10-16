@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>המספרה של שי · ספר בגבעתיים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="מספרה בגבעתיים: תספורת, פייד, זקן, תספורת ילד וצבע. בוחרים בצ׳אט מה עושים ומתי נוח, ושי חוזר בוואטסאפ עם שעה פנויה.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the felt letterboard price list hung on the white tile wall above the mirror, white push-in letters in its grooves,
+             with the barber pole by the door and the chrome-framed mirror at the station.
+     Detail: clipper guard numbers (מספר 2 is about 6 mm), minutes per service, weeks between cuts, today, tomorrow, this week,
+             morning, noon and evening.
+     Bold move: one giant navy felt letterboard holding the price list, hung a degree off straight. Everything around it is quiet tile white.
+     Motion: none. No yellow: the pole's red, white and blue, and chrome. */
+  :root {
+    --felt: #16223a;           /* the letterboard felt, the one deep field */
+    --felt-deep: #0e1729;
+    --letter: #f4f6f8;         /* the white push-in letters */
+    --tile: #f2f5f7;           /* the subway-tile wall, the page */
+    --grout: #d6dee4;
+    --pole-red: #b4182d;       /* the pole's red stripe, the accent on white */
+    --pole-blue: #2453a6;      /* the pole's blue stripe */
+    --chrome: #9aa6b2;
+    --ink: #121a26;
+    --ink-soft: #4b5867;
+    --display: "Secular One", "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--felt-deep);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--grout); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--felt); --bot-accent-fg: #fff; --bot-them: #eaeff3; --bot-me: var(--pole-red); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+    --guide-alert: var(--pole-red);
+    --ps-a: #c3d1dc; --ps-b: var(--felt); --ps-ui: var(--felt); --ps-edit: var(--pole-red);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--tile); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--pole-blue); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.1; margin: 0; }
+  h2 { font-size: clamp(34px, 4.4vw, 52px); }
+  .num { font-family: var(--mono); font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 24px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 4px; transition: background .2s, transform .2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-felt { background: var(--felt); color: #fff; }
+  .btn-felt:hover { background: var(--felt-deep); }
+  .btn-line { background: #fff; color: var(--felt); box-shadow: inset 0 0 0 2px var(--felt); }
+  .btn-line:hover { background: #e7edf2; }
+
+  .demo { background: var(--felt-deep); color: #c9d3de; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- the wall: white subway tiles ---------- */
+  .wall { background-color: var(--tile); background-image: linear-gradient(var(--grout) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, var(--grout) 1.5px, transparent 1.5px); background-size: 64px 32px, 64px 32px; background-position: 0 0, 0 0; }
+  .hero { position: relative; border-bottom: 10px solid var(--felt); }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(242,245,247,.2), rgba(242,245,247,.92) 60%); pointer-events: none; }
+  .hero > .wrap { position: relative; z-index: 1; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .pole { flex: none; width: 12px; height: 46px; border-radius: 6px; box-shadow: 0 0 0 3px var(--chrome);
+    background: repeating-linear-gradient(-35deg, var(--pole-red) 0 6px, #fff 6px 12px, var(--pole-blue) 12px 18px, #fff 18px 24px); }
+  .logo b { display: block; font: 400 30px/1 var(--display); color: var(--felt); }
+  .logo small { display: block; font-size: 14px; color: var(--ink-soft); margin-top: 4px; font-weight: 500; }
+  .bar > a { font-weight: 700; color: var(--felt); text-decoration: none; border-bottom: 2px solid var(--pole-red); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: center; padding: 30px 0 80px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--pole-red); font-weight: 700; font-size: 16px; }
+  .hero h1 { font-size: clamp(46px, 5.4vw, 74px); color: var(--felt); margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; display: block; color: var(--ink); font-size: .62em; margin-top: 8px; }
+  .lead { font-size: 20px; max-width: 36ch; margin: 0 0 28px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 34px 0 0; padding: 16px 0 0; border-top: 2px solid var(--felt); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 400 26px/1.1 var(--display); color: var(--felt); margin-bottom: 4px; }
+
+  /* the mirror at the station: a chrome frame around the photo */
+  .mirror { min-width: 0; padding: 12px; border-radius: 14px; background: linear-gradient(90deg, #7f8c99, #e9eef2 45%, #8b98a5); box-shadow: 0 30px 50px -30px rgba(14,23,41,.6); }
+  .mirror .ps { aspect-ratio: 16 / 10; border-radius: 6px; }
+
+  /* ---------- the letterboard: the price list ---------- */
+  .board-sec { padding-top: 76px; }
+  .board { position: relative; background-color: var(--felt); color: var(--letter); border-radius: 6px; padding: 34px 40px 30px;
+    background-image: repeating-linear-gradient(180deg, rgba(0,0,0,.28) 0 2px, transparent 2px 13px);
+    box-shadow: 0 0 0 10px #c9d2da, 0 0 0 12px #8b98a5, 0 40px 60px -30px rgba(14,23,41,.7); transform: rotate(-.8deg); margin: 12px 12px 0; }
+  .board::before, .board::after { content: ""; position: absolute; top: -34px; width: 2px; height: 34px; background: var(--chrome); }
+  .board::before { inset-inline-start: 22%; transform: rotate(14deg); } .board::after { inset-inline-end: 22%; transform: rotate(-14deg); }
+  .board-h { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 14px; }
+  .board-h h2 { font-size: clamp(36px, 5vw, 58px); letter-spacing: .06em; }
+  .board-h span { font-size: 15px; color: #c9d3de; }
+  .board ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 48px; }
+  .board li { min-width: 0; }
+  .item { width: 100%; display: grid; grid-template-columns: auto minmax(12px, 1fr) auto; align-items: baseline; gap: 2px 10px; padding: 14px 0 12px; border: 0;
+    border-bottom: 1px dashed rgba(244,246,248,.25); background: none; color: inherit; text-align: start; cursor: pointer; font: inherit; }
+  .item b { font: 400 25px/1.15 var(--display); letter-spacing: .04em; }
+  .item i { align-self: center; height: 0; border-bottom: 3px dotted rgba(244,246,248,.35); }
+  .item .p { font: 700 20px/1.2 var(--body); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .item small { grid-column: 1 / -1; font-size: 15px; color: #c9d3de; }
+  .item small .num { font-weight: 500; }
+  .item:hover b, .item:focus-visible b { text-decoration: underline; text-decoration-color: var(--pole-red); text-decoration-thickness: 3px; text-underline-offset: 6px; }
+  .item:focus-visible { outline-color: #fff; }
+  .board-foot { margin: 20px 0 0; font-size: 15px; color: #c9d3de; }
+  .fine { margin: 30px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- when: a block of wall tiles, one per slot ---------- */
+  .tiles { display: grid; grid-template-columns: 84px repeat(3, minmax(0, 1fr)); gap: 5px; background: var(--grout); padding: 5px; border-radius: 4px; max-width: 760px; }
+  .tiles .ch, .tiles .rh { background: var(--tile); display: grid; place-items: center; font-weight: 700; font-size: 15px; color: var(--ink-soft); padding: 10px 4px; min-width: 0; }
+  .tiles .rh { color: var(--felt); font-family: var(--display); font-weight: 400; font-size: 20px; }
+  .slot { min-height: 64px; min-width: 0; border: 0; background: #fff; font: 700 16px/1.2 var(--body); color: var(--felt); cursor: pointer; padding: 6px 4px; transition: background .15s, color .15s; }
+  .slot:hover { background: var(--felt); color: #fff; }
+  .when-key { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 16px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--ink-soft); }
+  .when-key b { color: var(--ink); }
+  .note { margin: 22px 0 0; max-width: 62ch; border-inline-start: 4px solid var(--pole-red); padding: 4px 14px; }
+
+  /* ---------- in the chair ---------- */
+  .chair { background: #fff; border-top: 1px solid var(--grout); border-bottom: 1px solid var(--grout); }
+  .chair-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+  .chair-grid div { min-width: 0; padding: 6px 24px 6px 0; }
+  .chair-grid div + div { border-inline-start: 1px solid var(--grout); padding-inline-start: 24px; }
+  .chair-grid b { display: block; font: 400 clamp(28px, 3.2vw, 40px)/1.1 var(--display); color: var(--felt); margin-bottom: 6px; }
+  .chair-grid span { font-size: 16px; }
+
+  /* ---------- owner ---------- */
+  .owner { background: var(--felt); color: #fff; }
+  .owner .head p { color: #c9d3de; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 26px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 44px; height: 44px; border-radius: 4px; display: grid; place-items: center; background: var(--letter); color: var(--felt); font: 400 22px/1 var(--display); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #c9d3de; font-size: 16px; }
+  .insta { margin: 34px 0 0; padding: 16px 0 0; border-top: 1px solid rgba(244,246,248,.25); color: #e3e9ef; max-width: 56ch; }
+  .owner .ph-cap { color: #c9d3de; }
+
+  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--felt); padding-top: 18px; }
+
+  @media (max-width: 960px) {
+    .hero::after { background: rgba(242,245,247,.85); }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; padding-bottom: 60px; }
+    .mirror { max-width: 600px; }
+    .board ul { grid-template-columns: minmax(0, 1fr); }
+    .chair-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .chair-grid div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .chair-grid div:nth-child(n+3) { border-top: 1px solid var(--grout); padding-top: 18px; margin-top: 12px; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    section { padding-block: 62px; }
+    body { font-size: 17px; }
+    .logo b { font-size: 25px; }
+    .hero-grid { padding-top: 14px; }
+    .hero h1 { font-size: clamp(42px, 12vw, 54px); }
+    .lead { font-size: 18px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 21px; }
+    .facts li { font-size: 13px; }
+    .mirror { padding: 8px; border-radius: 10px; }
+    .board { padding: 24px 18px 20px; margin: 10px 8px 0; transform: rotate(-.6deg); box-shadow: 0 0 0 7px #c9d2da, 0 0 0 9px #8b98a5, 0 30px 40px -24px rgba(14,23,41,.7); }
+    .item b { font-size: 21px; }
+    .item .p { font-size: 17px; }
+    .item small { font-size: 14px; }
+    .tiles { grid-template-columns: 62px repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; }
+    .tiles .rh { font-size: 17px; }
+    .slot { font-size: 14.5px; min-height: 56px; }
+    .chair-grid div { padding-inline-end: 12px; }
+    .chair-grid div + div { padding-inline-start: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .slot { transition: none; }
+    .btn:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=barber">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero wall">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span class="pole" aria-hidden="true"></span><div><b data-edit="name">המספרה של שי</b><small>ספר · גבעתיים</small></div></div>
+      <a href="#" data-wa="היי שי, הגעתי מהאתר ואשמח לתור">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">תספורת, פייד, זקן, ילדים וצבע</p>
+        <h1><span data-edit="h1a">יש תור היום?</span> <em data-edit="h1b">שאלו כאן. המכונה אצלי ביד.</em></h1>
+        <p class="lead">כשאני באמצע תספורת אני לא עונה לטלפון, וההודעות מחכות. כאן בוחרים מה עושים, שומעים מחיר ואומרים מתי נוח. אני חוזר אליכם עם שעה פנויה.</p>
+        <div class="ctas">
+          <button class="btn btn-felt" type="button" data-open-bot>לבקש תור</button>
+          <a class="btn btn-line" href="#prices">לראות מחירון</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">9 שנים</b>ספר בגבעתיים</li>
+          <li><b>30 דקות</b>תספורת רגילה</li>
+          <li><b>א׳ עד ו׳</b>שישי עד 14:00</li>
+        </ul>
+      </div>
+      <div class="mirror">
+        <figure class="ps" data-slot="cover" data-src="../shared/photos/barber-work.webp" data-alt="עמדת ספר: כיסא עור אדום מול מראה, מכונת תספורת, מספריים ומסרקים על השיש, ועמוד ספר על הקיר" data-pos="50 50" data-icon="camera" data-label="תמונה מהמספרה"></figure>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="board-sec" id="prices">
+    <div class="wrap">
+      <div class="board">
+        <div class="board-h"><h2>המחירון</h2><span>לוחצים על שירות, והוא נכנס לצ׳אט</span></div>
+        <ul>
+          <li><button class="item" type="button" data-cut="תספורת"><b>תספורת גבר</b><i></i><span class="p">70 עד 90 ₪</span><small>מכונה ומספריים, כולל שטיפה · <span class="num">30</span> דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="פייד"><b>פייד</b><i></i><span class="p">80 עד 100 ₪</span><small>מעבר הדרגתי בצדדים, קו חד · <span class="num">40</span> דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="תספורת וזקן"><b>תספורת וזקן</b><i></i><span class="p">100 עד 130 ₪</span><small>תספורת, עיצוב זקן וקווים · <span class="num">45</span> דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="זקן בלבד"><b>זקן בלבד</b><i></i><span class="p">40 עד 60 ₪</span><small>עיצוב, קווים ומגבת חמה · <span class="num">20</span> דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="תספורת ילד"><b>תספורת ילד</b><i></i><span class="p">50 עד 70 ₪</span><small>עד גיל 12, בסבלנות · <span class="num">25</span> דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="צבע / גוונים"><b>צבע או גוונים</b><i></i><span class="p">120 עד 250 ₪</span><small>אחרי בדיקת רגישות · 45 עד 90 דקות</small></button></li>
+          <li><button class="item" type="button" data-cut="סידור גבות"><b>סידור גבות</b><i></i><span class="p">20 עד 40 ₪</span><small>במספריים ובתער · <span class="num">10</span> דקות</small></button></li>
+        </ul>
+        <p class="board-foot">טווח לפי המחירון. המחיר הסופי לפי השיער ומה שעושים.</p>
+      </div>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו השירותים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section id="when" style="padding-top:20px">
+    <div class="wrap">
+      <div class="head"><h2>מתי נוח לכם?</h2><p>לוחצים על זמן שנוח לכם, והוא נכנס לפנייה. אני בודק ביומן וחוזר עם שעה פנויה.</p></div>
+      <div class="tiles" role="group" aria-label="מתי נוח לכם להגיע">
+        <span class="ch" aria-hidden="true"></span><span class="ch">בוקר</span><span class="ch">צהריים</span><span class="ch">ערב</span>
+        <span class="rh">היום</span>
+        <button class="slot" type="button" data-day="היום" data-slot-time="בוקר" aria-label="היום בבוקר">בוקר</button>
+        <button class="slot" type="button" data-day="היום" data-slot-time="צהריים" aria-label="היום בצהריים">צהריים</button>
+        <button class="slot" type="button" data-day="היום" data-slot-time="ערב" aria-label="היום בערב">ערב</button>
+        <span class="rh">מחר</span>
+        <button class="slot" type="button" data-day="מחר" data-slot-time="בוקר" aria-label="מחר בבוקר">בוקר</button>
+        <button class="slot" type="button" data-day="מחר" data-slot-time="צהריים" aria-label="מחר בצהריים">צהריים</button>
+        <button class="slot" type="button" data-day="מחר" data-slot-time="ערב" aria-label="מחר בערב">ערב</button>
+        <span class="rh">השבוע</span>
+        <button class="slot" type="button" data-day="השבוע" data-slot-time="בוקר" aria-label="השבוע בבוקר">בוקר</button>
+        <button class="slot" type="button" data-day="השבוע" data-slot-time="צהריים" aria-label="השבוע בצהריים">צהריים</button>
+        <button class="slot" type="button" data-day="השבוע" data-slot-time="ערב" aria-label="השבוע בערב">ערב</button>
+      </div>
+      <ul class="when-key">
+        <li><b>בוקר</b> 9:00 עד 12:00</li>
+        <li><b>צהריים</b> 12:00 עד 16:00</li>
+        <li><b>ערב</b> 16:00 עד 20:00</li>
+        <li><b>שישי</b> 8:00 עד 14:00</li>
+      </ul>
+      <p class="note">התור נקבע רק כשאני מאשר בוואטסאפ. ככה אף אחד לא מגיע לכיסא תפוס.</p>
+    </div>
+  </section>
+
+  <section class="chair">
+    <div class="wrap">
+      <div class="head"><h2>בכיסא</h2><p>מספרה קטנה בגבעתיים. כיסא אחד, מראה אחת, ולקוח אחד בכל פעם.</p></div>
+      <div class="chair-grid">
+        <div><b data-edit="c1">9 שנים</b><span>מאחורי הכיסא</span></div>
+        <div><b>כל לקוח</b><span>מכונה ומספריים מחוטאים, מגבת נקייה</span></div>
+        <div><b>2 דקות</b><span>לפני שמתחילים: מה רוצים, ואיזה מספר בצדדים</span></div>
+        <div><b>ילדים</b><span>כרית הגבהה, ובלי למהר</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>כל כמה זמן להסתפר, זקן בבית ותספורת ראשונה לילד. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה שי רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <div>
+          <ol>
+            <li><div><b>הלקוח שואל ״יש תור היום?״</b><span>ושומע טווח מחיר מהמחירון, בלי לחכות שתסיימו תספורת.</span></div></li>
+            <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>מה עושים, מתי נוח, ואם זו פעם ראשונה.</span></div></li>
+            <li><div><b>בין לקוח ללקוח שולחים שעה</b><span>הודעה אחת, במקום שיחות שלא נענו והודעות שנקברו.</span></div></li>
+          </ol>
+          <p class="insta">האינסטגרם נשאר לתמונות של העבודות. הכתובת הזאת היא לפניות: מי שמחפש ספר בגוגל, או קיבל קישור מחבר, מגיע אליכם בלחיצה אחת.</p>
+        </div>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ע</span><div><b>עומר לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לתור מהאתר (דמו)
+מה עושים: תספורת וזקן
+מחיר: ביקש טווח
+מתי: היום
+שעות: ערב
+ביקור: פעם ראשונה
+שם: עומר לוי
+טלפון: 052-7654321<time>12:10</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לספר</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>המספרה של שי · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "barber" });
+  // The sample ranges, the same as the price board above. A range, never a promised price.
+  const RANGE = {
+    "תספורת": "תספורת: 70 עד 90 ₪. פייד: 80 עד 100 ₪.",
+    "פייד": "פייד: 80 עד 100 ₪.",
+    "תספורת וזקן": "תספורת וזקן: 100 עד 130 ₪.",
+    "זקן בלבד": "זקן: 40 עד 60 ₪.",
+    "תספורת ילד": "תספורת ילד: 50 עד 70 ₪.",
+    "צבע / גוונים": "צבע או גוונים: 120 עד 250 ₪, לפי האורך והגוון.",
+    "סידור גבות": "סידור גבות: 20 עד 40 ₪.",
+  };
+  const UNSURE = "עוד לא יודע";
+  let picked = ""; // the service, for the price answer
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "שי · המספרה", subtitle: "מבקשים תור, גם כשאני באמצע תספורת", initial: "ש", launcher: "לבקש תור", hint: "נציג AI",
+    greet: "היי, כאן שי. אני כנראה באמצע תספורת.\nכמה שאלות קצרות, והפרטים מגיעים אליי לוואטסאפ.",
+    steps: [
+      { key: "cut", label: "מה עושים", ask: "מה עושים הפעם?", chips: ["תספורת", "תספורת וזקן", "זקן בלבד", "תספורת ילד", "צבע / גוונים", UNSURE],
+        tip: { when: (v) => v === "תספורת ילד", text: "תספורת ראשונה? כמה דברים קטנים עוזרים לילד לשבת בשקט.", id: "kid-first", link: "טיפים לתספורת ראשונה" } },
+      { key: "price", label: "מחיר", ask: "רוצים לשמוע כמה זה עולה?", chips: ["כן, כמה זה?", "לא, רק תור"],
+        show: (d) => { picked = d.cut; return d.cut !== UNSURE; },
+        tip: { when: (v) => v.startsWith("כן"), get text() { return (RANGE[picked] || "") + "\nזה טווח מהמחירון. המחיר הסופי לפי השיער."; } } },
+      { key: "day", label: "מתי", ask: (d) => (d.cut === UNSURE ? "אין בעיה, נחליט יחד בכיסא. " : "") + "מתי נוח לכם להגיע?", chips: ["היום", "מחר", "השבוע", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "first", label: "ביקור", ask: "הייתם אצלי בעבר?", chips: ["פעם ראשונה", "כבר הייתי אצלך"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה. בין לקוח ללקוח אני חוזר אליכם עם שעה פנויה.`,
+    summary: (d) => `פנייה לתור מהאתר (דמו)\nמה עושים: ${d.cut}${d.price ? "\nמחיר: " + (d.price.startsWith("כן") ? "ביקשו טווח" : "לא שאלו") : ""}\nמתי: ${d.day}\nשעות: ${d.slot}\nביקור: ${d.first}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירותים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-cut]").forEach((b) => b.addEventListener("click", () => bot.open({ cut: b.dataset.cut })));
+  document.querySelectorAll("[data-day]").forEach((b) => b.addEventListener("click", () => bot.open({ day: b.dataset.day, slot: b.dataset.slotTime })));
+  Guides.load("../shared/guides/barber.json", document.querySelector("[data-guides]"), { onAsk: (it) => bot.open(it.id === "kid-first" ? { cut: "תספורת ילד" } : undefined) });
+</script>
+</body>
+</html>

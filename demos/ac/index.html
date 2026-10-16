@@ -4,248 +4,365 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>אלון קור · מיזוג אוויר</title>
-<meta name="description" content="תיקון, ניקוי והתקנת מזגנים. מתארים את התקלה בצ׳אט, והפרטים מגיעים לטכנאי בוואטסאפ.">
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="תיקון, ניקוי והתקנת מזגנים בשרון ובמרכז. מתארים את התקלה בצ׳אט, והפרטים מגיעים לטכנאי בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the indoor unit on the wall and its remote, with the copper pipes running out of it.
-     Detail: set temperature, mode (קירור, ייבוש, מאוורר), BTU and horsepower, copper line sets.
-     Bold move: the hero is a drawn wall unit blowing cold air across the headline. */
+  /* Object: the thermostat readout on the wall unit, and the Israeli summer outside the window.
+     Detail: 38° outside against 24° in the living room, קירור / ייבוש / מאוורר, BTU, the filter, the drain pipe,
+     cleaning before the summer (April) and before the winter (October), the technician's daily round.
+     Bold move: the hero is one colour field that cools. It opens at a heatwave coral and a giant thin "38°",
+     counts down to "24°" while the field turns to ice blue. That is the page's only motion. */
   :root {
-    --frost: #f2f7fa;          /* wall paint in a cooled room */
-    --ice: #8fd3ec;            /* airflow */
-    --ice-deep: #2f8fb8;
-    --night: #0d2235;          /* text, remote body */
-    --night-soft: #4c6475;
-    --copper: #c77a45;         /* line set */
-    --lcd: #cfe0d6;            /* remote screen */
-    --display: "Rubik", system-ui, sans-serif;
-    --body: "Rubik", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --heatwave: #ff8f70;       /* outside, August, 14:00 */
+    --heat-haze: #ffc6b2;
+    --ice: #bfe6f5;            /* the room once the unit runs */
+    --chill: #eef8fc;          /* page paper, cooled */
+    --glacier: #0c6b97;        /* the cold accent, AA on white and on --chill */
+    --night: #0d2436;          /* text */
+    --night-soft: #3d566a;
+    --copper: #b4632e;         /* the line set, used only in drawings */
+    --display: "Fredoka", "Varela Round", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
     --phone-frame: var(--night);
-    --bot-bg: #fff; --bot-fg: var(--night); --bot-line: #dbe6ec; --bot-muted: var(--night-soft);
-    --bot-accent: var(--night); --bot-accent-fg: #fff; --bot-them: #eaf3f7; --bot-me: var(--ice-deep); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px;
+    --bot-bg: #fff; --bot-fg: var(--night); --bot-line: #cfe3ec; --bot-muted: var(--night-soft);
+    --bot-accent: var(--glacier); --bot-accent-fg: #fff; --bot-them: #e6f4fa; --bot-me: var(--night); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 22px; --bot-radius-msg: 16px; --bot-radius-pill: 999px; --bot-radius-input: 14px;
+    --ps-a: #bfe6f5; --ps-b: #4f93b5; --ps-ui: var(--night); --ps-edit: var(--glacier);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--frost); color: var(--night); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--chill); color: var(--night); font-family: var(--body); font-size: 17px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--copper); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: .98; letter-spacing: -.025em; margin: 0; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 999px; }
+  :focus-visible { outline: 3px solid var(--glacier); outline-offset: 3px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.05; letter-spacing: -.01em; margin: 0; }
+  h2 { font-size: clamp(38px, 5.4vw, 66px); }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 26px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: background .15s, transform .15s; }
+  .btn:active { transform: translateY(1px); }
   .btn-night { background: var(--night); color: #fff; }
-  .btn-night:hover { background: #000; }
-  .btn-line { border: 2px solid var(--night); color: var(--night); background: transparent; }
+  .btn-night:hover { background: #06131e; }
+  .btn-glass { background: rgba(255,255,255,.55); color: var(--night); box-shadow: inset 0 0 0 1.5px rgba(13,36,54,.35); backdrop-filter: blur(6px); }
+  .btn-glass:hover { background: rgba(255,255,255,.8); }
+  .kicker { font-family: var(--display); font-weight: 500; font-size: 15px; letter-spacing: .02em; color: var(--glacier); }
 
-  .demo { background: var(--night); color: #b9cbd6; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--night); color: #b9cfdc; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero ---------- */
-  .hero { position: relative; overflow: hidden; background: linear-gradient(180deg, #e6f1f6, var(--frost) 70%); }
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; position: relative; z-index: 2; }
-  .logo { font-weight: 900; font-size: 24px; letter-spacing: -.02em; }
-  .logo span { color: var(--ice-deep); }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--copper); }
-  .unit-wrap { position: relative; z-index: 1; margin-top: 6px; }
-  .unit-wrap svg { display: block; width: min(860px, 100%); height: auto; margin-inline: auto; }
-  .hero-copy { position: relative; z-index: 2; text-align: center; padding: 6px 0 70px; }
-  .hero h1 { font-size: clamp(46px, 7.2vw, 100px); margin: 0 auto 16px; max-width: 15ch; text-wrap: balance; }
-  .hero h1 em { font-style: normal; color: var(--ice-deep); }
-  .hero p { font-size: 19px; max-width: 40ch; margin: 0 auto 26px; color: var(--night-soft); }
-  .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .air path { stroke-dasharray: 14 18; animation: blow 2.6s linear infinite; }
-  @keyframes blow { to { stroke-dashoffset: -64; } }
+  /* ---------- Hero: the field that cools ---------- */
+  .hero { position: relative; overflow: hidden; background: linear-gradient(165deg, var(--heatwave), var(--heat-haze) 80%); }
+  .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(165deg, var(--ice), var(--chill) 85%); opacity: var(--cool, 1); pointer-events: none; }
+  .hero > * { position: relative; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1; display: flex; align-items: baseline; gap: 10px; white-space: nowrap; }
+  .logo small { font-weight: 500; font-size: 15px; color: var(--night-soft); }
+  .bar .wa { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--night); white-space: nowrap; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 40px 56px; align-items: center; padding-block: 26px 80px; }
+  .hero-copy { min-width: 0; }
+  .hero .kicker { color: var(--night); }
+  .hero h1 { font-size: clamp(46px, 6.4vw, 86px); margin: 14px 0 18px; text-wrap: balance; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; font-weight: 500; display: block; color: var(--night); }
+  .hero .lead { font-size: 19px; max-width: 36ch; margin: 0 0 26px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 26px; list-style: none; margin: 30px 0 0; padding: 0; font-size: 15px; }
+  .facts b { font-family: var(--display); font-weight: 600; font-size: 18px; }
+
+  .readout { position: relative; min-width: 0; }
+  .temp { font-family: var(--display); font-weight: 300; font-size: clamp(150px, 19vw, 270px); line-height: .8; letter-spacing: -.05em; direction: ltr; text-align: left; margin: 0 0 -18px -8px; position: relative; z-index: 2; font-variant-numeric: tabular-nums; }
+  .temp sup { font-size: .38em; vertical-align: top; position: relative; top: .14em; margin-left: .04em; font-weight: 300; }
+  .photo { position: relative; z-index: 1; }
+  .photo .ps { aspect-ratio: 5 / 4; border-radius: 30px; box-shadow: 0 40px 70px -40px rgba(13,36,54,.6); }
+  .modes { position: absolute; z-index: 3; inset-inline-end: 18px; bottom: 18px; display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: rgba(255,255,255,.82); backdrop-filter: blur(8px); font-size: 13.5px; font-weight: 500; }
+  .modes span { padding: 5px 12px; border-radius: 999px; }
+  .modes .on { background: var(--night); color: #fff; }
+  .outside { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 15px; }
+  .outside b { font-family: var(--display); font-weight: 600; }
 
   /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
-  .head h2 { font-size: clamp(38px, 5.4vw, 64px); }
-  .head .mono { color: var(--night-soft); }
+  section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 14px 28px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; color: var(--night-soft); max-width: 42ch; }
 
-  .remote-list { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px); gap: 40px; align-items: start; }
-  .lcd-rows { display: grid; gap: 10px; }
-  .lcd-row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center;
-    background: #fff; border: 1px solid #d9e5eb; border-radius: 18px; padding: 16px 18px; min-width: 0; }
-  .lcd-row:hover { border-color: var(--ice-deep); }
-  .lcd-row:focus-visible { outline: 3px solid var(--copper); outline-offset: 2px; }
-  .lcd-row .ic { width: 56px; height: 56px; border-radius: 14px; background: var(--lcd); display: grid; place-items: center; font-family: var(--mono); font-weight: 600; font-size: 13px; color: #2c4a3b; }
-  .lcd-row b { display: block; font-size: 19px; }
-  .lcd-row span { color: var(--night-soft); font-size: 14.5px; }
-  .lcd-row .pr { font-family: var(--mono); font-size: 14px; font-weight: 600; text-align: left; white-space: nowrap; }
+  /* the issues, as the modes of a remote */
+  .issues { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+  .issue { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1.5px solid #cfe3ec; border-radius: 26px; padding: 22px 20px 20px; min-width: 0; transition: border-color .15s, transform .15s; }
+  .issue:hover { border-color: var(--glacier); transform: translateY(-3px); }
+  .issue:focus-visible { outline: 3px solid var(--glacier); outline-offset: 3px; }
+  .issue svg { width: 44px; height: 44px; margin-bottom: 6px; }
+  .issue b { font-family: var(--display); font-weight: 600; font-size: 23px; line-height: 1.15; }
+  .issue span { color: var(--night-soft); font-size: 15px; line-height: 1.5; flex: 1; }
+  .issue .pr { color: var(--night); font-weight: 700; font-size: 16px; padding-top: 12px; border-top: 1px dashed #cfe3ec; flex: none; }
+  .issue.hot { background: var(--night); border-color: var(--night); color: #fff; }
+  .issue.hot span { color: #b7cad7; }
+  .issue.hot .pr { color: #fff; border-color: #36536a; }
 
-  .remote { background: linear-gradient(180deg, #fdfefe, #e9eff2); border-radius: 46px 46px 60px 60px; padding: 26px 24px 34px; box-shadow: 0 30px 60px -30px rgba(13,34,53,.55), inset 0 -6px 0 rgba(0,0,0,.05); position: sticky; top: 20px; }
-  .remote .screen { background: var(--lcd); border-radius: 14px; padding: 14px 16px; color: #23392d; box-shadow: inset 0 2px 6px rgba(0,0,0,.15); }
-  .remote .temp { font-weight: 300; font-size: 84px; line-height: 1; letter-spacing: -.04em; direction: ltr; text-align: left; }
-  .remote .temp sup { font-size: 30px; }
-  .remote .modes { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11.5px; margin-top: 6px; }
-  .remote .modes .on { font-weight: 700; text-decoration: underline; }
-  .remote .keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
-  .remote .keys span { height: 38px; border-radius: 12px; background: #dfe7eb; box-shadow: inset 0 -3px 0 rgba(0,0,0,.08); display: grid; place-items: center; font-size: 12px; color: var(--night-soft); }
-  .remote .power { background: var(--night) !important; color: #fff !important; font-weight: 700; }
-  .remote .caption { text-align: center; color: var(--night-soft); font-size: 13.5px; margin-top: 16px; }
+  .calc { background: #fff; }
 
-  .owner { background: var(--night); color: #e8f1f6; }
-  .owner .head .mono { color: #86a2b5; }
+  /* ---------- When to clean: a year of heat ---------- */
+  .season-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 56px; align-items: end; }
+  .year { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; align-items: end; height: 300px; padding-top: 34px; list-style: none; margin: 0; }
+  .year li { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; height: 100%; min-width: 0; }
+  .year .bar-t { border-radius: 14px 14px 4px 4px; height: calc((var(--t) - 12) * 13px); background: color-mix(in srgb, #7fc6e3 calc((24 - var(--t)) * 14%), var(--ice)); position: relative; }
+  .year li.warm .bar-t { background: color-mix(in srgb, var(--heatwave) calc((var(--t) - 24) * 12%), var(--heat-haze)); }
+  .year .deg { position: absolute; top: -26px; left: 0; right: 0; text-align: center; font-family: var(--display); font-weight: 500; font-size: 15px; direction: ltr; }
+  .year .m { text-align: center; font-size: 13.5px; color: var(--night-soft); margin-top: 8px; white-space: nowrap; }
+  .year li.clean .bar-t { box-shadow: 0 0 0 3px var(--chill), 0 0 0 5.5px var(--glacier); }
+  .year li.clean .m { color: var(--glacier); font-weight: 700; }
+  .season-side p { color: var(--night-soft); margin: 14px 0 22px; }
+  .legend { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--night-soft); margin-top: 16px; }
+  .legend i { width: 16px; height: 16px; border-radius: 5px; box-shadow: 0 0 0 2px var(--chill), 0 0 0 4px var(--glacier); background: var(--ice); }
+
+  /* ---------- The service visit ---------- */
+  .visit { background: #fff; }
+  .visit-grid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .tech { text-align: center; }
+  .vent { position: relative; width: min(300px, 100%); margin: 0 auto; aspect-ratio: 1; border-radius: 50%; padding: 14px; background: repeating-radial-gradient(circle, #e2f1f8 0 6px, #fff 6px 12px); }
+  .vent .ps { width: 100%; height: 100%; border-radius: 50%; }
+  .vent .ps-chip { display: none; }
+  .vent .read { position: absolute; z-index: 3; bottom: 6%; left: 50%; transform: translateX(-50%); background: var(--night); color: #fff; font-family: var(--display); font-weight: 500; font-size: 15px; padding: 5px 14px; border-radius: 999px; white-space: nowrap; }
+  .tech b { display: block; font-family: var(--display); font-weight: 600; font-size: 32px; line-height: 1.1; margin-top: 18px; }
+  .tech > span { color: var(--night-soft); font-size: 15.5px; }
+  .kit { list-style: none; margin: 22px 0 0; padding: 0; text-align: start; display: grid; gap: 0; }
+  .kit li { padding: 10px 0; border-top: 1px solid #dcebf2; font-size: 15.5px; display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+  .kit li::before { content: ""; width: 10px; height: 10px; margin-top: 8px; border-radius: 50%; background: var(--glacier); }
+
+  .round { border: 1.5px solid #cfe3ec; border-radius: 26px; overflow: hidden; }
+  .round-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 16px 22px; background: var(--chill); border-bottom: 1.5px solid #cfe3ec; }
+  .round-top h3 { font-size: 26px; }
+  .round-top span { font-size: 14px; color: var(--night-soft); }
+  .stops { list-style: none; margin: 0; padding: 6px 22px; }
+  .stops li { display: grid; grid-template-columns: 64px 18px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px dashed #d6e8f0; position: relative; }
+  .stops li:last-child { border-bottom: 0; }
+  .stops time { font-family: var(--display); font-weight: 500; font-size: 18px; direction: ltr; text-align: right; }
+  .stops .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--glacier); box-shadow: 0 0 0 4px #d6eef8; }
+  .stops li.done .dot { background: #9db6c4; box-shadow: none; }
+  .stops li.done { color: var(--night-soft); }
+  .stops b { font-weight: 700; display: block; line-height: 1.35; }
+  .stops small { color: var(--night-soft); font-size: 14px; }
+  .stops .tag { font-size: 13px; font-weight: 700; background: #e3f1f7; color: var(--glacier); padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .stops li.free { color: var(--night); }
+  .stops li.free .dot { background: #fff; box-shadow: 0 0 0 3px var(--glacier); }
+  .stops .slot-btn { all: unset; cursor: pointer; font-weight: 700; font-size: 14px; background: var(--night); color: #fff; padding: 8px 14px; border-radius: 999px; white-space: nowrap; }
+  .stops .slot-btn:focus-visible { outline: 3px solid var(--glacier); outline-offset: 2px; }
+  .round-note { padding: 0 22px 18px; margin: 0; font-size: 13.5px; color: var(--night-soft); }
+
+  .jobs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  .job { min-width: 0; }
+  .job .ps { aspect-ratio: 4 / 5; border-radius: 22px; }
+  .temps { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 2px 2px; font-size: 13px; font-weight: 500; }
+  .temps span { background: #ffe1d7; color: #6b2a14; border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+  .temps span:last-child { background: #d6eef8; color: #0a4a69; }
+  .job p { margin: 4px 2px 0; font-weight: 700; font-size: 15.5px; }
+
+  /* ---------- What the technician sees ---------- */
+  .owner { background: var(--night); color: #e7f1f7; }
+  .owner .head p { color: #a9c0cf; }
   .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 20px; counter-reset: s; }
-  .owner li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
-  .owner li::before { counter-increment: s; content: counter(s); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--ice); display: grid; place-items: center; font-weight: 700; color: var(--ice); }
-  .owner li b { display: block; font-size: 20px; }
-  .owner li span { color: #a9bfcc; font-size: 15.5px; }
-  .owner .ph-cap { color: #86a2b5; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 46px; height: 46px; border-radius: 50%; background: var(--ice); color: var(--night); display: grid; place-items: center; font-family: var(--display); font-weight: 600; font-size: 20px; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: #a9c0cf; font-size: 15.5px; }
+  .owner .ph-cap { color: #8fa9ba; }
 
-  footer { padding-block: 34px 90px; color: var(--night-soft); font-size: 14px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cfdde5; padding-top: 18px; }
+  footer { padding-block: 30px 96px; color: var(--night-soft); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; border-top: 1.5px solid #cfe3ec; padding-top: 18px; }
+  footer nav { display: flex; gap: 18px; flex-wrap: wrap; }
 
-
-  /* ---------- The technician: thermostat-dial portrait + jobs with LCD chips (photo slots) ---------- */
-  :root { --ps-a: #a9dcef; --ps-b: #2f8fb8; --ps-ui: var(--night); --ps-edit: var(--copper); }
-  .tech-grid { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 60px; align-items: center; }
-  .dial { position: relative; width: 100%; aspect-ratio: 1; border-radius: 50%; padding: 26px;
-    background: repeating-conic-gradient(from 0deg, var(--night-soft) 0 .6deg, transparent .6deg 6deg), radial-gradient(circle, #fff 60%, #e3edf2 61%);
-    box-shadow: 0 30px 60px -30px rgba(13,34,53,.55), inset 0 0 0 10px #fff; }
-  .dial::before { content: ""; position: absolute; inset: 10px; border-radius: 50%;
-    background: conic-gradient(from 220deg, var(--ice) 0deg, var(--ice-deep) 140deg, transparent 140deg 280deg, transparent 280deg);
-    -webkit-mask: radial-gradient(circle, transparent 66%, #000 67% 71%, transparent 72%); mask: radial-gradient(circle, transparent 66%, #000 67% 71%, transparent 72%); }
-  .dial .ps { width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 0 6px #fff; }
-  .dial .read { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); z-index: 3; background: var(--night); color: var(--ice); font-family: var(--mono); font-weight: 600; font-size: 15px; padding: 5px 12px; border-radius: 999px; white-space: nowrap; direction: ltr; }
-  .tech-name { text-align: center; margin-top: 18px; }
-  .tech-name b { display: block; font-weight: 900; font-size: 28px; letter-spacing: -.02em; }
-  .tech-name span { color: var(--night-soft); font-size: 15px; }
-  .jobs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  .job { background: #fff; border: 1px solid #d9e5eb; border-radius: 20px; padding: 10px; }
-  .job .ps { aspect-ratio: 4 / 5; border-radius: 14px; }
-  .temps { display: flex; justify-content: space-between; gap: 6px; margin: 10px 4px 2px; font-family: var(--mono); font-size: 12.5px; }
-  .temps span { background: var(--lcd); color: #23392d; border-radius: 8px; padding: 3px 8px; white-space: nowrap; }
-  .temps span:last-child { background: var(--night); color: var(--ice); }
-  .job p { margin: 6px 4px 2px; font-weight: 700; font-size: 15.5px; }
-  .dial .ps-chip { display: none; }
-  .tech-note { color: var(--night-soft); font-size: 15px; margin-top: 20px; }
-  @media (max-width: 900px) { .tech-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .dial-wrap { max-width: 300px; margin-inline: auto; width: 100%; } }
-  @media (max-width: 620px) { .jobs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; } .job:last-child { display: none; } .temps { font-size: 11px; flex-direction: column; } }
-
-  @media (max-width: 900px) {
-    .remote-list, .owner-grid { grid-template-columns: minmax(0, 1fr); }
-    .remote { position: static; max-width: 340px; }
+  @media (max-width: 1080px) {
+    .issues { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 920px) {
+    .hero-grid, .season-grid, .visit-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .readout { max-width: 520px; width: 100%; margin-inline: auto; }
     .owner .phone { margin-inline: auto; }
+    .season-grid { gap: 30px; }
   }
-  @media (max-width: 520px) {
-    .lcd-row { grid-template-columns: 44px minmax(0, 1fr); }
-    .lcd-row .ic { width: 44px; height: 44px; font-size: 11px; }
-    .lcd-row .pr { grid-column: 2; text-align: right; }
-    .hero-copy { padding-bottom: 54px; }
+  @media (max-width: 620px) {
+    body { font-size: 16.5px; }
+    section { padding-block: 64px; }
+    .logo { font-size: 24px; } .logo small { display: none; }
+    .hero-grid { padding-block: 10px 56px; gap: 26px; }
+    .hero h1 { font-size: clamp(40px, 11.6vw, 52px); }
+    .hero .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 4px 18px; margin-top: 22px; }
+    .temp { font-size: clamp(120px, 40vw, 170px); margin-bottom: -12px; }
+    .photo .ps { border-radius: 22px; }
+    .modes { inset-inline: 10px; bottom: 10px; justify-content: space-between; font-size: 12.5px; }
+    .modes span { padding: 5px 9px; }
+    .issues { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .issue { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 14px; padding: 16px; border-radius: 20px; }
+    .issue svg { grid-row: 1 / 3; margin: 2px 0 0; width: 40px; height: 40px; }
+    .issue b { font-size: 21px; }
+    .issue .pr { grid-column: 2; padding-top: 8px; margin-top: 6px; }
+    .year { gap: 3px; height: 240px; }
+    .year .bar-t { height: calc((var(--t) - 12) * 10px); border-radius: 8px 8px 3px 3px; }
+    .year .deg { font-size: 11.5px; top: -20px; }
+    .year .m { font-size: 11px; }
+    .stops { padding: 4px 14px; }
+    .stops li { grid-template-columns: 50px 14px minmax(0, 1fr); gap: 4px 10px; }
+    .stops .tag, .stops .slot-btn { grid-column: 3; justify-self: start; }
+    .stops time { font-size: 16px; }
+    .round-top { padding: 14px; } .round-note { padding: 0 14px 14px; }
+    .jobs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+    .job:last-child { display: none; }
   }
-  @media (prefers-reduced-motion: reduce) { .air path { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .issue { transition: none; } .issue:hover { transform: none; } }
+  html.a11y-still .issue { transition: none; }
+  html.a11y-still .issue:hover { transform: none; }
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=ac">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
-<header class="hero">
+<header class="hero" id="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span data-edit="name1">אלון</span><span data-edit="name2">קור</span></div>
-      <a href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על המזגן">וואטסאפ</a>
+      <div class="logo"><span><span data-edit="name1">אלון</span> <span data-edit="name2">קור</span></span><small>מיזוג אוויר</small></div>
+      <a class="wa" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על המזגן">וואטסאפ</a>
     </div>
-  </div>
-  <div class="unit-wrap" aria-hidden="true">
-    <svg viewBox="0 0 860 250" fill="none">
-      <defs>
-        <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3ebef"/></linearGradient>
-        <linearGradient id="cp" x1="0" x2="1"><stop offset="0" stop-color="#a95e2f"/><stop offset=".5" stop-color="#e0a070"/><stop offset="1" stop-color="#a95e2f"/></linearGradient>
-      </defs>
-      <!-- copper line set running down the wall -->
-      <path d="M690 92 H760 V250" stroke="url(#cp)" stroke-width="9" stroke-linecap="round"/>
-      <path d="M690 104 H746 V250" stroke="url(#cp)" stroke-width="6" stroke-linecap="round"/>
-      <path d="M690 116 H733 V250" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
-      <!-- indoor unit -->
-      <rect x="170" y="24" width="520" height="132" rx="26" fill="url(#body)" stroke="#cfdbe2" stroke-width="2"/>
-      <rect x="170" y="24" width="520" height="132" rx="26" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/>
-      <path d="M196 120 H664" stroke="#cfdbe2" stroke-width="2"/>
-      <rect x="200" y="128" width="460" height="16" rx="8" fill="#d5e0e6"/>
-      <rect x="210" y="134" width="440" height="4" rx="2" fill="#b9c8d0"/>
-      <!-- display -->
-      <rect x="560" y="58" width="78" height="34" rx="8" fill="#0d2235"/>
-      <text x="599" y="82" direction="ltr" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="20" font-weight="600" fill="#8fd3ec">24°</text>
-      <circle cx="546" cy="75" r="4" fill="#4fd18b"/>
-      <text x="212" y="66" direction="ltr" font-family="Rubik, sans-serif" font-size="13" font-weight="700" fill="#9aaeb9" letter-spacing="2">INVERTER · 12,000 BTU</text>
-      <!-- cold air -->
-      <g class="air" stroke="#8fd3ec" stroke-width="4" stroke-linecap="round">
-        <path d="M250 160 C 270 190, 230 215, 250 245"/>
-        <path d="M340 160 C 360 192, 320 214, 340 246" opacity=".8"/>
-        <path d="M430 160 C 450 190, 410 216, 430 246"/>
-        <path d="M520 160 C 540 192, 500 214, 520 246" opacity=".8"/>
-        <path d="M610 160 C 630 190, 590 216, 610 246"/>
-      </g>
-    </svg>
-  </div>
-  <div class="wrap hero-copy">
-    <div class="mono" style="color:var(--night-soft)">תיקון · ניקוי · התקנה · השרון והמרכז</div>
-    <h1><span data-edit="h1a">המזגן לא מקרר?</span> <em data-edit="h1b">כותבים, ואנחנו חוזרים.</em></h1>
-    <p>מתארים את התקלה בארבע לחיצות בצ׳אט. הפרטים מגיעים לטכנאי בוואטסאפ, והוא חוזר אליכם לקבוע מועד.</p>
-    <div class="ctas">
-      <button class="btn btn-night" data-open-bot>לתאר את התקלה</button>
-      <a class="btn btn-line" href="#" data-wa="היי, אשמח לקבוע טכנאי מזגנים">וואטסאפ ישיר</a>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="kicker">תיקון · ניקוי · התקנה · השרון והמרכז</div>
+        <h1><span data-edit="h1a">המזגן לא מקרר?</span> <em data-edit="h1b">כותבים, ואנחנו חוזרים.</em></h1>
+        <p class="lead">מתארים את התקלה בכמה לחיצות בצ׳אט. הפרטים מגיעים לטכנאי בוואטסאפ, והוא חוזר אליכם לקבוע מועד.</p>
+        <div class="ctas">
+          <button class="btn btn-night" data-open-bot>לתאר את התקלה</button>
+          <a class="btn btn-glass" href="#" data-wa="היי, אשמח לקבוע טכנאי מזגנים">וואטסאפ ישיר</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">9 שנים</b> בשטח</li>
+          <li>כל המותגים, <b>עילי ומיני מרכזי</b></li>
+          <li>אחריות <b data-edit="f3">6 חודשים</b></li>
+        </ul>
+      </div>
+      <div class="readout">
+        <div class="temp" aria-hidden="true"><span id="temp">24</span><sup>°</sup></div>
+        <div class="photo">
+          <figure class="ps" data-slot="hero" data-src="../shared/photos/ac-work.webp" data-alt="טכנאי מנקה פילטר במזגן עילי בסלון" data-pos="45 40" data-icon="snow" data-label="תמונה מעבודה"></figure>
+          <div class="modes" aria-hidden="true"><span class="on">קירור</span><span>ייבוש</span><span>מאוורר</span><span>חימום</span></div>
+        </div>
+        <div class="outside"><span>בחוץ: <b class="ltr">38°</b></span><span>בסלון, אחרי ניקוי: <b class="ltr">24°</b></span></div>
+      </div>
     </div>
   </div>
 </header>
 
 <main>
-  <section>
+  <section id="issues">
     <div class="wrap">
-      <div class="head"><h2>מה צריך לעשות?</h2><span class="mono">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span></div>
-      <div class="remote-list">
-        <div class="lcd-rows">
-          <button class="lcd-row" data-issue="לא מקרר או לא מחמם"><span class="ic">16°</span><span><b>לא מקרר או לא מחמם</b><span>בדיקת גז, מדחס וחיישנים</span></span><span class="pr">350 עד 550 ₪</span></button>
-          <button class="lcd-row" data-issue="מטפטף מים"><span class="ic">H₂O</span><span><b>מטפטף מים</b><span>ניקוי צינור ניקוז ומגש</span></span><span class="pr">250 עד 380 ₪</span></button>
-          <button class="lcd-row" data-issue="ניקוי תקופתי"><span class="ic">FAN</span><span><b>ניקוי ותחזוקה</b><span>פירוק, שטיפה וחיטוי של היחידה הפנימית</span></span><span class="pr">250 עד 350 ₪</span></button>
-          <button class="lcd-row" data-issue="התקנת מזגן חדש"><span class="ic">NEW</span><span><b>התקנה חדשה</b><span>כולל צנרת נחושת עד שלושה מטרים</span></span><span class="pr">850 עד 1,400 ₪</span></button>
-          <button class="lcd-row" data-issue="רעש או ריח"><span class="ic">dB</span><span><b>רעש או ריח</b><span>מאוורר, מיסבים ועובש בסוללה</span></span><span class="pr">280 עד 450 ₪</span></button>
+      <div class="head"><h2>מה קורה עם המזגן?</h2><p>מחירים לדוגמה. לחיצה פותחת את הצ׳אט עם התקלה.</p></div>
+      <div class="issues">
+        <button class="issue hot" data-issue="לא מקרר או לא מחמם">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M22 5v34 M7.3 13.5l29.4 17 M36.7 13.5l-29.4 17 M17 8l5 4 5-4 M17 36l5-4 5 4"/></svg>
+          <b>לא מקרר או לא מחמם</b><span>בדיקת גז, מדחס וחיישנים.</span><span class="pr">350 עד 550 ₪</span></button>
+        <button class="issue" data-issue="מטפטף מים">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="#0c6b97" stroke-width="2.4" stroke-linejoin="round"><path d="M22 6s11 12 11 20a11 11 0 0 1-22 0c0-8 11-20 11-20z"/><path d="M17 27a5 5 0 0 0 5 5" stroke-linecap="round"/></svg>
+          <b>מטפטף מים</b><span>ניקוי צינור הניקוז והמגש.</span><span class="pr">250 עד 380 ₪</span></button>
+        <button class="issue" data-issue="ניקוי תקופתי">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="#0c6b97" stroke-width="2.4" stroke-linecap="round"><circle cx="22" cy="22" r="3"/><path d="M22 19c0-8 4-13 9-12 3 1 2 7-7 13 M25 22c8 0 13 4 12 9-1 3-7 2-13-7 M22 25c0 8-4 13-9 12-3-1-2-7 7-13 M19 22c-8 0-13-4-12-9 1-3 7-2 13 7"/></svg>
+          <b>ניקוי ותחזוקה</b><span>פירוק, שטיפה וחיטוי של היחידה הפנימית.</span><span class="pr">250 עד 350 ₪</span></button>
+        <button class="issue" data-issue="התקנת מזגן חדש">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="#0c6b97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="36" height="16" rx="5"/><path d="M9 20h26 M14 31v6 M22 31v8 M30 31v6"/></svg>
+          <b>התקנה חדשה</b><span>כולל צנרת נחושת עד שלושה מטרים.</span><span class="pr">850 עד 1,400 ₪</span></button>
+        <button class="issue" data-issue="רעש או ריח">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="#0c6b97" stroke-width="2.4" stroke-linecap="round"><path d="M6 17v10h7l9 7V10l-9 7z" stroke-linejoin="round"/><path d="M29 16c3 3 3 9 0 12 M34 11c6 6 6 16 0 22"/></svg>
+          <b>רעש או ריח</b><span>מאוורר, מיסבים ועובש בסוללה.</span><span class="pr">280 עד 450 ₪</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="season">
+    <div class="wrap season-grid">
+      <div>
+        <ol class="year" aria-label="טמפרטורת מקסימום ממוצעת בחוף, לפי חודש, בערך">
+          <li style="--t:18"><span class="bar-t"><span class="deg">18°</span></span><span class="m">ינו׳</span></li>
+          <li style="--t:19"><span class="bar-t"><span class="deg">19°</span></span><span class="m">פבר׳</span></li>
+          <li style="--t:21"><span class="bar-t"><span class="deg">21°</span></span><span class="m">מרץ</span></li>
+          <li style="--t:24" class="clean"><span class="bar-t"><span class="deg">24°</span></span><span class="m">אפר׳</span></li>
+          <li style="--t:27" class="warm"><span class="bar-t"><span class="deg">27°</span></span><span class="m">מאי</span></li>
+          <li style="--t:29" class="warm"><span class="bar-t"><span class="deg">29°</span></span><span class="m">יוני</span></li>
+          <li style="--t:31" class="warm"><span class="bar-t"><span class="deg">31°</span></span><span class="m">יולי</span></li>
+          <li style="--t:32" class="warm"><span class="bar-t"><span class="deg">32°</span></span><span class="m">אוג׳</span></li>
+          <li style="--t:31" class="warm"><span class="bar-t"><span class="deg">31°</span></span><span class="m">ספט׳</span></li>
+          <li style="--t:28" class="clean warm"><span class="bar-t"><span class="deg">28°</span></span><span class="m">אוק׳</span></li>
+          <li style="--t:24"><span class="bar-t"><span class="deg">24°</span></span><span class="m">נוב׳</span></li>
+          <li style="--t:20"><span class="bar-t"><span class="deg">20°</span></span><span class="m">דצמ׳</span></li>
+        </ol>
+        <div class="legend"><i></i>החודשים הטובים לניקוי. טמפרטורות מקסימום ממוצעות בחוף, בערך.</div>
+      </div>
+      <div class="season-side">
+        <span class="kicker">מתי לנקות</span>
+        <h2>באפריל, לא ביולי.</h2>
+        <p>ביולי כולם מתקשרים באותו שבוע. ניקוי באפריל או באוקטובר תופס את המזגן לפני העומס, ותור קל יותר לקבוע.</p>
+        <button class="btn btn-night" data-issue="ניקוי תקופתי">לקבוע ניקוי</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="visit" id="visit">
+    <div class="wrap">
+      <div class="head"><h2>מי מגיע אליכם</h2><p>כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="visit-grid">
+        <div class="tech">
+          <div class="vent"><figure class="ps" data-slot="portrait" data-src="../shared/photos/ac-portrait.webp" data-alt="טכנאי מזגנים בסלון" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure><span class="read">טכנאי מיזוג</span></div>
+          <b data-edit="tech-name">אלון כהן</b>
+          <span data-edit="tech-role">טכנאי מיזוג מוסמך · 9 שנים</span>
+          <ul class="kit">
+            <li>ניילון על הרצפה ועל הספה לפני שפותחים</li>
+            <li>שקית ניקוי שתופסת את המים מהסוללה</li>
+            <li>מחיר לפני שמתחילים, וחשבונית בסוף</li>
+          </ul>
         </div>
-        <div class="remote" aria-hidden="true">
-          <div class="screen">
-            <div class="temp">24<sup>°C</sup></div>
-            <div class="modes"><span class="on">קירור</span><span>ייבוש</span><span>מאוורר</span><span>חימום</span></div>
+        <div>
+          <div class="round">
+            <div class="round-top"><h3>הסבב של היום</h3><span>דוגמה</span></div>
+            <ol class="stops">
+              <li class="done"><time>08:30</time><span class="dot"></span><span><b>ניקוי שני מזגנים</b><small>רעננה</small></span><span class="tag">בוצע</span></li>
+              <li class="done"><time>10:15</time><span class="dot"></span><span><b>מילוי גז, עילי בסלון</b><small>כפר סבא</small></span><span class="tag">בוצע</span></li>
+              <li><time>12:30</time><span class="dot"></span><span><b>התקנה בחדר ילדים</b><small>הוד השרון</small></span><span class="tag">בדרך</span></li>
+              <li class="free"><time>16:30</time><span class="dot"></span><span><b>חלון פנוי</b><small>השרון והמרכז</small></span><button class="slot-btn" data-open-bot>אולי אצלכם?</button></li>
+            </ol>
+            <p class="round-note">ככה נראה יום עבודה. את המועד קובעים יחד בטלפון, אחרי הצ׳אט.</p>
           </div>
-          <div class="keys"><span class="power">הפעלה</span><span>מצב</span><span>מאוורר</span><span>▲</span><span>שינה</span><span>▼</span></div>
-          <div class="caption">בצ׳אט שואלים גם איזה מזגן יש לכם</div>
+          <div class="jobs">
+            <div class="job"><figure class="ps" data-slot="j1" data-src="../shared/photos/ac-room.webp" data-alt="ניקוי פילטר במזגן עילי" data-icon="snow" data-label="תמונה מעבודה"></figure><div class="temps"><span data-edit="j1a">לפני: 31 מעלות</span><span data-edit="j1b">אחרי: 23 מעלות</span></div><p data-edit="j1">מילוי גז, כפר סבא</p></div>
+            <div class="job"><figure class="ps" data-slot="j2" data-label="תמונה מעבודה"><svg class="ps-ph" viewBox="0 0 160 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="200" fill="#d6eef8"/><rect x="18" y="40" width="124" height="46" rx="14" fill="#fff" stroke="#9cc7da" stroke-width="2"/><path d="M30 74h100" stroke="#cfe3ec" stroke-width="3"/><path d="M60 98s7 9 7 14a7 7 0 0 1-14 0c0-5 7-14 7-14z M94 120s6 8 6 12a6 6 0 0 1-12 0c0-4 6-12 6-12z" fill="#4f93b5"/><path d="M40 170h80" stroke="#9cc7da" stroke-width="3" stroke-linecap="round"/></svg></figure><div class="temps"><span data-edit="j2a">טפטוף</span><span data-edit="j2b">יבש</span></div><p data-edit="j2">פתיחת ניקוז, רעננה</p></div>
+            <div class="job"><figure class="ps" data-slot="j3" data-label="תמונה מעבודה"><svg class="ps-ph" viewBox="0 0 160 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="160" height="200" fill="#e6f4fa"/><rect x="18" y="52" width="124" height="46" rx="14" fill="#fff" stroke="#9cc7da" stroke-width="2"/><rect x="104" y="64" width="24" height="12" rx="3" fill="#0d2436"/><path d="M142 70h8v130" stroke="#b4632e" stroke-width="5" fill="none"/><path d="M40 112c6 10-4 18 2 28 M70 112c6 10-4 18 2 28 M100 112c6 10-4 18 2 28" stroke="#4f93b5" stroke-width="3" fill="none" stroke-linecap="round"/></svg></figure><div class="temps"><span data-edit="j3a">ישן</span><span data-edit="j3b">חדש</span></div><p data-edit="j3">התקנה בחדר ילדים</p></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section style="padding-top:0">
+  <section class="guides" id="guides">
     <div class="wrap">
-      <div class="head"><h2>מי מגיע אליכם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-      <div class="tech-grid">
-        <div class="dial-wrap">
-          <div class="dial"><figure class="ps" data-slot="portrait" data-src="../shared/photos/ac-portrait.webp" data-alt="טכנאי מזגנים בסלון" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure><span class="read">24°C · COOL</span></div>
-          <div class="tech-name"><b data-edit="tech-name">אלון כהן</b><span data-edit="tech-role">טכנאי מיזוג מוסמך · 9 שנים</span></div>
-        </div>
-        <div>
-          <div class="jobs">
-            <div class="job"><figure class="ps" data-slot="j1" data-src="../shared/photos/ac-room.webp" data-alt="ניקוי פילטר במזגן עילי" data-icon="snow" data-label="תמונה מעבודה"></figure><div class="temps"><span data-edit="j1a">לפני: 31 מעלות</span><span data-edit="j1b">אחרי: 23 מעלות</span></div><p data-edit="j1">מילוי גז, כפר סבא</p></div>
-            <div class="job"><figure class="ps" data-slot="j2" data-icon="drop" data-label="תמונה מעבודה"></figure><div class="temps"><span data-edit="j2a">טפטוף</span><span data-edit="j2b">יבש</span></div><p data-edit="j2">פתיחת ניקוז, רעננה</p></div>
-            <div class="job"><figure class="ps" data-slot="j3" data-icon="wrench" data-label="תמונה מעבודה"></figure><div class="temps"><span data-edit="j3a">ישן</span><span data-edit="j3b">חדש</span></div><p data-edit="j3">התקנה בחדר ילדים</p></div>
-          </div>
-          <p class="tech-note">פותחים את הדלת למי שמכירים מהתמונה. פנים אמיתיות ועבודות אמיתיות שוות יותר מכל סלוגן.</p>
-        </div>
-      </div>
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עד שמגיעים, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap">
-      <div class="head"><h2>מה הטכנאי רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="head"><h2>מה הטכנאי רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על ארבע שאלות</b><span>סוג המזגן, התקלה, ישוב ומספר טלפון. בלי טופס ארוך.</span></div></li>
-          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>אין צורך להתקשר ולשאול שוב. כבר יודעים מה לקחת לעבודה.</span></div></li>
-          <li><div><b>חוזרים ללקוח וקובעים</b><span>הצ׳אט עובד גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>התקלה, סוג המזגן, ישוב ומספר טלפון. אפשר גם תמונה של מדבקת הדגם.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>לא צריך להתקשר ולשאול שוב. כבר יודעים מה לקחת לעבודה.</span></div></li>
+          <li><div><b>חוזרים ללקוח וקובעים</b><span>הצ׳אט עונה גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
         </ol>
         <div>
           <div class="phone">
@@ -272,21 +389,26 @@
 <footer>
   <div class="wrap row">
     <span>אלון קור · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">הצהרת נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
   </div>
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "ac" });
   const RANGES = { "לא מקרר או לא מחמם": "350 עד 550", "מטפטף מים": "250 עד 380", "ניקוי תקופתי": "250 עד 350", "התקנת מזגן חדש": "850 עד 1,400", "רעש או ריח": "280 עד 450" };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "מיזוג אוויר", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
-    name: "אלון · מיזוג אוויר", subtitle: "חוזרים אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?",
-    greet: "היי, כאן אלון.\nארבע שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
+    name: "אלון · מיזוג אוויר", subtitle: "חוזרים אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?", hint: "נציג AI",
+    greet: "היי, כאן אלון.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
-      { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES) },
+      { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES),
+        tip: { when: (v) => v === "מטפטף מים", id: "dripping", text: "בינתיים: כבו את המזגן ושימו מגבת מתחת. בדרך כלל זה ניקוז סתום." } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המזגן או של מדבקת הדגם? כך מגיעים עם החלק הנכון.", photo: true },
       { key: "unit", label: "מזגן", ask: "איזה מזגן?", chips: ["עילי בחדר", "עילי בסלון", "מיני מרכזי", "מרכזי"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: כפר סבא" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -298,6 +420,51 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+
+  // The one motion moment: the hero cools from 38° to 24°. Skipped for reduced motion and "עצירת תנועה".
+  (function cool() {
+    const hero = document.getElementById("hero"), t = document.getElementById("temp");
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    const end = () => { t.textContent = "24"; hero.style.setProperty("--cool", 1); };
+    if (still()) return end();
+    let raf, start;
+    hero.style.setProperty("--cool", 0); t.textContent = "38";
+    const step = (now) => {
+      if (start == null) start = now;
+      const k = Math.min(1, (now - start - 500) / 2600);
+      if (k > 0) { const e = 1 - Math.pow(1 - k, 3); t.textContent = String(Math.round(38 - 14 * e)); hero.style.setProperty("--cool", e.toFixed(3)); }
+      if (k < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    addEventListener("a11y-still", () => { cancelAnimationFrame(raf); end(); });
+  })();
+
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה קורה עם המזגן?", items: [
+      { label: "לא מקרר או לא מחמם", range: [350, 550], prefill: { issue: "לא מקרר או לא מחמם" } },
+      { label: "מטפטף מים", range: [250, 380], prefill: { issue: "מטפטף מים" } },
+      { label: "ניקוי תקופתי", range: [250, 350], prefill: { issue: "ניקוי תקופתי" } },
+      { label: "רעש או ריח", range: [280, 450], prefill: { issue: "רעש או ריח" } },
+      { label: "התקנת מזגן חדש", range: [850, 1400], prefill: { issue: "התקנת מזגן חדש" }, note: "עבודת ההתקנה, בלי המזגן עצמו." },
+    ] },
+    factors: [
+      { ask: "איזה מזגן?", options: [
+        { label: "עילי בחדר", prefill: { unit: "עילי בחדר" } },
+        { label: "עילי בסלון", mul: 1.15, prefill: { unit: "עילי בסלון" } },
+        { label: "מיני מרכזי", mul: 1.6, prefill: { unit: "מיני מרכזי" } },
+        { label: "מרכזי", mul: 2.2, prefill: { unit: "מרכזי" } },
+      ] },
+      { ask: "כמה מזגנים?", options: [
+        { label: "אחד" },
+        { label: "שניים", mul: 1.8, note: "המזגן השני באותו ביקור, בלי עוד דמי הגעה." },
+        { label: "שלושה", mul: 2.5, note: "כל המזגנים באותו ביקור, בלי עוד דמי הגעה." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי בדיקה במקום, ותמיד לפני שמתחילים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/ac.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

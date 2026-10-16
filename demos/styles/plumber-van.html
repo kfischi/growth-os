@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>כיוון עיצוב: שלט על הרכב · אינסטלטור</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /*
+    1. The object: the side of the work van. The name, the trade and a phone number painted big enough to read from across the street.
+    2. The detail only this subject has: the phone number as the headline, "שירות 24/7" in a stencil plate, the service list as decals.
+    3. The one bold move: one saturated field colour with giant tight Rubik 900 digits. Everything below it is plain white.
+  */
+  :root {
+    --livery: #c8382a;     /* the van's paint */
+    --livery-deep: #9e2a1f;
+    --decal: #ffffff;      /* vinyl lettering */
+    --tarmac: #1c1d21;     /* text on white */
+    --tarmac-soft: #5a5d66;
+    --rule: #e3e4e8;
+    --display: "Rubik", system-ui, sans-serif;
+    --body: "Rubik", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  [data-palette="teal"] { --livery: #0e7470; --livery-deep: #0a5552; }
+  [data-palette="royal"] { --livery: #2342b8; --livery-deep: #182f88; }
+  [data-palette="bottle"] { --livery: #1f6a45; --livery-deep: #164f33; }
+  [data-palette="graphite"] { --livery: #2b2e35; --livery-deep: #1a1c21; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--tarmac); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { margin: 0; line-height: 1; text-wrap: balance; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--tarmac); outline-offset: 2px; }
+
+  .pick { background: var(--tarmac); color: #fff; font-size: 14px; }
+  .pick .wrap { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 0; }
+  .pick button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); cursor: pointer; padding: 0; }
+  .pick button[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+  .pick a { margin-inline-start: auto; color: #fff; }
+
+  .van { background: var(--livery); color: var(--decal); padding: 34px 0 0; overflow: hidden; }
+  .plate { display: inline-flex; align-items: center; gap: 10px; font: 500 13px var(--mono); letter-spacing: .08em; border: 2px solid var(--decal); padding: 6px 12px; }
+  .plate i { width: 9px; height: 9px; border-radius: 50%; background: var(--decal); }
+  .name { font: 900 clamp(26px, 4vw, 38px)/1 var(--display); letter-spacing: -.01em; margin-top: 22px; }
+  .trade { font: 500 18px var(--body); opacity: .9; margin-top: 6px; }
+  /* the bold move: the number, painted */
+  .number { display: block; font: 900 min(12.2vw, 146px)/.9 var(--display); letter-spacing: -.045em; margin: 22px 0 6px; direction: ltr; text-align: right; text-decoration: none; white-space: nowrap; }
+  .lead { max-width: 46ch; font-size: 19px; margin: 10px 0 0; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0 34px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 24px; font: 700 17px var(--body); border-radius: 999px; text-decoration: none; cursor: pointer; border: 0; }
+  .btn-decal { background: var(--decal); color: var(--livery-deep); }
+  .btn-line { border: 2px solid var(--decal); color: var(--decal); }
+  /* the van's lower stripe: the decals */
+  .stripe { background: var(--livery-deep); }
+  .stripe ul { list-style: none; margin: 0; padding: 14px 0; display: flex; gap: 10px 26px; flex-wrap: wrap; font: 700 15px var(--body); }
+  .stripe li::before { content: "—"; margin-inline-end: 8px; opacity: .6; }
+
+  .jobs { padding: 64px 0 76px; }
+  .jobs h2 { font: 900 clamp(34px, 5vw, 56px)/1 var(--display); letter-spacing: -.02em; margin-bottom: 26px; }
+  .job { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 18px; align-items: center; padding: 18px 0; border-top: 2px solid var(--tarmac); }
+  .job:last-of-type { border-bottom: 2px solid var(--tarmac); }
+  .job h3 { font: 700 20px var(--body); }
+  .job p { margin: 2px 0 0; color: var(--tarmac-soft); font-size: 15px; }
+  .job .price { font: 900 20px var(--display); white-space: nowrap; }
+  .job a { font-weight: 700; color: var(--livery); white-space: nowrap; }
+  .note { font-size: 13px; color: var(--tarmac-soft); margin-top: 14px; }
+
+  @media (max-width: 760px) {
+    .job { grid-template-columns: minmax(0, 1fr) auto; }
+    .job a { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<div class="pick" aria-label="חבילת צבעים">
+  <div class="wrap">
+    <span>חבילת צבעים:</span>
+    <button type="button" data-p="" aria-label="אדום" style="background:#c8382a" aria-pressed="true"></button>
+    <button type="button" data-p="teal" aria-label="טורקיז" style="background:#0e7470" aria-pressed="false"></button>
+    <button type="button" data-p="royal" aria-label="כחול רויאל" style="background:#2342b8" aria-pressed="false"></button>
+    <button type="button" data-p="bottle" aria-label="ירוק בקבוק" style="background:#1f6a45" aria-pressed="false"></button>
+    <button type="button" data-p="graphite" aria-label="גרפיט" style="background:#2b2e35" aria-pressed="false"></button>
+    <a href="./">לכל הכיוונים</a>
+  </div>
+</div>
+
+<main>
+<header class="van">
+  <div class="wrap">
+    <span class="plate"><i></i>שירות 24/7 · חדרה והשרון</span>
+    <div class="name">אורן מים</div>
+    <div class="trade">אינסטלציה · סתימות · נזילות · דודים</div>
+    <a class="number" href="tel:0526359513">052-635-9513</a>
+    <p class="lead">לא עונה כי אני מתחת לכיור של מישהו? כתבו בצ׳אט מה קרה, ואחזור אליכם תוך 15 דקות.</p>
+    <div class="ctas">
+      <a class="btn btn-decal" href="#">לפתוח קריאה בצ׳אט</a>
+      <a class="btn btn-line" href="#">וואטסאפ</a>
+    </div>
+  </div>
+  <div class="stripe"><div class="wrap"><ul><li>מחיר סגור לפני שמתחילים</li><li>12 חודשי אחריות</li><li>12 שנה בשטח</li></ul></div></div>
+</header>
+
+<section class="jobs">
+  <div class="wrap">
+    <h2>על מה קוראים לי</h2>
+    <div class="job"><div><h3>סתימה בכיור, באסלה או בניקוז</h3><p>פתיחה במכונה, בלי לשבור</p></div><span class="price">250 עד 450 ₪</span><a href="#">לפתוח קריאה</a></div>
+    <div class="job"><div><h3>נזילה מתחת לכיור או מצנרת</h3><p>אטמים, חיבורים וקטעי צנרת</p></div><span class="price">300 עד 650 ₪</span><a href="#">לפתוח קריאה</a></div>
+    <div class="job"><div><h3>דוד חשמל או שמש</h3><p>גוף חימום, טרמוסטט, החלפת דוד</p></div><span class="price">350 עד 2,800 ₪</span><a href="#">לפתוח קריאה</a></div>
+    <p class="note">כיוון עיצוב לדוגמה. העסק בדוי, המחירים להמחשה.</p>
+  </div>
+</section>
+</main>
+<script>
+  document.querySelectorAll(".pick button").forEach((b) => b.addEventListener("click", () => {
+    document.documentElement.dataset.palette = b.dataset.p;
+    document.querySelectorAll(".pick button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+</script>
+</body>
+</html>

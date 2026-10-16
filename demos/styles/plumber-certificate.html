@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>כיוון עיצוב: תעודת אחריות · אינסטלטור</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@700;900&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /*
+    1. The object: a warranty certificate the plumber hands over after the job. Guilloche border, a seal, a serial number.
+    2. The detail only this subject has: the plumber's license number, warranty in months, a job number, pipe sizes (½ אינץ׳).
+    3. The one bold move: a generated guilloche band (SVG, drawn in JS) framing the hero like a banknote. Everything else is quiet paper.
+  */
+  :root {
+    --deed: #1f4d3f;      /* the certificate's ink */
+    --deed-deep: #12332a;
+    --vellum: #f4f1e9;    /* the paper */
+    --seal: #9b2c2c;      /* the stamp */
+    --ink: #1a2420;
+    --ink-soft: #4f5c56;
+    --rule: #cfd6cf;
+    --display: "Noto Serif Hebrew", "Times New Roman", serif;
+    --body: "Noto Sans Hebrew", system-ui, sans-serif;
+  }
+  /* palettes: the same layout, other inks */
+  [data-palette="navy"] { --deed: #1e3a6b; --deed-deep: #12264a; --vellum: #f2f3f6; --seal: #a1342b; --ink: #161d2b; --ink-soft: #4d5668; --rule: #cdd3de; }
+  [data-palette="plum"] { --deed: #4a2a52; --deed-deep: #321b38; --vellum: #f5f1f3; --seal: #1f5f5b; --ink: #23192a; --ink-soft: #5c4f61; --rule: #d9cfd9; }
+  [data-palette="slate"] { --deed: #2f3b45; --deed-deep: #1e262d; --vellum: #f1f3f3; --seal: #b4462a; --ink: #1b2126; --ink-soft: #525d66; --rule: #ccd3d6; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--vellum); color: var(--ink); font: 400 17px/1.65 var(--body); -webkit-font-smoothing: antialiased; }
+  .wrap { width: min(1100px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 900; line-height: 1.1; margin: 0; text-wrap: balance; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--seal); outline-offset: 2px; }
+
+  .pick { background: var(--deed-deep); color: #fff; font-size: 14px; }
+  .pick .wrap { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 0; }
+  .pick button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid rgba(255,255,255,.5); cursor: pointer; padding: 0; }
+  .pick button[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+  .pick a { margin-inline-start: auto; color: #fff; }
+
+  .cert { padding: 28px 0 56px; }
+  .frame { position: relative; background: var(--vellum); padding: 22px; }
+  .guilloche { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+  .sheet { position: relative; background: var(--vellum); border: 1.5px solid var(--deed); padding: clamp(22px, 5vw, 56px); display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+  .serial { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--ink-soft); border-bottom: 1px solid var(--rule); padding-bottom: 12px; margin-bottom: 22px; letter-spacing: .02em; }
+  .serial b { color: var(--deed); font-weight: 700; }
+  .kicker { color: var(--deed); font-weight: 700; font-size: 15px; letter-spacing: .04em; }
+  h1 { font-size: clamp(40px, 7vw, 76px); color: var(--deed-deep); margin: 8px 0 16px; }
+  .lead { font-size: 18px; max-width: 34ch; color: var(--ink); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 0 22px; font: 700 16px var(--body); border-radius: 2px; text-decoration: none; cursor: pointer; border: 0; }
+  .btn-deed { background: var(--deed); color: #fff; }
+  .btn-line { background: transparent; color: var(--deed); border: 1.5px solid var(--deed); }
+
+  .seal { justify-self: center; position: relative; width: min(260px, 70vw); aspect-ratio: 1; }
+  .seal svg { width: 100%; height: 100%; display: block; transform: rotate(-9deg); }
+  .terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 26px; border-top: 1px solid var(--rule); }
+  .terms div { padding: 14px 0 0; }
+  .terms div + div { border-inline-start: 1px solid var(--rule); padding-inline-start: 16px; }
+  .terms b { display: block; font-family: var(--display); font-size: 26px; color: var(--deed-deep); line-height: 1.1; }
+  .terms span { font-size: 13px; color: var(--ink-soft); }
+
+  .clauses { padding: 8px 0 72px; }
+  .clauses h2 { font-size: clamp(30px, 4.4vw, 44px); color: var(--deed-deep); margin-bottom: 20px; }
+  .clause { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 14px; align-items: baseline; padding: 16px 0; border-bottom: 1px dashed var(--rule); }
+  .clause .no { font-family: var(--display); color: var(--seal); font-size: 20px; }
+  .clause h3 { font-size: 20px; font-weight: 700; color: var(--ink); }
+  .clause p { margin: 2px 0 0; color: var(--ink-soft); font-size: 15px; }
+  .clause .price { font-weight: 700; color: var(--deed); white-space: nowrap; }
+  .note { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
+
+  @media (max-width: 760px) {
+    .frame { padding: 12px; }
+    .sheet { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .seal { width: 150px; order: -1; justify-self: start; margin-bottom: -6px; }
+    .terms b { font-size: 21px; }
+    .clause { grid-template-columns: 36px minmax(0, 1fr); }
+    .clause .price { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="pick" aria-label="חבילת צבעים">
+  <div class="wrap">
+    <span>חבילת צבעים:</span>
+    <button type="button" data-p="" aria-label="ירוק מסמך" style="background:#1f4d3f" aria-pressed="true"></button>
+    <button type="button" data-p="navy" aria-label="כחול" style="background:#1e3a6b" aria-pressed="false"></button>
+    <button type="button" data-p="plum" aria-label="שזיף" style="background:#4a2a52" aria-pressed="false"></button>
+    <button type="button" data-p="slate" aria-label="צפחה" style="background:#2f3b45" aria-pressed="false"></button>
+    <a href="./">לכל הכיוונים</a>
+  </div>
+</div>
+
+<main>
+<section class="cert">
+  <div class="wrap">
+    <div class="frame">
+      <svg class="guilloche" aria-hidden="true" preserveAspectRatio="none"></svg>
+      <div class="sheet">
+        <div>
+          <div class="serial"><span>רישיון אינסטלטור מוסמך <b>מס׳ 40821</b></span><span>תעודה <b>2614</b> · חדרה והשרון</span></div>
+          <span class="kicker">אורן מים · אינסטלציה</span>
+          <h1>עבודה עם תעודה.</h1>
+          <p class="lead">נזילה, סתימה או דוד: כותבים בצ׳אט מה קרה, ומקבלים מחיר ברור לפני שמתחילים. בסוף כל עבודה, תעודת אחריות.</p>
+          <div class="ctas">
+            <a class="btn btn-deed" href="#">לפתוח קריאה בצ׳אט</a>
+            <a class="btn btn-line" href="#">וואטסאפ ישיר</a>
+          </div>
+          <div class="terms">
+            <div><b>12 חודשים</b><span>אחריות בכתב</span></div>
+            <div><b>15 דק׳</b><span>זמן חזרה</span></div>
+            <div><b>12 שנה</b><span>בשטח</span></div>
+          </div>
+        </div>
+        <div class="seal" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="96" fill="none" stroke="var(--seal)" stroke-width="3"/>
+            <circle cx="100" cy="100" r="88" fill="none" stroke="var(--seal)" stroke-width="1.2" stroke-dasharray="2 4"/>
+            <circle cx="100" cy="100" r="58" fill="none" stroke="var(--seal)" stroke-width="2"/>
+            <circle cx="100" cy="100" r="74" fill="none" stroke="var(--seal)" stroke-width="10" stroke-dasharray="1.5 5.5" opacity=".55"/>
+            <text x="100" y="96" text-anchor="middle" font-family="Noto Serif Hebrew, serif" font-weight="900" font-size="34" fill="var(--seal)">12</text>
+            <text x="100" y="122" text-anchor="middle" font-family="Noto Sans Hebrew, sans-serif" font-weight="700" font-size="15" fill="var(--seal)">חודשי אחריות</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clauses">
+  <div class="wrap">
+    <h2>מה מכוסה</h2>
+    <div class="clause"><span class="no">§1</span><div><h3>סתימה בכיור, באסלה או בניקוז</h3><p>פתיחה במכונה, בלי לשבור. עד שעה.</p></div><span class="price">250 עד 450 ₪</span></div>
+    <div class="clause"><span class="no">§2</span><div><h3>נזילה מתחת לכיור או מצנרת</h3><p>החלפת אטמים, חיבורים וקטעי צנרת ½ אינץ׳.</p></div><span class="price">300 עד 650 ₪</span></div>
+    <div class="clause"><span class="no">§3</span><div><h3>דוד חשמל או שמש</h3><p>גוף חימום, טרמוסטט, החלפת דוד.</p></div><span class="price">350 עד 2,800 ₪</span></div>
+    <p class="note">כיוון עיצוב לדוגמה. העסק בדוי, המחירים להמחשה.</p>
+  </div>
+</section>
+</main>
+
+<script>
+  // The guilloche: overlapping sine loops, drawn to the frame's size, in the certificate's ink.
+  function guilloche() {
+    const svg = document.querySelector(".guilloche"), box = svg.parentElement.getBoundingClientRect();
+    const W = Math.round(box.width), H = Math.round(box.height), pad = W < 500 ? 12 : 22;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    const per = Math.max(2 * (W + H), 1), step = 3;
+    let out = "";
+    for (let k = 0; k < 3; k++) {
+      let d = "";
+      for (let s = 0; s <= per; s += step) {
+        // walk the rectangle's edge, and swing in and out of the band
+        let x, y, nx, ny;
+        if (s < W) { x = s; y = pad / 2; nx = 0; ny = 1; }
+        else if (s < W + H) { x = W - pad / 2; y = s - W; nx = -1; ny = 0; }
+        else if (s < 2 * W + H) { x = W - (s - W - H); y = H - pad / 2; nx = 0; ny = -1; }
+        else { x = pad / 2; y = H - (s - 2 * W - H); nx = 1; ny = 0; }
+        const a = (pad / 2 - 1.5) * Math.sin(s / (7 + k * 2.3) + k * 1.9);
+        d += (s ? "L" : "M") + (x + nx * a).toFixed(1) + " " + (y + ny * a).toFixed(1);
+      }
+      out += `<path d="${d}" fill="none" stroke="var(--deed)" stroke-opacity="${0.55 - k * 0.12}" stroke-width=".8"/>`;
+    }
+    svg.innerHTML = out;
+  }
+  new ResizeObserver(guilloche).observe(document.querySelector(".frame"));
+  document.querySelectorAll(".pick button").forEach((b) => b.addEventListener("click", () => {
+    document.documentElement.dataset.palette = b.dataset.p;
+    document.querySelectorAll(".pick button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+</script>
+</body>
+</html>

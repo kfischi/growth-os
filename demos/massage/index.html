@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>רוני · עיסוי טיפולי</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="עיסוי טיפולי ברחובות: גב ועורף, עיסוי ספורט, רקמות עמוק, הרפיה ועיסוי בהריון, בקליניקה או בביקור בית. מסמנים איפה כואב, ורוני חוזר בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the body chart from the therapist's intake card, the back seen from behind, where the client marks
+             where it hurts. Drawn as a plate from an anatomy atlas, numbered, with leader lines.
+     Detail: 45, 60, 75 and 90 minutes; the neck, the shoulders, between the shoulder blades, the lower back, the legs;
+             a short health question before a first treatment; basalt stones; a folding table for home visits.
+     Bold move: one giant tappable anatomy plate in the hero. Muscle red appears only where the visitor taps.
+     Motion: none on its own. A zone fills when tapped, without a transition under reduced motion. */
+  :root {
+    --chart: #f1f4f3;          /* the chart paper: cool, not cream */
+    --sheet: #ffffff;          /* the clean sheet on the table */
+    --petrol: #1f4c57;         /* the table's padded top, buttons */
+    --petrol-deep: #16323b;    /* ink and the one dark band */
+    --muscle: #b0303d;         /* the atlas muscle red, only on tapped zones and the numbers */
+    --muscle-wash: #f4dcdd;
+    --basalt: #3a3f42;         /* the warm stones */
+    --eucalyptus: #c9dad5;     /* the folded sage towel */
+    --ink: #16323b;
+    --ink-soft: #4b6168;
+    --line: #cfdad8;
+    --grid: rgba(31,76,87,.07);
+    --display: "Secular One", "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--petrol-deep);
+    --bot-bg: var(--sheet); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--petrol); --bot-accent-fg: #fff; --bot-them: #e7eeec; --bot-me: var(--petrol-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 10px; --bot-radius-msg: 10px; --guide-alert: var(--muscle);
+    --ps-a: #c9dad5; --ps-b: #1f4c57; --ps-ui: var(--petrol-deep); --ps-edit: var(--muscle);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--chart); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--muscle); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.12; margin: 0; }
+  h2 { font-size: clamp(32px, 4.2vw, 50px); }
+  .mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 54ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 24px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 8px; transition: background .2s; }
+  .btn-petrol { background: var(--petrol); color: #fff; }
+  .btn-petrol:hover { background: var(--petrol-deep); }
+  .btn-line { box-shadow: inset 0 0 0 2px var(--petrol); color: var(--petrol-deep); background: transparent; }
+  .btn-line:hover { background: #e3ebe9; }
+
+  .demo { background: var(--petrol-deep); color: #d5e2df; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the copy and the anatomy plate ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+  .logo { font-family: var(--display); font-size: 32px; line-height: 1; }
+  .logo small { display: block; font: 600 14px/1.3 var(--body); color: var(--ink-soft); margin-top: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--muscle); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; align-items: start; padding: 44px 0 80px; }
+  .hero-copy { min-width: 0; padding-top: 18px; }
+  .kicker { margin: 0 0 18px; color: var(--ink-soft); font-weight: 600; font-size: 16px; }
+  .hero h1 { font-size: clamp(46px, 5.6vw, 76px); margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; display: block; font-size: .5em; line-height: 1.25; color: var(--petrol); margin-top: 12px; }
+  .lead { font-size: 19px; max-width: 36ch; margin: 0 0 28px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 36px 0 0; padding: 18px 0 0; border-top: 2px solid var(--ink); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 400 24px/1.2 var(--display); color: var(--ink); margin-bottom: 4px; }
+
+  .plate { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px 20px;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 22px 22px; }
+  .plate-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; margin-bottom: 10px; }
+  .plate-h b { font: 700 14px/1.2 var(--body); color: var(--muscle); }
+  .plate-h span { font-size: 15px; font-weight: 700; }
+  .plate-body { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 18px; align-items: center; }
+  .body-map { width: 100%; height: auto; max-height: 520px; display: block; }
+  .body-map .skin { fill: #eef3f2; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; }
+  .body-map .detail { fill: none; stroke: var(--ink-soft); stroke-width: 1; stroke-linecap: round; }
+  .body-map .spine { fill: none; stroke: var(--ink-soft); stroke-width: 1.2; stroke-dasharray: 2 4; stroke-linecap: round; }
+  .body-map .zone { fill: rgba(176,48,61,.10); stroke: var(--muscle); stroke-width: 1.2; stroke-dasharray: 3 3; cursor: pointer; transition: fill .15s; }
+  .body-map .zone:hover { fill: rgba(176,48,61,.28); }
+  .body-map .zone.on { fill: rgba(176,48,61,.72); stroke-dasharray: none; }
+  .body-map .lead-line { stroke: var(--ink); stroke-width: 1; }
+  .body-map .num circle { fill: var(--sheet); stroke: var(--muscle); stroke-width: 1.5; }
+  .body-map .num.on circle { fill: var(--muscle); }
+  .body-map .num text { font: 600 12px var(--mono); fill: var(--muscle); text-anchor: middle; dominant-baseline: central; }
+  .body-map .num.on text { fill: #fff; }
+  .zones { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .zones button { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: center; text-align: start; min-height: 46px; padding: 8px 10px;
+    background: var(--sheet); border: 1.5px solid var(--line); border-radius: 6px; font: 600 16px/1.25 var(--body); color: var(--ink); cursor: pointer; }
+  .zones button i { font: 600 12px/26px var(--mono); font-style: normal; width: 26px; height: 26px; border-radius: 50%; text-align: center; border: 1.5px solid var(--muscle); color: var(--muscle); }
+  .zones button:hover { border-color: var(--muscle); }
+  .zones button[aria-pressed="true"] { border-color: var(--muscle); background: var(--muscle-wash); }
+  .zones button[aria-pressed="true"] i { background: var(--muscle); color: #fff; }
+  .pick { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 14px; min-height: 96px; }
+  .pick p { margin: 0 0 4px; font-size: 16px; }
+  .pick .hint { color: var(--ink-soft); }
+  .pick h3 { font-size: 24px; margin-bottom: 4px; }
+  .pick .fit { color: var(--ink-soft); font-size: 15px; }
+  .pick .btn { margin-top: 10px; min-height: 46px; font-size: 16px; }
+  .caution { margin: 14px 0 0; display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: var(--ink); background: var(--chart); border-inline-start: 3px solid var(--muscle); padding: 10px 12px; }
+  .caution a { font-weight: 700; white-space: nowrap; }
+
+  /* ---------- One hour of treatment, seen from the phone ---------- */
+  .hour { background: var(--petrol-deep); color: #fff; }
+  .hour .head p { color: #cfe0dc; }
+  .clock { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; }
+  .clock::before { content: ""; position: absolute; top: 15px; inset-inline: 0; height: 2px; background: rgba(255,255,255,.35); }
+  .clock li { position: relative; min-width: 0; padding: 40px 16px 0 0; }
+  .clock li::before { content: ""; position: absolute; top: 9px; inset-inline-start: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--petrol-deep); border: 2px solid #cfe0dc; }
+  .clock li.miss::before { border-color: #ff9ea6; background: #ff9ea6; }
+  .clock li.ok::before { border-color: #fff; background: #fff; }
+  .clock time { display: block; font: 600 22px/1.2 var(--mono); }
+  .clock span { display: block; color: #cfe0dc; font-size: 16px; margin-top: 4px; }
+  .clock .ok span { color: #fff; font-weight: 600; }
+
+  /* ---------- Prices by length ---------- */
+  .lengths { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .len { min-width: 0; background: var(--sheet); border-top: 4px solid var(--petrol); padding: 18px 18px 16px; display: flex; flex-direction: column; }
+  .len-h { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+  .len-h b { font: 600 52px/1 var(--mono); color: var(--petrol); }
+  .len-h span { font-weight: 700; color: var(--ink-soft); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .row b { font-weight: 700; font-size: 16.5px; }
+  .row .p { font-weight: 700; color: var(--petrol-deep); white-space: nowrap; font-size: 16px; }
+  .row small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 14.5px; }
+  .len .ask { margin-top: auto; padding-top: 14px; border: 0; background: none; font: 700 15.5px var(--body); color: var(--petrol); cursor: pointer; text-align: start; text-decoration: underline; text-underline-offset: 4px; }
+  .home-visit { margin: 22px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; border: 1.5px dashed var(--petrol); padding: 14px 18px; background: var(--sheet); }
+  .home-visit b { font-size: 18px; }
+  .fine { margin: 18px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- The room ---------- */
+  .room { background: #e3ebe9; }
+  .room-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 44px; align-items: center; }
+  .frame { background: var(--sheet); padding: 10px; }
+  .frame .ps { aspect-ratio: 16 / 10; }
+  .room ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .room li { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid #c3d2cf; }
+  .room li b { font: 400 22px/1.2 var(--display); color: var(--petrol); }
+  .room li:first-child { border-top: 2px solid var(--ink); }
+
+  /* ---------- Owner ---------- */
+  .owner .head p { max-width: 60ch; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--muscle); color: var(--muscle); font: 600 17px/1 var(--mono); background: var(--sheet); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--ink-soft); font-size: 16px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
+
+  @media (max-width: 1020px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; padding-top: 26px; }
+    .hero-copy { padding-top: 0; }
+    .lengths { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .room-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    section { padding-block: 60px; }
+    body { font-size: 17px; }
+    .hero h1 { font-size: clamp(44px, 13vw, 58px); }
+    .hero h1 em { font-size: 22px; }
+    .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 19px; }
+    .facts li { font-size: 13px; }
+    .plate { padding: 14px 12px 16px; }
+    .plate-body { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .body-map { max-width: 300px; margin-inline: auto; max-height: 440px; }
+    .zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .zones li:last-child { grid-column: 1 / -1; }
+    .zones button { font-size: 15px; padding: 6px 8px; gap: 8px; }
+    .clock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
+    .clock li { padding: 0 34px 0 0; }
+    .clock li::before { top: 6px; }
+    .lengths { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .len-h b { font-size: 42px; }
+    .room li { grid-template-columns: 92px minmax(0, 1fr); }
+    .room li b { font-size: 19px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn, .body-map .zone { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+  html.a11y-still .body-map .zone { transition: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=massage">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">רוני</span><small>עיסוי טיפולי · רחובות</small></div>
+      <a href="#" data-wa="היי רוני, הגעתי מהאתר ואשמח לקבוע עיסוי">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">גב ועורף, עיסוי ספורט, רקמות עמוק, הרפיה ועיסוי בהריון</p>
+        <h1><span data-edit="h1a">איפה כואב לכם?</span> <em data-edit="h1b">מסמנים על המפה, ואני חוזר אליכם.</em></h1>
+        <p class="lead">בזמן טיפול הידיים שלי עסוקות והטלפון בשקט. כאן בוחרים עיסוי ואורך טיפול, שומעים טווח מחיר ומשאירים מתי נוח לכם. בין טיפול לטיפול אני חוזר לתאם.</p>
+        <div class="ctas">
+          <button class="btn btn-petrol" type="button" data-open-bot>לקבוע עיסוי</button>
+          <a class="btn btn-line" href="#" data-wa="היי רוני, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">11 שנה</b>בעיסוי טיפולי</li>
+          <li><b>45 עד 90</b>דקות לטיפול</li>
+          <li><b>ביקור בית</b>ברחובות והסביבה</li>
+        </ul>
+      </div>
+
+      <div class="plate" id="map">
+        <div class="plate-h"><span>הגב, מבט מאחור</span><b>לוח 1</b></div>
+        <div class="plate-body">
+          <svg class="body-map" viewBox="0 0 320 560" aria-hidden="true" focusable="false">
+            <!-- arms -->
+            <path class="skin" d="M86 130 C70 138 63 160 61 190 C59 232 55 282 53 322 C52 338 57 349 65 351 C73 353 77 343 77 331 C79 291 85 242 93 200 Z"/>
+            <path class="skin" d="M234 130 C250 138 257 160 259 190 C261 232 265 282 267 322 C268 338 263 349 255 351 C247 353 243 343 243 331 C241 291 235 242 227 200 Z"/>
+            <!-- legs -->
+            <path class="skin" d="M100 380 C96 428 102 474 108 512 C111 532 113 546 121 548 L147 548 C150 520 153 470 157 404 L158 380 Z"/>
+            <path class="skin" d="M220 380 C224 428 218 474 212 512 C209 532 207 546 199 548 L173 548 C170 520 167 470 163 404 L162 380 Z"/>
+            <!-- torso and hips -->
+            <path class="skin" d="M146 98 C130 112 104 116 88 126 C76 134 76 150 82 168 C90 196 96 230 98 262 C100 290 96 318 94 340 C92 360 94 374 100 388 L220 388 C226 374 228 360 226 340 C224 318 220 290 222 262 C224 230 230 196 238 168 C244 150 244 134 232 126 C216 116 190 112 174 98 Z"/>
+            <!-- head and neck -->
+            <path class="skin" d="M146 76 L146 104 C152 108 168 108 174 104 L174 76 Z"/>
+            <ellipse class="skin" cx="160" cy="50" rx="29" ry="35"/>
+            <!-- drawn detail: the spine, the shoulder blades, the hip line -->
+            <path class="spine" d="M160 104 V340"/>
+            <path class="detail" d="M112 156 C118 176 124 196 134 214 M208 156 C202 176 196 196 186 214"/>
+            <path class="detail" d="M104 356 C130 366 190 366 216 356 M160 360 V386"/>
+            <!-- the zones -->
+            <path class="zone" data-zone="neck" d="M146 82 H174 L176 110 C168 115 152 115 144 110 Z"/>
+            <path class="zone" data-zone="shoulders" d="M143 113 C128 120 106 121 92 129 C84 135 84 148 88 158 C106 151 124 147 140 145 Z M177 113 C192 120 214 121 228 129 C236 135 236 148 232 158 C214 151 196 147 180 145 Z"/>
+            <path class="zone" data-zone="upper" d="M128 150 C142 146 178 146 192 150 L196 228 C176 234 144 234 124 228 Z"/>
+            <path class="zone" data-zone="lower" d="M124 236 C144 242 176 242 196 236 L204 314 C180 322 140 322 116 314 Z"/>
+            <path class="zone" data-zone="legs" d="M106 396 L154 396 L151 470 L147 538 L124 538 C116 500 109 448 106 396 Z M214 396 L166 396 L169 470 L173 538 L196 538 C204 500 211 448 214 396 Z"/>
+            <!-- numbered leader lines, as in an atlas -->
+            <g class="lead-line">
+              <path d="M176 94 L286 94"/><path d="M110 138 L34 138"/><path d="M194 190 L286 190"/><path d="M118 276 L34 276"/><path d="M212 462 L286 462"/>
+            </g>
+            <g class="num" data-num="neck"><circle cx="296" cy="94" r="11"/><text x="296" y="94">1</text></g>
+            <g class="num" data-num="shoulders"><circle cx="24" cy="138" r="11"/><text x="24" y="138">2</text></g>
+            <g class="num" data-num="upper"><circle cx="296" cy="190" r="11"/><text x="296" y="190">3</text></g>
+            <g class="num" data-num="lower"><circle cx="24" cy="276" r="11"/><text x="24" y="276">4</text></g>
+            <g class="num" data-num="legs"><circle cx="296" cy="462" r="11"/><text x="296" y="462">5</text></g>
+          </svg>
+          <ul class="zones" aria-label="איפה כואב">
+            <li><button type="button" data-pick="neck" aria-pressed="false" aria-controls="pick"><i>1</i>עורף</button></li>
+            <li><button type="button" data-pick="shoulders" aria-pressed="false" aria-controls="pick"><i>2</i>כתפיים</button></li>
+            <li><button type="button" data-pick="upper" aria-pressed="false" aria-controls="pick"><i>3</i>בין השכמות</button></li>
+            <li><button type="button" data-pick="lower" aria-pressed="false" aria-controls="pick"><i>4</i>גב תחתון</button></li>
+            <li><button type="button" data-pick="legs" aria-pressed="false" aria-controls="pick"><i>5</i>ירכיים ושוקיים</button></li>
+          </ul>
+        </div>
+        <div class="pick" id="pick" aria-live="polite"><p class="hint">לוחצים על אזור במפה או ברשימה, ורואים מה מתאים לו.</p></div>
+        <p class="caution" role="note"><span>כאב חד אחרי פציעה, נימול, חום או ניתוח לאחרונה? קודם לרופא. כאב בחזה: מד״א <a href="tel:101">101</a>. <a href="#g-doctor-first">מתי קודם לרופא</a></span></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hour" id="hour">
+    <div class="wrap">
+      <div class="head"><h2>60 דקות בלי ידיים פנויות.</h2><p>מי שמתקשר באמצע טיפול שומע צלצול, ולפעמים מחפש מעסה אחר. לכן יש כאן צ׳אט: הוא שואל, נותן טווח מחיר, והפרטים מחכים לי בסוף הטיפול.</p></div>
+      <ol class="clock" aria-label="שעה אחת של טיפול">
+        <li><time class="mono">10:00</time><span>מתחיל טיפול. הטלפון בשקט.</span></li>
+        <li class="miss"><time class="mono">10:14</time><span>שיחה שלא נענתה. גב תחתון, מחפשת תור השבוע.</span></li>
+        <li class="miss"><time class="mono">10:37</time><span>עוד שיחה. רץ, רוצה עיסוי ספורט לפני מרוץ.</span></li>
+        <li class="ok"><time class="mono">11:00</time><span>הטיפול נגמר. שתי פניות מסודרות בוואטסאפ.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>הטיפולים והמחירים</h2><p>מחירים לדוגמה, לפי אורך הטיפול. סוגרים מחיר בשיחה, לפני הטיפול.</p></div>
+      <div class="lengths">
+        <div class="len">
+          <div class="len-h"><b class="mono">45</b><span>דקות</span></div>
+          <div class="row"><b>גב ועורף</b><span class="p">220 עד 280 ₪</span><small>עורף, כתפיים וגב עליון</small></div>
+          <button class="ask" type="button" data-len="45 דקות">לקבוע 45 דקות</button>
+        </div>
+        <div class="len">
+          <div class="len-h"><b class="mono">60</b><span>דקות</span></div>
+          <div class="row"><b>גוף מלא</b><span class="p">280 עד 360 ₪</span><small>גב, רגליים, ידיים ועורף</small></div>
+          <div class="row"><b>רקמות עמוק</b><span class="p">300 עד 380 ₪</span><small>לחץ חזק ואיטי על שריר תפוס</small></div>
+          <div class="row"><b>עיסוי ספורט</b><span class="p">300 עד 380 ₪</span><small>לפני תחרות או אחרי אימון</small></div>
+          <div class="row"><b>עיסוי בהריון</b><span class="p">300 עד 360 ₪</span><small>באישור הרופא, בשכיבה על הצד</small></div>
+          <button class="ask" type="button" data-len="60 דקות">לקבוע 60 דקות</button>
+        </div>
+        <div class="len">
+          <div class="len-h"><b class="mono">75</b><span>דקות</span></div>
+          <div class="row"><b>אבנים חמות</b><span class="p">340 עד 420 ₪</span><small>אבני בזלת חמות על הגב, ועיסוי</small></div>
+          <button class="ask" type="button" data-len="75 דקות">לקבוע 75 דקות</button>
+        </div>
+        <div class="len">
+          <div class="len-h"><b class="mono">90</b><span>דקות</span></div>
+          <div class="row"><b>הרפיה ארוך</b><span class="p">400 עד 480 ₪</span><small>לחץ רך, כל הגוף</small></div>
+          <button class="ask" type="button" data-len="90 דקות">לקבוע 90 דקות</button>
+        </div>
+      </div>
+      <p class="home-visit"><b>ביקור בית</b><span>תוספת 80 עד 120 ₪, לפי המרחק. ברחובות, נס ציונה, יבנה וגדרה. מגיע עם מיטה מתקפלת, מגבות ושמנים.</span></p>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="room">
+    <div class="wrap">
+      <div class="head"><h2>בקליניקה ברחובות</h2><p>חדר שקט ומחומם, עם חניה ליד הבניין.</p></div>
+      <div class="room-grid">
+        <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/massage-work.webp" data-alt="חדר הטיפול: מיטת עיסוי עם סדין לבן, מגבות מקופלות ואבני בזלת על שרפרף" data-pos="50 50" data-icon="home" data-label="תמונה מחדר הטיפול"></figure></div>
+        <ul>
+          <li><b data-edit="c1">11 שנה</b><span>מעסה מוסמך, עיסוי רפואי ועיסוי ספורט</span></li>
+          <li><b>5 דקות</b><span>שאלות קצרות על הבריאות לפני טיפול ראשון</span></li>
+          <li><b>כל טיפול</b><span>סדין ומגבות נקיים</span></li>
+          <li><b>בכל רגע</b><span>אומרים אם הלחץ חזק מדי, ומשנים</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לדעת לפני עיסוי ואחריו. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה רוני רואה</h2><p>מי שהגב תפוס לא תמיד מחפש באינסטגרם. הוא מחפש בגוגל או מקבל קישור מחבר, ומגיע לכאן. נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>המטופל מסמן איפה כואב</b><span>בוחר אורך טיפול ושומע טווח מחיר, בלי לחכות שתסיימו טיפול.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>איזה עיסוי, כמה זמן, בקליניקה או בבית, ומתי נוח.</span></div></li>
+          <li><div><b>בין טיפול לטיפול מתאמים</b><span>הודעה אחת, במקום שלוש שיחות שלא נענו.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">א</span><div><b>אבי לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לעיסוי מהאתר (דמו)
+עיסוי: גב ועורף
+איפה: גב תחתון
+אורך: 60 דקות
+מקום: ביקור בית, נס ציונה
+ימים: א׳ עד ה׳
+שעות: ערב
+שם: אבי לוי
+טלפון: 052-7654321<time>10:52</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למעסה</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>רוני עיסוי טיפולי · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "massage" });
+  // The sample ranges, the same as the price list above. A range, never a promised price.
+  const RANGE = {
+    "45 דקות": "45 דקות, גב ועורף: 220 עד 280 ₪.",
+    "60 דקות": "60 דקות: 280 עד 380 ₪, לפי סוג העיסוי.",
+    "75 דקות": "75 דקות, אבנים חמות: 340 עד 420 ₪.",
+    "90 דקות": "90 דקות, הרפיה: 400 עד 480 ₪.",
+  };
+  const PREG = "עיסוי בהריון", UNSURE = "עוד לא יודעים";
+  let len = ""; // the length, for the price answer
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "רוני · עיסוי טיפולי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "ר", launcher: "לקבוע עיסוי", hint: "נציג AI",
+    greet: "היי, כאן רוני. כרגע הידיים שלי בטיפול.\nכמה שאלות קצרות, ואחזור אליכם בין טיפול לטיפול.",
+    steps: [
+      { key: "kind", label: "עיסוי", ask: "איזה עיסוי מתאים לכם?", chips: ["גב ועורף", "עיסוי ספורט", "רקמות עמוק", "הרפיה", PREG, UNSURE] },
+      { key: "area", label: "איפה", ask: "ואיפה מרגישים את זה הכי הרבה?", chips: ["עורף וכתפיים", "גב עליון", "גב תחתון", "רגליים", "בכל הגוף"],
+        show: (d) => d.kind !== PREG && d.kind !== "הרפיה" },
+      { key: "health", label: "בריאות", ask: "שאלה אחת לפני: יש כאב חד אחרי פציעה, נימול, חום או ניתוח לאחרונה?", chips: ["לא", "כן, משהו מזה"],
+        show: (d) => d.kind !== PREG,
+        tip: { when: (v) => v !== "לא", text: "במקרה כזה קודם לרופא, ולעיסוי רק באישורו. כאב בחזה: מד״א 101, מיד.\nאפשר להמשיך, ונדבר על זה בשיחה.", id: "doctor-first", link: "מתי קודם לרופא" } },
+      { key: "health", label: "אישור", ask: "יש לכם אישור מהרופא או מהאחות שמלווים את ההריון?", chips: ["כן, יש אישור", "עוד לא"],
+        show: (d) => d.kind === PREG,
+        tip: { when: (v) => v === "עוד לא", text: "עיסוי בהריון רק אחרי אישור. אפשר להשאיר פרטים עכשיו, ולקבוע כשיש אישור.", id: "pregnancy", link: "עיסוי בהריון: מה לדעת" } },
+      { key: "length", label: "אורך", ask: "כמה זמן טיפול?", chips: ["45 דקות", "60 דקות", "90 דקות", UNSURE],
+        tip: { when: (v) => { len = v; return v in RANGE; }, get text() { return RANGE[len] + "\nזה טווח מהמחירון. את המחיר סוגרים איתי לפני הטיפול."; } } },
+      { key: "place", label: "מקום", ask: "בקליניקה ברחובות, או ביקור בית?", chips: ["בקליניקה", "ביקור בית"],
+        tip: { when: (v) => v === "ביקור בית", text: "ביקור בית: תוספת 80 עד 120 ₪, לפי המרחק. אני מגיע עם מיטה ומגבות." } },
+      { key: "town", label: "ישוב", ask: "באיזה ישוב?", chips: ["רחובות", "נס ציונה", "יבנה", "גדרה", "ישוב אחר"], show: (d) => d.place === "ביקור בית" },
+      { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה, ובין טיפול לטיפול אחזור לתאם יום ושעה.`,
+    summary: (d) => `פנייה לעיסוי מהאתר (דמו)\nעיסוי: ${d.kind}${d.area ? "\nאיפה: " + d.area : ""}`
+      + (d.kind === PREG ? `\nאישור רופא: ${d.health === "עוד לא" ? "עוד לא" : "יש"}` : `\nבריאות: ${d.health === "לא" ? "לא סימנו מגבלה" : "סימנו שיש משהו, לברר בשיחה"}`)
+      + `\nאורך: ${d.length}\nמקום: ${d.place}${d.town ? ", " + d.town : ""}\nימים: ${d.days}\nשעות: ${d.slot}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+
+  // The anatomy plate: tap a zone (or its line in the list) to see what fits it, then open the chat with it filled in.
+  const ZONES = {
+    neck: { n: "עורף", why: "נפוץ אצל מי שעובד מול מסך או נוהג הרבה.", fit: "מתאים: גב ועורף, 45 דקות", pre: { kind: "גב ועורף", area: "עורף וכתפיים" } },
+    shoulders: { n: "כתפיים", why: "נתפסות מתיק כבד, מתינוק על הידיים או מיום לחוץ.", fit: "מתאים: גב ועורף, 45 או 60 דקות", pre: { kind: "גב ועורף", area: "עורף וכתפיים" } },
+    upper: { n: "בין השכמות", why: "הנקודה שקשה להגיע אליה לבד.", fit: "מתאים: גב ועורף או רקמות עמוק, 60 דקות", pre: { kind: "גב ועורף", area: "גב עליון" } },
+    lower: { n: "גב תחתון", why: "מישיבה ארוכה, מהרמה או מעמידה כל היום. כאב שיורד לרגל עם נימול: קודם לרופא.", fit: "מתאים: רקמות עמוק, 60 דקות", pre: { kind: "רקמות עמוק", area: "גב תחתון" } },
+    legs: { n: "ירכיים ושוקיים", why: "אחרי ריצה, אימון או יום שלם על הרגליים.", fit: "מתאים: עיסוי ספורט, 60 דקות", pre: { kind: "עיסוי ספורט", area: "רגליים" } },
+  };
+  const pickEl = document.getElementById("pick");
+  let zoneNow = null;
+  function pick(id) {
+    const z = ZONES[id]; if (!z) return; zoneNow = id;
+    document.querySelectorAll(".body-map .zone").forEach((p) => p.classList.toggle("on", p.dataset.zone === id));
+    document.querySelectorAll(".body-map .num").forEach((g) => g.classList.toggle("on", g.dataset.num === id));
+    document.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pick === id)));
+    pickEl.replaceChildren();
+    const h = document.createElement("h3"); h.textContent = z.n;
+    const p = document.createElement("p"); p.textContent = z.why;
+    const f = document.createElement("p"); f.className = "fit"; f.textContent = z.fit;
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-petrol"; b.textContent = "לספר לרוני בצ׳אט";
+    b.addEventListener("click", () => bot.open(ZONES[zoneNow].pre));
+    pickEl.append(h, p, f, b);
+  }
+  document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => pick(b.dataset.pick)));
+  document.querySelectorAll(".body-map .zone").forEach((z) => z.addEventListener("click", () => pick(z.dataset.zone)));
+  document.querySelectorAll("[data-len]").forEach((b) => b.addEventListener("click", () => bot.open({ length: b.dataset.len })));
+  Guides.load("../shared/guides/massage.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

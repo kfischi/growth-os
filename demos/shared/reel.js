@@ -8,7 +8,7 @@
        </div>
        <figcaption>...</figcaption>
      </figure>
-   It plays only while on screen, never for reduced motion, save-data or 2G (then nothing loads until a press),
+   It plays only while on screen, never for reduced motion (or the accessibility menu's "עצירת תנועה"), save-data or 2G (then nothing loads until a press),
    and the button stops it (WCAG 2.2.2). In the demos' edit mode (body.ps-edit, from photoslots.js) a visitor can
    try their own video: it plays from their own device and is never uploaded. */
 (function () {
@@ -25,7 +25,7 @@
     const v = fig.querySelector("video"), b = fig.querySelector(".reel-toggle");
     if (!v || !b) return;
     const c = navigator.connection || {};
-    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches || c.saveData || /2g/.test(c.effectiveType || "");
+    const calm = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still") || c.saveData || /2g/.test(c.effectiveType || "");
     let wanted = !calm;
     const show = () => {
       const on = !v.paused;
@@ -36,6 +36,7 @@
     v.addEventListener("play", show);
     v.addEventListener("pause", show);
     b.addEventListener("click", () => { wanted = v.paused; if (wanted) play(); else v.pause(); });
+    document.addEventListener("a11y-still", () => { wanted = false; v.pause(); }); // "עצירת תנועה" in the accessibility menu (a11y.js)
     if ("IntersectionObserver" in window) {
       new IntersectionObserver((e) => { if (e[0].isIntersecting) { if (wanted) play(); } else v.pause(); }).observe(v);
     } else if (wanted) play();

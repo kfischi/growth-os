@@ -22,13 +22,15 @@
 ## 4. הצעה (אחרי שהדמו עניין)
 
 > מעולה. ככה זה עובד:
-> • הקמה: 2,250 ₪, אפשר בשלושה תשלומים של 750 ₪
-> • מהחודש הרביעי: 500 ₪ לחודש, כולל אחסון, תחזוקה ודוח חודשי
+> • הקמה: 2,490 ₪, תשלום אחד
+> • 290 ₪ לחודש (מחיר השקה, נעול כל עוד המנוי פעיל), כולל אחסון, תחזוקה ודוח חודשי
+> • המחירים סופיים, עם קבלה
 > • בלי התחייבות, מפסיקים בהודעה של 30 יום
-> • הדומיין והאחסון על שמך, כך שהדף נשאר שלך
+> • הדומיין על שמך, והקבצים של האתר שלך גם אם תעזוב
+> • בנוי לפי חוק הגנת הפרטיות ותקן הנגישות
 > מתי נוח לך לשיחה של 5 דקות?
 
-אם צריך רק דף בלי אוטומציה: חבילת נוכחות, 1,500 ₪ הקמה ו-150 ₪ לחודש.
+אם צריך רק דף בלי אוטומציה: חבילת נוכחות, 1,500 ₪ הקמה ו-150 ₪ לחודש. המחירים סופיים.
 
 ## כללים
 
@@ -53,6 +55,15 @@
 | ניקיון | https://service-pro-web.netlify.app/cleaning/?utm_source=whatsapp |
 | שיפוצים | https://service-pro-web.netlify.app/renovation/?utm_source=whatsapp |
 | מנעולן | https://service-pro-web.netlify.app/locksmith/?utm_source=whatsapp |
+| גרר ושירותי דרך | https://service-pro-web.netlify.app/towing/?utm_source=whatsapp |
+| קוסמטיקה ויופי | https://service-pro-web.netlify.app/cosmetics/?utm_source=whatsapp |
+| צלם אירועים | https://service-pro-web.netlify.app/photographer/?utm_source=whatsapp |
+| ספרות | https://service-pro-web.netlify.app/barber/?utm_source=whatsapp |
+| עיסוי ומסאז׳ | https://service-pro-web.netlify.app/massage/?utm_source=whatsapp |
+| בניית ציפורניים | https://service-pro-web.netlify.app/nails/?utm_source=whatsapp |
+| מורה לנהיגה | https://service-pro-web.netlify.app/driving/?utm_source=whatsapp |
+| ניקוי ספות ושטיחים | https://service-pro-web.netlify.app/upholstery/?utm_source=whatsapp |
+| תריסים | https://service-pro-web.netlify.app/shutters/?utm_source=whatsapp |
 | הדברה | https://service-pro-web.netlify.app/pest/?utm_source=whatsapp |
 | טכנאי מכשירי חשמל | https://service-pro-web.netlify.app/appliance/?utm_source=whatsapp |
 | הנדימן | https://service-pro-web.netlify.app/handyman/?utm_source=whatsapp |
@@ -60,6 +71,10 @@
 | מורה פרטית | https://service-pro-web.netlify.app/tutor/?utm_source=whatsapp |
 | פסיכולוגית | https://service-pro-web.netlify.app/psychologist/?utm_source=whatsapp |
 | עובדת סוציאלית | https://service-pro-web.netlify.app/social-worker/?utm_source=whatsapp |
-| מורה לנגינה | https://service-pro-web.netlify.app/music/?utm_source=whatsapp |
+| מורה לפסנתר | https://service-pro-web.netlify.app/music/?i=piano&utm_source=whatsapp |
+| מורה לקלידים | https://service-pro-web.netlify.app/music/?i=keys&utm_source=whatsapp |
+| מורה לגיטרה | https://service-pro-web.netlify.app/music/?i=guitar&utm_source=whatsapp |
+| מורה לבס | https://service-pro-web.netlify.app/music/?i=bass&utm_source=whatsapp |
+| מורה לתופים | https://service-pro-web.netlify.app/music/?i=drums&utm_source=whatsapp |
 
 בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>אורן מים · אינסטלציה</title>
+<script src="assets/a11y.js" data-statement="accessibility.html"></script>
 <meta name="description" content="אינסטלטור בחדרה והשרון: סתימות, נזילות, דודים. פותחים קריאה בצ׳אט ומקבלים מענה מיד.">
 <meta name="robots" content="noindex"><!-- sample business only: remove for a real client -->
 <meta property="og:type" content="website">
@@ -58,6 +59,11 @@
   .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; }
   .logo svg { width: 30px; height: 30px; }
   .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 6px 10px; border-radius: 4px; }
+  .live[data-state="busy"] i { background: #ff8a7a; animation: none; }
+  .live[data-state="urgent"] { border-color: #ff8a7a; } .live[data-state="urgent"] i { background: #ff5a4a; }
+  .live[data-state="closed"] i { background: #a9bce6; animation: none; }
+  .avail-line { margin: 22px 0 0; }
+  .live[hidden] { display: none; }
   .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 0 0 rgba(57,217,138,.6); animation: pulse 1.8s infinite; }
   @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(57,217,138,0); } 100% { box-shadow: 0 0 0 0 rgba(57,217,138,0); } }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 40px 72px; }
@@ -106,6 +112,8 @@
 
   .area { background: var(--blueprint-deep); color: #fff; }
   .area .head h2 { color: #fff; } .area .head .mono { color: #a9bce6; }
+  .save-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: inherit; font-weight: 600; text-underline-offset: 4px; }
+  .save-contact svg { width: 22px; height: 22px; flex: none; }
   .towns { display: flex; flex-wrap: wrap; gap: 8px; }
   .towns span { border: 1px solid rgba(232, 239, 255, .35); padding: 8px 14px; border-radius: 4px; }
   .area .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
@@ -168,7 +176,7 @@
 <header class="hero">
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg><span>אורן מים</span></div>
-    <span class="live mono"><i></i>זמין עכשיו · הגעה משוערת 45 דק׳</span>
+    <span class="live mono" data-avail hidden><i></i></span>
   </div>
   <div class="wrap hero-grid">
     <div>
@@ -184,6 +192,7 @@
         <div><b>12 שנה</b><span>בשטח</span></div>
         <div><b>מחיר סגור</b><span>לפני שמתחילים</span></div>
       </div>
+      <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>
     </div>
     <svg class="drawing" viewBox="0 0 520 420" aria-hidden="true">
       <!-- isometric pipe run -->
@@ -279,6 +288,7 @@
     <div>
       <p>לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט ותקבלו תשובה מיד.</p>
       <button class="btn btn-signal" type="button" data-open-bot>לבדוק בצ׳אט</button>
+      <a class="save-contact" href="contact.vcf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את אורן מים באנשי הקשר</a>
     </div>
   </div>
 </section>
@@ -299,21 +309,24 @@
     greet: "היי, כאן אורן 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה אני עונה מיד. שלוש שאלות קצרות ואני חוזר אליכם.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
       { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור? לשם יישלח גם אישור בוואטסאפ.", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !d.urgency.startsWith("עכשיו") },
     ],
     closing: (d) => [`תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.`, d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\n"),
-    summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     capture: {
       endpoint: SITE.leads,
-      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, message: `דחיפות: ${d.urgency}. ישוב: ${d.city}.` }),
+      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, callback: d.callback, message: `דחיפות: ${d.urgency}. ישוב: ${d.city}.` }),
       saved: (d) => `תודה ${d.name.split(" ")[0]}! הקריאה אצלי, ואישור בדרך אליכם בוואטסאפ. ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}, והמחיר הסופי אחרי אבחון.${d.urgency.startsWith("עכשיו") ? "\nעד שאגיע: סגרו את הברז הראשי." : ""}`,
     },
   });
   document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
   LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
+  LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
 </script>
 </body>
 </html>

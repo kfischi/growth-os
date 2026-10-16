@@ -4,222 +4,504 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>דרור הובלות</title>
-<meta name="description" content="הובלות דירות ומשרדים. הצעת מחיר בצ׳אט תוך דקה, ופרטים ישר לוואטסאפ.">
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="הובלות דירות ומשרדים, מהשרון לכל הארץ. מחיר משוער בצ׳אט תוך דקה, ומחיר סגור לפני שמעמיסים.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: a shipping label stuck on a cardboard box. Detail: from/to, floor, elevator, tracking number.
-     Bold move: the label itself is the hero, on a kraft field with packing tape. */
+  /* Object: the moving truck at the kerb: navy moving blankets, kraft boxes marked in marker, a red ratchet strap.
+     Detail: from and to, the floor and the elevator on each side, the crane, the boxes labelled by room, the hour-by-hour of moving day.
+     Bold move: giant condensed type on a navy blanket field, like the lettering on the side of the truck. */
   :root {
-    --kraft: #c69c6d;          /* cardboard */
-    --kraft-deep: #a87f52;
-    --kraft-light: #e7d3b8;
-    --label: #fdfdfb;          /* sticker paper */
-    --ink: #181512;            /* marker black */
-    --ink-soft: #5d5246;
-    --stamp: #d1302a;          /* fragile stamp */
-    --tape: rgba(240, 230, 210, .55);
-    --display: "Suez One", "Rubik", serif;
-    --body: "Rubik", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, monospace;
-    --bot-bg: var(--label); --bot-fg: var(--ink); --bot-line: #ddd3c4; --bot-muted: var(--ink-soft);
-    --bot-accent: var(--ink); --bot-accent-fg: var(--label); --bot-them: #f2ebe0; --bot-me: var(--ink); --bot-me-fg: var(--label);
-    --bot-font: var(--body); --bot-radius: 4px; --bot-radius-msg: 4px; --bot-radius-pill: 3px; --bot-radius-input: 3px;
+    --blanket: #172b4d;        /* moving blanket navy, the field */
+    --blanket-deep: #0f1e38;
+    --kraft: #c89b68;          /* cardboard */
+    --kraft-deep: #8e6439;
+    --wrap: #edf1f5;           /* stretch wrap, the light ground */
+    --strap: #c43a20;          /* ratchet strap */
+    --ink: #101a2c;
+    --ink-soft: #485366;
+    --display: "Karantina", "Rubik", "Arial Narrow", sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--blanket-deep);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: #d3dae3; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--blanket); --bot-accent-fg: #fff; --bot-them: #eef2f7; --bot-me: var(--blanket); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 8px; --bot-radius-pill: 6px; --bot-radius-input: 6px;
+    --ps-a: #c89b68; --ps-b: #172b4d; --ps-ui: var(--blanket); --ps-edit: var(--strap);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--kraft-light); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--wrap); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--stamp); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .03em; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.02; margin: 0; text-wrap: balance; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 3px; }
-  .btn-ink { background: var(--ink); color: var(--label); }
-  .btn-ink:hover { background: #000; }
-  .btn-line { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+  :focus-visible { outline: 3px solid var(--strap); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .92; margin: 0; letter-spacing: 0; text-wrap: balance; }
+  .kicker { font-size: 14px; font-weight: 500; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 6px; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-strap { background: var(--strap); color: #fff; box-shadow: 0 4px 0 #8a2614; }
+  .btn-strap:hover { background: #ad321b; }
+  .btn-ghost { border: 2px solid rgba(255,255,255,.7); color: #fff; background: transparent; }
+  .btn-ghost:hover { background: rgba(255,255,255,.1); }
+  .btn-navy { background: var(--blanket); color: #fff; }
+  .btn-navy:hover { background: var(--blanket-deep); }
 
-  .demo { background: var(--ink); color: #d9cbb7; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--blanket-deep); color: #b9c4d6; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero on cardboard ---------- */
-  .hero { background: var(--kraft); position: relative; overflow: hidden;
-    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px), radial-gradient(120% 80% at 80% 0%, rgba(255,255,255,.18), transparent 60%); }
-  .hero::before { content: ""; position: absolute; inset: 0 auto 0 12%; width: 110px; background: var(--tape); mix-blend-mode: screen; }
-  .bar { position: relative; display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
-  .logo { font-family: var(--display); font-size: 28px; }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid; }
-  .hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 48px; align-items: center; padding-block: 36px 80px; }
-  .hero h1 { font-size: clamp(50px, 7.4vw, 100px); margin: 10px 0 18px; }
-  .hero p { font-size: 19px; max-width: 34ch; margin: 0 0 28px; color: #2d2620; }
-  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  /* ---------- Hero: the blanket field ---------- */
+  .hero { background: var(--blanket); color: #fff; position: relative; overflow-x: clip;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 2px, transparent 2px 46px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 46px),
+      radial-gradient(100% 80% at 20% 0%, rgba(255,255,255,.08), transparent 60%); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 16px; }
+  .logo { font-family: var(--display); font-weight: 700; font-size: 38px; line-height: 1; }
+  .bar nav { display: flex; gap: 22px; align-items: center; font-size: 15px; }
+  .bar nav a { text-decoration: none; color: #dbe3ef; }
+  .bar nav a:hover { color: #fff; text-decoration: underline; text-underline-offset: 5px; }
+  .bar nav .wa { color: #fff; font-weight: 700; border-bottom: 2px solid var(--strap); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; padding-block: 18px 56px; }
+  .hero-copy { min-width: 0; }
+  .hero .kicker { color: #b9c6da; }
+  .hero h1 { font-size: clamp(76px, 10.2vw, 156px); margin: 8px 0 20px; }
+  .hero h1 .l2 { display: block; color: var(--kraft); }
+  .hero .lead { font-size: 19px; max-width: 36ch; margin: 0 0 28px; color: #d3dceb; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
 
-  .label { background: var(--label); padding: 18px; box-shadow: 0 2px 0 rgba(0,0,0,.08), 0 30px 50px -28px rgba(40, 25, 10, .65); transform: rotate(-1.5deg); position: relative; }
-  .label::before, .label::after { content: ""; position: absolute; width: 90px; height: 26px; background: var(--tape); top: -12px; }
-  .label::before { right: 22px; transform: rotate(4deg); } .label::after { left: 22px; transform: rotate(-5deg); }
-  .label .in { border: 3px solid var(--ink); }
-  .lrow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-bottom: 3px solid var(--ink); }
-  .lrow:last-child { border-bottom: 0; }
-  .lrow > div { padding: 10px 12px; min-width: 0; }
-  .lrow > div + div { border-inline-start: 3px solid var(--ink); }
-  .lrow.full { grid-template-columns: minmax(0, 1fr); }
-  .lab { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .12em; }
-  .val { font-family: var(--display); font-size: 30px; line-height: 1.1; }
-  .val small { font-family: var(--body); font-size: 14px; display: block; color: var(--ink-soft); }
-  .barcode { height: 54px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 8px, var(--ink) 8px 11px, transparent 11px 12px, var(--ink) 12px 13px, transparent 13px 16px); }
-  .stamp { position: absolute; left: -10px; bottom: 70px; transform: rotate(-14deg); border: 4px double var(--stamp); color: var(--stamp); font-family: var(--display); font-size: 30px; padding: 2px 14px; background: rgba(253,253,251,.7); }
+  .crate { position: relative; min-width: 0; }
+  .crate .ps { aspect-ratio: 3 / 4; border-radius: 4px; box-shadow: 0 50px 80px -40px rgba(0,0,0,.7); }
+  /* stretch wrap sheen over the photo */
+  .crate .sheen { position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: 4px;
+    background: linear-gradient(115deg, transparent 18%, rgba(255,255,255,.16) 24%, transparent 30%, transparent 58%, rgba(255,255,255,.12) 63%, transparent 68%); }
+  .crate .strap { position: absolute; z-index: 3; inset-inline: -16px; top: 62%; height: 38px; background: var(--strap); color: #fff; transform: rotate(-4deg);
+    display: flex; align-items: center; gap: 28px; overflow: hidden; white-space: nowrap; font-weight: 700; font-size: 14px; letter-spacing: .04em; box-shadow: 0 10px 20px -10px rgba(0,0,0,.6); pointer-events: none; }
+  .crate .strap::before, .crate .strap::after { content: ""; position: absolute; inset-inline: 0; height: 2px; background: rgba(255,255,255,.25); }
+  .crate .strap::before { top: 5px; } .crate .strap::after { bottom: 5px; }
+  .crate .buckle { position: absolute; z-index: 4; top: calc(62% - 6px); inset-inline-start: 22%; width: 46px; height: 50px; border-radius: 6px; background: linear-gradient(90deg, #7d868f, #d5dadf 40%, #8e979f); transform: rotate(-4deg); box-shadow: 0 6px 12px rgba(0,0,0,.4); pointer-events: none; }
+  .crate .note { position: absolute; z-index: 4; bottom: -18px; inset-inline-end: -10px; background: #fff; color: var(--ink); padding: 8px 14px; font-size: 14px; line-height: 1.35; transform: rotate(2deg); box-shadow: 0 12px 24px -12px rgba(0,0,0,.6); }
+  .crate .note b { display: block; font-family: var(--display); font-size: 26px; line-height: 1; }
+
+  /* the route ticket under the hero */
+  .route { background: #fff; color: var(--ink); border-radius: 6px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr); align-items: center; box-shadow: 0 30px 50px -30px rgba(0,0,0,.6); position: relative; z-index: 2; margin-bottom: -48px; }
+  .route > div { padding: 16px 20px; min-width: 0; }
+  .route > div + div { border-inline-start: 1.5px dashed #c9d1dc; }
+  .route .k { display: block; font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .route .v { font-family: var(--display); font-size: 38px; line-height: 1; display: block; }
+  .route .when .v { font-family: var(--body); font-weight: 700; font-size: 26px; line-height: 1.3; }
+  .route small { display: block; font-size: 14px; color: var(--ink-soft); }
+  .road { position: relative; height: 54px; }
+  .road::before { content: ""; position: absolute; inset-inline: 6px; top: 50%; height: 3px; background: repeating-linear-gradient(90deg, var(--blanket) 0 14px, transparent 14px 24px); }
+  .road .pin { position: absolute; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: var(--blanket); }
+  .road .pin.a { right: 0; } .road .pin.b { left: 0; background: var(--strap); }
+  .road svg { position: absolute; top: 2px; width: 64px; height: 36px; right: calc(100% - 70px); animation: drive 2.6s .5s cubic-bezier(.45,.05,.3,1) both; }
+  @keyframes drive { from { right: 4px; } to { right: calc(100% - 70px); } }
 
   /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(36px, 5vw, 60px); }
-  .head .mono { color: var(--ink-soft); }
-  .prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-  .box { background: var(--kraft); border-radius: 2px; padding: 14px; position: relative; background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px); }
-  .box .in { background: var(--label); padding: 18px; height: 100%; display: flex; flex-direction: column; }
-  .box h3 { font-size: 30px; }
-  .box .mono { color: var(--ink-soft); }
-  .box .price { font-family: var(--display); font-size: 34px; margin: 16px 0 6px; }
-  .box ul { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 4px; font-size: 15px; }
-  .box li::before { content: "☐ "; font-family: var(--mono); }
-  .box .btn { margin-top: auto; }
-  .fine { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
+  section { padding-block: 96px; }
+  .head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); align-items: end; gap: 12px 40px; margin-bottom: 38px; }
+  .head h2 { font-size: clamp(56px, 7vw, 96px); }
+  .head p { margin: 0; color: var(--ink-soft); font-size: 16.5px; }
 
-  .included { background: var(--ink); color: var(--label); }
-  .included .head .mono { color: #bba98f; }
-  .manifest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #4a4036; }
-  .manifest div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding: 18px 0; border-bottom: 1px solid #4a4036; }
-  .manifest div:nth-child(odd) { padding-inline-end: 28px; }
-  .manifest div:nth-child(even) { padding-inline-start: 28px; border-inline-start: 1px solid #4a4036; }
-  .manifest .mono { color: var(--kraft); padding-top: 4px; }
-  .manifest b { font-family: var(--display); font-weight: 400; font-size: 24px; display: block; }
-  .manifest span { color: #cbbda7; font-size: 15px; }
+  /* floors and elevators */
+  .floors { padding-top: 130px; }
+  .floor-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .city { min-width: 0; }
+  .city svg { width: 100%; height: auto; display: block; }
+  .access { display: grid; gap: 12px; }
+  .acc { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 16px; align-items: center; background: #fff; border-radius: 6px; padding: 16px 18px; border: 1.5px solid #d3dae3; transition: border-color .15s, transform .15s; }
+  .acc:hover { border-color: var(--blanket); transform: translateX(-3px); }
+  .acc:focus-visible { outline: 3px solid var(--strap); outline-offset: 2px; }
+  .acc svg { width: 56px; height: 56px; }
+  .acc b { display: block; font-size: 18px; }
+  .acc span span { color: var(--ink-soft); font-size: 14.5px; }
+  .acc .add { font-family: var(--body); font-weight: 700; font-size: 19px; line-height: 1; text-align: left; white-space: nowrap; }
+  .acc .add small { display: block; font-family: var(--body); font-size: 12px; color: var(--ink-soft); }
 
-  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
+  /* prices as boxes of three sizes */
+  .boxes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: end; }
+  .bx { all: unset; box-sizing: border-box; cursor: pointer; position: relative; background: var(--kraft); color: var(--ink); border-radius: 3px; padding: 46px 22px 22px; display: flex; flex-direction: column; min-width: 0;
+    background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.04) 0 2px, transparent 2px 8px); box-shadow: inset 0 -10px 0 rgba(0,0,0,.06), 0 30px 40px -30px rgba(40,25,10,.7); transition: transform .2s; }
+  .bx:hover { transform: translateY(-6px) rotate(-.6deg); }
+  .bx:focus-visible { outline: 3px solid var(--strap); outline-offset: 3px; }
+  .bx::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 64px; margin-left: -32px; background: rgba(240,228,206,.55); }
+  .bx > * { position: relative; }
+  .bx.s1 { min-height: 330px; } .bx.s2 { min-height: 390px; } .bx.s3 { min-height: 450px; }
+  .bx .up { position: absolute; top: 12px; inset-inline-start: 16px; display: flex; gap: 2px; }
+  .bx .up svg { width: 16px; height: 22px; }
+  .bx .tag { position: absolute; top: 12px; inset-inline-end: 16px; font-size: 13px; font-weight: 700; color: var(--strap); border: 2px solid var(--strap); padding: 0 8px; border-radius: 3px; transform: rotate(3deg); background: rgba(255,255,255,.35); }
+  .bx h3 { font-size: 54px; }
+  .bx .price { font-weight: 700; font-size: 22px; margin: 8px 0 12px; }
+  .bx ul { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 4px; font-size: 15.5px; }
+  .bx li { padding-inline-start: 22px; position: relative; }
+  .bx li::before { content: ""; position: absolute; inset-inline-start: 0; top: .45em; width: 12px; height: 12px; border: 2px solid var(--ink); border-radius: 2px; }
+  .bx .go { margin-top: auto; align-self: flex-start; background: var(--ink); color: #fff; font-weight: 700; padding: 10px 18px; border-radius: 6px; font-size: 15.5px; }
+  .fine { font-size: 13.5px; color: var(--ink-soft); margin-top: 14px; }
+
+  .calc { background: #fff; }
+
+  /* moving day, hour by hour */
+  .day { background: var(--wrap); }
+  .hours { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; position: relative; }
+  .hours::before { content: ""; position: absolute; top: 26px; inset-inline: 0; height: 3px; background: repeating-linear-gradient(90deg, var(--blanket) 0 14px, transparent 14px 24px); }
+  .hr { min-width: 0; padding-inline-end: 22px; position: relative; }
+  .hr time { display: inline-block; justify-self: start; background: var(--blanket); color: #fff; font-family: var(--body); font-weight: 700; font-size: 22px; line-height: 1; padding: 10px 14px; border-radius: 4px; position: relative; }
+  .hr:last-child time { background: var(--strap); }
+  .hr h3 { font-family: var(--body); font-weight: 700; font-size: 19px; line-height: 1.3; margin: 16px 0 6px; }
+  .hr p { margin: 0 0 16px; color: var(--ink-soft); font-size: 15.5px; }
+  .hr .ps { aspect-ratio: 4 / 3; border-radius: 4px; max-width: 280px; }
+  .hr .ps.truckpic { aspect-ratio: 4 / 3; }
+  .hr .brand { position: absolute; z-index: 2; top: 8px; inset-inline-end: 8px; background: #fff; color: var(--ink); font-family: var(--display); font-size: 22px; line-height: 1; padding: 4px 10px 2px; border-radius: 3px; }
+  .rooms { aspect-ratio: 4 / 3; max-width: 280px; background: #fff; border-radius: 4px; display: grid; place-items: center; }
+  .rooms svg { width: 88%; height: auto; }
+
+  /* heavy items band */
+  .heavy { background: var(--blanket); color: #fff; position: relative; overflow: hidden;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 2px, transparent 2px 46px), repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 46px); }
+  .heavy-grid { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .pola { background: #fff; padding: 10px 10px 12px; transform: rotate(-3deg); box-shadow: 0 30px 50px -24px rgba(0,0,0,.8); position: relative; max-width: 300px; }
+  .pola .ps { aspect-ratio: 222 / 168; }
+  .heavy .pola p { color: var(--ink); font-family: var(--display); font-size: 28px; line-height: 1; margin: 10px 4px 0; }
+  .pola::after { content: ""; position: absolute; inset-inline: -22px; top: 40%; height: 26px; background: var(--strap); transform: rotate(8deg); box-shadow: 0 6px 12px -4px rgba(0,0,0,.5); opacity: .95; pointer-events: none; }
+  .heavy h2 { font-size: clamp(56px, 7vw, 96px); margin-bottom: 18px; }
+  .heavy h2 span { color: var(--kraft); display: block; }
+  .heavy p { color: #d0d9e7; max-width: 46ch; margin: 0 0 24px; }
+  .items { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; padding: 0; list-style: none; }
+  .items li { border: 1.5px solid rgba(255,255,255,.4); border-radius: 999px; padding: 4px 14px; font-size: 15px; }
+
+  /* what is included */
+  .manifest { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .mf { background: #fff; border-radius: 6px; padding: 22px 20px; min-width: 0; border-top: 6px solid var(--kraft); }
+  .mf svg { width: 40px; height: 40px; display: block; margin-bottom: 14px; }
+  .mf b { display: block; font-family: var(--display); font-size: 34px; line-height: 1; margin-bottom: 6px; }
+  .mf span { color: var(--ink-soft); font-size: 15.5px; }
+
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 20px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 14px; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 44px; height: 44px; border-radius: 4px; background: var(--kraft); display: grid; place-items: center; font-family: var(--display); font-size: 30px; padding-top: 4px; color: var(--ink); }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 96px; color: var(--ink-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
 
-
-  /* ---------- On the road: truck + polaroids (photo slots) ---------- */
-  :root { --ps-a: #b98e62; --ps-b: #5e4129; --ps-ui: var(--ink); --ps-edit: var(--stamp); }
-  .road { background: var(--kraft); background-image: repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 9px); overflow: hidden; }
-  .road .head .mono { color: #4a3b2c; }
-  .truck { position: relative; display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); align-items: end; direction: ltr; max-width: 860px; margin: 10px auto 0; padding-bottom: 46px; }
-  .truck .cab { height: 150px; background: var(--ink); border-radius: 26px 6px 0 10px; position: relative; }
-  .truck .cab::before { content: ""; position: absolute; top: 18px; left: 18px; width: 70px; height: 52px; background: #b9d3e0; border-radius: 14px 4px 4px 4px; }
-  .truck .cab::after { content: ""; position: absolute; bottom: 22px; left: 0; width: 18px; height: 12px; background: #f6e7c8; border-radius: 0 4px 4px 0; }
-  .truck .box { aspect-ratio: 2.3 / 1; border-radius: 6px; border: 6px solid var(--label); box-shadow: 0 24px 40px -24px rgba(0,0,0,.6); }
-  .truck .box .brand { position: absolute; top: 12px; right: 14px; z-index: 2; background: var(--label); color: var(--ink); font-family: var(--display); font-size: 22px; padding: 2px 12px; direction: rtl; }
-  .truck .wheel { position: absolute; bottom: 0; width: 76px; height: 76px; border-radius: 50%; background: radial-gradient(circle, #8b8178 0 22%, #2b2622 23% 60%, #181512 61%); box-shadow: 0 0 0 6px var(--kraft); }
-  .truck .w1 { left: 54px; } .truck .w2 { right: 90px; } .truck .w3 { right: 180px; }
-  .truck .chassis { position: absolute; left: 10px; right: 10px; bottom: 34px; height: 14px; background: #2b2622; border-radius: 6px; z-index: -1; }
-  .polas { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; margin-top: 40px; }
-  .pola { background: var(--label); padding: 12px 12px 14px; width: min(270px, 100%); box-shadow: 0 22px 40px -24px rgba(40,25,10,.8); position: relative; }
-  .pola:nth-child(1) { transform: rotate(-3deg); } .pola:nth-child(2) { transform: rotate(2deg) translateY(14px); } .pola:nth-child(3) { transform: rotate(-1deg); }
-  .pola::before { content: ""; position: absolute; top: -12px; left: 50%; width: 90px; height: 26px; margin-left: -45px; background: var(--tape); transform: rotate(-3deg); z-index: 1; }
-  .pola .ps { aspect-ratio: 1; }
-  .pola p { margin: 10px 4px 0; font-family: var(--display); font-size: 20px; line-height: 1.2; }
-  .road-note { text-align: center; color: #4a3b2c; font-size: 15px; margin: 34px 0 0; }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+    .crate { max-width: 420px; }
+    .route { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-bottom: -40px; }
+    .route .road { grid-column: 1 / -1; order: 3; border-inline-start: 0 !important; border-top: 1.5px dashed #c9d1dc; }
+    .route .when { order: 4; grid-column: 1 / -1; border-inline-start: 0 !important; border-top: 1.5px dashed #c9d1dc; }
+    .floor-grid, .heavy-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .head { grid-template-columns: minmax(0, 1fr); }
+    .boxes { grid-template-columns: minmax(0, 1fr); max-width: 520px; }
+    .bx.s1, .bx.s2, .bx.s3 { min-height: 0; }
+    .hours { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 0; }
+    .hours::before { display: none; }
+    .manifest { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner .phone { margin-inline: auto; }
+    .pola { margin-inline: auto; }
+  }
   @media (max-width: 620px) {
-    .truck { grid-template-columns: minmax(0, 90px) minmax(0, 1fr); padding-bottom: 32px; }
-    .truck .cab { height: 92px; border-radius: 18px 4px 0 8px; } .truck .cab::before { top: 12px; left: 10px; width: 40px; height: 32px; }
-    .truck .box .brand { font-size: 15px; top: 8px; right: 8px; padding: 1px 8px; }
-    .truck .wheel { width: 48px; height: 48px; box-shadow: 0 0 0 4px var(--kraft); } .truck .w1 { left: 26px; } .truck .w2 { right: 40px; } .truck .w3 { right: 96px; }
-    .truck .chassis { bottom: 22px; height: 10px; }
-    .polas { gap: 14px; } .pola { width: calc(50% - 7px); padding: 8px 8px 10px; } .pola p { font-size: 16px; margin-top: 8px; }
-    .pola:nth-child(1) { transform: rotate(-2deg); } .pola:nth-child(2) { transform: rotate(2deg); } .pola:nth-child(3) { transform: rotate(-1deg); }
+    .bar nav a:not(.wa) { display: none; }
+    section { padding-block: 70px; }
+    .floors { padding-top: 100px; }
+    .hero h1 { font-size: clamp(64px, 21vw, 92px); }
+    .hero .lead { font-size: 17px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .crate { max-width: none; margin-inline: 8px; }
+    .crate .ps { aspect-ratio: 4 / 4.2; }
+    .route > div { padding: 12px 14px; }
+    .route .v { font-size: 32px; }
+    .head h2, .heavy h2 { font-size: clamp(50px, 15vw, 70px); }
+    .acc { grid-template-columns: 44px minmax(0, 1fr); padding: 14px; }
+    .acc svg { width: 44px; height: 44px; }
+    .acc .add { grid-column: 2; text-align: start; font-size: 26px; }
+    .hours { grid-template-columns: minmax(0, 1fr); }
+    .hr { padding-inline-end: 0; display: grid; grid-template-columns: minmax(0, 1fr) 130px; gap: 0 14px; align-items: start; }
+    .hr > time, .hr > h3, .hr > p { grid-column: 1; }
+    .hr > .ps, .hr > .rooms, .hr > .tp { grid-column: 2; grid-row: 1 / span 3; max-width: none; width: 130px; }
+    .hr p { margin-bottom: 0; }
+    .manifest { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    .mf { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 2px 16px; padding: 18px; }
+    .mf svg { grid-row: 1 / span 2; margin: 0; }
+    .mf b { font-size: 30px; }
+    .acc .add { font-size: 17px; }
+    .crate .strap { inset-inline: -8px; }
   }
-
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: minmax(0, 1fr); }
-    .label { max-width: 440px; }
-    .prices { grid-template-columns: minmax(0, 1fr); }
-    .manifest { grid-template-columns: minmax(0, 1fr); }
-    .manifest div:nth-child(n) { padding-inline: 0; border-inline-start: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .road svg { animation: none; }
+    .btn, .acc, .bx { transition: none; }
   }
-  @media (max-width: 420px) { .val { font-size: 24px; } .stamp { font-size: 24px; } }
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=movers">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
 <header class="hero">
-  <div class="wrap bar"><div class="logo" data-edit="name">דרור הובלות</div><a href="#" data-wa="היי דרור, אני צריך הצעת מחיר להובלה.">וואטסאפ</a></div>
+  <div class="wrap bar">
+    <div class="logo" data-edit="name">דרור הובלות</div>
+    <nav aria-label="ניווט">
+      <a href="#floors">קומות ומנוף</a><a href="#prices">מחירים</a><a href="#day">יום ההובלה</a>
+      <a class="wa" href="#" data-wa="היי דרור, אני צריך הצעת מחיר להובלה.">וואטסאפ</a>
+    </nav>
+  </div>
   <div class="wrap hero-grid">
-    <div>
-      <div class="mono">הובלות דירות ומשרדים · מהשרון לכל הארץ</div>
-      <h1 data-edit="h1">עוברים דירה? הצעת מחיר תוך דקה.</h1>
-      <p>עונים על חמש שאלות בצ׳אט, רואים מחיר משוער, והפרטים נשלחים אליי בוואטסאפ. בלי לחכות שמישהו יחזור אליכם.</p>
+    <div class="hero-copy">
+      <div class="kicker">הובלות דירות ומשרדים · מהשרון לכל הארץ</div>
+      <h1 data-edit="h1">עוברים דירה? <span class="l2">מחיר סגור לפני שמעמיסים.</span></h1>
+      <p class="lead">עונים על חמש שאלות בצ׳אט, רואים מחיר משוער, והפרטים מגיעים אליי לוואטסאפ. בלי לחכות שמישהו יחזור.</p>
       <div class="ctas">
-        <button class="btn btn-ink" type="button" data-open-bot>לקבל הצעת מחיר</button>
-        <a class="btn btn-line" href="#prices">מחירון משוער</a>
+        <button class="btn btn-strap" type="button" data-open-bot>לקבל הצעת מחיר</button>
+        <a class="btn btn-ghost" href="#calc">מחשבון מחיר</a>
       </div>
     </div>
-    <div class="label" aria-label="דוגמה למדבקת משלוח">
-      <div class="in">
-        <div class="lrow"><div><div class="lab">מ:</div><div class="val">חדרה<small>קומה 3, יש מעלית</small></div></div><div><div class="lab">אל:</div><div class="val">תל אביב<small>קומה 5, צריך מנוף</small></div></div></div>
-        <div class="lrow"><div><div class="lab">תאריך</div><div class="val">חמישי 16.10</div></div><div><div class="lab">דירה</div><div class="val">3 חדרים</div></div></div>
-        <div class="lrow full"><div><div class="lab">מספר הובלה · DR-2614-HDR</div><div class="barcode" aria-hidden="true"></div></div></div>
+    <div class="crate">
+      <figure class="ps" data-slot="hero" data-src="../shared/photos/movers-truck.webp" data-alt="מובילים מעלים ארון עטוף בניילון לרמפה של המשאית" data-pos="63 50" data-icon="truck" data-label="תמונה שלכם בעבודה"></figure>
+      <span class="sheen" aria-hidden="true"></span>
+      <span class="strap" aria-hidden="true"><span>דרור הובלות</span><span>עטוף ומאובטח</span><span>דרור הובלות</span><span>עטוף ומאובטח</span><span>דרור הובלות</span></span>
+      <span class="buckle" aria-hidden="true"></span>
+      <div class="note"><b>ארון שלוש דלתות</b>עטוף בשמיכה ובניילון, לפני שיורד במדרגות</div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="route" aria-label="דוגמה להובלה">
+      <div><span class="k">מ</span><span class="v">חדרה</span><small>קומה 3, יש מעלית</small></div>
+      <div class="road" aria-hidden="true">
+        <span class="pin a"></span><span class="pin b"></span>
+        <svg viewBox="0 0 64 36" fill="none"><g transform="translate(64 0) scale(-1 1)"><rect x="2" y="4" width="38" height="22" rx="2" fill="#172b4d"/><path d="M40 10 h12 l8 8 v8 h-20 z" fill="#c43a20"/><path d="M44 12 h7 l5 5 h-12 z" fill="#d4e1ee"/><circle cx="13" cy="28" r="5" fill="#101a2c" stroke="#fff" stroke-width="2"/><circle cx="50" cy="28" r="5" fill="#101a2c" stroke="#fff" stroke-width="2"/><rect x="8" y="9" width="12" height="9" fill="#c89b68"/><rect x="22" y="12" width="12" height="9" fill="#c89b68"/></g></svg>
       </div>
-      <div class="stamp" aria-hidden="true">שביר</div>
+      <div><span class="k">אל</span><span class="v">תל אביב</span><small>קומה 5, צריך מנוף</small></div>
+      <div class="when"><span class="k">מתי</span><span class="v">חמישי, 7:00</span><small>3 חדרים</small></div>
     </div>
   </div>
 </header>
 
-<section id="prices">
-  <div class="wrap">
-    <div class="head"><h2>כמה זה עולה בערך</h2><span class="mono">מחירים להמחשה · תלוי בקומות, מנוף ומרחק</span></div>
-    <div class="prices">
-      <div class="box"><div class="in"><span class="mono">ארגז 01</span><h3>סטודיו או חדר</h3><div class="price">1,200 עד 1,900 ₪</div><ul><li>משאית קטנה ושני סבלים</li><li>עטיפת רהיטים</li><li>עד 3 שעות</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
-      <div class="box"><div class="in"><span class="mono">ארגז 02</span><h3>2 עד 3 חדרים</h3><div class="price">2,500 עד 4,200 ₪</div><ul><li>משאית גדולה ושלושה סבלים</li><li>פירוק והרכבה של מיטות וארונות</li><li>עטיפה מלאה</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
-      <div class="box"><div class="in"><span class="mono">ארגז 03</span><h3>4 חדרים ומעלה</h3><div class="price">4,500 עד 7,800 ₪</div><ul><li>שתי משאיות או נסיעה כפולה</li><li>צוות של ארבעה</li><li>אפשרות לאריזה מלאה</li></ul><button class="btn btn-ink" type="button" data-open-bot>הצעה מדויקת</button></div></div>
+<main>
+  <section class="floors" id="floors">
+    <div class="wrap">
+      <div class="head"><h2>שתי כתובות, שתי קומות</h2><p>מה שמשנה את המחיר הוא לא רק הדירה, אלא איך יורדים ואיך עולים. בוחרים, וממשיכים בצ׳אט.</p></div>
+      <div class="floor-grid">
+        <div class="city" aria-hidden="true">
+          <svg viewBox="0 0 640 400" fill="none">
+            <path d="M0 360 H640" stroke="#101a2c" stroke-width="3"/>
+            <path d="M0 384 H640" stroke="#485366" stroke-width="2" stroke-dasharray="16 12"/>
+            <!-- from: 4 floors with elevator (right side, RTL first) -->
+            <rect x="430" y="150" width="180" height="210" fill="#fff" stroke="#101a2c" stroke-width="3"/>
+            <g fill="#d3dae3"><rect x="450" y="170" width="34" height="26"/><rect x="450" y="222" width="34" height="26"/><rect x="450" y="274" width="34" height="26"/><rect x="500" y="170" width="34" height="26"/><rect x="500" y="274" width="34" height="26"/></g>
+            <rect x="500" y="222" width="34" height="26" fill="#c89b68"/>
+            <rect x="556" y="150" width="40" height="210" fill="#edf1f5" stroke="#101a2c" stroke-width="2"/>
+            <rect x="562" y="216" width="28" height="38" fill="#172b4d"/><path d="M576 150 V216" stroke="#101a2c" stroke-width="1.5"/>
+            <rect x="490" y="320" width="34" height="40" fill="#172b4d"/>
+            <text x="520" y="132" font-family="Rubik, sans-serif" font-size="20" font-weight="700" fill="#101a2c" text-anchor="middle">מ: קומה 3, מעלית</text>
+            <!-- to: 6 floors with a crane (left side) -->
+            <rect x="40" y="70" width="190" height="290" fill="#fff" stroke="#101a2c" stroke-width="3"/>
+            <g fill="#d3dae3"><rect x="60" y="90" width="36" height="26"/><rect x="112" y="90" width="36" height="26"/><rect x="164" y="90" width="36" height="26"/><rect x="60" y="136" width="36" height="26"/><rect x="164" y="136" width="36" height="26"/><rect x="60" y="182" width="36" height="26"/><rect x="112" y="182" width="36" height="26"/><rect x="164" y="182" width="36" height="26"/><rect x="60" y="228" width="36" height="26"/><rect x="112" y="228" width="36" height="26"/><rect x="164" y="228" width="36" height="26"/><rect x="60" y="274" width="36" height="26"/><rect x="164" y="274" width="36" height="26"/></g>
+            <rect x="112" y="136" width="36" height="26" fill="#c89b68"/>
+            <path d="M104 168 H156" stroke="#101a2c" stroke-width="3"/>
+            <rect x="112" y="314" width="36" height="46" fill="#172b4d"/>
+            <text x="135" y="52" font-family="Rubik, sans-serif" font-size="20" font-weight="700" fill="#101a2c" text-anchor="middle">אל: קומה 5, מנוף</text>
+            <!-- crane truck between them -->
+            <rect x="270" y="300" width="120" height="44" rx="3" fill="#172b4d"/>
+            <path d="M390 312 h26 l14 16 v16 h-40 z" fill="#c43a20"/>
+            <circle cx="296" cy="350" r="11" fill="#101a2c" stroke="#fff" stroke-width="3"/><circle cx="410" cy="350" r="11" fill="#101a2c" stroke="#fff" stroke-width="3"/>
+            <path d="M300 300 L190 150" stroke="#c43a20" stroke-width="10" stroke-linecap="round"/>
+            <path d="M300 300 L190 150" stroke="#e98a77" stroke-width="2" stroke-dasharray="8 10"/>
+            <rect x="160" y="146" width="44" height="8" fill="#101a2c"/>
+            <rect x="166" y="126" width="30" height="20" fill="#c89b68" stroke="#8e6439" stroke-width="2"/>
+            <!-- stairs hint on the from building -->
+            <path d="M440 352 h12 v-10 h12 v-10 h12" stroke="#485366" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="access">
+          <button class="acc" type="button" data-floor="קרקע או יש מעלית">
+            <svg viewBox="0 0 56 56" fill="none" stroke="#101a2c" stroke-width="2.5" aria-hidden="true"><rect x="12" y="6" width="32" height="44" rx="2"/><path d="M28 6 V50"/><path d="M20 22 l-4 4 4 4 M36 22 l4 4 -4 4" stroke="#172b4d"/></svg>
+            <span><b>קרקע או יש מעלית</b><span>המעלית נשמרת בשמיכה, כדי שלא תישרט.</span></span>
+            <span class="add">0 ₪<small>בלי תוספת</small></span>
+          </button>
+          <button class="acc" type="button" data-floor="קומה בלי מעלית">
+            <svg viewBox="0 0 56 56" fill="none" stroke="#101a2c" stroke-width="2.5" aria-hidden="true"><path d="M6 48 h11 v-10 h11 v-10 h11 v-10 h11"/><rect x="34" y="4" width="14" height="10" fill="#c89b68" stroke="#8e6439"/></svg>
+            <span><b>קומה בלי מעלית</b><span>סחיבה במדרגות, לפי מספר הקומות.</span></span>
+            <span class="add">300 עד 700 ₪<small>נוספים</small></span>
+          </button>
+          <button class="acc" type="button" data-floor="צריך מנוף">
+            <svg viewBox="0 0 56 56" fill="none" stroke="#101a2c" stroke-width="2.5" aria-hidden="true"><path d="M8 50 L44 10" stroke="#c43a20" stroke-width="5" stroke-linecap="round"/><rect x="36" y="14" width="16" height="12" fill="#c89b68" stroke="#8e6439"/><path d="M4 50 h28"/></svg>
+            <span><b>צריך מנוף</b><span>לקומות גבוהות ולמה שלא נכנס במעלית.</span></span>
+            <span class="add">800 עד 1,500 ₪<small>נוספים</small></span>
+          </button>
+        </div>
+      </div>
     </div>
-    <p class="fine">הדף לדוגמה. אצלכם יופיעו המחירים והשירותים שלכם.</p>
-  </div>
-</section>
+  </section>
 
-<section class="road">
-  <div class="wrap">
-    <div class="head"><h2>בדרך</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
-    <div class="truck" aria-label="משאית עם תמונה של העסק">
-      <div class="cab" aria-hidden="true"></div>
-      <figure class="ps box" data-slot="truck" data-src="../shared/photos/movers-truck.webp" data-alt="מובילים מעמיסים ארון ארוז על רמפת המשאית" data-pos="40 50" data-icon="truck" data-label="תמונה או לוגו על המשאית"><span class="brand" data-edit="truck-brand">דרור הובלות</span></figure>
-      <span class="chassis" aria-hidden="true"></span>
-      <span class="wheel w1" aria-hidden="true"></span><span class="wheel w2" aria-hidden="true"></span><span class="wheel w3" aria-hidden="true"></span>
+  <section id="prices" style="background:#fff">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה עולה, בערך</h2><p>מחירים להמחשה. תלוי בקומות, במנוף ובמרחק. לחיצה על ארגז פותחת את הצ׳אט עם הגודל.</p></div>
+      <div class="boxes">
+        <button class="bx s1" type="button" data-size="סטודיו או חדר">
+          <span class="up" aria-hidden="true"><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg></span>
+          <h3>סטודיו או חדר</h3>
+          <span class="price">1,200 עד 1,900 ₪</span>
+          <ul><li>משאית קטנה ושני סבלים</li><li>עטיפת רהיטים</li><li>עד 3 שעות</li></ul>
+          <span class="go">לקבל הצעה</span>
+        </button>
+        <button class="bx s2" type="button" data-size="2 עד 3 חדרים">
+          <span class="up" aria-hidden="true"><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg></span>
+          <span class="tag">שביר</span>
+          <h3>2 עד 3 חדרים</h3>
+          <span class="price">2,500 עד 4,200 ₪</span>
+          <ul><li>משאית גדולה ושלושה סבלים</li><li>פירוק והרכבה של מיטות וארונות</li><li>עטיפה מלאה</li></ul>
+          <span class="go">לקבל הצעה</span>
+        </button>
+        <button class="bx s3" type="button" data-size="4 חדרים ומעלה">
+          <span class="up" aria-hidden="true"><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg><svg viewBox="0 0 16 22"><path d="M8 2 V20 M2 8 L8 2 14 8" fill="none" stroke="#101a2c" stroke-width="2.5"/></svg></span>
+          <h3>4 חדרים ומעלה</h3>
+          <span class="price">4,500 עד 7,800 ₪</span>
+          <ul><li>שתי משאיות או נסיעה כפולה</li><li>צוות של ארבעה</li><li>אפשר גם אריזה מלאה</li></ul>
+          <span class="go">לקבל הצעה</span>
+        </button>
+      </div>
+      <p class="fine">הדף לדוגמה. אצלכם יופיעו המחירים והשירותים שלכם.</p>
     </div>
-    <div class="polas">
-      <div class="pola"><figure class="ps" data-slot="p1" data-src="../shared/photos/movers-team.webp" data-alt="שני מובילים נושאים ספה" data-icon="person" data-label="הצוות שלכם"></figure><p data-edit="p1">הצוות, לפני הובלה בחיפה</p></div>
-      <div class="pola"><figure class="ps" data-slot="p2" data-src="../shared/photos/movers-piano.webp" data-alt="מובילים מכינים פסנתר כנף להובלה" data-icon="box" data-label="תמונה מהובלה"></figure><p data-edit="p2">פסנתר, קומה רביעית</p></div>
-      <div class="pola"><figure class="ps" data-slot="p3" data-src="../shared/photos/movers-loading.webp" data-alt="העמסת ארגזים למשאית" data-icon="home" data-label="תמונה מהובלה"></figure><p data-edit="p3">ארגזים במשאית, יוצאים לדרך</p></div>
-    </div>
-    <p class="road-note">לקוחות רוצים לראות מי ייכנס להם הביתה. תמונה של הצוות והמשאית שלכם בונה אמון מהר.</p>
-  </div>
-</section>
+  </section>
 
-<section class="included">
-  <div class="wrap">
-    <div class="head"><h2>מה בתוך ההובלה</h2><span class="mono">רשימת תכולה</span></div>
-    <div class="manifest">
-      <div><span class="mono">פריט 1</span><p style="margin:0"><b>ביטוח תכולה</b><span>כל ההובלה מבוטחת, כולל כלים ומכשירי חשמל.</span></p></div>
-      <div><span class="mono">פריט 2</span><p style="margin:0"><b>פירוק והרכבה</b><span>מיטות, ארונות ושולחנות, עם הכלים שלנו.</span></p></div>
-      <div><span class="mono">פריט 3</span><p style="margin:0"><b>מנוף לפי הצורך</b><span>לקומות גבוהות ופריטים שלא נכנסים במעלית.</span></p></div>
-      <div><span class="mono">פריט 4</span><p style="margin:0"><b>מחיר סגור מראש</b><span>מה שסגרנו בוואטסאפ, זה מה שמשלמים.</span></p></div>
+  <section class="calc" id="calc" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים גודל, גישה ומרחק, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer class="wrap"><div class="row"><span>דרור הובלות · דף לדוגמה, העסק בדוי</span><a href="../">רוצים דף כזה לעסק שלכם?</a></div></footer>
+  <section class="day" id="day">
+    <div class="wrap">
+      <div class="head"><h2>יום ההובלה, שעה אחרי שעה</h2><p>דירת 3 חדרים, לדוגמה. כל תמונה כאן מתחלפת בתמונה שלכם.</p></div>
+      <div class="hours">
+        <div class="hr">
+          <time>7:00</time>
+          <h3>מגיעים ועוטפים</h3>
+          <p>שמיכות על הרהיטים, ניילון על הספות, מגן על המעלית.</p>
+          <figure class="ps" data-slot="p1" data-src="../shared/photos/movers-team.webp" data-alt="שני מובילים נושאים ספה" data-pos="50 45" data-icon="person" data-label="הצוות שלכם"></figure>
+        </div>
+        <div class="hr">
+          <time>8:30</time>
+          <h3>מפרקים ומעמיסים</h3>
+          <p>מיטות וארונות מתפרקים, והארגזים עולים לפי סדר החדרים.</p>
+          <figure class="ps" data-slot="p3" data-src="../shared/photos/movers-loading.webp" data-alt="העמסת ארגזים למשאית" data-icon="home" data-label="תמונה מהובלה"></figure>
+        </div>
+        <div class="hr">
+          <time>10:30</time>
+          <h3>בדרך</h3>
+          <p>אתם יודעים מתי המשאית מגיעה, ומחכים לה בבית החדש.</p>
+          <figure class="ps truckpic" data-slot="truck" data-src="../shared/photos/movers-truck.webp" data-alt="מובילים מעמיסים ארון ארוז על רמפת המשאית" data-pos="12 40" data-icon="truck" data-label="תמונה או לוגו על המשאית"><span class="brand" data-edit="truck-brand">דרור הובלות</span></figure>
+        </div>
+        <div class="hr">
+          <time>12:30</time>
+          <h3>כל ארגז בחדר שלו</h3>
+          <p>פורקים, מרכיבים את המיטות, ומניחים לפי מה שכתוב על הארגז.</p>
+          <div class="rooms" aria-hidden="true">
+            <svg viewBox="0 0 240 170" fill="none">
+              <g font-family="Rubik, sans-serif" font-weight="700" font-size="17" fill="#101a2c" text-anchor="middle">
+                <rect x="14" y="80" width="96" height="76" fill="#c89b68" stroke="#8e6439" stroke-width="2"/><rect x="52" y="80" width="20" height="76" fill="#e3c9a6" opacity=".7"/><text x="62" y="124">מטבח</text>
+                <rect x="120" y="96" width="106" height="60" fill="#c89b68" stroke="#8e6439" stroke-width="2"/><rect x="163" y="96" width="20" height="60" fill="#e3c9a6" opacity=".7"/><text x="173" y="132">סלון</text>
+                <rect x="46" y="22" width="120" height="58" fill="#c89b68" stroke="#8e6439" stroke-width="2"/><rect x="96" y="22" width="20" height="58" fill="#e3c9a6" opacity=".7"/><text x="106" y="57">חדר ילדים</text>
+              </g>
+              <text x="200" y="40" font-family="Rubik, sans-serif" font-weight="700" font-size="15" fill="#c43a20" text-anchor="middle" transform="rotate(8 200 40)">שביר</text>
+              <rect x="174" y="24" width="52" height="24" stroke="#c43a20" stroke-width="2" transform="rotate(8 200 36)"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="heavy">
+    <div class="wrap heavy-grid">
+      <div class="pola">
+        <figure class="ps" data-slot="p2" data-src="../shared/photos/movers-piano.webp" data-alt="מובילים מכינים פסנתר כנף להובלה" data-icon="box" data-label="תמונה מהובלה"></figure>
+        <p data-edit="p2">פסנתר, קומה רביעית</p>
+      </div>
+      <div>
+        <h2>פריט כבד? <span>יש לו תוכנית משלו.</span></h2>
+        <p>רצועות, עגלה, שמיכות כפולות, ולפעמים מנוף. מספרים בצ׳אט מה יש, ומקבלים מחיר לפריט, לפני היום עצמו.</p>
+        <ul class="items"><li>פסנתר</li><li>כספת</li><li>מקרר דו דלתי</li><li>ארון שלוש דלתות</li><li>אקווריום</li></ul>
+        <button class="btn btn-strap" type="button" data-open-bot>לספר על פריט כבד</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head"><h2>מה בתוך ההובלה</h2><p>מה שסגרנו בוואטסאפ, זה מה שמשלמים.</p></div>
+      <div class="manifest">
+        <div class="mf"><svg viewBox="0 0 40 40" fill="none" stroke="#172b4d" stroke-width="2.5" aria-hidden="true"><path d="M20 4 L34 9 V20 C34 28 28 34 20 37 C12 34 6 28 6 20 V9 Z"/><path d="M14 20 l4 4 8 -9" stroke="#c43a20"/></svg><b>ביטוח תכולה</b><span>כל ההובלה מבוטחת, כולל כלים ומכשירי חשמל.</span></div>
+        <div class="mf"><svg viewBox="0 0 40 40" fill="none" stroke="#172b4d" stroke-width="2.5" aria-hidden="true"><path d="M8 32 L24 16 M22 10 a7 7 0 0 0 9 9 l-3 -3 -4 -1 -1 -4 z"/><circle cx="9" cy="31" r="2" fill="#c43a20" stroke="none"/></svg><b>פירוק והרכבה</b><span>מיטות, ארונות ושולחנות, עם הכלים שלנו.</span></div>
+        <div class="mf"><svg viewBox="0 0 40 40" fill="none" stroke="#172b4d" stroke-width="2.5" aria-hidden="true"><path d="M6 36 L30 8" stroke="#c43a20" stroke-width="4" stroke-linecap="round"/><rect x="24" y="10" width="12" height="10" fill="#c89b68"/><path d="M2 36 h22"/></svg><b>מנוף לפי הצורך</b><span>לקומות גבוהות ולפריטים שלא נכנסים במעלית.</span></div>
+        <div class="mf"><svg viewBox="0 0 40 40" fill="none" stroke="#172b4d" stroke-width="2.5" aria-hidden="true"><rect x="8" y="16" width="24" height="18" rx="2"/><path d="M13 16 V11 a7 7 0 0 1 14 0 V16"/><circle cx="20" cy="25" r="2.5" fill="#c43a20" stroke="none"/></svg><b>מחיר סגור מראש</b><span>בלי תוספות ביום ההובלה, אם הרשימה לא השתנתה.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides" style="background:#fff">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>טיפים מהשטח, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה דרור מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על חמש שאלות</b><span>מאיפה, לאן, גודל הדירה, הגישה ומתי. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם צריך מנוף, לפני שמרימים טלפון.</span></div></li>
+          <li><div><b>חוזרים עם מחיר סגור</b><span>הצ׳אט עונה גם כשאתם באמצע הובלה, עם הידיים על ארון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אברהם</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה להובלה מהאתר (דמו)
+מ: חדרה
+אל: תל אביב
+גודל: 2 עד 3 חדרים
+גישה: צריך מנוף
+מתי: החודש
+שם: מיכל אברהם
+טלפון: 054-3216789<time>21:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap"><div class="row"><span>דרור הובלות · דף לדוגמה, העסק בדוי</span><span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span></div></footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   const EST = { "סטודיו או חדר": [1200, 1900], "2 עד 3 חדרים": [2500, 4200], "4 חדרים ומעלה": [4500, 7800] };
   const EXTRA = { "קרקע או יש מעלית": 0, "קומה בלי מעלית": 400, "צריך מנוף": 900 };
   const fmt = (n) => n.toLocaleString("he-IL");
   PhotoSlots.init({ page: "movers" });
-  LeadBot.init({
+  const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "דרור · הובלות", subtitle: "הצעת מחיר בדקה", initial: "ד", launcher: "הצעת מחיר",
-    greet: "היי, כאן דרור 👋\nחמש שאלות קצרות ותקבלו מחיר משוער. אחר כך הפרטים מגיעים אליי לוואטסאפ.",
+    name: "דרור · הובלות", subtitle: "הצעת מחיר בדקה", initial: "ד", launcher: "הצעת מחיר", hint: "נציג AI",
+    greet: "היי, כאן דרור.\nחמש שאלות קצרות, ותקבלו מחיר משוער. אחר כך הפרטים מגיעים אליי לוואטסאפ.",
     steps: [
       { key: "from", label: "מאיפה", ask: "מאיזה ישוב עוברים?", input: "text", placeholder: "למשל: חדרה" },
       { key: "to", label: "לאן", ask: (d) => `ומ${d.from} לאן?`, input: "text", placeholder: "למשל: תל אביב" },
@@ -228,14 +510,41 @@
       { key: "when", label: "מתי", ask: "מתי ההובלה?", chips: ["השבוע", "החודש", "עוד אין תאריך"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לשלוח את ההצעה?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => {
       const [lo, hi] = EST[d.size]; const x = EXTRA[d.floor];
       return `תודה ${d.name.split(" ")[0]}! הובלה מ${d.from} ל${d.to}, ${d.size}: בערך ${fmt(lo + x)} עד ${fmt(hi + x)} ₪.\nאת המחיר הסופי סוגרים אחרי שיחה קצרה או תמונות.\nלחצו למטה, וההצעה תמשיך בוואטסאפ.`;
     },
-    summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה להובלה מהאתר (דמו)\nמ: ${d.from}\nאל: ${d.to}\nגודל: ${d.size}\nגישה: ${d.floor}\nמתי: ${d.when}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
   });
+  document.querySelectorAll("[data-size]").forEach((b) => b.addEventListener("click", () => bot.open({ size: b.dataset.size })));
+  document.querySelectorAll("[data-floor]").forEach((b) => b.addEventListener("click", () => bot.open({ floor: b.dataset.floor })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה גודל הדירה?", items: [
+      { label: "סטודיו או חדר", range: [1200, 1900], prefill: { size: "סטודיו או חדר" } },
+      { label: "2 עד 3 חדרים", range: [2500, 4200], prefill: { size: "2 עד 3 חדרים" } },
+      { label: "4 חדרים ומעלה", range: [4500, 7800], prefill: { size: "4 חדרים ומעלה" } },
+    ] },
+    factors: [
+      { ask: "איך הגישה בשני הצדדים?", options: [
+        { label: "קרקע או יש מעלית", prefill: { floor: "קרקע או יש מעלית" } },
+        { label: "קומה בלי מעלית", add: [300, 700], prefill: { floor: "קומה בלי מעלית" }, note: "סחיבה במדרגות: לפי מספר הקומות." },
+        { label: "צריך מנוף", add: [800, 1500], prefill: { floor: "צריך מנוף" }, note: "מנוף: 800 עד 1,500 ₪ נוספים." },
+      ] },
+      { ask: "כמה רחוק?", options: [
+        { label: "באותה עיר" },
+        { label: "עד 50 ק״מ", add: [300, 500] },
+        { label: "יותר מ-50 ק״מ", add: [700, 1200] },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. הצעה מדויקת אחרי רשימת תכולה, ובלי הפתעות ביום ההובלה.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/movers.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

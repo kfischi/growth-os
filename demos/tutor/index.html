@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>נועה שגיא · מורה פרטית למתמטיקה ואנגלית</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="שיעורים פרטיים במתמטיקה ובאנגלית, מיסודי ועד הבגרות. בחדרה, עמק חפר והשרון, או בזום.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,7 +195,7 @@
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=tutor">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
 <header class="hero squares">
   <div class="wrap">
@@ -307,6 +308,13 @@
     </div>
   </section>
 
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">טיפים מהשטח, ושאלות שחוזרות</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
   <section class="owner">
     <div class="wrap">
       <div class="head"><h2>מה המורה רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
@@ -347,13 +355,14 @@
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "tutor" });
   const RANGES = { "יסודי": "140 עד 160", "חטיבת ביניים": "150 עד 180", "תיכון: 3 יח״ל": "160 עד 190", "תיכון: 4 או 5 יח״ל": "180 עד 220" };
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "נועה · מורה פרטית", subtitle: "מתמטיקה ואנגלית", initial: "נ", launcher: "לבדוק שיעור",
+    name: "נועה · מורה פרטית", subtitle: "מתמטיקה ואנגלית", initial: "נ", launcher: "לבדוק שיעור", hint: "נציג AI",
     greet: "היי, כאן נועה.\nכמה שאלות קצרות, ואחזור אליכם לקבוע שיעור היכרות.",
     steps: [
       { key: "subject", label: "מקצוע", ask: "מה לומדים?", chips: ["מתמטיקה", "אנגלית", "שתיהן"] },
@@ -362,14 +371,16 @@
       { key: "where", label: "איפה", ask: "איפה נוח ללמוד?", chips: ["בבית שלנו", "אצל המורה", "אונליין"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! שיעור של 60 דקות בשכבה הזאת עולה בדרך כלל ${RANGES[d.level] || "140 עד 220"} ₪. שיעור ראשון הוא היכרות: מה חסר ואיך עובדים.\nלחצו למטה, ואחזור אליכם לקבוע.`,
-    summary: (d) => `פנייה מהאתר (דמו מורה פרטית)\nמקצוע: ${d.subject}\nשכבה: ${d.level}\nמטרה: ${d.goal}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו מורה פרטית)\nמקצוע: ${d.subject}\nשכבה: ${d.level}\nמטרה: ${d.goal}\nאיפה: ${d.where}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => bot.open({ level: b.dataset.level })));
   document.querySelectorAll("[data-subject]").forEach((b) => b.addEventListener("click", () => bot.open({ subject: b.dataset.subject })));
+  Guides.load("../shared/guides/tutor.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

@@ -4,252 +4,435 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>רז שגב · חשמלאי מוסמך</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="קצר, חשמל שקפץ, התקנות ועמדות טעינה. מתארים את התקלה בצ׳אט, והפרטים מגיעים לחשמלאי בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@700&family=Assistant:wght@400;600;700&family=Cousine:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&family=Cousine:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
-  /* Object: the home breaker panel, with label-maker tape naming each circuit.
-     Detail: amps per circuit (16A, 20A), the 30mA RCD, the inspection sticker on the door.
-     Bold move: a working panel in the hero. One breaker has tripped; flipping it back opens the chat. */
+  /* Object: the home distribution panel (לוח חשמל), its label-maker tape, and the three-core cable that feeds it.
+     Detail: 16A / 20A / 40A, פחת 30mA, 230V, brown phase, blue neutral, green earth, the licence, the earth test after every job.
+     Bold move: the page opens in a blackout. The kitchen breaker has tripped; flip it and the hero lights up, the bulb comes on, and the chat opens.
+     Everything else stays quiet: plaster wall, tape labels, one safety-orange strip. */
   :root {
-    --enamel: #e7e8e3;         /* panel paint */
-    --enamel-deep: #cfd1ca;
-    --graphite: #202427;       /* text, panel frame */
-    --breaker: #16191c;
-    --tape: #111315;           /* label-maker tape */
-    --live: #ff5a1f;           /* tripped indicator, safety orange */
-    --led: #1fbf6a;
-    --wall: #f4f4f1;
-    --display: "Miriam Libre", "Assistant", sans-serif;
-    --body: "Assistant", system-ui, sans-serif;
+    --blackout: #121a24;       /* the hero with the power off */
+    --plaster: #edefea;        /* the wall, once the light is back */
+    --conduit: #19202a;        /* text, the panel frame */
+    --conduit-soft: #4a5562;
+    --spark: #ff5a1f;          /* safety orange: tripped breaker, warnings, buttons */
+    --spark-ink: #b93a0b;      /* the same orange, dark enough for text on plaster */
+    --phase: #7b4527;          /* brown core */
+    --neutral: #2357c4;        /* blue core */
+    --earth: #1d8550;          /* green earth core */
+    --tape: #0f1318;
+    --display: "Karantina", "Rubik", "Arial Hebrew", sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
     --mono: "Cousine", ui-monospace, monospace;
-    --phone-frame: var(--graphite);
-    --bot-bg: #fff; --bot-fg: var(--graphite); --bot-line: #dcddd8; --bot-muted: #5d6266;
-    --bot-accent: var(--graphite); --bot-accent-fg: #fff; --bot-them: #efefeb; --bot-me: var(--live); --bot-me-fg: #202427;
+    --phone-frame: var(--conduit);
+    --bot-bg: #fff; --bot-fg: var(--conduit); --bot-line: #d5d8d2; --bot-muted: var(--conduit-soft);
+    --bot-accent: var(--conduit); --bot-accent-fg: #fff; --bot-them: #eef0ec; --bot-me: var(--spark); --bot-me-fg: var(--conduit);
     --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+    --guide-alert: var(--spark-ink);
+    --ps-a: #8b939a; --ps-b: #2b333c; --ps-ui: var(--conduit); --ps-edit: var(--spark);
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--wall); color: var(--graphite); font-family: var(--body); font-size: 18px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--plaster); color: var(--conduit); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--live); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.02; letter-spacing: -.02em; margin: 0; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 4px; }
-  .btn-live { background: var(--live); color: var(--graphite, #202427); }
-  .btn-live:hover { background: #e84a12; }
-  .btn-line { border: 2px solid var(--graphite); color: var(--graphite); background: transparent; }
-  .dymo { display: inline-block; background: var(--tape); color: #f2f2f2; font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: .01em; padding: 3px 8px 2px; border-radius: 2px;
-    text-shadow: 0 1px 0 rgba(255,255,255,.18); box-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap; }
+  :focus-visible { outline: 3px solid var(--spark); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: .92; letter-spacing: 0; margin: 0; }
+  h2 { font-size: clamp(54px, 7vw, 92px); }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 17px; border-radius: 4px; transition: transform .15s, background .15s; }
+  .btn:active { transform: translateY(1px); }
+  .btn-spark { background: var(--spark); color: var(--conduit); box-shadow: 0 3px 0 #b93a0b; }
+  .btn-spark:hover { background: #ff6d37; }
+  .btn-line { border: 2px solid currentColor; background: transparent; color: inherit; }
+  .tape { display: inline-block; background: var(--tape); color: #f1f3f5; font-family: var(--body); font-weight: 500; font-size: 13px; letter-spacing: .03em; line-height: 1.3; padding: 4px 9px 3px; border-radius: 2px;
+    text-shadow: 0 1px 0 rgba(255,255,255,.16); box-shadow: 0 1px 2px rgba(0,0,0,.35); white-space: nowrap; }
 
-  .demo { background: var(--graphite); color: #c7cbcd; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo { background: var(--tape); color: #c3cad1; font-size: 13px; text-align: center; padding: 7px 16px; }
   .demo a { color: #fff; }
 
-  /* ---------- Hero ---------- */
-  .bar { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; }
-  .logo { font-family: var(--display); font-size: 25px; display: flex; align-items: center; gap: 10px; }
-  .bar a { font-weight: 700; text-decoration: none; border-bottom: 3px solid var(--live); }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 470px); gap: 56px; align-items: center; padding-block: 30px 84px; }
-  .hero h1 { font-size: clamp(46px, 6.6vw, 88px); margin: 14px 0 18px; }
-  .hero h1 em { font-style: normal; color: #d9440d; } /* --live darkened for text on light: 3:1 for large type */
-  .hero p { font-size: 20px; max-width: 36ch; margin: 0 0 26px; color: #4a4f53; }
+  /* ---------- Hero: the blackout, then the light ---------- */
+  .hero { --h-bg: var(--blackout); --h-fg: #edf0f3; --h-soft: #a9b5c2; background: var(--h-bg); color: var(--h-fg); position: relative; overflow: hidden;
+    transition: background-color 1.1s ease, color .8s ease; }
+  .hero.lit { --h-bg: var(--plaster); --h-fg: var(--conduit); --h-soft: var(--conduit-soft); }
+  .hero::before { /* the torch beam on the panel while the power is off */
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 1; transition: opacity 1s ease;
+    background: radial-gradient(420px 360px at 26% 62%, rgba(150,180,215,.16), transparent 70%); }
+  .hero.lit::before { opacity: 0; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; position: relative; z-index: 2; }
+  .logo { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .logo b { font-family: var(--display); font-size: 40px; line-height: 1; font-weight: 700; white-space: nowrap; }
+  .bar .wa { font-weight: 700; text-decoration: none; border-bottom: 3px solid var(--spark); white-space: nowrap; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 48px 64px; align-items: end; padding-block: 18px 0; position: relative; z-index: 2; }
+  .hero-copy { padding-bottom: 72px; min-width: 0; }
+  .volt { display: flex; gap: 8px; flex-wrap: wrap; }
+  .volt .tape { background: transparent; color: var(--h-soft); box-shadow: inset 0 0 0 1.5px currentColor; text-shadow: none; }
+  .hero h1 { font-size: clamp(76px, 10.5vw, 150px); margin: 18px 0 14px; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; color: var(--spark); display: block; transition: color .8s ease; }
+  .hero.lit h1 em { color: var(--spark-ink); }
+  .hero .lead { font-size: 19px; max-width: 34ch; margin: 0 0 26px; color: var(--h-soft); transition: color .8s ease; }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 26px 0 0; padding: 16px 0 0; border-top: 1px solid color-mix(in srgb, var(--h-fg) 22%, transparent); list-style: none; font-size: 15px; color: var(--h-soft); }
+  .facts b { color: var(--h-fg); font-weight: 700; }
 
-  .panel { background: var(--graphite); border-radius: 10px; padding: 14px; box-shadow: 0 40px 70px -35px rgba(0,0,0,.6); position: relative; }
-  .panel-in { background: linear-gradient(180deg, var(--enamel), var(--enamel-deep)); border-radius: 4px; padding: 22px 18px 18px; position: relative; }
-  .panel-in::before { content: ""; position: absolute; inset: 8px; border: 1px solid rgba(0,0,0,.08); border-radius: 3px; pointer-events: none; }
-  .rail { display: flex; gap: 6px; justify-content: center; background: linear-gradient(180deg, #b8bbb4, #9fa39b 50%, #b8bbb4); padding: 10px 8px; border-radius: 3px; }
-  .brk { all: unset; box-sizing: border-box; cursor: pointer; width: 52px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .brk:focus-visible { outline: 3px solid var(--live); outline-offset: 3px; border-radius: 4px; }
-  .brk .dymo { font-size: 10.5px; padding: 2px 5px; letter-spacing: .02em; }
-  .brk .case { width: 100%; height: 118px; background: linear-gradient(90deg, #f7f7f4, #e3e4df); border-radius: 4px; border: 1px solid #b9bbb4; position: relative; box-shadow: inset 0 -4px 0 rgba(0,0,0,.05); }
-  .brk .slot { position: absolute; left: 50%; top: 30px; transform: translateX(-50%); width: 24px; height: 56px; background: #2a2e31; border-radius: 4px; }
-  .brk .lever { position: absolute; left: 50%; top: 32px; transform: translateX(-50%); width: 20px; height: 26px; background: var(--breaker); border-radius: 3px; transition: top .18s cubic-bezier(.3,1.6,.6,1); box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
-  .brk .win { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); width: 18px; height: 12px; border-radius: 2px; background: var(--led); box-shadow: 0 0 8px var(--led); }
-  .brk .amp { position: absolute; bottom: 7px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 10px; color: #5d6266; direction: ltr; }
-  .brk.off .lever { top: 58px; }
-  .brk.off .win { background: var(--live); box-shadow: 0 0 10px var(--live); }
+  /* the bulb hanging over the panel */
+  .lamp { position: absolute; bottom: calc(100% - 6px); left: 50%; margin-left: -60px; width: 120px; height: 520px; z-index: 0; pointer-events: none; }
+  .lamp .glass { fill: #2a3542; transition: fill .6s ease; }
+  .lamp .halo { opacity: 0; transition: opacity 1.1s ease; }
+  .hero.lit .lamp .glass { fill: #fbfdff; }
+  .hero.lit .lamp .halo { opacity: 1; }
+
+  .panel-col { position: relative; min-width: 0; }
+  .panel { z-index: 1; background: var(--conduit); border-radius: 10px 10px 0 0; padding: 14px 14px 0; box-shadow: 0 -10px 60px -20px rgba(0,0,0,.6); position: relative; }
+  .panel-in { background: linear-gradient(180deg, #e9eae5, #cfd2cb); border-radius: 4px 4px 0 0; padding: 20px 18px 22px; position: relative; }
+  .panel-in::before { content: ""; position: absolute; inset: 8px 8px 0; border: 1px solid rgba(0,0,0,.08); border-bottom: 0; border-radius: 3px; pointer-events: none; }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--conduit); font-size: 13px; }
+  .panel-head .ltr { font-family: var(--mono); font-size: 12px; }
+  .panel-head .warn { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+  .panel-head .warn svg { width: 22px; height: 20px; flex: none; }
+  .rail { display: flex; gap: 6px; justify-content: center; background: linear-gradient(180deg, #b6b9b2, #9da199 50%, #b6b9b2); padding: 10px 8px; border-radius: 3px; }
+  .brk { all: unset; box-sizing: border-box; cursor: pointer; width: 56px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .brk:focus-visible { outline: 3px solid var(--spark); outline-offset: 3px; border-radius: 4px; }
+  .brk .tape { font-size: 10.5px; padding: 2px 5px; letter-spacing: .02em; }
+  .brk .case { width: 100%; height: 124px; background: linear-gradient(90deg, #f8f8f5, #e2e3de); border-radius: 4px; border: 1px solid #b6b8b1; position: relative; box-shadow: inset 0 -4px 0 rgba(0,0,0,.05); }
+  .brk .slot { position: absolute; left: 50%; top: 32px; transform: translateX(-50%); width: 24px; height: 58px; background: #2a2f34; border-radius: 4px; }
+  .brk .lever { position: absolute; left: 50%; top: 34px; transform: translateX(-50%); width: 20px; height: 27px; background: #15191d; border-radius: 3px; transition: top .18s cubic-bezier(.3,1.6,.6,1); box-shadow: inset 0 2px 0 rgba(255,255,255,.18); }
+  .brk .win { position: absolute; left: 50%; top: 9px; transform: translateX(-50%); width: 18px; height: 12px; border-radius: 2px; background: var(--earth); box-shadow: 0 0 8px rgba(29,133,80,.8); }
+  .brk .amp { position: absolute; bottom: 7px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 10.5px; color: #4a5056; direction: ltr; }
+  .brk.off .lever { top: 61px; }
+  .brk.off .win { background: var(--spark); box-shadow: 0 0 12px var(--spark); }
   .brk.trip .case { animation: tripPulse 1.6s ease-in-out infinite; }
-  @keyframes tripPulse { 50% { box-shadow: 0 0 0 4px rgba(255,90,31,.35); } }
-  .brk.main { width: 70px; }
-  .brk.main .lever { background: var(--live); }
-  .panel-foot { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-top: 16px; }
-  .hint { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 8px; }
-  .hint::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 4px rgba(255,90,31,.25); flex: none; }
-  .sticker { background: #fff; border: 1px dashed #9a9e98; padding: 6px 10px; font-size: 12.5px; line-height: 1.35; transform: rotate(2deg); color: #3b4044; }
-  .sticker b { display: block; font-size: 11px; color: #a8350a; }
+  @keyframes tripPulse { 50% { box-shadow: 0 0 0 5px rgba(255,90,31,.45); } }
+  .brk.main { width: 72px; }
+  .brk.main .lever { background: var(--spark); }
+  .panel-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; color: var(--conduit); }
+  .hint { font-weight: 700; font-size: 15.5px; display: flex; align-items: center; gap: 10px; }
+  .hint::before { content: ""; width: 11px; height: 11px; border-radius: 50%; background: var(--spark); box-shadow: 0 0 0 4px rgba(255,90,31,.25); flex: none; }
+  .hero.lit .hint::before { background: var(--earth); box-shadow: 0 0 0 4px rgba(29,133,80,.2); }
+  .sticker { background: #fff; border: 1px dashed #8d928c; padding: 6px 10px; font-size: 12.5px; line-height: 1.35; transform: rotate(2deg); color: #3b4046; flex: none; }
+  .sticker b { display: block; font-size: 11.5px; color: var(--spark-ink); }
+
+  /* the feed: a three-core cable, brown phase, blue neutral, green earth */
+  .feed { height: 30px; position: relative; background: var(--conduit); }
+  .feed::before { content: ""; position: absolute; inset: 8px 0; background: linear-gradient(180deg, var(--phase) 0 33.3%, var(--neutral) 33.3% 66.6%, var(--earth) 66.6%); }
+  .feed::after { content: ""; position: absolute; inset: 8px 0; background: repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 2px, transparent 2px 18px); }
+
+  /* ---------- Safety strip ---------- */
+  .safety { background: var(--spark); color: var(--conduit); }
+  .safety .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px 28px; align-items: center; padding-block: 22px; }
+  .safety strong { font-family: var(--display); font-size: 46px; line-height: .9; }
+  .safety p { margin: 0; font-size: 17.5px; max-width: 66ch; }
+  .safety a { font-weight: 700; white-space: nowrap; }
 
   /* ---------- Sections ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
-  .head h2 { font-size: clamp(36px, 5vw, 58px); }
-  .jobs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; border-top: 3px solid var(--graphite); }
-  .job { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; padding: 18px 0; border-bottom: 1px solid #d3d4cf; min-width: 0; }
-  .job:hover h3 { color: var(--live); }
-  .job:focus-visible { outline: 3px solid var(--live); outline-offset: 2px; }
-  .job h3 { font-size: 26px; }
-  .job .dymo { justify-self: start; align-self: center; }
-  .job p { grid-column: 1 / -1; margin: 0; color: #4a4f53; font-size: 16px; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 14px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head p { margin: 0; color: var(--conduit-soft); max-width: 42ch; }
 
-  .safety { background: var(--live); color: var(--graphite); }
-  .safety .wrap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; padding-block: 30px; }
-  .safety b { font-family: var(--display); font-size: 30px; line-height: 1; }
-  .safety p { margin: 0; font-size: 18px; max-width: 70ch; }
+  /* the circuit schedule on the panel door: the services */
+  .door { background: #fff; border: 2px solid var(--conduit); border-radius: 6px; box-shadow: 10px 10px 0 var(--conduit); }
+  .door-top { display: grid; grid-template-columns: 110px minmax(0, 1fr) 190px; gap: 16px; padding: 12px 22px; background: var(--conduit); color: #c9d0d7; font-family: var(--mono); font-size: 12.5px; }
+  .job { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: 110px minmax(0, 1fr) 190px; gap: 16px; align-items: center; padding: 18px 22px; border-top: 1px solid #dcdfd9; position: relative; transition: background .15s; }
+  .job:first-of-type { border-top: 0; }
+  .job:hover { background: #f5f6f2; }
+  .job:hover h3 { color: var(--spark-ink); }
+  .job:focus-visible { outline: 3px solid var(--spark); outline-offset: -3px; }
+  .job .tape { justify-self: start; }
+  .job h3 { font-size: 44px; transition: color .15s; }
+  .job p { margin: 2px 0 0; color: var(--conduit-soft); font-size: 15.5px; }
+  .job .price { font-family: var(--body); font-weight: 700; font-size: 17px; text-align: left; white-space: nowrap; }
+  .job .price small { display: block; font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--conduit-soft); }
+  .job.urgent { background: #fff3ee; }
+  .job.urgent .tape { background: var(--spark); color: var(--conduit); text-shadow: none; }
+  .job.urgent .price { color: var(--spark-ink); }
+  .door-foot { padding: 12px 22px; border-top: 2px solid var(--conduit); font-size: 14.5px; color: var(--conduit-soft); }
 
-  .owner { background: var(--graphite); color: #eceeec; }
-  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
-  .owner h2 { margin-bottom: 18px; }
-  .owner p { color: #b8bec1; max-width: 46ch; margin: 0 0 14px; }
-  .owner .dymo { background: #000; }
-  .owner .ph-cap { color: #9aa1a5; }
+  .calc { background: #e3e6e0; }
 
-  footer { padding-block: 34px 90px; color: #5d6266; font-size: 15px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 3px solid var(--graphite); padding-top: 18px; }
+  /* ---------- The licence card + the work report ---------- */
+  .trust-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .card { background: linear-gradient(160deg, #ffffff, #eef1f4); border-radius: 14px; border: 1px solid #c9ced3; box-shadow: 0 30px 60px -36px rgba(25,32,42,.6); overflow: hidden; max-width: 520px; }
+  .card-band { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--neutral); color: #fff; padding: 12px 20px; font-weight: 700; font-size: 15px; }
+  .card-band .ltr { font-family: var(--mono); font-size: 12.5px; font-weight: 400; opacity: .9; }
+  .card-body { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 20px; padding: 20px; }
+  .card .ps { aspect-ratio: 4 / 5; border-radius: 6px; }
+  .card dl { margin: 0; display: grid; gap: 8px; font-size: 15px; }
+  .card dl div { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; border-bottom: 1px dotted #b7bdc3; padding-bottom: 6px; }
+  .card dt { color: var(--conduit-soft); font-size: 13px; padding-top: 2px; }
+  .card dd { margin: 0; font-weight: 500; min-width: 0; }
+  .card dd.name { font-family: var(--display); font-size: 36px; line-height: .9; font-weight: 700; }
+  .card-wires { height: 10px; background: linear-gradient(90deg, var(--phase) 0 33.3%, var(--neutral) 33.3% 66.6%, var(--earth) 66.6%); }
+  .card .ps-chip { font-size: 10px; }
+  .promise { list-style: none; margin: 30px 0 0; padding: 0; display: grid; gap: 0; max-width: 520px; }
+  .promise li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding: 13px 0; border-top: 1px solid #cdd1cb; }
+  .promise li svg { width: 26px; height: 26px; margin-top: 2px; }
+  .promise b { display: block; }
+  .promise span { color: var(--conduit-soft); font-size: 15.5px; }
 
-
-  /* ---------- Work report on a clipboard (photo slots) ---------- */
-  :root { --ps-a: #8a8f8a; --ps-b: #2a2e31; --ps-ui: var(--graphite); --ps-edit: var(--live); }
-  .report-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 56px; align-items: center; }
-  .board { background: linear-gradient(135deg, #a8774c, #8a5d37); border-radius: 18px; padding: 54px 20px 22px; position: relative; box-shadow: 0 40px 70px -40px rgba(0,0,0,.7); max-width: 640px; }
-  .board::before { content: ""; position: absolute; top: 12px; left: 50%; width: 150px; height: 46px; margin-left: -75px; border-radius: 10px 10px 16px 16px; background: linear-gradient(180deg, #e9ebe8, #a9ada8); box-shadow: 0 6px 10px rgba(0,0,0,.35); }
-  .paper { background: #fff; padding: 22px; box-shadow: 0 2px 0 #ddd, 0 4px 0 #f3f3f3; }
-  .paper-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-bottom: 3px solid var(--graphite); padding-bottom: 12px; margin-bottom: 16px; }
-  .paper-top h3 { font-size: 26px; }
-  .paper-top .who { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-  .paper-top .who .ps { width: 54px; height: 54px; border-radius: 6px; flex: none; }
-  .paper-top .who b { display: block; font-size: 16px; }
+  .board { background: linear-gradient(135deg, #3b4652, #262e37); border-radius: 16px; padding: 52px 18px 20px; position: relative; box-shadow: 0 40px 70px -40px rgba(0,0,0,.7); }
+  .board::before { content: ""; position: absolute; top: 12px; left: 50%; width: 150px; height: 44px; margin-left: -75px; border-radius: 10px 10px 16px 16px; background: linear-gradient(180deg, #e9ebe8, #a4a9a3); box-shadow: 0 6px 10px rgba(0,0,0,.35); }
+  .paper { background: #fff; padding: 22px; box-shadow: 0 2px 0 #ddd, 0 4px 0 #f1f1f1; }
+  .paper-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 3px solid var(--conduit); padding-bottom: 10px; margin-bottom: 16px; }
+  .paper-top h3 { font-size: 44px; }
+  .paper-top span { font-family: var(--mono); font-size: 12.5px; color: var(--conduit-soft); }
   .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .shot .ps { aspect-ratio: 4 / 3; }
-  .shot .dymo { margin-top: 8px; }
+  .shot .ps { aspect-ratio: 4 / 3; border-radius: 3px; }
+  .ps-img[src$="electrician-panel.webp"] { filter: grayscale(1) contrast(1.08); } /* the sample's earth wires and screwdriver read as yellow: shown in greys */
+  .shot .tape { margin-top: 8px; white-space: normal; }
   .checks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 6px; font-size: 15.5px; }
-  .checks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; }
-  .checks li::before { content: "✓"; width: 20px; height: 20px; border: 2px solid var(--graphite); display: grid; place-items: center; font-weight: 700; font-size: 13px; color: var(--live); }
-  .sign { margin-top: 16px; padding-top: 10px; border-top: 1px dashed #b8bab5; font-size: 13.5px; color: #5d6266; display: flex; justify-content: space-between; gap: 10px; }
-  .report-side h2 { font-size: clamp(34px, 4.6vw, 54px); margin-bottom: 14px; }
-  .report-side p { color: #4a4f53; margin: 0 0 12px; }
-  .paper-top .who .ps-chip, .shot .ps-chip { font-size: 10.5px; }
-  .paper-top .who .ps-chip { display: none; }
-  @media (max-width: 900px) { .report-wrap { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
-  @media (max-width: 520px) { .board { padding: 46px 10px 12px; } .paper { padding: 14px; } .paper-top { flex-direction: column; align-items: flex-start; } .shots { gap: 8px; } .shot .dymo { font-size: 10px; } }
+  .checks li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; }
+  .checks li::before { content: ""; width: 20px; height: 20px; margin-top: 3px; border: 2px solid var(--conduit); background: no-repeat center / 14px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8.5 6 12 14 3' fill='none' stroke='%231d8550' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  .sign { margin-top: 16px; padding-top: 10px; border-top: 1px dashed #b8bab5; font-size: 13.5px; color: var(--conduit-soft); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .report-note { margin: 18px 4px 0; color: var(--conduit-soft); font-size: 15px; }
 
-  @media (max-width: 900px) {
-    .hero-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
-    .panel { max-width: 470px; }
-    .jobs { grid-template-columns: minmax(0, 1fr); }
+  /* ---------- How it works: a single-line wiring diagram ---------- */
+  .line-diagram { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; position: relative; }
+  .line-diagram::before { content: ""; position: absolute; top: 27px; inset-inline: 28px; height: 4px; background: var(--conduit); }
+  .line-diagram li { position: relative; padding-inline-end: 28px; min-width: 0; }
+  .node { width: 58px; height: 58px; border-radius: 50%; border: 4px solid var(--conduit); background: var(--plaster); display: grid; place-items: center; position: relative; margin-bottom: 18px; }
+  .node svg { width: 26px; height: 26px; }
+  .line-diagram li:last-child .node { background: var(--spark); }
+  .line-diagram b { display: block; font-family: var(--display); font-size: 40px; line-height: .95; margin-bottom: 6px; }
+  .line-diagram span { color: var(--conduit-soft); font-size: 16px; display: block; max-width: 30ch; }
+
+  /* ---------- What the electrician sees ---------- */
+  .owner { background: var(--conduit); color: #e9edf0; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner h2 { margin: 16px 0 18px; }
+  .owner p { color: #b4bec8; max-width: 44ch; margin: 0 0 14px; }
+  .owner .tape { background: #000; }
+  .owner .ph-cap { color: #9eaab5; }
+  .guides { padding-bottom: 72px; }
+
+  footer { padding-block: 30px 96px; color: var(--conduit-soft); font-size: 14.5px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; border-top: 3px solid var(--conduit); padding-top: 18px; }
+  footer nav { display: flex; gap: 18px; flex-wrap: wrap; }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .hero-copy { padding-bottom: 10px; }
+    .panel-col { max-width: 480px; width: 100%; margin-inline: auto; }
+    .lamp { display: none; }
+    .trust-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
     .owner .phone { margin-inline: auto; }
+    .card, .promise { max-width: none; }
+  }
+  @media (max-width: 720px) {
+    .door { box-shadow: 6px 6px 0 var(--conduit); }
+    .door-top { display: none; }
+    .job { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 16px; }
+    .job .tape { grid-column: 1 / -1; grid-row: 1; }
+    .job > div { grid-column: 1; }
+    .job .price { grid-column: 2; grid-row: 2; align-self: start; font-size: 14px; padding-top: 6px; }
+    .job h3 { font-size: 38px; }
+    .safety .wrap { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .line-diagram { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+    .line-diagram::before { top: 28px; bottom: 28px; inset-inline: 27px auto; width: 4px; height: auto; }
+    .line-diagram li { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 16px; padding: 0; }
+    .node { margin: 0; }
   }
   @media (max-width: 520px) {
-    .panel { padding: 10px; }
-    .panel-in { padding: 16px 10px 14px; }
+    body { font-size: 16.5px; }
+    section { padding-block: 64px; }
+    .logo b { font-size: 34px; }
+    .logo .tape { display: none; }
+    .hero h1 { font-size: clamp(64px, 20vw, 86px); margin-top: 14px; }
+    .hero .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { font-size: 14px; gap: 4px 16px; }
+    .panel { padding: 10px 10px 0; }
+    .panel-in { padding: 14px 8px 16px; }
+    .panel-head { font-size: 11px; }
     .rail { gap: 4px; padding: 8px 5px; }
-    .brk { width: 42px; } .brk.main { width: 50px; }
-    .brk .dymo { font-size: 9px; padding: 2px 3px; }
-    .brk .case { height: 104px; }
-    .safety .wrap { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .brk { width: 43px; } .brk.main { width: 52px; }
+    .brk .tape { font-size: 9.5px; padding: 2px 3px; }
+    .brk .case { height: 108px; }
     .panel-foot { flex-direction: column; align-items: stretch; }
     .sticker { align-self: flex-start; }
+    .card-body { grid-template-columns: 104px minmax(0, 1fr); gap: 14px; padding: 16px; }
+    .card dl div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .card dd.name { font-size: 32px; }
+    .board { padding: 46px 10px 12px; }
+    .paper { padding: 14px; }
+    .paper-top h3 { font-size: 38px; }
+    .shots { gap: 8px; }
+    .shot .tape { font-size: 10.5px; }
   }
-  @media (prefers-reduced-motion: reduce) { .brk.trip .case { animation: none; } .brk .lever { transition: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .brk.trip .case { animation: none; box-shadow: 0 0 0 4px rgba(255,90,31,.45); }
+    .brk .lever, .hero, .hero::before, .hero h1 em, .hero .lead, .lamp .glass, .lamp .halo { transition: none; }
+  }
+  html.a11y-still .brk.trip .case { animation: none; box-shadow: 0 0 0 4px rgba(255,90,31,.45); }
+  html.a11y-still .brk .lever, html.a11y-still .hero, html.a11y-still .hero::before, html.a11y-still .hero h1 em, html.a11y-still .hero .lead, html.a11y-still .lamp .glass, html.a11y-still .lamp .halo { transition: none; }
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=electrician">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
-<header class="hero">
+<header class="hero" id="hero">
   <div class="wrap">
     <div class="bar">
-      <div class="logo"><span data-edit="name">רז שגב</span> <span class="dymo">חשמלאי מוסמך</span></div>
-      <a href="#" data-wa="היי רז, הגעתי מהאתר ויש לי שאלה">וואטסאפ</a>
+      <div class="logo"><b data-edit="name">רז שגב</b> <span class="tape">חשמלאי מוסמך</span></div>
+      <a class="wa" href="#" data-wa="היי רז, הגעתי מהאתר ויש לי שאלה">וואטסאפ</a>
     </div>
     <div class="hero-grid">
-      <div>
-        <span class="dymo">קצר · התקנות · לוחות · עמדות טעינה</span>
+      <div class="hero-copy">
+        <div class="volt"><span class="tape">קצרים</span><span class="tape">לוחות</span><span class="tape">נקודות</span><span class="tape">עמדות טעינה</span></div>
         <h1><span data-edit="h1a">החשמל קפץ</span> <em data-edit="h1b">ולא חוזר?</em></h1>
-        <p>מתארים מה קרה בצ׳אט קצר. הפרטים מגיעים אליי לוואטסאפ, ואני חוזר אליכם עם זמן הגעה.</p>
+        <p class="lead">מתארים מה קרה בצ׳אט קצר. הפרטים מגיעים אליי לוואטסאפ, ואני חוזר אליכם עם זמן הגעה.</p>
         <div class="ctas">
-          <button class="btn btn-live" data-open-bot>לתאר את התקלה</button>
+          <button class="btn btn-spark" data-open-bot>לתאר את התקלה</button>
           <a class="btn btn-line" href="#" data-wa="היי רז, אשמח לקבוע חשמלאי">וואטסאפ ישיר</a>
         </div>
+        <ul class="facts">
+          <li><b data-edit="f1">14 שנה</b> בשטח</li>
+          <li><b data-edit="f2">חדרה והשרון</b></li>
+          <li>אחריות <b data-edit="f3">12 חודשים</b></li>
+        </ul>
       </div>
-      <div class="panel">
-        <div class="panel-in">
-          <div class="rail" role="group" aria-label="לוח חשמל לדוגמה">
-            <button class="brk main" aria-label="מפסק ראשי"><span class="dymo">ראשי</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">40A</span></span></button>
-            <button class="brk" aria-label="פחת"><span class="dymo">פחת</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">30mA</span></span></button>
-            <button class="brk off trip" id="tripped" aria-label="מפסק המטבח קפץ. להרים אותו"><span class="dymo">מטבח</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-            <button class="brk" aria-label="סלון"><span class="dymo">סלון</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-            <button class="brk" aria-label="דוד"><span class="dymo">דוד</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-            <button class="brk" aria-label="מזגן"><span class="dymo">מזגן</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">20A</span></span></button>
-          </div>
-          <div class="panel-foot">
-            <span class="hint">המפסק של המטבח קפץ. לחצו עליו</span>
-            <span class="sticker"><b>בדיקת לוח</b>רז שגב · רישיון לדוגמה</span>
+      <div class="panel-col">
+        <svg class="lamp" viewBox="0 -290 120 520" aria-hidden="true">
+    <defs><radialGradient id="halo" cx="50%" cy="78%" r="50%"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".35" stop-color="#e8f0fb" stop-opacity=".55"/><stop offset="1" stop-color="#e8f0fb" stop-opacity="0"/></radialGradient></defs>
+    <circle class="halo" cx="60" cy="178" r="60" fill="url(#halo)"/>
+    <path d="M60 -290 V128" stroke="#5d6874" stroke-width="2.5"/>
+    <rect x="49" y="126" width="22" height="22" rx="3" fill="#3c4652"/>
+    <path class="glass" d="M60 148 c-16 0 -26 12 -26 27 c0 12 8 18 12 25 c2 4 2 8 3 11 h22 c1-3 1-7 3-11 c4-7 12-13 12-25 c0-15 -10-27 -26-27z"/>
+    <path d="M52 186 q4 -10 8 0 q4 10 8 0" fill="none" stroke="#8c97a3" stroke-width="1.6"/>
+  </svg>
+        <div class="panel">
+          <div class="panel-in">
+            <div class="panel-head">
+              <span class="warn"><svg viewBox="0 0 22 20" aria-hidden="true"><path d="M11 1 21 19H1z" fill="#ff5a1f" stroke="#19202a" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6 8 12h3l-1 4 4-6h-3z" fill="#19202a"/></svg>לוח דירתי</span>
+              <span class="ltr">230V · 40A</span>
+            </div>
+            <div class="rail" role="group" aria-label="לוח חשמל לדוגמה">
+              <button class="brk main" aria-label="מפסק ראשי"><span class="tape">ראשי</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">40A</span></span></button>
+              <button class="brk" aria-label="פחת"><span class="tape">פחת</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">30mA</span></span></button>
+              <button class="brk off trip" id="tripped" aria-label="מפסק המטבח קפץ. להרים אותו"><span class="tape">מטבח</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+              <button class="brk" aria-label="סלון"><span class="tape">סלון</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+              <button class="brk" aria-label="דוד"><span class="tape">דוד</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
+              <button class="brk" aria-label="מזגן"><span class="tape">מזגן</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">20A</span></span></button>
+            </div>
+            <div class="panel-foot">
+              <span class="hint" aria-live="polite">המפסק של המטבח קפץ. הרימו אותו</span>
+              <span class="sticker"><b>בדיקת לוח</b>רז שגב · רישיון לדוגמה</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="feed" aria-hidden="true"></div>
 </header>
 
 <div class="safety">
   <div class="wrap">
-    <b>קודם כל, בטיחות.</b>
-    <p>יש ריח שרוף או ניצוצות? מורידים את המפסק הראשי, לא נוגעים בלוח רטוב, ורק אז כותבים לנו.</p>
+    <strong>קודם כל, בטיחות.</strong>
+    <p>ריח שרוף או ניצוצות? מורידים את המפסק הראשי, לא נוגעים בלוח רטוב, ורק אז כותבים.</p>
+    <a href="#g-burning">מה עושים עכשיו</a>
   </div>
 </div>
 
 <main>
-  <section>
+  <section id="jobs">
     <div class="wrap">
-      <div class="head"><h2>עבודות נפוצות</h2><span class="dymo">מחירים לדוגמה</span></div>
-      <div class="jobs">
-        <button class="job" data-issue="החשמל קפץ"><h3>איתור קצר</h3><span class="dymo">300 עד 600 ₪</span><p>מפסק שקופץ שוב ושוב, או פחת שלא מחזיק.</p></button>
-        <button class="job" data-issue="שקע או מתג לא עובד"><h3>שקע או מתג</h3><span class="dymo">180 עד 350 ₪</span><p>שקע שרוף, מתג שלא מגיב, נקודה שהפסיקה לעבוד.</p></button>
-        <button class="job" data-issue="התקנה חדשה"><h3>נקודה חדשה</h3><span class="dymo">250 עד 400 ₪</span><p>שקע, נקודת תאורה או הכנה למזגן. המחיר לנקודה.</p></button>
-        <button class="job" data-issue="עמדת טעינה לרכב"><h3>עמדת טעינה לרכב</h3><span class="dymo">2,800 עד 4,800 ₪</span><p>כולל בדיקת הלוח והגדלת חיבור, אם צריך.</p></button>
-        <button class="job" data-issue="החלפת לוח חשמל"><h3>החלפת לוח</h3><span class="dymo">2,500 עד 4,500 ₪</span><p>לוח ישן עם נתיכים, או לוח שאין בו מקום למעגל נוסף.</p></button>
-        <button class="job" data-issue="ריח שרוף או ניצוצות"><h3>ריח שרוף</h3><span class="dymo">דחוף</span><p>מורידים את הראשי וכותבים. זו הפנייה הראשונה שמטופלת.</p></button>
+      <div class="head"><h2>טבלת מעגלים</h2><p>מה מזמינים הכי הרבה, ובכמה בערך. לחיצה על שורה פותחת את הצ׳אט עם התקלה.</p></div>
+      <div class="door">
+        <div class="door-top" aria-hidden="true"><span>מעגל</span><span>עבודה</span><span style="text-align:left">מחיר לדוגמה</span></div>
+        <button class="job" data-issue="החשמל קפץ"><span class="tape">פחת · 30mA</span><div><h3>איתור קצר</h3><p>מפסק שקופץ שוב ושוב, או פחת שלא מחזיק.</p></div><span class="price">300 עד 600 ₪<small>כולל איתור ותיקון</small></span></button>
+        <button class="job" data-issue="שקע או מתג לא עובד"><span class="tape">16A</span><div><h3>שקע או מתג</h3><p>שקע שרוף, מתג שלא מגיב, נקודה שהפסיקה לעבוד.</p></div><span class="price">180 עד 350 ₪<small>לנקודה</small></span></button>
+        <button class="job" data-issue="התקנה חדשה"><span class="tape">16A</span><div><h3>נקודה חדשה</h3><p>שקע, נקודת תאורה או הכנה למזגן.</p></div><span class="price">250 עד 400 ₪<small>לנקודה</small></span></button>
+        <button class="job" data-issue="עמדת טעינה לרכב"><span class="tape">32A</span><div><h3>עמדת טעינה לרכב</h3><p>כולל בדיקת הלוח והגדלת חיבור, אם צריך.</p></div><span class="price">2,800 עד 4,800 ₪<small>בלי העמדה עצמה</small></span></button>
+        <button class="job" data-issue="החלפת לוח חשמל"><span class="tape">ראשי · 40A</span><div><h3>החלפת לוח</h3><p>לוח ישן עם נתיכים, או לוח בלי מקום למעגל נוסף.</p></div><span class="price">2,500 עד 4,500 ₪<small>כולל פחת ומפסקים</small></span></button>
+        <button class="job urgent" data-issue="ריח שרוף או ניצוצות"><span class="tape">דחוף</span><div><h3>ריח שרוף</h3><p>מורידים את הראשי וכותבים. הפנייה הזאת מטופלת ראשונה.</p></div><span class="price">קודם בטיחות<small>מחיר אחרי בדיקה</small></span></button>
+        <div class="door-foot">המחיר הסופי אחרי בדיקה במקום, ותמיד לפני שמתחילים.</div>
       </div>
     </div>
   </section>
 
-  <section style="padding-top:0">
-    <div class="wrap report-wrap">
-      <div class="board">
-        <div class="paper">
-          <div class="paper-top">
-            <h3>דו״ח עבודה</h3>
-            <div class="who"><figure class="ps" data-slot="portrait" data-src="../shared/photos/electrician-portrait.webp" data-alt="חשמלאי בודק לוח חשמל" data-pos="55 40" data-icon="person" data-label="תמונה שלכם"></figure><div><b data-edit="report-name">רז שגב</b><span data-edit="report-role">חשמלאי מוסמך</span></div></div>
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים עבודה, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap trust-grid">
+      <div>
+        <div class="head" style="margin-bottom:24px"><h2>מי פותח לכם את הלוח</h2></div>
+        <div class="card">
+          <div class="card-band"><span>כרטיס חשמלאי</span><span class="ltr">LIC · 0000000</span></div>
+          <div class="card-body">
+            <figure class="ps" data-slot="portrait" data-src="../shared/photos/electrician-portrait.webp" data-alt="חשמלאי עם משקפי מגן" data-pos="45 40" data-icon="person" data-label="תמונה שלכם"></figure>
+            <dl>
+              <div><dt>שם</dt><dd class="name" data-edit="report-name">רז שגב</dd></div>
+              <div><dt>רישיון</dt><dd data-edit="report-role">חשמלאי מוסמך (לדוגמה)</dd></div>
+              <div><dt>בשטח</dt><dd data-edit="years">14 שנה</dd></div>
+              <div><dt>אזור</dt><dd data-edit="area">חדרה, עמק חפר והשרון</dd></div>
+            </dl>
           </div>
-          <div class="shots">
-            <div class="shot"><figure class="ps" data-slot="before" data-icon="bolt" data-label="תמונת לפני"></figure><span class="dymo" data-edit="shot1">לפני: לוח ישן עם נתיכים</span></div>
-            <div class="shot"><figure class="ps" data-slot="after" data-src="../shared/photos/electrician-panel.webp" data-alt="לוח חשמל חדש עם מפסקים מסודרים" data-icon="bolt" data-label="תמונת אחרי"></figure><span class="dymo" data-edit="shot2">אחרי: לוח חדש עם פחת</span></div>
-          </div>
-          <ul class="checks">
-            <li data-edit="c1">בדיקת הארקה ופחת</li>
-            <li data-edit="c2">סימון כל המעגלים בלוח</li>
-            <li data-edit="c3">צילום הלוח לפני ואחרי, ללקוח</li>
-          </ul>
-          <div class="sign"><span data-edit="sign-place">חדרה, דירת 4 חדרים</span><span>חתימה: ________</span></div>
+          <div class="card-wires" aria-hidden="true"></div>
         </div>
+        <ul class="promise">
+          <li><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#1d8550" stroke-width="2.4"/><path d="M8 13.5 11.5 17 18.5 9" fill="none" stroke="#1d8550" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>מחיר סגור לפני שמתחילים</b><span>בודקים, אומרים מחיר, ורק אז עובדים.</span></div></li>
+          <li><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M13 3v8 M7 11h12 M9 15h8 M11 19h4" stroke="#19202a" stroke-width="2.4" stroke-linecap="round"/></svg><div><b>בדיקת הארקה ופחת</b><span>בסוף כל עבודה בלוח, לא רק כשמבקשים.</span></div></li>
+          <li><svg viewBox="0 0 26 26" aria-hidden="true"><rect x="4" y="3" width="18" height="20" rx="2" fill="none" stroke="#2357c4" stroke-width="2.4"/><path d="M8 9h10 M8 13h10 M8 17h6" stroke="#2357c4" stroke-width="2.2" stroke-linecap="round"/></svg><div><b>חשבונית ואחריות בכתב</b><span>12 חודשים על העבודה.</span></div></li>
+        </ul>
       </div>
-      <div class="report-side">
-        <span class="dymo">כל תמונה כאן מתחלפת בתמונה שלכם</span>
-        <h2 style="margin-top:14px">ככה נראית עבודה מסודרת.</h2>
-        <p>לקוחות לא מבינים בחשמל, אבל מבינים לוח מסודר ותמונה לפני ואחרי. דו״ח כזה בכל עבודה בונה אמון.</p>
-        <p>לחצו על "לנסות עם התמונות שלכם" ושימו את התמונות מהעבודה האחרונה.</p>
+      <div>
+        <div class="board">
+          <div class="paper">
+            <div class="paper-top"><h3>דו״ח עבודה</h3><span data-edit="sign-place">חדרה · דירת 4 חדרים</span></div>
+            <div class="shots">
+              <div class="shot"><figure class="ps" data-slot="before" data-label="תמונת לפני"><svg class="ps-ph" viewBox="0 0 240 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="240" height="180" fill="#6f6a62"/><rect x="40" y="18" width="160" height="150" rx="4" fill="#d9d2c3" stroke="#4b463f" stroke-width="3"/><g fill="#efe9dc" stroke="#4b463f" stroke-width="2.5"><circle cx="80" cy="62" r="17"/><circle cx="120" cy="62" r="17"/><circle cx="160" cy="62" r="17"/><circle cx="80" cy="116" r="17"/><circle cx="120" cy="116" r="17"/></g><g fill="#4b463f"><circle cx="80" cy="62" r="5"/><circle cx="120" cy="62" r="5"/><circle cx="160" cy="62" r="5"/><circle cx="80" cy="116" r="5"/><circle cx="120" cy="116" r="5"/></g><path d="M150 100 c10 20 30 10 26 36 M164 98 c-6 26 18 30 6 52" fill="none" stroke="#7b4527" stroke-width="3.5"/><path d="M150 140 h40" stroke="#2357c4" stroke-width="3.5"/></svg></figure><span class="tape" data-edit="shot1">לפני: לוח ישן עם נתיכים</span></div>
+              <div class="shot"><figure class="ps" data-slot="after" data-src="../shared/photos/electrician-panel.webp" data-alt="לוח חשמל חדש עם מפסקים מסודרים" data-pos="40 50" data-icon="bolt" data-label="תמונת אחרי"></figure><span class="tape" data-edit="shot2">אחרי: לוח חדש עם פחת</span></div>
+            </div>
+            <ul class="checks">
+              <li data-edit="c1">בדיקת הארקה ופחת</li>
+              <li data-edit="c2">סימון כל המעגלים בלוח</li>
+              <li data-edit="c3">צילום הלוח לפני ואחרי, ללקוח</li>
+            </ul>
+            <div class="sign"><span>החלפת לוח, 6 מעגלים</span><span>חתימה: ________</span></div>
+          </div>
+        </div>
+        <p class="report-note">כל תמונה וכל שורה כאן מתחלפות בשלכם. לחצו על "לנסות עם התמונות שלכם" ושימו לוח מהעבודה האחרונה.</p>
       </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0" id="how">
+    <div class="wrap">
+      <div class="head"><h2>איך זה עובד</h2></div>
+      <ol class="line-diagram">
+        <li><span class="node"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M4 6h18v11H11l-5 4v-4H4z" fill="none" stroke="#19202a" stroke-width="2.2" stroke-linejoin="round"/></svg></span><div><b>מתארים בצ׳אט</b><span>מה קרה, כמה דחוף, ותמונה של הלוח אם יש.</span></div></li>
+        <li><span class="node"><svg viewBox="0 0 26 26" aria-hidden="true"><rect x="7" y="2" width="12" height="22" rx="2.5" fill="none" stroke="#19202a" stroke-width="2.2"/><path d="M11 20h4" stroke="#19202a" stroke-width="2.2" stroke-linecap="round"/></svg></span><div><b>הקריאה אצלי בוואטסאפ</b><span>כל הפרטים בהודעה אחת. לא צריך להסביר פעמיים.</span></div></li>
+        <li><span class="node"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M14 2 5 15h7l-1 9 9-13h-7z" fill="#19202a"/></svg></span><div><b>חוזר עם זמן הגעה</b><span>ומחיר סגור לפני שפותחים את הלוח.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="guides" id="guides" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עד שמגיעים, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
     </div>
   </section>
 
   <section class="owner">
     <div class="wrap owner-grid">
       <div>
-        <span class="dymo">מה החשמלאי מקבל</span>
-        <h2 style="margin-top:14px">פנייה אחת, כל הפרטים.</h2>
+        <span class="tape">מה החשמלאי מקבל</span>
+        <h2>פנייה אחת, כל הפרטים.</h2>
         <p>בלי "תתקשר אליי" ובלי לשאול שוב. התקלה, הדחיפות והישוב כבר בהודעה, ואפשר לתכנן את הסבב.</p>
-        <p>נסו את הצ׳אט למעלה, והטלפון כאן יתעדכן בפנייה שלכם.</p>
+        <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
       </div>
       <div>
         <div class="phone">
@@ -275,22 +458,27 @@
 <footer>
   <div class="wrap row">
     <span>רז שגב · דף לדוגמה, העסק בדוי</span>
-    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">הצהרת נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
   </div>
 </footer>
 
 <script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
 <script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "electrician" });
   const ISSUES = ["החשמל קפץ", "שקע או מתג לא עובד", "ריח שרוף או ניצוצות", "התקנה חדשה", "עמדת טעינה לרכב", "החלפת לוח חשמל"];
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "רז · חשמלאי", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ר", launcher: "תקלת חשמל?",
+    name: "רז · חשמלאי", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ר", launcher: "תקלת חשמל?", hint: "נציג AI",
     greet: "היי, כאן רז.\nכמה שאלות קצרות, והקריאה תגיע אליי לוואטסאפ.",
     steps: [
-      { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES },
-      { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"] },
+      { key: "issue", label: "תקלה", ask: "מה קרה?", chips: ISSUES,
+        tip: { when: (v) => v === "ריח שרוף או ניצוצות", id: "burning", text: "הורידו עכשיו את המפסק הראשי, ואל תגעו בשקע או במכשיר." } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הלוח או של מה שקרה? זה עוזר להבין לפני שמגיעים.", photo: true },
+      { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"],
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם קופץ מיד, עצרו." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
@@ -300,14 +488,44 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
+  // The one motion moment: flip the tripped breaker and the blackout ends.
+  const hero = document.getElementById("hero"), hint = document.querySelector(".hint");
   document.querySelectorAll(".brk").forEach((b) => b.addEventListener("click", () => {
     if (b.classList.contains("trip")) {
       b.classList.remove("off", "trip");
-      document.querySelector(".hint").textContent = "חזר? יופי. קפץ שוב? כתבו לנו.";
-      setTimeout(() => bot.open({ issue: "החשמל קפץ" }), 450);
+      b.setAttribute("aria-label", "מפסק המטבח");
+      hero.classList.add("lit");
+      hint.textContent = "האור חזר. קפץ שוב? כתבו לי.";
+      setTimeout(() => bot.open({ issue: "החשמל קפץ" }), 1500);
     } else b.classList.toggle("off");
   }));
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "איתור קצר", range: [300, 600], prefill: { issue: "החשמל קפץ" } },
+      { label: "שקע או מתג", range: [180, 350], prefill: { issue: "שקע או מתג לא עובד" } },
+      { label: "נקודה חדשה", range: [250, 400], prefill: { issue: "התקנה חדשה" } },
+      { label: "עמדת טעינה לרכב", range: [2800, 4800], prefill: { issue: "עמדת טעינה לרכב" }, note: "כולל בדיקת הלוח והגדלת חיבור, אם צריך." },
+      { label: "החלפת לוח", range: [2500, 4500], prefill: { issue: "החלפת לוח חשמל" } },
+    ] },
+    factors: [
+      { ask: "כמה נקודות?", for: ["נקודה חדשה", "שקע או מתג"], options: [
+        { label: "אחת" },
+        { label: "2 עד 3", mul: [1.8, 2.7], note: "כמה נקודות באותו ביקור זולות יותר לכל נקודה." },
+        { label: "4 עד 6", mul: [3.2, 5], note: "כמה נקודות באותו ביקור זולות יותר לכל נקודה." },
+      ] },
+      { ask: "כמה דחוף?", options: [
+        { label: "היום", prefill: { urgency: "היום" } },
+        { label: "השבוע", prefill: { urgency: "השבוע" } },
+        { label: "לא דחוף", prefill: { urgency: "לא דחוף" } },
+        { label: "עכשיו, אין חשמל", add: 150, prefill: { urgency: "עכשיו, אין חשמל" }, note: "יציאה מיידית: 150 ₪ נוספים." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי בדיקה במקום, ותמיד לפני שמתחילים. ריח שרוף או ניצוצות: מורידים את הראשי וכותבים מיד.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/electrician.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 </body>
 </html>

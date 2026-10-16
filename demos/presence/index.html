@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אורן מים · אינסטלציה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="דוגמה לחבילת נוכחות: דף מעוצב לעסק, עם כפתור וואטסאפ וחיוג.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b3340">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Noto+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../plumber/oren.css">
+<style>
+  /* The same business as ../plumber/ at the נוכחות level: the identity (tokens, object, detail, bold move) is in ../plumber/oren.css.
+     Simpler on purpose: no chat, no calculator. WhatsApp and a call, plus a dock at the bottom of the phone screen. */
+
+  /* the package: our note to business owners, not the business's own text */
+  .pkg { background: var(--porcelain); border-top: 1px solid var(--grout); }
+  .pkg-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+  .pkg h2 { font-size: clamp(30px, 4.2vw, 46px); margin-bottom: 14px; }
+  .pkg .price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; font-family: var(--display); font-size: 30px; color: var(--copper-deep); }
+  .pkg .price small { font-family: var(--body); font-size: 15px; color: var(--ink-soft); }
+  .pkg ul { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
+  .pkg li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; }
+  .pkg li::before { content: ""; width: 26px; height: 8px; margin-top: 10px; border-radius: 4px; background: var(--pipe); }
+  .more { background: var(--deepwater); color: #fff; border-radius: 22px; padding: 28px; box-shadow: 0 30px 60px -36px rgba(11, 51, 64, .7); }
+  .more h3 { font-size: 26px; margin-bottom: 10px; }
+  .more p { color: var(--foam); margin-bottom: 20px; }
+  .more .links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* the dock: call and WhatsApp, on phones only, clear of the accessibility button on the right */
+  .dock { display: none; }
+  /* on a wide screen the three stations sit on one horizontal pipe */
+  @media (min-width: 981px) {
+    .run { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+    .run::before { top: 19px; bottom: auto; inset-inline: 24px 24px; width: auto; height: 10px; background: var(--pipe); }
+    .run li { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  }
+  @media (max-width: 980px) { .pkg-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; } }
+  @media (max-width: 620px) {
+    .dock { position: fixed; z-index: 55; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); left: 12px; right: 78px; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 8px; padding: 6px; border-radius: 999px; background: rgba(7, 38, 48, .92); box-shadow: 0 16px 34px -12px rgba(0, 0, 0, .6); backdrop-filter: blur(8px); }
+    .dock a { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; font-weight: 700; font-size: 15.5px; text-decoration: none; color: #fff; }
+    .dock a:first-child { background: var(--hot-line); }
+    .dock a:last-child { box-shadow: inset 0 0 0 1.5px rgba(201, 223, 226, .55); }
+    .dock svg { width: 18px; height: 18px; }
+    .more { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דוגמה לחבילת נוכחות · העסק בדוי. כאן ההודעות והשיחות מגיעות אלינו. אצלכם הן יגיעו אליכם. <a href="#package">מה כלול ב-1,500 ₪</a></div>
+
+<header class="hero">
+  <div class="wrap bar">
+    <div class="logo"><svg viewBox="0 0 30 34" aria-hidden="true"><defs><linearGradient id="lg-cu" x1="0" x2="1"><stop offset="0" stop-color="#b5602c"/><stop offset=".45" stop-color="#f2b98d"/><stop offset="1" stop-color="#8e4419"/></linearGradient></defs><path d="M15 2c5 7 10 12 10 18.5a10 10 0 0 1-20 0C5 14 10 9 15 2z" fill="url(#lg-cu)"/><path d="M10.5 21a4.5 4.5 0 0 0 4.5 4.5" fill="none" stroke="#0b3340" stroke-width="2" stroke-linecap="round"/></svg><span data-edit="name">אורן מים</span></div>
+    <nav aria-label="בדף"><a href="#prices">מחירים</a><a href="#field">מי מגיע</a><a href="#area">אזורים</a></nav>
+    <a class="tel" href="tel:+972526359513">052-635-9513</a>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-a">
+      <p class="kicker">אינסטלציה · חדרה, עמק חפר והשרון · 24/7</p>
+      <h1><span data-edit="h1a">נזילה? סתימה?</span><em data-edit="h1b">מגיעים היום.</em></h1>
+      <p class="lead">כתבו לי בוואטסאפ מה התקלה ואיפה, או התקשרו. אני חוזר תוך 15 דקות.</p>
+      <div class="ctas">
+        <a class="btn btn-hot" href="#" data-wa="היי אורן, יש לי תקלה ואשמח שתחזור אליי."><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/></svg>לכתוב בוואטסאפ</a>
+        <a class="btn btn-ghost" href="tel:+972526359513">להתקשר</a>
+      </div>
+    </div>
+    <div class="rig">
+      <svg class="gauge" viewBox="0 0 200 236" role="img" aria-label="מד לחץ על הקו: 3 בר">
+        <defs>
+          <radialGradient id="g-bz" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#f8d3b4"/><stop offset=".45" stop-color="#c97439"/><stop offset="1" stop-color="#5c2a0e"/></radialGradient>
+          <linearGradient id="g-cu" x1="0" x2="1"><stop offset="0" stop-color="#6e3211"/><stop offset=".3" stop-color="#c06a35"/><stop offset=".45" stop-color="#f2b98d"/><stop offset=".7" stop-color="#b5602c"/><stop offset="1" stop-color="#5c2a0e"/></linearGradient>
+        </defs>
+        <rect x="86" y="190" width="28" height="46" fill="url(#g-cu)"/>
+        <path d="M76 192h48l7 11-7 11H76l-7-11z" fill="url(#g-cu)"/>
+        <circle cx="100" cy="100" r="98" fill="url(#g-bz)"/>
+        <circle cx="100" cy="100" r="87" fill="#f7f7f2"/>
+        <circle cx="100" cy="100" r="87" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="2.5"/>
+        <path d="M176 100 A76 76 0 0 1 153.7 153.7" fill="none" stroke="#c8302a" stroke-width="7"/>
+        <g class="tk"><line x1="43.4" y1="156.6" x2="53.3" y2="146.7" class="mj"/><line x1="35.3" y1="147.0" x2="40.9" y2="142.9"/><line x1="28.7" y1="136.3" x2="35.0" y2="133.1"/><line x1="23.9" y1="124.7" x2="30.6" y2="122.6"/><line x1="21.0" y1="112.5" x2="27.9" y2="111.4"/><line x1="20.0" y1="100.0" x2="34.0" y2="100.0" class="mj"/><line x1="21.0" y1="87.5" x2="27.9" y2="88.6"/><line x1="23.9" y1="75.3" x2="30.6" y2="77.4"/><line x1="28.7" y1="63.7" x2="35.0" y2="66.9"/><line x1="35.3" y1="53.0" x2="40.9" y2="57.1"/><line x1="43.4" y1="43.4" x2="53.3" y2="53.3" class="mj"/><line x1="53.0" y1="35.3" x2="57.1" y2="40.9"/><line x1="63.7" y1="28.7" x2="66.9" y2="35.0"/><line x1="75.3" y1="23.9" x2="77.4" y2="30.6"/><line x1="87.5" y1="21.0" x2="88.6" y2="27.9"/><line x1="100.0" y1="20.0" x2="100.0" y2="34.0" class="mj"/><line x1="112.5" y1="21.0" x2="111.4" y2="27.9"/><line x1="124.7" y1="23.9" x2="122.6" y2="30.6"/><line x1="136.3" y1="28.7" x2="133.1" y2="35.0"/><line x1="147.0" y1="35.3" x2="142.9" y2="40.9"/><line x1="156.6" y1="43.4" x2="146.7" y2="53.3" class="mj"/><line x1="164.7" y1="53.0" x2="159.1" y2="57.1"/><line x1="171.3" y1="63.7" x2="165.0" y2="66.9"/><line x1="176.1" y1="75.3" x2="169.4" y2="77.4"/><line x1="179.0" y1="87.5" x2="172.1" y2="88.6"/><line x1="180.0" y1="100.0" x2="166.0" y2="100.0" class="mj"/><line x1="179.0" y1="112.5" x2="172.1" y2="111.4"/><line x1="176.1" y1="124.7" x2="169.4" y2="122.6"/><line x1="171.3" y1="136.3" x2="165.0" y2="133.1"/><line x1="164.7" y1="147.0" x2="159.1" y2="142.9"/><line x1="156.6" y1="156.6" x2="146.7" y2="146.7" class="mj"/></g>
+        <g class="nums"><text x="61.8" y="143.2">0</text><text x="46.0" y="105.0">1</text><text x="61.8" y="66.8">2</text><text x="100.0" y="51.0">3</text><text x="138.2" y="66.8">4</text><text x="154.0" y="105.0">5</text><text x="138.2" y="143.2">6</text></g>
+        <text x="100" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="#4a6168">bar</text>
+        <g class="needle"><path d="M96.5 114 L100 28 L103.5 114 Z" fill="#c8302a"/></g>
+        <circle cx="100" cy="100" r="10" fill="#2b3f45"/><circle cx="100" cy="100" r="4" fill="#d47f47"/>
+        <path d="M38 70 A66 66 0 0 1 140 34" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="rig-pipe" aria-hidden="true"></span>
+      <figure class="reel">
+        <div class="reel-frame">
+          <video muted loop playsinline preload="none" poster="../shared/video/plumber-poster.webp" aria-label="צילום מהשטח: חיתוך צינור לפני התקנה"><source src="../shared/video/plumber.mp4" type="video/mp4"><source src="../shared/video/plumber.webm" type="video/webm"></video>
+          <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button>
+          <label class="reel-swap">להחליף לסרטון שלכם<input type="file" accept="video/*" aria-label="להחליף לסרטון שלכם"></label>
+        </div>
+        <figcaption class="mono">צילום מהשטח · חיתוך צינור לפני התקנה</figcaption>
+      </figure>
+    </div>
+    <div class="hero-b">
+      <div class="meter">
+        <div class="cell"><span class="odo" data-to="15" aria-hidden="true">15</span><small>דקות עד שאני חוזר</small><span class="sr">חוזר תוך 15 דקות</span></div>
+        <div class="cell"><span class="odo" data-to="12" aria-hidden="true">12</span><small>שנה בשטח</small><span class="sr">12 שנה בשטח</span></div>
+        <div class="cell"><span class="odo" data-to="12" aria-hidden="true">12</span><small>חודשי אחריות</small><span class="sr">אחריות 12 חודשים</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="prices">
+  <div class="wrap">
+    <div class="head">
+      <div><p class="kicker">מחירון פתוח</p><h2>הקריאות הנפוצות</h2></div>
+      <p class="note mono">מחירים להמחשה · המחיר הסופי נקבע אחרי אבחון, ותמיד לפני שמתחילים</p>
+    </div>
+    <div class="board">
+      <div class="board-top mono"><span>הזמנת עבודה<b>מס׳ 2614</b></span><span>זמינות<b>היום</b></span><span>אחריות<b>12 חודשים</b></span></div>
+      <ul class="jobs">
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11h18v1.5a9 9 0 0 1-18 0z"/><path d="M15 11V6.5a2.5 2.5 0 0 0-5 0"/><path d="M12 21.5v1.5"/><path d="M9.5 15.5c1 1 4 1 5 0"/></svg></span>
+          <div class="job-t"><b>סתימה בכיור, באסלה או בניקוז<span class="ltag">ביוב</span></b><small>פתיחה במכונה, בלי לשבור</small></div>
+          <span class="job-time">עד שעה</span>
+          <span class="job-price">250 עד 450 ₪</span>
+          <a class="job-go" href="#" data-wa="היי אורן, יש לי סתימה.">לכתוב בוואטסאפ</a>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z"/><path d="M9 14.5a3 3 0 0 0 3 3"/></svg></span>
+          <div class="job-t"><b>נזילה מתחת לכיור או מצנרת<span class="ltag cold">קר</span></b><small>החלפת אטמים, חיבורים וקטעי צנרת</small></div>
+          <span class="job-time">שעה עד שעתיים</span>
+          <span class="job-price">300 עד 650 ₪</span>
+          <a class="job-go" href="#" data-wa="היי אורן, יש לי נזילה.">לכתוב בוואטסאפ</a>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="17" rx="3"/><path d="M12 7v6"/><circle cx="12" cy="14.5" r="1.8"/><path d="M9 19.5v2.5M15 19.5v2.5"/></svg></span>
+          <div class="job-t"><b>דוד חשמל או שמש<span class="ltag hot">חם</span></b><small>גוף חימום, טרמוסטט, החלפת דוד</small></div>
+          <span class="job-time">שעה עד שלוש</span>
+          <span class="job-price">350 עד 2,800 ₪</span>
+          <a class="job-go" href="#" data-wa="היי אורן, יש לי בעיה בדוד.">לכתוב בוואטסאפ</a>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="11" rx="2"/><path d="M15.5 10l6-3v10l-6-3"/><path d="M5.5 13c1-2 2-2 3 0s2 2 3 0"/></svg></span>
+          <div class="job-t"><b>איתור נזילה בלי הרס<span class="ltag wall">בקיר</span></b><small>מצלמה תרמית ומכשור אקוסטי</small></div>
+          <span class="job-time">שעתיים</span>
+          <span class="job-price">650 עד 1,200 ₪</span>
+          <a class="job-go" href="#" data-wa="היי אורן, צריך איתור נזילה.">לכתוב בוואטסאפ</a>
+        </li>
+      </ul>
+    </div>
+    <p class="fine">הדף לדוגמה. אצלכם יופיעו המחירים, השירותים והאזורים שלכם.</p>
+  </div>
+</section>
+
+<section class="deep field" id="field">
+  <div class="wrap">
+    <div class="head">
+      <div><p class="kicker">מהשטח</p><h2>מי מגיע אליכם</h2></div>
+      <p class="note mono">כל תמונה כאן מתחלפת בתמונה שלכם</p>
+    </div>
+    <div class="field-grid">
+      <div class="portrait">
+        <figure class="ps" data-slot="portrait" data-src="../shared/photos/plumber-portrait.webp" data-alt="אינסטלטור מתקן צנרת מתחת לכיור" data-pos="55 35" data-icon="person" data-label="תמונה שלכם"></figure>
+        <div class="brass">
+          <span class="mono" data-edit="badge-brand">אורן מים</span>
+          <h3 data-edit="badge-name">אורן לוי</h3>
+          <p data-edit="badge-role">אינסטלטור · 12 שנה בשטח</p>
+        </div>
+      </div>
+      <div>
+        <div class="ends">
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d1" data-src="../shared/photos/plumber-siphon.webp" data-alt="החלפת סיפון מתחת לכיור במטבח" data-icon="wrench" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט א׳ · ½ אינץ׳</span><h3 data-edit="d1">החלפת סיפון במטבח</h3></div>
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d2" data-src="../shared/photos/plumber-leak.webp" data-alt="איתור נזילה בצנרת שבקיר" data-icon="drop" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ב׳ · בקיר</span><h3 data-edit="d2">איתור נזילה בקיר</h3></div>
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d3" data-src="../shared/photos/plumber-drain.webp" data-alt="פתיחת סתימה באמבטיה" data-icon="home" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ג׳ · ניקוז</span><h3 data-edit="d3">פתיחת סתימה באמבטיה</h3></div>
+        </div>
+        <p class="field-note">לקוחות סומכים על מי שהם רואים. תמונה אמיתית שלכם ושל העבודה שלכם עושה יותר מכל משפט.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="white">
+  <div class="wrap">
+    <div class="head"><div><p class="kicker">הודעה אחת, שלוש תחנות</p><h2>מה קורה כשכותבים לי</h2></div></div>
+    <ol class="run">
+      <li><span class="valve" aria-hidden="true">1</span><div><span class="mono">30 שניות</span><h3>כותבים בוואטסאפ</h3><p>מה התקלה, כמה דחוף ואיפה. אפשר לצרף תמונה.</p></div></li>
+      <li><span class="valve" aria-hidden="true">2</span><div><span class="mono">תוך 15 דקות</span><h3>אני חוזר אליכם</h3><p>שואל מה שצריך ונותן טווח מחיר.</p></div></li>
+      <li><span class="valve" aria-hidden="true">3</span><div><span class="mono">באותו יום</span><h3>קובעים ומגיעים</h3><p>קובעים שעה, ומחיר סגור לפני שמתחילים לעבוד.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="deep" id="area">
+  <div class="wrap area-grid">
+    <div class="area-copy">
+      <p class="kicker">קו ראשי מחדרה</p>
+      <h2>אזורי שירות</h2>
+      <ul class="towns"><li>חדרה</li><li>עמק חפר</li><li>נתניה</li><li>פרדס חנה כרכור</li><li>אור עקיבא</li><li>קיסריה</li><li>בנימינה</li><li>כפר יונה</li></ul>
+      <p>לא בטוחים אם אני מגיע אליכם? כתבו לי את הישוב בוואטסאפ.</p>
+      <div class="ctas" style="margin-top:22px"><a class="btn btn-hot" href="#" data-wa="היי אורן, אתה מגיע ל">לשאול בוואטסאפ</a></div>
+    </div>
+    <svg class="netmap" viewBox="0 0 440 340" role="img" aria-label="מפת אזור השירות: מחדרה לקיסריה, אור עקיבא, בנימינה, פרדס חנה כרכור, עמק חפר, כפר יונה ונתניה, ברדיוס 25 ק״מ">
+      <path class="sea" d="M162 0 C158 70 150 120 140 170 S100 280 74 340 L0 340 L0 0 Z"/>
+      <path class="coast" d="M162 0 C158 70 150 120 140 170 S100 280 74 340"/>
+      <circle class="ring" cx="230" cy="156" r="150"/>
+      <g>
+        <path class="run-l" d="M230 156 V110 L202 82 H170 M230 110 V76 M230 156 L268 118 V90 L301 57 M230 156 H312 L349 119 M230 156 V219 L206 243 H150 L98 293 M230 219 L278 267 V305"/>
+        <path class="run-h" d="M230 156 V110 L202 82 H170 M230 110 V76 M230 156 L268 118 V90 L301 57 M230 156 H312 L349 119 M230 156 V219 L206 243 H150 L98 293 M230 219 L278 267 V305"/>
+      </g>
+      <circle class="node" cx="170" cy="82" r="7"/><circle class="node" cx="230" cy="76" r="7"/><circle class="node" cx="301" cy="57" r="7"/><circle class="node" cx="349" cy="119" r="7"/>
+      <circle class="node" cx="206" cy="243" r="7"/><circle class="node" cx="278" cy="305" r="7"/><circle class="node" cx="98" cy="293" r="7"/>
+      <circle class="hub" cx="230" cy="156" r="12"/>
+      <g text-anchor="middle">
+        <text x="160" y="110">קיסריה</text><text x="230" y="60">אור עקיבא</text><text x="334" y="46">בנימינה</text><text x="370" y="100">פרדס חנה כרכור</text>
+        <text x="268" y="186" style="font-size:17px">חדרה</text><text x="206" y="272">עמק חפר</text><text x="328" y="310">כפר יונה</text><text x="98" y="324">נתניה</text>
+        <text class="small" x="44" y="176">הים</text><text class="small" x="330" y="236">25 ק״מ</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+</main>
+
+<section class="pkg" id="package" aria-labelledby="pkg-h">
+  <div class="wrap pkg-grid">
+    <div>
+      <p class="kicker">חבילת נוכחות</p>
+      <h2 id="pkg-h">זה הדף שמקבלים ב-1,500 <span class="nis">₪</span></h2>
+      <div class="price">1,500 <span class="nis">₪</span> <small>הקמה, פעם אחת</small> · 150 <span class="nis">₪</span> <small>לחודש. המחירים סופיים</small></div>
+      <ul>
+        <li>דף מעוצב ומותאם לנייד, עם השירותים, המחירים, האזורים והתמונות שלכם</li>
+        <li>כפתור וואטסאפ וכפתור חיוג</li>
+        <li>חיבור לדומיין שלכם</li>
+        <li>אחסון ותחזוקה, כלולים בתשלום החודשי</li>
+      </ul>
+    </div>
+    <div class="more">
+      <h3>ומה מוסיף נציג AI?</h3>
+      <p>צ׳אט שעונה ללקוחות כשאתם בעבודה, מענה אוטומטי בוואטסאפ תוך שניות, התראה ותזכורת על כל פנייה, ודוח חודשי.</p>
+      <div class="links">
+        <a class="btn btn-hot" href="../plumber/">אותו עסק, עם נציג AI</a>
+        <a class="btn btn-ghost" href="../#plans">לכל המחירים</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · דף לדוגמה, העסק בדוי</span><nav aria-label="קישורים"><a href="../privacy/">פרטיות</a><a href="../accessibility/">הצהרת נגישות</a><a href="../build/?t=plumber">רוצים דף כזה לעסק שלכם?</a></nav></div></footer>
+
+<div class="dock" aria-label="יצירת קשר">
+  <a href="#" data-wa="היי אורן, יש לי תקלה ואשמח שתחזור אליי."><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>וואטסאפ</a>
+  <a href="tel:+972526359513"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>להתקשר</a>
+</div>
+
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/reel.js"></script>
+<script>
+  document.querySelectorAll("[data-wa]").forEach((a) => {
+    a.href = "https://wa.me/972526359513?text=" + encodeURIComponent(a.dataset.wa || "");
+    a.target = "_blank"; a.rel = "noopener";
+  });
+  // The water meter's wheels: each digit is a strip that rolls to its number (../plumber/oren.css). Static text without JS.
+  document.querySelectorAll(".odo[data-to]").forEach((o) => {
+    const digits = [...o.dataset.to]; o.textContent = "";
+    digits.forEach((d, i) => {
+      const wheel = document.createElement("b"); if (i === digits.length - 1) wheel.className = "red";
+      const strip = document.createElement("i"); strip.style.setProperty("--n", d); strip.style.animationDelay = (0.25 + i * 0.18) + "s";
+      for (let k = 0; k < 10; k++) { const s = document.createElement("span"); s.textContent = k; strip.append(s); }
+      wheel.append(strip); o.append(wheel);
+    });
+  });
+  PhotoSlots.init({ page: "presence" });
+</script>
+</body>
+</html>

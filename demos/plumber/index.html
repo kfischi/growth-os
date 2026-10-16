@@ -4,246 +4,253 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>אורן מים · אינסטלציה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="אינסטלטור בחדרה והשרון: סתימות, נזילות, דודים. פותחים קריאה בצ׳אט ומקבלים מענה מיד.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b3340">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Noto+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<link rel="stylesheet" href="oren.css">
 <style>
-  /* Object: a plumbing blueprint and a work order. Detail: pipe diameters, pressure in bar, response time.
-     Bold move: an isometric pipe drawing on a blueprint field. */
-  :root {
-    --blueprint: #123a8c;      /* blueprint field */
-    --blueprint-deep: #0c2a68;
-    --grid: rgba(255, 255, 255, .09);
-    --line-w: #e8efff;         /* white ink on blueprint */
-    --paper: #f3f6fb;          /* whiteprint paper */
-    --ink: #0f1d3a;
-    --ink-soft: #4b5873;
-    --rule: #c9d4e6;
-    --signal: #cc2e26;         /* emergency red */
-    --display: "Secular One", "IBM Plex Sans Hebrew", sans-serif;
-    --body: "IBM Plex Sans Hebrew", system-ui, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, monospace;
-    /* chatbot */
-    --bot-bg: #ffffff; --bot-fg: var(--ink); --bot-line: var(--rule); --bot-muted: var(--ink-soft);
-    --bot-accent: var(--blueprint); --bot-accent-fg: #fff; --bot-them: #eef2f9; --bot-me: var(--blueprint); --bot-me-fg: #fff;
-    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-pill: 4px; --bot-radius-input: 4px;
+  /* The live נציג AI: a real model answering from this business's facts (functions/demo-chat.mjs) */
+  .live-ai .wrap { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 28px 48px; align-items: center; }
+  .live-ai .tag { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--body); color: var(--copper-lite); }
+  .live-ai .tag i { inline-size: 9px; block-size: 9px; border-radius: 50%; background: #3ccf8e; box-shadow: 0 0 0 4px rgba(60, 207, 142, .22); }
+  .live-ai h2 { margin: 10px 0 12px; }
+  .live-ai .lede { color: var(--foam); max-width: 48ch; margin: 0 0 20px; }
+  .live-ai .asks { display: grid; gap: 10px; }
+  .live-ai .asks button { text-align: start; border: 1.5px solid rgba(201, 223, 226, .35); background: rgba(255, 255, 255, .05); color: #fff; border-radius: 14px; padding: 13px 16px; font: 500 16px/1.35 var(--body); cursor: pointer; transition: background-color .15s, border-color .15s; }
+  .live-ai .asks button:hover { background: rgba(255, 255, 255, .1); border-color: #fff; }
+  .live-ai .asks button small { display: block; color: var(--foam); font-size: 13px; margin-top: 2px; }
+  .live-ai .asks button:focus-visible { outline: 3px solid var(--copper-lite); outline-offset: 2px; }
+  .live-ai .fine { margin-top: 14px; font-size: 13.5px; }
+  .ab-launch { display: none !important; } /* this page opens the live chat from its own buttons; the corner holds the scripted chat */
+  @media (max-width: 820px) { .live-ai .wrap { grid-template-columns: minmax(0, 1fr); } }
+  /* Tokens and the shared identity (object, detail, bold move) are in oren.css, shared with ../presence/.
+     This page adds what only the full נציג AI demo has: the "available now" try, the calculator, the owner's phone, testimonials. */
+
+  /* "available now": what the visitor sees when Oren writes עסוק / פנוי / חירום in WhatsApp */
+  .avail-try { margin-top: 26px; padding: 14px 16px; border-radius: 16px; background: rgba(7, 38, 48, .55); box-shadow: inset 0 0 0 1px rgba(201, 223, 226, .22); display: grid; gap: 12px; max-width: 520px; }
+  .avail-try .live { background: transparent; box-shadow: none; padding: 0; font-size: 14.5px; color: #fff; }
+  .try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--foam); }
+  .try span { flex: 1 1 100%; }
+  .try button { min-height: 38px; padding: 6px 14px; border-radius: 999px; border: 0; background: rgba(255, 255, 255, .07); box-shadow: inset 0 0 0 1px rgba(201, 223, 226, .45); color: #fff; font: 600 14px var(--body); cursor: pointer; }
+  .try button:hover { box-shadow: inset 0 0 0 1.5px #fff; }
+  .try button[aria-pressed="true"] { background: var(--copper-lite); color: var(--ink); box-shadow: none; }
+
+  /* the calculator sits in a porcelain body on the field */
+  .calc-body { background: var(--limescale); color: var(--ink); border-radius: 24px; padding: 32px; box-shadow: 0 0 0 1.5px rgba(234, 168, 119, .5), 0 40px 70px -40px rgba(0, 0, 0, .8); }
+  .calc .est-go { min-height: 50px; }
+
+  /* how it works, next to the owner's phone */
+  .how-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 80px; align-items: center; }
+  .phone-col { position: relative; }
+  .phone-col::before { content: ""; position: absolute; inset: 8% -40px 12%; border-radius: 40px; background: var(--limescale); z-index: 0; }
+  .phone-col .phone { position: relative; z-index: 1; margin-inline: auto; }
+  .phone-col .ph-cap { position: relative; z-index: 1; color: var(--ink-soft); }
+
+  /* testimonials: slips from the work book */
+  .tst-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .tst-card { margin: 0; background: var(--porcelain); border-radius: 18px; padding: 22px 22px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; box-shadow: 0 1px 0 var(--grout), 0 24px 40px -32px rgba(11, 51, 64, .5); border-top: 5px solid var(--copper); }
+  .tst-card.new { border-top-color: var(--hot-line); }
+  .tst-stars { color: var(--copper-deep); letter-spacing: 2px; font-size: 17px; }
+  .tst-text { margin: 0; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+  .tst-by { margin-top: auto; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); font-size: 14px; }
+  .tst-by b { color: var(--ink); font-weight: 700; }
+  .tst-by .tag { background: var(--hot-line); color: #fff; border-radius: 999px; padding: 0 10px; font-weight: 700; }
+  .tst-try { margin-top: 22px; background: var(--porcelain); border-radius: 18px; padding: 4px 22px; box-shadow: inset 0 0 0 1.5px var(--grout); }
+  .tst-try summary { cursor: pointer; padding: 16px 0; font-weight: 700; color: var(--deepwater); }
+  .tst-try form { display: grid; gap: 12px; padding-bottom: 6px; }
+  .tst-try label { display: grid; gap: 6px; font-weight: 600; font-size: 15px; }
+  .tst-try textarea, .tst-try input, .tst-try select { font: inherit; border: 1.5px solid var(--grout); border-radius: 10px; padding: 10px 12px; background: #fff; color: var(--ink); width: 100%; }
+  .tst-try textarea { min-height: 110px; resize: vertical; }
+  .tst-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+  .tst-try .btn { justify-self: start; }
+  .tst-err { margin: 0; color: #a8231e; font-weight: 600; min-height: 1.2em; }
+  .tst-how { color: var(--ink-soft); font-size: 14px; margin: 6px 0 16px; }
+
+  @media (max-width: 980px) {
+    .how-grid { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+    .tst-grid { grid-template-columns: minmax(0, 1fr); }
   }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-  a { color: inherit; }
-  :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
-  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
-  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .02em; }
-  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; margin: 0; text-wrap: balance; }
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 22px; border-radius: 4px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; }
-  .btn-signal { background: var(--signal); color: #fff; }
-  .btn-signal:hover { background: #c42a21; }
-  .btn-ghost { border: 1.5px solid rgba(232, 239, 255, .5); color: #fff; background: transparent; }
-  .btn-ghost:hover { border-color: #fff; }
-
-  .demo { background: var(--ink); color: #c7d2ea; font-size: 13px; text-align: center; padding: 7px 16px; }
-  .demo a { color: #fff; }
-
-  /* ---------- Hero ---------- */
-  .hero { background: var(--blueprint); color: #fff; position: relative; overflow: hidden;
-    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
-  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
-  .logo { font-family: var(--display); font-size: 26px; display: flex; align-items: center; gap: 10px; }
-  .logo svg { width: 30px; height: 30px; }
-  .live { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(232, 239, 255, .35); padding: 6px 10px; border-radius: 4px; }
-  .live i { width: 8px; height: 8px; border-radius: 50%; background: #39d98a; box-shadow: 0 0 0 0 rgba(57,217,138,.6); animation: pulse 1.8s infinite; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgba(57,217,138,0); } 100% { box-shadow: 0 0 0 0 rgba(57,217,138,0); } }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; padding-block: 40px 72px; }
-  .hero .tag { color: #a9bce6; }
-  .hero h1 { font-size: clamp(48px, 7vw, 92px); margin: 14px 0 18px; }
-  .hero h1 span { color: #fff; background: var(--signal); padding: 0 .12em; }
-  .hero p { font-size: 19px; color: #d5def3; max-width: 34ch; margin: 0 0 28px; }
-  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
-  .facts { display: flex; gap: 28px; margin-top: 34px; padding-top: 18px; border-top: 1px dashed rgba(232, 239, 255, .3); flex-wrap: wrap; }
-  .facts b { display: block; font-family: var(--display); font-size: 30px; font-weight: 400; line-height: 1; }
-  .facts span { color: #a9bce6; }
-  .drawing { width: 100%; height: auto; max-width: 560px; justify-self: center; }
-  /* The short video: a blueprint detail frame, red corner ticks. Behaviour in ../shared/reel.js */
-  .reel { margin: 0; justify-self: center; width: min(100%, 360px); }
-  .reel-frame { position: relative; aspect-ratio: 4 / 5; border: 1.5px solid var(--line-w); padding: 8px; background: rgba(255,255,255,.04); }
-  .reel-frame::before, .reel-frame::after { content: ""; position: absolute; width: 18px; height: 18px; border: 3px solid var(--signal); }
-  .reel-frame::before { top: -6px; inset-inline-start: -6px; border-inline-end: 0; border-bottom: 0; }
-  .reel-frame::after { bottom: -6px; inset-inline-end: -6px; border-inline-start: 0; border-top: 0; }
-  .reel video { width: 100%; height: 100%; object-fit: cover; display: block; background: var(--blueprint-deep); }
-  .reel figcaption { color: #a9bce6; margin-top: 10px; text-align: center; }
-  .drawing .p { fill: none; stroke: var(--line-w); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-  .drawing .d { fill: none; stroke: #a9bce6; stroke-width: 1; stroke-dasharray: 4 4; }
-  .drawing text { font-family: var(--mono); font-size: 13px; fill: #a9bce6; }
-  .drawing .drop { fill: #7fb2ff; animation: drip 2.4s ease-in infinite; }
-  @keyframes drip { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 80% { transform: translateY(46px); opacity: 1; } 100% { transform: translateY(52px); opacity: 0; } }
-
-  /* ---------- Work order ---------- */
-  section { padding-block: 84px; }
-  .head { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
-  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
-  .head .mono { color: var(--ink-soft); }
-  .order { background: #fff; border: 1.5px solid var(--ink); }
-  .order-top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1.5px solid var(--ink); }
-  .order-top div { padding: 10px 14px; border-inline-start: 1px solid var(--rule); }
-  .order-top div:first-child { border: 0; }
-  .order-top b { display: block; font-family: var(--display); font-weight: 400; font-size: 18px; }
-  .order table { width: 100%; border-collapse: collapse; font-size: 16px; }
-  .order th { text-align: start; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); padding: 12px 14px; border-bottom: 1px solid var(--rule); }
-  .order td { padding: 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .order tr:last-child td { border-bottom: 0; }
-  .order td b { font-weight: 600; }
-  .order td small { display: block; color: var(--ink-soft); font-size: 14px; }
-  .order .price { font-family: var(--mono); font-size: 14px; white-space: nowrap; }
-  .order button { border: 1.5px solid var(--blueprint); background: none; color: var(--blueprint); font: 600 14px var(--body); padding: 6px 12px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
-  .order button:hover { background: var(--blueprint); color: #fff; }
-  .fine { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
-
-  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1.5px solid var(--ink); }
-  .step { padding: 22px 22px 0 0; border-inline-start: 1px solid var(--rule); padding-inline: 22px; }
-  .step:first-child { border: 0; padding-inline-start: 0; }
-  .step .mono { color: var(--signal); font-weight: 500; }
-  .step h3 { font-size: 26px; margin: 8px 0 6px; }
-  .step p { margin: 0; color: var(--ink-soft); }
-
-  .area { background: var(--blueprint-deep); color: #fff; }
-  .area .head h2 { color: #fff; } .area .head .mono { color: #a9bce6; }
-  .towns { display: flex; flex-wrap: wrap; gap: 8px; }
-  .towns span { border: 1px solid rgba(232, 239, 255, .35); padding: 8px 14px; border-radius: 4px; }
-  .area .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
-  .area p { color: #d5def3; margin: 0 0 20px; }
-
-  footer { padding-block: 34px 90px; color: var(--ink-soft); font-size: 14px; }
-  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--rule); padding-top: 20px; }
-
-
-  /* ---------- From the field: badge + detail callouts (photo slots) ---------- */
-  :root { --ps-a: #2a56b8; --ps-b: #0c2a68; --ps-ui: var(--blueprint); --ps-edit: var(--signal); }
-  .field { background: var(--blueprint-deep); color: #fff; overflow: hidden;
-    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 24px 24px; }
-  .field .head .mono { color: #a9bce6; }
-  .field-grid { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 64px; align-items: start; }
-  .lanyard { display: flex; flex-direction: column; align-items: center; }
-  .lanyard::before { content: ""; width: 34px; height: 90px; background: repeating-linear-gradient(180deg, var(--signal) 0 14px, #b8261e 14px 16px); clip-path: polygon(0 0, 100% 0, 70% 100%, 30% 100%); }
-  .clip { width: 46px; height: 18px; border-radius: 4px; background: linear-gradient(180deg, #d8dde6, #9aa3b3); margin-top: -4px; position: relative; z-index: 1; }
-  .badge { width: 100%; background: #fff; color: var(--ink); border-radius: 14px; padding: 16px; margin-top: -6px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); transform: rotate(-3deg); }
-  .badge-top { display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
-  .badge-top b { color: var(--blueprint); font-family: var(--display); font-size: 16px; font-weight: 400; }
-  .badge .ps { aspect-ratio: 1; border-radius: 10px; }
-  .badge h3 { font-size: 30px; margin-top: 14px; }
-  .badge p { margin: 2px 0 12px; color: var(--ink-soft); font-size: 15px; }
-  .badge .code { height: 30px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 7px, transparent 7px 9px); }
-  .details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .detail { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
-  .detail .ring { width: 100%; max-width: 230px; aspect-ratio: 1; border-radius: 50%; padding: 8px; border: 2px dashed rgba(232,239,255,.55); position: relative; }
-  .detail .ring::after { content: ""; position: absolute; width: 46px; height: 2px; background: rgba(232,239,255,.55); bottom: 10%; left: -30px; transform: rotate(-35deg); }
-  .detail .ps { width: 100%; height: 100%; border-radius: 50%; }
-  .detail .mono { color: #a9bce6; margin-top: 14px; }
-  .detail h3 { font-size: 22px; margin-top: 2px; }
-  .field-note { color: #a9bce6; font-size: 14px; margin-top: 26px; }
-  @media (max-width: 880px) { .field-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .lanyard { max-width: 300px; margin-inline: auto; } }
-  @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
-
-  @media (max-width: 880px) {
-    .hero-grid, .area .row { grid-template-columns: minmax(0, 1fr); }
-    .drawing { max-width: 420px; }
-    .reel { width: min(100%, 300px); }
-    .steps { grid-template-columns: minmax(0, 1fr); }
-    .step { border-inline-start: 0; border-top: 1px solid var(--rule); padding: 18px 0 0; }
-    .step:first-child { border-top: 0; }
-    .order .hide-sm { display: none; }
+  @media (max-width: 620px) {
+    .calc-body { padding: 22px 16px; border-radius: 18px; margin-inline: -4px; }
+    .tst-row { grid-template-columns: minmax(0, 1fr); }
+    .phone-col::before { inset-inline: -16px; }
+    .avail-try { padding: 12px 14px; }
   }
-  @media (max-width: 520px) {
-    .order-top { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .order-top div:nth-child(3) { display: none; }
-    .order td, .order th { padding-inline: 10px; }
-    .order th:last-child, .order td:last-child { display: none; }
-    .order tbody tr { cursor: pointer; }
-    .bar .live { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=plumber">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
 
 <header class="hero">
   <div class="wrap bar">
-    <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="#fff"/></svg><span data-edit="name">אורן מים</span></div>
-    <span class="live mono"><i></i>זמין עכשיו · הגעה משוערת 45 דק׳</span>
+    <div class="logo"><svg viewBox="0 0 30 34" aria-hidden="true"><defs><linearGradient id="lg-cu" x1="0" x2="1"><stop offset="0" stop-color="#b5602c"/><stop offset=".45" stop-color="#f2b98d"/><stop offset="1" stop-color="#8e4419"/></linearGradient></defs><path d="M15 2c5 7 10 12 10 18.5a10 10 0 0 1-20 0C5 14 10 9 15 2z" fill="url(#lg-cu)"/><path d="M10.5 21a4.5 4.5 0 0 0 4.5 4.5" fill="none" stroke="#0b3340" stroke-width="2" stroke-linecap="round"/></svg><span data-edit="name">אורן מים</span></div>
+    <nav aria-label="בדף"><a href="#prices">מחירים</a><a href="#calc">מחשבון</a><a href="#guides">מה עושים עכשיו</a><a href="#area">אזורים</a></nav>
+    <span class="live mono" data-avail><i></i>זמינים 24/7.</span>
   </div>
   <div class="wrap hero-grid">
-    <div>
-      <div class="tag mono">אינסטלציה · חדרה, עמק חפר והשרון · 24/7</div>
-      <h1><span data-edit="h1a">נזילה? סתימה?</span><br><span data-edit="h1b">מגיעים היום.</span></h1>
-      <p>מתארים את התקלה בצ׳אט, מקבלים הערכת מחיר, והפרטים מגיעים אליי לוואטסאפ. אני חוזר תוך 15 דקות.</p>
+    <div class="hero-a">
+      <p class="kicker">אינסטלציה · חדרה, עמק חפר והשרון · 24/7</p>
+      <h1><span data-edit="h1a">נזילה? סתימה?</span><em data-edit="h1b">מגיעים היום.</em></h1>
+      <p class="lead">מתארים את התקלה בצ׳אט, מקבלים הערכת מחיר, והפרטים מגיעים אליי לוואטסאפ. אני חוזר תוך 15 דקות.</p>
       <div class="ctas">
-        <button class="btn btn-signal" type="button" data-open-bot>לפתוח קריאה בצ׳אט</button>
+        <button class="btn btn-hot" type="button" data-open-bot><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/></svg>לפתוח קריאה בצ׳אט</button>
         <a class="btn btn-ghost" href="#" data-wa="היי אורן, יש לי תקלה ואשמח שתחזור אליי.">וואטסאפ ישיר</a>
       </div>
-      <div class="facts mono">
-        <div><b>15 דק׳</b><span>זמן חזרה</span></div>
-        <div><b>12 שנה</b><span>בשטח</span></div>
-        <div><b>מחיר סגור</b><span>לפני שמתחילים</span></div>
+    </div>
+    <div class="rig">
+      <svg class="gauge" viewBox="0 0 200 236" role="img" aria-label="מד לחץ על הקו: 3 בר">
+        <defs>
+          <radialGradient id="g-bz" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#f8d3b4"/><stop offset=".45" stop-color="#c97439"/><stop offset="1" stop-color="#5c2a0e"/></radialGradient>
+          <linearGradient id="g-cu" x1="0" x2="1"><stop offset="0" stop-color="#6e3211"/><stop offset=".3" stop-color="#c06a35"/><stop offset=".45" stop-color="#f2b98d"/><stop offset=".7" stop-color="#b5602c"/><stop offset="1" stop-color="#5c2a0e"/></linearGradient>
+        </defs>
+        <rect x="86" y="190" width="28" height="46" fill="url(#g-cu)"/>
+        <path d="M76 192h48l7 11-7 11H76l-7-11z" fill="url(#g-cu)"/>
+        <circle cx="100" cy="100" r="98" fill="url(#g-bz)"/>
+        <circle cx="100" cy="100" r="87" fill="#f7f7f2"/>
+        <circle cx="100" cy="100" r="87" fill="none" stroke="rgba(0,0,0,.28)" stroke-width="2.5"/>
+        <path d="M176 100 A76 76 0 0 1 153.7 153.7" fill="none" stroke="#c8302a" stroke-width="7"/>
+        <g class="tk"><line x1="43.4" y1="156.6" x2="53.3" y2="146.7" class="mj"/><line x1="35.3" y1="147.0" x2="40.9" y2="142.9"/><line x1="28.7" y1="136.3" x2="35.0" y2="133.1"/><line x1="23.9" y1="124.7" x2="30.6" y2="122.6"/><line x1="21.0" y1="112.5" x2="27.9" y2="111.4"/><line x1="20.0" y1="100.0" x2="34.0" y2="100.0" class="mj"/><line x1="21.0" y1="87.5" x2="27.9" y2="88.6"/><line x1="23.9" y1="75.3" x2="30.6" y2="77.4"/><line x1="28.7" y1="63.7" x2="35.0" y2="66.9"/><line x1="35.3" y1="53.0" x2="40.9" y2="57.1"/><line x1="43.4" y1="43.4" x2="53.3" y2="53.3" class="mj"/><line x1="53.0" y1="35.3" x2="57.1" y2="40.9"/><line x1="63.7" y1="28.7" x2="66.9" y2="35.0"/><line x1="75.3" y1="23.9" x2="77.4" y2="30.6"/><line x1="87.5" y1="21.0" x2="88.6" y2="27.9"/><line x1="100.0" y1="20.0" x2="100.0" y2="34.0" class="mj"/><line x1="112.5" y1="21.0" x2="111.4" y2="27.9"/><line x1="124.7" y1="23.9" x2="122.6" y2="30.6"/><line x1="136.3" y1="28.7" x2="133.1" y2="35.0"/><line x1="147.0" y1="35.3" x2="142.9" y2="40.9"/><line x1="156.6" y1="43.4" x2="146.7" y2="53.3" class="mj"/><line x1="164.7" y1="53.0" x2="159.1" y2="57.1"/><line x1="171.3" y1="63.7" x2="165.0" y2="66.9"/><line x1="176.1" y1="75.3" x2="169.4" y2="77.4"/><line x1="179.0" y1="87.5" x2="172.1" y2="88.6"/><line x1="180.0" y1="100.0" x2="166.0" y2="100.0" class="mj"/><line x1="179.0" y1="112.5" x2="172.1" y2="111.4"/><line x1="176.1" y1="124.7" x2="169.4" y2="122.6"/><line x1="171.3" y1="136.3" x2="165.0" y2="133.1"/><line x1="164.7" y1="147.0" x2="159.1" y2="142.9"/><line x1="156.6" y1="156.6" x2="146.7" y2="146.7" class="mj"/></g>
+        <g class="nums"><text x="61.8" y="143.2">0</text><text x="46.0" y="105.0">1</text><text x="61.8" y="66.8">2</text><text x="100.0" y="51.0">3</text><text x="138.2" y="66.8">4</text><text x="154.0" y="105.0">5</text><text x="138.2" y="143.2">6</text></g>
+        <text x="100" y="142" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" fill="#4a6168">bar</text>
+        <g class="needle"><path d="M96.5 114 L100 28 L103.5 114 Z" fill="#c8302a"/></g>
+        <circle cx="100" cy="100" r="10" fill="#2b3f45"/><circle cx="100" cy="100" r="4" fill="#d47f47"/>
+        <path d="M38 70 A66 66 0 0 1 140 34" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="rig-pipe" aria-hidden="true"></span>
+      <figure class="reel">
+        <div class="reel-frame">
+          <video muted loop playsinline preload="none" poster="../shared/video/plumber-poster.webp" aria-label="צילום מהשטח: חיתוך צינור לפני התקנה"><source src="../shared/video/plumber.mp4" type="video/mp4"><source src="../shared/video/plumber.webm" type="video/webm"></video>
+          <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button>
+          <label class="reel-swap">להחליף לסרטון שלכם<input type="file" accept="video/*" aria-label="להחליף לסרטון שלכם"></label>
+        </div>
+        <figcaption class="mono">צילום מהשטח · חיתוך צינור לפני התקנה</figcaption>
+      </figure>
+    </div>
+    <div class="hero-b">
+      <div class="meter">
+        <div class="cell"><span class="odo" data-to="15" aria-hidden="true">15</span><small>דקות עד שאני חוזר</small><span class="sr">חוזר תוך 15 דקות</span></div>
+        <div class="cell"><span class="odo" data-to="12" aria-hidden="true">12</span><small>שנה בשטח</small><span class="sr">12 שנה בשטח</span></div>
+        <div class="cell"><span class="odo" data-to="12" aria-hidden="true">12</span><small>חודשי אחריות</small><span class="sr">אחריות 12 חודשים</span></div>
+      </div>
+      <div class="avail-try">
+        <span class="live mono" data-avail><i></i>זמינים 24/7.</span>
+        <div class="try mono" data-avail-try><span>נסו: אורן כותב בוואטסאפ, והשורה למעלה מתעדכנת</span></div>
       </div>
     </div>
-    <figure class="reel">
-      <div class="reel-frame">
-        <video muted loop playsinline preload="none" poster="../shared/video/plumber-poster.webp" aria-label="צילום מהשטח: חיתוך צינור לפני התקנה"><source src="../shared/video/plumber.mp4" type="video/mp4"><source src="../shared/video/plumber.webm" type="video/webm"></video>
-        <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button>
-        <label class="reel-swap">להחליף לסרטון שלכם<input type="file" accept="video/*" aria-label="להחליף לסרטון שלכם"></label>
-      </div>
-      <figcaption class="mono">צילום מהשטח · חיתוך צינור לפני התקנה</figcaption>
-    </figure>
   </div>
 </header>
 
 <main>
 
-<section>
+<section id="prices">
   <div class="wrap">
-    <div class="head"><h2>הקריאות הנפוצות</h2><span class="mono">מחירים להמחשה · המחיר הסופי נקבע אחרי אבחון</span></div>
-    <div class="order">
-      <div class="order-top mono">
-        <div>הזמנת עבודה<b>מס׳ 2614</b></div>
-        <div>זמינות<b>היום</b></div>
-        <div>אחריות<b>12 חודשים</b></div>
-      </div>
-      <table>
-        <thead><tr><th>תקלה</th><th class="hide-sm">זמן טיפול</th><th>טווח מחיר</th><th></th></tr></thead>
-        <tbody>
-          <tr><td><b>סתימה בכיור, באסלה או בניקוז</b><small>פתיחה במכונה, בלי לשבור</small></td><td class="hide-sm">עד שעה</td><td class="price">250 עד 450 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
-          <tr><td><b>נזילה מתחת לכיור או מצנרת</b><small>החלפת אטמים, חיבורים וקטעי צנרת</small></td><td class="hide-sm">שעה עד שעתיים</td><td class="price">300 עד 650 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
-          <tr><td><b>דוד חשמל או שמש</b><small>גוף חימום, טרמוסטט, החלפת דוד</small></td><td class="hide-sm">שעה עד שלוש</td><td class="price">350 עד 2,800 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
-          <tr><td><b>איתור נזילה בלי הרס</b><small>מצלמה תרמית ומכשור אקוסטי</small></td><td class="hide-sm">שעתיים</td><td class="price">650 עד 1,200 ₪</td><td><button type="button" data-open-bot>לפתוח קריאה</button></td></tr>
-        </tbody>
-      </table>
+    <div class="head">
+      <div><p class="kicker">מחירון פתוח</p><h2>הקריאות הנפוצות</h2></div>
+      <p class="note mono">מחירים להמחשה · המחיר הסופי נקבע אחרי אבחון, ותמיד לפני שמתחילים</p>
+    </div>
+    <div class="board">
+      <div class="board-top mono"><span>הזמנת עבודה<b>מס׳ 2614</b></span><span>זמינות<b>היום</b></span><span>אחריות<b>12 חודשים</b></span></div>
+      <ul class="jobs">
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 11h18v1.5a9 9 0 0 1-18 0z"/><path d="M15 11V6.5a2.5 2.5 0 0 0-5 0"/><path d="M12 21.5v1.5"/><path d="M9.5 15.5c1 1 4 1 5 0"/></svg></span>
+          <div class="job-t"><b>סתימה בכיור, באסלה או בניקוז<span class="ltag">ביוב</span></b><small>פתיחה במכונה, בלי לשבור</small></div>
+          <span class="job-time">עד שעה</span>
+          <span class="job-price">250 עד 450 ₪</span>
+          <button class="job-go" type="button" data-open-bot>לפתוח קריאה</button>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5s6.5 7 6.5 11.5a6.5 6.5 0 0 1-13 0C5.5 9.5 12 2.5 12 2.5z"/><path d="M9 14.5a3 3 0 0 0 3 3"/></svg></span>
+          <div class="job-t"><b>נזילה מתחת לכיור או מצנרת<span class="ltag cold">קר</span></b><small>החלפת אטמים, חיבורים וקטעי צנרת</small></div>
+          <span class="job-time">שעה עד שעתיים</span>
+          <span class="job-price">300 עד 650 ₪</span>
+          <button class="job-go" type="button" data-open-bot>לפתוח קריאה</button>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="17" rx="3"/><path d="M12 7v6"/><circle cx="12" cy="14.5" r="1.8"/><path d="M9 19.5v2.5M15 19.5v2.5"/></svg></span>
+          <div class="job-t"><b>דוד חשמל או שמש<span class="ltag hot">חם</span></b><small>גוף חימום, טרמוסטט, החלפת דוד</small></div>
+          <span class="job-time">שעה עד שלוש</span>
+          <span class="job-price">350 עד 2,800 ₪</span>
+          <button class="job-go" type="button" data-open-bot>לפתוח קריאה</button>
+        </li>
+        <li class="job">
+          <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="13" height="11" rx="2"/><path d="M15.5 10l6-3v10l-6-3"/><path d="M5.5 13c1-2 2-2 3 0s2 2 3 0"/></svg></span>
+          <div class="job-t"><b>איתור נזילה בלי הרס<span class="ltag wall">בקיר</span></b><small>מצלמה תרמית ומכשור אקוסטי</small></div>
+          <span class="job-time">שעתיים</span>
+          <span class="job-price">650 עד 1,200 ₪</span>
+          <button class="job-go" type="button" data-open-bot>לפתוח קריאה</button>
+        </li>
+      </ul>
     </div>
     <p class="fine">הדף לדוגמה. אצלכם יופיעו המחירים, השירותים והאזורים שלכם.</p>
   </div>
 </section>
 
-<section class="field">
+<section class="calc deep" id="calc">
   <div class="wrap">
-    <div class="head"><h2>מהשטח</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+    <div class="head">
+      <div><p class="kicker">לפני שכותבים</p><h2>כמה זה יעלה?</h2></div>
+      <p class="note mono">בוחרים תקלה, ורואים טווח. הכפתור פותח קריאה עם מה שבחרתם.</p>
+    </div>
+    <div class="calc-body"><div data-estimate></div></div>
+    <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים והתוספות שלכם.</p>
+  </div>
+</section>
+
+<section class="white">
+  <div class="wrap how-grid">
+    <div>
+      <div class="head"><div><p class="kicker">קריאה אחת, שלוש תחנות</p><h2>מה קורה כשפותחים קריאה</h2></div></div>
+      <ol class="run">
+        <li><span class="valve" aria-hidden="true">1</span><div><span class="mono">30 שניות</span><h3>מתארים בצ׳אט</h3><p>מה התקלה, כמה דחוף ואיפה. אפשר לצרף תמונה. בלי לחכות על הקו.</p></div></li>
+        <li><span class="valve" aria-hidden="true">2</span><div><span class="mono">מיד</span><h3>מקבלים טווח מחיר</h3><p>מהמחירון, ומהתמונה אם צירפתם. הפרטים נשלחים אליי לוואטסאפ.</p></div></li>
+        <li><span class="valve" aria-hidden="true">3</span><div><span class="mono">תוך 15 דקות</span><h3>אני חוזר וקובע</h3><p>קובעים שעה, ומחיר סגור לפני שמתחילים לעבוד.</p></div></li>
+      </ol>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="ph-screen">
+          <div class="ph-top"><span class="ph-av">ד</span><div><b>דנה כהן</b><small>מהאתר</small></div></div>
+          <div class="ph-chat">
+            <span class="ph-day">היום</span>
+            <div class="ph-msg" id="ph-msg">קריאה חדשה מהאתר (דמו אינסטלטור)
+תקלה: נזילה
+דחיפות: היום
+ישוב: פרדס חנה כרכור
+שם: דנה כהן
+טלפון: 052-7654321
+מתי לחזור: בעוד שעה<time>07:42</time></div>
+          </div>
+        </div>
+      </div>
+      <p class="ph-cap">ככה הקריאה מגיעה לאורן. נסו את הצ׳אט, והטלפון יתעדכן.</p>
+    </div>
+  </div>
+</section>
+
+<section class="deep field">
+  <div class="wrap">
+    <div class="head">
+      <div><p class="kicker">מהשטח</p><h2>מי מגיע אליכם</h2></div>
+      <p class="note mono">כל תמונה כאן מתחלפת בתמונה שלכם</p>
+    </div>
     <div class="field-grid">
-      <div class="lanyard">
-        <span class="clip"></span>
-        <div class="badge">
-          <div class="badge-top"><b data-edit="badge-brand">אורן מים</b><span>טכנאי מוסמך</span></div>
-          <figure class="ps" data-slot="portrait" data-src="../shared/photos/plumber-portrait.webp" data-alt="אינסטלטור מתקן צנרת מתחת לכיור" data-pos="55 35" data-icon="person" data-label="תמונה שלכם"></figure>
+      <div class="portrait">
+        <figure class="ps" data-slot="portrait" data-src="../shared/photos/plumber-portrait.webp" data-alt="אינסטלטור מתקן צנרת מתחת לכיור" data-pos="55 35" data-icon="person" data-label="תמונה שלכם"></figure>
+        <div class="brass">
+          <span class="mono" data-edit="badge-brand">אורן מים</span>
           <h3 data-edit="badge-name">אורן לוי</h3>
           <p data-edit="badge-role">אינסטלטור · 12 שנה בשטח</p>
-          <div class="code" aria-hidden="true"></div>
         </div>
       </div>
       <div>
-        <div class="details">
-          <div class="detail"><div class="ring"><figure class="ps" data-slot="d1" data-src="../shared/photos/plumber-siphon.webp" data-alt="החלפת סיפון מתחת לכיור במטבח" data-icon="wrench" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט א׳</span><h3 data-edit="d1">החלפת סיפון במטבח</h3></div>
-          <div class="detail"><div class="ring"><figure class="ps" data-slot="d2" data-src="../shared/photos/plumber-leak.webp" data-alt="איתור נזילה בצנרת שבקיר" data-icon="drop" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ב׳</span><h3 data-edit="d2">איתור נזילה בקיר</h3></div>
-          <div class="detail"><div class="ring"><figure class="ps" data-slot="d3" data-src="../shared/photos/plumber-drain.webp" data-alt="פתיחת סתימה באמבטיה" data-icon="home" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ג׳</span><h3 data-edit="d3">פתיחת סתימה באמבטיה</h3></div>
+        <div class="ends">
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d1" data-src="../shared/photos/plumber-siphon.webp" data-alt="החלפת סיפון מתחת לכיור במטבח" data-icon="wrench" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט א׳ · ½ אינץ׳</span><h3 data-edit="d1">החלפת סיפון במטבח</h3></div>
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d2" data-src="../shared/photos/plumber-leak.webp" data-alt="איתור נזילה בצנרת שבקיר" data-icon="drop" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ב׳ · בקיר</span><h3 data-edit="d2">איתור נזילה בקיר</h3></div>
+          <div class="end"><div class="mouth"><figure class="ps" data-slot="d3" data-src="../shared/photos/plumber-drain.webp" data-alt="פתיחת סתימה באמבטיה" data-icon="home" data-label="תמונה מעבודה"></figure></div><span class="mono">פרט ג׳ · ניקוז</span><h3 data-edit="d3">פתיחת סתימה באמבטיה</h3></div>
         </div>
         <p class="field-note">לקוחות סומכים על מי שהם רואים. תמונה אמיתית שלכם ושל העבודה שלכם עושה יותר מכל משפט.</p>
       </div>
@@ -251,56 +258,196 @@
   </div>
 </section>
 
-<section>
+<section class="tst-sec" id="testimonials">
   <div class="wrap">
-    <div class="head"><h2>מה קורה כשפותחים קריאה</h2></div>
-    <div class="steps">
-      <div class="step"><span class="mono">שלב 1 · 30 שניות</span><h3>מתארים בצ׳אט</h3><p>מה התקלה, כמה דחוף ואיפה. בלי לחכות על הקו.</p></div>
-      <div class="step"><span class="mono">שלב 2 · מיד</span><h3>מקבלים הערכת מחיר</h3><p>טווח מחיר ברור, והפרטים נשלחים אליי בוואטסאפ.</p></div>
-      <div class="step"><span class="mono">שלב 3 · תוך 15 דק׳</span><h3>אני חוזר וקובע</h3><p>אישור שעה, ומחיר סגור לפני שמתחילים לעבוד.</p></div>
+    <div class="head">
+      <div><p class="kicker">מהלקוחות</p><h2>מה אומרים אחרי הביקור</h2></div>
+      <p class="note mono">המלצות לדוגמה · באתר שלכם: לקוחות אמיתיים</p>
+    </div>
+    <div class="tst-grid" id="tst-list">
+      <figure class="tst-card"><span class="tst-stars" aria-label="5 מתוך 5">★★★★★</span><blockquote class="tst-text">הגיע תוך שעה, פתח את הסתימה במטבח בלי לשבור כלום. המחיר היה בדיוק כמו שאמר בצ׳אט.</blockquote><figcaption class="tst-by"><b>מיכל, חדרה</b><span>מרץ</span></figcaption></figure>
+      <figure class="tst-card"><span class="tst-stars" aria-label="5 מתוך 5">★★★★★</span><blockquote class="tst-text">נזילה מתחת לכיור בשבת בבוקר. ענה מיד בצ׳אט, הסביר מה לסגור עד שהגיע.</blockquote><figcaption class="tst-by"><b>יוסי, פרדס חנה</b><span>פברואר</span></figcaption></figure>
+      <figure class="tst-card"><span class="tst-stars" aria-label="4 מתוך 5">★★★★☆</span><blockquote class="tst-text">החליף גוף חימום בדוד. עבודה נקייה, ומחיר סגור לפני שהתחיל.</blockquote><figcaption class="tst-by"><b>רונית, נתניה</b><span>ינואר</span></figcaption></figure>
+    </div>
+    <details class="tst-try">
+      <summary>נסו: לכתוב המלצה, ולראות אותה עולה לאתר</summary>
+      <form id="tst-form" novalidate>
+        <label>מה תרצו לכתוב?<textarea id="tst-text" maxlength="400" required placeholder="למשל: הגיע מהר, פתר את הבעיה, ומחיר כמו שסיכמנו."></textarea></label>
+        <div class="tst-row">
+          <label>השם שיופיע<input id="tst-name" maxlength="30" required placeholder="למשל: דנה, חדרה"></label>
+          <label>דירוג<select id="tst-stars"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="">בלי דירוג</option></select></label>
+        </div>
+        <p class="tst-err" id="tst-err" role="alert"></p>
+        <button class="btn btn-hot" type="submit">לפרסם את ההמלצה</button>
+      </form>
+      <p class="tst-how">באתר אמיתי: רק לקוח שפנה אליכם ושסימנתם עליו "טיפלתי" מקבל קישור אישי לכתוב המלצה. היא עולה מיד, ואתם מקבלים אותה בוואטסאפ עם כפתור "להסתיר".</p>
+    </details>
+  </div>
+</section>
+
+<section class="deep live-ai" id="live-ai" aria-labelledby="t-live">
+  <div class="wrap">
+    <div>
+      <p class="tag"><i aria-hidden="true"></i>נציג AI חי, לא תסריט</p>
+      <h2 id="t-live">שאלו את אורן כל שאלה</h2>
+      <p class="lede">הצ׳אט בפינה שואל שאלות קבועות. כאן עונה נציג AI אמיתי, מתוך המחירים, האזורים והשעות של העסק. וכשהוא לא יודע, הוא אומר את זה ולא ממציא.</p>
+      <button class="btn btn-hot" type="button" data-live-ask="">לשאול את הנציג</button>
+      <p class="fine">העסק בדוי. מה שכותבים כאן נשלח לנציג AI כדי שיענה, ולא נשמר. שם וטלפון שתשאירו לא מגיעים לאף אחד.</p>
+    </div>
+    <div class="asks">
+      <button type="button" data-live-ask="כמה עולה לפתוח סתימה במטבח?">כמה עולה לפתוח סתימה במטבח?<small>מחיר מהמחירון של העסק</small></button>
+      <button type="button" data-live-ask="אתם מגיעים לכפר יונה בשבת?">אתם מגיעים לכפר יונה בשבת?<small>אזור, זמינות ותוספת לשבת</small></button>
+      <button type="button" data-live-ask="יש לי נזילה מהתקרה, מה עושים עכשיו?">יש לי נזילה מהתקרה, מה עושים עכשיו?<small>מה עושים עד שמגיעים</small></button>
+      <button type="button" data-live-ask="אתם מתקינים גם מזגנים?">אתם מתקינים גם מזגנים?<small>ומה קורה כשהתשובה היא לא</small></button>
     </div>
   </div>
 </section>
 
-<section class="area">
-  <div class="wrap row">
-    <div>
-      <div class="head"><h2>אזורי שירות</h2><span class="mono">רדיוס 25 ק״מ מחדרה</span></div>
-      <div class="towns"><span>חדרה</span><span>עמק חפר</span><span>נתניה</span><span>פרדס חנה כרכור</span><span>אור עקיבא</span><span>קיסריה</span><span>בנימינה</span><span>כפר יונה</span></div>
+<section class="guides white" id="guides">
+  <div class="wrap">
+    <div class="head">
+      <div><p class="kicker">עד שמגיעים</p><h2>טיפים ומדריכים</h2></div>
+      <p class="note mono">מה עושים ברגע הראשון, ואיך מונעים את הפעם הבאה</p>
     </div>
-    <div>
+    <div data-guides></div>
+  </div>
+</section>
+
+<section class="deep" id="area">
+  <div class="wrap area-grid">
+    <div class="area-copy">
+      <p class="kicker">קו ראשי מחדרה</p>
+      <h2>אזורי שירות</h2>
+      <ul class="towns"><li>חדרה</li><li>עמק חפר</li><li>נתניה</li><li>פרדס חנה כרכור</li><li>אור עקיבא</li><li>קיסריה</li><li>בנימינה</li><li>כפר יונה</li></ul>
       <p>לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט ותקבלו תשובה מיד.</p>
-      <button class="btn btn-signal" type="button" data-open-bot>לבדוק בצ׳אט</button>
+      <div class="ctas" style="margin-top:22px"><button class="btn btn-hot" type="button" data-open-bot>לבדוק בצ׳אט</button></div>
     </div>
+    <svg class="netmap" viewBox="0 0 440 340" role="img" aria-label="מפת אזור השירות: מחדרה לקיסריה, אור עקיבא, בנימינה, פרדס חנה כרכור, עמק חפר, כפר יונה ונתניה, ברדיוס 25 ק״מ">
+      <path class="sea" d="M162 0 C158 70 150 120 140 170 S100 280 74 340 L0 340 L0 0 Z"/>
+      <path class="coast" d="M162 0 C158 70 150 120 140 170 S100 280 74 340"/>
+      <circle class="ring" cx="230" cy="156" r="150"/>
+      <g>
+        <path class="run-l" d="M230 156 V110 L202 82 H170 M230 110 V76 M230 156 L268 118 V90 L301 57 M230 156 H312 L349 119 M230 156 V219 L206 243 H150 L98 293 M230 219 L278 267 V305"/>
+        <path class="run-h" d="M230 156 V110 L202 82 H170 M230 110 V76 M230 156 L268 118 V90 L301 57 M230 156 H312 L349 119 M230 156 V219 L206 243 H150 L98 293 M230 219 L278 267 V305"/>
+      </g>
+      <circle class="node" cx="170" cy="82" r="7"/><circle class="node" cx="230" cy="76" r="7"/><circle class="node" cx="301" cy="57" r="7"/><circle class="node" cx="349" cy="119" r="7"/>
+      <circle class="node" cx="206" cy="243" r="7"/><circle class="node" cx="278" cy="305" r="7"/><circle class="node" cx="98" cy="293" r="7"/>
+      <circle class="hub" cx="230" cy="156" r="12"/>
+      <g text-anchor="middle">
+        <text x="160" y="110">קיסריה</text><text x="230" y="60">אור עקיבא</text><text x="334" y="46">בנימינה</text><text x="370" y="100">פרדס חנה כרכור</text>
+        <text x="268" y="186" style="font-size:17px">חדרה</text><text x="206" y="272">עמק חפר</text><text x="328" y="310">כפר יונה</text><text x="98" y="324">נתניה</text>
+        <text class="small" x="44" y="176">הים</text><text class="small" x="330" y="236">25 ק״מ</text>
+      </g>
+    </svg>
   </div>
 </section>
 
 </main>
 
-<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · דף לדוגמה, העסק בדוי</span><a href="../">רוצים דף כזה לעסק שלכם?</a></div></footer>
+<footer class="wrap"><div class="row"><span>אורן מים · אינסטלציה · דף לדוגמה, העסק בדוי</span><nav aria-label="קישורים"><a href="../privacy/">פרטיות</a><a href="../accessibility/">הצהרת נגישות</a><a href="../build/?t=plumber">לבנות אתר כזה</a></nav></div></footer>
 
 <script src="../shared/leadbot.js"></script>
 <script src="../shared/photoslots.js"></script>
 <script src="../shared/reel.js"></script>
+<script src="../shared/estimate.js"></script>
+<script src="../shared/status.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/aibot.js"></script>
+<script>
+  // The water meter's wheels: each digit is a strip that rolls to its number (oren.css). Static text without JS.
+  document.querySelectorAll(".odo[data-to]").forEach((o) => {
+    const digits = [...o.dataset.to]; o.textContent = "";
+    digits.forEach((d, i) => {
+      const wheel = document.createElement("b"); if (i === digits.length - 1) wheel.className = "red";
+      const strip = document.createElement("i"); strip.style.setProperty("--n", d); strip.style.animationDelay = (0.25 + i * 0.18) + "s";
+      for (let k = 0; k < 10; k++) { const s = document.createElement("span"); s.textContent = k; strip.append(s); }
+      wheel.append(strip); o.append(wheel);
+    });
+  });
+</script>
+<script>
+  // The testimonials demo: what the visitor writes shows on the page at once, as on a real site.
+  // Same checks as the real one (functions/testimonial.mjs): plain words, no links, e-mails or phone numbers.
+  (function () {
+    const f = document.getElementById("tst-form"), err = document.getElementById("tst-err"), list = document.getElementById("tst-list");
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = document.getElementById("tst-text").value.replace(/\s+/g, " ").trim(), name = document.getElementById("tst-name").value.replace(/\s+/g, " ").trim();
+      const stars = Number(document.getElementById("tst-stars").value) || 0;
+      err.textContent = text.length < 15 ? "כמה מילים נוספות, בבקשה." : name.length < 2 ? "כתבו שם, לפחות שתי אותיות." :
+        /https?:|www\.|\.(com|co\.il|net|org)\b|@/i.test(name + " " + text) || /\d[\d\s-]{6,}\d/.test(name + " " + text) ? "בלי קישורים, מיילים או מספרי טלפון." : "";
+      if (err.textContent) return;
+      const card = el("figure", "tst-card new");
+      if (stars) { const st = el("span", "tst-stars", "★".repeat(stars) + "☆".repeat(5 - stars)); st.setAttribute("aria-label", stars + " מתוך 5"); card.append(st); }
+      card.append(el("blockquote", "tst-text", text));
+      const by = el("figcaption", "tst-by"); by.append(el("b", null, name), el("span", "tag", "חדש באתר")); card.append(by);
+      list.prepend(card); f.reset();
+      card.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    });
+  })();
+</script>
 <script>
   const RANGES = { "סתימה": "250 עד 450 ₪", "נזילה": "300 עד 650 ₪", "דוד ומים חמים": "350 עד 2,800 ₪", "איתור נזילה": "650 עד 1,200 ₪", "התקנה או החלפה": "לפי הצעת מחיר" };
   const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "אינסטלציה", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
-    name: "אורן · אינסטלטור", subtitle: "עונה מיד, גם כשאני בשטח", initial: "א", launcher: "לפתוח קריאה",
-    greet: "היי, כאן אורן 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה אני עונה מיד. שלוש שאלות קצרות ואני חוזר אליכם.",
+    name: "אורן · אינסטלטור", subtitle: "עונה מיד, גם כשאני בשטח", initial: "א", launcher: "לפתוח קריאה", hint: "נציג AI",
+    greet: "היי, כאן אורן.\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות, ואני חוזר אליכם.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
-      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? ככה אפשר לתת מחיר מדויק יותר.", photo: true },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"],
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "leak", text: "עד שנגיע: סגרו את הברז הראשי. אם המים קרובים לחשמל, הורידו קודם את המפסק בלוח." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !d.urgency.startsWith("עכשיו") },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.\n${d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : ""}\nלחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`,
-    summary: (d) => `קריאה חדשה מהאתר (דמו אינסטלטור)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה חדשה מהאתר (דמו אינסטלטור)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הצ׳אט מותאם לשירותים ולמחירים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
   });
   PhotoSlots.init({ page: "plumber" });
-  document.querySelectorAll(".order tbody tr").forEach((tr) => tr.addEventListener("click", () => bot.open()));
+  // The live נציג AI (functions/demo-chat.mjs): opened from the #live-ai buttons, never from the corner.
+  const live = AiBot.init({
+    endpoint: "/api/demo-chat/plumber", whatsapp: "972526359513",
+    name: "אורן מים · נציג AI", subtitle: "חי: עונה מתוך המידע של העסק",
+    greet: "היי, אני הנציג של אורן מים. אפשר לשאול על מחירים, אזורים, זמינות, או מה עושים עד שאורן מגיע.",
+    chips: ["כמה עולה החלפת דוד?", "אתם מגיעים לנתניה?", "יש לכם אחריות?", "אתם עושים חשמל?"],
+    placeholder: "כתבו שאלה, כמו לקוח", note: "נציג AI אמיתי בעסק בדוי. הוא יכול לטעות, ושום פרט לא נשלח לאף אחד.",
+    offline: "הנציג החי לא זמין כרגע. אפשר לנסות שוב בעוד רגע, או לפתוח קריאה בצ׳אט שבפינה.", offlineWa: false,
+  });
+  document.querySelectorAll("[data-live-ask]").forEach((b) => b.addEventListener("click", () => { live.open(); if (b.dataset.liveAsk) live.ask(b.dataset.liveAsk); }));
+  // The "available now" line. On a real site it follows what the owner writes in WhatsApp ("עסוק", "פנוי").
+  LeadStatus.init({ hours: { days: [0, 1, 2, 3, 4, 5, 6], start: 0, end: 24 }, area: "חדרה והשרון", demo: true });
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה התקלה?", items: [
+      { label: "סתימה", range: [250, 450], prefill: { issue: "סתימה" } },
+      { label: "נזילה", range: [300, 650], prefill: { issue: "נזילה" } },
+      { label: "דוד: גוף חימום או טרמוסטט", range: [350, 600], prefill: { issue: "דוד ומים חמים" } },
+      { label: "דוד: החלפה", range: [1900, 2800], prefill: { issue: "דוד ומים חמים" }, note: "כולל דוד חדש, פירוק ופינוי של הישן." },
+      { label: "איתור נזילה", range: [650, 1200], prefill: { issue: "איתור נזילה" } },
+      { label: "התקנה או החלפה", range: null, prefill: { issue: "התקנה או החלפה" } },
+    ] },
+    factors: [
+      { ask: "כמה דחוף?", options: [
+        { label: "היום", prefill: { urgency: "היום" } },
+        { label: "השבוע", prefill: { urgency: "השבוע" } },
+        { label: "עכשיו, יש מים על הרצפה", add: 100, prefill: { urgency: "עכשיו, יש מים על הרצפה" }, note: "יציאה מיידית: 100 ₪ נוספים." },
+      ] },
+      { ask: "מתי נוח שנגיע?", options: [
+        { label: "בשעות היום" },
+        { label: "בערב או בשבת", add: 150, note: "בערב ובשבת: 150 ₪ נוספים." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. המחיר הסופי נקבע אחרי אבחון במקום, ותמיד לפני שמתחילים.",
+    quote: "לפי הצעת מחיר, אחרי שרואים את העבודה",
+    cta: "לפתוח קריאה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
 </script>
+<script>Guides.load("../shared/guides/plumber.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });</script>
 </body>
 </html>

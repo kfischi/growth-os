@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>יונתן צילום · צלם אירועים בחדרה, בשרון ובמרכז</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="צלם אירועים: חתונות, בר ובת מצווה, בריתות ואירועי חברה, בחדרה, בשרון ובמרכז. בודקים תאריך בצ׳אט ומקבלים תיק עבודות בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the contact sheet on the light table. Strips of 35mm film printed in a row, each frame 3:2 with its edge number,
+     a loupe lying on top, and the photographer's red grease pencil circling the frames for the album.
+     Detail: frame numbers (14, 14A), the evening by the clock (17:30 התארגנות, 19:30 חופה, 22:00 רחבה), hours of coverage,
+     guests, the album's 30 על 30 ס״מ and 40 pages, the exposure in the corner (f/2.8, 1/200). One event a day, so the date is what matters.
+     Bold move: one big dark contact sheet in the hero on the glowing light table, with a frame circled in grease pencil
+     (the only motion: the circle draws itself once) and the loupe magnifying another. Everything else stays quiet and light. */
+  :root {
+    --table: #eef1f4;          /* the light table's diffuser, cool white */
+    --glow: #fbfcfd;           /* where the lamp is brightest */
+    --emulsion: #1d1820;       /* the contact sheet, the film base, the ink */
+    --emulsion-2: #2a2430;
+    --dim: #4f4957;            /* secondary text on the table */
+    --grease: #c0183c;         /* the china marker */
+    --grease-lit: #ff8aa1;     /* the same pencil on the dark sheet */
+    --print: #fdfcfb;          /* photo paper */
+    --display: "Secular One", "Rubik", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --hand: "Amatic SC", "Secular One", system-ui, sans-serif;
+    --phone-frame: var(--emulsion);
+    --bot-bg: #fff; --bot-fg: var(--emulsion); --bot-line: #d6dbe1; --bot-muted: var(--dim);
+    --bot-accent: var(--emulsion); --bot-accent-fg: #fff; --bot-them: #eef1f4; --bot-me: var(--emulsion); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 6px; --bot-radius-input: 4px; --bot-focus: var(--grease);
+    --guide-alert: var(--grease);
+    --ps-a: #c9d2dc; --ps-b: #6f7c8c; --ps-ui: var(--emulsion); --ps-edit: var(--grease);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--table); color: var(--emulsion); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--grease); outline-offset: 2px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .mono { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; }
+  bdi { unicode-bidi: isolate; }
+  h1, h2, h3 { margin: 0; font-weight: 400; }
+  h2 { font-family: var(--display); font-size: clamp(30px, 4.2vw, 48px); line-height: 1.15; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16px; border-radius: 3px; }
+  .btn-dark { background: var(--emulsion); color: #fff; }
+  .btn-dark:hover { background: #352d3b; }
+  .btn-line { border: 2px solid var(--emulsion); color: var(--emulsion); background: transparent; }
+  .btn-line:hover { background: var(--glow); }
+
+  .demo { background: var(--emulsion); color: #c9c3cf; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* film edge: sprocket holes as a repeating band */
+  .sprockets { height: 14px; background: radial-gradient(circle at 50% 50%, transparent 0, transparent 0) ,
+      repeating-linear-gradient(90deg, transparent 0 6px, var(--table) 6px 15px, transparent 15px 22px);
+    -webkit-mask: linear-gradient(transparent 3px, #000 3px, #000 11px, transparent 11px); mask: linear-gradient(transparent 3px, #000 3px, #000 11px, transparent 11px); }
+
+  /* ---------- Hero: the light table ---------- */
+  .hero { background: radial-gradient(ellipse 70% 80% at 35% 45%, var(--glow), var(--table) 70%, #e2e7ec); border-bottom: 1px solid #d6dbe1; overflow: hidden; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 0; }
+  .logo { font-family: var(--display); font-size: 25px; line-height: 1; white-space: nowrap; }
+  .logo span { color: var(--grease); }
+  .bar .mono { color: var(--dim); }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--grease); }
+  .bar-mid { flex: 1; text-align: center; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 48px; align-items: center; padding: 34px 0 64px; }
+  .hero-copy { min-width: 0; }
+  .kicker { color: var(--dim); margin: 0 0 14px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(38px, 4.8vw, 60px); line-height: 1.08; }
+  .hero h1 span { display: block; }
+  .hero h1 em { font-style: normal; display: block; color: var(--grease); }
+  .lead { font-size: 19px; line-height: 1.6; max-width: 34ch; margin: 20px 0 24px; color: var(--dim); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* the date slip: a strip of photo paper with a date on it */
+  .slip { margin-top: 26px; background: var(--print); border: 1px solid #d6dbe1; padding: 14px 16px 12px; max-width: 460px; box-shadow: 0 16px 30px -24px rgba(29,24,32,.6); }
+  .slip-row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+  .slip label { display: block; font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .slip .field { flex: 1 1 170px; min-width: 0; }
+  .slip input { width: 100%; min-height: 46px; border: 1.5px solid #b8bfc8; border-radius: 3px; padding: 8px 10px; font: 16px var(--mono); color: var(--emulsion); background: #fff; }
+  .slip .btn { flex: 0 0 auto; }
+  .slip p { margin: 10px 0 0; font-size: 14.5px; color: var(--dim); }
+  .slip p b { color: var(--emulsion); }
+
+  .sheet-wrap { position: relative; min-width: 0; }
+  .sheet { display: block; width: 100%; height: auto; transform: rotate(-2deg); filter: drop-shadow(0 30px 34px rgba(29,24,32,.35)); }
+  .grease-ring { stroke-dasharray: 340; stroke-dashoffset: 340; animation: grease 1.1s .6s ease-out forwards; }
+  @keyframes grease { to { stroke-dashoffset: 0; } }
+  .note { position: absolute; font-family: var(--hand); font-size: 30px; line-height: 1; color: var(--grease); transform: rotate(-7deg); pointer-events: none; white-space: nowrap; }
+  .note.n1 { top: 57%; left: 20%; }
+  .exif { margin: 18px 0 0; color: var(--dim); text-align: center; }
+
+  /* ---------- Packages: the lab order ---------- */
+  section { padding-block: 84px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 26px; }
+  .head .mono { color: var(--dim); }
+  .order { background: var(--print); border: 1px solid #d6dbe1; box-shadow: 0 30px 50px -40px rgba(29,24,32,.55); }
+  .order .edge { background: var(--emulsion); color: #c9c3cf; display: flex; justify-content: space-between; gap: 12px; padding: 0 16px; }
+  .order .edge .sprockets { flex: 1; align-self: center; }
+  .order .edge span { line-height: 30px; white-space: nowrap; }
+  .pk { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 150px 190px; gap: 8px 24px; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e3e6ea; }
+  .pk:hover b { text-decoration: underline; text-decoration-color: var(--grease); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+  .pk:focus-visible { outline: 3px solid var(--grease); outline-offset: -3px; }
+  .pk b { display: block; font-family: var(--display); font-weight: 400; font-size: 23px; line-height: 1.25; }
+  .pk .d { display: block; color: var(--dim); font-size: 15.5px; margin-top: 2px; }
+  .pk .h { font-family: var(--mono); font-size: 14px; color: var(--dim); }
+  .pk .p { font-weight: 700; font-size: 17px; text-align: left; white-space: nowrap; }
+  .pk .p small { display: block; font-weight: 400; font-size: 12.5px; color: var(--dim); }
+  .order-foot { display: flex; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; padding: 16px 24px 18px; font-size: 15px; color: var(--dim); }
+  .order-foot b { color: var(--emulsion); }
+
+  /* ---------- The evening, frame by frame ---------- */
+  .strip { background: var(--emulsion); color: #e9e5ec; padding: 0 14px; }
+  .strip .frames { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; padding: 8px 0 10px; list-style: none; margin: 0; }
+  .strip li { min-width: 0; }
+  .strip svg { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; }
+  .strip .t { display: flex; justify-content: space-between; gap: 6px; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: #b9b1c0; }
+  .strip .t b { font-weight: 500; color: var(--grease-lit); }
+  .strip h3 { font-size: 16px; font-weight: 700; margin: 2px 0 0; line-height: 1.3; }
+  .strip p { margin: 2px 0 0; font-size: 14px; color: #c9c3cf; line-height: 1.45; }
+  .day-note { margin: 16px 0 0; color: var(--dim); font-size: 15.5px; }
+
+  /* ---------- The album: who shoots ---------- */
+  .album { background: var(--emulsion); padding: 14px; border-radius: 4px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; box-shadow: 0 40px 60px -40px rgba(29,24,32,.7); }
+  .leaf { background: var(--print); padding: 34px 32px 36px; min-width: 0; position: relative; }
+  .leaf + .leaf { box-shadow: inset -18px 0 22px -18px rgba(29,24,32,.35); }
+  .leaf:first-child { box-shadow: inset 18px 0 22px -18px rgba(29,24,32,.35); }
+  .mat { margin: 0; min-width: 0; background: #fff; padding: 8px 8px 0; border: 1px solid #e3e6ea; box-shadow: 0 10px 18px -14px rgba(29,24,32,.5); }
+  .mat .ps { aspect-ratio: 3 / 2; }
+  .mat figcaption, .mat > p { margin: 0; padding: 6px 2px 8px; font-size: 14px; color: var(--dim); }
+  .portrait { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px; align-items: center; }
+  .portrait .mat .ps { aspect-ratio: 4 / 5; }
+  .portrait b { display: block; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.15; }
+  .portrait span { color: var(--dim); font-size: 15.5px; }
+  .facts { list-style: none; padding: 0; margin: 24px 0 0; }
+  .facts li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 9px 0; border-bottom: 1px solid #e3e6ea; line-height: 1.5; }
+  .facts li > b { font-weight: 700; color: var(--grease); }
+  .prints { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .prints .wide { grid-column: 1 / -1; }
+  .one-a-day { margin-top: 22px; border: 2px solid var(--grease); padding: 12px 16px; }
+  .one-a-day b { display: block; font-family: var(--display); font-weight: 400; font-size: 21px; color: var(--grease); }
+  .one-a-day span { font-size: 15.5px; color: var(--dim); }
+
+  /* ---------- What the photographer sees ---------- */
+  .owner { background: var(--emulsion); color: #e9e5ec; }
+  .owner .head .mono { color: #b9b1c0; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li b i { font-style: normal; font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--grease-lit); margin-inline-end: 10px; }
+  .owner li span { color: #c9c3cf; font-size: 15.5px; }
+  .owner .ph-cap { color: #b9b1c0; }
+
+  footer { padding-block: 34px 96px; color: var(--dim); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid #cfd5dc; padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 920px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; padding-bottom: 48px; }
+    .sheet-wrap { max-width: 560px; width: 100%; margin-inline: auto; }
+    .strip .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 20px; }
+    .album { grid-template-columns: minmax(0, 1fr); }
+    .leaf:first-child, .leaf + .leaf { box-shadow: none; }
+    .leaf + .leaf { border-top: 1px dashed #cfd5dc; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 620px) {
+    .bar-mid { display: none; }
+    .hero-grid { padding-top: 14px; }
+    .hero h1 { font-size: clamp(34px, 10vw, 44px); }
+    .lead { font-size: 17px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .slip .btn { flex: 1 1 100%; }
+    .note { font-size: 25px; }
+    section { padding-block: 60px; }
+    .pk { grid-template-columns: minmax(0, 1fr) auto; padding: 16px; gap: 6px 14px; }
+    .pk > span:first-child { grid-column: 1 / -1; }
+    .pk b { font-size: 21px; }
+    .pk .p { font-size: 16px; }
+    .order-foot { padding: 14px 16px; }
+    .order .edge .sprockets { display: none; }
+    .strip { padding: 0 10px; }
+    .strip .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 10px; }
+    .leaf { padding: 24px 16px 26px; }
+    .album { padding: 8px; }
+    .portrait { grid-template-columns: 112px minmax(0, 1fr); gap: 14px; }
+    .portrait b { font-size: 25px; }
+    .facts li { grid-template-columns: 78px minmax(0, 1fr); font-size: 15.5px; }
+    .prints { gap: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .grease-ring { animation: none; stroke-dashoffset: 0; } }
+  html.a11y-still .grease-ring { animation: none; stroke-dashoffset: 0; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=photographer">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<!-- The frames: drawn stand-ins for the owner's own photos, 3:2 like a 35mm negative. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-slate" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8496aa"/><stop offset="1" stop-color="#3f4b5c"/></linearGradient>
+    <linearGradient id="g-blush" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ecd3db"/><stop offset="1" stop-color="#9a6f80"/></linearGradient>
+    <linearGradient id="g-sea" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5d8a8c"/><stop offset="1" stop-color="#2e4f55"/></linearGradient>
+    <linearGradient id="g-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e2638"/><stop offset="1" stop-color="#4a3c58"/></linearGradient>
+    <linearGradient id="g-dawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe5ec"/><stop offset="1" stop-color="#a9b6c4"/></linearGradient>
+    <pattern id="sprk" width="14" height="10" patternUnits="userSpaceOnUse"><rect x="3" y="2" width="8" height="6" rx="1.2" fill="#eef1f4" opacity=".9"/></pattern>
+  </defs>
+  <symbol id="s-arch" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-slate)"/><path d="M16 64V36a32 27 0 0 1 64 0v28" fill="none" stroke="#e3e9ef" stroke-width="3"/><path d="M14 33c6-6 10-6 14-2M68 31c4-4 8-4 14 2" stroke="#ecd3db" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="40" cy="32" r="4.6" fill="#f4eff1"/><path d="M35 38h10l5 26H30z" fill="#f4eff1"/><circle cx="57" cy="31" r="4.6" fill="#22252e"/><path d="M52 37h10l1 27H51z" fill="#22252e"/></symbol>
+  <symbol id="s-toast" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-blush)"/><circle cx="18" cy="16" r="9" fill="#fff" opacity=".45"/><circle cx="76" cy="12" r="6" fill="#fff" opacity=".5"/><circle cx="58" cy="22" r="12" fill="#fff" opacity=".28"/><g fill="#fbf7f8" opacity=".92"><path d="M30 18h14l-2 16a5 5 0 0 1-10 0z" transform="rotate(12 37 30)"/><path d="M52 18h14l-2 16a5 5 0 0 1-10 0z" transform="rotate(-12 59 30)"/></g><path d="M39 44v14M33 58h12M57 44v14M51 58h12" stroke="#fbf7f8" stroke-width="2.4"/></symbol>
+  <symbol id="s-rings" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-sea)"/><circle cx="40" cy="34" r="13" fill="none" stroke="#eef3f4" stroke-width="4"/><circle cx="57" cy="34" r="13" fill="none" stroke="#c9d8da" stroke-width="4"/><circle cx="34" cy="22" r="2.4" fill="#fff"/></symbol>
+  <symbol id="s-dance" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-night)"/><circle cx="16" cy="14" r="8" fill="#ff8aa1" opacity=".55"/><circle cx="44" cy="10" r="5" fill="#9fd0d2" opacity=".7"/><circle cx="70" cy="18" r="10" fill="#d8c8f0" opacity=".45"/><circle cx="86" cy="8" r="4" fill="#fff" opacity=".6"/><circle cx="30" cy="24" r="3" fill="#fff" opacity=".5"/><g fill="#15121a"><circle cx="20" cy="46" r="6"/><path d="M12 64c0-10 4-12 8-12s8 2 8 12z"/><path d="M14 44l-6-14 3-1 7 13z"/><circle cx="48" cy="44" r="6.5"/><path d="M39 64c0-11 5-13 9-13s9 2 9 13z"/><path d="M53 41l7-15 3 1-6 16z M43 41l-7-15-3 1 6 16z"/><circle cx="76" cy="47" r="6"/><path d="M68 64c0-10 4-12 8-12s8 2 8 12z"/></g></symbol>
+  <symbol id="s-table" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-dawn)"/><path d="M0 40L42 26h12l42 14v24H0z" fill="#fdfcfb"/><path d="M0 40L42 26h12l42 14" fill="none" stroke="#c9d2dc" stroke-width="1.5"/><g fill="#d996a8"><circle cx="30" cy="31" r="4"/><circle cx="48" cy="27" r="3"/><circle cx="66" cy="31" r="4"/></g><g fill="#5d8a8c"><circle cx="26" cy="32" r="2.5"/><circle cx="70" cy="32" r="2.5"/></g><path d="M20 48h10M66 48h10M42 52h12" stroke="#c9d2dc" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="s-tallit" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-slate)"/><circle cx="48" cy="20" r="8" fill="#e9dfe2"/><path d="M40 13a8 5 0 0 1 16 0" fill="#22252e"/><path d="M30 64c0-18 8-28 18-28s18 10 18 28z" fill="#22252e"/><path d="M27 64l8-26h26l8 26z" fill="#f6f4f2"/><path d="M30 55h36M32 49h32" stroke="#3f4b5c" stroke-width="3"/></symbol>
+  <symbol id="s-baby" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-dawn)"/><ellipse cx="48" cy="40" rx="36" ry="18" fill="#ecd3db"/><ellipse cx="52" cy="38" rx="22" ry="11" fill="#fdfcfb"/><circle cx="30" cy="36" r="8" fill="#f1dcd3"/><path d="M40 33q12 -4 30 2" stroke="#e3e6ea" stroke-width="2" fill="none"/></symbol>
+  <symbol id="s-crowd" viewBox="0 0 96 64"><rect width="96" height="64" fill="url(#g-sea)"/><rect x="24" y="8" width="48" height="22" fill="#cfe0e1" opacity=".5"/><g fill="#1f3236"><circle cx="12" cy="44" r="6"/><circle cx="30" cy="42" r="6.5"/><circle cx="50" cy="45" r="6"/><circle cx="68" cy="42" r="6.5"/><circle cx="86" cy="44" r="6"/><path d="M0 64c2-10 6-13 12-13s10 3 12 13zM18 64c2-11 6-14 12-14s10 3 12 14zM38 64c2-10 6-12 12-12s10 2 12 12zM56 64c2-11 6-14 12-14s10 3 12 14zM74 64c2-10 6-13 12-13s10 3 12 13z"/></g></symbol>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo" data-edit="logo">יונתן <span>צילום</span></div>
+      <span class="bar-mid mono">צלם אירועים · חדרה, השרון והמרכז</span>
+      <a href="#" data-wa="היי יונתן, הגעתי מהאתר ואשמח לבדוק תאריך">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker mono">חתונות · בר ובת מצווה · בריתות · אירועי חברה</p>
+        <h1><span data-edit="h1a">יש לכם תאריך?</span> <em data-edit="h1b">אבדוק אם הוא פנוי.</em></h1>
+        <p class="lead" data-edit="lead">כתבו בצ׳אט איזה אירוע, מתי ואיפה. אבדוק ביומן ואחזור אליכם עם תשובה ותיק עבודות בוואטסאפ.</p>
+        <div class="ctas">
+          <button class="btn btn-dark" type="button" data-open-bot>לבדוק תאריך</button>
+          <a class="btn btn-line" href="#" data-wa="היי יונתן, אשמח לשמוע על צילום לאירוע שלנו">וואטסאפ ישיר</a>
+        </div>
+        <form class="slip" id="date-check">
+          <div class="slip-row">
+            <div class="field"><label for="ev-date">תאריך האירוע</label><input id="ev-date" type="date" dir="ltr"></div>
+            <button class="btn btn-dark" type="submit">לבדוק אם פנוי</button>
+          </div>
+          <p><b>ביום אחד אני מצלם אירוע אחד.</b> לכן כדאי לבדוק את התאריך מוקדם.</p>
+        </form>
+      </div>
+
+      <div class="sheet-wrap" aria-hidden="true">
+        <svg class="sheet" viewBox="0 0 460 356" fill="none">
+          <rect width="460" height="356" rx="3" fill="#1d1820"/>
+          <g font-family="IBM Plex Mono, ui-monospace, monospace" font-size="7.5" fill="#b9b1c0" direction="ltr">
+            <!-- strip 1 -->
+            <rect x="14" y="16" width="432" height="104" fill="#2a2430"/>
+            <rect x="14" y="17" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="108" width="432" height="10" fill="url(#sprk)"/>
+            <use href="#s-table" x="22" y="32" width="96" height="64"/><use href="#s-arch" x="128" y="32" width="96" height="64"/><use href="#s-rings" x="234" y="32" width="96" height="64"/><use href="#s-arch" x="340" y="32" width="96" height="64"/>
+            <text x="24" y="104">11</text><text x="66" y="104">11A</text><text x="130" y="104">12</text><text x="172" y="104">12A</text><text x="236" y="104">13</text><text x="278" y="104">13A</text><text x="342" y="104">14</text><text x="384" y="104">14A</text>
+            <!-- strip 2 -->
+            <rect x="14" y="126" width="432" height="104" fill="#2a2430"/>
+            <rect x="14" y="127" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="218" width="432" height="10" fill="url(#sprk)"/>
+            <use href="#s-crowd" x="22" y="142" width="96" height="64"/><use href="#s-toast" x="128" y="142" width="96" height="64"/><use href="#s-tallit" x="234" y="142" width="96" height="64"/><use href="#s-rings" x="340" y="142" width="96" height="64"/>
+            <text x="24" y="214">15</text><text x="66" y="214">15A</text><text x="130" y="214">16</text><text x="172" y="214">16A</text><text x="236" y="214">17</text><text x="278" y="214">17A</text><text x="342" y="214">18</text><text x="384" y="214">18A</text>
+            <!-- strip 3 -->
+            <rect x="14" y="236" width="432" height="104" fill="#2a2430"/>
+            <rect x="14" y="237" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="328" width="432" height="10" fill="url(#sprk)"/>
+            <use href="#s-baby" x="22" y="252" width="96" height="64"/><use href="#s-dance" x="128" y="252" width="96" height="64"/><use href="#s-dance" x="234" y="252" width="96" height="64"/><use href="#s-crowd" x="340" y="252" width="96" height="64"/>
+            <text x="24" y="324">19</text><text x="66" y="324">19A</text><text x="130" y="324">20</text><text x="172" y="324">20A</text><text x="236" y="324">21</text><text x="278" y="324">21A</text><text x="342" y="324">22</text><text x="384" y="324">22A</text>
+          </g>
+          <!-- grease pencil: one frame circled for the album, one crossed out -->
+          <g stroke="#ff5a7d" stroke-width="4" stroke-linecap="round">
+            <ellipse class="grease-ring" cx="176" cy="174" rx="58" ry="41" transform="rotate(-5 176 174)"/>
+            <path d="M346 38l84 52M430 38l-84 52" opacity=".9"/>
+          </g>
+          <!-- the loupe on frame 21 -->
+          <g transform="translate(282 284)">
+            <path d="M40 40l26 26" stroke="#4f4957" stroke-width="12" stroke-linecap="round"/>
+            <circle r="52" fill="#eef1f4" stroke="#4f4957" stroke-width="8"/>
+            <clipPath id="loupe-clip"><circle r="47"/></clipPath>
+            <g clip-path="url(#loupe-clip)"><use href="#s-dance" x="-90" y="-60" width="180" height="120"/></g>
+            <circle r="47" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>
+          </g>
+        </svg>
+        <span class="note n1">לאלבום</span>
+        <p class="exif mono">פריים <bdi dir="ltr">16A</bdi> · הרמת כוסית · <bdi dir="ltr">f/2.8 · 1/200</bdi></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="packages">
+    <div class="wrap">
+      <div class="head"><h2>חבילות צילום</h2><span class="mono">מחירים לדוגמה · לפי שעות ומספר אורחים · לחיצה פותחת את הצ׳אט</span></div>
+      <div class="order">
+        <div class="edge mono" aria-hidden="true"><span>יונתן צילום</span><span class="sprockets"></span><span dir="ltr">400 · 35</span></div>
+        <button class="pk" type="button" data-event="חתונה"><span><b>חתונה</b><span class="d">מההתארגנות ועד הרחבה. גלריה ערוכה ותמונות ראשונות תוך שבוע.</span></span><span class="h">6 עד 8 שעות</span><span class="p">6,500 עד 11,000 ₪<small>צלם שני: בתוספת</small></span></button>
+        <button class="pk" type="button" data-event="בר / בת מצווה"><span><b>בר או בת מצווה</b><span class="d">הטקס, קבלת הפנים, המשפחה והרחבה.</span></span><span class="h">3 עד 5 שעות</span><span class="p">3,200 עד 5,500 ₪</span></button>
+        <button class="pk" type="button" data-event="ברית / בריתה"><span><b>ברית או בריתה</b><span class="d">הטקס, הסבים והסבתות, והאורחים.</span></span><span class="h">שעה עד שעתיים</span><span class="p">1,200 עד 2,000 ₪</span></button>
+        <button class="pk" type="button" data-event="אירוע חברה"><span><b>אירוע חברה</b><span class="d">כנס, ערב צוות או השקה. תמונות לרשתות כבר למחרת.</span></span><span class="h">לפי שעות</span><span class="p">700 עד 1,000 ₪<small>לשעה</small></span></button>
+        <button class="pk" type="button" data-event="הצעה / זוגי"><span><b>הצעה או צילומי זוג</b><span class="d">צילום מוסתר ברגע ההצעה, או שעה וחצי בשקיעה.</span></span><span class="h">שעה עד שעה וחצי</span><span class="p">800 עד 1,600 ₪</span></button>
+        <div class="order-foot"><span><b>אלבום מודפס:</b> 30 על 30 ס״מ, 40 עמודים, 1,400 עד 2,600 ₪.</span><span><b>שעה נוספת באירוע:</b> 450 עד 600 ₪.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>חתונה אחת, פריים אחרי פריים</h2><span class="mono">ערב טיפוסי של 7 שעות</span></div>
+      <div class="strip">
+        <div class="sprockets" aria-hidden="true"></div>
+        <ol class="frames">
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-table"/></svg><div class="t"><b dir="ltr">17:30</b><span dir="ltr">01</span></div><h3>התארגנות</h3><p>פרטים, שמלה, המשפחה בבית.</p></li>
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-rings"/></svg><div class="t"><b dir="ltr">18:15</b><span dir="ltr">07</span></div><h3>צילומי זוג</h3><p>20 דקות, לפני שהאורחים מגיעים.</p></li>
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-toast"/></svg><div class="t"><b dir="ltr">18:45</b><span dir="ltr">12</span></div><h3>קבלת פנים</h3><p>האורחים, החיבוקים, השולחנות.</p></li>
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-arch"/></svg><div class="t"><b dir="ltr">19:30</b><span dir="ltr">16</span></div><h3>חופה</h3><p>מקום קבוע ליד החופה, בלי להפריע.</p></li>
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-crowd"/></svg><div class="t"><b dir="ltr">20:15</b><span dir="ltr">21</span></div><h3>משפחה</h3><p>לפי הרשימה ששלחתם מראש.</p></li>
+          <li><svg viewBox="0 0 96 64" aria-hidden="true"><use href="#s-dance"/></svg><div class="t"><b dir="ltr">21:00</b><span dir="ltr">28</span></div><h3>רחבה</h3><p>עד שעה אחרי שעולים לרקוד.</p></li>
+        </ol>
+        <div class="sprockets" aria-hidden="true"></div>
+      </div>
+      <p class="day-note">לוח הזמנים שלכם שונה? מסדרים אותו יחד בשיחה לפני האירוע.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>מי מצלם</h2><span class="mono">כל תמונה כאן מתחלפת בתמונה שלכם</span></div>
+      <div class="album">
+        <div class="leaf">
+          <div class="portrait">
+            <figure class="mat"><div class="ps" data-slot="portrait" data-icon="person" data-label="תמונה שלכם"></div></figure>
+            <div><b data-edit="who">יונתן אברהם</b><span data-edit="who-role">צלם אירועים · 11 שנה</span></div>
+          </div>
+          <ul class="facts">
+            <li><b>מי מצלם</b><span data-edit="f1">אני, בכל אירוע. לא מעביר לצלם אחר.</span></li>
+            <li><b>ציוד</b><span data-edit="f2">שתי מצלמות. כל תמונה נשמרת על שני כרטיסים.</span></li>
+            <li><b>עריכה</b><span data-edit="f3">אני בוחר ועורך בעצמי, תמונה אחרי תמונה.</span></li>
+            <li><b>מסירה</b><span data-edit="f4">גלריה אונליין תוך 4 עד 6 שבועות.</span></li>
+            <li><b>אזור</b><span data-edit="f5">חדרה, השרון והמרכז, ועד חיפה.</span></li>
+          </ul>
+          <div class="one-a-day"><b>ביום אחד, אירוע אחד</b><span>לא מצלם שני אירועים באותו ערב. כשהתאריך נסגר, הוא שלכם.</span></div>
+        </div>
+        <div class="leaf">
+          <div class="prints">
+            <figure class="mat wide"><div class="ps" data-slot="g1" data-label="תמונה מאירוע"><svg class="ps-ph" viewBox="0 0 96 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#s-arch"/></svg></div><figcaption data-edit="g1">חופה בגן אירועים, עמק חפר</figcaption></figure>
+            <figure class="mat"><div class="ps" data-slot="g2" data-label="תמונה מאירוע"><svg class="ps-ph" viewBox="0 0 96 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#s-tallit"/></svg></div><figcaption data-edit="g2">בר מצווה, נתניה</figcaption></figure>
+            <figure class="mat"><div class="ps" data-slot="g3" data-label="תמונה מאירוע"><svg class="ps-ph" viewBox="0 0 96 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#s-dance"/></svg></div><figcaption data-edit="g3">הרחבה, אחרי חצות</figcaption></figure>
+            <figure class="mat"><div class="ps" data-slot="g4" data-label="תמונה מאירוע"><svg class="ps-ph" viewBox="0 0 96 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><use href="#s-baby"/></svg></div><figcaption data-edit="g4">ברית, כפר סבא</figcaption></figure>
+            <figure class="mat"><div class="ps" data-slot="kit" data-src="../shared/photos/photographer-work.webp" data-alt="מצלמה, דף קונטקט וזכוכית מגדלת על שולחן אור" data-icon="camera" data-label="הציוד"></div><figcaption data-edit="g5">הציוד, לפני אירוע</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><span class="mono">מה לשאול, כמה שעות, ומה להכין לפני האירוע</span></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה הצלם רואה</h2><span class="mono">נסו את הצ׳אט, והטלפון יתעדכן</span></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b><i dir="ltr">01</i>הזוג או ההורים עונים על כמה שאלות</b><span>איזה אירוע, התאריך, איפה וכמה אורחים. בלי טופס ארוך.</span></div></li>
+          <li><div><b><i dir="ltr">02</i>הפנייה מגיעה מסודרת לוואטסאפ</b><span>עם התאריך בשורה השנייה, ככה שאפשר לבדוק ביומן מיד.</span></div></li>
+          <li><div><b><i dir="ltr">03</i>שולחים תיק עבודות וחוזרים</b><span>מי שביקש תיק עבודות מסומן. הצ׳אט עונה גם כשאתם באמצע אירוע.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שירה ודניאל</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה חדשה מהאתר (דמו צלם אירועים)
+אירוע: חתונה
+תאריך: 14.8.2027
+מקום: גן אירועים בעמק חפר
+אורחים: 250 עד 400
+תיק עבודות: לשלוח בוואטסאפ
+שם: שירה כהן
+טלפון: 052-7654321<time>22:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לצלם</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap"><div class="row"><span>יונתן צילום · צלם אירועים · דף לדוגמה, העסק בדוי</span><nav aria-label="קישורים"><a href="../privacy/">פרטיות</a><a href="../accessibility/">הצהרת נגישות</a><a href="../build/?t=photographer">לבנות אתר כזה</a></nav></div></footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "photographer" });
+  // Sample ranges, the same as the packages above.
+  const RANGES = { "חתונה": "6,500 עד 11,000 ₪", "בר / בת מצווה": "3,200 עד 5,500 ₪", "ברית / בריתה": "1,200 עד 2,000 ₪", "אירוע חברה": "700 עד 1,000 ₪ לשעה", "הצעה / זוגי": "800 עד 1,600 ₪" };
+  const FOR = { "חתונה": "לחתונה", "בר / בת מצווה": "לבר או בת מצווה", "ברית / בריתה": "לברית או בריתה", "אירוע חברה": "לאירוע חברה", "הצעה / זוגי": "להצעה או לצילומי זוג" };
+  const when = (d) => d.dateval || (d.date === "עוד לא סגרנו" ? "" : d.date);
+  const wantsPortfolio = (d) => (d.portfolio || "").startsWith("שלחו");
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "יונתן · צלם אירועים", subtitle: "עונה מיד, גם כשאני באמצע אירוע", initial: "י", launcher: "לבדוק תאריך", hint: "נציג AI",
+    greet: "היי, כאן יונתן.\nכמה שאלות קצרות על האירוע, ואני בודק ביומן וחוזר אליכם.",
+    steps: [
+      { key: "event", label: "אירוע", ask: "איזה אירוע?", chips: ["חתונה", "בר / בת מצווה", "ברית / בריתה", "אירוע חברה", "הצעה / זוגי", "אחר"] },
+      { key: "date", label: "תאריך", ask: "יש כבר תאריך? אפשר גם לכתוב אותו כאן.", chips: ["יש תאריך", "עוד לא סגרנו"], input: "text", placeholder: "למשל: 14.8",
+        tip: { when: (v) => v === "עוד לא סגרנו", id: "book-early", text: "אין בעיה. כשיהיו לכם שניים או שלושה תאריכים אפשריים, אבדוק את כולם.", link: "כמה זמן מראש לסגור צלם" } },
+      { key: "dateval", label: "תאריך", ask: "מה התאריך?", input: "text", placeholder: "למשל: 14.8.2027", show: (d) => d.date === "יש תאריך" },
+      { key: "place", label: "מקום", ask: "איפה האירוע? אולם, ישוב או אזור.", chips: ["חדרה והסביבה", "השרון", "המרכז", "הצפון"], input: "text", placeholder: "למשל: גן אירועים בעמק חפר" },
+      { key: "guests", label: "אורחים", ask: "בערך כמה אורחים?", chips: ["עד 100", "100 עד 250", "250 עד 400", "מעל 400"], show: (d) => d.event !== "אירוע חברה" && d.event !== "הצעה / זוגי" },
+      { key: "hours", label: "שעות", ask: "כמה שעות צילום בערך?", chips: ["עד 3 שעות", "3 עד 5 שעות", "יום שלם"], show: (d) => d.event === "אירוע חברה" },
+      { key: "portfolio", label: "תיק עבודות", ask: "לשלוח לכם תיק עבודות בוואטסאפ? אירוע שלם, לא רק התמונות הכי יפות.", chips: ["שלחו לי תיק עבודות", "לא צריך, תודה"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => {
+      const w = when(d), first = d.name.split(" ")[0];
+      const check = w ? `אני בודק ביומן את ${w}` : "כשיהיו לכם תאריכים, אבדוק את כולם";
+      const price = RANGES[d.event] ? `\nמחיר לדוגמה ${FOR[d.event]}: ${RANGES[d.event]}${d.event === "אירוע חברה" ? "" : ", לפי שעות ומספר אורחים"}.` : "";
+      return `תודה ${first}! ${check}${wantsPortfolio(d) ? " ושולח לכם תיק עבודות" : ""}.${price}\nלחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`;
+    },
+    summary: (d) => [
+      "פנייה חדשה מהאתר (דמו צלם אירועים)",
+      "אירוע: " + d.event,
+      "תאריך: " + (when(d) || "עוד לא סגרו"),
+      "מקום: " + d.place,
+      d.guests ? "אורחים: " + d.guests : "",
+      d.hours ? "שעות: " + d.hours : "",
+      "תיק עבודות: " + (wantsPortfolio(d) ? "לשלוח בוואטסאפ" : "לא ביקשו"),
+      "שם: " + d.name,
+      "טלפון: " + d.phone,
+      d.callback ? "מתי לחזור: " + d.callback : "",
+    ].filter(Boolean).join("\n"),
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים לחבילות שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-event]").forEach((b) => b.addEventListener("click", () => bot.open({ event: b.dataset.event })));
+  // The date slip: the date the visitor picked goes into the chat as their answer. Nothing is checked here: the owner checks.
+  (function () {
+    const f = document.getElementById("date-check"), inp = document.getElementById("ev-date");
+    const t = new Date(); inp.min = new Date(t.getTime() - t.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    f.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(inp.value);
+      bot.open(m ? { date: `${+m[3]}.${+m[2]}.${m[1]}` } : undefined);
+    });
+  })();
+  Guides.load("../shared/guides/photographer.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

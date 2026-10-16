@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>בני תריסים · תיקון תריסים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="תריס תקוע, רצועה שנקרעה, תריס חשמלי או ממ״ד בנתניה והשרון. מתארים בצ׳אט מה קרה, והפרטים מגיעים לטכנאי בוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#16232c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: an aluminium roller shutter on a living-room window: the slats with their little light slots, the box above with
+     its axle, and the strap running down the wall into its reel box. The room is dim until the shutter rolls up.
+     Detail: slats (שלבים) counted and replaced in the same profile, the strap and its spring reel, the up/down switch of an
+     electric shutter, the steel plate of a ממ״ד window, the floor number, "כמה תריסים".
+     Bold move: one big drawn shutter in the hero rolls up once, and the daylight comes through in stripes across the dark room.
+     Everything else is quiet: the price list is the shutter itself, one slat per job. */
+  :root {
+    --room: #16232c;           /* the living room with the shutter down */
+    --room-deep: #0e171d;
+    --room-soft: #aebdc7;      /* text on the room */
+    --alu: #dbe1e6;            /* an aluminium slat */
+    --alu-shade: #a3afb9;
+    --alu-line: #6c7a85;       /* the dark seam between two slats */
+    --strap: #0d6b63;          /* the strap and the work bag: the one colour */
+    --strap-deep: #09514b;
+    --daylight: #e3f1f7;       /* light through the slots */
+    --wall: #eef2f4;           /* plaster by day */
+    --ink: #16232c;
+    --ink-soft: #4a5a65;
+    --display: "Secular One", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--room-deep);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: #ccd5db; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--strap); --bot-accent-fg: #fff; --bot-them: #edf1f4; --bot-me: var(--room); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 8px; --bot-radius-msg: 10px; --bot-focus: var(--room);
+    --ps-a: #c5d0d7; --ps-b: #5b6b77; --ps-ui: var(--room); --ps-edit: var(--strap);
+    --guide-alert: var(--strap);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--wall); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--strap); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .mono { font-family: var(--mono); font-weight: 500; font-size: 12.5px; letter-spacing: .02em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; letter-spacing: -.01em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 22px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 6px; transition: transform .15s, background .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-day { background: var(--daylight); color: var(--room-deep); box-shadow: 0 0 0 4px rgba(227,241,247,.14), 0 12px 30px -10px rgba(227,241,247,.45); }
+  .btn-day:hover { background: #fff; }
+  .btn-ghost { border: 1.5px solid rgba(255,255,255,.45); color: #fff; background: transparent; }
+  .btn-ghost:hover { background: rgba(255,255,255,.08); border-color: #fff; }
+  .btn:focus-visible { outline-color: var(--daylight); }
+
+  .demo { background: var(--room-deep); color: #b6c3cc; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Sticky top bar: the shutter box ---------- */
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(22,35,44,.95); color: #fff; backdrop-filter: blur(8px); border-bottom: 3px solid var(--alu-line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-size: 25px; line-height: 1; display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+  .logo .n2 { color: var(--daylight); opacity: .8; }
+  .logo .k { display: inline-block; width: 26px; height: 26px; border-radius: 3px; background: repeating-linear-gradient(180deg, var(--alu) 0 4px, var(--alu-line) 4px 6px); box-shadow: 0 0 0 2px var(--alu-shade); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-ghost { border-color: rgba(255,255,255,.3); }
+
+  /* ---------- Hero: the dim room, and the shutter rolling up ---------- */
+  .hero { position: relative; overflow: hidden; background: var(--room); color: #fff; isolation: isolate; }
+  .hero::after { /* daylight through the slats, falling across the room */
+    content: ""; position: absolute; z-index: -1; inset: -20% -10% -10% -30%;
+    background: repeating-linear-gradient(-24deg, transparent 0 34px, rgba(227,241,247,.07) 34px 52px);
+    mask: linear-gradient(250deg, #000 10%, transparent 75%); -webkit-mask: linear-gradient(250deg, #000 10%, transparent 75%);
+    animation: day 1.8s 1.4s ease-out both; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 64px; align-items: start; padding: 54px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--room-soft); font-size: 15px; margin-bottom: 18px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: #fff; font-weight: 500; }
+  .kicker .now i { width: 18px; height: 10px; border-radius: 2px; background: repeating-linear-gradient(180deg, var(--daylight) 0 2px, transparent 2px 4px); }
+  .hero h1 { grid-area: h1; font-size: clamp(54px, 7.6vw, 108px); line-height: .95; margin-bottom: 22px; }
+  .hero h1 em { display: block; font-style: normal; font-family: var(--body); font-weight: 700; font-size: .36em; letter-spacing: -.01em; line-height: 1.22; color: var(--room-soft); margin-top: 18px; }
+  .hero h1 em b { color: #fff; }
+  .lede { grid-area: lede; font-size: 19px; max-width: 42ch; margin: 0 0 26px; color: #d3dde3; }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 44px 0 0; padding: 0 0 56px; }
+  .facts div { border-inline-start: 1px solid rgba(255,255,255,.16); padding: 2px 16px 0; min-width: 0; }
+  .facts div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-size: 24px; line-height: 1.1; color: #fff; }
+  .facts dd { margin: 4px 0 0; color: var(--room-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: end; min-width: 0; }
+  .win svg { display: block; width: 100%; height: auto; }
+  .win .roll { animation: roll 2.4s .5s cubic-bezier(.45,.05,.3,1) both; }
+  .win .note { position: absolute; inset-inline-end: -12px; top: 58%; width: 236px; background: #fff; color: var(--ink); border-radius: 12px 12px 12px 3px; padding: 11px 14px 12px; font-size: 14px; line-height: 1.4;
+    box-shadow: 0 24px 50px -20px rgba(0,0,0,.6); animation: pop .5s 2.8s cubic-bezier(.3,1.4,.5,1) both; }
+  .win .note .mono { font-family: var(--body); display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 11.5px; margin-bottom: 3px; }
+  .win .note b { color: var(--strap); }
+  @keyframes roll { from { transform: translateY(0); } to { transform: translateY(-236px); } }
+  @keyframes day { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Sections ---------- */
+  main > section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head h2 { font-size: clamp(38px, 5.2vw, 64px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 40ch; font-size: 16px; }
+
+  /* The price list is the shutter: a box on top, one slat per job, the bottom bar, and the strap down the side */
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 40px; align-items: start; }
+  .blind { display: grid; grid-template-columns: minmax(0, 1fr) 16px; column-gap: 10px; min-width: 0; }
+  .sbox { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 6px 6px 0 0;
+    background: linear-gradient(180deg, #3a4a55, var(--room)); color: var(--room-soft); }
+  .sbox .mono { color: #dbe4ea; font-family: var(--body); font-size: 13.5px; }
+  .sbox .axle { width: 70px; height: 10px; border-radius: 5px; background: repeating-linear-gradient(90deg, #6c7a85 0 3px, #8c99a3 3px 6px); }
+  .slats { display: grid; min-width: 0; border-inline: 6px solid #c2ccd3; }
+  .sl { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; padding: 14px 20px 14px 18px;
+    background: linear-gradient(180deg, #f4f7f9, var(--alu) 55%, #c4cdd4); border-bottom: 3px solid var(--alu-line); transition: background .15s; }
+  .sl::before { /* the little light slots along the slat */
+    content: ""; position: absolute; inset-inline: 18px; top: 5px; height: 3px; border-radius: 2px; opacity: .55;
+    background: repeating-linear-gradient(90deg, #fff 0 10px, transparent 10px 26px); }
+  .sl:hover { background: linear-gradient(180deg, #fff, #e8edf1 55%, #d2dae0); }
+  .sl:focus-visible { outline: 3px solid var(--strap); outline-offset: -3px; }
+  .sl > span { display: block; min-width: 0; }
+  .sl b { display: block; font-size: 18.5px; font-weight: 700; line-height: 1.3; }
+  .sl > span > span { display: block; color: #3c4a54; font-size: 14.5px; line-height: 1.4; }
+  .sl .pr { font-weight: 700; font-size: 16.5px; white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .sl .pr small { display: block; font-weight: 400; font-size: 12.5px; color: #3c4a54; }
+  .sl.hot { background: var(--strap); color: #fff; border-bottom-color: var(--strap-deep); }
+  .sl.hot:hover { background: var(--strap-deep); }
+  .sl.hot > span > span, .sl.hot .pr small { color: #d5ece9; }
+  .sl.hot .pr { color: #fff; }
+  .sl.hot:focus-visible { outline-color: var(--room); }
+  .bar { height: 12px; background: var(--alu-line); border-radius: 0 0 4px 4px; }
+  .strap { grid-row: 2 / span 2; grid-column: 2; display: grid; grid-template-rows: minmax(0, 1fr) 64px; justify-items: center; }
+  .strap::before { content: ""; width: 9px; background: repeating-linear-gradient(180deg, #8a7d70 0 3px, #7a6e62 3px 5px); }
+  .strap::after { content: ""; width: 16px; border-radius: 4px; background: #fff; border: 2px solid var(--alu-shade); }
+
+  .reel { background: var(--room); color: #d9e2e8; border-radius: 10px; padding: 24px; position: sticky; top: 84px; }
+  .reel svg { display: block; width: 100%; height: auto; }
+  .reel h3 { font-size: 27px; color: #fff; margin: 16px 0 6px; }
+  .reel p { margin: 0 0 14px; color: var(--room-soft); font-size: 15px; }
+  .reel ul { list-style: none; margin: 0; padding: 14px 0 0; border-top: 1px solid rgba(255,255,255,.14); display: grid; gap: 8px; font-size: 15px; }
+  .reel li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .reel li::before { content: ""; width: 14px; height: 8px; border-radius: 1px; background: repeating-linear-gradient(180deg, var(--daylight) 0 2px, transparent 2px 4px); }
+
+  /* The calculator, in the dim room */
+  .calc { background: var(--room); color: #fff;
+    --bot-bg: #20313c; --bot-fg: #fff; --bot-line: #3d5260; --bot-muted: var(--room-soft); --bot-accent: var(--daylight); --bot-accent-fg: var(--room-deep); --bot-focus: var(--daylight); }
+  .calc .head p { color: var(--room-soft); }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  /* Who comes: the work photo through a half-open shutter */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .frame { position: relative; background: #f8fafb; padding: 14px; border-radius: 4px; box-shadow: 0 0 0 1px #c9d2d8, 0 50px 80px -40px rgba(22,35,44,.55); }
+  .frame .ps { aspect-ratio: 8 / 5; }
+  .frame::before { /* the shutter, a third of the way down over the photo */
+    content: ""; position: absolute; z-index: 3; inset: 14px 14px auto; height: 30%; pointer-events: none;
+    background: repeating-linear-gradient(180deg, #f1f4f6 0, var(--alu) 7px, var(--alu-shade) 11px, var(--alu-line) 11px 13px);
+    box-shadow: 0 6px 10px -6px rgba(22,35,44,.5); }
+  .frame-cap { margin-top: 22px; }
+  .frame-cap b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; }
+  .frame-cap span { color: var(--ink-soft); font-size: 15.5px; }
+  .who-copy h2 { font-size: clamp(38px, 5vw, 60px); margin-bottom: 16px; }
+  .who-copy > p { color: var(--ink-soft); margin: 0 0 28px; max-width: 46ch; }
+  .day { list-style: none; margin: 0 0 32px; padding: 0; display: grid; border-inline-start: 2px solid var(--strap); }
+  .day li { position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 0 22px 18px; }
+  .day li::before { content: ""; position: absolute; inset-inline-start: -7px; top: 6px; width: 12px; height: 12px; border-radius: 2px; background: var(--wall); border: 2px solid var(--strap); }
+  .day li:last-child::before { background: var(--strap); }
+  .day time { font-family: var(--mono); font-weight: 600; color: var(--strap); font-size: 15px; padding-top: 1px; }
+  .day b { display: block; font-size: 17.5px; }
+  .day span { color: var(--ink-soft); font-size: 15px; }
+  .shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .shot { margin: 0; min-width: 0; }
+  .shot .ps { aspect-ratio: 4 / 5; border-radius: 4px; }
+  .shot p { margin: 8px 0 0; font-weight: 700; font-size: 15px; line-height: 1.35; }
+  .shot small { display: block; font-weight: 500; font-size: 12px; color: var(--ink-soft); }
+
+  /* Guides */
+  .guides { background: #e1e7eb; }
+
+  /* Owner */
+  .owner { background: var(--room); color: #e3eaef; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: var(--room-soft); }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 6px; background: var(--strap); box-shadow: inset 0 -4px 0 var(--strap-deep); display: grid; place-items: center; font-family: var(--display); font-size: 22px; color: #fff; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--room-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--room-soft); }
+
+  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid #c6cfd5; padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 280px); column-gap: 32px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; }
+    .facts div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .win .note { inset-inline-end: -10px; width: 200px; }
+    .price-grid, .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .reel { position: static; }
+    .owner .phone { margin-inline: auto; }
+    .frame { max-width: 520px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 22px; }
+    .top-a .btn-day { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr) 124px; grid-template-areas: "kick kick" "h1 h1" "lede win" "cta cta" "facts facts"; column-gap: 14px; padding-top: 28px; }
+    .kicker { font-size: 13.5px; margin-bottom: 12px; }
+    .hero h1 { font-size: 58px; margin-bottom: 16px; }
+    .hero h1 em { font-size: 22px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; align-self: center; }
+    .win { align-self: center; }
+    .win .note { display: none; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { margin-top: 30px; padding-bottom: 40px; }
+    .facts dt { font-size: 21px; }
+    main > section { padding-block: 68px; }
+    .blind { grid-template-columns: minmax(0, 1fr) 12px; column-gap: 6px; }
+    .slats { border-inline-width: 4px; }
+    .sl { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 12px; }
+    .sl .pr { text-align: right; font-size: 15.5px; }
+    .sl .pr small { display: inline; margin-inline-start: 6px; }
+    .sl b { font-size: 17px; }
+    .sbox { padding: 10px 12px; }
+    .sbox .axle { width: 44px; }
+    .frame { padding: 10px; }
+    .frame::before { inset: 10px 10px auto; }
+    .shots { gap: 8px; }
+    .shot p { font-size: 13px; }
+    .shot small { font-size: 11px; }
+    .day li { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; padding-inline: 18px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero::after, .win .note { animation: none; }
+    .win .roll { animation: none; transform: translateY(-236px); }
+    .btn, .sl { transition: none; }
+  }
+  html.a11y-still .hero::after, html.a11y-still .win .note { animation: none; }
+  html.a11y-still .win .roll { animation: none; transform: translateY(-236px); }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=shutters">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">בני</span><span class="n2" data-edit="name2">תריסים</span></div>
+    <div class="top-a">
+      <button class="btn btn-day" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על תריס">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>עונה גם בערב</span><span>נתניה · כפר יונה · השרון</span></div>
+    <h1><span data-edit="h1a">התריס נתקע?</span> <em data-edit="h1b">כתבו לי, ו<b>אני חוזר עם זמן הגעה.</b></em></h1>
+    <p class="lede">שלוש שאלות בצ׳אט ותמונה, והפרטים אצלי בוואטסאפ. אני מגיע עם הרצועה, השלב או המנוע הנכון, ואת המחיר סוגרים לפני שמתחילים.</p>
+    <div class="ctas">
+      <button class="btn btn-day" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, צריך טכנאי תריסים">וואטסאפ ישיר</a>
+    </div>
+    <dl class="facts">
+      <div><dt>19 שנה</dt><dd>מתקן תריסים בנתניה והשרון</dd></div>
+      <div><dt>חלקים ברכב</dt><dd>רצועות, שלבים ומנועים נפוצים</dd></div>
+      <div><dt>מחיר סגור</dt><dd>בטלפון, לפני שאני יוצא</dd></div>
+      <div><dt>גם ממ״ד</dt><dd>ידני, חשמלי ותריס פלדה</dd></div>
+    </dl>
+
+    <div class="win" aria-hidden="true">
+      <svg viewBox="0 0 360 520" fill="none">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fcfe6"/><stop offset="1" stop-color="#e3f1f7"/></linearGradient>
+          <linearGradient id="slatg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f4f6"/><stop offset=".55" stop-color="#cfd7dd"/><stop offset="1" stop-color="#a3afb9"/></linearGradient>
+          <pattern id="slats" x="44" y="64" width="272" height="14" patternUnits="userSpaceOnUse">
+            <rect width="272" height="12" fill="url(#slatg)"/><rect y="12" width="272" height="2" fill="#6c7a85"/>
+            <g fill="#e3f1f7"><rect x="14" y="4" width="9" height="2" rx="1"/><rect x="40" y="4" width="9" height="2" rx="1"/><rect x="66" y="4" width="9" height="2" rx="1"/><rect x="92" y="4" width="9" height="2" rx="1"/><rect x="118" y="4" width="9" height="2" rx="1"/><rect x="144" y="4" width="9" height="2" rx="1"/><rect x="170" y="4" width="9" height="2" rx="1"/><rect x="196" y="4" width="9" height="2" rx="1"/><rect x="222" y="4" width="9" height="2" rx="1"/><rect x="248" y="4" width="9" height="2" rx="1"/></g>
+          </pattern>
+          <clipPath id="opening"><rect x="44" y="64" width="272" height="412"/></clipPath>
+        </defs>
+        <!-- window frame and the view -->
+        <rect x="30" y="50" width="300" height="440" fill="#e9eef2"/>
+        <rect x="44" y="64" width="272" height="412" fill="url(#sky)"/>
+        <g fill="#b9d9e8"><rect x="52" y="330" width="62" height="146"/><rect x="124" y="296" width="46" height="180"/><rect x="232" y="352" width="76" height="124"/><rect x="178" y="380" width="48" height="96"/></g>
+        <g fill="#d3e9f2"><rect x="64" y="346" width="10" height="10"/><rect x="88" y="346" width="10" height="10"/><rect x="64" y="372" width="10" height="10"/><rect x="134" y="312" width="9" height="9"/><rect x="152" y="312" width="9" height="9"/><rect x="246" y="368" width="12" height="9"/><rect x="274" y="368" width="12" height="9"/></g>
+        <rect x="176" y="64" width="8" height="412" fill="#dfe6eb"/>
+        <!-- the shutter, rolling up into its box -->
+        <g clip-path="url(#opening)">
+          <g class="roll">
+            <rect x="44" y="64" width="272" height="404" fill="url(#slats)"/>
+            <rect x="44" y="466" width="272" height="10" fill="#56636d"/>
+          </g>
+        </g>
+        <!-- the box above, the sill -->
+        <rect x="22" y="22" width="316" height="34" rx="3" fill="#cfd7dd" stroke="#8c99a3"/>
+        <rect x="22" y="48" width="316" height="8" fill="#a3afb9"/>
+        <rect x="20" y="488" width="320" height="14" rx="2" fill="#dbe1e6" stroke="#8c99a3"/>
+        <!-- the strap down the wall, into its reel box -->
+        <rect x="341" y="56" width="8" height="246" fill="#8a7d70"/>
+        <rect x="333" y="296" width="24" height="56" rx="5" fill="#f1f4f6" stroke="#8c99a3" stroke-width="2"/>
+        <rect x="340" y="308" width="10" height="20" rx="2" fill="#56636d"/>
+      </svg>
+      <div class="note"><span class="mono"><span>בני · תריסים</span><span class="ltr">07:46</span></span>קיבלתי את התמונה. <b>מגיע היום</b> עם רצועה חדשה.</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מה קרה לתריס?</h2><p>מחירים לדוגמה. לוחצים על השלב המתאים, והצ׳אט נפתח עם התשובה.</p></div>
+      <div class="price-grid">
+        <div class="blind">
+          <div class="sbox"><span class="mono">מחירון לדוגמה</span><span class="axle" aria-hidden="true"></span></div>
+          <div class="slats">
+            <button class="sl hot" data-issue="תריס נתקע"><span><b>שחרור תריס תקוע</b><span>נתקע פתוח, נתקע סגור, או יצא מהמסילה</span></span><span class="pr">250 עד 450 ₪<small>לתריס</small></span></button>
+            <button class="sl" data-issue="רצועה נקרעה"><span><b>החלפת רצועה</b><span>רצועה שנקרעה או נשחקה, כולל הקופסה אם צריך</span></span><span class="pr">180 עד 350 ₪<small>לתריס</small></span></button>
+            <button class="sl" data-issue="תריס חשמלי לא עובד"><span><b>תריס חשמלי לא עובד</b><span>מנוע, מתג או שלט שהפסיקו להגיב</span></span><span class="pr">350 עד 750 ₪<small>לפי התקלה</small></span></button>
+            <button class="sl" data-issue="החלפת שלבים"><span><b>החלפת שלבים</b><span>שלבים שבורים או מעוקמים, באותו פרופיל</span></span><span class="pr">200 עד 550 ₪<small>לפי הכמות</small></span></button>
+            <button class="sl" data-issue="התקנת מנוע"><span><b>מנוע לתריס קיים</b><span>מנוע בציר ומתג על הקיר, במקום הרצועה</span></span><span class="pr">900 עד 1,500 ₪<small>כולל מנוע</small></span></button>
+            <button class="sl" data-issue="תריס ממ״ד"><span><b>תריס ממ״ד</b><span>פלדה שלא נסגרת, ידית או מנגנון שנתקעו</span></span><span class="pr">350 עד 800 ₪<small>לפי המנגנון</small></span></button>
+          </div>
+          <span class="strap" aria-hidden="true"></span>
+          <div class="bar" aria-hidden="true"></div>
+        </div>
+        <aside class="reel" aria-label="מה יש בקופסת התריס">
+          <svg viewBox="0 0 320 190" fill="none" aria-hidden="true">
+            <rect x="10" y="14" width="300" height="162" rx="8" fill="#20313c" stroke="#3d5260" stroke-width="2"/>
+            <!-- the axle with the slats rolled on it -->
+            <circle cx="110" cy="92" r="60" fill="#2a3d49"/>
+            <g stroke="#a3afb9" stroke-width="5" fill="none">
+              <circle cx="110" cy="92" r="52"/><circle cx="110" cy="92" r="43"/><circle cx="110" cy="92" r="34"/><circle cx="110" cy="92" r="25"/>
+            </g>
+            <circle cx="110" cy="92" r="14" fill="#6c7a85"/><circle cx="110" cy="92" r="5" fill="#16232c"/>
+            <path d="M162 92 V176" stroke="#a3afb9" stroke-width="8"/>
+            <!-- the strap pulley and the strap -->
+            <circle cx="236" cy="72" r="26" fill="#2a3d49" stroke="#6c7a85" stroke-width="3"/>
+            <circle cx="236" cy="72" r="18" stroke="#8a7d70" stroke-width="7" fill="none"/>
+            <path d="M254 72 V176" stroke="#8a7d70" stroke-width="7"/>
+            <path d="M110 92 L236 72" stroke="#6c7a85" stroke-width="3" stroke-dasharray="4 5"/>
+          </svg>
+          <h3>מה יש בקופסה?</h3>
+          <p>מעל החלון יש ציר. השלבים מתגלגלים עליו, והרצועה או המנוע מסובבים אותו. רוב התקלות מתחילות שם.</p>
+          <ul>
+            <li><span>רצועה, ציר וגלגלת: מחליפים רק את מה שנשבר</span></li>
+            <li><span>מחיר סגור לפני שמתחילים לעבוד</span></li>
+            <li><span>תריסי אלומיניום, תריסים חשמליים ותריסי ממ״ד</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה קרה, איזה תריס ובאיזו קומה, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap who-grid">
+      <div>
+        <div class="frame">
+          <figure class="ps" data-slot="work" data-src="../shared/photos/shutters-work.webp" data-alt="חלון עם תריס אלומיניום חצי פתוח, וכלי עבודה על הרצפה" data-pos="50 50" data-icon="home" data-label="תמונה שלכם"></figure>
+        </div>
+        <div class="frame-cap"><b data-edit="tech-name">בני אזולאי</b><span data-edit="tech-role">טכנאי תריסים · 19 שנה · נתניה והשרון</span></div>
+      </div>
+      <div class="who-copy">
+        <h2>מי מגיע?</h2>
+        <p>אני, עם הרכב והחלקים. ככה נראה בוקר עם קריאה, לדוגמה:</p>
+        <ol class="day">
+          <li><time class="ltr">07:40</time><div><b>כותבים בצ׳אט: הרצועה נקרעה</b><span>כמה תריסים, באיזו קומה, ותמונה אם יש.</span></div></li>
+          <li><time class="ltr">07:46</time><div><b>אני מתקשר</b><span>אומר מתי אני מגיע וכמה זה יעלה, לפני שאני יוצא.</span></div></li>
+          <li><time class="ltr">11:20</time><div><b>התריס עולה ויורד</b><span>ואם עוד שלב נסדק, מחליפים באותו ביקור.</span></div></li>
+        </ol>
+        <div class="shots">
+          <figure class="shot"><div class="ps" data-slot="tag1" data-icon="wrench" data-label="תמונה מעבודה"></div><p data-edit="tag1">רצועה חדשה בתריס סלון</p><small data-edit="tag1b">נתניה</small></figure>
+          <figure class="shot"><div class="ps" data-slot="tag2" data-icon="bolt" data-label="תמונה מעבודה"></div><p data-edit="tag2">מנוע לתריס של 3 מטר</p><small data-edit="tag2b">כפר יונה</small></figure>
+          <figure class="shot"><div class="ps" data-slot="tag3" data-icon="home" data-label="תמונה מעבודה"></div><p data-edit="tag3">שלבים חדשים בחדר ילדים</p><small data-edit="tag3b">אבן יהודה</small></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עם תריס תקוע עד שמגיעים, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, כמה תריסים, קומה, דחיפות, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>עם התמונה, אם צירפו. יודעים מראש אם לקחת רצועה, שלבים או מנוע.</span></div></li>
+          <li><div><b>חוזרים ללקוח עם זמן הגעה</b><span>הצ׳אט עונה גם כשאתם על סולם ולא יכולים להרים טלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שרה לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו תריסים)
+מה קרה: רצועה נקרעה
+כמה תריסים: תריס אחד
+קומה: קומה 1 עד 3
+מתי: היום או מחר
+ישוב: נתניה
+שם: שרה לוי
+טלפון: 052-7654321<time>07:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הקריאה מגיעה לטכנאי</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>בני תריסים · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  PhotoSlots.init({ page: "shutters" });
+  const ISSUES = ["תריס נתקע", "רצועה נקרעה", "תריס חשמלי לא עובד", "החלפת שלבים", "התקנת מנוע", "תריס ממ״ד"];
+  const RANGES = { "תריס נתקע": "250 עד 450", "רצועה נקרעה": "180 עד 350", "תריס חשמלי לא עובד": "350 עד 750", "החלפת שלבים": "200 עד 550", "התקנת מנוע": "900 עד 1,500", "תריס ממ״ד": "350 עד 800" };
+  const PLANNED = (d) => d.issue === "התקנת מנוע" || d.issue === "החלפת שלבים";
+  const MAMAD = (d) => d.issue === "תריס ממ״ד";
+  const URGENT = "נתקע פתוח, צריך היום";
+  const bot = LeadBot.init({
+    estimate: { endpoint: "/api/estimate", trade: "טכנאי תריסים", prices: RANGES }, // a first look at the photo the customer attaches
+    whatsapp: "972526359513",
+    name: "בני · תריסים", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ב", launcher: "התריס נתקע?", hint: "נציג AI",
+    greet: "היי, כאן בני.\nכמה שאלות קצרות, והפרטים אצלי בוואטסאפ.",
+    steps: [
+      { key: "issue", label: "מה קרה", ask: "מה קרה לתריס?", chips: ISSUES,
+        tip: { when: (v) => v === "תריס ממ״ד", id: "mamad", text: "ממ״ד שלא נסגר באזעקה: סוגרים את החלון ואת הדלת המוגנת, ופועלים לפי הנחיות פיקוד העורף." } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של התריס או של קופסת הרצועה? כך אני מגיע עם החלק הנכון.", photo: true },
+      { key: "count", label: "כמה תריסים", ask: "כמה תריסים?", chips: ["תריס אחד", "2 תריסים", "3 ומעלה"] },
+      { key: "floor", label: "קומה", ask: "באיזו קומה?", chips: ["קרקע", "קומה 1 עד 3", "קומה 4 ומעלה", "בית פרטי"] },
+      { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: [URGENT, "היום או מחר", "השבוע", "לא דחוף"], show: (d) => !PLANNED(d) && !MAMAD(d),
+        tip: { when: (v) => v === URGENT, id: "stuck", text: "בינתיים: לא מושכים בכוח ולא פותחים את הקופסה. תריס חשמלי: מורידים את המפסק. נתקע פתוח בקרקע? נועלים את החלון." } },
+      { key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
+      { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: ["לא נסגר, צריך היום", "השבוע", "לא דחוף"], show: MAMAD },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: נתניה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const price = RANGES[d.issue] ? `בדרך כלל ${RANGES[d.issue]} ₪${d.issue === "התקנת מנוע" ? "" : " לתריס"}, ומחיר סופי לפני שמתחילים.` : "את המחיר נותנים אחרי בדיקה.";
+      const safe = d.issue === "תריס ממ״ד" ? "\nבאזעקה: נשארים במרחב מוגן ופועלים לפי הנחיות פיקוד העורף."
+        : d.issue === "תריס חשמלי לא עובד" ? "\nעד שאני מגיע: לא פותחים את קופסת התריס ולא את המתג." : "";
+      return `תודה ${first}. רשמתי: ${d.issue}, ${d.count}, ${d.floor}, ב${d.city}. ${price}${safe}\nלחצו למטה, ואני חוזר אליכם עם זמן הגעה.`;
+    },
+    summary: (d) => `קריאה מהאתר (דמו תריסים)\nמה קרה: ${d.issue}\nכמה תריסים: ${d.count}\nקומה: ${d.floor}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+  const NOT_MAMAD = ["תריס נתקע", "רצועה נקרעה", "תריס חשמלי לא עובד", "החלפת שלבים", "התקנת מנוע"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה קרה?", items: [
+      { label: "תריס נתקע", range: [250, 450], prefill: { issue: "תריס נתקע" } },
+      { label: "רצועה נקרעה", range: [180, 350], prefill: { issue: "רצועה נקרעה" } },
+      { label: "תריס חשמלי לא עובד", range: [350, 750], prefill: { issue: "תריס חשמלי לא עובד" } },
+      { label: "החלפת שלבים", range: [200, 550], prefill: { issue: "החלפת שלבים" } },
+      { label: "מנוע לתריס קיים", range: [900, 1500], prefill: { issue: "התקנת מנוע" } },
+      { label: "תריס ממ״ד", range: [350, 800], prefill: { issue: "תריס ממ״ד" } },
+    ] },
+    factors: [
+      { ask: "איזה תריס?", for: ["תריס נתקע", "החלפת שלבים"], options: [
+        { label: "ידני, עם רצועה" },
+        { label: "חשמלי", add: [50, 150], note: "בתריס חשמלי בודקים גם את המנוע ואת המתג." },
+      ] },
+      { ask: "איזה חלון?", for: NOT_MAMAD, options: [
+        { label: "חלון רגיל" },
+        { label: "חלון גדול או דלת מרפסת", mul: [1.15, 1.3], note: "תריס רחב כבד יותר, והחלקים גדולים יותר." },
+      ] },
+      { ask: "כמה תריסים?", for: NOT_MAMAD, options: [
+        { label: "תריס אחד", prefill: { count: "תריס אחד" } },
+        { label: "2 תריסים", mul: [1.7, 1.8], prefill: { count: "2 תריסים" } },
+        { label: "3 ומעלה", mul: [2.4, 2.7], prefill: { count: "3 ומעלה" }, note: "כמה תריסים באותו ביקור: המחיר לתריס יורד." },
+      ] },
+      { ask: "באיזו קומה?", options: [
+        { label: "קרקע", prefill: { floor: "קרקע" } },
+        { label: "קומה 1 עד 3", prefill: { floor: "קומה 1 עד 3" } },
+        { label: "קומה 4 ומעלה", add: [0, 250], prefill: { floor: "קומה 4 ומעלה" }, note: "אם צריך לעבוד מבחוץ בקומה גבוהה, לפעמים צריך ציוד גובה, והמחיר עולה." },
+        { label: "בית פרטי", prefill: { floor: "בית פרטי" } },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. את המחיר הסופי אומרים בטלפון, לפני שיוצאים.",
+    cta: "לפתוח קריאה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/shutters.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

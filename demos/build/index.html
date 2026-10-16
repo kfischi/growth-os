@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>בונים אתר בשיחה · נחיתה רכה</title>
+<title>בונים אתר בשיחה · Easy Landing</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="עונים על כמה שאלות על העסק, ורואים את האתר נבנה מולכם. מאשרים, ורק אז משלמים.">
-<meta name="theme-color" content="#3d2442">
+<meta name="theme-color" content="#5428e0">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   /* Object: a job sheet that fills itself while you talk. Detail: the site's own fields, ticked one by one.
      Bold move: the live draft of the owner's own site, right next to the chat. */
   :root {
-    --paper: #f6f5fb; --mist: #ebe9f4; --ink: #1d1b2e; --slate: #5d5a72; --plum: #3d2442; --mint: #0f7a6c; --brick: #b23730;
+    /* the home page's palette: violet for the brand and buttons, fuchsia the only ornament */
+    --paper: #fcfbff; --mist: #f1edfd; --ink: #17112e; --slate: #4a4462; --plum: #3a17b0; --mint: #5428e0; --brick: #b23730; --fuchsia: #c2136f; --silver-ink: #6b6680;
     --line: color-mix(in oklab, var(--ink) 14%, var(--paper));
     --font: "Rubik", "Calibri", "Segoe UI", system-ui, sans-serif;
   }
@@ -24,15 +26,17 @@
   button, input, textarea { font: inherit; color: inherit; }
   [hidden] { display: none !important; }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 20px; border-radius: 10px; border: 0; background: var(--mint); color: #fff; font-weight: 700; cursor: pointer; text-decoration: none; }
-  .btn:hover { background: #0b6a5d; }
+  .btn:not(.quiet) { box-shadow: 0 12px 26px -12px rgb(84 40 224 / .75), 0 2px 6px -2px rgb(84 40 224 / .35); }
+  .btn:hover { background: var(--plum); }
   .btn:disabled { opacity: .55; cursor: default; }
   .btn.quiet { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
   .btn.quiet:hover { border-color: var(--ink); }
 
-  .top { background: var(--plum); color: #fff; }
+  .top { background: color-mix(in oklab, var(--paper) 92%, transparent); color: var(--ink); border-bottom: 1px solid var(--line); }
   .top .in { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1400px; margin: 0 auto; }
-  .brand { font-weight: 900; font-size: 20px; text-decoration: none; letter-spacing: -.01em; }
-  .top small { color: #d9cde0; font-size: 14px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
+  .brand svg { flex: none; inline-size: 30px; block-size: 30px; }
+  .top small { color: var(--silver-ink); font-size: 14px; }
 
   /* ---------- start ---------- */
   .start { max-width: 1100px; margin: 0 auto; padding: 48px 16px 64px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 48px; align-items: start; }
@@ -48,7 +52,7 @@
   form.card h2 { margin: 0 0 4px; font-size: 24px; }
   form.card p { margin: 0 0 18px; color: var(--slate); }
   label { display: block; font-weight: 500; margin: 14px 0 6px; }
-  input[type=text], input[type=tel], textarea { width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  input[type=text], input[type=tel], textarea, #fTrade { width: 100%; min-height: 48px; border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
   input:focus, textarea:focus { border-color: var(--mint); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--mint) 25%, transparent); }
   .check { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: start; font-weight: 400; font-size: 14px; color: var(--slate); margin-top: 16px; }
   .check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--mint); }
@@ -80,12 +84,73 @@
   .msg.sys { align-self: center; background: none; color: var(--slate); font-size: 14px; text-align: center; padding: 4px; }
   .msg.fail { align-self: center; background: #f8e4e2; color: #6e1f1a; font-size: 14px; }
   .typing { align-self: flex-start; color: var(--slate); font-size: 14px; }
+  /* the questionnaire: one question, answers to pick, a field for what isn't listed */
+  .guide { border-top: 1px solid var(--line); padding: 12px; background: #fff; max-height: 52vh; overflow-y: auto; }
+  .guide[hidden] { display: none; }
+  .guide.busy { opacity: .55; pointer-events: none; }
+  .guide .q { margin: 0 0 10px; font-weight: 500; }
+  .guide .step { font-size: 12px; color: var(--slate); margin: 0 0 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip { min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 15px; cursor: pointer; text-align: start; }
+  .chip:hover { border-color: var(--mint); }
+  .chip[aria-pressed=true] { background: var(--mint); border-color: var(--mint); color: #fff; }
+  .chip.card { border-radius: 12px; width: 100%; line-height: 1.45; }
+  .other { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; margin-bottom: 8px; }
+  .other input { min-height: 44px; }
+  .prow { display: grid; grid-template-columns: 22px minmax(0, 1fr) minmax(0, 9.5em); gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .prow input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--mint); }
+  .prow input[type=text] { min-height: 40px; padding: 6px 10px; }
+  .guide .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .linkish.skip { font-size: 14px; color: var(--slate); }
+  /* the design: six looks, each with its palettes */
+  .looks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .look { display: grid; gap: 6px; align-content: start; text-align: start; padding: 10px; border-radius: 12px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; cursor: pointer; }
+  .look b { font-size: 15px; line-height: 1.2; }
+  .look small { font-size: 12px; color: var(--slate); line-height: 1.35; }
+  .look .mini { display: flex; gap: 3px; }
+  .look .mini i { flex: 1; height: 14px; border-radius: 3px; }
+  .look[aria-pressed=true] { border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint); }
+  .pals { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .pal { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 12px 6px 8px; border-radius: 999px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+  .pal .sw { display: inline-flex; width: 30px; height: 22px; border-radius: 999px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .pal .sw i { flex: 1; }
+  .pal[aria-pressed=true] { border-color: var(--mint); box-shadow: 0 0 0 2px var(--mint); }
+  .styling .looks, .styling .pals { opacity: .55; pointer-events: none; }
+  .design-q { font-size: 13px; color: var(--slate); margin: 0 0 6px; }
+  @media (max-width: 420px) { .look small { display: none; } }
   .compose { border-top: 1px solid var(--line); padding: 10px 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; }
   .compose textarea { min-height: 48px; max-height: 140px; resize: none; }
   .compose .btn { padding-inline: 16px; }
   .photos { border-top: 1px solid var(--line); padding: 10px 12px 12px; }
   .photos summary { cursor: pointer; font-weight: 700; }
-  .slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .gen { margin-top: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; display: grid; gap: 8px; }
+  .gen p { margin: 0; font-size: .95rem; }
+  .gen label { font-size: .9rem; font-weight: 600; }
+  .gen[hidden] { display: none; }
+  .gen.busy #genGo { opacity: .6; pointer-events: none; }
+  .learn-hint { font-size: 14px; color: var(--slate); margin: 8px 0; }
+  .learn-file { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1.5px dashed var(--line); border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+  .learn-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .learn-file:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .learn-count { font-size: 14px; color: var(--slate); margin-inline-start: 8px; }
+  #learnText { margin: 6px 0 8px; }
+  .slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .slots.one { grid-template-columns: minmax(0, 1fr); max-width: 220px; }
+  .slots.one .slot { aspect-ratio: 16 / 9; }
+  .media-h { margin: 16px 0 0; font-size: 15px; }
+  .media-h small { font-weight: 400; color: var(--slate); }
+  .top-pick { border: 0; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .top-pick legend { font-weight: 700; font-size: 15px; margin-bottom: 6px; padding: 0; }
+  .top-pick label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; background: #fff; }
+  .top-pick input { width: 18px; height: 18px; margin: 0; accent-color: var(--mint); }
+  .top-pick label:has(input:checked) { border-color: var(--mint); }
+  .top-pick label:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
+  .clip-list { display: grid; gap: 8px; margin-top: 10px; }
+  .clip-row { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .clip-row img { width: 48px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: var(--mist); }
+  .clip-row input { min-height: 44px; }
+  .clip-row .btn { min-height: 44px; padding-inline: 12px; }
+  .clip-note { font-size: 14px; color: var(--slate); margin: 6px 0 0; }
   .slot { position: relative; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; overflow: hidden; display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--slate); background: var(--paper); cursor: pointer; padding: 4px; }
   .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .slot input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
@@ -93,15 +158,44 @@
   .slot:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
   .slot.busy::after { content: "מעלים…"; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.85); color: var(--ink); }
   .vid { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 14px; color: var(--slate); }
+  .vid[hidden] { display: none; }
   .vid video { width: 72px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; background: var(--mist); }
   .vid .pick { position: relative; overflow: hidden; }
   .vid .pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .vid .pick:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
   .vprev { width: 100%; max-height: 46vh; background: var(--ink); border-radius: 10px; margin-bottom: 10px; }
   input[type=range] { width: 100%; accent-color: var(--mint); }
-  .approve { border-top: 1px solid var(--line); padding: 12px; }
+  .approve { border-top: 1px solid var(--line); padding: 12px; max-height: 46svh; overflow-y: auto; overscroll-behavior: contain; }
   .approve .btn { width: 100%; }
   .approve p { margin: 0 0 8px; font-size: 14px; color: var(--slate); }
+  .approve .btn + .btn, .approve .btn + p, .approve p + .btn { margin-top: 8px; }
+  .approve h3 { margin: 14px 0 6px; font-size: 15px; }
+  .approve .pkgs { margin-bottom: 10px; }
+  .approve .warn { color: #8a1c1c; font-weight: 600; }
+  .launch { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; background: #fff; }
+  .launch summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+  .launch ol { margin: 8px 0; padding-inline-start: 18px; font-size: 14px; color: var(--ink); }
+  .launch .net { margin: 14px 0 2px; font-size: 14px; color: var(--ink); }
+  .textbox, .linkbox { white-space: pre-line; background: var(--paper); border-radius: 8px; padding: 8px 10px; color: var(--ink) !important; overflow-wrap: anywhere; }
+  .regions { display: grid; gap: 10px; }
+  .region-card { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+  .region-card legend { font-weight: 700; font-size: 14px; padding: 0 4px; }
+  .region-card textarea { min-height: 72px; }
+  .region-card .count { color: var(--slate); font-size: 12px; }
+  .socials { display: grid; gap: 8px; margin-bottom: 10px; }
+  .socials label { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14px; font-weight: 600; }
+  .socials input[type=text] { min-height: 44px; }
+  .approve .total { color: var(--ink); font-weight: 700; font-size: 15px; }
+  .approve ul { margin: 0 0 8px; padding-inline-start: 18px; font-size: 14px; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; }
+  .approve .linkish { display: block; min-height: 32px; margin-top: 6px; }
+  .dns { width: 100%; border-collapse: collapse; font-size: 13px; margin: 6px 0 10px; direction: ltr; }
+  .dns th, .dns td { border: 1px solid var(--line); padding: 6px; text-align: left; overflow-wrap: anywhere; }
+  .addr-list { display: grid; gap: 8px; margin-bottom: 12px; }
+  .addr-list .pkg b { direction: ltr; text-align: right; overflow-wrap: anywhere; }
+  .suffix { display: flex; flex-direction: row; align-items: center; gap: 6px; direction: ltr; unicode-bidi: isolate; }
+  .suffix input { flex: 1; min-width: 0; }
+  .suffix span { color: var(--slate); font-size: 14px; white-space: nowrap; }
 
   .view { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--mist); }
   .viewbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; font-size: 14px; color: var(--slate); }
@@ -120,8 +214,6 @@
   .pkg input { margin-top: 4px; accent-color: var(--mint); width: 18px; height: 18px; }
   .pkg b { display: block; font-size: 17px; }
   .pkg span { color: var(--slate); font-size: 14px; }
-  .plans { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; font-size: 14px; }
-  .plans label { margin: 0; font-weight: 400; display: flex; gap: 6px; align-items: center; }
   .row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .row .btn { flex: 1; }
 
@@ -138,10 +230,12 @@
     .items { grid-template-columns: minmax(0, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.terms-ok { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; font-size: .95rem; }
+.terms-ok input { inline-size: 20px; block-size: 20px; margin: 0; }
 </style>
 </head>
 <body>
-<header class="top"><div class="in"><a class="brand" href="/">נחיתה רכה</a><small>בונה האתרים</small></div></header>
+<header class="top"><div class="in"><a class="brand" href="/"><svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="9" fill="#5428e0"/><path d="M9 8h12v3H12.5v2.6h7.5v2.8h-7.5V19H21v3H9z" fill="#fff"/><circle cx="23.5" cy="23.5" r="3" fill="#c2136f"/></svg>Easy Landing</a><small>בונה האתרים</small></div></header>
 
 <main id="start" class="start" hidden>
   <section aria-labelledby="t-start">
@@ -152,17 +246,26 @@
       <li><span class="tick" aria-hidden="true">2</span><div><b>האתר שלכם מתמלא מולכם</b><span>בקישור פרטי, עם התמונות שלכם. מבקשים שינוי, והוא מתעדכן.</span></div></li>
       <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, ואנחנו מעלים לאוויר</b><span>אחרי האישור שלכם והתשלום, אנחנו עוברים על הכל ומעלים.</span></div></li>
     </ol>
-    <p class="note">כרגע: אתרים לאינסטלטורים. בתחום אחר? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%90%D7%AA%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a>, ונבנה יחד.</p>
+    <p class="note">התחום שלכם לא ברשימה? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%90%D7%AA%D7%A8%20%D7%9C%D7%A2%D7%A1%D7%A7%20%D7%A9%D7%9C%D7%99" target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a>, ונבנה יחד.</p>
   </section>
   <form id="startForm" class="card" novalidate>
     <h2>מתחילים</h2>
     <p>נשמור את הטיוטה. בכל שלב אפשר להעתיק קישור אישי ולחזור אליה ממכשיר אחר.</p>
+    <label for="fTrade">מה התחום שלכם?</label>
+    <select id="fTrade">
+      <option value="plumber">אינסטלטור</option><option value="electrician">חשמלאי</option><option value="ac">טכנאי מזגנים</option>
+      <option value="locksmith">מנעולן</option><option value="towing">גרר ושירותי דרך</option><option value="shutters">תריסים</option><option value="appliance">טכנאי מכשירי חשמל</option><option value="pest">מדביר</option>
+      <option value="handyman">הנדימן</option><option value="renovation">שיפוצים</option><option value="cleaning">ניקיון</option><option value="upholstery">ניקוי ספות ושטיחים</option>
+      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="cosmetics">קוסמטיקה ויופי</option><option value="nails">בניית ציפורניים</option><option value="barber">ספרות</option><option value="massage">עיסוי ומסאז׳</option><option value="photographer">צלם אירועים</option><option value="trainer">מאמן כושר</option>
+      <option value="driving">מורה לנהיגה</option><option value="tutor">מורה פרטי</option><option value="music">מורה למוזיקה</option><option value="psychologist">פסיכולוג/ית</option>
+      <option value="social-worker">עובד/ת סוציאלי/ת</option>
+    </select>
     <label for="fName">איך קוראים לכם?</label>
     <input id="fName" type="text" autocomplete="name" maxlength="40" required>
     <label for="fPhone">הנייד של העסק (וואטסאפ)</label>
     <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="050-1234567" dir="ltr" maxlength="16" required>
     <div class="hp" aria-hidden="true"><label for="fCompany">חברה</label><input id="fCompany" type="text" tabindex="-1" autocomplete="off"></div>
-    <label class="check"><input id="fConsent" type="checkbox"><span>מסכימים שנשמור את הפרטים והשיחה כדי לבנות את האתר ולחזור אליכם. לא נשלח פרסומות.</span></label>
+    <label class="check"><input id="fConsent" type="checkbox"><span>מסכימים שנשמור את הפרטים והשיחה כדי לבנות את האתר ולחזור אליכם. לא נשלח פרסומות. <a href="../privacy/" target="_blank" rel="noopener">מדיניות הפרטיות</a></span></label>
     <p class="err" id="startErr" role="alert"></p>
     <button class="btn" type="submit">לבנות את האתר</button>
   </form>
@@ -183,32 +286,62 @@
     </details>
     <div class="banner warn" id="returned" hidden></div>
     <div class="log" id="log" aria-live="polite"></div>
+    <div class="guide" id="guide" aria-live="polite" hidden></div>
     <form class="compose" id="compose">
       <label for="msg" class="hp">הודעה</label>
-      <textarea id="msg" rows="1" maxlength="800" placeholder="כתבו כאן…" enterkeyhint="send"></textarea>
+      <textarea id="msg" rows="1" maxlength="800" placeholder="או כתבו לנו חופשי…" enterkeyhint="send"></textarea>
       <button class="btn" type="submit" id="send">שליחה</button>
     </form>
+    <details class="photos" id="learn">
+      <summary>למדו את העסק שלי</summary>
+      <p class="learn-hint">יש לכם מחירון, פלייר, כרטיס ביקור או עמוד בפייסבוק? צלמו או העלו עד 3 תמונות, או הדביקו טקסט. נקרא, נמלא את האתר, ואתם רק בודקים.</p>
+      <label class="learn-file"><input id="learnFiles" type="file" accept="image/*" multiple><span>להעלות תמונות</span></label>
+      <span class="learn-count" id="learnCount"></span>
+      <label for="learnText" class="hp">טקסט על העסק</label>
+      <textarea id="learnText" rows="3" maxlength="4000" placeholder="או הדביקו כאן: מחירון, תיאור מהפייסבוק, מהאתר הקודם…"></textarea>
+      <button class="btn sm" type="button" id="learnGo">ללמוד מזה</button>
+    </details>
+    <details class="photos" id="design">
+      <summary>עיצוב: תבנית וצבעים</summary>
+      <div id="designBox" style="margin-top:10px"></div>
+    </details>
     <details class="photos" id="photos">
-      <summary>תמונות וסרטון</summary>
-      <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטון שלנו, ומותר לפרסם אותם באתר.</span></label>
-      <div class="slots" id="slots"></div>
+      <summary>תמונות וסרטונים</summary>
+      <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטונים שלנו, ומותר לפרסם אותם באתר.</span></label>
+      <fieldset class="top-pick" id="heroPick"><legend>ראש האתר</legend>
+        <label><input type="radio" name="heroKind" value="photo"><span>תמונה בראש האתר</span></label>
+        <label><input type="radio" name="heroKind" value="video"><span>סרטון בראש האתר</span></label>
+      </fieldset>
+      <div id="heroPhoto"><div class="slots one" id="heroSlot"></div>
+      <div class="gen" id="gen" hidden>
+        <p><b>אין לכם תמונה לרקע?</b> ניצור לכם אחת: המקום והעבודה, בלי אנשים ובלי כיתוב.</p>
+        <label for="genWish">מה לראות בה? (לא חובה)</label>
+        <input id="genWish" type="text" maxlength="200" placeholder="למשל: מקלחת מודרנית ונקייה, צנרת נחושת">
+        <button class="btn sm" type="button" id="genGo">ליצור תמונת רקע</button>
+      </div></div>
       <div class="vid" id="vid"></div>
+      <h3 class="media-h">תמונות שלכם ושל העבודה <small>עד 6 עבודות</small></h3>
+      <div class="slots" id="slots"></div>
+      <h3 class="media-h">סרטונים מהעבודה <small>לא חובה, עד 5</small></h3>
+      <div id="clipsBox"></div>
     </details>
     <div class="approve" id="approveBox"></div>
   </section>
 
   <section class="view" aria-label="האתר שלכם">
-    <div class="viewbar"><span>טיוטה · מתעדכנת אחרי כל תשובה</span><a id="openDraft" href="#" target="_blank" rel="noopener">לפתוח בחלון מלא</a></div>
+    <div class="viewbar"><span id="viewNote">טיוטה · מתעדכנת אחרי כל תשובה</span><a id="openDraft" href="#" target="_blank" rel="noopener">לפתוח בחלון מלא</a></div>
     <div class="frame"><iframe id="frame" title="הטיוטה של האתר"></iframe></div>
   </section>
 </main>
 
 <dialog id="videoDlg" aria-labelledby="t-video">
   <h2 id="t-video">איזה קטע לשים באתר?</h2>
-  <p>בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.</p>
+  <p id="vWhere">בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.</p>
   <video id="vPrev" class="vprev" muted playsinline></video>
   <div id="vPick"><label for="vStart">מתחילים בשנייה <output id="vStartOut" for="vStart">0</output></label>
   <input id="vStart" type="range" min="0" step="0.5" value="0"></div>
+  <div id="vTitleBox" hidden><label for="vTitle">כותרת קצרה (לא חובה)</label>
+  <input id="vTitle" type="text" maxlength="34" placeholder="למשל: פתיחת סתימה במטבח"></div>
   <div class="bar" id="vBarBox" hidden><i id="vBar"></i></div>
   <p class="note" id="vNote" aria-live="polite"></p>
   <p class="err" id="vErr" role="alert"></p>
@@ -218,15 +351,43 @@
 <dialog id="approveDlg" aria-labelledby="t-approve">
   <form method="dialog" id="approveForm">
     <h2 id="t-approve">מאשרים את האתר</h2>
-    <p>בוחרים חבילה. אחרי התשלום אנחנו עוברים על האתר ומעלים אותו לאוויר. עד אז אפשר עוד לבקש שינויים.</p>
+    <p>בוחרים חבילה. אחר כך בוחרים כתובת לאתר ומשלמים, והאתר עולה לאוויר לבד. עד התשלום אפשר עוד לשנות.</p>
     <div class="pkgs">
-      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,250 ₪ הקמה, ומהחודש הרביעי 500 ₪ לחודש.</span>
-        <div class="plans" id="aiPlans"><label><input type="radio" name="plan" value="full" checked> תשלום אחד</label><label><input type="radio" name="plan" value="three"> 3 תשלומים של 750 ₪</label></div></div></label>
+      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,490 ₪ הקמה, ו-290 ₪ לחודש (מחיר השקה, נעול לתמיד).</span></div></label>
       <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
     </div>
-    <p class="note">בלי התחייבות: מבטלים בהודעה של 30 יום. הדומיין והאתר רשומים על שמכם.</p>
+    <p class="note">בלי התחייבות: מבטלים מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
     <p class="err" id="approveErr" role="alert"></p>
     <div class="row"><button class="btn" value="ok" id="approveGo">מאשרים</button><button class="btn quiet" value="cancel" formnovalidate>עוד לא</button></div>
+  </form>
+</dialog>
+
+<dialog id="addrDlg" aria-labelledby="t-addr">
+  <form method="dialog" id="addrForm">
+    <h2 id="t-addr">כתובת לאתר</h2>
+    <p>בוחרים כתובת. היא עובדת מהיום הראשון, ואפשר לחבר אליה דומיין משלכם.</p>
+    <div class="addr-list" id="addrList" role="radiogroup" aria-label="כתובות פנויות"><p>מחפשים כתובות פנויות…</p></div>
+    <label for="addrOwn">או כתובת אחרת (אותיות באנגלית, ספרות ומקף)</label>
+    <div class="suffix"><input id="addrOwn" autocomplete="off" inputmode="url" maxlength="40" spellcheck="false"><span id="addrSuffix"></span></div>
+    <label class="pkg" style="margin-top:14px"><input type="checkbox" id="addrHas"><div><b>יש לכם דומיין משלכם?</b><span>נחבר אותו אחרי התשלום.</span></div></label>
+    <div id="addrDomainBox" hidden>
+      <label for="addrDomain">הדומיין שלכם</label>
+      <input id="addrDomain" dir="ltr" autocomplete="off" inputmode="url" maxlength="80" placeholder="example.co.il" spellcheck="false">
+      <p class="note">אחרי התשלום נציג לכם שתי שורות להעתיק באתר של החברה שבה קניתם את הדומיין. החיבור לוקח בדרך כלל כמה שעות, ולפעמים עד 48 שעות. עד אז האתר עובד בכתובת שבחרתם כאן.</p>
+    </div>
+    <p class="err" id="addrErr" role="alert"></p>
+    <div class="row"><button class="btn" value="ok" id="addrGo">לשמור את הכתובת</button><button class="btn quiet" value="cancel" formnovalidate>ביטול</button></div>
+  </form>
+</dialog>
+
+<dialog id="helpDlg" aria-labelledby="t-help">
+  <form method="dialog" id="helpForm">
+    <h2 id="t-help">נתקעתם? כתבו לנו</h2>
+    <p>ההודעה מגיעה אלינו לוואטסאפ, עם הקישור לאתר שלכם. נחזור אליכם בהקדם.</p>
+    <label for="helpMsg">מה קרה?</label>
+    <textarea id="helpMsg" rows="4" maxlength="500" required></textarea>
+    <p class="err" id="helpErr" role="alert"></p>
+    <div class="row"><button class="btn" value="ok" id="helpGo">לשלוח</button><button class="btn quiet" value="cancel" formnovalidate>ביטול</button></div>
   </form>
 </dialog>
 
@@ -235,9 +396,11 @@
   'use strict';
   const $ = (s) => document.querySelector(s);
   const API = '/api/builder/', STORE = 'nr-builder', WA = '972526359513';
-  const SLOTS = { portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3' };
+  const SLOTS = { hero: 'תמונה לראש האתר', portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', work4: 'עבודה 4', work5: 'עבודה 5', work6: 'עבודה 6', before: 'לפני', after: 'אחרי' };
+  const MAX_CLIPS = 5;
   const ERR = {
     not_configured: 'הבונה עוד לא פתוח. כתבו לנו בוואטסאפ ונבנה את האתר יחד.',
+    bad_image: 'את התמונה הזאת לא הצלחנו לקרוא. נסו צילום מסך שלה, או הדביקו טקסט.',
     busy_today: 'היום נפתחו כבר הרבה אתרים. נסו שוב מחר, או כתבו לנו בוואטסאפ.',
     rate_limited: 'יותר מדי ניסיונות בזמן קצר. נסו שוב בעוד כמה דקות.',
     bad_name: 'כתבו שם, לפחות שתי אותיות.',
@@ -250,16 +413,27 @@
     too_long: 'ההודעה ארוכה מדי. אפשר לחלק אותה לכמה הודעות.',
     missing: 'חסרים עוד כמה פרטים לפני אישור.',
     no_rights: 'סמנו קודם שהתמונות שלכם ומותר לפרסם אותן.',
+    image_failed: 'לא הצלחנו ליצור תמונה הפעם. נסו שוב, או כתבו אחרת מה לראות בה.',
     too_big: 'התמונה גדולה מדי. נסו תמונה אחרת.',
     bad_type: 'אפשר להעלות רק תמונה (JPG או WebP).',
     not_found: 'הטיוטה לא נמצאה. אולי היא נמחקה אחרי 30 יום בלי שימוש.',
     video_unsupported: 'הדפדפן הזה לא יכול להכין את הסרטון. נסו מכרום או מספארי מעודכנים, או שלחו לנו את הסרטון בוואטסאפ.',
     video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
     video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
+    too_many: 'אפשר עד 5 סרטונים. כדי להוסיף סרטון, הסירו אחד.',
+    edit_limit: 'הגעתם למכסת השינויים של החודש. כתבו לנו בוואטסאפ ונעשה את השינוי.',
+    slug_taken: 'הכתובת הזו תפוסה או לא תקינה. בחרו אחרת: אותיות באנגלית, ספרות ומקף.',
+    bad_domain: 'הדומיין לא נראה תקין. כתבו אותו כך: example.co.il',
+    domain_taken: 'הדומיין הזה כבר מחובר לאתר אחר אצלנו. אם הוא שלכם, כתבו לנו.',
+    no_address: 'קודם בוחרים כתובת לאתר.',
+    terms: 'כדי לשלם צריך לאשר את תנאי השימוש והביטולים.',
+    pay_failed: 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע, או כתבו לנו.',
+    no_subscription: 'אין כאן מנוי פעיל.',
+    no_changes: 'אין שינויים לפרסם.',
   };
-  const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.';
+  const say = (code) => ERR[code] || 'משהו נתקע אצלנו. נסו שוב בעוד רגע.' + (code ? ' (' + code + ')' : ''); // the code helps us find it in the log
 
-  let cred = null, state = null, sending = false;
+  let cred = null, state = null, sending = false, billing = null;
   const busy = new Set(); let queue = Promise.resolve(); // photos go up one at a time
   const store = {
     get() { try { return localStorage.getItem(STORE); } catch (e) { return null; } },
@@ -278,13 +452,15 @@
   }
 
   /* ---------- start ---------- */
+  // ?t=<trade> from a demo's "build" button: the trade is already picked.
+  (() => { const t = new URLSearchParams(location.search).get('t'); if (t && $('#fTrade option[value="' + CSS.escape(t) + '"]')) $('#fTrade').value = t; })();
   $('#startForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector('button[type=submit]'), err = $('#startErr');
     err.textContent = '';
     if (!$('#fConsent').checked) { err.textContent = say('no_consent'); return; }
     btn.disabled = true; btn.textContent = 'פותחים…';
-    const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value, template: 'plumber' } });
+    const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value, template: $('#fTrade').value } });
     btn.disabled = false; btn.textContent = 'לבנות את האתר';
     if (!r.ok) {
       err.textContent = say(r.data.error);
@@ -312,28 +488,36 @@
     log.scrollTop = log.scrollHeight; return d;
   }
 
-  function openWork(s) {
+  function openWork(s, b) {
     $('#start').hidden = true; $('#work').hidden = false;
-    state = s;
+    state = s; if (b) billing = b;
     log.textContent = '';
     bubble('them', s.greeting);
     for (const m of s.messages) bubble(m.role === 'user' ? 'me' : 'them', m.content);
     $('#openDraft').href = draftUrl();
-    frame.src = draftUrl();
+    frame.removeAttribute('srcdoc'); frame.src = draftUrl();
     paint();
-    if (s.status === 'draft' || s.status === 'returned') setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
+    if (isEditable(s)) setTimeout(() => $('#msg').focus({ preventScroll: true }), 50);
   }
 
   // Reload the draft and keep the reader where they were.
-  function refreshFrame() {
+  // With the page the server sent back (html), the draft shows without a second request to the server.
+  function refreshFrame(html) {
     let y = 0;
     try { y = frame.contentWindow.scrollY; } catch (e) { /* not loaded */ }
     frame.addEventListener('load', () => { try { frame.contentWindow.scrollTo(0, y); } catch (e) { /* ignore */ } }, { once: true });
+    // A fresh page from the html (srcdoc wins over src, so a reload has to drop it first).
+    if (html) { frame.srcdoc = html; return; }
+    frame.removeAttribute('srcdoc');
     frame.src = draftUrl() + '&t=' + Date.now();
   }
 
+  // A draft, or a live site its owner may change (self edit).
+  const isEditable = (s) => s.status === 'draft' || s.status === 'returned' || Boolean(s.edit);
+
   function paint() {
-    const s = state, editable = s.status === 'draft' || s.status === 'returned';
+    const s = state, editable = isEditable(s);
+    $('#viewNote').textContent = s.edit ? (s.edit.dirty ? 'השינויים שלכם · עוד לא באתר' : 'כמו באתר עכשיו') : 'טיוטה · מתעדכנת אחרי כל תשובה';
     // progress
     const req = s.checklist.filter((i) => !i.optional), done = req.filter((i) => i.done).length;
     $('#progCount').textContent = done + ' מתוך ' + req.length;
@@ -345,15 +529,37 @@
     ret.hidden = !s.returnNote; ret.textContent = s.returnNote ? 'הערה מאיתנו: ' + s.returnNote : '';
     // compose and photos
     $('#compose').hidden = !editable; $('#photos').hidden = !editable;
+    $('#design').hidden = !editable || !s.looks;
+    if (s.looks) designPicker($('#designBox'));
     $('#rights').checked = $('#rights').checked || s.photoRights;
+    paintGuide();
     paintSlots(editable);
+    $('#gen').hidden = !(editable && s.heroAI);
+    paintHero(editable);
     paintVideo(editable);
+    paintClips(editable);
     paintApprove();
   }
 
+  // The top of the site: a photo or a video, one of them. The pick is saved at once (no AI) and the draft follows.
+  function paintHero(editable) {
+    const kind = state.hero === 'video' ? 'video' : 'photo';
+    document.querySelectorAll('input[name=heroKind]').forEach((i) => { i.checked = i.value === kind; i.disabled = !editable; });
+    $('#heroPhoto').hidden = kind !== 'photo'; $('#vid').hidden = kind !== 'video';
+  }
+  document.querySelectorAll('input[name=heroKind]').forEach((i) => i.addEventListener('change', async () => {
+    if (!i.checked || !state) return;
+    const r = await call('answer', { body: { hero: i.value, rev: state.rev } });
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); return; }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+  }));
+
   function paintSlots(editable) {
-    const box = $('#slots'); box.textContent = '';
+    $('#heroSlot').textContent = ''; $('#slots').textContent = '';
     for (const [slot, label] of Object.entries(SLOTS)) {
+      const box = slot === 'hero' ? $('#heroSlot') : $('#slots');
       const el = document.createElement('label'); el.className = 'slot' + (busy.has(slot) ? ' busy' : '');
       const url = state.photos[slot];
       if (url) {
@@ -370,7 +576,7 @@
         input.addEventListener('change', () => { // cleared, so the same file can be picked again
           const f = input.files[0]; input.value = '';
           if (!f) return;
-          if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+          if (!confirmRights()) return;
           busy.add(slot); el.classList.add('busy');
           queue = queue.then(() => uploadPhoto(slot, f)).catch(() => {});
         });
@@ -389,20 +595,531 @@
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'מאשרים את האתר';
       b.disabled = s.missing.length > 0; b.addEventListener('click', () => { $('#approveErr').textContent = ''; $('#approveDlg').showModal(); });
       box.append(b);
+    } else if (s.status === 'client_approved' && billing && billing.on) {
+      const a = billing.address;
+      box.append(h3('1. כתובת לאתר'));
+      if (a) {
+        const l = p('הכתובת: '); l.append(ltr(a.host));
+        if (a.domain) { const d = p('אחרי התשלום נחבר גם את '); d.append(ltr(a.domain)); }
+        box.append(btn('לשנות כתובת', openAddress, 'linkish'));
+      } else box.append(btn('לבחור כתובת', openAddress));
+      box.append(h3('2. תשלום'));
+      const pr = billing.prices;
+      if (pr) {
+        const pk = document.createElement('div'); pk.className = 'pkgs';
+        pk.append(cycleOpt('month', 'חודשי', nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש.' + (pr.vat ? ' לפני מע״מ.' : ''), true));
+        if (billing.annual) pk.append(cycleOpt('year', 'שנה מראש', nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10.' + (pr.vat ? ' לפני מע״מ.' : ''), false));
+        box.append(pk);
+        const total = p(''); total.className = 'total';
+        const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = (pr.vat ? 'לתשלום היום, כולל מע״מ: ' : 'לתשלום היום: ') + nis(pr.today[c ? c.value : 'month']); };
+        pk.addEventListener('change', showTotal); showTotal();
+      }
+      // The terms first (demos/terms/): paying means accepting them, and the server records when.
+      const terms = document.createElement('label'); terms.className = 'terms-ok';
+      const tick = document.createElement('input'); tick.type = 'checkbox'; tick.id = 'termsOk';
+      const tl = document.createElement('a'); tl.href = '../terms/'; tl.target = '_blank'; tl.rel = 'noopener'; tl.textContent = 'תנאי השימוש והביטולים';
+      terms.append(tick, document.createTextNode(' מאשרים את '), tl);
+      box.append(terms);
+      const go = btn('לתשלום מאובטח', pay); go.disabled = !a || !tick.checked; box.append(go);
+      tick.addEventListener('change', () => { go.disabled = !a || !tick.checked; });
+      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. הקבלה נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
+      box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
       p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
       if (s.pay.length) {
         for (const l of s.pay) {
           const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
-          a.textContent = l.plan === 'three' ? 'לתשלום ב-3 תשלומים' : 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
+          a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
         }
-      } else p('נשלח לכם קישור לתשלום בוואטסאפ, בדרך כלל באותו יום.');
-      const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'רוצים לשנות משהו? חזרה לעריכה';
-      back.addEventListener('click', reopen); box.append(back);
+      } else p('נשלח לכם בוואטסאפ את פרטי התשלום, בדרך כלל באותו יום. הקבלה מגיעה אחרי התשלום.');
+      box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'paid') {
-      p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+      if (billing && billing.publishing === 'working' && billing.address) { p('התשלום התקבל, תודה! האתר עולה לאוויר עכשיו. זה לוקח בדרך כלל פחות מדקה.'); watchPublish(); }
+      else if (billing && billing.publishing === 'stuck') p('התשלום התקבל. משהו נתקע בהעלאה לאוויר, ואנחנו כבר מטפלים בזה. נעדכן אתכם בוואטסאפ.');
+      else p('התשלום התקבל. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+    } else if (s.edit) {
+      const e = s.edit;
+      p(e.dirty ? 'יש שינויים שעוד לא באתר. עברו עליהם בתצוגה, ואם הכול נכון, פרסמו.' : 'האתר באוויר. כתבו בשיחה מה לשנות.');
+      const go = document.createElement('button'); go.type = 'button'; go.className = 'btn'; go.textContent = 'לפרסם את השינויים';
+      go.disabled = !e.dirty || s.missing.length > 0 || e.publishesLeft === 0; go.addEventListener('click', () => editAction('publish', go));
+      box.append(go);
+      if (e.dirty) {
+        const no = document.createElement('button'); no.type = 'button'; no.className = 'btn quiet'; no.textContent = 'לבטל את השינויים';
+        no.addEventListener('click', () => { if (confirm('לבטל את כל השינויים שעוד לא פורסמו?')) editAction('discard', no); });
+        box.append(no);
+      } else if (e.canUndo) {
+        const back = document.createElement('button'); back.type = 'button'; back.className = 'btn quiet'; back.textContent = 'לחזור לגרסה הקודמת';
+        back.addEventListener('click', () => { if (confirm('לטעון את הגרסה הקודמת של האתר? היא תעלה לאתר רק אחרי שתפרסמו.')) editAction('undo', back); });
+        box.append(back);
+      }
+      if (s.missing.length) p('לפני פרסום חסרים: ' + s.missing.join(', ') + '.');
+      p('נשארו החודש: ' + e.messagesLeft + ' הודעות, ' + e.publishesLeft + ' פרסומים.').className = 'note';
     } else if (s.status === 'published') {
-      p('האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
+      p(s.site ? 'האתר באוויר.' : 'האתר מוכן ועובר להעלאה. נשלח לכם בוואטסאפ את הכתובת כשהוא באוויר.');
+    }
+    if (s.site) {
+      const l = p('הכתובת של האתר: '); const a = document.createElement('a'); a.href = s.site; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = s.site.replace(/^https:\/\/|\/$/g, ''); a.dir = 'ltr'; l.append(a);
+    }
+    if (s.status === 'published' && billing) paintLive(box);
+    if (s.status !== 'draft') box.append(btn('נתקעתם? כתבו לנו', () => { $('#helpErr').textContent = ''; $('#helpDlg').showModal(); }, 'linkish'));
+  }
+
+  /* ---------- address, payment, subscription (lib/billing.mjs) ---------- */
+  const nis = (n) => Number(n).toLocaleString('he-IL', { maximumFractionDigits: 2 }) + ' ₪';
+  const dateHe = (iso) => new Date(iso).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  function h3(t) { const e = document.createElement('h3'); e.textContent = t; return e; }
+  function ltr(t) { const e = document.createElement('bdi'); e.dir = 'ltr'; e.textContent = t; return e; }
+  function btn(t, fn, cls) { const b = document.createElement('button'); b.type = 'button'; b.className = cls || 'btn'; b.textContent = t; b.addEventListener('click', () => fn(b)); return b; }
+  function cycleOpt(v, title, text, on) {
+    const l = document.createElement('label'); l.className = 'pkg';
+    l.innerHTML = '<input type="radio" name="cycle"><div><b></b><span></span></div>';
+    const i = l.querySelector('input'); i.value = v; i.checked = on;
+    l.querySelector('b').textContent = title; l.querySelector('span').textContent = text;
+    return l;
+  }
+  function setBilling(d) { if (d.state) state = d.state; if (d.billing) billing = d.billing; paint(); }
+
+  // The owner's site after payment: their own domain while it connects, the panel link once, the subscription, invoices.
+  function paintLive(box) {
+    const b = billing, p = (t, cls) => { const e = document.createElement('p'); e.textContent = t; if (cls) e.className = cls; box.append(e); return e; };
+    if (b.domain && b.domain.state === 'waiting') {
+      box.append(h3('מחברים את הדומיין שלכם'));
+      const l = p('באתר של החברה שבה קניתם את '); l.append(ltr(b.domain.name)); l.append(', בהגדרות ה-DNS, מוסיפים את שתי השורות האלה:');
+      const t = document.createElement('table'); t.className = 'dns';
+      t.innerHTML = '<thead><tr><th>Type</th><th>Host</th><th>Value</th></tr></thead><tbody></tbody>';
+      for (const r of b.domain.dns || []) { const tr = document.createElement('tr'); for (const v of [r.type, r.host, r.value]) { const td = document.createElement('td'); td.textContent = v; tr.append(td); } t.tBodies[0].append(tr); }
+      box.append(t);
+      p('זהו. החיבור לוקח בדרך כלל כמה שעות, ולפעמים עד 48 שעות. אנחנו בודקים לבד כל שעה, ומעבירים את האתר לדומיין ברגע שהוא מוכן. עד אז האתר עובד בכתובת שלמעלה.', 'note');
+      box.append(btn('לבדוק עכשיו', domainCheck, 'btn quiet'));
+    } else if (b.domain && b.domain.state === 'live') { const l = p('הדומיין מחובר: '); l.append(ltr(b.domain.name)); }
+    if (b.panel) {
+      box.append(h3('הפאנל שלכם'));
+      p('כאן רואים כל פנייה, עם תזכורות וסטטיסטיקות. הקישור אישי: שמרו אותו במועדפים ואל תשלחו אותו לאחרים.');
+      const a = document.createElement('a'); a.className = 'btn'; a.href = b.panel; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'לפתוח את הפאנל'; box.append(a);
+      box.append(btn('שמרתי את הקישור', async (x) => { x.disabled = true; const r = await call('panel-seen', { body: {} }); x.disabled = false; if (r.ok) setBilling(r.data); }, 'btn quiet'));
+    }
+    if (b.launch) paintLaunch(box, b.launch);
+    const sub = b.sub;
+    if (sub) {
+      box.append(h3('המנוי'));
+      p((sub.cycle === 'year' ? 'שנתי, ' + nis(sub.amount) + ' לשנה' : 'חודשי, ' + nis(sub.amount) + ' לחודש') + ((billing.prices || {}).vat ? ' כולל מע״מ' : '') + (sub.card ? ' · כרטיס שמסתיים ב-' + sub.card : ''));
+      if (sub.state === 'active') { p('החיוב הבא: ' + dateHe(sub.next)); box.append(btn('ביטול המנוי', cancelSub, 'linkish')); }
+      else if (sub.state === 'failed' || sub.state === 'suspended') {
+        p(sub.state === 'suspended' ? 'החיוב לא עבר כמה פעמים, ולכן המענה האוטומטי והצ׳אט מושהים. האתר עצמו עובד.' : 'החיוב האחרון לא עבר. ננסה שוב בעוד כמה ימים, או שתעדכנו כרטיס עכשיו.', 'warn');
+        box.append(btn('לעדכן כרטיס', pay));
+      } else if (sub.state === 'cancelling') { p('ביטלתם את המנוי. הוא פעיל עד ' + dateHe(sub.end) + '.'); box.append(btn('להמשיך את המנוי', resumeSub, 'btn quiet')); }
+      else if (sub.state === 'ended') p('המנוי הסתיים. האתר והדומיין שלכם נשארים.');
+    }
+    if (b.invoices && b.invoices.length) {
+      box.append(h3('קבלות'));
+      const ul = document.createElement('ul');
+      for (const i of b.invoices) { const li = document.createElement('li'); const a = document.createElement('a'); a.href = i.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = (i.number ? 'מס׳ ' + i.number + ' · ' : '') + nis(i.sum) + ' · ' + dateHe(i.date); li.append(a); ul.append(li); }
+      box.append(ul);
+    }
+  }
+
+  // The first visitors: Google Business Profile, a WhatsApp status, local groups, the bio of each network. Each with its own link.
+  function paintLaunch(box, k) {
+    box.append(h3('להביא את הלקוחות הראשונים'));
+    const note = el('p', 'note', 'אתר חדש מתחיל להופיע בגוגל בהדרגה. בשבועות הראשונים רוב הכניסות מגיעות מכאן.'); box.append(note);
+    const copy = (text, label) => btn(label || 'להעתיק', async (x) => {
+      try { await navigator.clipboard.writeText(text); x.textContent = 'הועתק'; } catch (e) { x.textContent = 'לא הצלחנו להעתיק'; }
+      setTimeout(() => { x.textContent = label || 'להעתיק'; }, 2000);
+    }, 'btn quiet');
+    const card = (title, why) => { const d = el('details', 'launch'); const sm = el('summary', null, title); d.append(sm); if (why) d.append(el('p', null, why)); box.append(d); return d; };
+    const g = card('1. פרופיל עסק בגוגל', 'מה שמופיע בגוגל מפות ובחיפוש של התחום ליד הלקוח. חינם, ולרוב מאושר תוך כמה ימים.');
+    const ol = el('ol'); for (const s of k.gbp.steps) ol.append(el('li', null, s)); g.append(ol);
+    const go = document.createElement('a'); go.className = 'btn'; go.href = 'https://business.google.com/create'; go.target = '_blank'; go.rel = 'noopener'; go.textContent = 'לפתוח פרופיל בגוגל';
+    const lk = el('p', 'linkbox'); lk.append(ltr(k.gbp.link)); g.append(go, lk, copy(k.gbp.link, 'להעתיק את הקישור לאתר'));
+    const s = card('2. סטטוס בוואטסאפ', 'כל מי ששמר את המספר שלכם רואה אותו. שווה לחזור עליו פעם בשבועיים.');
+    s.append(el('p', 'textbox', k.status.text), copy(k.status.text));
+    const p = card('3. קבוצות של השכונה והעיר', 'רק בקבוצות שמותר בהן לפרסם, ולא יותר מפעם בכמה שבועות.');
+    p.append(el('p', 'textbox', k.groups.text), copy(k.groups.text));
+    if (k.social && k.social.length) {
+      const n = card('4. הקישור לאתר ברשתות', 'כך מי שמגיע לפרופיל שלכם ברשתות מוצא את האתר בלחיצה.');
+      for (const x of k.social) {
+        n.append(el('h4', 'net', x.name), el('p', null, x.how));
+        const lk = el('p', 'linkbox'); lk.append(ltr(x.link)); n.append(lk, copy(x.link, 'להעתיק את הקישור'));
+      }
+    }
+    if (k.tracked) box.append(el('p', 'note', 'לכל ערוץ קישור משלו, ובפאנל רואים כמה כניסות ופניות הגיעו מכל אחד.'));
+  }
+
+  async function openAddress() {
+    $('#addrErr').textContent = ''; const list = $('#addrList');
+    list.innerHTML = '<p>מחפשים כתובות פנויות…</p>';
+    const a = billing && billing.address;
+    $('#addrOwn').value = ''; $('#addrHas').checked = Boolean(a && a.domain); $('#addrDomain').value = (a && a.domain) || ''; $('#addrDomainBox').hidden = !$('#addrHas').checked;
+    $('#addrDlg').showModal();
+    const r = await call('address', { method: 'GET' });
+    list.textContent = '';
+    const opts = r.ok ? r.data.suggestions : [];
+    if (a && !opts.some((o) => o.slug === a.slug)) opts.unshift({ slug: a.slug, host: a.host });
+    if (opts[0]) $('#addrSuffix').textContent = opts[0].host.slice(opts[0].slug.length);
+    opts.forEach((o, i) => {
+      const l = document.createElement('label'); l.className = 'pkg';
+      l.innerHTML = '<input type="radio" name="addr"><div><b></b></div>';
+      const inp = l.querySelector('input'); inp.value = o.slug; inp.checked = a ? o.slug === a.slug : i === 0;
+      l.querySelector('b').textContent = o.host; list.append(l);
+    });
+    if (!opts.length) list.innerHTML = '<p>כתבו כתובת למטה.</p>';
+  }
+  $('#addrHas').addEventListener('change', (e) => { $('#addrDomainBox').hidden = !e.target.checked; if (e.target.checked) $('#addrDomain').focus(); });
+  $('#addrOwn').addEventListener('input', () => { if ($('#addrOwn').value) document.querySelectorAll('input[name=addr]').forEach((i) => { i.checked = false; }); });
+  $('#addrForm').addEventListener('submit', async (e) => {
+    if (e.submitter && e.submitter.value === 'cancel') return;
+    e.preventDefault();
+    const own = $('#addrOwn').value.trim().toLowerCase(), picked = $('input[name=addr]:checked');
+    const slug = own || (picked && picked.value);
+    if (!slug) { $('#addrErr').textContent = 'בחרו כתובת, או כתבו אחת.'; return; }
+    const domain = $('#addrHas').checked ? $('#addrDomain').value.trim() : '';
+    if ($('#addrHas').checked && !domain) { $('#addrErr').textContent = 'כתבו את הדומיין, או בטלו את הסימון.'; return; }
+    $('#addrGo').disabled = true;
+    const r = await call('address', { body: { slug, domain, rev: state.rev } });
+    $('#addrGo').disabled = false;
+    if (!r.ok) { $('#addrErr').textContent = say(r.data.error); if (r.data.state) { state = r.data.state; paint(); } return; }
+    $('#addrDlg').close(); setBilling(r.data);
+    if (r.data.registered === false) bubble('sys', 'שימו לב: הדומיין ' + ((billing.address && billing.address.domain) || domain) + ' עוד לא רשום. רושמים אותו על שמכם אצל רשם דומיינים, ואנחנו נחבר אותו אחרי התשלום.');
+  });
+
+  async function pay(b) {
+    const c = document.querySelector('input[name=cycle]:checked');
+    b.disabled = true; const label = b.textContent; b.textContent = 'פותחים את דף התשלום…';
+    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: !!($('#termsOk') || {}).checked } });
+    if (r.ok && /^https:\/\//.test(r.data.url)) { location.href = r.data.url; return; }
+    b.disabled = false; b.textContent = label;
+    const f = bubble('fail', say(r.data.error)); f.append(' ', waLink('לוואטסאפ', 'היי, נתקעתי בתשלום על האתר שלי.'));
+  }
+
+  // Back from Grow: the payment may still be on its way (Grow's callback); ask a few times.
+  async function payCheck(n) {
+    const r = await call('pay-check', { body: {} });
+    if (r.ok) setBilling(r.data);
+    if (r.ok && (r.data.paid || (state && state.status !== 'client_approved'))) { bubble('sys', state.status === 'published' ? 'התשלום התקבל, והאתר באוויר!' : 'התשלום התקבל, תודה! האתר עולה לאוויר.'); return; }
+    if (n < 5) setTimeout(() => payCheck(n + 1), 4000);
+    else bubble('sys', 'עוד לא קיבלנו אישור מ-Grow. אם שילמתם, זה יגיע בדקות הקרובות, ונעדכן כאן ובוואטסאפ.');
+  }
+  let watching = false;
+  function watchPublish() {
+    if (watching) return; watching = true; let n = 0;
+    const tick = async () => {
+      const r = await call('state', { method: 'GET' });
+      if (r.ok) { setBilling(r.data); if (state.status === 'published') { watching = false; bubble('sys', 'האתר באוויר!'); return; } }
+      if (++n < 20) setTimeout(tick, 6000); else watching = false;
+    };
+    setTimeout(tick, 6000);
+  }
+  async function domainCheck(b) {
+    b.disabled = true; const r = await call('domain-check', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data);
+    bubble('sys', r.data.domain === 'live' ? 'הדומיין מחובר! האתר עבר לכתובת החדשה.' : 'עוד לא. לפעמים זה לוקח עד 48 שעות, ואנחנו ממשיכים לבדוק לבד.');
+  }
+  async function cancelSub(b) {
+    if (!confirm('לבטל את המנוי? הוא יישאר פעיל עד סוף התקופה ששולמה, ואחר כך המענה האוטומטי והצ׳אט ייכבו. האתר והדומיין נשארים שלכם.')) return;
+    b.disabled = true; const r = await call('cancel', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data); bubble('sys', 'המנוי בוטל. אפשר לחזור בכם עד סוף התקופה.');
+  }
+  async function resumeSub(b) {
+    b.disabled = true; const r = await call('resume', { body: {} }); b.disabled = false;
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    setBilling(r.data); bubble('sys', 'המנוי ממשיך.');
+  }
+  $('#helpForm').addEventListener('submit', async (e) => {
+    if (e.submitter && e.submitter.value === 'cancel') return;
+    e.preventDefault();
+    const msg = $('#helpMsg').value.trim();
+    if (msg.length < 3) { $('#helpErr').textContent = 'כתבו במשפט מה קרה.'; return; }
+    $('#helpGo').disabled = true;
+    const r = await call('help', { body: { message: msg } });
+    $('#helpGo').disabled = false;
+    if (!r.ok || !r.data.sent) { $('#helpErr').textContent = 'לא הצלחנו לשלוח. '; $('#helpErr').append(waLink('כתבו לנו בוואטסאפ', 'היי, נתקעתי בבונה: ' + msg)); return; }
+    $('#helpDlg').close(); $('#helpMsg').value = '';
+    bubble('sys', 'קיבלנו. נחזור אליכם בוואטסאפ בהקדם.');
+  });
+
+  // Self edit: publish the changes, drop them, or load the version before the last publish.
+  async function editAction(action, btn) {
+    btn.disabled = true;
+    const r = await call(action, { body: { rev: state.rev } });
+    btn.disabled = false;
+    if (!r.ok) {
+      const f = bubble('fail', say(r.data.error) + (r.data.missing ? ' ' + r.data.missing.join(', ') : ''));
+      if (r.data.error === 'edit_limit') f.append(' ', waLink('לוואטסאפ', 'היי, אשמח לעשות שינוי באתר שלי.'));
+      if (r.data.state) { state = r.data.state; paint(); }
+      return;
+    }
+    state = r.data.state;
+    if (action === 'publish') { openWork(state); bubble('sys', 'השינויים פורסמו. האתר יתעדכן בעוד כמה דקות.'); }
+    else if (action === 'discard') { openWork(state); bubble('sys', 'ביטלנו את השינויים. התצוגה חזרה למה שבאתר.'); }
+    else { paint(); refreshFrame(r.data.draft); markSite(); bubble('sys', 'טענו את הגרסה הקודמת. עברו עליה, ואם היא נכונה, פרסמו.'); }
+  }
+
+  /* ---------- the questionnaire: pick an answer, type what isn't listed; no AI involved ---------- */
+  const guideBox = $('#guide');
+  let socialTyped = null; // the social step's fields, kept between redraws
+  const doneKey = () => 'nr-guide-' + String(cred || '').split(':')[0];
+  const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(doneKey()) || '[]')); } catch (e) { return new Set(); } };
+  const markDone = (id) => { const d = doneSet(); d.add(id); try { localStorage.setItem(doneKey(), JSON.stringify([...d])); } catch (e) { /* private mode */ } };
+  const whenText = (r) => (!r ? 'מהר' : /^באותו/.test(r) ? r : 'תוך ' + r);
+  const fill = (text) => String(text).replace('{when}', whenText(state.content.response_time));
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  function stepDone(st, s, done) {
+    const c = s.content;
+    if (done.has(st.id)) return true;
+    if (st.type === 'style') return false;
+    if (st.type === 'text' || st.type === 'pick') return Boolean(String(c[st.field] || '').trim());
+    if (st.type === 'region') return Boolean(String(c.area || '').trim());
+    if (st.type === 'towns') return (c.towns || []).length > 0;
+    if (st.type === 'services') return (c.services || []).length > 0;
+    if (st.type === 'headline') return Boolean(c.headline_2);
+    if (st.type === 'copy') return st.id === 'headline' ? Boolean(c.headline_2) : Boolean(String(c[Object.keys(st.options[0])[0]] || '').trim());
+    if (st.type === 'photos') return Object.keys(s.photos || {}).length > 0;
+    if (st.type === 'regions') return (c.regions || []).length > 0;
+    if (st.type === 'social') return Object.keys(c.social || {}).length > 0;
+    return false;
+  }
+
+  async function answer(st, payload, label) {
+    guideBox.classList.add('busy');
+    const r = await call('answer', { body: { ...payload, rev: state.rev } });
+    guideBox.classList.remove('busy');
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return false; }
+    bubble('them', st.ask); bubble('me', label);
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+    paint();
+    return true;
+  }
+
+  // A field for an answer that isn't on the list.
+  function otherField(placeholder, onSave, btnText) {
+    const f = el('form', 'other'); const i = el('input'); i.type = 'text'; i.placeholder = placeholder || 'משהו אחר? כתבו כאן'; i.setAttribute('aria-label', i.placeholder);
+    const b = el('button', 'btn quiet', btnText || 'הוספה'); b.type = 'submit';
+    f.addEventListener('submit', (e) => { e.preventDefault(); const v = i.value.trim(); if (v) onSave(v, i); });
+    f.append(i, b); return f;
+  }
+  function chip(text, pressed, onClick, cls) {
+    const b = el('button', 'chip' + (cls ? ' ' + cls : ''), text); b.type = 'button';
+    if (pressed != null) b.setAttribute('aria-pressed', String(pressed));
+    b.addEventListener('click', onClick); return b;
+  }
+
+  // The design: a look, then one of its palettes. Each tap saves it and reloads the draft next to the chat.
+  let styleBusy = false;
+  async function setStyle(look, palette) {
+    if (styleBusy) return;
+    styleBusy = true; document.body.classList.add('styling');
+    const r = await call('answer', { body: { style: { look, palette }, rev: state.rev } });
+    styleBusy = false; document.body.classList.remove('styling');
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); paint(); return; }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+    paint();
+  }
+  function designPicker(box) {
+    box.textContent = '';
+    const cur = state.style, looks = state.looks;
+    const lookNow = looks.find((l) => l.id === cur.look) || looks[0];
+    box.append(el('p', 'design-q', 'תבנית'));
+    const grid = el('div', 'looks');
+    for (const l of looks) {
+      const b = el('button', 'look'); b.type = 'button'; b.dataset.look = l.id;
+      b.setAttribute('aria-pressed', String(l.id === lookNow.id));
+      const mini = el('span', 'mini'); mini.setAttribute('aria-hidden', 'true');
+      for (const c of l.palettes[0].swatch) { const i = el('i'); i.style.background = c; mini.append(i); }
+      b.append(mini, el('b', null, l.label), el('small', null, l.note));
+      b.addEventListener('click', () => { if (l.id !== cur.look) setStyle(l.id, l.palettes[0].id); });
+      grid.append(b);
+    }
+    box.append(grid, el('p', 'design-q', 'צבעים'));
+    const pals = el('div', 'pals');
+    for (const p of lookNow.palettes) {
+      const b = el('button', 'pal'); b.type = 'button'; b.dataset.palette = p.id;
+      b.setAttribute('aria-pressed', String(p.id === cur.palette));
+      const sw = el('span', 'sw'); sw.setAttribute('aria-hidden', 'true');
+      for (const c of p.swatch) { const i = el('i'); i.style.background = c; sw.append(i); }
+      b.append(sw, document.createTextNode(p.label));
+      b.addEventListener('click', () => { if (p.id !== cur.palette) setStyle(lookNow.id, p.id); });
+      pals.append(b);
+    }
+    box.append(pals);
+    return box;
+  }
+
+  function paintGuide() {
+    const s = state, g = s.guide;
+    guideBox.textContent = '';
+    if (!g || !(s.status === 'draft' || s.status === 'returned')) { guideBox.hidden = true; return; }
+    const done = doneSet(), steps = g.steps, i = steps.findIndex((st) => !stepDone(st, s, done));
+    if (i < 0) { guideBox.hidden = true; return; }
+    const st = steps[i], c = s.content;
+    guideBox.hidden = false;
+    guideBox.append(el('p', 'step', 'שאלה ' + (i + 1) + ' מתוך ' + steps.length), el('p', 'q', st.ask));
+    const chips = el('div', 'chips');
+
+    if (st.type === 'style') {
+      if (!s.looks) { markDone('style'); return paintGuide(); }
+      $('#design').hidden = true; // the same picker is here in the question
+      const box = designPicker(el('div', 'design'));
+      const go = el('button', 'btn', 'ממשיכים'); go.type = 'button';
+      go.addEventListener('click', () => {
+        const l = s.looks.find((x) => x.id === s.style.look), p = l && l.palettes.find((x) => x.id === s.style.palette);
+        bubble('them', st.ask); bubble('me', (l ? l.label : '') + (p ? ', ' + p.label : ''));
+        markDone('style'); paint();
+      });
+      guideBox.append(box, go);
+    } else if (st.type === 'text') {
+      guideBox.append(otherField(st.placeholder, (v) => answer(st, { set: [{ field: st.field, value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'pick') {
+      for (const o of st.options) {
+        const label = typeof o === 'string' ? o : o.label, value = typeof o === 'string' ? o : o.value;
+        chips.append(chip(label, null, () => answer(st, { set: [{ field: st.field, value }] }, label)));
+      }
+      guideBox.append(chips, otherField(st.placeholder, (v) => answer(st, { set: [{ field: st.field, value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'region') {
+      for (const r of g.regions) chips.append(chip(r.label, null, () => answer(st, { set: [{ field: 'area', value: r.label }] }, r.label)));
+      guideBox.append(chips, otherField('אזור אחר, למשל: רחובות והסביבה', (v) => answer(st, { set: [{ field: 'area', value: v }] }, v), 'שמירה'));
+    } else if (st.type === 'towns') {
+      const region = g.regions.find((r) => r.label === c.area);
+      const picked = new Set((c.towns || []).length ? c.towns : region ? region.towns : []);
+      const all = [...new Set([...(region ? region.towns : []), ...picked])];
+      const draw = () => {
+        chips.textContent = '';
+        for (const t of all) chips.append(chip(t, picked.has(t), () => { picked.has(t) ? picked.delete(t) : picked.add(t); draw(); }));
+      };
+      draw();
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', () => {
+        const list = all.filter((t) => picked.has(t));
+        if (!list.length) { bubble('fail', 'סמנו לפחות ישוב אחד.'); return; }
+        if (list.length > 12) { bubble('fail', 'עד 12 ישובים. הורידו כמה.'); return; }
+        answer(st, { towns: list }, list.join(', '));
+      });
+      guideBox.append(chips, otherField('ישוב נוסף', (v, input) => { all.push(v); picked.add(v); input.value = ''; draw(); }), save);
+    } else if (st.type === 'services') {
+      const have = new Map((c.services || []).map((x) => [x.name, x]));
+      const picked = new Set(have.keys());
+      const all = [...g.services.map((x) => x.name), ...[...have.keys()].filter((n) => !g.services.some((x) => x.name === n))];
+      const draw = () => {
+        chips.textContent = '';
+        for (const n of all) chips.append(chip(n, picked.has(n), () => {
+          if (!picked.has(n) && picked.size >= 6) { bubble('fail', 'עד 6 שירותים. הורידו אחד קודם.'); return; }
+          picked.has(n) ? picked.delete(n) : picked.add(n); draw();
+        }));
+      };
+      draw();
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', () => {
+        const list = all.filter((n) => picked.has(n)).map((n) => {
+          const kb = g.services.find((x) => x.name === n), old = have.get(n);
+          return old || { name: n, detail: kb ? kb.detail : '', time: kb ? kb.time : '', price: '' };
+        });
+        if (!list.length) { bubble('fail', 'סמנו לפחות שירות אחד.'); return; }
+        answer(st, { services: list }, list.map((x) => x.name).join(', '));
+      });
+      guideBox.append(chips, otherField('שירות נוסף', (v, input) => {
+        if (picked.size >= 6) { bubble('fail', 'עד 6 שירותים. הורידו אחד קודם.'); return; }
+        all.push(v); picked.add(v); input.value = ''; draw();
+      }), save);
+    } else if (st.type === 'prices') {
+      const rows = (c.services || []).map((x) => {
+        const kb = g.services.find((k) => k.name === x.name);
+        const row = el('label', 'prow'); const on = el('input'); on.type = 'checkbox'; on.checked = Boolean(x.price || kb);
+        const name = el('span', '', x.name); const v = el('input'); v.type = 'text'; v.value = x.price || (kb ? kb.price : ''); v.placeholder = 'למשל: 300 עד 500 ₪'; v.maxLength = 24;
+        v.setAttribute('aria-label', 'מחיר: ' + x.name); on.setAttribute('aria-label', 'להציג מחיר: ' + x.name);
+        row.append(on, name, v); guideBox.append(row);
+        return { x, on, v };
+      });
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button'; save.style.marginTop = '10px';
+      save.addEventListener('click', async () => {
+        const list = rows.map(({ x, on, v }) => ({ ...x, price: on.checked ? v.value.trim() : '' }));
+        if (await answer(st, { services: list }, list.filter((x) => x.price).length ? 'המחירים נשמרו' : 'בלי מחירים')) { markDone('prices'); paint(); }
+      });
+      const none = el('button', 'linkish skip', 'בלי מחירים באתר'); none.type = 'button';
+      none.addEventListener('click', async () => { if (await answer(st, { services: rows.map(({ x }) => ({ ...x, price: '' })) }, 'בלי מחירים')) { markDone('prices'); paint(); } });
+      const r = el('div', 'row'); r.append(save, none); guideBox.append(r);
+    } else if (st.type === 'copy') {
+      for (const o of st.options) {
+        const set = Object.entries(o).map(([field, value]) => ({ field, value: fill(value) }));
+        const text = set.map((x) => x.value).join(' ');
+        chips.append(chip(text, null, async () => { if (await answer(st, { set }, text)) { markDone(st.id); paint(); } }, 'card'));
+      }
+      const own = el('button', 'linkish skip', 'רוצים נוסח אחר? כתבו לנו בשיחה'); own.type = 'button';
+      own.addEventListener('click', () => { msg.value = st.id === 'headline' ? 'אשמח לכותרת אחרת: ' : 'אשמח לפסקת פתיחה אחרת: '; msg.focus(); });
+      guideBox.append(chips, own);
+    } else if (st.type === 'regions') {
+      // A card per area: its name, its towns (from the owner's list) and a few words of their own about it.
+      const MIN = 60, towns = c.towns || [];
+      const guess = String(c.area || '').split(/,|\s+ו(?=\S)/).map((x) => x.trim()).filter(Boolean).slice(0, 3);
+      const cards = (c.regions && c.regions.length ? c.regions : guess.map((n) => ({ name: n, towns: towns.filter((t) => t === n), note: '' })))
+        .map((r) => ({ name: r.name, towns: new Set(r.towns || []), note: r.note || '' }));
+      const list = el('div', 'regions');
+      const draw = () => {
+        list.textContent = '';
+        cards.forEach((r, n) => {
+          const card = el('fieldset', 'region-card');
+          const lg = el('legend', null, 'אזור ' + (n + 1)); card.append(lg);
+          const nm = el('input'); nm.type = 'text'; nm.maxLength = 30; nm.value = r.name; nm.placeholder = 'שם האזור, למשל: השרון'; nm.setAttribute('aria-label', 'שם האזור ' + (n + 1));
+          nm.addEventListener('input', () => { r.name = nm.value; });
+          const tc = el('div', 'chips');
+          for (const t of towns) tc.append(chip(t, r.towns.has(t), (e) => { r.towns.has(t) ? r.towns.delete(t) : r.towns.add(t); e.currentTarget.setAttribute('aria-pressed', String(r.towns.has(t))); }));
+          const ta = el('textarea'); ta.maxLength = 500; ta.rows = 3; ta.value = r.note; ta.setAttribute('aria-label', 'כמה מילים על העבודה ב' + (r.name || 'אזור ' + (n + 1)));
+          ta.placeholder = 'למשל: אני גר בחדרה ומגיע לרוב הקריאות תוך 20 דקות. החלפתי כאן עשרות דודים בבניינים הישנים.';
+          const cnt = el('small', 'count'); const upd = () => { cnt.textContent = ta.value.trim().length < MIN ? 'עוד ' + (MIN - ta.value.trim().length) + ' תווים לפחות' : ta.value.trim().length + '/500'; };
+          ta.addEventListener('input', () => { r.note = ta.value; upd(); }); upd();
+          const rm = el('button', 'linkish', 'להוריד את האזור'); rm.type = 'button'; rm.addEventListener('click', () => { cards.splice(n, 1); draw(); });
+          card.append(nm, el('p', 'design-q', 'הישובים באזור'), tc, ta, cnt, rm);
+          list.append(card);
+        });
+      };
+      draw();
+      const add = el('button', 'linkish', 'עוד אזור'); add.type = 'button';
+      add.addEventListener('click', () => { if (cards.length >= 5) { bubble('fail', 'עד 5 אזורים.'); return; } cards.push({ name: '', towns: new Set(), note: '' }); draw(); });
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', async () => {
+        const out = cards.filter((r) => r.name.trim()).map((r) => ({ name: r.name.trim(), towns: towns.filter((t) => r.towns.has(t)), note: r.note.trim(), response: '' }));
+        const short = out.find((r) => r.note.length < MIN), empty = out.find((r) => !r.towns.length);
+        if (!out.length) { bubble('fail', 'כתבו לפחות אזור אחד, או דלגו.'); return; }
+        if (empty) { bubble('fail', 'סמנו ישוב אחד לפחות ב' + empty.name + '.'); return; }
+        if (short) { bubble('fail', 'על ' + short.name + ' כתבו לפחות ' + MIN + ' תווים, או הורידו את האזור.'); return; }
+        if (await answer(st, { regions: out }, out.map((r) => r.name).join(', '))) { markDone('regions'); paint(); }
+      });
+      const r = el('div', 'row'); r.append(save, add);
+      guideBox.append(list, r);
+    } else if (st.type === 'social') {
+      // One field per network: a link or a handle. The server cleans it into the profile's address, or says why not.
+      // What they typed stays while they fix one the server refused (the guide is drawn again after every answer).
+      const typed = socialTyped || (socialTyped = { ...(c.social || {}) }), box = el('div', 'socials'), inputs = {};
+      for (const n of st.networks) {
+        const row = el('label'); const i = el('input'); i.type = 'text'; i.dir = 'ltr'; i.inputMode = 'url';
+        i.autocomplete = 'off'; i.spellcheck = false; i.setAttribute('autocapitalize', 'off'); i.maxLength = 300;
+        i.placeholder = n.placeholder; i.value = typed[n.key] || ''; i.dataset.net = n.key;
+        i.addEventListener('input', () => { typed[n.key] = i.value; });
+        row.append(el('span', null, n.label), i); box.append(row); inputs[n.key] = i;
+      }
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', async () => {
+        const social = Object.fromEntries(Object.entries(inputs).map(([k, i]) => [k, i.value.trim()]));
+        const names = st.networks.filter((n) => social[n.key]).map((n) => n.label);
+        if (!names.length) { bubble('fail', 'כתבו לפחות רשת אחת, או דלגו.'); return; }
+        if (await answer(st, { social }, names.join(', '))) { socialTyped = null; markDone('social'); paint(); }
+      });
+      guideBox.append(box, save);
+    } else if (st.type === 'photos') {
+      const open = el('button', 'btn', 'לתמונות'); open.type = 'button';
+      open.addEventListener('click', () => { $('#photos').open = true; $('#photos').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+      const later = el('button', 'linkish skip', 'בלי תמונות כרגע'); later.type = 'button';
+      later.addEventListener('click', () => { markDone('photos'); paint(); });
+      const r = el('div', 'row'); r.append(open, later); guideBox.append(r);
+    }
+    if (st.optional) {
+      const skip = el('button', 'linkish skip', 'לדלג'); skip.type = 'button';
+      skip.addEventListener('click', () => { markDone(st.id); paint(); });
+      guideBox.append(skip);
     }
   }
 
@@ -424,50 +1141,109 @@
     if (!r.ok) {
       mine.remove(); msg.value = text;
       const f = bubble('fail', say(r.data.error));
-      if (r.data.error === 'limit') f.append(' ', waLink('לוואטסאפ', 'היי, התחלתי לבנות אתר בבונה ואשמח להמשיך איתכם.'));
+      if (r.data.error === 'limit' || r.data.error === 'edit_limit') f.append(' ', waLink('לוואטסאפ', state && state.edit ? 'היי, אשמח לעשות שינוי באתר שלי.' : 'היי, התחלתי לבנות אתר בבונה ואשמח להמשיך איתכם.'));
       if (r.data.state) { state = r.data.state; if (r.data.error === 'conflict') openWork(state); else paint(); msg.value = text; }
       return;
     }
     state = r.data.state;
     bubble('them', r.data.reply);
     paint();
-    if (r.data.changed && r.data.changed.length) { refreshFrame(); markSite(); }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
     msg.focus({ preventScroll: true });
   });
 
+  /* ---------- "למדו את העסק שלי": material the owner already has fills the draft (/api/builder/learn) ---------- */
+  $('#learnFiles').addEventListener('change', () => {
+    const n = $('#learnFiles').files.length;
+    $('#learnCount').textContent = n ? (n > 3 ? 'נקרא את 3 הראשונות' : n === 1 ? 'תמונה אחת' : n + ' תמונות') : '';
+  });
+  const toDataUrl = (blob) => new Promise((ok, fail) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = fail; fr.readAsDataURL(blob); });
+  $('#learnGo').addEventListener('click', async () => {
+    const go = $('#learnGo'); if (go.disabled) return;
+    const files = [...$('#learnFiles').files].slice(0, 3), text = $('#learnText').value.trim();
+    if (!files.length && !text) { bubble('fail', 'העלו תמונה או הדביקו טקסט, ונלמד מזה.'); return; }
+    go.disabled = true; go.textContent = 'קוראים…';
+    let images = [];
+    try { images = await Promise.all(files.map(async (f) => toDataUrl(await shrink(f)))); }
+    catch (e) { go.disabled = false; go.textContent = 'ללמוד מזה'; bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו צילום מסך שלה.'); return; }
+    bubble('me', 'שיתפנו חומר על העסק' + (files.length ? ' · ' + files.length + ' תמונות' : '') + (text ? ' · טקסט' : ''));
+    const typing = document.createElement('div'); typing.className = 'typing'; typing.textContent = 'קוראים את החומר…'; $('#log').append(typing); $('#log').scrollTop = $('#log').scrollHeight;
+    const r = await call('learn', { body: { text, images, rev: state.rev } });
+    typing.remove(); go.disabled = false; go.textContent = 'ללמוד מזה';
+    if (!r.ok) { bubble('fail', say(r.data.error)); if (r.data.state) { state = r.data.state; paint(); } return; }
+    state = r.data.state; bubble('them', r.data.reply); paint();
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+    $('#learnFiles').value = ''; $('#learnText').value = ''; $('#learnCount').textContent = ''; $('#learn').open = false;
+  });
+
   /* ---------- photos: resized and re-encoded here, which also drops the location data ---------- */
-  async function shrink(file) {
-    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
-    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
-    const c = document.createElement('canvas'); c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+  // The rights box is easy to miss on a phone: asking at the moment of picking keeps the upload going.
+  // A background photo made for them: the server makes it, the page saves it like an upload (it is theirs to use).
+  $('#genGo').addEventListener('click', async () => {
+    const box = $('#gen');
+    if (box.classList.contains('busy')) return;
+    box.classList.add('busy'); $('#genGo').textContent = 'יוצרים תמונה, כחצי דקה…';
+    busy.add('hero'); paintSlots(isEditable(state));
+    const r = await call('hero-image', { body: { wish: $('#genWish').value } });
+    box.classList.remove('busy'); $('#genGo').textContent = 'ליצור תמונת רקע';
+    if (!r.ok || !r.data.image) { busy.delete('hero'); paint(); bubble('fail', say(r.data.error)); return; }
+    const blob = await (await fetch(r.data.image)).blob();
+    queue = queue.then(() => uploadPhoto('hero', blob)).catch(() => {});
+    await queue;
+    bubble('sys', 'יצרנו תמונת רקע לראש האתר. לא מתאימה? אפשר ליצור אחרת או להעלות תמונה שלכם.');
+  });
+
+  function confirmRights() {
+    if ($('#rights').checked) return true;
+    if (confirm('התמונות והסרטונים שלכם, ומותר לפרסם אותם באתר?')) { $('#rights').checked = true; return true; }
+    bubble('fail', say('no_rights')); return false;
+  }
+
+  // Some phone photos (HEIC on an iPhone) don't open with createImageBitmap but do as an <img>.
+  async function decode(file) {
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      const url = URL.createObjectURL(file), img = new Image();
+      try { img.src = url; await img.decode(); return img; }
+      finally { setTimeout(() => URL.revokeObjectURL(url), 2000); }
+    }
+  }
+
+  // The top and before/after show wide: up to 1600 pixels. The other photos show small: 1200 is plenty.
+  async function shrink(file, max = 1600) {
+    const bmp = await decode(file);
+    const bw = bmp.naturalWidth || bmp.width, bh = bmp.naturalHeight || bmp.height;
+    const scale = Math.min(1, max / Math.max(bw, bh));
+    const c = document.createElement('canvas'); c.width = Math.round(bw * scale); c.height = Math.round(bh * scale);
     c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
     const enc = (type, q) => new Promise((res) => c.toBlob(res, type, q));
     let blob = await enc('image/webp', 0.82);
     if (!blob || blob.type !== 'image/webp') blob = await enc('image/jpeg', 0.85); // Safari can't write WebP
     for (let q = 0.75; blob && blob.size > 950000 && q > 0.4; q -= 0.15) blob = await enc('image/jpeg', q);
+    if (!blob) throw new Error('encode');
     return blob;
   }
 
   async function uploadPhoto(slot, file) {
     let blob;
-    try { blob = await shrink(file); } catch (e) { busy.delete(slot); paint(); bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו תמונה אחרת, או צלמו מסך שלה.'); return; }
+    try { blob = await shrink(file, ['hero', 'before', 'after'].includes(slot) ? 1600 : 1200); } catch (e) { busy.delete(slot); paint(); bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו תמונה אחרת, או צלמו מסך שלה.'); return; }
     const r = await call('photo', { raw: blob, query: '?slot=' + slot, headers: { 'content-type': blob.type, 'x-photo-rights': 'yes' } });
     busy.delete(slot);
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame(); markSite();
+    refreshFrame(r.data.draft); markSite();
   }
 
   async function removePhoto(slot) {
     const r = await call('photo', { method: 'DELETE', query: '?slot=' + slot });
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    state = r.data.state; paint(); refreshFrame();
+    state = r.data.state; paint(); refreshFrame(r.data.draft);
   }
 
   /* ---------- the short video: the owner picks 10 seconds, the browser makes a small MP4 (H.264, no sound) ---------- */
   const VIDEO_LIB = '/shared/vendor/mediabunny-1.61.3.min.mjs', CLIP = 10;
-  let vFile = null, vDur = 0, vUrl = null;
+  let vFile = null, vDur = 0, vUrl = null, vTarget = 'hero'; // 'hero': the video at the top; 'clip': one of the short videos
 
   function paintVideo(editable) {
     const box = $('#vid'); box.textContent = '';
@@ -481,22 +1257,67 @@
       x.addEventListener('click', removeVideo);
       box.append(el, x, pickButton('להחליף'));
     } else {
-      box.append(pickButton('להוסיף סרטון קצר'), document.createTextNode('לא חובה. 10 שניות מהעבודה, בראש האתר.'));
+      box.append(pickButton('להוסיף סרטון לראש האתר'), document.createTextNode('10 שניות מהעבודה, בלי קול.'));
     }
   }
 
-  function pickButton(text) {
+  // Up to 5 short videos for "סרטונים מהעבודה": each with its first frame and an optional title.
+  function paintClips(editable) {
+    const box = $('#clipsBox'); box.textContent = '';
+    if (!editable) return;
+    const list = state.videos || [];
+    if (list.length) {
+      const ul = document.createElement('div'); ul.className = 'clip-list';
+      list.forEach((c, i) => {
+        const row = document.createElement('div'); row.className = 'clip-row';
+        const img = document.createElement('img'); img.src = c.poster; img.alt = 'סרטון ' + (i + 1);
+        const t = document.createElement('input'); t.type = 'text'; t.maxLength = 34; t.value = c.title || ''; t.placeholder = 'כותרת (לא חובה)';
+        t.setAttribute('aria-label', 'כותרת לסרטון ' + (i + 1));
+        t.addEventListener('change', () => saveClipTitle(c.id, t.value));
+        const x = document.createElement('button'); x.type = 'button'; x.className = 'btn quiet'; x.textContent = 'להסיר';
+        x.setAttribute('aria-label', 'להסיר את סרטון ' + (i + 1)); x.addEventListener('click', () => removeClip(c.id));
+        row.append(img, t, x); ul.append(row);
+      });
+      box.append(ul);
+    }
+    if (busy.has('clip')) { const n = document.createElement('p'); n.className = 'clip-note'; n.textContent = 'מכינים את הסרטון…'; box.append(n); return; }
+    const n = document.createElement('p'); n.className = 'clip-note';
+    if (list.length < MAX_CLIPS) {
+      const row = document.createElement('div'); row.className = 'vid'; row.append(pickButton(list.length ? 'להוסיף עוד סרטון' : 'להוסיף סרטון', 'clip')); box.append(row);
+      n.textContent = 'כל סרטון 10 שניות, בלי קול. באתר הם מתנגנים רק כשגוללים אליהם.';
+    } else n.textContent = 'יש כבר 5 סרטונים. כדי להוסיף, הסירו אחד.';
+    box.append(n);
+  }
+
+  async function saveClipTitle(id, title) {
+    const r = await call('clip', { method: 'PUT', query: '?id=' + id, body: { title } });
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { paint(); bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft); markSite();
+  }
+
+  async function removeClip(id) {
+    const r = await call('clip', { method: 'DELETE', query: '?id=' + id });
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft);
+  }
+
+  function pickButton(text, target = 'hero') {
     const l = document.createElement('label'); l.className = 'btn quiet pick'; l.textContent = text;
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'video/*'; input.setAttribute('aria-label', text);
-    input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) openVideo(f); });
+    input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) openVideo(f, target); });
     l.append(input); return l;
   }
 
-  function openVideo(file) {
-    if (!$('#rights').checked) { bubble('fail', say('no_rights')); return; }
+  function openVideo(file, target = 'hero') {
+    if (!confirmRights()) return;
     if (!('VideoEncoder' in window)) { bubble('fail', say('video_unsupported')); return; }
     if (file.size > 1_500_000_000) { bubble('fail', 'הסרטון גדול מדי. צלמו קטע קצר יותר.'); return; }
-    vFile = file; vDur = 0;
+    vFile = file; vDur = 0; vTarget = target;
+    $('#vWhere').textContent = target === 'clip' ? 'באתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ, באזור "סרטונים מהעבודה".' : 'בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.';
+    $('#vTitleBox').hidden = target !== 'clip'; $('#vTitle').value = '';
     if (vUrl) URL.revokeObjectURL(vUrl);
     vUrl = URL.createObjectURL(file);
     const prev = $('#vPrev'); prev.src = vUrl;
@@ -525,8 +1346,9 @@
     try { made = await makeClip(vFile, start, (p) => { $('#vBar').style.width = Math.round(p * 100) + '%'; }); }
     catch (e) { $('#vGo').disabled = false; $('#vBarBox').hidden = true; $('#vNote').textContent = ''; $('#vErr').textContent = say(e.message === 'unsupported' ? 'video_unsupported' : e.message === 'too_short' ? 'video_short' : 'video_failed'); return; }
     $('#videoDlg').close();
-    busy.add('video'); paint();
-    queue = queue.then(() => uploadVideo(made)).catch(() => {});
+    const target = vTarget, title = $('#vTitle').value.trim();
+    busy.add(target === 'clip' ? 'clip' : 'video'); paint();
+    queue = queue.then(() => (target === 'clip' ? uploadClip(made, title) : uploadVideo(made))).catch(() => {});
   });
 
   async function makeClip(file, start, onProgress) {
@@ -552,7 +1374,7 @@
       conversion.onProgress = onProgress;
       await conversion.execute();
       const movie = new Blob([output.target.buffer], { type: 'video/mp4' });
-      if (movie.size <= 4_400_000) return { movie, poster: await firstFrame(movie) };
+      if (movie.size <= 4_400_000) return { movie, poster: await firstFrame(movie), width, height };
     }
     throw new Error('failed');
   }
@@ -579,7 +1401,16 @@
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame(); markSite();
+    refreshFrame(r.data.draft); markSite();
+  }
+
+  async function uploadClip({ movie, poster, width, height }, title) {
+    const r = await call('clip', { raw: new Blob([poster, movie]), headers: { 'content-type': 'application/octet-stream', 'x-poster-length': String(poster.size), 'x-photo-rights': 'yes', 'x-video-size': width + 'x' + height, 'x-title': encodeURIComponent(title || '') } });
+    busy.delete('clip');
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft); markSite();
   }
 
   async function removeVideo() {
@@ -587,22 +1418,24 @@
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    refreshFrame();
+    refreshFrame(r.data.draft);
   }
 
   /* ---------- approve ---------- */
-  document.querySelectorAll('input[name=pkg]').forEach((r) => r.addEventListener('change', () => { $('#aiPlans').hidden = $('input[name=pkg]:checked').value !== 'ai'; }));
   $('#approveForm').addEventListener('submit', async (e) => {
     if (e.submitter && e.submitter.value === 'cancel') return;
     e.preventDefault();
-    const pkg = $('input[name=pkg]:checked').value, plan = pkg === 'ai' ? $('input[name=plan]:checked').value : 'full';
+    const pkg = $('input[name=pkg]:checked').value, plan = 'full';
     $('#approveGo').disabled = true;
     const r = await call('approve', { body: { package: pkg, plan, rev: state.rev } });
     $('#approveGo').disabled = false;
     if (!r.ok) { $('#approveErr').textContent = say(r.data.error) + (r.data.missing ? ' ' + r.data.missing.join(', ') : ''); if (r.data.state) { state = r.data.state; paint(); } return; }
     $('#approveDlg').close();
-    state = r.data.state; paint();
-    bubble('sys', 'האתר אושר. תודה!');
+    state = r.data.state;
+    const st = await call('state', { method: 'GET' }); if (st.ok) billing = st.data.billing;
+    paint();
+    bubble('sys', billing && billing.on ? 'האתר אושר. עכשיו בוחרים כתובת ומשלמים, והוא עולה לאוויר.' : 'האתר אושר. תודה!');
+    if (billing && billing.on && !billing.address) openAddress();
   });
 
   async function reopen() {
@@ -648,8 +1481,11 @@
       return;
     }
     store.set(cred);
-    if (!m) history.replaceState(null, '', '#d=' + cred);
-    openWork(r.data.state);
+    const back = new URLSearchParams(location.search).get('pay');
+    history.replaceState(null, '', location.pathname + '#d=' + cred);
+    openWork(r.data.state, r.data.billing);
+    if (back === 'ok') payCheck(0);
+    else if (back === 'cancel') bubble('sys', 'התשלום לא הושלם. אפשר לנסות שוב מתי שתרצו.');
   }
   addEventListener('hashchange', () => location.reload());
   boot();

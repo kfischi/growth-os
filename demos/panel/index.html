@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>לוח פניות</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
@@ -59,6 +60,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .svc { margin: 6px 0 0; font-weight: 500; }
 .msg { margin: 4px 0 0; color: var(--muted); white-space: pre-line; }
 .meta { margin: 8px 0 0; color: var(--muted); font-size: .8rem; display: flex; gap: 12px; flex-wrap: wrap; }
+.call { display: inline-block; margin: 8px 0 0; padding: 4px 10px; border-radius: 999px; background: var(--won-soft); color: var(--won); font-size: .85rem; font-weight: 500; }
+.call.due { background: var(--new-soft); color: var(--new); }
 .inbound { margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: var(--accent-soft); font-size: .9rem; }
 .inbound small { color: var(--muted); display: block; }
 .acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
@@ -80,6 +83,80 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .err { color: var(--new); min-height: 1.5em; margin: 10px 0 0; font-size: .9rem; }
 .foot { margin-top: 24px; color: var(--muted); font-size: .8rem; display: flex; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
 [hidden] { display: none !important; }
+.worth { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px; }
+.worth-line { margin: 0 0 8px; font-size: 1rem; }
+.worth-line b { font-size: 1.35rem; color: var(--accent); }
+.worth-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.worth-form label { font-size: .9rem; }
+.worth-in { display: inline-flex; align-items: center; gap: 4px; }
+.worth-in input { width: 7.5em; font: inherit; padding: 7px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+.worth .hint { margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
+.avail { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px; }
+.avail-now { display: flex; gap: 10px; align-items: center; }
+.avail-now small { display: block; color: var(--muted); font-size: .8rem; }
+.avail-now b { font-weight: 500; }
+.dot { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--muted); }
+.dot.free, .dot.open { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.dot.busy { background: var(--new); box-shadow: 0 0 0 4px var(--new-soft); }
+.dot.urgent { background: var(--new); box-shadow: 0 0 0 4px var(--new-soft), 0 0 0 7px var(--new); }
+.avail-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.avail-btns [aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .avail-btns [aria-pressed="true"] { color: #0f1514; } }
+.avail .hint { margin: 8px 0 0; color: var(--muted); font-size: .8rem; }
+.sx { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
+.sx summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
+.sx summary small { color: var(--muted); font-weight: 400; }
+.sx h3 { font-size: .9rem; font-weight: 500; margin: 14px 0 6px; }
+.sx .hint { margin: 0 0 10px; color: var(--muted); font-size: .85rem; }
+.sx-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.sx-tiles div { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+.sx-tiles b { display: block; font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+.sx-tiles span { color: var(--muted); font-size: .78rem; }
+.sx-bars { display: flex; align-items: flex-end; gap: 2px; height: 96px; border-bottom: 1px solid var(--line); direction: ltr; }
+.sx-bars i { flex: 1; min-width: 0; background: var(--accent); border-radius: 4px 4px 0 0; min-height: 0; position: relative; }
+.sx-bars i.zero { background: transparent; }
+.sx-bars i:hover, .sx-bars i:focus-visible { background: var(--ink); outline: none; }
+.sx-bars.leads { height: 44px; }
+.sx-bars.leads i { background: var(--won); }
+.sx-axis { display: flex; justify-content: space-between; color: var(--muted); font-size: .72rem; direction: ltr; margin-top: 3px; }
+.sx-tip { min-height: 1.4em; font-size: .85rem; color: var(--ink); margin: 4px 0 0; }
+.sx-split { display: flex; height: 14px; border-radius: 7px; overflow: hidden; gap: 2px; background: var(--card); }
+.sx-split i:nth-child(1) { background: var(--accent); } .sx-split i:nth-child(2) { background: var(--won); } .sx-split i:nth-child(3) { background: var(--muted); }
+.sx-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .85rem; margin-top: 6px; }
+.sx-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 6px; vertical-align: -1px; }
+.sx-legend span:nth-child(1)::before { background: var(--accent); } .sx-legend span:nth-child(2)::before { background: var(--won); } .sx-legend span:nth-child(3)::before { background: var(--muted); }
+.sx ol { margin: 0 0 12px; padding: 0; list-style: none; display: grid; gap: 6px; }
+.sx ol li { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-size: .9rem; }
+.sx ol li em { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; }
+.sx ol li em i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+@media (max-width: 520px) { .sx-tiles { grid-template-columns: repeat(2, 1fr); } }
+.links { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 14px; margin-bottom: 16px; }
+.links summary { cursor: pointer; padding: 10px 0; font-weight: 500; list-style-position: inside; }
+.links summary small { color: var(--muted); font-weight: 400; }
+.links .hint { margin: 0 0 10px; color: var(--muted); font-size: .9rem; }
+.links ul { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.links li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; border-top: 1px solid var(--line); padding-top: 8px; }
+.links li b { font-weight: 500; }
+.links li .n { color: var(--muted); font-size: .85rem; }
+.links li code { grid-column: 1 / -1; font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; direction: ltr; text-align: right; }
+.links li .row { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 6px; }
+.links form { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.links form input { flex: 1 1 200px; min-height: 40px; border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; background: var(--bg); }
+.qr-dlg { border: 1px solid var(--line); border-radius: 20px; background: var(--card); color: var(--ink); padding: 20px; width: min(420px, calc(100% - 32px)); }
+.qr-dlg::backdrop { background: rgba(10, 16, 15, .55); }
+.qr-dlg h2 { margin: 0 0 12px; font-size: 1.1rem; }
+.qr-img { background: #fff; border-radius: 12px; padding: 12px; display: grid; place-items: center; }
+.qr-img svg { width: 100%; max-width: 280px; height: auto; display: block; }
+.qr-dlg .hint { color: var(--muted); font-size: .85rem; margin: 12px 0 6px; }
+.qr-dlg code { display: block; direction: ltr; text-align: right; font-size: .8rem; color: var(--muted); overflow-wrap: anywhere; }
+.qr-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.links .err { margin: 6px 0 10px; }
+.tst li { grid-template-columns: 1fr auto; }
+.tst li p { grid-column: 1; margin: 2px 0 0; font-size: .95rem; white-space: pre-line; }
+.tst li.off { opacity: .55; }
+.tst li .n b { color: var(--fg, inherit); }
+  .pic { display: inline-block; margin-top: 8px; }
+  .pic img { display: block; max-width: 160px; max-height: 160px; border-radius: 10px; border: 1px solid var(--line, #ddd); }
 </style>
 </head>
 <body>
@@ -116,6 +193,79 @@ button, input, select, textarea { font: inherit; color: inherit; }
       <div class="stat"><b id="s-after">0</b><span>פניות מחוץ לשעות העבודה</span></div>
       <div class="stat"><b id="s-conv">-</b><span>מהנכנסים השאירו פרטים</span></div>
     </div>
+
+    <div class="worth" id="worth" hidden>
+      <p class="worth-line" id="w-line"></p>
+      <form id="w-form" class="worth-form">
+        <label for="w-val">כמה שווה עבודה ממוצעת אצלכם?</label>
+        <span class="worth-in"><input id="w-val" type="number" inputmode="numeric" min="0" max="1000000" step="10" placeholder="למשל 450"><span>₪</span></span>
+        <button class="ghost" type="submit">לשמור</button>
+      </form>
+      <p class="hint">זו הערכה: הפניות שסימנתם "נסגר" החודש, כפול הסכום שכתבתם. רק אתם רואים אותה.</p>
+      <p class="err" id="w-err" role="alert"></p>
+    </div>
+
+    <div class="avail" id="avail" hidden>
+      <div class="avail-now"><span class="dot" id="av-dot"></span><div><small>מה כתוב באתר עכשיו</small><b id="av-text"></b></div></div>
+      <div class="avail-btns" role="group" aria-label="לשנות את מה שכתוב באתר">
+        <button class="ghost" type="button" data-av="busy">עסוק</button>
+        <button class="ghost" type="button" data-av="free">פנוי</button>
+        <button class="ghost" type="button" data-av="urgent">חירום</button>
+        <button class="ghost" type="button" data-av="auto">לפי שעות הפעילות</button>
+      </div>
+      <p class="hint">אפשר גם לכתוב "עסוק", "פנוי" או "חירום" בוואטסאפ למספר של העסק. "עסוק 2" זה לשעתיים. בחירום האתר כותב שאתם זמינים לקריאות דחופות, ופניות שנכנסות מסומנות כדחופות (6 שעות, או "חירום 3").</p>
+    </div>
+
+    <details class="sx" id="sx" hidden>
+      <summary>סטטיסטיקות <small>30 הימים האחרונים</small></summary>
+      <p class="hint">מספרים בלבד: בלי עוגיות ובלי לדעת מי נכנס. כל לחיצה נספרת פעם אחת בביקור.</p>
+      <div class="sx-tiles" id="sx-tiles"></div>
+      <h3>כניסות לאתר, לפי יום</h3>
+      <div class="sx-bars" id="sx-days" role="list" aria-label="כניסות לפי יום"></div>
+      <div class="sx-axis"><span id="sx-from"></span><span>היום</span></div>
+      <h3>פניות, לפי יום</h3>
+      <div class="sx-bars leads" id="sx-leads" role="list" aria-label="פניות לפי יום"></div>
+      <p class="sx-tip" id="sx-tip" aria-live="polite"></p>
+      <h3>מאיזה מכשיר</h3>
+      <div class="sx-split" id="sx-dev" aria-hidden="true"></div>
+      <div class="sx-legend" id="sx-dev-l"></div>
+      <h3>באילו שעות נכנסים</h3>
+      <div class="sx-bars" id="sx-hours" role="list" aria-label="כניסות לפי שעה"></div>
+      <div class="sx-axis"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+      <p class="hint" id="sx-peak"></p>
+      <h3>מאיפה הגיעו</h3>
+      <ol id="sx-src"></ol>
+    </details>
+
+    <details class="links" id="links" hidden>
+      <summary>קישורים לשיתוף <small id="links-n"></small></summary>
+      <p class="hint">לכל קבוצה או ערוץ קישור משלו. מפרסמים אותו שם, ורואים כאן כמה נכנסו ממנו החודש וכמה השאירו פרטים.</p>
+      <ul id="links-list"></ul>
+      <form id="link-form">
+        <input id="link-name" maxlength="40" placeholder="למשל: קבוצת השכונה בפייסבוק" aria-label="שם לקישור החדש" required>
+        <button class="btn" type="submit">ליצור קישור</button>
+      </form>
+      <p class="err" id="link-err" role="alert"></p>
+    </details>
+
+    <details class="links tst" id="tst" hidden>
+      <summary>המלצות באתר <small id="tst-n"></small></summary>
+      <p class="hint">לקוח שסימנתם "טיפלתי" ואישרתם לו בקשה כותב המלצה, והיא עולה לאתר מיד. כאן אפשר להסתיר או להחזיר כל אחת.</p>
+      <ul id="tst-list"></ul>
+      <p class="err" id="tst-err" role="alert"></p>
+    </details>
+
+    <dialog class="qr-dlg" id="qr-dlg" aria-labelledby="qr-title">
+      <h2 id="qr-title"></h2>
+      <div class="qr-img" id="qr-img"></div>
+      <p class="hint">להדביק על הרכב, על כרטיס הביקור או על החשבונית. מי שסורק מגיע לאתר, והכניסה נספרת כאן תחת הקישור הזה.</p>
+      <code id="qr-url"></code>
+      <div class="qr-acts">
+        <a class="btn" id="qr-svg" download>להורדה להדפסה (SVG)</a>
+        <a class="btn line" id="qr-png" download>להורדה כתמונה (PNG)</a>
+        <button class="ghost" type="button" id="qr-close">סגירה</button>
+      </div>
+    </dialog>
 
     <div class="tabs" role="group" aria-label="סינון">
       <button class="tab" type="button" data-f="new" aria-pressed="true">מחכות</button>
@@ -167,6 +317,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (min < 60) return min === 1 ? 'לפני דקה' : 'לפני ' + min + ' דקות';
     const h = Math.round(min / 60); if (h < 24) return h === 1 ? 'לפני שעה' : h === 2 ? 'לפני שעתיים' : 'לפני ' + h + ' שעות';
     return fmtTime(iso);
+  }
+  // "היום ב-16:00", "מחר ב-09:00", or the date.
+  function whenText(iso) {
+    const d = new Date(iso), key = (x) => x.toLocaleDateString('en-CA', { timeZone: 'Asia/Jerusalem' });
+    const today = key(new Date()), tomorrow = key(new Date(Date.now() + 86400000));
+    const hm = d.toLocaleTimeString('he-IL', { timeZone: 'Asia/Jerusalem', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    return (key(d) === today ? 'היום' : key(d) === tomorrow ? 'מחר' : d.toLocaleDateString('he-IL', { timeZone: 'Asia/Jerusalem', weekday: 'long', day: 'numeric', month: 'numeric' })) + ' ב-' + hm;
   }
   const fmtWait = (min) => min == null ? '-' : min < 60 ? min + ' דק׳' : min < 1440 ? Math.round(min / 60) + ' שע׳' : Math.round(min / 1440) + ' ימים';
 
@@ -226,12 +383,176 @@ button, input, select, textarea { font: inherit; color: inherit; }
       $('#s-conv').textContent = m.conversion == null ? '-' : m.conversion + '%';
     }
 
+    renderStats();
+    renderWorth();
+    renderLinks();
+    renderAvail();
+    renderTestimonials();
+
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
     const list = $('#list');
     if (!shown.length) { list.replaceChildren(el('div', 'empty', filter === 'new' ? 'אין פניות שמחכות. הכול מטופל.' : 'אין כאן פניות עדיין.')); return; }
     list.replaceChildren(...shown.map((l) => card(l, inbound[l.id] || [])));
   }
+
+  // The source as the owner knows it: a tagged link shows the name they gave it.
+  function sourceName(s) {
+    const link = /^t-[a-z0-9]{4}$/.test(s || '') && (data.links || []).find((x) => 't-' + x.code === s);
+    return link ? link.label : SOURCE[s] || s || 'ישיר';
+  }
+
+  // The last 30 days (0013_stats.sql): visits and leads per day, clicks, devices, hours, sources. Numbers only.
+  const ACT_HE = { wa: 'לחיצות על וואטסאפ', call: 'לחיצות על חיוג', chat: 'פתחו את הצ׳אט', save: 'שמרו באנשי הקשר', build: 'התחילו לבנות אתר', demo: 'פתחו דמו' };
+  function renderStats() {
+    const st = data.stats;
+    $('#sx').hidden = !st;
+    if (!st) return;
+    const tile = (n, label) => { const d = el('div'); d.append(el('b', null, String(n)), el('span', null, label)); return d; };
+    const tiles = [tile(st.visits, 'כניסות'), tile(st.leads, 'פניות')];
+    // Google search, 28 days (Search Console reports a few days late).
+    if (st.google) tiles.push(tile(st.google.impressions.toLocaleString('he-IL'), 'הופעות בגוגל'), tile(st.google.clicks.toLocaleString('he-IL'), 'כניסות מגוגל'));
+    for (const [k, label] of Object.entries(ACT_HE)) if (st.acts[k] || ['wa', 'call', 'chat'].includes(k)) tiles.push(tile(st.acts[k] || 0, label));
+    $('#sx-tiles').replaceChildren(...tiles);
+    const fmtDay = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });
+    const bars = (box, items, val, say) => {
+      const max = Math.max(1, ...items.map(val));
+      box.replaceChildren(...items.map((x, i) => {
+        const b = el('i'); const v = val(x);
+        b.style.height = (v / max * 100) + '%'; if (!v) b.className = 'zero';
+        b.tabIndex = 0; b.setAttribute('role', 'listitem'); b.setAttribute('aria-label', say(x, i));
+        const show = () => { $('#sx-tip').textContent = say(x, i); };
+        b.addEventListener('mouseenter', show); b.addEventListener('focus', show);
+        return b;
+      }));
+    };
+    bars($('#sx-days'), st.daily, (d) => d.visits, (d) => fmtDay(d.day) + ': ' + d.visits + ' כניסות, ' + d.leads + ' פניות');
+    bars($('#sx-leads'), st.daily, (d) => d.leads, (d) => fmtDay(d.day) + ': ' + d.visits + ' כניסות, ' + d.leads + ' פניות');
+    $('#sx-from').textContent = fmtDay(st.daily[0].day);
+    $('#sx-tip').textContent = '';
+    const dev = [['mobile', 'נייד'], ['desktop', 'מחשב'], ['tablet', 'טאבלט']];
+    const pct = (n) => st.deviceTotal ? Math.round(n / st.deviceTotal * 100) : 0;
+    $('#sx-dev').replaceChildren(...dev.map(([k]) => { const i = el('i'); i.style.flex = String(st.devices[k] || 0); return i; }));
+    $('#sx-dev-l').replaceChildren(...dev.map(([k, label]) => el('span', null, label + ' ' + pct(st.devices[k] || 0) + '%')));
+    bars($('#sx-hours'), st.hours, (n) => n, (n, h) => String(h).padStart(2, '0') + ':00 עד ' + String((h + 1) % 24).padStart(2, '0') + ':00: ' + n + ' כניסות');
+    const top = st.hours.map((n, h) => [n, h]).filter(([n]) => n).sort((a, b) => b[0] - a[0]).slice(0, 3).map(([, h]) => String(h).padStart(2, '0') + ':00');
+    $('#sx-peak').textContent = top.length ? 'השעות העמוסות: ' + top.join(', ') + '. כדאי להיות זמינים אז.' : '';
+    const most = Math.max(1, ...st.sources.map((x) => x.visits));
+    $('#sx-src').replaceChildren(...st.sources.map((x) => {
+      const li = el('li'); li.append(el('span', null, sourceName(x.source)), el('b', null, String(x.visits)));
+      const bar = el('em'); const fill = el('i'); fill.style.width = (x.visits / most * 100) + '%'; bar.append(fill); li.append(bar);
+      return li;
+    }));
+    if (!st.sources.length) $('#sx-src').replaceChildren(el('li', null, 'עוד אין כניסות.'));
+  }
+
+  function renderLinks() {
+    const links = data.links || [];
+    $('#links').hidden = !data.month; // the links need the lead system's numbers
+    $('#links-n').textContent = links.length ? '(' + links.length + ')' : '';
+    $('#links-list').replaceChildren(...links.map((k) => {
+      const li = el('li');
+      li.append(el('b', null, k.label), el('span', 'n', k.visits + ' כניסות · ' + k.leads + ' פניות'));
+      const row = el('span', 'row');
+      const copy = el('button', 'ghost', 'להעתיק'); copy.type = 'button'; copy.setAttribute('aria-label', 'להעתיק את הקישור של ' + k.label);
+      copy.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(k.url); copy.textContent = 'הועתק'; }
+        catch (e) { const r = document.createRange(); r.selectNodeContents(code); getSelection().removeAllRanges(); getSelection().addRange(r); copy.textContent = 'סמנו והעתיקו'; }
+        setTimeout(() => { copy.textContent = 'להעתיק'; }, 2000);
+      });
+      const del = el('button', 'ghost', 'למחוק'); del.type = 'button'; del.setAttribute('aria-label', 'למחוק את הקישור ' + k.label);
+      del.addEventListener('click', async () => {
+        if (!confirm('למחוק את "' + k.label + '"? מי שילחץ עליו עדיין יגיע לאתר, אבל לא נדע שהגיע ממנו.')) return;
+        try { await call('POST', { unlink: k.code }, adminQuery()); data.links = links.filter((x) => x !== k); renderLinks(); }
+        catch (e) { if (e.message !== 'unauthorised') $('#link-err').textContent = 'לא הצלחנו למחוק. נסו שוב.'; }
+      });
+      const qrb = el('button', 'ghost', 'QR'); qrb.type = 'button'; qrb.setAttribute('aria-label', 'קוד QR של ' + k.label);
+      qrb.addEventListener('click', () => openQr(k));
+      row.append(copy, qrb, del);
+      const code = el('code', null, k.url);
+      li.append(row, code);
+      return li;
+    }));
+  }
+  function renderTestimonials() {
+    const list = data.testimonials;
+    $('#tst').hidden = !Array.isArray(list);
+    if (!list) return;
+    const shown = list.filter((t) => !t.hidden).length;
+    $('#tst-n').textContent = list.length ? '(' + shown + ' באתר' + (list.length > shown ? ', ' + (list.length - shown) + ' מוסתרות' : '') + ')' : '';
+    if (!list.length) { $('#tst-list').replaceChildren(el('li', 'n', 'עוד אין המלצות.')); return; }
+    $('#tst-list').replaceChildren(...list.map((t) => {
+      const li = el('li', t.hidden ? 'off' : '');
+      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
+      const btn = el('button', 'ghost', t.hidden ? 'להחזיר לאתר' : 'להסתיר'); btn.type = 'button';
+      btn.setAttribute('aria-label', (t.hidden ? 'להחזיר לאתר את ההמלצה של ' : 'להסתיר את ההמלצה של ') + t.name);
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try { const r = await call('POST', { testimonial: t.id, hidden: !t.hidden }, adminQuery()); t.hidden = r.testimonial.hidden; $('#tst-err').textContent = ''; renderTestimonials(); }
+        catch (e) { btn.disabled = false; if (e.message !== 'unauthorised') $('#tst-err').textContent = 'לא הצלחנו לשנות. נסו שוב.'; }
+      });
+      const row = el('span', 'row'); row.append(btn);
+      li.append(head, row, el('p', null, t.body));
+      return li;
+    }));
+  }
+  // What the month is worth, in the owner's own numbers: jobs marked "נסגר" times their average job. An estimate.
+  const shekel = (n) => n.toLocaleString('he-IL') + ' ₪';
+  function renderWorth() {
+    const m = data.month, v = data.client && data.client.job_value;
+    $('#worth').hidden = !m;
+    if (!m) return;
+    const line = $('#w-line'); line.textContent = '';
+    if (v) {
+      line.append('החודש סימנתם ' + m.won + ' עבודות כ"נסגר". שווי משוער: ', el('b', null, shekel(m.won * v)), '.');
+      if (m.open) line.append(' ועוד ' + m.open + ' פניות מחכות לטיפול.');
+    } else line.textContent = 'כתבו כמה שווה עבודה ממוצעת, ונראה כאן כמה שוות העבודות שהאתר הביא החודש.';
+    if (document.activeElement !== $('#w-val')) $('#w-val').value = v || '';
+  }
+  function renderAvail() {
+    const a = data.availability;
+    $('#avail').hidden = !a || !data.month;
+    if (!a) return;
+    $('#av-text').textContent = a.text; $('#av-dot').className = 'dot ' + a.state;
+    $$('[data-av]').forEach((b) => b.setAttribute('aria-pressed', String(a.manual ? b.dataset.av === a.state : b.dataset.av === 'auto')));
+  }
+  $('#w-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const raw = $('#w-val').value.trim();
+    try {
+      const r = await call('POST', { job_value: raw === '' ? null : Number(raw) }, adminQuery());
+      data.client.job_value = r.job_value; $('#w-err').textContent = ''; $('#w-val').blur(); renderWorth();
+    } catch (x) { $('#w-err').textContent = 'לא נשמר. כתבו מספר בשקלים, למשל 450.'; }
+  });
+  // A QR code for a tagged link, to print. The encoder (vendor/, MIT) loads only on the first one.
+  let qrLib = null;
+  const loadQr = () => qrLib || (qrLib = new Promise((ok, fail) => {
+    const sc = document.createElement('script'); sc.src = '/shared/vendor/qrcode-generator-2.0.4.js';
+    sc.onload = () => ok(window.qrcode); sc.onerror = () => { qrLib = null; fail(new Error('qr')); }; document.head.append(sc);
+  }));
+  async function openQr(k) {
+    let qr;
+    try { const make = await loadQr(); qr = make(0, 'M'); qr.addData(k.url); qr.make(); }
+    catch (e) { $('#link-err').textContent = 'לא הצלחנו ליצור קוד QR. נסו שוב.'; return; }
+    const n = qr.getModuleCount(), m = 4, size = n + m * 2;
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + (c + m) + ' ' + (r + m) + 'h1v1h-1z';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="' + d + '" fill="#000"/></svg>';
+    const svgUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    const img = new Image(); img.alt = 'קוד QR שמוביל אל ' + k.url; img.src = svgUrl;
+    $('#qr-img').replaceChildren(img);
+    $('#qr-title').textContent = k.label; $('#qr-url').textContent = k.url;
+    const file = 'qr-' + k.code;
+    $('#qr-svg').href = svgUrl; $('#qr-svg').download = file + '.svg';
+    // PNG: 1,200 px, sharp for print and fine for a WhatsApp status.
+    const cv = document.createElement('canvas'), px = Math.floor(1200 / size); cv.width = cv.height = size * px;
+    const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.fillStyle = '#000';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) g.fillRect((c + m) * px, (r + m) * px, px, px);
+    $('#qr-png').href = cv.toDataURL('image/png'); $('#qr-png').download = file + '.png';
+    $('#qr-dlg').showModal();
+  }
+  $('#qr-close').addEventListener('click', () => $('#qr-dlg').close());
+  const adminQuery = () => auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '';
 
   function card(l, ins) {
     const c = el('article', 'lead' + (l.status === 'new' ? ' is-new' : ''));
@@ -240,15 +561,25 @@ button, input, select, textarea { font: inherit; color: inherit; }
     const t = el('time', null, ago(l.created_at)); t.dateTime = l.created_at; t.title = fmtTime(l.created_at); head.append(t);
     c.append(head);
     if (l.service) c.append(el('p', 'svc', l.service));
+    if (l.callback_at && l.status === 'new') { // the customer asked for a call at this time
+      const due = new Date(l.callback_at) <= new Date();
+      c.append(el('p', 'call' + (due ? ' due' : ''), (due ? 'הגיע הזמן לחזור: ' : 'ביקשו שתחזרו ') + whenText(l.callback_at)));
+    }
     if (l.message) c.append(el('p', 'msg', l.message));
+    if (l.photo_url) { // the photo the customer attached in the chat
+      const a = el('a', 'pic'); a.href = l.photo_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const img = el('img'); img.src = l.photo_url; img.alt = 'התמונה שהלקוח צירף'; img.loading = 'lazy'; a.append(img); c.append(a);
+    }
     const meta = el('p', 'meta');
     meta.append(el('span', null, l.phone));
-    meta.append(el('span', null, (l.channel === 'chat' ? 'צ׳אט' : 'טופס') + ' · ' + (SOURCE[l.source] || l.source || 'ישיר')));
+    meta.append(el('span', null, (l.channel === 'chat' ? 'צ׳אט' : 'טופס') + ' · ' + sourceName(l.source)));
     meta.append(el('span', null, l.auto_reply === 'sent' ? 'קיבל מענה אוטומטי' : l.auto_reply === 'failed' ? 'המענה האוטומטי לא נשלח' : ''));
     // The owner's WhatsApp alert didn't go out: this enquiry may have been seen only here.
     const stuck = l.owner_alert === 'pending' && Date.now() - new Date(l.created_at) > 10 * 60000;
     if (l.owner_alert === 'failed' || l.owner_alert === 'skipped' || stuck) c.append(el('p', 'warn', 'ההתראה בוואטסאפ על הפנייה הזאת לא נשלחה. כדאי לחזור ללקוח מכאן.'));
     if (l.reminded_at && l.status === 'new') meta.append(el('span', null, 'נשלחה תזכורת'));
+    const REVIEW = { sent: 'נשלחה בקשה לביקורת', failed: 'הבקשה לביקורת לא נשלחה', optout: 'ביקשו לא לקבל הודעות' };
+    if (REVIEW[l.review]) meta.append(el('span', null, REVIEW[l.review]));
     c.append(meta);
     ins.slice(0, 2).forEach((x) => {
       const b = el('div', 'inbound'); b.append(el('small', null, 'הודעה בוואטסאפ · ' + ago(x.created_at)), document.createTextNode((x.body && x.body.text) || ''));
@@ -273,17 +604,17 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
   async function save(l, patch) {
     try {
-      const { lead } = await call('PATCH', Object.assign({ id: l.id }, patch), auth.startsWith('admin:') ? '?client=' + encodeURIComponent(pickClient) : '');
+      const { lead } = await call('PATCH', Object.assign({ id: l.id }, patch), adminQuery());
       Object.assign(l, lead); render();
     } catch (e) { if (e.message !== 'unauthorised') $('#a-err').textContent = 'השינוי לא נשמר. נסו שוב.'; }
   }
 
   function csv() {
     if (!data) return;
-    const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
+    const cols = [['created_at', 'תאריך'], ['name', 'שם'], ['phone', 'טלפון'], ['service', 'נושא'], ['message', 'פרטים'], ['channel', 'ערוץ'], ['source', 'מקור'], ['campaign', 'קמפיין'], ['callback_at', 'לחזור ב'], ['status', 'סטטוס'], ['handled_at', 'טופל ב'], ['note', 'הערה']];
     // A leading = + - @ would run as a formula in Excel. Anyone can type into the form, so neutralise it.
     const cell = (v) => { let t = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
-    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : (k === 'created_at' || k === 'handled_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
+    const rows = data.leads.map((l) => cols.map(([k]) => cell(k === 'status' ? STATUS[l.status] : k === 'source' ? sourceName(l.source) : (k === 'created_at' || k === 'handled_at' || k === 'callback_at') && l[k] ? fmtTime(l[k]) : l[k])).join(','));
     const blob = new Blob(['﻿' + [cols.map((c) => cell(c[1])).join(','), ...rows].join('\r\n')], { type: 'text/csv;charset=utf-8' });
     const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'leads-' + data.client.slug + '-' + new Date().toISOString().slice(0, 10) + '.csv';
     document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -296,6 +627,21 @@ button, input, select, textarea { font: inherit; color: inherit; }
     auth = slug + ':' + key; store.set(auth); $('#l-err').textContent = ''; load();
   });
   $('#logout').addEventListener('click', () => logout());
+  const LINK_ERR = { bad_label: 'כתבו שם של שתי אותיות לפחות.', label_taken: 'כבר יש קישור בשם הזה.', too_many_links: 'הגעתם ל-30 קישורים. מחקו אחד שכבר לא בשימוש.' };
+  $$('[data-av]').forEach((b) => b.addEventListener('click', async () => {
+    try { const { availability } = await call('POST', { available: b.dataset.av }, adminQuery()); data.availability = availability; renderAvail(); $('#a-err').textContent = ''; }
+    catch (e) { if (e.message !== 'unauthorised') $('#a-err').textContent = 'השינוי לא נשמר. נסו שוב.'; }
+  }));
+  $('#link-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = $('#link-name'), label = input.value.trim();
+    if (label.length < 2) { $('#link-err').textContent = LINK_ERR.bad_label; return; }
+    try {
+      const { link } = await call('POST', { link: label }, adminQuery());
+      data.links = (data.links || []).concat(Object.assign({ visits: 0, leads: 0 }, link));
+      input.value = ''; $('#link-err').textContent = ''; renderLinks();
+    } catch (err) { if (err.message !== 'unauthorised') $('#link-err').textContent = LINK_ERR[err.message] || 'לא הצלחנו ליצור קישור. נסו שוב.'; }
+  });
   $('#csv').addEventListener('click', csv);
   $('#pick').addEventListener('change', (e) => { pickClient = e.target.value; load(); });
   $$('.tab').forEach((b) => b.addEventListener('click', () => {
@@ -303,7 +649,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   }));
 
   if (auth) load(); else logout();
-  setInterval(() => { if (auth && document.visibilityState === 'visible' && !document.activeElement.matches('textarea, select')) load(); }, 60000);
+  setInterval(() => { if (auth && document.visibilityState === 'visible' && !document.activeElement.matches('textarea, select, input')) load(); }, 60000);
 })();
 </script>
 </body>

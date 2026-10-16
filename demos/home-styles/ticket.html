@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>כיוון ב: כרטיס קריאה · Easy Landing</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@400;700&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 1. The object: a service call ticket, the slip a tradesperson tears off a pad: perforated edge, a call number, a rubber stamp.
+   2. The detail only this subject has: "קריאה #0417", the hour it came in, the town, and the stamp "נענתה" in seconds.
+   3. The one bold move: giant condensed type on a ticket that sits a little crooked, with one red stamp. The page around it is pale ice and quiet. */
+:root {
+  --go: #ff6b3d;         /* the one action colour: warm against the blue, never yellow */
+  --go-ink: #0b1033;
+  --ice: #e8eefc;        /* the desk the ticket lies on */
+  --slip: #ffffff;       /* the ticket */
+  --cobalt: #1736c4;     /* the pen */
+  --carbon: #0d1430;     /* ink */
+  --stamp: #d1362a;      /* the rubber stamp */
+  --perf: #b8c4e8;       /* perforation and rules */
+  --display: 'Karantina', 'Arial Narrow', 'Rubik', sans-serif;
+  --body: 'Rubik', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', 'Rubik', monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ice); color: var(--carbon); font: 400 1.0625rem/1.6 var(--body); overflow-x: clip; }
+a { color: var(--cobalt); }
+:focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-block-size: 52px; padding: 0 24px; border-radius: 8px; font: 700 1.05rem var(--body); text-decoration: none; }
+.btn.go { background: var(--go); color: var(--go-ink); box-shadow: 0 10px 24px -12px rgba(255,107,61,.8); }
+.btn.go:hover { filter: brightness(1.05); }
+.btn.ink { background: var(--cobalt); color: #fff; }
+.btn.line { box-shadow: inset 0 0 0 2px var(--cobalt); color: var(--cobalt); }
+
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-block-size: 68px; }
+.brand { font: 700 2rem/1 var(--display); text-decoration: none; color: var(--carbon); letter-spacing: .01em; }
+.brand span { color: var(--cobalt); }
+.bar .btn { min-block-size: 42px; padding: 0 16px; font-size: .95rem; }
+
+.hero { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 32px 56px; align-items: center; padding-block: clamp(20px, 5svh, 56px) clamp(48px, 9svh, 96px); }
+.hero > * { min-width: 0; }
+
+/* the ticket */
+.ticket { position: relative; background: var(--slip); padding: clamp(22px, 3vw, 40px); padding-top: clamp(30px, 4vw, 48px); transform: rotate(-1.5deg); box-shadow: 0 30px 60px -30px rgba(13,20,48,.35); }
+.ticket::before { content: ""; position: absolute; inset-inline: 0; top: -9px; height: 18px; background: radial-gradient(circle at 9px 9px, var(--ice) 6px, transparent 6.5px) 0 0 / 18px 18px repeat-x; }
+.t-row { display: flex; justify-content: space-between; gap: 12px; font: 500 .85rem var(--mono); color: #4f5b86; border-bottom: 1px dashed var(--perf); padding-bottom: 10px; margin-bottom: 14px; }
+h1 { margin: 0; font: 700 clamp(5rem, 13vw, 11rem)/.8 var(--display); letter-spacing: -.01em; }
+h1 em { font-style: normal; color: var(--cobalt); }
+.lead { margin: 18px 0 4px; font: 700 clamp(1.25rem, 2vw, 1.6rem)/1.3 var(--body); max-width: 24ch; }
+.sub { margin: 0 0 22px; color: #4f5b86; }
+.ctas { display: flex; flex-wrap: wrap; gap: 10px; }
+.stamp { position: absolute; bottom: clamp(18px, 4vw, 40px); inset-inline-end: clamp(12px, 3vw, 36px); transform: rotate(-12deg); border: 3px solid var(--stamp); color: var(--stamp); padding: 6px 14px 2px; font: 700 clamp(1.8rem, 3.4vw, 2.8rem)/1 var(--display); border-radius: 6px; opacity: .92; text-align: center; }
+.stamp small { display: block; font: 500 .7rem/1.4 var(--mono); padding-bottom: 4px; }
+
+.vid-head { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-weight: 700; }
+.vid-head i { inline-size: 32px; block-size: 32px; border-radius: 50%; background: var(--cobalt); display: grid; place-items: center; }
+.vid-head i::before { content: ""; margin-left: 3px; border-block: 6px solid transparent; border-left: 10px solid #fff; }
+.vid-head small { margin-inline-start: auto; font: 500 .85rem var(--mono); color: #4f5b86; }
+.reel { margin: 0; }
+.reel-frame { position: relative; aspect-ratio: 1240 / 820; border-radius: 10px; overflow: hidden; background: var(--slip); box-shadow: 0 0 0 1px var(--perf), 0 30px 60px -34px rgba(13,20,48,.5); }
+.reel-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* a row of torn-off slips */
+.slips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding-bottom: clamp(40px, 7svh, 72px); }
+.slip { background: var(--slip); padding: 18px 20px 20px; border-top: 4px solid var(--cobalt); min-width: 0; }
+.slip:nth-child(2) { transform: rotate(.8deg); } .slip:nth-child(3) { transform: rotate(-.6deg); }
+.slip p { margin: 0; font: 500 .8rem var(--mono); color: #4f5b86; }
+.slip b { display: block; margin: 4px 0; font: 700 2.6rem/1 var(--display); color: var(--carbon); }
+.slip span { color: #3c4670; }
+
+.plans { padding-bottom: clamp(48px, 9svh, 96px); }
+.plans h2 { margin: 0 0 18px; font: 700 clamp(3rem, 6vw, 4.6rem)/.9 var(--display); }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.card { background: var(--slip); padding: clamp(20px, 3vw, 32px); min-width: 0; border-radius: 6px; border: 1px solid var(--perf); }
+.card.ai { border: 2px solid var(--cobalt); }
+.card h3 { margin: 0; font: 700 2.4rem/1 var(--display); }
+.card .for { margin: 4px 0 14px; color: #4f5b86; }
+.price { margin: 0; font: 700 clamp(3.4rem, 6vw, 4.6rem)/.9 var(--display); color: var(--cobalt); }
+.price small { font: 500 1rem var(--body); color: var(--carbon); }
+.mo { margin: 4px 0 16px; font-weight: 700; }
+.card ul { margin: 0 0 22px; padding: 0; list-style: none; display: grid; gap: 4px; }
+.card li::before { content: "✓ "; color: var(--cobalt); font-weight: 700; }
+.back { padding-bottom: 48px; color: #4f5b86; font-size: .95rem; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .reel-wrap { order: -1; }
+  .slips, .cards { grid-template-columns: minmax(0, 1fr); }
+  .stamp { position: static; display: inline-block; margin-top: 18px; }
+}
+@media (max-width: 420px) { h1 { font-size: 5.2rem; } .bar .btn { display: none; } }
+@media (prefers-reduced-motion: reduce) { .ticket, .slip, .stamp { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar"><a class="brand" href="../">Easy <span>Landing</span></a><a class="btn go" href="../build/">לבנות את האתר</a></header>
+  <div class="hero">
+    <article class="ticket">
+      <p class="t-row"><span>קריאה #0417</span><span>21:47 · חדרה</span></p>
+      <h1>אתרים <em>שבונים</em> עסקים.</h1>
+      <p class="lead">אתר לעסק שלכם שעונה ללקוחות, גם כשאתם עסוקים.</p>
+      <p class="sub">בונים אותו בעצמכם, בצ׳אט. משלמים רק כשהוא מוכן.</p>
+      <div class="ctas"><a class="btn go" href="../build/">לבנות את האתר שלי</a><a class="btn line" href="../film/">סרטון הסבר</a></div>
+      <p class="stamp" aria-hidden="true"><small>21:47</small>נענתה</p>
+    </article>
+    <div class="reel-wrap">
+      <p class="vid-head"><i aria-hidden="true"></i>צפו: ככה נבנה האתר<small>0:27</small></p>
+      <figure class="reel">
+        <div class="reel-frame"><video muted loop playsinline preload="none" poster="../shared/video/hero/hero-poster.webp" aria-label="רגעים מהתהליך: האתר, הצ׳אט, התבניות, הצבעים, והפנייה שמגיעה בוואטסאפ"><source src="../shared/video/hero/hero.webm" type="video/webm"><source src="../shared/video/hero/hero.mp4" type="video/mp4"></video>
+          <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+      </figure>
+    </div>
+  </div>
+  <div class="slips">
+    <div class="slip"><p>09:12 · שיחה</p><b>נענתה</b><span>מענה בוואטסאפ תוך שניות, מהמספר שלכם</span></div>
+    <div class="slip"><p>13:05 · צ׳אט באתר</p><b>נשמרה</b><span>כל פנייה בטבלה, עם תזכורת לחזור</span></div>
+    <div class="slip"><p>19:20 · אחרי שעות</p><b>חיכתה לבוקר</b><span>הלקוח השאיר פרטים, ואתם רואים אותם ראשונים</span></div>
+  </div>
+  <section class="plans" aria-labelledby="t-plans">
+    <h2 id="t-plans">שתי חבילות. בלי התחייבות.</h2>
+    <div class="cards">
+      <article class="card"><h3>נוכחות</h3><p class="for">מקום אחד לשלוח אליו לקוחות.</p><p class="price"><bdi>1,500 ₪</bdi> <small>הקמה</small></p><p class="mo"><bdi>150 ₪</bdi> לחודש</p><ul><li>דף מעוצב ומותאם לנייד</li><li>כפתור וואטסאפ וחיוג</li><li>אחסון ותחזוקה</li></ul><a class="btn line" href="../build/">לבנות דף נוכחות</a></article>
+      <article class="card ai"><h3>נציג AI</h3><p class="for">כל פנייה מקבלת מענה.</p><p class="price"><bdi>1,900 ₪</bdi> <small>הקמה</small></p><p class="mo"><bdi>390 ₪</bdi> לחודש</p><ul><li>כל מה שבנוכחות</li><li>מענה בוואטסאפ תוך שניות</li><li>התראה ותזכורת על כל פנייה</li><li>צ׳אט באתר שעונה על שאלות</li></ul><a class="btn go" href="../build/">לבנות את האתר שלי</a></article>
+    </div>
+  </section>
+  <p class="back">כיוון ב מתוך שלושה. <a href="./">לכל הכיוונים</a> · <a href="../">לאתר של היום</a></p>
+</div>
+<script src="../shared/reel.js"></script>
+</body>
+</html>

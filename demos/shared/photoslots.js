@@ -34,7 +34,7 @@
   .ps-tools button.ps-reset{background:transparent;color:#fff}
   .ps-tools input{width:70px;accent-color:#fff;display:none}
   .ps.has-img .ps-tools input{display:block}
-  .ps-ui-btn{position:fixed;z-index:62;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;display:flex;align-items:center;gap:8px;border:0;cursor:pointer;
+  .ps-ui-btn{position:fixed;z-index:62;bottom:calc(82px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;display:flex;align-items:center;gap:8px;border:0;cursor:pointer;
     background:var(--ps-ui,#111);color:var(--ps-ui-fg,#fff);font:600 14.5px/1 system-ui,sans-serif;padding:12px 16px;border-radius:999px;box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
   .ps-ui-btn svg{width:18px;height:18px}
   .ps-banner{position:fixed;z-index:63;top:10px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 20px));display:none;gap:10px;align-items:center;
