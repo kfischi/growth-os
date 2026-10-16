@@ -8,12 +8,13 @@
 <meta name="description" content="ניקיון בתים, משרדים ואחרי שיפוץ בחדרה והשרון. אותה מנקה, כל שבוע, באותה שעה. בוחרים בצ׳אט מה צריך ומקבלים הערכת זמן ומחיר.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Rubik:wght@700;800&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/cleaning-portrait.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: a freshly wiped window, and the cleaner's fixed slot in the family calendar.
      Detail: the same weekday and hour every week (שלישי, 8:00), the hours per visit, the checklist per room.
-     Bold move: the hero photo sits behind fogged glass, and one squeegee stroke wipes it clear. Everything else stays airy and quiet. */
+     Bold move: the window photo, large and clear, in a rounded frame with glass cards over it. Everything else stays airy and quiet. */
   :root {
     --glass: #f3f8fc;          /* page: clean glass in daylight */
     --rinse: #e2eef7;          /* soft panels */
@@ -240,6 +241,41 @@
     .rates { margin-inline: 0; border-radius: 28px; }
     .rate .num { font-size: 54px; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top stays light: clean glass with a breath of glove blue and mint, big tight type, the window photo in a rounded
+     frame and glass cards over it (the days, the chat, the regular visit), the main button glowing. */
+  .hero { background: var(--glass);
+    background-image: radial-gradient(55% 65% at 8% 12%, rgba(44,120,189,.20), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(43,154,130,.12), transparent 70%), linear-gradient(180deg, #fff, var(--glass) 75%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--scrubs); }
+  .hero h1 em { color: var(--glove-ink); }
+  .hero .btn-deep { box-shadow: 0 16px 32px -14px rgba(23,44,85,.75), 0 2px 6px -2px rgba(23,44,85,.4); }
+  .facts b { font-family: "Rubik", var(--body); font-weight: 800; }
+  .window-wrap { aspect-ratio: 1 / 1; max-width: 560px; padding: 0; }
+  .window { position: absolute; inset: 8% 2% 14% 16%; aspect-ratio: auto; border-radius: 34px; background: var(--rinse);
+    box-shadow: 0 0 0 1px #d3e3f0, 0 50px 90px -46px rgba(23,44,85,.55); }
+  .drops { top: 2%; inset-inline-end: auto; inset-inline-start: 6%; width: 52px; height: 52px; }
+  .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: 0 26px 50px -28px rgba(23,44,85,.55); padding: 14px 16px; color: var(--scrubs); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .next { inset-inline-start: 0; bottom: 0; width: min(270px, 62%); border-radius: 22px; animation-delay: .15s; }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 3px; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--scrubs-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 4px rgba(43,154,130,.18); }
+  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--scrubs); }
+  .g-chat { top: 36%; inset-inline-end: -1%; width: min(52%, 230px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eaf3fa; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--scrubs); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 960px) { .window-wrap { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) { .g-chat { display: none; } .window { inset: 10% 0 16% 8%; } .window-wrap { padding: 0; } .next { inset-inline-start: 0; bottom: 0; width: 70%; } .drops { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+  /* Photo first (the owner's update): the photo is the star, so the fog, the squeegee and the sparkles left the top. */
+  .glass { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(23,44,85,.55); }
+  .next b, .facts b, .g-chat p { font-variant-numeric: tabular-nums; }
+  .window .ps-img { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 961px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .window-wrap { max-width: 580px; }
+    .window { inset: 7% 0 12% 12%; } .g-chat { inset-inline-end: -3%; width: 212px; top: 42%; } }
 </style>
 </head>
 <body>
@@ -308,15 +344,14 @@
       <div class="window-wrap">
         <div class="window">
           <figure class="ps" data-slot="portrait" data-src="../shared/photos/cleaning-portrait.webp" data-alt="מנקה מנגבת חלון גדול" data-pos="62 40" data-icon="person" data-label="תמונה שלכם"></figure>
-          <div class="fog" aria-hidden="true"></div>
-          <div class="blade" aria-hidden="true"></div>
         </div>
-        <div class="next">
+        <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>ימים א׳ עד ה׳</b></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">כמה זה לדירת 4 חדרים?</p><p class="a">בניקיון קבוע 80 ₪ לשעה, בערך 4 עד 6 שעות. בצ׳אט מקבלים הערכה.</p></div>
+        <div class="next glass">
           <small><span class="dot"></span>ביקור קבוע</small>
           <b data-edit="next-day">שלישי, 8:00</b>
           <span data-edit="next-who">שקד · 4 שעות · כל שבוע</span>
         </div>
-        <svg class="drops" viewBox="0 0 64 64" aria-hidden="true"><g fill="#fff" stroke="#2c78bd" stroke-width="2"><path d="M40 6 l4 12 l12 4 l-12 4 l-4 12 l-4 -12 l-12 -4 l12 -4 Z"/><path d="M16 36 l2.5 7 l7 2.5 l-7 2.5 l-2.5 7 l-2.5 -7 l-7 -2.5 l7 -2.5 Z"/></g></svg>
       </div>
     </div>
   </div>
@@ -490,6 +525,8 @@
   range.addEventListener("input", () => ba.style.setProperty("--pos", range.value + "%"));
 
   PhotoSlots.init({ page: "cleaning" });
+  // The top photo is the first thing seen: load it at once, with its real size.
+  { const im = document.querySelector(".window .ps-img"); if (im) { im.loading = "eager"; im.fetchPriority = "high"; im.width = 466; im.height = 380; } }
   const HOURS = { "עד 3 חדרים": [3, 4], "4 עד 5 חדרים": [4, 6], "6 חדרים ומעלה": [6, 8] };
   const RATE = { "דירה": 90, "בית פרטי": 90, "משרד": 90, "אחרי שיפוץ או מעבר": 110 };
   const fmt = (n) => n.toLocaleString("he-IL");

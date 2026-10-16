@@ -8,7 +8,8 @@
 <meta name="description" content="עיסוי טיפולי ברחובות: גב ועורף, עיסוי ספורט, רקמות עמוק, הרפיה ועיסוי בהריון, בקליניקה או בביקור בית. מסמנים איפה כואב, ורוני חוזר בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/massage-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the body chart from the therapist's intake card, the back seen from behind, where the client marks
@@ -198,6 +199,70 @@
     html { scroll-behavior: auto; }
   }
   html.a11y-still .body-map .zone { transition: none; }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top gets a breath of sage and petrol on the chart paper, big tight Rubik, the treatment room drawing large in a
+     rounded frame with glass cards over it (where Roni treats, the chat, three prices by length), the main button
+     glowing in petrol. The anatomy plate keeps its atlas look, in its own band right under the top. */
+  .hero { background: var(--chart);
+    background-image: radial-gradient(50% 60% at 12% 26%, rgba(201,218,213,.9), transparent 70%), radial-gradient(42% 52% at 96% 0%, rgba(31,76,87,.10), transparent 70%); }
+  .bar { border-bottom-color: rgba(31,76,87,.14); }
+  @media (min-width: 1021px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; padding: 30px 0 88px; } .hero-copy { padding-top: 0; } }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
+  .hero h1 em { font-family: "Rubik", var(--body); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--petrol); }
+  .lead { color: var(--ink-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-petrol { box-shadow: 0 16px 32px -14px rgba(22,50,59,.75), 0 2px 6px -2px rgba(22,50,59,.35); }
+  .hero .btn-line { background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--petrol); }
+  .facts { border-top: 1px solid var(--line); }
+  .facts b { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--petrol-deep); font-variant-numeric: tabular-nums; }
+  .row .p, .len-h b { font-variant-numeric: tabular-nums; }
+
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,50,59,.6), 0 4px 12px -6px rgba(22,50,59,.18);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--petrol); box-shadow: 0 0 0 4px rgba(31,76,87,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { display: grid; gap: 5px; animation-delay: .12s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--petrol-deep); white-space: nowrap; }
+  .g-chat { display: grid; gap: 6px; padding: 11px; animation-delay: .26s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e7eeec; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--petrol-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
+  .hframe { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #e3ebe9;
+    box-shadow: 0 0 0 1px rgba(22,50,59,.08), 0 50px 90px -46px rgba(22,50,59,.62), 0 18px 34px -26px rgba(22,50,59,.35); }
+  .hframe .ps { aspect-ratio: auto; height: 100%; border-radius: 0; border: 0; transform: none; box-shadow: none; }
+
+  .g-day { top: 2%; inset-inline-end: 0; }
+  .g-chat { top: 38%; inset-inline-end: -1%; width: min(50%, 226px); }
+  .g-price { bottom: 2%; inset-inline-start: 0; width: min(300px, 68%); animation-delay: .15s; }
+  .g-price i { font: 700 12.5px/1 var(--body); font-style: normal; color: var(--muscle); margin-inline-end: 4px; }
+
+  .mapsec { padding-top: 24px; }
+  .map-grid { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 28px 56px; align-items: center; }
+  .map-grid .head { display: block; margin: 0; }
+  .map-grid .head p { margin-top: 14px; max-width: 32ch; }
+  .plate { border-radius: 8px; box-shadow: 0 30px 60px -44px rgba(22,50,59,.45); }
+
+  @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } .map-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 560px) {
+    .g-chat { display: none; }
+    .hframe { inset: 10% 0 16% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 82%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -225,57 +290,72 @@
         </ul>
       </div>
 
-      <div class="plate" id="map">
-        <div class="plate-h"><span>הגב, מבט מאחור</span><b>לוח 1</b></div>
-        <div class="plate-body">
-          <svg class="body-map" viewBox="0 0 320 560" aria-hidden="true" focusable="false">
-            <!-- arms -->
-            <path class="skin" d="M86 130 C70 138 63 160 61 190 C59 232 55 282 53 322 C52 338 57 349 65 351 C73 353 77 343 77 331 C79 291 85 242 93 200 Z"/>
-            <path class="skin" d="M234 130 C250 138 257 160 259 190 C261 232 265 282 267 322 C268 338 263 349 255 351 C247 353 243 343 243 331 C241 291 235 242 227 200 Z"/>
-            <!-- legs -->
-            <path class="skin" d="M100 380 C96 428 102 474 108 512 C111 532 113 546 121 548 L147 548 C150 520 153 470 157 404 L158 380 Z"/>
-            <path class="skin" d="M220 380 C224 428 218 474 212 512 C209 532 207 546 199 548 L173 548 C170 520 167 470 163 404 L162 380 Z"/>
-            <!-- torso and hips -->
-            <path class="skin" d="M146 98 C130 112 104 116 88 126 C76 134 76 150 82 168 C90 196 96 230 98 262 C100 290 96 318 94 340 C92 360 94 374 100 388 L220 388 C226 374 228 360 226 340 C224 318 220 290 222 262 C224 230 230 196 238 168 C244 150 244 134 232 126 C216 116 190 112 174 98 Z"/>
-            <!-- head and neck -->
-            <path class="skin" d="M146 76 L146 104 C152 108 168 108 174 104 L174 76 Z"/>
-            <ellipse class="skin" cx="160" cy="50" rx="29" ry="35"/>
-            <!-- drawn detail: the spine, the shoulder blades, the hip line -->
-            <path class="spine" d="M160 104 V340"/>
-            <path class="detail" d="M112 156 C118 176 124 196 134 214 M208 156 C202 176 196 196 186 214"/>
-            <path class="detail" d="M104 356 C130 366 190 366 216 356 M160 360 V386"/>
-            <!-- the zones -->
-            <path class="zone" data-zone="neck" d="M146 82 H174 L176 110 C168 115 152 115 144 110 Z"/>
-            <path class="zone" data-zone="shoulders" d="M143 113 C128 120 106 121 92 129 C84 135 84 148 88 158 C106 151 124 147 140 145 Z M177 113 C192 120 214 121 228 129 C236 135 236 148 232 158 C214 151 196 147 180 145 Z"/>
-            <path class="zone" data-zone="upper" d="M128 150 C142 146 178 146 192 150 L196 228 C176 234 144 234 124 228 Z"/>
-            <path class="zone" data-zone="lower" d="M124 236 C144 242 176 242 196 236 L204 314 C180 322 140 322 116 314 Z"/>
-            <path class="zone" data-zone="legs" d="M106 396 L154 396 L151 470 L147 538 L124 538 C116 500 109 448 106 396 Z M214 396 L166 396 L169 470 L173 538 L196 538 C204 500 211 448 214 396 Z"/>
-            <!-- numbered leader lines, as in an atlas -->
-            <g class="lead-line">
-              <path d="M176 94 L286 94"/><path d="M110 138 L34 138"/><path d="M194 190 L286 190"/><path d="M118 276 L34 276"/><path d="M212 462 L286 462"/>
-            </g>
-            <g class="num" data-num="neck"><circle cx="296" cy="94" r="11"/><text x="296" y="94">1</text></g>
-            <g class="num" data-num="shoulders"><circle cx="24" cy="138" r="11"/><text x="24" y="138">2</text></g>
-            <g class="num" data-num="upper"><circle cx="296" cy="190" r="11"/><text x="296" y="190">3</text></g>
-            <g class="num" data-num="lower"><circle cx="24" cy="276" r="11"/><text x="24" y="276">4</text></g>
-            <g class="num" data-num="legs"><circle cx="296" cy="462" r="11"/><text x="296" y="462">5</text></g>
-          </svg>
-          <ul class="zones" aria-label="איפה כואב">
-            <li><button type="button" data-pick="neck" aria-pressed="false" aria-controls="pick"><i>1</i>עורף</button></li>
-            <li><button type="button" data-pick="shoulders" aria-pressed="false" aria-controls="pick"><i>2</i>כתפיים</button></li>
-            <li><button type="button" data-pick="upper" aria-pressed="false" aria-controls="pick"><i>3</i>בין השכמות</button></li>
-            <li><button type="button" data-pick="lower" aria-pressed="false" aria-controls="pick"><i>4</i>גב תחתון</button></li>
-            <li><button type="button" data-pick="legs" aria-pressed="false" aria-controls="pick"><i>5</i>ירכיים ושוקיים</button></li>
-          </ul>
+      <div class="visual">
+        <div class="hframe"><figure class="ps" data-slot="hero" data-src="../shared/photos/massage-work.webp" data-alt="חדר הטיפול: מיטת עיסוי עם סדין לבן, מגבות מקופלות ואבני בזלת על שרפרף" data-pos="50 50" data-icon="home" data-label="תמונה מחדר הטיפול"></figure></div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה מטפלים</span><b>בקליניקה ברחובות</b><small>או ביקור בית, עם מיטה מתקפלת</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">תפוס לי הגב התחתון. מה מתאים?</p><p class="a">סמנו על המפה ובחרו אורך טיפול. אני חוזר לתאם בין טיפול לטיפול.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <p><b><i>45 דק׳</i> גב ועורף</b><em>220 עד 280 ₪</em></p>
+          <p><b><i>60 דק׳</i> גוף מלא</b><em>280 עד 360 ₪</em></p>
+          <p><b><i>90 דק׳</i> הרפיה ארוך</b><em>400 עד 480 ₪</em></p>
         </div>
-        <div class="pick" id="pick" aria-live="polite"><p class="hint">לוחצים על אזור במפה או ברשימה, ורואים מה מתאים לו.</p></div>
-        <p class="caution" role="note"><span>כאב חד אחרי פציעה, נימול, חום או ניתוח לאחרונה? קודם לרופא. כאב בחזה: מד״א <a href="tel:101">101</a>. <a href="#g-doctor-first">מתי קודם לרופא</a></span></p>
       </div>
     </div>
   </div>
 </header>
 
 <main>
+  <section class="mapsec">
+    <div class="wrap map-grid">
+      <div class="head"><h2>מסמנים על המפה</h2><p>לוחצים על אזור בגב, ורואים איזה טיפול מתאים לו. אחר כך הצ׳אט ממשיך משם.</p></div>
+  <div class="plate" id="map">
+      <div class="plate-h"><span>הגב, מבט מאחור</span><b>לוח 1</b></div>
+      <div class="plate-body">
+        <svg class="body-map" viewBox="0 0 320 560" aria-hidden="true" focusable="false">
+          <!-- arms -->
+          <path class="skin" d="M86 130 C70 138 63 160 61 190 C59 232 55 282 53 322 C52 338 57 349 65 351 C73 353 77 343 77 331 C79 291 85 242 93 200 Z"/>
+          <path class="skin" d="M234 130 C250 138 257 160 259 190 C261 232 265 282 267 322 C268 338 263 349 255 351 C247 353 243 343 243 331 C241 291 235 242 227 200 Z"/>
+          <!-- legs -->
+          <path class="skin" d="M100 380 C96 428 102 474 108 512 C111 532 113 546 121 548 L147 548 C150 520 153 470 157 404 L158 380 Z"/>
+          <path class="skin" d="M220 380 C224 428 218 474 212 512 C209 532 207 546 199 548 L173 548 C170 520 167 470 163 404 L162 380 Z"/>
+          <!-- torso and hips -->
+          <path class="skin" d="M146 98 C130 112 104 116 88 126 C76 134 76 150 82 168 C90 196 96 230 98 262 C100 290 96 318 94 340 C92 360 94 374 100 388 L220 388 C226 374 228 360 226 340 C224 318 220 290 222 262 C224 230 230 196 238 168 C244 150 244 134 232 126 C216 116 190 112 174 98 Z"/>
+          <!-- head and neck -->
+          <path class="skin" d="M146 76 L146 104 C152 108 168 108 174 104 L174 76 Z"/>
+          <ellipse class="skin" cx="160" cy="50" rx="29" ry="35"/>
+          <!-- drawn detail: the spine, the shoulder blades, the hip line -->
+          <path class="spine" d="M160 104 V340"/>
+          <path class="detail" d="M112 156 C118 176 124 196 134 214 M208 156 C202 176 196 196 186 214"/>
+          <path class="detail" d="M104 356 C130 366 190 366 216 356 M160 360 V386"/>
+          <!-- the zones -->
+          <path class="zone" data-zone="neck" d="M146 82 H174 L176 110 C168 115 152 115 144 110 Z"/>
+          <path class="zone" data-zone="shoulders" d="M143 113 C128 120 106 121 92 129 C84 135 84 148 88 158 C106 151 124 147 140 145 Z M177 113 C192 120 214 121 228 129 C236 135 236 148 232 158 C214 151 196 147 180 145 Z"/>
+          <path class="zone" data-zone="upper" d="M128 150 C142 146 178 146 192 150 L196 228 C176 234 144 234 124 228 Z"/>
+          <path class="zone" data-zone="lower" d="M124 236 C144 242 176 242 196 236 L204 314 C180 322 140 322 116 314 Z"/>
+          <path class="zone" data-zone="legs" d="M106 396 L154 396 L151 470 L147 538 L124 538 C116 500 109 448 106 396 Z M214 396 L166 396 L169 470 L173 538 L196 538 C204 500 211 448 214 396 Z"/>
+          <!-- numbered leader lines, as in an atlas -->
+          <g class="lead-line">
+            <path d="M176 94 L286 94"/><path d="M110 138 L34 138"/><path d="M194 190 L286 190"/><path d="M118 276 L34 276"/><path d="M212 462 L286 462"/>
+          </g>
+          <g class="num" data-num="neck"><circle cx="296" cy="94" r="11"/><text x="296" y="94">1</text></g>
+          <g class="num" data-num="shoulders"><circle cx="24" cy="138" r="11"/><text x="24" y="138">2</text></g>
+          <g class="num" data-num="upper"><circle cx="296" cy="190" r="11"/><text x="296" y="190">3</text></g>
+          <g class="num" data-num="lower"><circle cx="24" cy="276" r="11"/><text x="24" y="276">4</text></g>
+          <g class="num" data-num="legs"><circle cx="296" cy="462" r="11"/><text x="296" y="462">5</text></g>
+        </svg>
+        <ul class="zones" aria-label="איפה כואב">
+          <li><button type="button" data-pick="neck" aria-pressed="false" aria-controls="pick"><i>1</i>עורף</button></li>
+          <li><button type="button" data-pick="shoulders" aria-pressed="false" aria-controls="pick"><i>2</i>כתפיים</button></li>
+          <li><button type="button" data-pick="upper" aria-pressed="false" aria-controls="pick"><i>3</i>בין השכמות</button></li>
+          <li><button type="button" data-pick="lower" aria-pressed="false" aria-controls="pick"><i>4</i>גב תחתון</button></li>
+          <li><button type="button" data-pick="legs" aria-pressed="false" aria-controls="pick"><i>5</i>ירכיים ושוקיים</button></li>
+        </ul>
+      </div>
+      <div class="pick" id="pick" aria-live="polite"><p class="hint">לוחצים על אזור במפה או ברשימה, ורואים מה מתאים לו.</p></div>
+      <p class="caution" role="note"><span>כאב חד אחרי פציעה, נימול, חום או ניתוח לאחרונה? קודם לרופא. כאב בחזה: מד״א <a href="tel:101">101</a>. <a href="#g-doctor-first">מתי קודם לרופא</a></span></p>
+    </div>
+    </div>
+  </section>
   <section class="hour" id="hour">
     <div class="wrap">
       <div class="head"><h2>60 דקות בלי ידיים פנויות.</h2><p>מי שמתקשר באמצע טיפול שומע צלצול, ולפעמים מחפש מעסה אחר. לכן יש כאן צ׳אט: הוא שואל, נותן טווח מחיר, והפרטים מחכים לי בסוף הטיפול.</p></div>
@@ -389,6 +469,9 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "massage" });
+  // The top photo is the first thing seen: load it at once, with its size known.
+  (function () { const im = document.querySelector(".hframe .ps-img"); if (!im) return;
+    im.loading = "eager"; im.fetchPriority = "high"; im.width = 800; im.height = 500; })();
   // The sample ranges, the same as the price list above. A range, never a promised price.
   const RANGE = {
     "45 דקות": "45 דקות, גב ועורף: 220 עד 280 ₪.",

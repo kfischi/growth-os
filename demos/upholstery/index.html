@@ -8,7 +8,8 @@
 <meta name="description" content="ניקוי ספות, כורסאות, מזרנים, שטיחים וריפוד ברכב בחדרה והשרון. בוחרים בצ׳אט מה לנקות ורואים טווח מחיר, גם כשהמכונה עובדת.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/upholstery-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: a fabric swatch book, and the sewn-in care label under the sofa cushion.
@@ -240,6 +241,46 @@
     .steps li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
     .steps .mono { font-size: 13px; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: undyed linen with a breath of petrol and one warm trace of the wine stain, big tight type,
+     the drawing of the sofa and its one clean stripe in a large rounded frame and glass cards over it
+     (the job in progress and the care label), the main button glowing in petrol. */
+  .hero { background: var(--linen);
+    background-image: radial-gradient(55% 65% at 8% 14%, rgba(11,79,108,.16), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(140,31,60,.07), transparent 70%), linear-gradient(180deg, #f7f8f7, var(--linen) 80%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--graphite); }
+  .hero h1 em { color: var(--petrol); font-size: .6em; letter-spacing: -.02em; line-height: 1.12; margin-top: 14px; }
+  .btn { border-radius: 999px; }
+  .hero .btn-petrol { box-shadow: 0 16px 32px -14px rgba(7,58,80,.75), 0 2px 6px -2px rgba(7,58,80,.4); }
+  .hero .btn-thread { background: #fff; }
+  .codes li { border-radius: 999px; padding: 6px 14px 6px 8px; }
+  .codes b { border-radius: 999px; padding: 1px 9px; font-variant-numeric: tabular-nums; }
+  .cushion-wrap { aspect-ratio: 1 / 1; padding: 0; }
+  .cushion { position: absolute; inset: 8% 2% 14% 16%; aspect-ratio: auto; border-radius: 34px;
+    box-shadow: inset 0 0 0 10px rgba(255,255,255,.08), inset 0 -40px 60px -30px rgba(0,0,0,.35), 0 0 0 1px rgba(26,35,38,.08), 0 50px 90px -46px rgba(7,58,80,.6); }
+  .cushion::before { border-radius: 22px; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(7,58,80,.6); padding: 14px 16px; color: var(--graphite);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .busy { inset-inline-start: auto; inset-inline-end: 0; top: 0; max-width: 240px; font-size: 14px; animation-delay: .1s; }
+  .busy b { font-weight: 700; }
+  .busy b::before { background: var(--petrol); box-shadow: 0 0 0 4px rgba(11,79,108,.16); }
+  .busy span { color: var(--graphite-soft); }
+  .label { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(220px, 52%); border-radius: 18px; transform: rotate(-2deg); animation-delay: .5s; }
+  .label::before { inset-inline-start: auto; inset-inline-end: 28px; height: 18px; top: -12px; background: var(--wine); width: 2px; border-radius: 2px; }
+  .label .mono { font-variant-numeric: tabular-nums; }
+  @keyframes lift-tag { from { opacity: 0; transform: translateY(18px) rotate(-2deg); } to { transform: rotate(-2deg); } }
+  .label.glass { animation-name: lift-tag; }
+  @media (max-width: 960px) { .cushion-wrap { max-width: 440px; } }
+  @media (max-width: 560px) { .cushion { inset: 10% 0 16% 8%; } .cushion-wrap { padding: 0; } .busy { max-width: 72%; } .label { width: 62%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+  /* Photo first (the owner's update): the drawing of the sofa with its one clean stripe is the star, in the rounded frame. */
+  .cushion .ps { position: absolute; inset: 0; border-radius: 0; aspect-ratio: auto; height: 100%; }
+  .cushion .ps-chip, .cushion::before { display: none; }
+  @media (max-width: 560px) { .cushion-wrap { aspect-ratio: 1 / .92; } .cushion { inset: 12% 0 18% 0; } }
+  .cushion .ps-img { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 961px) { .hero-grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); } .cushion-wrap { aspect-ratio: 5 / 4; max-width: 620px; } .cushion { inset: 11% 0 17% 3%; } }
 </style>
 </head>
 <body>
@@ -287,14 +328,11 @@
         </ul>
       </div>
       <div class="cushion-wrap">
-        <div class="cushion" role="img" aria-label="כרית ספה מלוכלכת, ופס נקי אחד שהמכונה עברה עליו">
-          <span class="wine"></span>
-          <svg class="paws" viewBox="0 0 100 60" aria-hidden="true"><g fill="#4f4235"><circle cx="16" cy="40" r="7"/><circle cx="8" cy="30" r="3"/><circle cx="16" cy="26" r="3"/><circle cx="24" cy="30" r="3"/><circle cx="62" cy="22" r="7"/><circle cx="54" cy="12" r="3"/><circle cx="62" cy="8" r="3"/><circle cx="70" cy="12" r="3"/></g></svg>
-          <span class="stripe"></span>
-          <span class="wand"></span>
+        <div class="cushion">
+          <figure class="ps" data-slot="hero" data-src="../shared/photos/upholstery-work.webp" data-alt="ציור: ראש שאיבה עובר על ספה מוכתמת ומשאיר פס נקי" data-pos="44 62" data-icon="sparkle" data-label="תמונה מעבודה"></figure>
         </div>
-        <div class="busy"><b>באמצע עבודה, רעננה</b><span>הצ׳אט עונה בינתיים</span></div>
-        <div class="label"><span class="mono">W/S · 30°</span><span>ספת בד, 3 מושבים</span><span>מתייבשת עד הערב</span></div>
+        <div class="busy glass"><b>באמצע עבודה, רעננה</b><span>הצ׳אט עונה בינתיים</span></div>
+        <div class="label glass"><span class="mono">W/S · 30°</span><span>ספת בד, 3 מושבים</span><span>מתייבשת עד הערב</span></div>
       </div>
     </div>
   </div>
@@ -434,6 +472,8 @@
   range.addEventListener("input", () => ba.style.setProperty("--pos", range.value + "%"));
 
   PhotoSlots.init({ page: "upholstery" });
+  // The top drawing is the first thing seen: load it at once, with its real size.
+  { const im = document.querySelector(".cushion .ps-img"); if (im) { im.loading = "eager"; im.fetchPriority = "high"; im.width = 800; im.height = 500; } }
 
   // The sample prices, the same as the swatches above. One table feeds the chat and the calculator.
   // base: the item's range; each size adds (add) or multiplies (mul) it, like Estimate does.

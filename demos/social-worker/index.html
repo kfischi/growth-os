@@ -8,7 +8,8 @@
 <meta name="description" content="הדרכת הורים, טיפול רגשי במבוגרים ובמתבגרים וליווי משפחות במעברים. בקליניקה בעמק חפר או אונליין. מתחילים בשיחת היכרות.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Rubik:wght@400;500&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Rubik:wght@400;500;700;800&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/social-worker-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the family map (genogram) a parent and I draw together at the first meeting, pinned to the rose plaster wall of the meeting room,
@@ -223,6 +224,47 @@
     .about dl div { grid-template-columns: minmax(0, 1fr); gap: 0; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .map [data-g], .btn { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: rose plaster with a breath of marker and teal, big tight type, the meeting-room photo large in a
+     rounded frame with two glass cards over it (the hours, the first step), the main button glowing. "בשביל מי?" stays,
+     as a glass panel under the photo. The crisis line is untouched. */
+  body { background-image: radial-gradient(760px 620px at 6% 420px, rgba(220,154,144,.34), transparent 70%), radial-gradient(640px 480px at 96% 140px, rgba(29,87,89,.08), transparent 70%); background-repeat: no-repeat; }
+  .hero-grid { gap: 64px; align-items: center; }
+  .kicker { margin-bottom: 16px; }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--cardigan-deep); margin-bottom: 24px; }
+  .hero h1 em { color: var(--marker-ink); background: none; padding: 0; }
+  .btn { border-radius: 999px; }
+  .hero .btn-ink { box-shadow: 0 16px 32px -14px rgba(19,59,61,.7), 0 2px 6px -2px rgba(19,59,61,.35), inset 0 1px 0 rgba(255,255,255,.14); }
+  .hero .btn-line { border: 0; background: #fff; box-shadow: inset 0 0 0 1.5px #dcc6bd; }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--cardigan); }
+
+  .visual { position: relative; width: 100%; aspect-ratio: 1.12 / 1; }
+  .frame { position: absolute; inset: 7% 0 11% 9%; border-radius: 34px; overflow: hidden; background: var(--plaster-deep);
+    box-shadow: 0 0 0 1px rgba(220,154,144,.35), 0 50px 90px -46px rgba(90,40,45,.55), 0 18px 34px -24px rgba(19,59,61,.25); }
+  .frame .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .glass { position: absolute; background: rgba(255,252,250,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.75);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(90,40,45,.5), 0 4px 12px -6px rgba(19,59,61,.16);
+    padding: 13px 16px; color: var(--cardigan-deep); display: grid; gap: 2px; line-height: 1.4; font-variant-numeric: tabular-nums; animation: lift .9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--cardigan-soft); }
+  .glass b { font: 800 16.5px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .glass small { font-size: 13px; color: var(--cardigan-soft); }
+  .g-day { top: 0; inset-inline-end: 0; }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--cardigan); box-shadow: 0 0 0 4px rgba(29,87,89,.15); }
+  .g-step { bottom: 0; inset-inline-start: 4%; animation-delay: .2s; }
+  .g-h svg { width: 16px; height: 16px; color: var(--marker-ink); flex: none; }
+  .pick { margin-top: 22px; background: rgba(255,252,250,.84); border: 1px solid rgba(255,255,255,.75); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 22px 44px -32px rgba(90,40,45,.5); }
+  .pick-out .btn { box-shadow: 0 12px 24px -14px rgba(19,59,61,.6); }
+  @media (max-width: 980px) { .board { max-width: 600px; } }
+  @media (max-width: 520px) {
+    .hero h1 { font-size: clamp(36px, 10.4vw, 44px); line-height: 1.05; }
+    .visual { aspect-ratio: 1 / 1.02; }
+    .frame { inset: 9% 0 15% 4%; }
+    .glass { padding: 10px 13px; } .glass b { font-size: 14.5px; } .glass small { display: none; }
+    .g-step { inset-inline-start: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -253,44 +295,14 @@
       </div>
 
       <div class="board">
-        <div class="map">
-          <span class="pin p1" aria-hidden="true"></span><span class="pin p2" aria-hidden="true"></span>
-          <svg viewBox="0 0 600 520" fill="none" aria-hidden="true">
-            <g stroke="#1d5759" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-              <!-- grandmother and the line down to mother -->
-              <g data-g="f"><circle class="draw" pathLength="1" cx="420" cy="44" r="20"/><path class="draw" pathLength="1" d="M420 64 V92"/></g>
-              <!-- parents and the line between them -->
-              <g data-g="p f"><path class="draw" pathLength="1" d="M144 92 H220 V168 H144 Z"/><path class="draw" pathLength="1" d="M220 130 H382"/></g>
-              <g data-g="p s f"><circle class="draw" pathLength="1" cx="420" cy="130" r="38"/></g>
-              <!-- children -->
-              <g data-g="f"><path class="draw d2" pathLength="1" d="M301 130 V226"/><path class="draw d2" pathLength="1" d="M170 226 H430"/>
-                <path class="draw d2" pathLength="1" d="M300 226 V262 M430 226 V274"/>
-                <circle class="draw d2" pathLength="1" cx="300" cy="288" r="26"/><path class="draw d2" pathLength="1" d="M410 274 H450 V314 H410 Z"/></g>
-              <g data-g="t f"><path class="draw d2" pathLength="1" d="M170 226 V258"/><path class="draw d2" pathLength="1" d="M142 258 H198 V314 H142 Z"/></g>
-            </g>
-            <!-- my own notes, in rose marker -->
-            <g stroke="#dc9a90" stroke-width="4" stroke-linecap="round" fill="none">
-              <path data-g="f" class="draw d3" pathLength="1" d="M110 244 C 104 198, 230 208, 300 208 S 500 198, 494 244 S 470 374, 300 372 S 116 384, 110 244"/>
-              <path class="draw d4" pathLength="1" d="M180 444 C 262 442, 304 418, 300 374"/>
-            </g>
-            <g font-family="Amatic SC, Fredoka, cursive" font-weight="700" text-anchor="middle" direction="rtl">
-              <text data-g="f" x="478" y="52" font-size="26" fill="#4c615f">סבתא</text>
-              <text class="lab" data-g="p f" x="182" y="74" font-size="30" fill="#1d5759">אבא</text>
-              <text class="lab" data-g="p s f" x="508" y="138" font-size="30" fill="#1d5759">אמא</text>
-              <text data-g="t f" x="170" y="350" font-size="26" fill="#1d5759">בן 14</text>
-              <text data-g="f" x="300" y="342" font-size="26" fill="#1d5759">בת 10</text>
-              <text data-g="f" x="430" y="342" font-size="26" fill="#1d5759">בן 6</text>
-              <text x="478" y="198" font-size="27" fill="#94404e">מעבר דירה בקיץ</text>
-              <text x="440" y="420" font-size="31" fill="#94404e">מה הכי קשה עכשיו?</text>
-              <text x="440" y="452" font-size="25" fill="#4c615f">מתחילים מכאן</text>
-            </g>
-          </svg>
-          <figure class="ps portrait" data-slot="portrait" data-src="../shared/photos/social-worker-portrait.webp" data-alt="עובדת סוציאלית בחדר הפגישות" data-pos="62 40" data-icon="person" data-label="תמונה שלכם"></figure>
-          <span class="map-note">מפה לדוגמה, בלי פרטים אמיתיים</span>
+        <div class="visual">
+          <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/social-worker-work.webp" data-alt="יעל יושבת ליד שולחן עגול בחדר הפגישות, ציורי ילדים על הקיר" data-pos="52 38" data-icon="person" data-label="תמונה שלכם"></figure></div>
+          <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>ראשון עד חמישי, 8:00 עד 20:00</b><small>במושב בעמק חפר, או אונליין</small></div>
+          <div class="glass g-step" aria-hidden="true"><span class="g-h"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 3.2 4 4.4c-.9.5-1.2 1.5-.8 2.4a17 17 0 0 0 10 10c.9.4 1.9.1 2.4-.8l1.2-2.2-3.4-2-1.4 1.4a11 11 0 0 1-5.2-5.2l1.4-1.4z"/></svg>הצעד הראשון</span><b>שיחת טלפון קצרה</b><small>חוזרת אליכם ועונה על שאלות</small></div>
         </div>
 
         <div class="pick">
-          <p class="pick-q"><b>בשביל מי?</b><span>בחרו, ותראו על המפה</span></p>
+          <p class="pick-q"><b>בשביל מי?</b><span>בחרו, ותראו איך זה נראה</span></p>
           <div class="chips" role="group" aria-label="בשביל מי הפנייה">
             <button type="button" aria-pressed="false" data-pick="p" data-who="הדרכת הורים" data-say="הדרכת הורים: שני ההורים, בלי הילד. 50 דקות, פעם בשבועיים.">הורים</button>
             <button type="button" aria-pressed="false" data-pick="s" data-who="לעצמי" data-say="טיפול רגשי: פגישה שבועית של 50 דקות, בקליניקה או אונליין.">לעצמי</button>
@@ -441,6 +453,8 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "social-worker" });
+  // the hero photo is the first thing on screen: load it at once, not lazily
+  document.querySelectorAll(".frame .ps-img").forEach((i) => { i.loading = "eager"; i.fetchPriority = "high"; i.width = 800; i.height = 500; });
   const CRISIS = "במצב חירום או מחשבות על פגיעה עצמית: ער״ן 1201, או מד״א 101.";
   const WHEN = { "בוקר": "בשעות הבוקר", "אחר הצהריים": "אחר הצהריים", "ערב": "בשעות הערב" };
   const bot = LeadBot.init({
@@ -463,15 +477,14 @@
   });
   Guides.load("../shared/guides/social-worker.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 
-  // "בשביל מי?": lights up that part of the family map, and the button opens the chat with the answer filled in.
+  // "בשביל מי?": says how that kind of meeting goes, and the button opens the chat with the answer filled in.
   (function () {
     const svg = document.querySelector(".map svg"), say = document.getElementById("pick-say"), chips = document.querySelectorAll("[data-pick]");
     let who = null;
     chips.forEach((b) => b.addEventListener("click", () => {
       const off = b.getAttribute("aria-pressed") === "true";
       chips.forEach((c) => c.setAttribute("aria-pressed", "false"));
-      svg.querySelectorAll("[data-g]").forEach((n) => n.classList.toggle("on", !off && n.dataset.g.split(" ").includes(b.dataset.pick)));
-      svg.classList.toggle("picking", !off);
+      if (svg) { svg.querySelectorAll("[data-g]").forEach((n) => n.classList.toggle("on", !off && n.dataset.g.split(" ").includes(b.dataset.pick))); svg.classList.toggle("picking", !off); }
       if (off) { who = null; say.textContent = "שלושה תחומים, ובכולם מתחילים בשיחת היכרות."; return; }
       b.setAttribute("aria-pressed", "true"); who = b.dataset.who; say.textContent = b.dataset.say;
     }));

@@ -56,6 +56,7 @@ try {
 const bare = { ...P.emptyContent(), ...Object.fromEntries(Object.entries(SAMPLE).filter(([k]) => P.FIELDS[k] && P.FIELDS[k].required)), services: SAMPLE.services.map((s) => ({ name: s.name, detail: "", time: "", price: "" })), towns: ["חדרה"] };
 fs.writeFileSync(path.join(out, "bare.html"), P.render(bare, { mode: "site" })["index.html"]);
 // A draft at the very start: almost everything empty.
+fs.cpSync(path.join(repo, "demos/shared/photos"), path.join(out, "shared/photos"), { recursive: true }); // drafts show sample photos from /shared/photos/
 fs.writeFileSync(path.join(out, "draft.html"), P.render({ ...P.emptyContent(), owner_name: "אורן לוי", whatsapp: "0526359513" }, { mode: "draft", assets: "assets/" })["index.html"]);
 // A draft with only the "before" photo: the frame shows, with the missing half marked.
 fs.writeFileSync(path.join(out, "draft-ba.html"), P.render({ ...SAMPLE }, { mode: "draft", assets: "assets/", photos: { before: "assets/photos/plumber-leak.webp" } })["index.html"]);
@@ -71,6 +72,7 @@ import("../../demos/netlify/lib/templates/trades/index.mjs").then(async ({ TRADE
     fs.mkdirSync(dir, { recursive: true }); fs.cpSync(path.join(out, "assets"), path.join(dir, "assets"), { recursive: true });
     for (const [name, html] of Object.entries(P.render(c, { mode: "site", leads: null, photos: {} }))) fs.writeFileSync(path.join(dir, name), html);
     fs.writeFileSync(path.join(dir, "draft.html"), P.render(c, { mode: "draft", assets: "assets/" })["index.html"]);
+    fs.cpSync(path.join(repo, "demos/shared/photos"), path.join(dir, "shared/photos"), { recursive: true }); // a draft shows the trade's sample photos from /shared/photos/
   }
   console.log("rendered into " + out);
 });

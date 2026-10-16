@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מאיה לב · שיעורי פסנתר וגיטרה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
-<script>(function () { var k = new URLSearchParams(location.search).get("i"); document.documentElement.dataset.i = /^(piano|keys|guitar|bass|drums)$/.test(k || "") ? k : "piano"; })();</script>
+<script>(function () { var k = new URLSearchParams(location.search).get("i"); document.documentElement.dataset.i = k = /^(piano|keys|guitar|bass|drums)$/.test(k || "") ? k : "piano"; if (k === "piano" || k === "keys") { var l = document.createElement("link"); l.rel = "preload"; l.as = "image"; l.href = "../shared/photos/music-work.webp"; l.setAttribute("fetchpriority", "high"); document.head.appendChild(l); } })();</script>
 <meta name="description" content="שיעורי פסנתר וגיטרה לילדים מגיל 6 ולמבוגרים, בכרכור או אצלכם בבית. שיעור ניסיון קצר לפני שמתחילים.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Assistant:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@700;800&family=Assistant:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: an LP record and its sleeve. The front cover, the record sliding out, the track list on the back and the liner notes.
@@ -252,6 +252,57 @@
   }
   @media (prefers-reduced-motion: reduce) { .nh { transition: none; } .vinyl, .vinyl.spin, .neck.ring .str { animation: none; } .btn { transition: none; } }
   html.a11y-still .vinyl, html.a11y-still .vinyl.spin { animation: none; }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: the paper inner sleeve with a breath of this record's colours, big tight type, the record and its
+     sleeve in a rounded frame of the sleeve colour, glass cards over it (the trial lesson, the first lessons with prices,
+     the chat), the main button glowing. Every instrument keeps its own colours through --sleeve and --spark.
+     The frame shows the teacher's photo where the sample fits the instrument (piano, keys); otherwise the record still
+     slides out of its sleeve, as before. */
+  .hero { background: var(--inner); color: var(--vinyl);
+    background-image: radial-gradient(55% 65% at 6% 20%, color-mix(in srgb, var(--sleeve) 13%, transparent), transparent 70%), radial-gradient(45% 55% at 98% 0%, color-mix(in srgb, var(--spark) 12%, transparent), transparent 70%); }
+  .hero::before { display: none; }
+  .logo small { color: var(--groove); opacity: 1; }
+  .bar a { color: var(--sleeve); border-bottom-color: var(--sleeve); }
+  .tag { color: var(--sleeve); opacity: 1; font-weight: 700; }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--vinyl); }
+  .hero h1 em { color: var(--sleeve); font-size: .62em; line-height: 1.12; letter-spacing: -.02em; margin-top: 12px; }
+  .lead { color: var(--groove); opacity: 1; }
+  .hero .btn-paper { background: var(--sleeve); color: #fff; box-shadow: 0 16px 32px -14px color-mix(in srgb, var(--sleeve) 80%, transparent), 0 2px 6px -2px color-mix(in srgb, var(--sleeve-deep) 45%, transparent); }
+  .hero .btn-paper:hover { background: var(--sleeve-deep); }
+  .hero .btn-ring { background: #fff; color: var(--vinyl); box-shadow: inset 0 0 0 1.5px #d3d7df; }
+  .hero .btn-ring:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--sleeve); }
+  .stage { position: relative; aspect-ratio: 1 / .88; max-width: 560px; width: 100%; justify-self: center; min-width: 0; }
+  .stage .frame { position: absolute; inset: 9% 0 15% 14%; border-radius: 34px; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(80% 70% at 85% 0%, rgba(255,255,255,.16), transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(0,0,0,.25), transparent 70%), var(--sleeve);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 50px 90px -46px color-mix(in srgb, var(--sleeve-deep) 85%, transparent); }
+  .stage .lp { width: 84%; transform: translateY(-4%); }
+  .stage .cover .big { font-size: clamp(40px, 4.6vw, 64px); }
+  .stage .hero-ph { position: absolute; inset: 0; aspect-ratio: auto; width: 100%; height: 100%; margin: 0; border-radius: 0; }
+  .stage.has-photo .lp { display: none; }
+  .stage.has-photo .frame { background: #dfe3ea; }
+  .glass { position: absolute; z-index: 4; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px color-mix(in srgb, var(--sleeve-deep) 75%, transparent); padding: 14px 16px; color: var(--vinyl);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-day { top: 0; inset-inline-start: 6%; display: grid; gap: 3px; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--groove); }
+  .g-day .nt { width: 16px; height: 16px; fill: none; stroke: var(--sleeve); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); }
+  .g-price { bottom: 0; inset-inline-start: 0; width: min(290px, 70%); animation-delay: .15s; }
+  .g-price .t { display: block; font-size: 13px; color: var(--groove); margin-bottom: 4px; }
+  .g-price ul { list-style: none; margin: 0; padding: 0; }
+  .g-price li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px dashed #d8dbe2; font-size: 15px; line-height: 1.4; }
+  .g-price li:first-child { border-top: 0; }
+  .g-price li b { font-family: "Rubik", var(--body); font-weight: 700; white-space: nowrap; }
+  .g-chat { top: 58%; inset-inline-end: -1%; width: min(50%, 230px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 14px; line-height: 1.4; }
+  .g-chat .q { background: #eef0f4; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--sleeve); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 900px) { .stage { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 620px) { .stage .lp { width: 86%; } .stage .cover .big { font-size: clamp(30px, 9vw, 44px); } }
+  @media (max-width: 560px) { .g-chat { display: none; } .stage { aspect-ratio: 1 / 1.06; } .stage.has-photo { aspect-ratio: 1 / 1.15; } .stage.has-photo .frame { inset: 12% 0 30% 0; } .stage .frame { inset: 15% 0 27% 0; } .stage .lp { width: 70%; } .g-day { inset-inline-start: 4%; padding: 10px 14px; } .g-price { width: 84%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -277,6 +328,9 @@
           <a class="btn btn-ring" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
         </div>
       </div>
+      <div class="stage">
+      <div class="frame">
+      <figure class="ps hero-ph" data-slot="hero" data-alt="מורה בחדר הלימוד, יושבת ליד פסנתר, גיטרה ועמוד תווים" data-pos="50 40" data-icon="camera" data-label="תמונה מהשיעורים"></figure>
       <div class="lp" aria-hidden="true">
         <div class="vinyl" id="vinyl"><div class="lbl"><span id="v-label">פסנתר</span><small>33⅓ · A</small></div></div>
         <div class="cover">
@@ -285,6 +339,11 @@
           <div class="big" id="c-big">פסנתר</div>
           <div class="who"><span id="c-who">מאיה לב</span><small id="c-sub">שיעורים פרטיים · כרכור</small></div>
         </div>
+      </div>
+      </div>
+        <div class="glass g-day" aria-hidden="true"><span><svg class="nt" viewBox="0 0 20 20"><path d="M8 15.5V3.5l8-1.5v11.5"/><circle cx="5.6" cy="15.5" r="2.4"/><circle cx="13.6" cy="13.5" r="2.4"/></svg>שיעור ניסיון</span><b>30 דקות, לפני שמתחילים</b></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">אפשר להתחיל מאפס?</p><p class="a">בטח. ספרו מי לומד ואיפה נוח, ואחזור לקבוע שיעור ניסיון.</p></div>
+        <div class="glass g-price" aria-hidden="true"><span class="t">שיעור של 45 דקות</span><ul id="g-lessons"></ul></div>
       </div>
     </div>
   </div>
@@ -405,7 +464,7 @@
       tag: "כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים", try: "נסו לנגן ↓",
       prog: [["פסנתר לילדים", "מגיל 6. שירים מוכרים, שתי ידיים, וקריאת תווים בקצב של הילד.", 150], ["מבוגרים שתמיד רצו", "מתחילים מאפס או חוזרים אחרי שנים. בלי מבחנים, בקצב שלכם.", 170], ["קלאסי ותווים", "יצירות, טכניקה וקריאה מהדף. הכנה לבחינות קונסרבטוריון.", 170], ["ממשיכים ומגמת מוזיקה", "תיאוריה, שמיעה והכנה לרסיטל או לבחינה.", 180]],
       styles: ["שירים ופופ", "קלאסי", "ג׳אז ואלתור", "עוד לא יודעים"], f3: "פסנתר אקוסטי בסטודיו. לבית, פסנתר חשמלי מספיק להתחלה", c2: "שיעור פסנתר",
-      photos: { portrait: "music-portrait", studio: "music-studio", lesson: "music-lesson" },
+      photos: { portrait: "music-portrait", studio: "music-studio", lesson: "music-lesson", hero: "music-work" },
     },
     keys: {
       label: "קלידים", teacher: "נועה ברק", initial: "נ", role: "מורה לקלידים · 10 שנה",
@@ -414,7 +473,7 @@
       tag: "חדרה, כרכור ועמק חפר · מגיל 8 ועד מבוגרים", try: "נסו לנגן, בצליל של פסנתר חשמלי ↓",
       prog: [["קלידים למתחילים", "מגיל 8. אקורדים בשתי ידיים ושירים ראשונים כבר בחודש הראשון.", 140], ["ליווי שירה ושירים", "ללוות את עצמכם או מישהו ששר. שומעים שיר ומוצאים את האקורדים.", 150], ["קלידים בלהקה", "סאונדים, התפקיד שלכם בשיר, ונגינה עם מתופף וגיטרה.", 170], ["הפקה במחשב", "קלידי מידי, תוכנת הפקה ושיר ראשון שאתם מקליטים בעצמכם.", 180]],
       styles: ["ליווי שירים", "להקה ובמה", "הפקה במחשב", "עוד לא יודעים"], f3: "אורגנית, פסנתר חשמלי וקלידי מידי", c2: "שיעור קלידים",
-      photos: { portrait: "music-portrait", studio: null, lesson: "music-lesson" },
+      photos: { portrait: "music-portrait", studio: null, lesson: "music-lesson", hero: "music-work" },
     },
     guitar: {
       label: "גיטרה", teacher: "יואב דגן", initial: "י", role: "מורה לגיטרה · 11 שנה",
@@ -463,7 +522,10 @@
   document.querySelectorAll(".ps[data-slot]").forEach((f) => { const ph = I.photos[f.dataset.slot]; if (ph) f.dataset.src = `../shared/photos/${ph}.webp`; else delete f.dataset.src; });
   document.querySelector('[data-slot="portrait"]').dataset.alt = `מורה ל${I.label}`;
   document.querySelectorAll("[data-wa]").forEach((a) => { a.dataset.wa = `היי ${I.teacher.split(" ")[0]}, הגעתי מהאתר ויש לי שאלה על שיעורי ${I.label}`; });
+  // the top: the sample photo where it fits the instrument (a teacher at the piano), otherwise the record in its sleeve
+  if (!I.photos.hero) document.querySelector(".hero-ph").remove(); else document.querySelector(".stage").classList.add("has-photo");
   PhotoSlots.init({ page: "music-" + KIND });
+  (function () { const h = document.querySelector(".hero-ph .ps-img"); if (h) { h.loading = "eager"; h.fetchPriority = "high"; h.width = 800; h.height = 500; } })();
 
   Instruments.mount(KIND, { visual: $("visual"), control: $("play"), last: $("last"), name: $("name") });
 
@@ -497,6 +559,8 @@
   $("play").addEventListener("pointerdown", () => { if (still()) return; vinyl.classList.remove("spin"); void vinyl.offsetWidth; vinyl.classList.add("spin"); });
   $("play").addEventListener("click", (e) => { if (e.detail === 0 && !still()) { vinyl.classList.remove("spin"); void vinyl.offsetWidth; vinyl.classList.add("spin"); } });
   Guides.load(`../shared/guides/music-${KIND}.json`, document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+  // Smart luxury: the glass cards on the record carry this instrument's first three lessons and prices.
+  $("g-lessons").innerHTML = I.prog.slice(0, 3).map(([b, , p]) => `<li>${b}<b>${p} ₪</b></li>`).join("");
 </script>
 </body>
 </html>

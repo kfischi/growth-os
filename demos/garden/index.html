@@ -8,8 +8,9 @@
 <meta name="description" content="אחזקת גינות, גיזום, טפטוף ודשא בחדרה, עמק חפר והשרון. מספרים בצ׳אט מה יש בגינה, והפרטים מגיעים לגנן בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
+<link rel="preload" as="image" href="../shared/photos/garden-work.webp" fetchpriority="high">
 <style>
   /* Object: the gardener's planting wheel (גלגל עונות), a paper dial that turns month by month, with the task and the drip setting in its window.
      Detail: the Israeli garden year: גיזום בחורף, שתילה בסתיו, דשא באביב, טפטוף פעמיים ביום בקיץ וכבוי בחורף; moshav names in עמק חפר; מ״ר of lawn.
@@ -205,6 +206,60 @@
   .strip.lab { display: none; }
   @media (max-width: 680px) { .bed .strip-wrap .strip.lab { display: grid; margin-bottom: 3px; } .strip.lab span { font-size: 10px; text-align: center; color: var(--ink-soft); } }
   @media (prefers-reduced-motion: reduce) { .wheel .dial { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: dew paper with a breath of new leaves and pomegranate, big tight type, the gardener's photo in a large
+     rounded frame with glass cards over two corners (the first prices, the chat), the main button glowing in cypress.
+     The season wheel moved down to open the first section, next to the calendar of the year. */
+  .hero { background: var(--dew); color: var(--cypress);
+    background-image: radial-gradient(55% 65% at 8% 12%, rgba(63,122,69,.18), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(196,56,46,.09), transparent 70%); }
+  .hero::after { display: none; }
+  .logo { color: var(--cypress); } .logo span + span { color: var(--shoot); }
+  .bar a { color: var(--cypress); border-bottom-color: var(--pomegranate); }
+  .now { border-color: var(--line); background: rgba(255,255,255,.6); color: var(--ink-soft); }
+  .now i { background: var(--pomegranate); box-shadow: 0 0 0 4px rgba(196,56,46,.14); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--cypress); }
+  .hero h1 { text-wrap: balance; }
+  .hero h1 em { color: var(--shoot); }
+  .hero .lead { color: var(--ink-soft); }
+  .hero .btn-sprout { background: var(--cypress); color: #fff; box-shadow: 0 16px 32px -14px rgba(24,59,45,.8), 0 2px 6px -2px rgba(24,59,45,.45); }
+  .hero .btn-sprout:hover { background: var(--cypress-deep); }
+  .hero .btn-ghost { background: #fff; color: var(--cypress); border: 0; box-shadow: inset 0 0 0 1.5px var(--line); }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--shoot); }
+  .area li { color: var(--ink-soft); border-bottom-color: #b5c6a8; }
+  .visual { position: relative; min-width: 0; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .frame { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: var(--wheel);
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(24,59,45,.6), 0 8px 20px -12px rgba(24,59,45,.25); }
+  .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
+  /* the season wheel now opens the first section, beside the calendar it explains */
+  .wheel-band { max-width: 470px; margin: 0 auto 30px; padding: 18px 0 26px; }
+  main { overflow-x: clip; } /* the turning square of the dial never widens the page */
+  .wheel .dial { filter: drop-shadow(0 24px 30px rgba(24,59,45,.28)); }
+  .hub { box-shadow: 0 0 0 6px var(--wheel), 0 0 0 7px #c5d3b9, 0 18px 30px -12px rgba(15,42,31,.55); }
+  .hub .w { flex-wrap: wrap; }
+  .wheel-note { color: var(--ink-soft); }
+  .glass { position: absolute; z-index: 4; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(24,59,45,.6), 0 4px 12px -6px rgba(24,59,45,.2); padding: 14px 16px; color: var(--cypress);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both .15s; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-price { top: 0; inset-inline-end: 0; width: min(256px, 46%); display: grid; gap: 1px; }
+  .g-price span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-price span svg { width: 14px; height: 14px; color: var(--drip); flex: none; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.55; }
+  .g-price p b { font: 800 14px/1.55 "Rubik", var(--body); color: var(--cypress); white-space: nowrap; }
+  .g-chat { bottom: 0; inset-inline-start: 0; width: min(270px, 54%); display: grid; gap: 6px; animation-delay: .35s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eaf0e4; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--cypress); color: #fff; border-end-start-radius: 4px; }
+  .hero-grid { padding-bottom: 72px; }
+  @media (max-width: 1000px) { .visual { max-width: 500px; } .hero-grid { padding-bottom: 56px; } }
+  @media (max-width: 560px) {
+    .frame { inset: 10% 0 16% 8%; border-radius: 28px; }
+    .g-chat { display: none; }
+    .g-price { top: auto; bottom: 0; inset-inline-end: auto; inset-inline-start: 0; width: 80%; }
+    .wheel-band { margin-bottom: 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -228,17 +283,10 @@
         <ul class="area" aria-label="אזורי עבודה"><li>חדרה</li><li>עמק חפר</li><li>השרון</li><li>מושבים וקיבוצים</li></ul>
       </div>
 
-      <div>
-        <div class="wheel" id="wheel">
-          <svg class="dial" id="dial" viewBox="-300 -300 600 600" role="group" aria-label="גלגל העונות: מה עושים בגינה בכל חודש"></svg>
-          <div class="pointer" aria-hidden="true"><b>החודש</b><i></i></div>
-          <div class="hub" aria-live="polite">
-            <div class="m" id="hub-m">אוקטובר</div>
-            <div class="t" id="hub-t">זמן לשתול</div>
-            <div class="w"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg><span id="hub-w">טפטוף: פעם ביומיים</span></div>
-          </div>
-        </div>
-        <p class="wheel-note">לחצו על חודש בגלגל · תוכנית השקיה לדוגמה</p>
+      <div class="visual">
+        <div class="frame"><figure class="ps" data-slot="hero" data-src="../shared/photos/garden-work.webp" data-alt="גנן כורע ליד עץ רימון וגוזם ענפים" data-pos="58 50" data-icon="trowel" data-label="תמונה מגינה"></figure></div>
+        <div class="glass g-price" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg>מחירים לדוגמה</span><p>אחזקה קבועה <b>350 עד 900 ₪</b></p><p>גיזום <b>400 עד 1,500 ₪</b></p><p>מערכת השקיה <b>800 עד 2,500 ₪</b></p></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">יש לנו גינה של 80 מ״ר. כמה עולה אחזקה?</p><p class="a">בדרך כלל 350 עד 900 ₪ לחודש, לפי הגודל. אחזור אליכם לקבוע סיור.</p></div>
       </div>
     </div>
   </div>
@@ -251,6 +299,18 @@
         <span class="eyebrow">מחירים לדוגמה · לחיצה פותחת את הצ׳אט</span>
         <h2>מה עושים, ובאיזה חודש</h2>
         <p>לכל עבודה בגינה יש עונה. ככה זה נראה לאורך השנה.</p>
+      </div>
+      <div class="wheel-band">
+        <div class="wheel" id="wheel">
+          <svg class="dial" id="dial" viewBox="-300 -300 600 600" role="group" aria-label="גלגל העונות: מה עושים בגינה בכל חודש"></svg>
+          <div class="pointer" aria-hidden="true"><b>החודש</b><i></i></div>
+          <div class="hub" aria-live="polite">
+            <div class="m" id="hub-m">אוקטובר</div>
+            <div class="t" id="hub-t">זמן לשתול</div>
+            <div class="w"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg><span id="hub-w">טפטוף: פעם ביומיים</span></div>
+          </div>
+        </div>
+        <p class="wheel-note">לחצו על חודש בגלגל · תוכנית השקיה לדוגמה</p>
       </div>
       <div class="beds">
         <div class="cal-h" aria-hidden="true"><span></span><div class="strip"><span>ינו</span><span>פבר</span><span>מרץ</span><span>אפר</span><span>מאי</span><span>יונ</span><span>יול</span><span>אוג</span><span>ספט</span><span>אוק</span><span>נוב</span><span>דצמ</span></div><span></span></div>
@@ -435,6 +495,8 @@
 <script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "garden" });
+  /* the top photo is the first thing on screen: load it at once, with its size */
+  { const hi = document.querySelector('[data-slot="hero"] img'); if (hi) { hi.loading = "eager"; hi.fetchPriority = "high"; hi.width = 800; hi.height = 500; } }
 
   // ---------- the garden wheel ----------
   (function () {
