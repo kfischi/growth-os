@@ -8,7 +8,7 @@
 <meta name="description" content="שיפוץ מטבחים, אמבטיות ודירות בשרון. סיור בבית, הצעת מחיר מפורטת ולוח זמנים בכתב לפני שמתחילים.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the kitchen wall itself, before and after: the same elevation drawn twice, raw and finished.
@@ -243,6 +243,68 @@
     .site .frame .mark { inset-inline-end: 0; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .proj svg { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: fresh plaster with a breath of glazed green, big tight type, the drawn kitchen wall in a large
+     rounded frame (its line still sweeps once and stays draggable) and glass cards at its edges (the written schedule,
+     the chat, the sample ranges), the main button glowing in glaze green. Signature: the laser level draws its line
+     under "לוח זמנים" once, like the beam hitting the wall. */
+  .hero { background: var(--plaster);
+    background-image: radial-gradient(55% 65% at 8% 14%, rgba(29,92,88,.15), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(164,111,66,.08), transparent 70%), linear-gradient(180deg, #f8faf8, var(--plaster) 80%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--graphite); }
+  .hero h1 em { color: var(--glaze); }
+  .hero h1 em::after { bottom: -.04em; transform-origin: right center; animation: beam .9s .35s cubic-bezier(.6,0,.2,1) both; }
+  .hero h1 em::before { content: ""; position: absolute; bottom: calc(-.04em - 3px); inset-inline-end: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--laser);
+    box-shadow: 0 0 0 4px rgba(23,184,103,.22), 0 0 12px 2px rgba(23,184,103,.7); animation: dot .9s .35s cubic-bezier(.6,0,.2,1) both; }
+  @keyframes beam { from { transform: scaleX(0); } }
+  @keyframes dot { 0% { inset-inline-end: 100%; opacity: 0; } 15% { opacity: 1; } }
+  .btn { border-radius: 999px; }
+  .hero .btn-glaze { box-shadow: 0 16px 32px -14px rgba(19,63,60,.75), 0 2px 6px -2px rgba(19,63,60,.4); }
+  .hero .btn-line { background: #fff; border: 0; box-shadow: inset 0 0 0 1.5px var(--seam); }
+  .hero .btn-line:hover { background: #fff; color: var(--graphite); box-shadow: inset 0 0 0 1.5px var(--glaze); }
+  .terms { border-top-color: var(--seam); }
+  .stage { position: relative; padding: 44px 0 62px; }
+  .ps-ba.reno { border-radius: 34px; margin-inline-end: 7%; box-shadow: 0 0 0 1px rgba(27,33,36,.08), 0 50px 90px -46px rgba(19,63,60,.6); }
+  .ps-ba.reno .ps-ba-tag { border-radius: 999px; top: 16px; }
+  .ps-ba.reno .ps-ba-tag.b { left: 18px; top: auto; bottom: 16px; }
+  .ps-ba.reno .ps-ba-tag.a { right: 18px; }
+  .drag-hint { top: 16px; bottom: auto; border-radius: 999px; padding: 4px 14px; }
+  .wall-cap { margin-top: 0; }
+  .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(19,63,60,.6); padding: 14px 16px; color: var(--graphite); pointer-events: none;
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--tx, 0) var(--ty, 0); transition: translate .35s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .lx-plan { top: 0; inset-inline-end: 0; width: 228px; display: grid; gap: 4px; animation-delay: .1s; }
+  .lx-k { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--graphite-soft); }
+  .lx-k i { width: 8px; height: 8px; border-radius: 50%; background: var(--laser); box-shadow: 0 0 0 4px rgba(23,184,103,.18); }
+  .lx-plan b { font: 800 16px/1.2 "Rubik", var(--body); }
+  .lx-plan ol { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 5px; }
+  .lx-plan li { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 12.5px; color: var(--graphite-soft); }
+  .lx-plan li em { display: block; height: 8px; border-radius: 4px; background: var(--glaze); margin-inline-start: calc(var(--s) * 12.5%); width: calc(var(--w) * 12.5%); }
+  .lx-plan li em.oak { background: var(--oak); }
+  .lx-plan li span { min-width: 0; }
+  .lx-chat { top: 40%; inset-inline-end: -2%; width: min(46%, 236px); display: grid; gap: 6px; animation-delay: .3s; }
+  .lx-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .lx-chat .q { background: #eef3f1; justify-self: end; border-end-end-radius: 4px; }
+  .lx-chat .a { background: var(--glaze); color: #fff; border-end-start-radius: 4px; }
+  .lx-price { bottom: 18px; inset-inline-start: -10px; width: min(300px, 60%); display: grid; gap: 7px; font-size: 14px; animation-delay: .5s; }
+  .lx-price small { font-size: 12.5px; font-weight: 700; color: var(--graphite-soft); }
+  .lx-price div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .lx-price div + div { border-top: 1px dashed var(--seam); padding-top: 7px; }
+  .lx-price b { font: 700 15px/1.2 "Rubik", var(--body); color: var(--glaze); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .wall-cap b, .terms b { font-variant-numeric: tabular-nums; }
+  @media (max-width: 980px) { .wall { max-width: 640px; width: 100%; justify-self: center; } }
+  @media (max-width: 620px) {
+    .lx-chat { display: none; }
+    .stage { padding: 40px 0 64px; }
+    .ps-ba.reno { margin-inline: 0; border-radius: 26px; }
+    .lx-plan { width: 200px; padding: 11px 13px; }
+    .lx-price { inset-inline-start: 0; bottom: 0; width: 74%; padding: 11px 13px; }
+    .lx-price b { font-size: 14px; }
+    .ps-ba.reno .ps-ba-tag.b { bottom: auto; top: 16px; }
+    .drag-hint { top: auto; bottom: 74px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass, .hero h1 em::after, .hero h1 em::before { animation: none; } .glass { transition: none; } }
+  html.a11y-still .glass, html.a11y-still .hero h1 em::after, html.a11y-still .hero h1 em::before { animation: none; }
 </style>
 </head>
 <body>
@@ -274,6 +336,14 @@
       </div>
 
       <div class="wall">
+        <div class="stage">
+        <div class="glass lx-plan" aria-hidden="true">
+          <span class="lx-k"><i></i>לוח זמנים בכתב</span>
+          <b>מטבח · שבעה שבועות</b>
+          <ol><li><span>הריסה</span><em style="--s:0;--w:1"></em></li><li><span>ריצוף</span><em style="--s:2;--w:2"></em></li><li><span>נגרות</span><em class="oak" style="--s:4;--w:2"></em></li></ol>
+        </div>
+        <div class="glass lx-chat" aria-hidden="true"><p class="q">כמה עולה לשפץ מטבח?</p><p class="a">תלוי בגודל ובגימור. מתארים כאן, ואחרי סיור בבית מקבלים הצעה מפורטת.</p></div>
+        <div class="glass lx-price" aria-hidden="true"><small>טווחים לדוגמה</small><div><span>מטבח</span><b>35,000 עד 80,000 ₪</b></div><div><span>חדר אמבטיה</span><b>25,000 עד 45,000 ₪</b></div></div>
         <div class="ps-ba reno" id="ba">
           <figure class="ps" data-slot="after" data-icon="home" data-label="תמונת אחרי">
             <div class="ps-ph" aria-hidden="true">
@@ -383,6 +453,7 @@
           <span class="ps-ba-line" aria-hidden="true"></span>
           <span class="ps-ba-tag b">לפני</span><span class="ps-ba-tag a">אחרי</span>
           <span class="drag-hint" aria-hidden="true">גררו את הקו</span>
+        </div>
         </div>
         <div class="wall-cap">
           <div><b data-edit="ba-title">מטבח בהרצליה, לפני ואחרי</b><br><span class="mono" data-edit="ba-text">שבעה שבועות, בלי חריגה בתקציב.</span></div>
@@ -657,6 +728,27 @@
     document.getElementById("calc").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }));
   Guides.load("../shared/guides/renovation.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+<script>
+  // Desktop with a fine pointer: the glass cards drift a few pixels with the pointer, each at its own depth. Never on touch, reduced motion or "עצירת תנועה".
+  (() => {
+    const v = document.querySelector(".stage"), hero = v && v.closest(".hero");
+    if (!hero) return;
+    const ok = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const still = () => document.documentElement.classList.contains("a11y-still");
+    const cards = [...v.querySelectorAll(".glass")];
+    let x = 0, y = 0, raf = 0;
+    const paint = () => { raf = 0;
+      cards.forEach((c, i) => { const d = 5 + i * 3.5; c.style.setProperty("--tx", (-x * d).toFixed(2) + "px"); c.style.setProperty("--ty", (-y * d).toFixed(2) + "px"); }); };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    hero.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || !ok.matches || still()) return;
+      const r = v.getBoundingClientRect(), cl = (n) => Math.max(-1, Math.min(1, n));
+      x = cl(((e.clientX - r.left) / r.width - .5) * 2); y = cl(((e.clientY - r.top) / r.height - .5) * 2); ask();
+    });
+    hero.addEventListener("pointerleave", () => { x = y = 0; ask(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; ask(); });
+  })();
 </script>
 </body>
 </html>

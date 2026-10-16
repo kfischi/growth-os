@@ -8,7 +8,7 @@
 <meta name="description" content="אימון אישי בחדרה, בבית או בזום. תוכנית שבועית, מעקב התקדמות, ואימון היכרות שנקבע בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,500..900&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,500..900&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the athletics track. Red tartan, white lane lines, lane numbers painted at the start line, and a race bib pinned on.
@@ -238,6 +238,86 @@
     .js .ladder.wait li { transform: none; }
   }
   html.a11y-still .js .ladder.wait li, html.a11y-still .ladder.wait li { transform: none; }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: stadium concrete with a breath of tartan, the lane lines kept as a faint painted arc, big tight
+     Rubik with the track's lean, the photo in a large rounded frame with glass cards over it (two prices, the chat, and
+     the race bib, still pinned with its two holes), the main button glowing in tartan.
+     Signature moment: on load the lane lines are painted once, inside lane first, like the marking cart on a new track,
+     and the bib swings onto its pins. Never with reduced motion or html.a11y-still. */
+  .hero { background: var(--concrete); color: var(--spike);
+    background-image: radial-gradient(52% 62% at 14% 30%, rgba(178,58,38,.13), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(22,58,44,.08), transparent 70%); }
+  .hero::before { display: none; }
+  .lanes g { stroke: var(--tartan); }
+  .lanes g:nth-of-type(1) { stroke-opacity: .16; stroke-width: 2.5; }
+  .lanes g:nth-of-type(2) { stroke-opacity: .28; }
+  .lanes g:nth-of-type(3) { fill: var(--tartan); fill-opacity: .14; }
+  .lanes circle { stroke-dasharray: 1 1; animation: paint 1.6s cubic-bezier(.45,0,.2,1) both; }
+  @keyframes paint { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  .lanes circle:nth-child(2) { animation-delay: .08s; } .lanes circle:nth-child(3) { animation-delay: .16s; } .lanes circle:nth-child(4) { animation-delay: .24s; }
+  .lanes circle:nth-child(5) { animation-delay: .32s; } .lanes circle:nth-child(6) { animation-delay: .4s; } .lanes circle:nth-child(7) { animation-delay: .48s; }
+  .logo { color: var(--spike); } .logo small { color: var(--stand); opacity: 1; }
+  .bar a { color: var(--tartan-deep); border-bottom-color: var(--tartan); }
+  .kicker span { border: 1px solid #cfd6d3; background: rgba(255,255,255,.7); border-radius: 999px; color: var(--spike); padding: 5px 13px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 56px; padding: 30px 0 72px; }
+  .hero h1 { font-family: "Rubik", var(--body); font-stretch: 100%; font-weight: 800; letter-spacing: -.035em; font-size: clamp(50px, 7vw, 96px); line-height: 1; color: var(--spike); transform: skewX(-6deg); }
+  .hero h1 em { background: none; color: var(--tartan); padding: 0; margin-top: 0; }
+  .lead { color: #46504c; }
+  .btn { border-radius: 999px; }
+  .hero .btn-lane { background: var(--tartan); color: #fff; box-shadow: 0 16px 32px -14px rgba(142,44,28,.8), 0 2px 6px -2px rgba(142,44,28,.4), inset 0 1px 0 rgba(255,255,255,.2); }
+  .hero .btn-lane:hover { background: var(--tartan-deep); }
+  .hero .btn-ghost { background: #fff; color: var(--spike); box-shadow: inset 0 0 0 1.5px #cfd6d3, 0 10px 22px -18px rgba(142,44,28,.45); }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--tartan); }
+  .splits { border-top: 1px solid #cfd6d3; }
+  .splits div + div { border-inline-start: 1px solid #cfd6d3; }
+  .splits b { font-family: "Rubik", var(--body); font-stretch: 100%; font-weight: 800; letter-spacing: -.03em; font-size: 40px; color: var(--tartan-deep); font-variant-numeric: tabular-nums; }
+  .splits span { color: var(--stand); }
+  .plan .price { font-variant-numeric: tabular-nums; }
+
+  .visual { position: relative; padding: 0; width: 100%; max-width: 540px; aspect-ratio: 1 / 1; justify-self: center; }
+  .visual .frame { position: absolute; inset: 7% 3% 13% 15%; border-radius: 34px; overflow: hidden; background: #e4e8e6;
+    box-shadow: 0 0 0 1px rgba(23,26,25,.06), 0 50px 90px -46px rgba(110,34,22,.6), 0 18px 34px -26px rgba(142,44,28,.35); }
+  .visual .frame .ps { aspect-ratio: auto; height: 100%; border: 0; transform: none; box-shadow: none; }
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--spike);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(110,34,22,.6), 0 4px 12px -6px rgba(142,44,28,.2);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both;
+    translate: calc(var(--px, 0) * var(--d, 10px)) calc(var(--py, 0) * var(--d, 10px)); transition: translate .6s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--stand); }
+  .g-price { top: 0; inset-inline-end: 0; width: 236px; display: grid; gap: 5px; --d: -9px; }
+  .g-price svg { stroke: var(--tartan); }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed #d9dedc; padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--tartan-deep); white-space: nowrap; }
+  .g-chat { top: 40%; inset-inline-end: -2%; width: min(50%, 232px); display: grid; gap: 6px; padding: 11px; animation-delay: .28s; --d: 16px; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eef1f0; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--spike); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  /* The bib: glass now, still pinned on with its two holes, and it swings onto the pins once. */
+  .bib.glass { inset-inline-start: 0; bottom: 2%; min-width: 0; width: 176px; padding: 14px 18px 14px; border-radius: 18px; text-align: center; --d: 12px;
+    transform: rotate(-4deg); animation: pin .9s cubic-bezier(.3,1.4,.5,1) both .18s; }
+  @keyframes pin { from { opacity: 0; transform: translateY(18px) rotate(-11deg); } }
+  .bib.glass::before, .bib.glass::after { top: 9px; background: #e4e8e6; box-shadow: inset 0 1px 1.5px rgba(23,26,25,.35); }
+  .bib.glass b { font-family: "Rubik", var(--body); font-stretch: 100%; font-weight: 800; letter-spacing: -.03em; font-size: 44px; line-height: 1.02; color: var(--spike); }
+  .bib.glass small { letter-spacing: .04em; }
+  .bib.glass span { display: block; color: var(--stand); font-size: 13px; }
+
+  @media (max-width: 980px) { .visual { max-width: 460px; } .bib-photo { width: 100%; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .hero h1 { font-size: clamp(48px, 14vw, 62px); }
+    .splits b { font-size: 32px; }
+    .g-chat { display: none; }
+    .visual .frame { inset: 9% 0 15% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-price { width: 62%; }
+    .g-price p { font-size: 13px; }
+    .bib.glass { width: 140px; padding: 12px 12px 10px; }
+    .bib.glass b { font-size: 34px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass, .bib.glass, .lanes circle { animation: none; } .glass { translate: none; transition: none; } }
+  html.a11y-still .glass, html.a11y-still .bib.glass, html.a11y-still .lanes circle { animation: none; }
+  html.a11y-still .glass { translate: none; transition: none; }
 </style>
 </head>
 <body>
@@ -247,8 +327,8 @@
 <header class="hero">
   <svg class="lanes" viewBox="0 0 1200 760" preserveAspectRatio="xMinYMax slice" aria-hidden="true">
     <g fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="3">
-      <circle cx="-80" cy="980" r="560"/><circle cx="-80" cy="980" r="640"/><circle cx="-80" cy="980" r="720"/>
-      <circle cx="-80" cy="980" r="800"/><circle cx="-80" cy="980" r="880"/><circle cx="-80" cy="980" r="960"/><circle cx="-80" cy="980" r="1040"/>
+      <circle cx="-80" cy="980" r="560" pathLength="1"/><circle cx="-80" cy="980" r="640" pathLength="1"/><circle cx="-80" cy="980" r="720" pathLength="1"/>
+      <circle cx="-80" cy="980" r="800" pathLength="1"/><circle cx="-80" cy="980" r="880" pathLength="1"/><circle cx="-80" cy="980" r="960" pathLength="1"/><circle cx="-80" cy="980" r="1040" pathLength="1"/>
     </g>
     <g stroke="#fff" stroke-opacity=".55" stroke-width="5"><path d="M480 980 V900 M560 980 V900"/></g>
     <g fill="#fff" fill-opacity=".22" font-family="Noto Sans Hebrew, Rubik, sans-serif" font-weight="900" font-size="54" text-anchor="middle">
@@ -275,9 +355,15 @@
           <div><b>12</b><span>שבועות לתוכנית</span></div>
         </div>
       </div>
-      <div class="bib-photo">
-        <figure class="ps" data-slot="cover" data-src="../shared/photos/trainer-cover.webp" data-alt="מאמנת ומתאמנת באימון קטלבל בפארק" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure>
-        <div class="bib"><small>מאמנת</small><b data-edit="years">8 שנים</b><span data-edit="bib-line">של אימון אישי</span></div>
+      <div class="bib-photo visual">
+        <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/trainer-cover.webp" data-alt="מאמנת ומתאמנת באימון קטלבל בפארק" data-pos="50 40" data-icon="person" data-label="תמונה שלכם"></figure></div>
+        <div class="glass g-price" aria-hidden="true">
+          <span><svg viewBox="0 0 16 16" width="13" height="13"><circle cx="8" cy="9" r="6" fill="none" stroke-width="1.8"/><path d="M8 9 V5.5 M6 1.5 H10" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg>55 דקות לאימון</span>
+          <p><b>אימון בודד</b><em>220 ₪</em></p>
+          <p><b>כרטיסייה של 10</b><em>190 ₪ לאימון</em></p>
+        </div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">אפשר להתחיל אחרי הפסקה ארוכה?</p><p class="a">בטח, מתחילים בקטן. עונים על ארבע שאלות, ואני חוזרת לקבוע אימון היכרות.</p></div>
+        <div class="bib glass"><small>מאמנת</small><b data-edit="years">8 שנים</b><span data-edit="bib-line">של אימון אישי</span></div>
       </div>
     </div>
   </div>
@@ -439,6 +525,21 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "trainer" });
+  // The glass cards follow a fine pointer by a few pixels. Transform only, never on touch, reduced motion or a11y-still.
+  (function () {
+    const hero = document.querySelector(".hero"), root = document.documentElement;
+    const fine = matchMedia("(hover: hover) and (pointer: fine)"), calm = matchMedia("(prefers-reduced-motion: reduce)");
+    let raf = 0, x = 0, y = 0;
+    const set = (a, b) => { hero.style.setProperty("--px", a); hero.style.setProperty("--py", b); };
+    hero.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || !fine.matches || calm.matches || root.classList.contains("a11y-still")) return;
+      const r = hero.getBoundingClientRect();
+      x = ((e.clientX - r.left) / r.width - .5).toFixed(3); y = ((e.clientY - r.top) / r.height - .5).toFixed(3);
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; set(x, y); });
+    });
+    hero.addEventListener("pointerleave", () => set(0, 0));
+    document.addEventListener("a11y-still", () => set(0, 0));
+  })();
   const PLACE = { "בסטודיו בחדרה": "בסטודיו בחדרה", "אצלי בבית": "אצלכם בבית", "אונליין": "בזום" };
   const bot = LeadBot.init({
     whatsapp: "972526359513",

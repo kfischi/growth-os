@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;500;600&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/ac-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the thermostat readout on the wall unit, and the Israeli summer outside the window.
@@ -260,11 +261,9 @@
   .g-read { display: flex; align-items: flex-end; gap: 10px; }
   .gauge { width: 64px; height: 42px; flex: none; margin-bottom: 4px; }
   .gauge .needle { transform-box: view-box; transform-origin: 32px 36px; transform: rotate(calc(75deg - var(--cool, 1) * 105deg)); }
-  .glass { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(12,64,92,.5); translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  .glass { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(12,64,92,.5); }
   .g-price > span { display: flex; align-items: center; gap: 6px; color: var(--glacier); font-weight: 700; }
   .g-price i, .g-temp .temp, .facts b { font-variant-numeric: tabular-nums; }
-  @media (prefers-reduced-motion: reduce) { .glass { transition: none; translate: none; } }
-  html.a11y-still .glass { transition: none; translate: none; }
 </style>
 </head>
 <body>
@@ -296,9 +295,9 @@
           <figure class="ps" data-slot="hero" data-src="../shared/photos/ac-work.webp" data-alt="טכנאי מנקה פילטר במזגן עילי בסלון" data-pos="45 40" data-icon="snow" data-label="תמונה מעבודה"></figure>
           <div class="modes" aria-hidden="true"><span class="on">קירור</span><span>ייבוש</span><span>מאוורר</span><span>חימום</span></div>
         </div>
-        <div class="glass g-temp" aria-hidden="true" data-depth="1.2"><span>בסלון, אחרי ניקוי</span><div class="g-read"><div class="temp"><span id="temp">24</span><sup>°</sup></div><svg class="gauge" viewBox="0 0 64 42"><defs><linearGradient id="gaugeArc" x1="0" x2="1"><stop offset="0" stop-color="#0c6b97"/><stop offset=".55" stop-color="#7fc6e3"/><stop offset="1" stop-color="#ff8f70"/></linearGradient></defs><path d="M6 36A26 26 0 0 1 58 36" fill="none" stroke="url(#gaugeArc)" stroke-width="5" stroke-linecap="round"/><path d="M6 36h3M32 10v3M58 36h-3" stroke="#3d566a" stroke-width="1.5" stroke-linecap="round" opacity=".5"/><line class="needle" x1="32" y1="36" x2="32" y2="15" stroke="#0d2436" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="36" r="4" fill="#0d2436"/><circle cx="32" cy="36" r="1.5" fill="#fff"/></svg></div><small>בחוץ: <b class="ltr">38°</b></small></div>
-        <div class="glass g-price" aria-hidden="true" data-depth=".7"><span><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 1.5v13M2.4 4.75l11.2 6.5M2.4 11.25l11.2-6.5M6 2.8 8 4.6l2-1.8M6 13.2l2-1.8 2 1.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>מחירים לדוגמה</span><p><b>לא מקרר</b><i>350 עד 550 ₪</i></p><p><b>מטפטף מים</b><i>250 עד 380 ₪</i></p><p><b>ניקוי ותחזוקה</b><i>250 עד 350 ₪</i></p></div>
-        <div class="glass g-chat" aria-hidden="true" data-depth="1.6"><p class="q">המזגן בסלון מטפטף, אפשר טכנאי?</p><p class="a">כן. מתארים כאן את התקלה, והטכנאי חוזר אליכם לקבוע מועד.</p></div>
+        <div class="glass g-temp" aria-hidden="true"><span>בסלון, אחרי ניקוי</span><div class="g-read"><div class="temp"><span id="temp">24</span><sup>°</sup></div><svg class="gauge" viewBox="0 0 64 42"><defs><linearGradient id="gaugeArc" x1="0" x2="1"><stop offset="0" stop-color="#0c6b97"/><stop offset=".55" stop-color="#7fc6e3"/><stop offset="1" stop-color="#ff8f70"/></linearGradient></defs><path d="M6 36A26 26 0 0 1 58 36" fill="none" stroke="url(#gaugeArc)" stroke-width="5" stroke-linecap="round"/><path d="M6 36h3M32 10v3M58 36h-3" stroke="#3d566a" stroke-width="1.5" stroke-linecap="round" opacity=".5"/><line class="needle" x1="32" y1="36" x2="32" y2="15" stroke="#0d2436" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="36" r="4" fill="#0d2436"/><circle cx="32" cy="36" r="1.5" fill="#fff"/></svg></div><small>בחוץ: <b class="ltr">38°</b></small></div>
+        <div class="glass g-price" aria-hidden="true"><span><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 1.5v13M2.4 4.75l11.2 6.5M2.4 11.25l11.2-6.5M6 2.8 8 4.6l2-1.8M6 13.2l2-1.8 2 1.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>מחירים לדוגמה</span><p><b>לא מקרר</b><i>350 עד 550 ₪</i></p><p><b>מטפטף מים</b><i>250 עד 380 ₪</i></p><p><b>ניקוי ותחזוקה</b><i>250 עד 350 ₪</i></p></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">המזגן בסלון מטפטף, אפשר טכנאי?</p><p class="a">כן. מתארים כאן את התקלה, והטכנאי חוזר אליכם לקבוע מועד.</p></div>
       </div>
     </div>
   </div>
@@ -449,6 +448,8 @@
 <script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "ac" });
+  // the hero photo is the first thing seen: load it at once, with its real size
+  { const hi = document.querySelector(".hero .frame .ps-img"); if (hi) { hi.loading = "eager"; hi.fetchPriority = "high"; hi.width = 800; hi.height = 500; } }
   const RANGES = { "לא מקרר או לא מחמם": "350 עד 550", "מטפטף מים": "250 עד 380", "ניקוי תקופתי": "250 עד 350", "התקנת מזגן חדש": "850 עד 1,400", "רעש או ריח": "280 עד 450" };
   const bot = LeadBot.init({
     estimate: { endpoint: "/api/estimate", trade: "מיזוג אוויר", prices: RANGES }, // a first look at the photo the customer attaches
@@ -489,22 +490,6 @@
     addEventListener("a11y-still", () => { cancelAnimationFrame(raf); end(); });
   })();
 
-  // Glass cards drift a few pixels with a fine pointer on desktop. Transform only; off for touch, reduced motion and "עצירת תנועה".
-  (function tilt() {
-    const area = document.querySelector(".hero .visual");
-    if (!area || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const cards = [...area.querySelectorAll(".glass")], hero = document.getElementById("hero");
-    const off = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    let raf = 0, x = 0, y = 0;
-    const paint = () => { raf = 0; cards.forEach((c) => { const d = +c.dataset.depth || 1; c.style.setProperty("--px", (x * 7 * d).toFixed(1) + "px"); c.style.setProperty("--py", (y * 6 * d).toFixed(1) + "px"); }); };
-    hero.addEventListener("pointermove", (e) => {
-      if (off() || e.pointerType !== "mouse") return;
-      const r = area.getBoundingClientRect();
-      x = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)); y = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / r.height));
-      if (!raf) raf = requestAnimationFrame(paint);
-    });
-    hero.addEventListener("pointerleave", () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); });
-  })();
 
   Estimate.init(document.querySelector("[data-estimate]"), {
     pick: { ask: "מה קורה עם המזגן?", items: [

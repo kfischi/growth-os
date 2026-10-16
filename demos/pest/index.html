@@ -274,7 +274,7 @@
   .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; padding: 14px 16px; color: var(--dusk);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,39,83,.6), 0 4px 12px -6px rgba(28,39,83,.18);
-    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
   .g-lic { top: 5%; inset-inline-start: 0; display: grid; gap: 3px; }
   .g-lic span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--dusk-soft); }
@@ -298,8 +298,8 @@
     .g-price { top: auto; bottom: 22%; width: 164px; padding: 12px 14px; }
     .g-price div { display: grid; gap: 0; padding: 6px 0; font-size: 14px; }
   }
-  @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; translate: none; } }
-  html.a11y-still .glass { animation: none; transition: none; translate: none; }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -608,25 +608,6 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/pest.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
-</script>
-<script>
-  /* The glass cards drift a few pixels with a fine pointer; never for touch, reduced motion or "עצירת תנועה". */
-  (() => {
-    const hero = document.querySelector(".hero"), cards = hero ? hero.querySelectorAll(".glass") : [];
-    if (!cards.length || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    let x = 0, y = 0, raf = 0;
-    const paint = () => { raf = 0; cards.forEach((c, i) => { const k = 4 + i * 3; c.style.setProperty("--px", (x * k).toFixed(1) + "px"); c.style.setProperty("--py", (y * k).toFixed(1) + "px"); }); };
-    hero.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || still()) return;
-      const r = hero.getBoundingClientRect();
-      x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5;
-      if (!raf) raf = requestAnimationFrame(paint);
-    });
-    const reset = () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); };
-    hero.addEventListener("pointerleave", reset);
-    document.addEventListener("a11y-still", reset);
-  })();
 </script>
 </body>
 </html>
