@@ -209,10 +209,54 @@ r = await J(await req("chat", { body: { message: "העליתי סרטון", rev:
 assert.match(aiCallsState(), /"video":true/, "the chat knows there is a video"); assert.match(B.renderDraft(D), /צילום מהשטח · פתיחת סתימה במטבח/);
 r = await J(await req("video", { method: "DELETE" })); assert.equal(D.video, null); assert.equal(storage.size, stored);
 assert.match(B.renderDraft(D), /class="drawing"/);
-r = await J(await vreq(vbody(jpg, mp4))); assert.equal(r.error, "rate_limited", "6 videos per 10 minutes from one address");
+
+/* ---------------- up to 5 short videos: "סרטונים מהעבודה" ---------------- */
+const creq = (headers = {}) => req("clip", { raw: vbody(jpg, mp4), ip: "4.4.4.4", headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length), "x-video-size": "720x1280", ...headers } });
+r = await J(await creq({ "x-photo-rights": "" })); assert.equal(r.error, "no_rights");
+r = await J(await req("clip", { raw: vbody(jpg, Buffer.from("<html>no</html>".repeat(20))), ip: "4.4.4.4", headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length) } })); assert.equal(r.status, 415, "only an MP4");
+const beforeClips = storage.size;
+r = await J(await creq({ "x-title": encodeURIComponent("פתיחת סתימה <b>במטבח</b>") }));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.videos.length, 1); assert.equal(storage.size, beforeClips + 2);
+assert.equal(D.videos[0].title, "פתיחת סתימה b במטבח /b", "no markup in a title"); assert.deepEqual([D.videos[0].w, D.videos[0].h], [720, 1280]);
+assert.match(D.videos[0].id, /^[0-9a-f]{8}$/); assert.match(r.state.videos[0].src, /\/clip-[0-9a-f]{12}\.mp4$/); assert.match(r.state.videos[0].poster, /\/clipposter-.*\.jpg$/);
+r = await J(await creq()); assert.equal(D.videos.length, 2); assert.equal(D.content.hero_media, undefined, "a clip doesn't touch the content");
+html = B.renderDraft(D);
+assert.match(html, /<section class="clips-sec" id="videos">/); assert.equal((html.match(/<figure class="vclip"/g) || []).length, 2);
+assert.match(html, /<video muted loop playsinline preload="none" data-src="https:\/\/x\.supabase\.co[^"]*clip-[^"]*\.mp4" width="720" height="1280"/, "no src until it plays");
+assert.ok(!/<video[^>]* src=/.test(html.split('class="clips-sec"')[1]), "nothing of the short videos is fetched on load");
+assert.match(html, /<img src="data:image\/gif;base64,[^"]+" data-src="https:\/\/x\.supabase\.co[^"]*clipposter[^"]*" alt="" width="720" height="1280"/, "the poster loads when the section is near");
+assert.equal((html.match(/<script>\(function \(\) \{\n  var list = /g) || []).length, 1, "the clips' script once");
+r = await J(await req("clip", { method: "PUT", query: "?id=" + D.videos[1].id, body: { title: "ניקוי סתימה בחדרה" } })); assert.equal(r.status, 200); assert.equal(D.videos[1].title, "ניקוי סתימה בחדרה");
+assert.match(B.renderDraft(D), /<figcaption>ניקוי סתימה בחדרה<\/figcaption>/);
+r = await J(await req("clip", { method: "PUT", query: "?id=nothere0", body: { title: "x" } })); assert.equal(r.status, 400);
+r = await J(await req("clip", { method: "DELETE", query: "?id=0000ffff" })); assert.equal(r.status, 404);
+const gone = D.videos[0];
+r = await J(await req("clip", { method: "DELETE", query: "?id=" + gone.id })); assert.equal(r.status, 200); assert.equal(D.videos.length, 1);
+assert.ok(!storage.has(gone.path) && !storage.has(gone.poster.path), "a removed video and its frame are deleted"); assert.equal(storage.size, beforeClips + 2);
+for (let i = 0; i < 4; i++) { r = await J(await creq()); assert.equal(r.status, 200, JSON.stringify(r)); }
+assert.equal(D.videos.length, 5); r = await J(await creq()); assert.equal(r.error, "too_many", "5 short videos at most");
+for (let i = 0; i < 6; i++) { r = await J(await vreq(vbody(jpg, mp4))); assert.equal(r.status, 200, "video " + (i + 7)); }
+r = await J(await vreq(vbody(jpg, mp4))); assert.equal(r.error, "rate_limited", "12 videos per 10 minutes from one address");
 r = await J(await req("video", { raw: vbody(jpg, mp4), ip: "3.3.3.3", headers: { "content-type": "application/octet-stream", "x-photo-rights": "yes", "x-poster-length": String(jpg.length) } }));
 assert.ok(D.video, "back for the publish test");
+for (const x of D.videos.slice(2)) await req("clip", { method: "DELETE", query: "?id=" + x.id }); // two stay for the publish test
+assert.equal(D.videos.length, 2);
+
+/* ---------------- the top of the site: a photo or the video, the owner's pick ---------------- */
+r = await J(await req("photo", { raw: webp, query: "?slot=hero", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 200);
+assert.equal(r.state.hero, "video", "without a pick, the video shows");
+html = B.renderDraft(D); assert.match(html, /<figure class="reel">/); assert.ok(!html.includes('class="hero has-bg"'), "one of them, not both");
+r = await J(await req("answer", { body: { hero: "photo", rev: D.rev } })); assert.equal(r.status, 200); assert.equal(D.content.hero_media, "photo"); assert.equal(r.state.hero, "photo");
+assert.match(r.draft, /class="hero has-bg"/); assert.ok(!r.draft.includes('<figure class="reel">'));
+r = await J(await req("answer", { body: { hero: "banner", rev: D.rev } })); assert.equal(r.status, 422);
+r = await J(await req("answer", { body: { hero: "video", rev: D.rev } })); assert.equal(D.content.hero_media, "video"); assert.match(r.draft, /<figure class="reel">/);
+
+/* ---------------- six work photos: the draft marks only the first three empty frames ---------------- */
+r = await J(await req("photo", { raw: webp, query: "?slot=work5", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 200);
+assert.deepEqual([D.photos.work5.w, D.photos.work5.h], [257, 257], "the photo's size, read from its header");
 html = B.renderDraft(D); assert.match(html, /builder\/drafts\/.*work1-/); assert.match(html, /עבודה 2<br>מעלים ב״תמונות״/, "an empty slot is marked in the draft");
+assert.ok(!html.includes("עבודה 4<br>מעלים"), "slots 4 to 6 only once filled"); assert.match(html, /work5-[0-9a-f]+\.webp" alt="[^"]*" width="257" height="257" loading="lazy"/);
+assert.match(html, /<div class="details n4">/, "1, 2, 3 (empty frames) and 5");
 
 /* ---------------- approve ---------------- */
 r = await J(await req("approve", { body: { package: "ai", plan: "three", rev: D.rev } })); assert.equal(r.error, "bad_package", "the setup is one payment");
@@ -271,12 +315,16 @@ assert.deepEqual(r.hosting, { state: "off" }, "without NETLIFY_TOKEN the site wa
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).filter((x) => !/\/service-[a-z0-9]+\.html$/.test(x)).sort();
 assert.equal(tree.tree.filter((e) => /\/service-[a-z0-9]+\.html$/.test(e.path)).length, D.content.services.length, "a page per service in the repo too");
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "assets/photos/work5.webp",
+  ...D.videos.flatMap((x) => [`assets/videos/${x.id}.mp4`, `assets/videos/${x.id}-poster.jpg`]), "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
 assert.ok(!/noindex|טיוטה|class="todo"/.test(index), "no draft marks on the real site"); assert.match(index, /"leads":"https:\/\/service-pro-web.netlify.app\/api\/lead\/oren-mayim"/);
 assert.match(index, /src="assets\/photos\/portrait.jpg"/); assert.match(index, /src="assets\/leadbot.js"/); assert.match(index, /<source src="assets\/hero.mp4" type="video\/mp4">/); assert.match(index, /poster="assets\/hero-poster.jpg"/);
+assert.ok(!paths.some((x) => /photos\/hero\./.test(x)), "the top shows the video: its photo isn't published");
+assert.equal((index.match(/<figure class="vclip"/g) || []).length, 2); assert.match(index, new RegExp(`data-src="assets/videos/${D.videos[0].id}.mp4" width="720" height="1280"`));
+assert.match(index, /src="assets\/photos\/work5.webp" alt="[^"]*" width="257" height="257"/); assert.match(index, /<div class="details n2">/, "a live site shows only the photos it has");
 assert.ok(!file("_headers").content.includes("noindex")); assert.ok(!/0526359513|972526359513/.test(file("CLIENT.md").content), "no phone in the public repo card");
 const C = T.ls_clients.find((c) => c.slug === "oren-mayim");
 assert.ok(C && C.key_hash && C.owner_phone === "972526359513"); assert.match(C.chat_facts, /סתימה בכיור.*250 עד 450 ₪/);
@@ -327,8 +375,15 @@ ai.queue.push({ reply: "הורדנו.", set: [{ field: "intro", value: "טעות
 r = await J(await req("chat", { body: { message: "תשנו", rev: D.rev }, ip: "6.6.6.1" })); assert.equal(D.content.intro, "טעות.");
 r = await J(await req("photo", { raw: jpg, query: "?slot=work2", headers: { "x-photo-rights": "yes" }, ip: "6.6.6.1" }));
 const unused = D.photos.work2.path;
+// and a short video while editing: a change too, gone with the discard; a live one stays in storage when removed
+const liveClip = D.videos[0];
+r = await J(await req("clip", { method: "DELETE", query: "?id=" + liveClip.id, ip: "6.6.6.1" })); assert.equal(r.status, 200);
+assert.ok(storage.has(liveClip.path), "the live site's video stays in storage while editing");
+r = await J(await creq()); assert.equal(r.status, 200, JSON.stringify(r)); const unusedClip = D.videos.at(-1);
+assert.equal(r.state.edit.dirty, true);
 r = await J(await req("discard", { body: { rev: D.rev }, ip: "6.6.6.1" }));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(D.content.intro, "פתיחה חדשה מבעל העסק."); assert.ok(!D.photos.work2); assert.ok(!storage.has(unused)); assert.equal(r.state.edit.dirty, false);
+assert.ok(!storage.has(unusedClip.path) && !storage.has(unusedClip.poster.path), "the unpublished video is deleted"); assert.equal(D.videos[0].id, liveClip.id, "the live videos are back");
 // back to the previous version: loaded as changes, published like any change
 r = await J(await req("undo", { body: { rev: D.rev }, ip: "6.6.6.1" }));
 assert.equal(r.status, 200); assert.equal(D.content.intro, liveIntro); assert.equal(D.photos.portrait.path, oldPortrait); assert.equal(r.state.edit.dirty, true);
@@ -436,6 +491,28 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const draft = P.render(SAMPLE, { mode: "draft", photos: { after: "/x.jpg" } })["index.html"];
   assert.ok(draft.includes("<section class=\"ba-sec\">") && draft.includes('class="ba half"') && !draft.includes('class="ba-range"'));
   assert.ok(!P.render(SAMPLE, { mode: "draft" })["index.html"].includes("<section class=\"ba-sec\">"), "nothing until a photo is in");
+// --- the gallery: 1 to 6 work photos in tidy rows; the short videos load nothing until they play; the top's pick
+{
+  for (let n = 1; n <= 6; n++) {
+    const photos = Object.fromEntries(P.WORKS.slice(0, n).map((w) => [w, `assets/photos/${w}.webp`]));
+    const html = P.render(SAMPLE, { mode: "site", photos, sizes: { work1: [1200, 900] } })["index.html"];
+    assert.match(html, new RegExp(`<div class="details n${n}">`)); assert.equal((html.match(/<div class="detail">/g) || []).length, n);
+    assert.match(html, /src="assets\/photos\/work1.webp" alt="[^"]*" width="1200" height="900" loading="lazy"/);
+  }
+  assert.match(P.render({ ...SAMPLE, work6_title: "ניקוי מרזב" }, { mode: "site", photos: { work6: "assets/photos/work6.webp" } })["index.html"], /פרט א׳<\/span><h3>ניקוי מרזב<\/h3>/);
+  assert.match(P.render(SAMPLE, { mode: "draft" })["index.html"], /<div class="details n3">/, "an empty draft: three frames, not six");
+  const clips = [1, 2, 3, 4, 5, 6].map((i) => ({ src: `assets/videos/c${i}.mp4`, poster: `assets/videos/c${i}-poster.webp`, title: i === 1 ? "סתימה <b>" : "", w: 720, h: 1280 }));
+  const site = P.render(SAMPLE, { mode: "site", clips })["index.html"];
+  assert.equal((site.match(/<figure class="vclip"/g) || []).length, 5, "five at most"); assert.match(site, /<div class="vclips n5">/);
+  assert.match(site, /data-t="סתימה &lt;b&gt;"/); assert.ok(!/<video[^>]* src=/.test(site.split("<section class=\"clips-sec\"")[1]), "no video file on load");
+  assert.ok(!P.render(SAMPLE, { mode: "site" })["index.html"].includes("<section class=\"clips-sec\""), "no videos, no section");
+  const both = { photos: { hero: "assets/photos/hero.webp" }, video: { src: "assets/hero.mp4", poster: "assets/hero-poster.webp" } };
+  assert.match(P.render(SAMPLE, { mode: "site", ...both })["index.html"], /<figure class="reel">/, "no pick: the video");
+  const pickPhoto = P.render({ ...SAMPLE, hero_media: "photo" }, { mode: "site", ...both })["index.html"];
+  assert.ok(pickPhoto.includes('class="hero has-bg"') && !pickPhoto.includes('<figure class="reel">') && !pickPhoto.includes("querySelector(\".reel video\")"), "the photo, not both");
+  assert.match(P.render({ ...SAMPLE, hero_media: "video" }, { mode: "site", photos: both.photos })["index.html"], /class="drawing"/, "a pick without its file: the drawing");
+  assert.equal(P.heroKind({}, { photo: true }), "photo"); assert.equal(P.heroKind({ hero_media: "photo" }, { video: true }), null);
+}
   assert.ok(P.PHOTOS.before && P.PHOTOS.after && P.FIELDS.ba_title.max === 40);
 }
 

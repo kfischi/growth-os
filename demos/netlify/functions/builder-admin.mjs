@@ -9,7 +9,7 @@
 //   POST /api/builder-admin { action: "delete",  id }
 import { json, configured, authorise, db, q, clip } from "../lib/leads.mjs";
 import { hostingOn, cleanDomain, addDomain, dnsSteps } from "../lib/hosting.mjs";
-import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia, publishDraft, PublishError } from "../lib/builder.mjs";
+import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, deletePhotos, mediaPaths, Conflict, snapshot, editing, isDirty, editUsage, releaseMedia, publishDraft, PublishError, versionPatch } from "../lib/builder.mjs";
 
 function view(d) {
   const t = templateOf(d);
@@ -95,7 +95,7 @@ export default async (req) => {
       const on = body.on === true;
       // A site published before self edit existed: what it shows now is its content.
       // Turned off: changes the owner didn't publish are dropped, so a later publish by כפיר never carries them.
-      const back = !on && d.live && isDirty(d) ? { content: d.live.content, photos: d.live.photos || {}, video: d.live.video || null, photo_rev: d.photo_rev + 1 } : {};
+      const back = !on && d.live && isDirty(d) ? { ...versionPatch(d.live, d), photo_rev: d.photo_rev + 1 } : {};
       const patch = on ? { self_edit: true, live: d.live || snapshot(d), messages: [] } : { self_edit: false, messages: [], ...back };
       const saved = await saveDraft(d, patch);
       if (back.content) await releaseMedia(saved, mediaPaths(d));

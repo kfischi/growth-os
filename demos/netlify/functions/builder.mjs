@@ -3,12 +3,16 @@
 //   GET    /api/builder/state                                             -> { state }
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
 //   POST   /api/builder/learn     { text?, images?: [dataURL x3], rev }    -> { reply, changed, state, draft }   "למדו את העסק שלי"
-//   POST   /api/builder/answer    { set, services, towns, regions, social, style, rev }   an answer picked in the questionnaire,
-//                                 or the design ({ look, palette }), no AI -> { state }
+//   POST   /api/builder/answer    { set, services, towns, regions, social, style, hero, rev }   an answer picked in the questionnaire,
+//                                 the design ({ look, palette }) or the top of the site (hero: "photo" | "video"), no AI -> { state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
 //   DELETE /api/builder/photo?slot=portrait                               -> { state }
 //   POST   /api/builder/video     body: the first frame (JPEG/WebP) then the MP4; x-poster-length: frame bytes -> { state }
 //   DELETE /api/builder/video                                             -> { state }
+//   POST   /api/builder/clip      the same body as /video, plus x-title (URI-encoded) and x-video-size ("720x1280"): one of
+//                                 up to 5 short videos for "סרטונים מהעבודה"                       -> { state }
+//   PUT    /api/builder/clip?id=<id>   { title }   its title                                       -> { state }
+//   DELETE /api/builder/clip?id=<id>                                         -> { state }
 //   POST   /api/builder/approve   { package, plan, rev }                  -> { state }
 //   POST   /api/builder/reopen    { rev }   back to editing, before payment -> { state }
 // Address, payment and the subscription (lib/billing.mjs; billing comes back as { billing } next to state):
@@ -30,17 +34,20 @@ import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db
 import {
   TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
   chatTurn, learnTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
-  isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES,
+  isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES, imageSize, versionPatch,
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient, hostSite, suggestSlugs, connectDomain,
 } from "../lib/builder.mjs";
 import { billingView, chooseAddress, checkout, confirmPayment, cancel, resume } from "../lib/billing.mjs";
 import dns from "node:dns/promises";
+import { randomBytes } from "node:crypto";
+
+class TooMany extends Error {}
 
 const startLimited = rateLimiter(3, 60 * 60 * 1000);   // new drafts per IP per hour, per function instance
 const chatLimited = rateLimiter(40, 10 * 60 * 1000);    // chat turns per IP
 const photoLimited = rateLimiter(30, 10 * 60 * 1000);
-const videoLimited = rateLimiter(6, 10 * 60 * 1000);
+const videoLimited = rateLimiter(12, 10 * 60 * 1000);   // the top's video and up to 5 short ones, with a few replacements
 const publishLimited = rateLimiter(6, 10 * 60 * 1000);
 const answerLimited = rateLimiter(120, 10 * 60 * 1000);
 const learnLimited = rateLimiter(8, 60 * 60 * 1000);    // "learn my business" reads (images cost more than a chat turn)
@@ -154,6 +161,7 @@ export default async (req, context) => {
         regions: Array.isArray(body.regions) ? body.regions.slice(0, 8) : null,
         social: body.social && typeof body.social === "object" && !Array.isArray(body.social) ? Object.fromEntries(["instagram", "facebook", "tiktok", "youtube"].filter((k) => typeof body.social[k] === "string").map((k) => [k, body.social[k].slice(0, 300)])) : null,
         style: body.style && typeof body.style === "object" ? { look: String(body.style.look || ""), palette: String(body.style.palette || "") } : null,
+        hero: typeof body.hero === "string" ? body.hero : null,
       };
       const { content, changed, errors } = applyUpdate(templateOf(d), d.content, update);
       if (errors.length) return json({ error: "bad_answer", errors, state: stateOf(d) }, 422);
@@ -196,7 +204,8 @@ export default async (req, context) => {
       if (buf.length > MAX_PHOTO_BYTES) return json({ error: "too_big" }, 413);
       const ext = photoType(buf);
       if (!ext) return json({ error: "bad_type" }, 415);
-      const photo = await uploadPhoto(d.id, slot, buf, ext);
+      const size = imageSize(buf);
+      const photo = { ...await uploadPhoto(d.id, slot, buf, ext), ...(size ? { w: size[0], h: size[1] } : {}) };
       // Photos have their own version (photo_rev), so an upload during a chat answer doesn't cancel the answer,
       // and two uploads at once both stay.
       let saved;
@@ -236,6 +245,61 @@ export default async (req, context) => {
       if (!saved.row) { await deletePhotos([film.path, poster.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       const old = saved.before && saved.before.video;
       if (old) await releaseMedia(saved.row, [old.path, old.poster.path]);
+      return json({ state: stateOf(saved.row), draft: renderDraft(saved.row) });
+    }
+
+    // The short videos for "סרטונים מהעבודה": the same checks as the video at the top, up to t.VIDEOS.max of them.
+    if (action === "clip") {
+      const V = templateOf(d).VIDEOS;
+      if (!V) return json({ error: "not_found" }, 404);
+      if (!isEditable(d)) return json({ error: "locked", state: stateOf(d) }, 409);
+      const id = new URL(req.url).searchParams.get("id");
+      const title = (raw) => String(raw || "").replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, V.titleMax);
+      if (req.method === "DELETE" || req.method === "PUT") {
+        if (!/^[0-9a-f]{8}$/.test(id || "")) return json({ error: "bad_slot" }, 400);
+        if (!(d.videos || []).some((x) => x.id === id)) return json({ error: "not_found", state: stateOf(d) }, 404);
+        if (req.method === "PUT") {
+          const body = await req.json().catch(() => null);
+          if (!body || typeof body.title !== "string") return json({ error: "bad_json" }, 400);
+          const { row, before } = await saveMedia(d.id, (fresh) => ({ videos: (fresh.videos || []).map((x) => (x.id === id ? { ...x, title: title(body.title) } : x)) }));
+          if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
+          return json({ state: stateOf(row), draft: renderDraft(row) });
+        }
+        const { row, before } = await saveMedia(d.id, (fresh) => ({ videos: (fresh.videos || []).filter((x) => x.id !== id) }));
+        if (!row) return json({ error: "locked", state: stateOf(before || d) }, 409);
+        const old = ((before && before.videos) || []).find((x) => x.id === id);
+        if (old) await releaseMedia(row, [old.path, old.poster.path]);
+        return json({ state: stateOf(row), draft: renderDraft(row) });
+      }
+      if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
+      if (req.headers.get("x-photo-rights") !== "yes") return json({ error: "no_rights" }, 422);
+      if ((d.videos || []).length >= V.max) return json({ error: "too_many", state: stateOf(d) }, 422);
+      if (videoLimited(ip)) return json({ error: "rate_limited" }, 429);
+      if (Number(req.headers.get("content-length") || 0) > MAX_VIDEO_BYTES + MAX_POSTER_BYTES) return json({ error: "too_big" }, 413);
+      const buf = Buffer.from(await req.arrayBuffer());
+      const n = Number(req.headers.get("x-poster-length"));
+      if (!Number.isInteger(n) || n < 100 || n > MAX_POSTER_BYTES || n >= buf.length) return json({ error: "bad_type" }, 415);
+      const frame = buf.subarray(0, n), movie = buf.subarray(n);
+      if (movie.length > MAX_VIDEO_BYTES) return json({ error: "too_big" }, 413);
+      const frameExt = photoType(frame);
+      if (!frameExt || !isMp4(movie)) return json({ error: "bad_type" }, 415);
+      const m = /^(\d{2,4})x(\d{2,4})$/.exec(req.headers.get("x-video-size") || ""), size = m ? [Number(m[1]), Number(m[2])] : imageSize(frame);
+      let name = "";
+      try { name = title(decodeURIComponent(req.headers.get("x-title") || "")); } catch { name = ""; }
+      const [poster, film] = await Promise.all([uploadPhoto(d.id, "clipposter", frame, frameExt), uploadPhoto(d.id, "clip", movie, "mp4")]);
+      const item = { id: randomBytes(4).toString("hex"), ...film, poster, title: name, ...(size ? { w: size[0], h: size[1] } : {}) };
+      let saved;
+      try {
+        saved = await saveMedia(d.id, (fresh) => {
+          if ((fresh.videos || []).length >= V.max) throw new TooMany();
+          return { videos: [...(fresh.videos || []), item] };
+        });
+      } catch (e) {
+        await deletePhotos([film.path, poster.path]);
+        if (e instanceof TooMany) return json({ error: "too_many", state: stateOf(await getDraft(d.id)) }, 422);
+        throw e;
+      }
+      if (!saved.row) { await deletePhotos([film.path, poster.path]); return json({ error: "locked", state: saved.before ? stateOf(saved.before) : undefined }, 409); }
       return json({ state: stateOf(saved.row), draft: renderDraft(saved.row) });
     }
 
@@ -336,7 +400,7 @@ export default async (req, context) => {
       const body = await req.json().catch(() => ({}));
       if (!editing(d)) return json({ error: "locked", state: stateOf(d) }, 409);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
-      const editPatch = (v) => ({ content: v.content, photos: v.photos || {}, video: v.video || null, photo_rev: d.photo_rev + 1 });
+      const editPatch = (v) => ({ ...versionPatch(v, d), photo_rev: d.photo_rev + 1 });
 
       if (action === "discard") {
         if (!isDirty(d)) return json({ error: "no_changes", state: stateOf(d) }, 409);

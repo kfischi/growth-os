@@ -45,6 +45,12 @@ try {
   clip = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "builder-")), "phone.webm");
   execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=720x1280:rate=30", "-t", "14", "-c:v", "libvpx", "-b:v", "1M", clip]);
 } catch { clip = null; console.log("no ffmpeg: the video step is skipped"); }
+// And a short one (3 seconds, portrait) for the videos of the work.
+let shortClip = null;
+if (clip) {
+  shortClip = path.join(path.dirname(clip), "short.webm");
+  execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=360x640:rate=30", "-t", "3", "-c:v", "libvpx", "-b:v", "500k", shortClip]);
+}
 
 const b = await chromium.launch();
 let bad = 0;
@@ -179,6 +185,32 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.evaluate(() => { window.createImageBitmap = window.__cib; });
   });
 
+  await check("work photos 4 to 6", async () => {
+    for (const n of [5, 6, 7]) { // after the portrait and works 1 to 3
+      await p.setInputFiles(`#slots .slot:nth-child(${n}) input`, path.join(ROOT, "shared/photos/plumber-siphon.webp"));
+      await p.waitForSelector(`#slots .slot:nth-child(${n}) img`, { timeout: 8000 });
+    }
+    assert.equal(await p.locator("#slots .slot").count(), 9, "the portrait, six works, before and after");
+    const d = T.ls_drafts.at(-1);
+    for (const s of ["work4", "work5", "work6"]) assert.ok(d.photos[s] && d.photos[s].w > 0 && d.photos[s].h > 0, s + " with its size");
+    assert.ok(d.photos.work4.w <= 1200 && d.photos.work4.h <= 1200, "a work photo is shrunk to 1200 pixels");
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator(".details.n6").waitFor({ state: "attached", timeout: 8000 });
+    assert.equal(await p.frameLocator("#frame").locator(".details img").count(), 3, "three photos and three marked frames");
+    if (w < 860) await p.click("#tabChat");
+    assert.equal(await overflow(), false);
+  });
+
+  await check("the top of the site: a photo or a video", async () => {
+    assert.equal(await p.isChecked('input[name=heroKind][value=photo]'), true, "a photo until they pick");
+    assert.equal(await p.isVisible("#heroSlot .slot"), true); assert.equal(await p.isVisible("#vid"), false);
+    await p.click('#heroPick label:has(input[value=video])');
+    await p.waitForFunction(() => !document.querySelector("#vid").hidden, null, { timeout: 8000 });
+    assert.equal(T.ls_drafts.at(-1).content.hero_media, "video");
+    assert.equal(await p.isVisible("#heroSlot .slot"), false, "one of them");
+    await p.locator("#photos").screenshot({ path: `/tmp/qa-page/builder-photos-${w}.png` }).catch(() => {});
+  });
+
   if (clip) await check("a short video, cut and converted in the browser", async () => {
     await p.setInputFiles("#vid .pick input", clip);
     await p.waitForSelector("#videoDlg[open]");
@@ -202,6 +234,45 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     if (w < 860) await p.click("#tabChat");
   });
 
+  if (shortClip) await check("two short videos of the work, one removed", async () => {
+    for (const title of ["פתיחת סתימה", "ניקוי מרזב"]) {
+      const n = await p.locator("#clipsBox .clip-row").count();
+      await p.setInputFiles("#clipsBox .pick input", shortClip);
+      await p.waitForSelector("#videoDlg[open]");
+      assert.equal(await p.isVisible("#vTitle"), true, "a title for a video of the work");
+      await p.fill("#vTitle", title);
+      await p.click("#vGo");
+      await p.waitForFunction((k) => document.querySelectorAll("#clipsBox .clip-row").length === k, n + 1, { timeout: 60000 });
+    }
+    const d = T.ls_drafts.at(-1);
+    assert.deepEqual(d.videos.map((x) => x.title), ["פתיחת סתימה", "ניקוי מרזב"]);
+    assert.deepEqual([d.videos[0].w, d.videos[0].h], [360, 640]);
+    const { storage: st } = await import("./builder-fakes.mjs");
+    assert.equal(st.get(d.videos[0].path).toString("ascii", 4, 8), "ftyp", "an MP4");
+    const first = d.videos[0];
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator(".vclips.n2").waitFor({ state: "attached", timeout: 8000 });
+    if (w < 860) await p.click("#tabChat");
+    await p.click('#clipsBox .clip-row:nth-child(1) button');
+    await p.waitForFunction(() => document.querySelectorAll("#clipsBox .clip-row").length === 1, null, { timeout: 8000 });
+    await p.locator("#photos").screenshot({ path: `/tmp/qa-page/builder-clips-${w}.png` }).catch(() => {});
+    assert.equal(d.videos.length, 1); assert.equal(d.videos[0].title, "ניקוי מרזב"); assert.ok(!st.has(first.path), "the removed video is deleted");
+    await p.fill("#clipsBox .clip-row input", "ניקוי מרזב בחדרה"); await p.press("#clipsBox .clip-row input", "Tab");
+    for (let i = 0; i < 40 && d.videos[0].title !== "ניקוי מרזב בחדרה"; i++) await p.waitForTimeout(100);
+    assert.equal(d.videos[0].title, "ניקוי מרזב בחדרה", "the title is saved");
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator(".vclips.n1 figcaption", { hasText: "ניקוי מרזב בחדרה" }).waitFor({ timeout: 8000 });
+    if (w < 860) await p.click("#tabChat");
+    // back to a photo at the top: the video steps aside and the draft shows the drawing (no photo yet)
+    await p.click('#heroPick label:has(input[value=photo])');
+    await p.waitForFunction(() => !document.querySelector("#heroPhoto").hidden, null, { timeout: 8000 });
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator(".hero .drawing, .hero .seal").first().waitFor({ state: "attached", timeout: 8000 });
+    assert.equal(await p.frameLocator("#frame").locator(".reel").count(), 0);
+    if (w < 860) await p.click("#tabChat");
+    assert.equal(await overflow(), false);
+  });
+
   await check("approve", async () => {
     await p.click("#approveBox .btn");
     await p.waitForSelector("#approveDlg[open]");
@@ -220,7 +291,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   });
   await check("self edit: change the live site in the chat, then publish", async () => {
     const d = T.ls_drafts.at(-1), slug = "page-test-" + w;
-    Object.assign(d, { status: "published", published_slug: slug, self_edit: true, messages: [], prev_live: null, live: JSON.parse(JSON.stringify({ content: d.content, photos: d.photos, video: d.video })) });
+    Object.assign(d, { status: "published", published_slug: slug, self_edit: true, messages: [], prev_live: null, live: JSON.parse(JSON.stringify({ content: d.content, photos: d.photos, video: d.video, ...(d.videos && d.videos.length ? { videos: d.videos } : {}) })) });
     gh.files.set(`clients/${slug}/CLIENT.md`, "טיוטה `" + d.id + "`");
     await p.reload();
     await p.waitForFunction(() => /האתר באוויר/.test(document.querySelector("#approveBox").textContent));

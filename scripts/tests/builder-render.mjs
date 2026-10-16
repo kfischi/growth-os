@@ -33,6 +33,25 @@ try {
   const withVideo = P.render({ ...SAMPLE, video_title: "פתיחת סתימה במטבח" }, { mode: "site", photos: {}, video: { src: "assets/hero.mp4", poster: "assets/hero-poster.jpg" } });
   fs.writeFileSync(path.join(out, "video.html"), withVideo["index.html"]);
 } catch (e) { console.log("no ffmpeg: skipped the video page"); }
+// Full media: a photo at the top, the portrait, six work photos, before and after, and five short videos of the work
+// (full.html). The page must not get heavier on load: the videos' files load only when they play.
+try {
+  fs.mkdirSync(path.join(out, "assets/videos"), { recursive: true });
+  const clips = [];
+  for (let i = 1; i <= 5; i++) {
+    const src = `assets/videos/c${i}.mp4`, poster = `assets/videos/c${i}-poster.webp`;
+    execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", `testsrc=size=360x640:rate=24`, "-t", "3", "-an", "-c:v", "libvpx-vp9", "-b:v", "300k", path.join(out, src)]);
+    execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=360x640", "-frames:v", "1", "-c:v", "libwebp", path.join(out, poster)]);
+    clips.push({ src, poster, title: ["פתיחת סתימה במטבח", "החלפת ברז", "", "איתור נזילה במצלמה", "ניקוי מרזב"][i - 1], w: 360, h: 640 });
+  }
+  const extra = { hero: "plumber-leak.webp", work4: "plumber-drain.webp", work5: "plumber-siphon.webp", work6: "plumber-portrait.webp" };
+  const all = { ...photos, ...extra };
+  const sizes = Object.fromEntries(Object.keys(all).map((k) => [k, [640, 640]]));
+  const titles = { work1_title: "החלפת סיפון", work2_title: "תיקון נזילה", work3_title: "פתיחת ניקוז", work4_title: "צנרת חדשה", work5_title: "ברז למטבח", work6_title: "בדיקת לחץ" };
+  const full = P.render({ ...SAMPLE, ...titles, hero_media: "photo", ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber",
+    photos: Object.fromEntries(Object.entries(all).map(([k, f]) => [k, "assets/photos/" + f])), sizes, clips });
+  fs.writeFileSync(path.join(out, "full.html"), full["index.html"]);
+} catch (e) { console.log("no ffmpeg: skipped the full media page"); }
 // A site with only what is required: no photos, no prices, no optional facts.
 const bare = { ...P.emptyContent(), ...Object.fromEntries(Object.entries(SAMPLE).filter(([k]) => P.FIELDS[k] && P.FIELDS[k].required)), services: SAMPLE.services.map((s) => ({ name: s.name, detail: "", time: "", price: "" })), towns: ["חדרה"] };
 fs.writeFileSync(path.join(out, "bare.html"), P.render(bare, { mode: "site" })["index.html"]);

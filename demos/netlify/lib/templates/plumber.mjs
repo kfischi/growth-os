@@ -44,6 +44,9 @@ export const FIELDS = {
   work1_title: { label: "כותרת לתמונת עבודה 1", max: 34, kind: "text" },
   work2_title: { label: "כותרת לתמונת עבודה 2", max: 34, kind: "text" },
   work3_title: { label: "כותרת לתמונת עבודה 3", max: 34, kind: "text" },
+  work4_title: { label: "כותרת לתמונת עבודה 4", max: 34, kind: "text" },
+  work5_title: { label: "כותרת לתמונת עבודה 5", max: 34, kind: "text" },
+  work6_title: { label: "כותרת לתמונת עבודה 6", max: 34, kind: "text" },
   ba_title: { label: "כותרת ללפני ואחרי", max: 40, kind: "text", hint: "מה רואים ואיפה, למשל: ניקוי סתימה בכיור, חדרה" },
   video_title: { label: "כותרת לסרטון", max: 34, kind: "text", hint: "מה רואים בסרטון, למשל: פתיחת סתימה במטבח" },
 };
@@ -67,9 +70,23 @@ export const PHOTOS = {
   work1: { label: "עבודה 1", title: "work1_title" },
   work2: { label: "עבודה 2", title: "work2_title" },
   work3: { label: "עבודה 3", title: "work3_title" },
+  work4: { label: "עבודה 4", title: "work4_title" },
+  work5: { label: "עבודה 5", title: "work5_title" },
+  work6: { label: "עבודה 6", title: "work6_title" },
   before: { label: "לפני", title: "ba_title" },  // with "after": a before/after slider on the site
   after: { label: "אחרי", title: "ba_title" },
 };
+
+export const WORKS = ["work1", "work2", "work3", "work4", "work5", "work6"];
+export const DRAFT_WORKS = 3; // a draft marks only the first three empty frames, so it isn't a wall of placeholders
+// Short videos of the work, besides the one at the top: each 10 seconds, silent, made in the owner's browser.
+export const VIDEOS = { max: 5, seconds: 10, titleMax: 34, label: "סרטונים מהעבודה" };
+// The top of the site shows the owner's pick: a photo behind the text, or the short video in the drawing's place.
+// Without a pick: the video if there is one, else the photo. A pick without its file shows the drawing.
+export function heroKind(c, { photo = false, video = false } = {}) {
+  const pick = c && (c.hero_media === "video" || c.hero_media === "photo") ? c.hero_media : video ? "video" : "photo";
+  return pick === "video" ? (video ? "video" : null) : (photo ? "photo" : null);
+}
 
 // The fields with the trade's own defaults and examples (the trade, the first headline, the price note).
 export function fieldsFor(tradeId) {
@@ -163,6 +180,8 @@ export const STATIC_FILES = { "assets/favicon.svg": FAVICON }; // the other asse
  * @param opts.photos    { slot: url } for the slots that have a photo
  * @param opts.leads     the lead system endpoint, or null (נוכחות package, or a draft)
  * @param opts.video     { src, poster } for the short silent video at the top, or null (then the drawing shows)
+ * @param opts.clips     [{ src, poster, title, w, h }] up to VIDEOS.max short videos for "סרטונים מהעבודה"
+ * @param opts.sizes     { slot: [width, height] } of the photos, so the browser keeps their place before they load
  * @param opts.url       the site's address ("https://<host>/"), known at deploy: canonical links, og:url, sitemap.xml
  *                       and robots.txt. Without it (a draft, the repo copy) they are left out.
  * @param opts.credit    { name, url } the line at the bottom: "האתר נבנה ב-<name> · אתרים שבונים עסקים", or null
@@ -207,8 +226,13 @@ export function faqSchema(items) {
 // Opens the item a link points to (#g-<id>), also in browsers that don't do it on their own.
 const GUIDE_JS = `(function(){function o(){var m=/^#g-([\\w-]+)$/.exec(location.hash);if(!m)return;var d=document.getElementById("g-"+m[1]);if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView({block:"start"});}}addEventListener("hashchange",o);o();})();`;
 
-export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, url = "", credit = null, now = new Date() } = {}) {
+export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, clips = [], sizes = {}, url = "", credit = null, now = new Date() } = {}) {
   const draft = mode === "draft";
+  // The top: the owner's pick of a photo or the video (heroKind); the other one isn't shown or published.
+  const hero = heroKind(c, { photo: Boolean(photos.hero), video: Boolean(video) });
+  const heroImg = hero === "photo" ? photos.hero : "";
+  const heroVideo = hero === "video" ? video : null;
+  clips = (Array.isArray(clips) ? clips : []).filter((x) => x && x.src && x.poster).slice(0, VIDEOS.max);
   const L = lookOf(c);
   const T = tradeOf(c.trade_id), W = T.words;
   if (!draft) {
@@ -238,15 +262,16 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const showTime = services.some((s) => s.time), showPrice = services.some((s) => s.price);
   const ranges = Object.fromEntries(services.filter((s) => s.price).map((s) => [s.name, s.price]));
   const robots = draft ? '<meta name="robots" content="noindex, nofollow">\n' : "";
+  const dims = (slot) => { const z = sizes[slot]; return Array.isArray(z) && z[0] > 0 && z[1] > 0 ? ` width="${Math.round(z[0])}" height="${Math.round(z[1])}"` : ""; };
   const photo = (slot, alt, extra = "") => photos[slot]
-    ? `<figure class="ps has-img"><img src="${h(photos[slot])}" alt="${h(alt)}" loading="lazy" decoding="async"${extra}></figure>`
+    ? `<figure class="ps has-img"><img src="${h(photos[slot])}" alt="${h(alt)}"${dims(slot)} loading="lazy" decoding="async"${extra}></figure>`
     : draft ? `<figure class="ps ph"><span>${h(PHOTOS[slot].label)}<br>מעלים ב״תמונות״</span></figure>` : "";
   const area = String(c.area || "").trim();
   const GUIDES = guidesOf(T, services);
   const urgentGuides = GUIDES.items.filter((it) => it.kind === "now"); // what to do right now; trades without them show tips
   // The absolute address, only on the deployed site: what Google indexes as the one true page.
   const site = !draft && /^https:\/\/[a-z0-9.-]+\/$/.test(url || "") ? url : "";
-  const ogPhoto = photos.hero || photos.work1 || photos.portrait;
+  const ogPhoto = heroImg || WORKS.map((s) => photos[s]).find(Boolean) || photos.portrait;
   // The fonts come from the site itself (scripts/fetch-fonts.mjs): faster, and nothing goes to Google. A draft takes
   // them from /shared/fonts; only the repo copy (no address yet) still links Google Fonts.
   const font = FONTS[L.id];
@@ -275,8 +300,9 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     ? services.map((s) => `<tr><td><b>${draft ? h(s.name) : `<a class="svc-link" href="${servicePage(s.name)}">${h(s.name)}</a>`}</b>${s.detail ? `<small>${h(s.detail)}</small>` : ""}</td>${showTime ? `<td class="hide-sm">${h(s.time || "")}</td>` : ""}${showPrice ? `<td class="price">${h(s.price || "לפי הצעת מחיר")}</td>` : ""}<td><button type="button" data-open-bot>${h(W.open)}</button></td></tr>`).join("\n          ")
     : `<tr><td colspan="4"><span class="todo">${h(SERVICES.label)}</span></td></tr>`;
 
-  const works = ["work1", "work2", "work3"].filter((s) => photos[s] || draft);
-  const letters = ["א׳", "ב׳", "ג׳"];
+  // Up to six work photos. A draft shows the first three frames even when empty, the others only once filled.
+  const works = WORKS.filter((s, i) => photos[s] || (draft && i < DRAFT_WORKS));
+  const letters = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳"];
   const details = works.map((s, i) => {
     const title = String(c[PHOTOS[s].title] || "").trim();
     return `<div class="detail"><div class="ring">${photo(s, title || `עבודה של ${name}`)}</div><span class="mono">פרט ${letters[i]}</span>${title ? `<h3>${h(title)}</h3>` : draft ? `<h3><span class="todo">כותרת לתמונה</span></h3>` : ""}</div>`;
@@ -337,7 +363,7 @@ ${fontHead}
 </head>
 <body class="look-${L.id}">
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
-<header class="hero${photos.hero ? " has-bg" : ""}"${photos.hero ? ` style="--hero-img: url('${h(photos.hero)}')"` : ""}>
+<header class="hero${heroImg ? " has-bg" : ""}"${heroImg ? ` style="--hero-img: url('${h(heroImg)}')"` : ""}>
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="currentColor"/></svg><span>${v("business_name")}</span></div>
     ${callLocal ? `<a class="live mono" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}
@@ -356,7 +382,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>${leads ? `
       <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
-    ${video ? reel(video, String(c.video_title || "").trim()) : photos.hero ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id })}
+    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id })}
   </div>
 </header>
 ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(T.crisis)}</p>\n` : ""}
@@ -394,14 +420,14 @@ ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(
         </div>
       </div>
       ${works.length ? `<div>
-        <div class="details">
+        <div class="details n${works.length}">
           ${details}
         </div>
       </div>` : ""}
     </div>
   </div>
 </section>
-${ba}
+${ba}${clips.length ? clipsSection(clips) : ""}
 <section>
   <div class="wrap">
     <div class="head"><h2>${h(W.how)}</h2></div>
@@ -448,7 +474,8 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
 
 <footer class="wrap"><div class="row"><span>${h(name)} · ${h(trade)} · ${year}</span><span>הפרטים שמשאירים בצ׳אט משמשים רק כדי לחזור אליכם. <a href="${draft ? "#" : "privacy.html"}">פרטיות</a> · <a href="${draft ? "#" : "accessibility.html"}">הצהרת נגישות</a></span></div>${creditLine}</footer>
 
-${video ? `<script>${REEL_JS}</script>
+${heroVideo ? `<script>${REEL_JS}</script>
+` : ""}${clips.length ? `<script>${CLIPS_JS}</script>
 ` : ""}<script src="${h(assets)}leadform.js" defer></script>
 <script src="${h(assets)}leadbot.js" defer></script>
 <script>
@@ -715,8 +742,61 @@ const reel = (v, title) => `<figure class="reel">
       <figcaption class="mono">צילום מהשטח${title ? " · " + h(title) : ""}</figcaption>
     </figure>`;
 
+// "סרטונים מהעבודה": up to five short videos. Nothing of them loads with the page: the posters (first frames) come
+// when the section is a screen away, and a video's file only when it starts. One plays at a time, only while on screen, and never by itself for reduced motion,
+// save-data, a slow network or the accessibility menu's "עצירת תנועה". Each has its own pause button.
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="; // a clear pixel until the poster comes
+const dimsOf = (x) => (x.w > 0 && x.h > 0 ? ` width="${Math.round(x.w)}" height="${Math.round(x.h)}"` : "");
+const clipsSection = (clips) => `
+<section class="clips-sec" id="videos">
+  <div class="wrap">
+    <div class="head"><h2>סרטונים מהעבודה</h2><span class="mono">בלי קול · עד ${VIDEOS.seconds} שניות</span></div>
+    <div class="vclips n${clips.length}">
+      ${clips.map((x) => { const t = String(x.title || "").trim(); return `<figure class="vclip"${t ? ` data-t="${h(t)}"` : ""}>
+        <div class="vclip-frame"><img src="${BLANK}" data-src="${h(x.poster)}" alt=""${dimsOf(x)} decoding="async"><noscript><img src="${h(x.poster)}" alt=""${dimsOf(x)} loading="lazy"></noscript>
+          <video muted loop playsinline preload="none" data-src="${h(x.src)}"${dimsOf(x)} aria-label="${h(t || "סרטון מהעבודה")}"></video>
+          <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון${t ? ": " + h(t) : ""}" data-state="play"></button></div>
+        ${t ? `<figcaption>${h(t)}</figcaption>` : ""}
+      </figure>`; }).join("\n      ")}
+    </div>
+  </div>
+</section>
+`;
+
+const CLIPS_JS = `(function () {
+  var list = [].slice.call(document.querySelectorAll(".vclip")).map(function (el) {
+    return { el: el, v: el.querySelector("video"), b: el.querySelector(".reel-toggle"), t: el.dataset.t ? ": " + el.dataset.t : "", ratio: 0, stopped: false };
+  });
+  if (!list.length) return;
+  var c = navigator.connection || {};
+  var auto = !(matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still") || c.saveData || /2g/.test(c.effectiveType || ""));
+  function show(f) { var on = !f.v.paused; f.b.dataset.state = on ? "pause" : "play"; f.b.setAttribute("aria-label", (on ? "לעצור את הסרטון" : "להפעיל את הסרטון") + f.t); }
+  function play(f) {
+    list.forEach(function (o) { if (o !== f && !o.v.paused) o.v.pause(); }); // one at a time
+    if (!f.v.getAttribute("src")) f.v.src = f.v.dataset.src; // the file is fetched only now
+    var p = f.v.play(); if (p && p.catch) p.catch(function () { show(f); });
+  }
+  function pick() { // the most visible one plays; one that left the screen stops
+    var best = null;
+    list.forEach(function (f) { if (f.ratio < .6 && !f.v.paused) f.v.pause(); if (auto && !f.stopped && f.ratio >= .6 && (!best || f.ratio > best.ratio)) best = f; });
+    if (best && best.v.paused && !list.some(function (o) { return o !== best && !o.v.paused; })) play(best);
+  }
+  list.forEach(function (f) {
+    f.v.addEventListener("play", function () { show(f); }); f.v.addEventListener("pause", function () { show(f); });
+    f.v.addEventListener("playing", function () { f.el.classList.add("on"); });
+    f.b.addEventListener("click", function () { if (f.v.paused) { f.stopped = false; play(f); } else { f.stopped = true; f.v.pause(); } });
+  });
+  document.addEventListener("a11y-still", function () { auto = false; list.forEach(function (f) { f.v.pause(); }); });
+  function posters() { list.forEach(function (f) { var i = f.el.querySelector("img[data-src]"); if (i) { i.src = i.dataset.src; i.removeAttribute("data-src"); } }); }
+  if (!("IntersectionObserver" in window)) { posters(); return; }
+  var near = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { near.disconnect(); posters(); } }, { rootMargin: "100% 0px" });
+  near.observe(document.querySelector(".clips-sec") || list[0].el);
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { list.forEach(function (f) { if (f.el === e.target) f.ratio = e.isIntersecting ? e.intersectionRatio : 0; }); }); pick(); }, { threshold: [0, .6, .9] });
+  list.forEach(function (f) { io.observe(f.el); });
+})();`;
+
 const REEL_JS = `(function () {
-  var v = document.querySelector(".reel video"), b = document.querySelector(".reel-toggle");
+  var v = document.querySelector(".reel video"), b = document.querySelector(".reel .reel-toggle");
   if (!v || !b) return;
   var c = navigator.connection || {};
   var calm = matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still") || c.saveData || /2g/.test(c.effectiveType || "");
@@ -726,9 +806,12 @@ const REEL_JS = `(function () {
   v.addEventListener("play", show); v.addEventListener("pause", show);
   b.addEventListener("click", function () { wanted = v.paused; if (wanted) play(); else v.pause(); });
   document.addEventListener("a11y-still", function () { wanted = false; v.pause(); }); // the accessibility menu (a11y.js)
-  // Plays only while on screen, to save the visitor's battery and data.
-  if ("IntersectionObserver" in window) new IntersectionObserver(function (e) { if (e[0].isIntersecting) { if (wanted) play(); } else v.pause(); }).observe(v);
-  else if (wanted) play();
+  // Plays only while on screen, to save the visitor's battery and data, and only after the page itself has loaded.
+  function start() {
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (e) { if (e[0].isIntersecting) { if (wanted) play(); } else v.pause(); }).observe(v);
+    else if (wanted) play();
+  }
+  if (document.readyState === "complete") start(); else addEventListener("load", start);
 })();`;
 
 const CSS = `
@@ -845,8 +928,10 @@ const CSS = `
   .badge p { margin: 2px 0 12px; color: var(--ink-soft); font-size: 15px; }
   .badge .code { height: 30px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 7px, transparent 7px 9px); }
   .mono-letter { display: grid; place-items: center; color: #fff; font-family: var(--display); font-size: 120px; line-height: 1; background: linear-gradient(135deg, var(--ps-a), var(--ps-b)); }
-  .details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
-  .detail { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
+  /* One to six work photos: rows of up to three (two and four in pairs), a short last row centred, never a hole. */
+  .details { --cols: 3; --gap: 28px; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
+  .details.n1 { --cols: 1; } .details.n2, .details.n4 { --cols: 2; }
+  .detail { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
   .detail .ring { width: 100%; max-width: 230px; aspect-ratio: 1; border-radius: 50%; padding: 8px; border: 2px dashed var(--on-deep-line-strong); position: relative; }
   .detail .ring::after { content: ""; position: absolute; width: 46px; height: 2px; background: var(--on-deep-line-strong); bottom: 10%; left: -30px; transform: rotate(-35deg); }
   .detail .ps { width: 100%; height: 100%; border-radius: 50%; }
@@ -868,7 +953,17 @@ const CSS = `
     .step:first-child { border-top: 0; }
     .order .hide-sm { display: none; }
   }
-  @media (max-width: 620px) { .details { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .detail:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 60%; margin-inline: auto; } }
+  @media (max-width: 620px) { .details:not(.n1) { --cols: 2; --gap: 20px; } }
+  .clips-sec { background: var(--paper); }
+  .vclips { --cols: 3; --gap: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
+  .vclips.n1 { --cols: 1; } .vclips.n2 { --cols: 2; } .vclips.n4 { --cols: 4; }
+  .vclip { margin: 0; flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); max-width: 340px; min-width: 0; }
+  .vclip-frame { position: relative; aspect-ratio: 4 / 5; overflow: hidden; border-radius: 6px; background: var(--deep); }
+  .vclip-frame img[data-src] { visibility: hidden; }
+  .vclip-frame img, .vclip-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vclip-frame video { opacity: 0; } .vclip.on .vclip-frame video { opacity: 1; }
+  .vclip figcaption { margin-top: 10px; text-align: center; color: var(--ink-soft); font-size: 15px; }
+  @media (max-width: 620px) { .vclips:not(.n1) { --cols: 2; --gap: 12px; } .vclip .reel-toggle { bottom: 10px; inset-inline-start: 10px; } }
   .guides-sec { background: var(--surface); }
   .tst-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 16px; }
   .tst-card { margin: 0; background: var(--surface); border: 1.5px solid var(--rule); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }

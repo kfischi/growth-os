@@ -39,6 +39,7 @@ export const MAX_CHARS = 800;         // per owner message
 export const MAX_PHOTO_BYTES = 1_048_576;
 export const MAX_VIDEO_BYTES = 4_500_000;   // about 10 seconds at 720p; Netlify takes request bodies up to 6 MB
 export const MAX_POSTER_BYTES = 400_000;
+// The same limits for each of the short videos on the site ("סרטונים מהעבודה", up to t.VIDEOS.max of them).
 export const STALE_DAYS = 30;         // an unapproved draft nobody touched for this long is deleted
 
 const MODEL = () => process.env.BUILDER_MODEL || "claude-opus-5-5";
@@ -81,13 +82,13 @@ export async function saveDraft(d, patch) {
 }
 
 // Saves the photos and the video only if no other upload saved in between; tries again on the fresh row.
-// change(fresh) returns { photos?, video? }. Returns { row, before }; row is null when the draft is no longer editable.
+// change(fresh) returns { photos?, video?, videos? }. Returns { row, before }; row is null when the draft is no longer editable.
 export async function saveMedia(id, change) {
   for (let i = 0; i < 4; i++) {
     const fresh = (await db("GET", `ls_drafts?id=eq.${q(id)}&select=*`))[0];
     if (!fresh || !isEditable(fresh)) return { row: null, before: fresh };
     const patch = { ...change(fresh), photo_rev: fresh.photo_rev + 1 };
-    const any = Object.keys(patch.photos || fresh.photos || {}).length || (patch.video !== undefined ? patch.video : fresh.video);
+    const any = Object.keys(patch.photos || fresh.photos || {}).length || (patch.video !== undefined ? patch.video : fresh.video) || (patch.videos || fresh.videos || []).length;
     if (!fresh.photo_rights_at && any) patch.photo_rights_at = new Date().toISOString();
     const rows = await db("PATCH", `ls_drafts?id=eq.${q(id)}&photo_rev=eq.${fresh.photo_rev}&status=eq.${q(fresh.status)}`, patch, "return=representation");
     if (rows.length) return { row: rows[0], before: fresh };
@@ -97,10 +98,11 @@ export async function saveMedia(id, change) {
 
 export const savePhotos = (id, change) => saveMedia(id, (fresh) => ({ photos: change({ ...(fresh.photos || {}) }) }));
 
-// Every file a draft keeps in storage: the photos, the video and its first frame.
+// Every file a draft keeps in storage: the photos, the video at the top, the short videos, and their first frames.
 export function mediaPaths(d) {
   const v = d.video;
-  return [...Object.values(d.photos || {}).map((p) => p.path), ...(v ? [v.path, v.poster && v.poster.path] : [])].filter(Boolean);
+  return [...Object.values(d.photos || {}).map((p) => p.path), ...(v ? [v.path, v.poster && v.poster.path] : []),
+    ...(Array.isArray(d.videos) ? d.videos : []).flatMap((x) => [x.path, x.poster && x.poster.path])].filter(Boolean);
 }
 
 /* ---------------- self edit: the owner changes a live site (0004_self_edit.sql) ---------------- */
@@ -110,7 +112,12 @@ export function mediaPaths(d) {
 export const editing = (d) => d.status === "published" && Boolean(d.self_edit) && Boolean(d.published_slug);
 export const isEditable = (d) => d.status === "draft" || d.status === "returned" || editing(d);
 
-export const snapshot = (d) => ({ content: d.content || {}, photos: d.photos || {}, video: d.video || null });
+// The short videos join the snapshot only when there are some, so a site published before them isn't "changed".
+export const snapshot = (d) => ({ content: d.content || {}, photos: d.photos || {}, video: d.video || null, ...(Array.isArray(d.videos) && d.videos.length ? { videos: d.videos } : {}) });
+// What a saved version puts back into the working copy d (discard, undo, self edit turned off). The short videos
+// only when one of the two has some, so a database without 0019_videos.sql keeps working as before.
+export const versionPatch = (v, d = {}) => ({ content: v.content, photos: v.photos || {}, video: v.video || null,
+  ...((v.videos && v.videos.length) || (d.videos && d.videos.length) ? { videos: v.videos || [] } : {}) });
 // Key order doesn't matter: the chat rebuilds objects.
 const stable = (v) => JSON.stringify(v, (k, x) => (x && typeof x === "object" && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map((key) => [key, x[key]])) : x));
 export const isDirty = (d) => !d.live || stable(snapshot(d)) !== stable(d.live);
@@ -224,6 +231,11 @@ export function applyUpdate(t, content, update) {
     errors.push(...r.errors);
     if (JSON.stringify(r.social) !== JSON.stringify(content.social || {})) { next.social = r.social; changed.push("social"); }
   }
+  // The top of the site: a photo or the short video, picked in the builder ("תמונה בראש האתר" / "סרטון בראש האתר").
+  if (update && update.hero != null) {
+    if (update.hero !== "photo" && update.hero !== "video") errors.push("בראש האתר: תמונה או סרטון.");
+    else if (next.hero_media !== update.hero) { next.hero_media = update.hero; changed.push("hero"); }
+  }
   // The design: a look and one of its palettes (templates/looks.mjs), picked in the builder, never by the chat.
   if (update && update.style && t.LOOKS) {
     const { look, palette } = update.style;
@@ -247,6 +259,29 @@ export const photoUrl = (p) => storageUrl(`public/${BUCKET}/${p.path}`);
 
 // The browser already resized and re-encoded the photo (which also drops EXIF and location).
 // Here we only accept what is really a JPEG or a WebP, and not too big.
+// Width and height of a JPEG or WebP, read from its header, so the page can keep the photo's place before it loads.
+export function imageSize(buf) {
+  try {
+    if (photoType(buf) === "webp") {
+      const kind = buf.toString("ascii", 12, 16);
+      if (kind === "VP8 ") return [buf.readUInt16LE(26) & 0x3fff, buf.readUInt16LE(28) & 0x3fff];
+      if (kind === "VP8L") { const b = buf.readUInt32LE(21); return [(b & 0x3fff) + 1, ((b >> 14) & 0x3fff) + 1]; }
+      if (kind === "VP8X") return [buf.readUIntLE(24, 3) + 1, buf.readUIntLE(27, 3) + 1];
+      return null;
+    }
+    if (photoType(buf) === "jpg") {
+      for (let i = 2; i + 9 < buf.length;) {
+        if (buf[i] !== 0xff) { i++; continue; }
+        const m = buf[i + 1];
+        if (m === 0xd8 || m === 0x01 || (m >= 0xd0 && m <= 0xd7) || m === 0xff) { i += m === 0xff ? 1 : 2; continue; }
+        if (m >= 0xc0 && m <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(m)) return [buf.readUInt16BE(i + 7), buf.readUInt16BE(i + 5)];
+        i += 2 + buf.readUInt16BE(i + 2);
+      }
+    }
+  } catch { /* a cut file: no size */ }
+  return null;
+}
+
 export function photoType(buf) {
   if (buf.length > 12 && buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP") return "webp";
   if (buf.length > 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "jpg";
@@ -348,6 +383,9 @@ export function publicState(d) {
     id: d.id, status: d.status, template: d.template, content: d.content, missing: t.missing(d.content), checklist: checklist(t, d),
     photos: Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, photoUrl(p)])),
     video: videoUrls(d),
+    videos: clipUrls(d).map(({ id, src, poster, title }) => ({ id, src, poster, title })),
+    // The top of the site: what the owner picked ("photo" or "video"), or what shows without a pick.
+    hero: d.content && (d.content.hero_media === "photo" || d.content.hero_media === "video") ? d.content.hero_media : d.video ? "video" : "photo",
     photoRights: Boolean(d.photo_rights_at), package: d.package, plan: d.plan, returnNote: d.status === "returned" ? d.return_note : null,
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
     pay: d.status === "client_approved" && d.package && !d.paid_at && !process.env.GROW_PAGE_CODE ? payLinks(d.package) : [],
@@ -372,11 +410,15 @@ function editState(d) {
 }
 
 const videoUrls = (d) => (d.video ? { src: photoUrl(d.video), poster: photoUrl(d.video.poster) } : null);
+const clipList = (d) => (Array.isArray(d.videos) ? d.videos : []);
+const clipUrls = (d) => clipList(d).map((x) => ({ id: x.id, src: photoUrl(x), poster: photoUrl(x.poster), title: x.title || "", w: x.w || 0, h: x.h || 0 }));
+const photoSizes = (d) => Object.fromEntries(Object.entries(d.photos || {}).filter(([, p]) => p.w && p.h).map(([slot, p]) => [slot, [p.w, p.h]]));
+const heroOf = (t, d) => (t.heroKind ? t.heroKind(d.content, { photo: Boolean((d.photos || {}).hero), video: Boolean(d.video) }) : null);
 
 export function renderDraft(d) {
   const t = templateOf(d);
   const photos = Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, photoUrl(p)]));
-  return t.render(d.content, { mode: "draft", assets: "/shared/", photos, video: videoUrls(d) })["index.html"];
+  return t.render(d.content, { mode: "draft", assets: "/shared/", photos, video: videoUrls(d), clips: clipUrls(d), sizes: photoSizes(d) })["index.html"];
 }
 
 /* ---------------- the chat ---------------- */
@@ -406,7 +448,7 @@ const BUILD_ORDER = `Order of the conversation (skip what is already filled, see
 5. Propose headline_2 and intro from the facts.
 6. Optional, once, after the services: offer a page for each area they work in ("רוצים דף לכל אזור? ספרו לי במשפט או שניים על העבודה בכל אזור"). Fill regions only from what they tell about each area.
 7. Optional, once: ask if they have Instagram, Facebook, TikTok or YouTube for the business, so the site links to them ("יש לעסק אינסטגרם, פייסבוק או טיקטוק? נוסיף אותם לאתר").
-8. Photos: ask them to add a photo of the owner and up to 3 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. A "לפני" and an "אחרי" photo of the same job make a before/after slider on the site; offer it once, with a short ba_title. They may also add one short video of their work, in the same place: it plays silently at the top of the site. It is optional; mention it once, never insist. Once there is a video, offer a short video_title.
+8. Photos: ask them to add a photo of the owner and up to 6 photos of their work with the "תמונות" buttons under the chat. The photos must be theirs. Offer short titles for the work photos (work1_title...) once they describe them. A "לפני" and an "אחרי" photo of the same job make a before/after slider on the site; offer it once, with a short ba_title. The top of the site takes a photo or one short video, their pick ("תמונה בראש האתר" or "סרטון בראש האתר" in the same place); and up to 5 more short videos of their work go in a "סרטונים מהעבודה" section, each 10 seconds, silent, with its own title written there. Videos are optional; mention them once, never insist. Once there is a video at the top, offer a short video_title.
 The design (a look and its colours) is picked with the "עיצוב" buttons under the chat, not by you. If they ask to change colours or the layout, point them there.
 9. When nothing required is missing: ask them to look at the whole draft, ask for any change, and when they are happy press "מאשרים את האתר".
 After approval the content is locked; changes then go through us on WhatsApp.
@@ -415,7 +457,7 @@ After approval the content is locked; changes then go through us on WhatsApp.
 const EDIT_ORDER = `The site is already live. The owner came back to change it.
 - Ask what they want to change, then change exactly that. Don't walk them through the other fields again.
 - After a change, say in one short sentence what changed, and that they see it on the page next to the chat.
-- Photos and the video: they replace them with the "תמונות" buttons under the chat. You may change the titles.
+- Photos and the videos: they replace them with the "תמונות" buttons under the chat. You may change the photo titles and video_title; the other videos' titles are written next to each video there.
 - Nothing reaches the live site until they press "לפרסם את השינויים". When they say they're done, remind them to press it.
 - The look and the colours: they change them with the "עיצוב" buttons under the chat.
 - Something you can't do here (a new page, the domain, the lead system): say we take care of it on WhatsApp.
@@ -477,7 +519,7 @@ function stateFor(d) {
   const fields = Object.fromEntries(Object.keys(t.FIELDS).map((k) => [k, d.content[k] || ""]));
   return JSON.stringify({
     fields, services: d.content.services || [], towns: d.content.towns || [], regions: d.content.regions || [], social: d.content.social || {},
-    photos: Object.keys(d.photos || {}), video: Boolean(d.video), missing_required: t.missing(d.content),
+    photos: Object.keys(d.photos || {}), video: Boolean(d.video), top_of_site: heroOf(t, d) || "drawing", videos: clipList(d).length, missing_required: t.missing(d.content),
   });
 }
 
@@ -611,13 +653,25 @@ export const credit = (slug) => {
 };
 
 // url: the site's address once it has one (hosting), for the canonical links and the sitemap.
+// The media files of the live site: [stored file, path on the site]. Only the top the owner picked goes up
+// (the hero photo or the hero video, not both), then the short videos with their first frames.
+export function siteMedia(d) {
+  const hero = heroOf(templateOf(d), d);
+  const media = Object.entries(d.photos || {}).filter(([slot]) => slot !== "hero" || hero === "photo").map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
+  if (d.video && hero === "video") media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
+  for (const x of clipList(d)) media.push([x, `assets/videos/${x.id}.mp4`], [x.poster, `assets/videos/${x.id}-poster.${x.poster.ext}`]);
+  return media;
+}
+
 export function siteFiles(d, slug, url = "") {
   const t = templateOf(d);
   const photos = {};
-  for (const [slot, p] of Object.entries(d.photos || {})) photos[slot] = `assets/photos/${slot}.${p.ext}`;
+  const hero = heroOf(t, d);
+  for (const [slot, p] of Object.entries(d.photos || {})) if (slot !== "hero" || hero === "photo") photos[slot] = `assets/photos/${slot}.${p.ext}`;
   const leads = d.package === "ai" ? `${SITE_ORIGIN}/api/lead/${slug}` : null;
-  const video = d.video ? { src: "assets/hero.mp4", poster: `assets/hero-poster.${d.video.poster.ext}` } : null;
-  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video, url, credit: credit(slug) });
+  const video = d.video && hero === "video" ? { src: "assets/hero.mp4", poster: `assets/hero-poster.${d.video.poster.ext}` } : null;
+  const clips = clipList(d).map((x) => ({ src: `assets/videos/${x.id}.mp4`, poster: `assets/videos/${x.id}-poster.${x.poster.ext}`, title: x.title || "", w: x.w || 0, h: x.h || 0 }));
+  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video, clips, sizes: photoSizes(d), url, credit: credit(slug) });
   const card = `# ${d.content.business_name}
 
 נבנה בבונה האתרים (${t.label}), טיוטה \`${d.id}\`. פורסם: ${new Date().toISOString().slice(0, 10)}.
@@ -660,9 +714,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
     return { path: `${dir}/assets/${name}`, mode: "100644", type: "blob", sha: f.sha };
   });
 
-  const media = Object.entries(d.photos || {}).map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
-  if (d.video) media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
-  const photos = await Promise.all(media.map(async ([p, to]) => {
+  const photos = await Promise.all(siteMedia(d).map(async ([p, to]) => {
     const blob = ghOk(await gh("POST", "/git/blobs", { content: (await photoBytes(p)).toString("base64"), encoding: "base64" }), "blob");
     return { path: `${dir}/${to}`, mode: "100644", type: "blob", sha: blob.sha };
   }));
@@ -676,7 +728,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
       const r = await gh("GET", `/contents/${dir}/${sub}?ref=${q(BRANCH())}`);
       return r.ok && Array.isArray(r.data) ? r.data.filter((f) => f.type === "file").map((f) => `${dir}/${sub}/${f.name}`) : [];
     };
-    const media = [...await listFiles("assets/photos"), ...(await listFiles("assets")).filter((p) => /\/hero(-poster)?\.\w+$/.test(p))];
+    const media = [...await listFiles("assets/photos"), ...await listFiles("assets/videos"), ...(await listFiles("assets")).filter((p) => /\/hero(-poster)?\.\w+$/.test(p))];
     // A service the owner renamed or removed: its old page goes too.
     const top = await gh("GET", `/contents/${dir}?ref=${q(BRANCH())}`);
     if (top.ok && Array.isArray(top.data)) media.push(...top.data.filter((f) => f.type === "file" && /^service-[a-z0-9]+\.html$/.test(f.name)).map((f) => `${dir}/${f.name}`));
@@ -721,9 +773,7 @@ export async function siteBundle(d, slug, url = "") {
     }
     Object.assign(files, indexNowFile(new URL(url).host)); // the IndexNow key, so the search engines trust our pings
   }
-  const media = Object.entries(d.photos || {}).map(([slot, p]) => [p, `assets/photos/${slot}.${p.ext}`]);
-  if (d.video) media.push([d.video, "assets/hero.mp4"], [d.video.poster, `assets/hero-poster.${d.video.poster.ext}`]);
-  for (const [p, to] of media) files[to] = await photoBytes(p);
+  for (const [p, to] of siteMedia(d)) files[to] = await photoBytes(p);
   return files;
 }
 
@@ -932,7 +982,7 @@ export const pricesText = async (client) => {
 // Runs with the monthly report: drafts nobody approved or touched for 30 days, and their photos.
 export async function deleteStaleDrafts(now = new Date()) {
   const cutoff = new Date(now - STALE_DAYS * 86_400_000).toISOString();
-  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&paid_at=is.null&updated_at=lt.${q(cutoff)}&select=id,photos,video&limit=500`);
+  const rows = await db("GET", `ls_drafts?status=in.(draft,returned)&paid_at=is.null&updated_at=lt.${q(cutoff)}&select=id,photos,video,videos&limit=500`);
   for (const r of rows) {
     await deletePhotos(mediaPaths(r));
     await db("DELETE", `ls_drafts?id=eq.${q(r.id)}`);

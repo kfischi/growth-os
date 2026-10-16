@@ -131,7 +131,23 @@
   .learn-file:focus-within { outline: 3px solid var(--ink); outline-offset: 2px; }
   .learn-count { font-size: 14px; color: var(--slate); margin-inline-start: 8px; }
   #learnText { margin: 6px 0 8px; }
-  .slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .slots.one { grid-template-columns: minmax(0, 1fr); max-width: 220px; }
+  .slots.one .slot { aspect-ratio: 16 / 9; }
+  .media-h { margin: 16px 0 0; font-size: 15px; }
+  .media-h small { font-weight: 400; color: var(--slate); }
+  .top-pick { border: 0; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .top-pick legend { font-weight: 700; font-size: 15px; margin-bottom: 6px; padding: 0; }
+  .top-pick label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; background: #fff; }
+  .top-pick input { width: 18px; height: 18px; margin: 0; accent-color: var(--mint); }
+  .top-pick label:has(input:checked) { border-color: var(--mint); }
+  .top-pick label:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
+  .clip-list { display: grid; gap: 8px; margin-top: 10px; }
+  .clip-row { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+  .clip-row img { width: 48px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 6px; background: var(--mist); }
+  .clip-row input { min-height: 44px; }
+  .clip-row .btn { min-height: 44px; padding-inline: 12px; }
+  .clip-note { font-size: 14px; color: var(--slate); margin: 6px 0 0; }
   .slot { position: relative; aspect-ratio: 1; border: 1.5px dashed var(--line); border-radius: 10px; overflow: hidden; display: grid; place-items: center; text-align: center; font-size: 12px; color: var(--slate); background: var(--paper); cursor: pointer; padding: 4px; }
   .slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .slot input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
@@ -139,6 +155,7 @@
   .slot:focus-within { outline: 3px solid var(--mint); outline-offset: 2px; }
   .slot.busy::after { content: "מעלים…"; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.85); color: var(--ink); }
   .vid { margin-top: 10px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 14px; color: var(--slate); }
+  .vid[hidden] { display: none; }
   .vid video { width: 72px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; background: var(--mist); }
   .vid .pick { position: relative; overflow: hidden; }
   .vid .pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
@@ -286,16 +303,24 @@
       <div id="designBox" style="margin-top:10px"></div>
     </details>
     <details class="photos" id="photos">
-      <summary>תמונות וסרטון</summary>
-      <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטון שלנו, ומותר לפרסם אותם באתר.</span></label>
-      <div class="slots" id="slots"></div>
+      <summary>תמונות וסרטונים</summary>
+      <label class="check"><input id="rights" type="checkbox"><span>התמונות והסרטונים שלנו, ומותר לפרסם אותם באתר.</span></label>
+      <fieldset class="top-pick" id="heroPick"><legend>ראש האתר</legend>
+        <label><input type="radio" name="heroKind" value="photo"><span>תמונה בראש האתר</span></label>
+        <label><input type="radio" name="heroKind" value="video"><span>סרטון בראש האתר</span></label>
+      </fieldset>
+      <div id="heroPhoto"><div class="slots one" id="heroSlot"></div>
       <div class="gen" id="gen" hidden>
         <p><b>אין לכם תמונה לרקע?</b> ניצור לכם אחת: המקום והעבודה, בלי אנשים ובלי כיתוב.</p>
         <label for="genWish">מה לראות בה? (לא חובה)</label>
         <input id="genWish" type="text" maxlength="200" placeholder="למשל: מקלחת מודרנית ונקייה, צנרת נחושת">
         <button class="btn sm" type="button" id="genGo">ליצור תמונת רקע</button>
-      </div>
+      </div></div>
       <div class="vid" id="vid"></div>
+      <h3 class="media-h">תמונות שלכם ושל העבודה <small>עד 6 עבודות</small></h3>
+      <div class="slots" id="slots"></div>
+      <h3 class="media-h">סרטונים מהעבודה <small>לא חובה, עד 5</small></h3>
+      <div id="clipsBox"></div>
     </details>
     <div class="approve" id="approveBox"></div>
   </section>
@@ -308,10 +333,12 @@
 
 <dialog id="videoDlg" aria-labelledby="t-video">
   <h2 id="t-video">איזה קטע לשים באתר?</h2>
-  <p>בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.</p>
+  <p id="vWhere">בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.</p>
   <video id="vPrev" class="vprev" muted playsinline></video>
   <div id="vPick"><label for="vStart">מתחילים בשנייה <output id="vStartOut" for="vStart">0</output></label>
   <input id="vStart" type="range" min="0" step="0.5" value="0"></div>
+  <div id="vTitleBox" hidden><label for="vTitle">כותרת קצרה (לא חובה)</label>
+  <input id="vTitle" type="text" maxlength="34" placeholder="למשל: פתיחת סתימה במטבח"></div>
   <div class="bar" id="vBarBox" hidden><i id="vBar"></i></div>
   <p class="note" id="vNote" aria-live="polite"></p>
   <p class="err" id="vErr" role="alert"></p>
@@ -366,7 +393,8 @@
   'use strict';
   const $ = (s) => document.querySelector(s);
   const API = '/api/builder/', STORE = 'nr-builder', WA = '972526359513';
-  const SLOTS = { hero: 'רקע לראש האתר', portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', before: 'לפני', after: 'אחרי' };
+  const SLOTS = { hero: 'תמונה לראש האתר', portrait: 'תמונה שלכם', work1: 'עבודה 1', work2: 'עבודה 2', work3: 'עבודה 3', work4: 'עבודה 4', work5: 'עבודה 5', work6: 'עבודה 6', before: 'לפני', after: 'אחרי' };
+  const MAX_CLIPS = 5;
   const ERR = {
     not_configured: 'הבונה עוד לא פתוח. כתבו לנו בוואטסאפ ונבנה את האתר יחד.',
     bad_image: 'את התמונה הזאת לא הצלחנו לקרוא. נסו צילום מסך שלה, או הדביקו טקסט.',
@@ -389,6 +417,7 @@
     video_unsupported: 'הדפדפן הזה לא יכול להכין את הסרטון. נסו מכרום או מספארי מעודכנים, או שלחו לנו את הסרטון בוואטסאפ.',
     video_short: 'הסרטון קצר מדי. צריך לפחות 2 שניות.',
     video_failed: 'לא הצלחנו להכין את הסרטון. נסו סרטון אחר, או שלחו לנו אותו בוואטסאפ.',
+    too_many: 'אפשר עד 5 סרטונים. כדי להוסיף סרטון, הסירו אחד.',
     edit_limit: 'הגעתם למכסת השינויים של החודש. כתבו לנו בוואטסאפ ונעשה את השינוי.',
     slug_taken: 'הכתובת הזו תפוסה או לא תקינה. בחרו אחרת: אותיות באנגלית, ספרות ומקף.',
     bad_domain: 'הדומיין לא נראה תקין. כתבו אותו כך: example.co.il',
@@ -503,13 +532,31 @@
     paintGuide();
     paintSlots(editable);
     $('#gen').hidden = !(editable && s.heroAI);
+    paintHero(editable);
     paintVideo(editable);
+    paintClips(editable);
     paintApprove();
   }
 
+  // The top of the site: a photo or a video, one of them. The pick is saved at once (no AI) and the draft follows.
+  function paintHero(editable) {
+    const kind = state.hero === 'video' ? 'video' : 'photo';
+    document.querySelectorAll('input[name=heroKind]').forEach((i) => { i.checked = i.value === kind; i.disabled = !editable; });
+    $('#heroPhoto').hidden = kind !== 'photo'; $('#vid').hidden = kind !== 'video';
+  }
+  document.querySelectorAll('input[name=heroKind]').forEach((i) => i.addEventListener('change', async () => {
+    if (!i.checked || !state) return;
+    const r = await call('answer', { body: { hero: i.value, rev: state.rev } });
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', r.data.errors ? r.data.errors.join(' ') : say(r.data.error)); return; }
+    if (r.data.changed && r.data.changed.length) { refreshFrame(r.data.draft); markSite(); }
+  }));
+
   function paintSlots(editable) {
-    const box = $('#slots'); box.textContent = '';
+    $('#heroSlot').textContent = ''; $('#slots').textContent = '';
     for (const [slot, label] of Object.entries(SLOTS)) {
+      const box = slot === 'hero' ? $('#heroSlot') : $('#slots');
       const el = document.createElement('label'); el.className = 'slot' + (busy.has(slot) ? ' busy' : '');
       const url = state.photos[slot];
       if (url) {
@@ -1145,7 +1192,7 @@
 
   function confirmRights() {
     if ($('#rights').checked) return true;
-    if (confirm('התמונות והסרטון שלכם, ומותר לפרסם אותם באתר?')) { $('#rights').checked = true; return true; }
+    if (confirm('התמונות והסרטונים שלכם, ומותר לפרסם אותם באתר?')) { $('#rights').checked = true; return true; }
     bubble('fail', say('no_rights')); return false;
   }
 
@@ -1159,10 +1206,11 @@
     }
   }
 
-  async function shrink(file) {
+  // The top and before/after show wide: up to 1600 pixels. The other photos show small: 1200 is plenty.
+  async function shrink(file, max = 1600) {
     const bmp = await decode(file);
     const bw = bmp.naturalWidth || bmp.width, bh = bmp.naturalHeight || bmp.height;
-    const scale = Math.min(1, 1600 / Math.max(bw, bh));
+    const scale = Math.min(1, max / Math.max(bw, bh));
     const c = document.createElement('canvas'); c.width = Math.round(bw * scale); c.height = Math.round(bh * scale);
     c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
     const enc = (type, q) => new Promise((res) => c.toBlob(res, type, q));
@@ -1175,7 +1223,7 @@
 
   async function uploadPhoto(slot, file) {
     let blob;
-    try { blob = await shrink(file); } catch (e) { busy.delete(slot); paint(); bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו תמונה אחרת, או צלמו מסך שלה.'); return; }
+    try { blob = await shrink(file, ['hero', 'before', 'after'].includes(slot) ? 1600 : 1200); } catch (e) { busy.delete(slot); paint(); bubble('fail', 'לא הצלחנו לקרוא את התמונה. נסו תמונה אחרת, או צלמו מסך שלה.'); return; }
     const r = await call('photo', { raw: blob, query: '?slot=' + slot, headers: { 'content-type': blob.type, 'x-photo-rights': 'yes' } });
     busy.delete(slot);
     if (r.data.state) state = r.data.state;
@@ -1192,7 +1240,7 @@
 
   /* ---------- the short video: the owner picks 10 seconds, the browser makes a small MP4 (H.264, no sound) ---------- */
   const VIDEO_LIB = '/shared/vendor/mediabunny-1.61.3.min.mjs', CLIP = 10;
-  let vFile = null, vDur = 0, vUrl = null;
+  let vFile = null, vDur = 0, vUrl = null, vTarget = 'hero'; // 'hero': the video at the top; 'clip': one of the short videos
 
   function paintVideo(editable) {
     const box = $('#vid'); box.textContent = '';
@@ -1206,22 +1254,67 @@
       x.addEventListener('click', removeVideo);
       box.append(el, x, pickButton('להחליף'));
     } else {
-      box.append(pickButton('להוסיף סרטון קצר'), document.createTextNode('לא חובה. 10 שניות מהעבודה, בראש האתר.'));
+      box.append(pickButton('להוסיף סרטון לראש האתר'), document.createTextNode('10 שניות מהעבודה, בלי קול.'));
     }
   }
 
-  function pickButton(text) {
+  // Up to 5 short videos for "סרטונים מהעבודה": each with its first frame and an optional title.
+  function paintClips(editable) {
+    const box = $('#clipsBox'); box.textContent = '';
+    if (!editable) return;
+    const list = state.videos || [];
+    if (list.length) {
+      const ul = document.createElement('div'); ul.className = 'clip-list';
+      list.forEach((c, i) => {
+        const row = document.createElement('div'); row.className = 'clip-row';
+        const img = document.createElement('img'); img.src = c.poster; img.alt = 'סרטון ' + (i + 1);
+        const t = document.createElement('input'); t.type = 'text'; t.maxLength = 34; t.value = c.title || ''; t.placeholder = 'כותרת (לא חובה)';
+        t.setAttribute('aria-label', 'כותרת לסרטון ' + (i + 1));
+        t.addEventListener('change', () => saveClipTitle(c.id, t.value));
+        const x = document.createElement('button'); x.type = 'button'; x.className = 'btn quiet'; x.textContent = 'להסיר';
+        x.setAttribute('aria-label', 'להסיר את סרטון ' + (i + 1)); x.addEventListener('click', () => removeClip(c.id));
+        row.append(img, t, x); ul.append(row);
+      });
+      box.append(ul);
+    }
+    if (busy.has('clip')) { const n = document.createElement('p'); n.className = 'clip-note'; n.textContent = 'מכינים את הסרטון…'; box.append(n); return; }
+    const n = document.createElement('p'); n.className = 'clip-note';
+    if (list.length < MAX_CLIPS) {
+      const row = document.createElement('div'); row.className = 'vid'; row.append(pickButton(list.length ? 'להוסיף עוד סרטון' : 'להוסיף סרטון', 'clip')); box.append(row);
+      n.textContent = 'כל סרטון 10 שניות, בלי קול. באתר הם מתנגנים רק כשגוללים אליהם.';
+    } else n.textContent = 'יש כבר 5 סרטונים. כדי להוסיף, הסירו אחד.';
+    box.append(n);
+  }
+
+  async function saveClipTitle(id, title) {
+    const r = await call('clip', { method: 'PUT', query: '?id=' + id, body: { title } });
+    if (r.data.state) state = r.data.state;
+    if (!r.ok) { paint(); bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft); markSite();
+  }
+
+  async function removeClip(id) {
+    const r = await call('clip', { method: 'DELETE', query: '?id=' + id });
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft);
+  }
+
+  function pickButton(text, target = 'hero') {
     const l = document.createElement('label'); l.className = 'btn quiet pick'; l.textContent = text;
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'video/*'; input.setAttribute('aria-label', text);
-    input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) openVideo(f); });
+    input.addEventListener('change', () => { const f = input.files[0]; input.value = ''; if (f) openVideo(f, target); });
     l.append(input); return l;
   }
 
-  function openVideo(file) {
+  function openVideo(file, target = 'hero') {
     if (!confirmRights()) return;
     if (!('VideoEncoder' in window)) { bubble('fail', say('video_unsupported')); return; }
     if (file.size > 1_500_000_000) { bubble('fail', 'הסרטון גדול מדי. צלמו קטע קצר יותר.'); return; }
-    vFile = file; vDur = 0;
+    vFile = file; vDur = 0; vTarget = target;
+    $('#vWhere').textContent = target === 'clip' ? 'באתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ, באזור "סרטונים מהעבודה".' : 'בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.';
+    $('#vTitleBox').hidden = target !== 'clip'; $('#vTitle').value = '';
     if (vUrl) URL.revokeObjectURL(vUrl);
     vUrl = URL.createObjectURL(file);
     const prev = $('#vPrev'); prev.src = vUrl;
@@ -1250,8 +1343,9 @@
     try { made = await makeClip(vFile, start, (p) => { $('#vBar').style.width = Math.round(p * 100) + '%'; }); }
     catch (e) { $('#vGo').disabled = false; $('#vBarBox').hidden = true; $('#vNote').textContent = ''; $('#vErr').textContent = say(e.message === 'unsupported' ? 'video_unsupported' : e.message === 'too_short' ? 'video_short' : 'video_failed'); return; }
     $('#videoDlg').close();
-    busy.add('video'); paint();
-    queue = queue.then(() => uploadVideo(made)).catch(() => {});
+    const target = vTarget, title = $('#vTitle').value.trim();
+    busy.add(target === 'clip' ? 'clip' : 'video'); paint();
+    queue = queue.then(() => (target === 'clip' ? uploadClip(made, title) : uploadVideo(made))).catch(() => {});
   });
 
   async function makeClip(file, start, onProgress) {
@@ -1277,7 +1371,7 @@
       conversion.onProgress = onProgress;
       await conversion.execute();
       const movie = new Blob([output.target.buffer], { type: 'video/mp4' });
-      if (movie.size <= 4_400_000) return { movie, poster: await firstFrame(movie) };
+      if (movie.size <= 4_400_000) return { movie, poster: await firstFrame(movie), width, height };
     }
     throw new Error('failed');
   }
@@ -1301,6 +1395,15 @@
   async function uploadVideo({ movie, poster }) {
     const r = await call('video', { raw: new Blob([poster, movie]), headers: { 'content-type': 'application/octet-stream', 'x-poster-length': String(poster.size), 'x-photo-rights': 'yes' } });
     busy.delete('video');
+    if (r.data.state) state = r.data.state;
+    paint();
+    if (!r.ok) { bubble('fail', say(r.data.error)); return; }
+    refreshFrame(r.data.draft); markSite();
+  }
+
+  async function uploadClip({ movie, poster, width, height }, title) {
+    const r = await call('clip', { raw: new Blob([poster, movie]), headers: { 'content-type': 'application/octet-stream', 'x-poster-length': String(poster.size), 'x-photo-rights': 'yes', 'x-video-size': width + 'x' + height, 'x-title': encodeURIComponent(title || '') } });
+    busy.delete('clip');
     if (r.data.state) state = r.data.state;
     paint();
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }

@@ -10,7 +10,7 @@ export const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_drafts: [],
 export const storage = new Map(); export const sentWa = []; export const aiCalls = []; export const ai = { queue: [], mode: "ok" };
 export const gh = { calls: [], files: new Map([["clients/sample-plumber/assets/leadbot.js", "sha-bot"], ["clients/sample-plumber/assets/leadform.js", "sha-form"], ["clients/sample-plumber/assets/a11y.js", "sha-a11y"]]), head: "c0", moveFails: 0, trees: [] };
 export const DEF = {
-  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, video: null, photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+  ls_drafts: () => ({ id: randomUUID(), template: "plumber", content: {}, photos: {}, messages: [], status: "draft", rev: 0, photo_rev: 0, paid_at: null, video: null, videos: [], photo_rights_at: null, package: null, plan: null, return_note: null, published_slug: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
   ls_leads: () => ({ id: randomUUID(), status: "new", created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
   ls_payments: () => ({ id: randomUUID(), status: "pending", created_at: new Date().toISOString() }),
