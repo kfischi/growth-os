@@ -1,16 +1,19 @@
-"""The background music of the process film, composed here so it is ours to use. Light and moving, to match the pace
-of the film and the voice: 112 BPM in D major, a soft kick and clap, offbeat hats and a shaker, a pulsing bass, a
-plucked sixteenth-note arpeggio and a pad underneath. It opens with two bars of pad and hats, gives the groove a
-breath every eight bars, and ends on a ringing chord. Deterministic: the same file every run.
-scripts/process-voice.mjs lays it under the voice and ducks it while she speaks.
-Run: python3 scripts/process-music.py [seconds] [out.wav]   Needs numpy."""
-import sys, wave
+"""The background music of the explainer film, composed here so it is ours to use. Fast and light, to match the film's
+cuts: 124 BPM in D major, a soft kick and clap, offbeat hats and a shaker, a pulsing bass, a plucked sixteenth-note
+arpeggio and a pad underneath. It opens with one bar of pad and hats under the hook, gives the groove a breath every
+eight bars, and ends on a ringing chord. With a hits file (the "hits" of scripts/process-voice/film.json, written by
+process-video.mjs) it marks the film's cuts: a low swell and boom on every new step ("big"), a whoosh on every new
+feature ("cut"), a click on the hook's flashes ("tick"). Deterministic: the same file every run.
+scripts/process-voice.mjs lays it under the film (and under the voice, ducked while she speaks).
+Run: python3 scripts/process-music.py [seconds] [out.wav] [hits.json]   Needs numpy."""
+import sys, wave, json
 import numpy as np
 
 SR = 44100
 LENGTH = float(sys.argv[1]) if len(sys.argv) > 1 else 266.0
 OUT = sys.argv[2] if len(sys.argv) > 2 else "process-music.wav"
-BPM = 112
+HITS = json.load(open(sys.argv[3]))["hits"] if len(sys.argv) > 3 else []
+BPM = 124
 BEAT = 60 / BPM
 BAR = 4 * BEAT
 S16 = BEAT / 4
@@ -108,7 +111,7 @@ def pad(notes, dur):
             s += np.sin(2 * np.pi * f * t + ph) + 0.18 * np.sin(4 * np.pi * f * t + ph)
     return s * ramp(m, 0.25, 0.8) / (len(notes) * 2)
 
-INTRO = 2 * BAR
+INTRO = 1 * BAR
 END_AT = LENGTH - 6.5
 ARP = [0, 1, 2, 3, 2, 1, 3, 2, 0, 2, 1, 3, 2, 3, 1, 2]
 BASS = [0, None, 0, 0, None, 0, 12, 0]  # eighth notes: root, rests, an octave jump
@@ -145,6 +148,44 @@ add(at, bass(38, 2.5), 0.3)
 for i, note in enumerate([62, 66, 69, 74, 76, 81]):
     add(at + i * S16, pluck(note, 0.12))
 
+# The cuts: a swell into a low boom for a new step, a whoosh for a new feature, a click for a flash of the hook.
+def boom():
+    m = int(0.9 * SR)
+    t = np.arange(m) / SR
+    f = 38 + 60 * np.exp(-t * 18)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 4.5)
+
+def swell(dur):
+    m = int(dur * SR)
+    t = np.arange(m) / SR
+    s = highpass(rng.standard_normal(m), 4)
+    return s * (t / dur) ** 2.2 * 0.6
+
+def whoosh():
+    m = int(0.32 * SR)
+    t = np.arange(m) / SR
+    s = highpass(highpass(rng.standard_normal(m), 3), 3)
+    return s * np.sin(np.pi * t / 0.32) ** 2
+
+def click():
+    m = int(0.04 * SR)
+    t = np.arange(m) / SR
+    return (np.sin(2 * np.pi * 1800 * t) + 0.5 * np.sin(2 * np.pi * 2900 * t)) * np.exp(-t * 120)
+
+for h in HITS:
+    x, k = float(h["t"]), h["k"]
+    if x > LENGTH - 7:  # the ending has its own chord
+        continue
+    if k == "big":
+        add(x - 0.45, swell(0.45), 0.10)
+        add(x, boom(), 0.42)
+        add(x, hat(open_=True), 0.10)
+    elif k == "cut":
+        add(x - 0.16, whoosh(), 0.07)
+        add(x, kick(), 0.25)
+    else:
+        add(x, click(), 0.06)
+
 # A small room, then a gentle top cut (about 7 kHz) and the fades.
 ir_len = int(1.2 * SR)
 ir = rng.standard_normal(ir_len) * np.exp(-np.arange(ir_len) / SR * 5.0)
@@ -166,4 +207,4 @@ with wave.open(OUT, "wb") as w:
     w.setsampwidth(2)
     w.setframerate(SR)
     w.writeframes((out * 32767).astype("<i2").tobytes())
-print(f"{OUT}: {LENGTH:.1f} s, {BPM} BPM")
+print(f"{OUT}: {LENGTH:.1f} s, {BPM} BPM, {len(HITS)} accents")

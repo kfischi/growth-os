@@ -1,9 +1,11 @@
-// The loop at the top of the home page: real moments cut from the process video (its silent master scripts/process-voice/film.mp4,
-// recorded by scripts/process-video.mjs): the site, the AI chat, the builder's templates and colours, the questions,
-// the draft filling up, photos, approving, and an enquiry arriving on WhatsApp. Only the browser window is kept, so
-// it reads big. The captions are not burned in: the page shows them from CUES (written to hero-cues.json), synced to
-// the video, so the Hebrew is real text. Run after recording the process video again.
-// Run: node scripts/hero-video.mjs   Needs ffmpeg.
+// The loop at the top of the home page: real moments cut from the explainer film, recorded with the camera kept wide
+// (WIDE=1 node scripts/process-video.mjs): the site, the AI chat, the builder's templates and colours, the questions,
+// the draft filling up, photos, the site live after the payment, and an enquiry arriving on WhatsApp. Only the browser
+// window is kept, so it reads big. Each clip starts at a moment the recorder names (its "marks", in the .json next to
+// the recording), so the loop follows the film when it is recorded again. The captions are not burned in: the page
+// shows them from the cues (written to hero-cues.json, and to data-cues on the home page's hero figure), synced to the
+// video, so the Hebrew is real text.
+// Run: node scripts/hero-video.mjs [recording.mp4]   Needs ffmpeg.
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -12,22 +14,23 @@ import { execFileSync } from "node:child_process";
 const ROOT = path.resolve(new URL("../demos", import.meta.url).pathname);
 // The same film recorded with the camera kept wide (WIDE=1 node scripts/process-video.mjs), so no clip loses the page's sides.
 const SRC = process.argv[2] || path.join(os.tmpdir(), "process-wide.mp4");
+const { marks } = JSON.parse(fs.readFileSync(SRC.replace(/\.mp4$/, ".json"), "utf8"));
 const OUT = path.join(ROOT, "shared/video/hero");
 // The browser window on the process video's 1920x1080 stage (scripts/video-stage.html), address bar included.
 const CROP = "1240:820:48:150";
 const FADE = 0.4;
-// [start in the process video (s), length (s), caption]
+// [the recorder's mark, seconds after it, length (s), caption]
 const CLIPS = [
-  [21.0, 3.2, "אתר מקצועי לעסק שלכם"],
-  [39.9, 3.2, "נציג AI שעונה ללקוחות"],
-  [80.5, 3.6, "בוחרים תבנית"],
-  [115.7, 3.2, "ובוחרים צבעים"],
-  [142.4, 3.2, "עונים על כמה שאלות"],
-  [169.9, 3.2, "והאתר מתמלא מול העיניים"],
-  [184.5, 3.0, "מעלים תמונות"],
-  [229.7, 2.8, "מאשרים, ואנחנו מעלים לאוויר"],
-  [263.9, 4.4, "וכל פנייה מגיעה אליכם בוואטסאפ"],
-];
+  ["h-site", 0.2, 3.2, "אתר מקצועי לעסק שלכם"],
+  ["h-chat", 0.0, 3.2, "נציג AI שעונה ללקוחות"],
+  ["h-look", -0.6, 3.4, "בוחרים תבנית"],
+  ["h-pal", -0.6, 3.0, "ובוחרים צבעים"],
+  ["h-q", 0.0, 3.2, "עונים על כמה שאלות"],
+  ["h-fill", 0.0, 3.0, "והאתר מתמלא מול העיניים"],
+  ["h-photos", 0.0, 3.0, "מעלים תמונות"],
+  ["h-live", -0.2, 2.8, "משלמים, והאתר עולה לאוויר לבד"],
+  ["h-wa", -1.4, 4.2, "וכל פנייה מגיעה אליכם בוואטסאפ"],
+].map(([m, d, len, text]) => { if (marks[m] == null) throw new Error("no mark " + m + " in the recording"); return [+(marks[m] + d).toFixed(2), len, text]; });
 
 fs.mkdirSync(OUT, { recursive: true });
 // Each clip: cut, cropped, the same size and rate. Then a chain of short cross-fades.
@@ -50,3 +53,5 @@ fs.writeFileSync(path.join(OUT, "hero-cues.json"), JSON.stringify(cues, null, 2)
 const secs = execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp4]).toString().trim();
 const mb = (f) => (fs.statSync(f).size / 1e6).toFixed(2);
 console.log(`hero: ${Number(secs).toFixed(1)} s · mp4 ${mb(mp4)} MB · webm ${mb(webm)} MB · cues ${cues.map((c) => c.at).join(", ")}`);
+// The same cues, as the home page's hero figure carries them (data-cues on figure.reel in demos/index.html).
+console.log("data-cues: [" + cues.map((c) => `{&quot;at&quot;: ${c.at}, &quot;text&quot;: &quot;${c.text}&quot;}`).join(", ") + "]");

@@ -6,117 +6,146 @@
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   /* The stage for scripts/process-video.mjs: 1920x1080. The real site runs in the iframe "app"; everything else
-     (the explanation panel, the step rail, the camera, the arrow, the cards, the phone) is drawn here. */
+     (the hook, the titles, the step rail, the camera, the arrow, the cards, the phone, the prices) is drawn here.
+     Titles are big on purpose: the film has to read on a phone, with the sound off. */
   :root { --plum: #3a17b0; --plum-2: #17112e; --ink: #17112e; --slate: #4a4462; --mist: #f1edfd; --paper: #fcfbff; --mint: #5428e0; --mint-2: #e4dcfb; --line: #d8d6e3; --fuchsia: #c2136f; }
   * { box-sizing: border-box; }
   html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
   body { background: radial-gradient(1200px 700px at 30% 40%, #fcfbff, #ebe5fc); color: var(--ink); font-family: Rubik, system-ui, sans-serif; }
+  .dot { color: var(--fuchsia); }
 
   /* top: the brand and the ten steps */
   .top { position: absolute; inset: 0 0 auto 0; height: 118px; display: flex; align-items: center; gap: 36px; padding: 0 48px; background: var(--plum); color: #fff; }
   .brand { flex: none; display: grid; gap: 2px; }
-  .brand b { font: 900 34px/1 Rubik; letter-spacing: -.01em; }
-  .brand small { font: 500 17px Rubik; color: #d8d6e3; }
-  .rail { flex: 1; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
-  .rail li { position: relative; display: grid; gap: 6px; justify-items: center; color: #b9addf; font: 500 17px Rubik; transition: color .4s; }
+  .brand b { font: 900 36px/1 Rubik; letter-spacing: -.01em; }
+  .brand small { font: 500 18px Rubik; color: #d8d6e3; }
+  .rail { flex: 1; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; transition: opacity .3s; }
+  .rail li { position: relative; display: grid; gap: 6px; justify-items: center; color: #b9addf; font: 500 19px Rubik; transition: color .3s; }
   .rail li i { width: 100%; height: 8px; border-radius: 4px; background: rgba(255,255,255,.14); overflow: hidden; }
-  .rail li i::after { content: ""; display: block; height: 100%; width: 0; background: var(--mint-2); transition: width .7s cubic-bezier(.65,0,.35,1); }
+  .rail li i::after { content: ""; display: block; height: 100%; width: 0; background: var(--mint-2); transition: width .45s cubic-bezier(.65,0,.35,1); }
   .rail li span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .rail li em { font: 700 14px Rubik; font-style: normal; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); }
+  .rail li em { font: 700 15px Rubik; font-style: normal; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.12); }
   .rail li.done { color: #ebe5fc; } .rail li.done i::after { width: 100%; } .rail li.done em { background: var(--mint); color: #fff; }
   .rail li.on { color: #fff; } .rail li.on i::after { width: 50%; } .rail li.on em { background: var(--mint-2); color: var(--plum-2); }
   .rail li.on span { font-weight: 700; }
+  /* in the montage the rail gives way to one line */
+  .gets { position: absolute; inset: 0 auto 0 48px; display: flex; align-items: center; gap: 14px; font: 700 30px Rubik; color: #fff; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .gets i { font-style: normal; padding: 6px 16px; border-radius: 999px; background: rgba(255,255,255,.14); font: 700 22px Rubik; color: var(--mint-2); }
+  body.montage .rail { opacity: 0; } body.montage .gets { opacity: 1; }
 
   /* the browser window with the real site */
   .device { position: absolute; left: 48px; top: 150px; width: 1240px; border-radius: 18px; background: #fff; box-shadow: 0 40px 90px -40px rgba(42,24,48,.55), 0 0 0 1px rgba(42,24,48,.08); overflow: hidden; }
   .chrome { height: 46px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #f6f3ff; border-bottom: 1px solid var(--line); direction: ltr; }
   .dots { display: flex; gap: 7px; } .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d8d6e3; }
-  .url { flex: 1; height: 30px; border-radius: 15px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; font: 500 16px Rubik; color: var(--slate); }
+  .url { flex: 1; height: 30px; border-radius: 15px; background: #fff; border: 1px solid var(--line); display: flex; align-items: center; gap: 8px; padding: 0 14px; font: 500 17px Rubik; color: var(--slate); }
   .url svg { width: 14px; height: 14px; flex: none; }
   .url b { color: var(--ink); font-weight: 500; }
   .view { position: relative; width: 1240px; height: 775px; overflow: hidden; background: #fff; }
-  .cam { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; transition: transform 1.05s cubic-bezier(.65,0,.35,1); will-change: transform; }
+  .cam { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 0 0; transition: transform .6s cubic-bezier(.65,0,.35,1); will-change: transform; }
   .cam iframe { width: 1280px; height: 800px; border: 0; display: block; background: #fff; }
-  .dim { position: absolute; inset: 0; pointer-events: none; background: rgba(29,27,46,0); transition: background .5s; }
+  .dim { position: absolute; inset: 0; pointer-events: none; background: rgba(23,17,46,0); transition: background .35s; }
+  .dim.on { background: rgba(23,17,46,.55); }
 
-  /* the explanation, beside the window */
+  /* the titles, beside the window: what this step is, in a few big words, and what happens right now */
   .panel { position: absolute; right: 48px; top: 150px; width: 560px; height: 821px; display: flex; flex-direction: column; gap: 22px; }
-  .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; background: var(--plum); color: #fff; font: 700 20px Rubik; }
+  .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 9px 18px; border-radius: 999px; background: var(--plum); color: #fff; font: 700 24px Rubik; }
   .chip b { font-weight: 900; color: var(--mint-2); }
-  .panel h1 { margin: 0; font: 900 66px/1.02 Rubik; letter-spacing: -.02em; color: var(--plum-2); text-wrap: balance; }
-  .panel .text { margin: 0; font: 400 27px/1.45 Rubik; color: #3a3650; text-wrap: pretty; }
-  .now { margin-top: 6px; display: grid; gap: 8px; padding: 20px 22px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px -26px rgba(42,24,48,.5); border-inline-start: 6px solid var(--mint); }
-  .now span { font: 700 16px Rubik; color: var(--mint); letter-spacing: .06em; }
-  .now b { font: 700 30px/1.3 Rubik; color: var(--ink); min-height: 1.3em; }
-  .now.flash { animation: flash .6s ease-out; }
-  @keyframes flash { 0% { transform: translateX(-10px); opacity: .2; } 100% { transform: none; opacity: 1; } }
-  .next { margin-top: auto; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 18px; border: 2px dashed #cfc6ee; color: var(--slate); }
-  .next span { flex: none; font: 700 16px Rubik; letter-spacing: .06em; color: var(--slate); }
-  .next b { font: 700 26px Rubik; color: var(--plum); }
-  .next svg { width: 28px; height: 28px; margin-inline-start: auto; color: var(--plum); }
-  .next.pulse { animation: pulse 1.1s ease-in-out 2; border-color: var(--mint); }
-  @keyframes pulse { 50% { transform: scale(1.03); background: #fff; } }
-  .swap { animation: swap .7s cubic-bezier(.2,.8,.2,1); }
-  @keyframes swap { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .panel h1 { margin: 0; font: 900 92px/1 Rubik; letter-spacing: -.025em; color: var(--plum-2); text-wrap: balance; }
+  .panel .text { margin: 0; font: 500 36px/1.3 Rubik; color: #3a3650; text-wrap: balance; }
+  .now { margin-top: auto; display: grid; gap: 8px; padding: 22px 24px; border-radius: 20px; background: #fff; box-shadow: 0 18px 40px -26px rgba(42,24,48,.5); border-inline-start: 8px solid var(--mint); }
+  .now b { font: 700 40px/1.25 Rubik; color: var(--ink); min-height: 1.25em; text-wrap: balance; }
+  .now.empty { visibility: hidden; }
+  .now.flash { animation: flash .35s ease-out; }
+  @keyframes flash { 0% { transform: translateX(-14px); opacity: .2; } 100% { transform: none; opacity: 1; } }
+  .sample { align-self: flex-start; display: none; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 999px; border: 2px solid var(--fuchsia); color: var(--fuchsia); font: 700 24px Rubik; background: #fff; }
+  .sample::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--fuchsia); }
+  body.montage .sample { display: inline-flex; }
+  .swap { animation: swap .4s cubic-bezier(.2,.8,.2,1); }
+  @keyframes swap { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
   /* the hand: an arrow that glides to the next thing to press, a ring on it, a ripple on the tap */
-  .arrow { position: absolute; z-index: 20; width: 74px; height: 74px; pointer-events: none; opacity: 0; transition: left .55s cubic-bezier(.2,.8,.2,1), top .55s cubic-bezier(.2,.8,.2,1), opacity .25s; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
-  .arrow.on { opacity: 1; } .arrow svg { width: 100%; height: 100%; animation: bob .6s ease-in-out infinite alternate; }
+  .arrow { position: absolute; z-index: 20; width: 74px; height: 74px; pointer-events: none; opacity: 0; transition: left .35s cubic-bezier(.2,.8,.2,1), top .35s cubic-bezier(.2,.8,.2,1), opacity .2s; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
+  .arrow.on { opacity: 1; } .arrow svg { width: 100%; height: 100%; animation: bob .45s ease-in-out infinite alternate; }
   @keyframes bob { to { transform: translateY(var(--by, 9px)); } }
-  .glow { position: absolute; z-index: 19; pointer-events: none; border-radius: 16px; box-shadow: 0 0 0 4px var(--mint), 0 0 0 14px rgba(15,122,108,.22), 0 0 0 9999px rgba(29,27,46,.0); opacity: 0; transition: opacity .3s, left .45s, top .45s, width .45s, height .45s; }
+  .glow { position: absolute; z-index: 19; pointer-events: none; border-radius: 16px; box-shadow: 0 0 0 4px var(--mint), 0 0 0 14px rgba(84,40,224,.22); opacity: 0; transition: opacity .2s, left .3s, top .3s, width .3s, height .3s; }
   .glow.on { opacity: 1; }
-  .tap { position: absolute; z-index: 21; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 4px solid var(--mint); background: rgba(15,122,108,.22); pointer-events: none; animation: tap .65s ease-out forwards; }
+  .tap { position: absolute; z-index: 21; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 4px solid var(--mint); background: rgba(84,40,224,.22); pointer-events: none; animation: tap .5s ease-out forwards; }
   @keyframes tap { from { transform: scale(.3); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
-  .bubble { position: absolute; z-index: 22; max-width: 420px; padding: 12px 18px; border-radius: 14px; background: var(--plum-2); color: #fff; font: 700 24px/1.3 Rubik; box-shadow: 0 14px 30px -12px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); transition: opacity .3s, transform .3s; pointer-events: none; }
+  .bubble { position: absolute; z-index: 22; max-width: 460px; padding: 12px 20px; border-radius: 14px; background: var(--plum-2); color: #fff; font: 700 30px/1.25 Rubik; box-shadow: 0 14px 30px -12px rgba(0,0,0,.5); opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none; }
   .bubble.on { opacity: 1; transform: none; }
 
   /* the step card that sweeps over the window when a step starts */
-  .card { position: absolute; z-index: 15; left: 48px; top: 150px; width: 1240px; height: 821px; border-radius: 18px; display: grid; place-items: center; background: linear-gradient(135deg, var(--plum), var(--plum-2)); color: #fff; text-align: center; clip-path: inset(0 0 0 100%); transition: clip-path .7s cubic-bezier(.65,0,.35,1); }
+  .card { position: absolute; z-index: 15; left: 48px; top: 150px; width: 1240px; height: 821px; border-radius: 18px; display: grid; place-items: center; background: linear-gradient(135deg, var(--mint), var(--plum-2)); color: #fff; text-align: center; clip-path: inset(0 0 0 100%); transition: clip-path .4s cubic-bezier(.65,0,.35,1); }
   .card.on { clip-path: inset(0 0 0 0); }
   .card.off { clip-path: inset(0 100% 0 0); }
-  .card .n { font: 900 220px/0.9 Rubik; color: rgba(127,216,200,.95); letter-spacing: -.04em; }
-  .card h2 { margin: 6px 0 0; font: 900 84px/1 Rubik; letter-spacing: -.02em; }
-  .card p { margin: 18px 0 0; font: 500 30px Rubik; color: #d8d6e3; }
+  .card .n { font: 900 230px/0.9 Rubik; color: var(--mint-2); letter-spacing: -.04em; }
+  .card h2 { margin: 10px 0 0; font: 900 110px/1 Rubik; letter-spacing: -.025em; }
+  .card p { margin: 22px 0 0; font: 500 40px Rubik; color: #e4dcfb; }
 
-  /* the owner's phone, for the WhatsApp messages */
-  .phone { position: absolute; z-index: 16; left: 430px; top: 160px; width: 470px; height: 860px; border-radius: 54px; background: #121016; padding: 14px; box-shadow: 0 50px 100px -40px rgba(0,0,0,.7); transform: translateY(120%); transition: transform .9s cubic-bezier(.2,.8,.2,1); }
+  /* a phone, for the WhatsApp messages */
+  .phone { position: absolute; z-index: 16; left: 433px; top: 140px; width: 470px; height: 900px; border-radius: 54px; background: #121016; padding: 14px; box-shadow: 0 50px 100px -40px rgba(0,0,0,.7); transform: translateY(120%); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
   .phone.on { transform: none; }
   .phone .scr { width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #efe7de; display: flex; flex-direction: column; }
   .phone .bar { background: #075e54; color: #fff; padding: 46px 18px 14px; display: flex; align-items: center; gap: 12px; }
-  .phone .av { width: 44px; height: 44px; border-radius: 50%; background: var(--mint-2); color: var(--plum-2); display: grid; place-items: center; font: 900 20px Rubik; }
-  .phone .bar b { display: block; font: 700 21px Rubik; } .phone .bar small { font: 400 15px Rubik; opacity: .85; }
-  .phone .msgs { flex: 1; padding: 18px 14px; display: flex; flex-direction: column; gap: 12px; }
-  .phone .m { align-self: flex-start; max-width: 88%; background: #fff; border-radius: 4px 14px 14px 14px; padding: 10px 14px 6px; font: 400 23px/1.45 Rubik; color: #111; box-shadow: 0 1px 1px rgba(0,0,0,.12); opacity: 0; transform: translateY(10px) scale(.98); transition: opacity .35s, transform .35s; white-space: pre-line; }
+  .phone .av { width: 46px; height: 46px; border-radius: 50%; background: var(--mint-2); color: var(--plum-2); display: grid; place-items: center; font: 900 21px Rubik; }
+  .phone .bar b { display: block; font: 700 22px Rubik; } .phone .bar small { font: 400 15px Rubik; opacity: .85; }
+  .phone .msgs { flex: 1; padding: 16px 14px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; overflow: hidden; }
+  .phone .m { align-self: flex-start; max-width: 90%; background: #fff; border-radius: 4px 14px 14px 14px; padding: 10px 14px 6px; font: 400 22px/1.42 Rubik; color: #111; box-shadow: 0 1px 1px rgba(0,0,0,.12); opacity: 0; transform: translateY(10px) scale(.98); transition: opacity .25s, transform .25s; white-space: pre-line; }
+  .phone .m.me { align-self: flex-end; background: #d9fdd3; border-radius: 14px 4px 14px 14px; }
   .phone .m.on { opacity: 1; transform: none; }
   .phone .m time { display: block; text-align: left; font-size: 13px; color: #8a8a8a; margin-top: 4px; }
-  .phone .file { display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 10px; border-radius: 10px; background: #f3f0ea; font: 700 18px Rubik; }
-  .phone .file i { width: 34px; height: 40px; border-radius: 4px; background: #c9453a; color: #fff; font: 700 11px Rubik; font-style: normal; display: grid; place-items: center; }
-  .phone .btn { display: block; margin-top: 8px; text-align: center; padding: 10px; border-top: 1px solid #eee; color: #0a7cff; font: 700 19px Rubik; }
+  .phone .m img { display: block; width: 100%; border-radius: 8px; margin: 2px 0 8px; aspect-ratio: 4 / 3; object-fit: cover; }
+  .phone .btns { display: flex; border-top: 1px solid #eee; margin: 8px -14px 0; }
+  .phone .btn { flex: 1; display: block; text-align: center; padding: 10px 4px; color: #0a7cff; font: 700 20px Rubik; }
+  .phone .btn + .btn { border-inline-start: 1px solid #eee; }
+  .phone .btn.hit { background: #e8f1ff; }
 
-  /* opening and closing */
-  .full { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(1400px 900px at 60% 30%, #4a2d50, var(--plum-2)); color: #fff; text-align: center; opacity: 0; transition: opacity .7s; pointer-events: none; }
+  /* the hook and the end: the whole stage */
+  .full { position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; background: radial-gradient(1400px 900px at 60% 30%, #3a17b0, var(--plum-2)); color: #fff; text-align: center; opacity: 0; transition: opacity .3s; pointer-events: none; overflow: hidden; }
   .full.on { opacity: 1; }
-  .full .lines { display: grid; gap: 22px; justify-items: center; }
-  .full .l { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s cubic-bezier(.2,.8,.2,1); }
+  .full.cut { transition: none; }
+  .slides { position: absolute; inset: 0; }
+  .slides img { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; opacity: 0; }
+  .slides img.on { opacity: 1; animation: kb 1.6s linear forwards; }
+  @keyframes kb { from { transform: scale(1.0); } to { transform: scale(1.07); } }
+  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(23,17,46,.55), rgba(58,23,176,.78) 55%, rgba(23,17,46,.92)); }
+  .full .lines { position: relative; display: grid; gap: 24px; justify-items: center; padding: 0 80px; }
+  .full .l { opacity: 0; transform: translateY(30px) scale(.97); transition: opacity .3s, transform .35s cubic-bezier(.2,.8,.2,1); }
   .full .l.on { opacity: 1; transform: none; }
+  .full .l.gone { opacity: 0; transform: translateY(-30px); }
+  .full .huge { font: 900 150px/1.02 Rubik; letter-spacing: -.035em; text-wrap: balance; text-shadow: 0 8px 40px rgba(23,17,46,.45); }
   .full .big { font: 900 112px/1 Rubik; letter-spacing: -.03em; }
-  .full .mid { font: 700 52px/1.2 Rubik; color: var(--mint-2); }
-  .full .small { font: 500 34px/1.35 Rubik; color: #d8d6e3; }
-  .full .grid { display: grid; grid-template-columns: repeat(5, 230px); gap: 16px; margin-top: 14px; }
-  .full .st { display: grid; gap: 10px; justify-items: center; padding: 22px 12px; border-radius: 18px; background: rgba(255,255,255,.07); opacity: 0; transform: translateY(20px) scale(.96); transition: opacity .45s, transform .45s cubic-bezier(.2,.8,.2,1), background .4s; }
-  .full .st.on { opacity: 1; transform: none; }
-  .full .st em { font: 900 40px Rubik; font-style: normal; color: var(--mint-2); }
-  .full .st b { font: 700 28px Rubik; }
-  .full .st.ok { background: rgba(15,122,108,.45); }
-  .full .st.ok em::after { content: " ✓"; color: #fff; }
-  .full .cta { display: inline-flex; align-items: center; gap: 18px; padding: 22px 40px; border-radius: 999px; background: var(--mint); font: 900 46px Rubik; }
-  .full .addr { font: 700 36px Rubik; color: #fff; direction: ltr; }
+  .full .mid { font: 700 64px/1.2 Rubik; color: var(--mint-2); }
+  .full .small { font: 500 40px/1.35 Rubik; color: #e4dcfb; }
+  .full .tagline { font: 700 34px Rubik; color: var(--mint-2); letter-spacing: .02em; }
+  .full .stack { display: grid; place-items: center; }
+  .full .stack > * { grid-area: 1 / 1; }
+  .full .plans { display: grid; grid-template-columns: repeat(2, 680px); gap: 40px; margin-top: 10px; }
+  .full .plan { position: relative; display: grid; gap: 12px; justify-items: start; text-align: start; padding: 40px 46px; border-radius: 28px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 2px rgba(255,255,255,.18); }
+  .full .plan.rec { background: #fff; color: var(--ink); box-shadow: 0 30px 80px -30px rgba(0,0,0,.6); }
+  .full .plan .tag { position: absolute; top: -24px; inset-inline-end: 36px; padding: 8px 22px; border-radius: 999px; background: var(--fuchsia); color: #fff; font: 700 30px Rubik; }
+  .full .plan h3 { margin: 0; font: 900 72px/1 Rubik; }
+  .full .plan .p { font: 900 104px/1 Rubik; letter-spacing: -.02em; }
+  .full .plan .p small { font: 500 38px Rubik; letter-spacing: 0; }
+  .full .plan .m { font: 700 52px Rubik; color: var(--mint-2); }
+  .full .plan.rec .m { color: var(--mint); }
+  .full .plan .w { font: 500 32px/1.3 Rubik; color: #d8d6e3; }
+  .full .plan.rec .w { color: var(--slate); }
+  .full .fine { font: 500 38px Rubik; color: #e4dcfb; }
+  /* the end holds for reading, so it keeps moving a little */
+  .full .lines.drift { animation: drift 6s linear forwards; }
+  @keyframes drift { from { transform: scale(1); } to { transform: scale(1.045); } }
+  .full .cta.l.on { animation: glow 1.4s ease-in-out infinite alternate; }
+  @keyframes glow { to { box-shadow: 0 0 0 18px rgba(84,40,224,.18), 0 24px 70px -14px rgba(84,40,224,1); } }
+  .full .cta { display: inline-flex; align-items: center; gap: 18px; padding: 26px 52px; border-radius: 999px; background: var(--mint); font: 900 58px Rubik; box-shadow: 0 0 0 10px rgba(84,40,224,.28), 0 24px 60px -18px rgba(84,40,224,.9); }
+  .full .addr { font: 700 40px Rubik; color: #fff; direction: ltr; }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>Easy Landing</b><small>ככה בונים את האתר שלכם</small></div>
+  <div class="brand"><b>Easy Landing</b><small>אתרים שבונים עסקים</small></div>
   <ol class="rail" id="rail"></ol>
+  <div class="gets" aria-hidden="true"><i>אחרי שהאתר באוויר</i>מה האתר עושה בשבילכם</div>
 </header>
 
 <section class="device" id="device">
@@ -127,17 +156,17 @@
 </section>
 
 <aside class="panel" id="panel">
-  <div class="chip" id="chip">שלב <b id="sn">1</b> מתוך 10</div>
+  <div class="chip" id="chip"></div>
+  <div class="sample" id="sample">המחשה · הפרטים והמספרים לדוגמה</div>
   <h1 id="title"></h1>
   <p class="text" id="text"></p>
-  <div class="now" id="nowBox"><span>עכשיו</span><b id="now"></b></div>
-  <div class="next" id="nextBox"><span>השלב הבא</span><b id="next"></b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+  <div class="now empty" id="nowBox"><b id="now"></b></div>
 </aside>
 
 <div class="card" id="card"><div><div class="n" id="cardN"></div><h2 id="cardT"></h2><p id="cardS"></p></div></div>
 
 <div class="phone" id="phone"><div class="scr">
-  <div class="bar"><span class="av" id="phAv">E</span><div><b id="phName">Easy Landing</b><small>מחובר/ת</small></div></div>
+  <div class="bar"><span class="av" id="phAv">E</span><div><b id="phName">Easy Landing</b><small id="phSub">וואטסאפ</small></div></div>
   <div class="msgs" id="msgs"></div>
 </div></div>
 
@@ -145,37 +174,50 @@
 <div class="glow" id="glow"></div>
 <div class="bubble" id="bubble"></div>
 
-<div class="full" id="full"><div class="lines" id="lines"></div></div>
+<div class="full" id="full"><div class="slides" id="slides"></div><div class="shade" id="shade"></div><div class="lines" id="lines"></div></div>
 
 <script>
   const STEPS = ["תחום", "דמו", "בונה", "תבנית", "צבעים", "שאלות", "תמונות", "בדיקה", "אישור", "באוויר"];
   const $ = (id) => document.getElementById(id);
   $("rail").innerHTML = STEPS.map((s, i) => `<li><i></i><span><em>${i + 1}</em>${s}</span></li>`).join("");
   const S = window.stage = {};
+  // A title's last full stop is the house's one ornament: fuchsia.
+  const dotted = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\.$/, '<span class="dot">.</span>');
+  S.dotted = dotted;
 
   // The address bar shows the real address of the page in the window.
   const SHOW = (u) => {
-    if (u.pathname.startsWith("/__live")) return "<b>www.העסק-שלכם.co.il</b>";
+    if (u.pathname.startsWith("/__live")) return "<b>oren-mayim.easylanding.co.il</b>" + u.pathname.replace(/^\/__live\/?/, "/").replace(/^\/$/, "");
     return "service-pro-web.netlify.app<b>" + u.pathname.replace(/index\.html$/, "") + "</b>";
   };
-  setInterval(() => { try { const u = new URL($("app").contentWindow.location.href); if (u.protocol.startsWith("http")) $("url").innerHTML = SHOW(u); } catch (e) {} }, 200);
+  setInterval(() => { try { const u = new URL($("app").contentWindow.location.href); if (u.protocol.startsWith("http")) $("url").innerHTML = SHOW(u); } catch (e) {} }, 100);
 
-  S.step = (n, title, text, next) => {
+  const swap = (...ids) => { for (const id of ids) { const e = $(id); e.classList.remove("swap"); void e.offsetWidth; e.classList.add("swap"); } };
+  // A step of the build: the rail, the chip, the title and one short line.
+  S.step = (n, title, text) => {
+    document.body.classList.remove("montage");
     document.querySelectorAll("#rail li").forEach((li, i) => { li.className = i + 1 < n ? "done" : i + 1 === n ? "on" : ""; });
-    $("sn").textContent = n; $("title").textContent = title; $("text").textContent = text;
-    $("next").textContent = next || "סיימנו"; $("now").textContent = "";
-    for (const id of ["chip", "title", "text", "nextBox"]) { const e = $(id); e.classList.remove("swap"); void e.offsetWidth; e.classList.add("swap"); }
-    $("nextBox").classList.remove("pulse");
+    $("chip").innerHTML = `שלב <b>${n}</b> מתוך 10`;
+    $("title").innerHTML = dotted(title); $("text").textContent = text || "";
+    $("now").textContent = ""; $("nowBox").classList.add("empty");
+    swap("chip", "title", "text");
   };
-  S.now = (t) => { const b = $("nowBox"); $("now").textContent = t; b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); };
-  S.pulseNext = () => { const b = $("nextBox"); b.classList.remove("pulse"); void b.offsetWidth; b.classList.add("pulse"); };
+  // A feature in "what you get": the same panel, with the "sample" badge.
+  S.feature = (n, of, title, text) => {
+    document.body.classList.add("montage");
+    $("chip").innerHTML = `מה מקבלים <b>${n}</b> מתוך ${of}`;
+    $("title").innerHTML = dotted(title); $("text").textContent = text || "";
+    $("now").textContent = ""; $("nowBox").classList.add("empty");
+    swap("chip", "title", "text");
+  };
+  S.now = (t) => { const b = $("nowBox"); $("now").textContent = t; b.classList.toggle("empty", !t); b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash"); };
   S.allDone = () => document.querySelectorAll("#rail li").forEach((li) => { li.className = "done"; });
 
-  S.card = (n, title, sub) => { const c = $("card"); $("cardN").textContent = n; $("cardT").textContent = title; $("cardS").textContent = sub || ""; c.className = "card"; void c.offsetWidth; c.classList.add("on"); };
-  S.uncard = () => { const c = $("card"); c.classList.add("off"); setTimeout(() => { c.className = "card"; }, 750); };
+  S.card = (n, title, sub) => { const c = $("card"); $("cardN").textContent = n; $("cardT").innerHTML = dotted(title); $("cardS").textContent = sub || ""; c.className = "card"; void c.offsetWidth; c.classList.add("on"); };
+  S.uncard = () => { const c = $("card"); c.classList.add("off"); setTimeout(() => { c.className = "card"; }, 450); };
 
   S.cam = (tx, ty, s) => { $("cam").style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; };
-  S.dim = (on) => { $("dim").style.background = on ? "rgba(29,27,46,.0)" : "rgba(29,27,46,0)"; };
+  S.dim = (on) => $("dim").classList.toggle("on", !!on);
 
   S.point = (r, say) => {
     const a = $("arrow"), g = $("glow"), up = r.top < 260;
@@ -193,16 +235,24 @@
     } else b.classList.remove("on");
   };
   S.unpoint = () => { $("arrow").classList.remove("on"); $("glow").classList.remove("on"); $("bubble").classList.remove("on"); };
-  S.tap = (x, y) => { const d = document.createElement("div"); d.className = "tap"; d.style.left = x + "px"; d.style.top = y + "px"; document.body.appendChild(d); setTimeout(() => d.remove(), 700); };
+  S.tap = (x, y) => { const d = document.createElement("div"); d.className = "tap"; d.style.left = x + "px"; d.style.top = y + "px"; document.body.appendChild(d); setTimeout(() => d.remove(), 550); };
 
-  S.phone = (on, name, av) => { if (name) { $("phName").textContent = name; $("phAv").textContent = av || name[0]; } $("phone").classList.toggle("on", on); if (!on) setTimeout(() => { $("msgs").innerHTML = ""; }, 900); };
-  S.msg = (html) => { const m = document.createElement("div"); m.className = "m"; m.innerHTML = html; $("msgs").append(m); requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add("on"))); };
+  S.phone = (on, name, av, sub) => {
+    if (name) { $("phName").textContent = name; $("phAv").textContent = av || name[0]; $("phSub").textContent = sub || "וואטסאפ"; }
+    if (on && name) $("msgs").innerHTML = "";
+    $("phone").classList.toggle("on", on); S.dim(on);
+  };
+  S.msg = (html, me) => { const m = document.createElement("div"); m.className = "m" + (me ? " me" : ""); m.innerHTML = html; $("msgs").append(m); requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add("on"))); };
+  S.hit = (label) => { const b = [...document.querySelectorAll("#msgs .btn")].reverse().find((x) => x.textContent === label); if (!b) return null; b.classList.add("hit"); const r = b.getBoundingClientRect(); S.tap(r.left + r.width / 2, r.top + r.height / 2); return true; };
 
-  // Full-screen lines, one after another.
-  S.full = (on) => $("full").classList.toggle("on", on);
-  S.lines = (html) => { $("lines").innerHTML = html; };
+  // The whole stage: the hook over flashes of real demo sites, and the end.
+  S.full = (on, cut) => { const f = $("full"); f.classList.toggle("cut", !!cut); f.classList.toggle("on", on); };
+  S.slides = (srcs) => { $("slides").innerHTML = srcs.map((s) => `<img src="${s}" alt="">`).join(""); $("shade").hidden = !srcs.length; };
+  S.slide = (n) => document.querySelectorAll("#slides img").forEach((im, i) => im.classList.toggle("on", i === n));
+  S.lines = (html, drift) => { const l = $("lines"); l.innerHTML = html; l.classList.remove("drift"); if (drift) { void l.offsetWidth; l.classList.add("drift"); } };
   S.show = (sel) => document.querySelectorAll("#lines " + sel).forEach((e) => e.classList.add("on"));
   S.showN = (sel, n) => { const e = document.querySelectorAll("#lines " + sel)[n]; if (e) e.classList.add("on"); };
+  S.goneN = (sel, n) => { const e = document.querySelectorAll("#lines " + sel)[n]; if (e) { e.classList.remove("on"); e.classList.add("gone"); } };
 </script>
 </body>
 </html>

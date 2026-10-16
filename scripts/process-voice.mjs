@@ -1,7 +1,12 @@
-// The narration of the process film. Takes the silent master (scripts/process-voice/film.mp4, recorded by
-// process-video.mjs), lays one piece of voice per line of scripts/process-voice.json at its step, and where a line is
-// longer than its step the step is slowed down to fit (the picture waits for the voice, never the other way round).
-// Adds the background music under the voice and writes the film the site plays and its captions (WebVTT).
+// The sound of the explainer film. Takes the silent master (scripts/process-voice/film.mp4, recorded by
+// process-video.mjs, with its beats, captions and cuts in film.json) and writes the film the site plays and its
+// captions (WebVTT).
+// Music only, until the narration is recorded: the music composed for the film's length, with an accent on every cut,
+// and captions of the titles on screen:
+//   node scripts/process-voice.mjs --no-voice [--music=auto|file.wav] [out-dir]
+// With the narration: one piece of voice per line of scripts/process-voice.json at its beat, and where a line is
+// longer than its beat the beat is slowed down to fit (the picture waits for the voice, never the other way round).
+// The music goes under the voice, ducked while she speaks, and the captions are the lines:
 //   node scripts/process-voice.mjs [--music=auto|file.wav] [--cuts=t1,t2,...] <voice-dir | one-recording> [out-dir]
 // <voice-dir> holds 01.mp3, 02.mp3 ... one per line. Or one recording of the whole script read in order with a pause
 // between lines (a blank line between them in ElevenLabs): it is cut at the pauses that best match the length of each
@@ -14,16 +19,40 @@ import { execFileSync } from "node:child_process";
 
 const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
 const FILM = path.join(ROOT, "scripts/process-voice/film.mp4");
+const META = path.join(ROOT, "scripts/process-voice/film.json");
 const { lines } = JSON.parse(fs.readFileSync(path.join(ROOT, "scripts/process-voice.json"), "utf8"));
 const args = process.argv.slice(2);
 const opt = (k) => (args.find((a) => a.startsWith(`--${k}=`)) || "").slice(k.length + 3);
 const given = opt("cuts").split(",").filter(Boolean).map(Number);
-const music = opt("music");
-const [voiceIn, outDir = path.join(ROOT, "demos/shared/video/process")] = args.filter((a) => !a.startsWith("--"));
-if (!voiceIn) { console.error("usage: node scripts/process-voice.mjs [--music=file] [--cuts=...] <voice-dir | recording> [out-dir]"); process.exit(1); }
+const noVoice = args.includes("--no-voice");
+const music = opt("music") || (noVoice ? "auto" : "");
+const rest = args.filter((a) => !a.startsWith("--"));
+const [voiceIn, outDir = path.join(ROOT, "demos/shared/video/process")] = noVoice ? [null, rest[0]] : rest;
+if (!voiceIn && !noVoice) { console.error("usage: node scripts/process-voice.mjs --no-voice [--music=file] [out-dir]\n   or: node scripts/process-voice.mjs [--music=file] [--cuts=...] <voice-dir | recording> [out-dir]"); process.exit(1); }
 
 const probe = (f) => Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f]).toString());
 const filmEnd = probe(FILM);
+const ts = (s) => new Date(Math.max(0, s) * 1000).toISOString().slice(11, 23);
+// The music for a length: composed (scripts/process-music.py), with the film's cuts when the timing is the film's own.
+function compose(total, withHits) {
+  const out = path.join(os.tmpdir(), "process-music.wav");
+  execFileSync("python3", [path.join(ROOT, "scripts/process-music.py"), total.toFixed(1), out, ...(withHits && fs.existsSync(META) ? [META] : [])], { stdio: "inherit" });
+  return out;
+}
+
+if (noVoice) {
+  // The film as recorded, the music under it, and one caption per title on screen (from film.json).
+  const meta = JSON.parse(fs.readFileSync(META, "utf8"));
+  const bed = music === "auto" ? compose(filmEnd, true) : music;
+  fs.mkdirSync(outDir, { recursive: true });
+  const out = path.join(outDir, "process.mp4");
+  execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", FILM, "-i", bed,
+    "-filter_complex", `[1:a]aresample=48000,apad,loudnorm=I=-17:TP=-1.5:LRA=7,afade=t=out:st=${(filmEnd - 2.5).toFixed(2)}:d=2.5[a]`,
+    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "128k", "-ac", "2", "-t", filmEnd.toFixed(3), "-movflags", "+faststart", out]);
+  fs.writeFileSync(path.join(outDir, "process.vtt"), "WEBVTT\n\n" + meta.cues.map((c, i) => `${i + 1}\n${ts(c.from)} --> ${ts(c.to)}\n${c.text}\n`).join("\n"));
+  console.log(`${out} · ${filmEnd.toFixed(1)} s · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · music only · ${meta.cues.length} captions in process.vtt`);
+  process.exit(0);
+}
 const said = (l) => l.say || l.text;
 
 // One recording of the whole script: where each line ends.
@@ -107,10 +136,8 @@ lines.forEach((l, i) => {
 const total = now;
 // --music=auto composes the music for the film's new length (scripts/process-music.py).
 let bedFile = music;
-if (music === "auto") {
-  bedFile = path.join(os.tmpdir(), "process-music.wav");
-  execFileSync("python3", [path.join(ROOT, "scripts/process-music.py"), total.toFixed(1), bedFile], { stdio: "inherit" });
-}
+// Its accents follow the film's cuts only when no beat was slowed down (then the film keeps its own timing).
+if (music === "auto") bedFile = compose(total, !segs.some((g) => g.factor > 1.005));
 
 // The picture: copied as is when every step fits (the aim), else slowed piece by piece and joined.
 let picture = FILM;
@@ -140,6 +167,5 @@ execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", picture, ...files.flat
   "-filter_complex", audio, "-map", "0:v", "-map", "[a]", "-c:v", "copy",
   "-c:a", "aac", "-b:a", "96k", "-ac", "1", "-t", total.toFixed(3), "-movflags", "+faststart", out]);
 
-const ts = (s) => new Date(Math.max(0, s) * 1000).toISOString().slice(11, 23);
 fs.writeFileSync(path.join(outDir, "process.vtt"), "WEBVTT\n\n" + cues.map((c, i) => `${i + 1}\n${ts(c.from)} --> ${ts(Math.min(c.to + 0.3, i + 1 < cues.length ? cues[i + 1].from : total))}\n${c.text}\n`).join("\n"));
 console.log(`\n${out} · ${total.toFixed(1)} s · ${(fs.statSync(out).size / 1e6).toFixed(1)} MB · captions process.vtt`);
