@@ -249,7 +249,7 @@
   html.a11y-still .win .roll { animation: none; transform: translateY(-236px); }
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
      The top turns light: plaster with a breath of the strap's green and the daylight, big tight type, the shutter drawing in a
-     rounded frame and glass cards over its corners (the chat and the first jobs on the price list; on a phone the kinds of shutters instead of the chat),
+     rounded frame and glass cards over its corners (the chat and the first jobs on the price list),
      the main button glowing. */
   .hero { background: var(--wall); color: var(--ink);
     background-image: radial-gradient(55% 65% at 8% 12%, rgba(159,207,230,.45), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(13,107,99,.12), transparent 70%); }
@@ -281,10 +281,6 @@
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,35,44,.55), 0 4px 12px -6px rgba(13,107,99,.18); padding: 14px 16px; color: var(--ink);
     animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-area { display: none; gap: 3px; }
-  .g-area span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
-  .g-area span svg { width: 16px; height: 14px; flex: none; }
-  .g-area b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--ink); }
   .win .note { top: 0; inset-inline-end: 0; width: min(50%, 236px); display: grid; gap: 6px; border-radius: 20px; padding: 14px 16px; font-size: inherit; line-height: 1.4;
     background: rgba(255,255,255,.82); box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,35,44,.55), 0 4px 12px -6px rgba(13,107,99,.18); animation: lift .8s cubic-bezier(.2,.7,.2,1) both .3s; }
   .note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
@@ -306,8 +302,6 @@
     .win .note { display: none; }
     .win { aspect-ratio: 1 / 1.02; }
     .win .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
-    .g-area { display: grid; top: 14px; inset-inline-end: 14px; padding: 10px 13px; border-radius: 16px; }
-    .g-area b { font-size: 15px; }
     .g-jobs { bottom: 0; inset-inline-start: 5%; width: 82%; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
@@ -345,7 +339,6 @@
 
     <div class="win">
       <div class="frame-l"><figure class="ps" data-slot="hero" data-src="../shared/photos/shutters-work.webp" data-alt="חלון עם תריס אלומיניום חצי פתוח, וכלי עבודה על הרצפה" data-pos="50 45" data-icon="home" data-label="תמונה שלכם"></figure></div>
-      <div class="glass g-area" aria-hidden="true"><span><svg viewBox="0 0 16 14" fill="none"><rect x=".5" y=".5" width="15" height="3" rx="1" fill="#0d6b63"/><path d="M2 6h12M2 9h12M2 12h12" stroke="#0d6b63" stroke-width="1.6" stroke-linecap="round"/></svg>סוגי תריסים</span><b>ידני · חשמלי · ממ״ד</b></div>
       <div class="glass note" aria-hidden="true"><p class="q">התריס נתקע למטה, אפשר להגיע?</p><p class="a">שלחו תמונה בצ׳אט. אני חוזר עם זמן הגעה ומחיר סגור.</p></div>
       <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירון לדוגמה · לתריס</span><div><b>תריס תקוע</b><span>250 עד 450 ₪</span></div><div><b>החלפת רצועה</b><span>180 עד 350 ₪</span></div><div><b>תריס חשמלי</b><span>350 עד 750 ₪</span></div></div>
     </div>
