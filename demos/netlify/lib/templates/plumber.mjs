@@ -269,6 +269,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const heroImg = hero === "photo" ? photos.hero : sampleHero;
   clips = (Array.isArray(clips) ? clips : []).filter((x) => x && x.src && x.poster).slice(0, VIDEOS.max);
   const L = lookOf(c);
+  const inVis = Boolean(L.look.photoInVisual && heroImg); // a look that frames the top photo itself (luxe) instead of a background
   const T = tradeOf(c.trade_id), W = T.words;
   if (!draft) {
     const m = missing(c);
@@ -409,7 +410,7 @@ ${fontHead}
 </head>
 <body class="look-${L.id}">
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
-<header class="hero${heroImg ? " has-bg" : ""}"${heroImg ? ` style="--hero-img: url('${h(heroImg)}')"` : ""}>${sampleHero ? `
+<header class="hero${heroImg && !inVis ? " has-bg" : ""}"${heroImg && !inVis ? ` style="--hero-img: url('${h(heroImg)}')"` : ""}>${sampleHero && !inVis ? `
   <span class="sample-tag">תמונה לדוגמה · מעלים תמונה או סרטון משלכם</span>` : ""}
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="currentColor"/></svg><span>${v("business_name")}</span></div>
@@ -429,7 +430,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>${leads ? `
       <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
-    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id })}
+    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg && !inVis ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id, heroImg, sample: Boolean(sampleHero), svc: listed })}
   </div>
 </header>
 ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(T.crisis)}</p>\n` : ""}

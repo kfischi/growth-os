@@ -90,7 +90,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
       .catch(async () => { throw new Error(`waited for ${re} but the question is "${await p.textContent("#guide .q").catch(() => "?")}", log ends "${(await p.textContent("#log")).slice(-80)}"`); });
     // first the design: a look, then a palette; the draft next to the chat changes with each tap
     assert.match(await p.textContent("#guide .q"), /איך האתר ייראה/);
-    assert.equal(await p.locator("#guide .look").count(), 6);
+    assert.equal(await p.locator("#guide .look").count(), 7);
     assert.equal(await p.isHidden("#design"), true, "the same picker isn't shown twice");
     await p.click('#guide .look[data-look="certificate"]');
     await p.waitForSelector('#guide .look[data-look="certificate"][aria-pressed=true]');
@@ -196,7 +196,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     assert.ok(d.photos.work4.w <= 1200 && d.photos.work4.h <= 1200, "a work photo is shrunk to 1200 pixels");
     if (w < 860) await p.click("#tabSite");
     await p.frameLocator("#frame").locator(".details.n6").waitFor({ state: "attached", timeout: 8000 });
-    assert.equal(await p.frameLocator("#frame").locator(".details img").count(), 3, "three photos and three marked frames");
+    assert.equal(await p.frameLocator("#frame").locator(".details figure:not(.eg-photo) img").count(), 3, "three photos and three marked frames");
     if (w < 860) await p.click("#tabChat");
     assert.equal(await overflow(), false);
   });
@@ -267,7 +267,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.click('#heroPick label:has(input[value=photo])');
     await p.waitForFunction(() => !document.querySelector("#heroPhoto").hidden, null, { timeout: 8000 });
     if (w < 860) await p.click("#tabSite");
-    await p.frameLocator("#frame").locator(".hero.has-bg .sample-tag").waitFor({ state: "attached", timeout: 8000 });
+    await p.frameLocator("#frame").locator(".hero.has-bg .sample-tag, .lx-photo .lx-tag").waitFor({ state: "attached", timeout: 8000 });
     assert.equal(await p.frameLocator("#frame").locator(".reel").count(), 0);
     if (w < 860) await p.click("#tabChat");
     assert.equal(await overflow(), false);

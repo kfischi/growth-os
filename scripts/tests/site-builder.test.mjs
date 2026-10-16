@@ -122,15 +122,15 @@ for (const [lid, L] of Object.entries(P.LOOKS)) for (const pid of Object.keys(L.
   const html = P.render({ ...SAMPLE, look: lid, palette: pid }, { mode: "site" })["index.html"];
   assert.match(html, new RegExp(`<body class="look-${lid}">`)); assert.ok(html.includes(L.palettes[pid].accent), lid + " " + pid);
 }
-assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" })["index.html"], /<body class="look-blueprint">/);
+assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" })["index.html"], /<body class="look-luxe">/, "an unknown look falls back to the trade's first, smart luxury");
 // Each trade sees the looks that suit it: a beauty clinic the studio, the price list and the appointment card first.
 {
   const ids = (t) => P.catalog(t).map((l) => l.id);
-  assert.deepEqual(ids("plumber"), ["blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"]);
-  assert.deepEqual(ids("cosmetics"), ["studio", "menu", "appointment", "mosaic", "certificate"]);
+  assert.deepEqual(ids("plumber"), ["luxe", "blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"]);
+  assert.deepEqual(ids("cosmetics"), ["luxe", "studio", "menu", "appointment", "mosaic", "certificate"]);
   assert.ok(!ids("nails").includes("blueprint") && !ids("barber").includes("van"), "no technician looks for a salon");
   const care = { ...SAMPLE, trade_id: "cosmetics", trade: "קוסמטיקאית", services: [{ name: "טיפול פנים", price: "250 עד 350 ₪" }, { name: "גבות" }] };
-  assert.match(P.render(care, { mode: "site" })["index.html"], /<body class="look-studio">/, "the studio is the default for a beauty clinic");
+  assert.match(P.render(care, { mode: "site" })["index.html"], /<body class="look-luxe">/, "smart luxury is the default, for a beauty clinic too");
   const menu = P.render({ ...care, look: "menu" }, { mode: "site" })["index.html"].match(/<div class="menu-card">[\s\S]*?<\/div>/)[0];
   assert.match(menu, /טיפול פנים<\/span><i aria-hidden="true"><\/i><span class="mc-p">250 עד 350 ₪/); assert.match(menu, /גבות<\/span><i aria-hidden="true"><\/i><\/li>/, "no price is invented");
   const appt = P.render({ ...care, look: "appointment" }, { mode: "site" })["index.html"].match(/<div class="appt">[\s\S]*?ap-foot[^<]*<\/p>/)[0];
@@ -222,7 +222,7 @@ ai.queue.push({ reply: "יופי של סרטון.", set: [{ field: "video_title"
 r = await J(await req("chat", { body: { message: "העליתי סרטון", rev: D.rev } })); assert.equal(r.status, 200);
 assert.match(aiCallsState(), /"video":true/, "the chat knows there is a video"); assert.match(B.renderDraft(D), /צילום מהשטח · פתיחת סתימה במטבח/);
 r = await J(await req("video", { method: "DELETE" })); assert.equal(D.video, null); assert.equal(storage.size, stored);
-assert.match(B.renderDraft(D), /class="sample-tag"/, "without the video the draft shows the sample photo");
+assert.match(B.renderDraft(D), /class="(sample-tag|lx-tag)"/, "without the video the draft shows the sample photo");
 assert.ok(!/sample-tag|shared\/photos/.test(P.render(SAMPLE, { mode: "site" })["index.html"]), "a published site never shows the sample");
 
 /* ---------------- up to 5 short videos: "סרטונים מהעבודה" ---------------- */
@@ -260,9 +260,9 @@ assert.equal(D.videos.length, 2);
 /* ---------------- the top of the site: a photo or the video, the owner's pick ---------------- */
 r = await J(await req("photo", { raw: webp, query: "?slot=hero", headers: { "x-photo-rights": "yes" } })); assert.equal(r.status, 200);
 assert.equal(r.state.hero, "video", "without a pick, the video shows");
-html = B.renderDraft(D); assert.match(html, /<figure class="reel">/); assert.ok(!html.includes('class="hero has-bg"'), "one of them, not both");
+html = B.renderDraft(D); assert.match(html, /<figure class="reel">/); assert.ok(!/class="hero has-bg"|class="lx-photo has"/.test(html), "one of them, not both");
 r = await J(await req("answer", { body: { hero: "photo", rev: D.rev } })); assert.equal(r.status, 200); assert.equal(D.content.hero_media, "photo"); assert.equal(r.state.hero, "photo");
-assert.match(r.draft, /class="hero has-bg"/); assert.ok(!r.draft.includes('<figure class="reel">'));
+assert.match(r.draft, /class="hero has-bg"|class="lx-photo has"/); assert.ok(!r.draft.includes('<figure class="reel">'));
 r = await J(await req("answer", { body: { hero: "banner", rev: D.rev } })); assert.equal(r.status, 422);
 r = await J(await req("answer", { body: { hero: "video", rev: D.rev } })); assert.equal(D.content.hero_media, "video"); assert.match(r.draft, /<figure class="reel">/);
 
@@ -438,7 +438,7 @@ r = await J(await req("publish", { body: { rev: D.rev }, ip: "6.6.6.1" })); asse
   assert.equal(r.state.guide.steps[0].type, "style"); assert.equal(r.state.guide.steps[1].field, "business_name"); assert.match(r.state.greeting, /בוחרים תשובה/);
   const calls = aiCalls.length;
   // the design: a look and one of its palettes, checked against the template's looks, no AI
-  assert.equal(r.state.looks.length, 6); assert.deepEqual(r.state.style, { look: "blueprint", palette: "blue" });
+  assert.equal(r.state.looks.length, 7); assert.deepEqual(r.state.style, { look: "luxe", palette: "violet" });
   r = await J(await req("answer", { body: { style: { look: "van", palette: "teal" }, rev: Q.rev }, ip: "8.8.8.1" }));
   assert.equal(r.status, 200, JSON.stringify(r)); assert.deepEqual(r.changed, ["style"]); assert.deepEqual(r.state.style, { look: "van", palette: "teal" });
   assert.equal(Q.content.look, "van"); assert.equal(Q.content.palette, "teal");
@@ -524,8 +524,9 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const both = { photos: { hero: "assets/photos/hero.webp" }, video: { src: "assets/hero.mp4", poster: "assets/hero-poster.webp" } };
   assert.match(P.render(SAMPLE, { mode: "site", ...both })["index.html"], /<figure class="reel">/, "no pick: the video");
   const pickPhoto = P.render({ ...SAMPLE, hero_media: "photo" }, { mode: "site", ...both })["index.html"];
-  assert.ok(pickPhoto.includes('class="hero has-bg"') && !pickPhoto.includes('<figure class="reel">') && !pickPhoto.includes("querySelector(\".reel video\")"), "the photo, not both");
-  assert.match(P.render({ ...SAMPLE, hero_media: "video" }, { mode: "site", photos: both.photos })["index.html"], /class="drawing"/, "a pick without its file: the drawing");
+  assert.ok(/class="hero has-bg"|class="lx-photo has"/.test(pickPhoto) && !pickPhoto.includes('<figure class="reel">') && !pickPhoto.includes("querySelector(\".reel video\")"), "the photo, not both");
+  const pickVideo = P.render({ ...SAMPLE, hero_media: "video" }, { mode: "site", photos: both.photos })["index.html"];
+  assert.ok(/class="drawing"|class="lx-stage"/.test(pickVideo) && !/lx-photo has|hero has-bg/.test(pickVideo), "a pick without its file: the look's own visual, not the photo");
   assert.equal(P.heroKind({}, { photo: true }), "photo"); assert.equal(P.heroKind({ hero_media: "photo" }, { video: true }), null);
 }
   assert.ok(P.PHOTOS.before && P.PHOTOS.after && P.FIELDS.ba_title.max === 40);
@@ -597,9 +598,9 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const lib = await import("../../demos/netlify/lib/builder.mjs");
   const c = { ...t.emptyContent(), business_name: "אורן מים", trade: "אינסטלציה", area: "חדרה" };
   const page = t.render(c, { mode: "draft", assets: "/shared/", photos: { hero: "assets/photos/hero.webp" } })["index.html"];
-  assert.ok(page.includes('class="hero has-bg"') && page.includes("--hero-img: url('assets/photos/hero.webp')"), "the hero shows the photo");
+  assert.ok(/class="hero has-bg"|class="lx-photo has"/.test(page) && page.includes("url('assets/photos/hero.webp')"), "the hero shows the photo");
   const bare = t.render(c, { mode: "draft", assets: "/shared/" })["index.html"];
-  assert.ok(bare.includes("--hero-img: url('/shared/photos/plumber-siphon.webp')") && bare.includes('class="sample-tag"'), "no photo of theirs: the trade's sample, labelled");
+  assert.ok(bare.includes("url('/shared/photos/plumber-siphon.webp')") && /class="(sample-tag|lx-tag)"/.test(bare), "no photo of theirs: the trade's sample, labelled");
   assert.ok(t.PHOTOS.hero, "hero is a photo slot");
   delete process.env.GEMINI_API_KEY;
   assert.equal(lib.heroAI(), false, "no key, no button");
