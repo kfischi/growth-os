@@ -396,8 +396,17 @@ try {
   /* ---------- 1. the trade ---------- */
   await step(1);
   await now("ארבעה סוגי עסקים");
-  await tap(A('#cats button[data-cat="care"]'), "תורים וטיפולים", { zoom: false, hold: 300 }); await raw(400);
-  await tap(A('#cats button[data-cat="urgent"]'), "תקלות דחופות", { zoom: false, hold: 250 }); await raw(250);
+  // A tour of the trades, each tap turning the phone into another business: the variety the home page's loop shows.
+  mark("h-trades");
+  const chip = (id, say) => tap(A(`#chips .chip[data-id="${id}"]`), say, { zoom: false, hold: 250 });
+  await tap(A('#cats button[data-cat="care"]'), "תורים וטיפולים", { zoom: false, hold: 300 }); await raw(500);
+  await chip("barber", "מספרה"); await raw(500);
+  await tap(A('#cats button[data-cat="learn"]'), "שיעורים ואירועים", { zoom: false, hold: 250 }); await raw(500);
+  await chip("driving", "מורה לנהיגה"); await raw(500);
+  await tap(A('#cats button[data-cat="home"]'), "בית וחצר", { zoom: false, hold: 250 }); await raw(500);
+  await chip("garden", "גינון"); await raw(500);
+  await tap(A('#cats button[data-cat="urgent"]'), "תקלות דחופות", { zoom: false, hold: 250 }); await raw(400);
+  await chip("electrician", "חשמלאי"); await raw(450);
   await now("בוחרים תחום, והטלפון מתחלף");
   await tap(A('#chips .chip[data-id="plumber"]'), "אינסטלטור", { zoom: false, hold: 300 }); await raw(650);
   await tap(A("#toDemo"), "לדמו המלא", { max: 1.6, hold: 300 });

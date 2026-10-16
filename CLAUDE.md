@@ -41,7 +41,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | נציג AI (the page, the lead system and the AI chat) | 2,490 ₪, one payment | 290 ₪ (launch price, locked; regular 390 ₪) |
 
 - All prices are **final**: the business that issues the receipts is an עוסק פטור, so no VAT is added (`VAT_RATE` in `lib/billing.mjs`, default 0; set it, e.g. 0.18, only if that changes, and the builder shows totals with VAT again). Pages say "המחירים סופיים" and never "לפני מע״מ" or "כולל מע״מ". Every payment gets a receipt the business can claim as an expense.
-- The launch monthly of נציג AI (290 ₪, "נעילת מחיר השקה") stays for as long as that subscription is active: `ls_billing.amount` is stored per subscriber, so a later price change never touches it. The terms page says so.
+- The launch monthly of נציג AI (290 ₪, the tag "במחיר השקה – נהנים מהנחה קבועה במחיר החודשי, לתמיד.") stays for as long as that subscription is active: `ls_billing.amount` is stored per subscriber, so a later price change never touches it. The terms page says so.
 
 - Self edit (the owner changes the live site in the builder chat and publishes) is included in both packages as part of the monthly; publishing turns it on. There is no Sanity add-on.
 - Monthly only (the owner's choice: no prepayment means no refunds of unused months). The year ahead (12 for 10) still exists in `lib/billing.mjs` behind `BILLING_YEAR=1`, off. The refund rules are on `demos/terms/`.
