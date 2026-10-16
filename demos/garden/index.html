@@ -8,7 +8,7 @@
 <meta name="description" content="אחזקת גינות, גיזום, טפטוף ודשא בחדרה, עמק חפר והשרון. מספרים בצ׳אט מה יש בגינה, והפרטים מגיעים לגנן בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Alef:wght@400;700&family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the gardener's planting wheel (גלגל עונות), a paper dial that turns month by month, with the task and the drip setting in its window.
@@ -205,6 +205,58 @@
   .strip.lab { display: none; }
   @media (max-width: 680px) { .bed .strip-wrap .strip.lab { display: grid; margin-bottom: 3px; } .strip.lab span { font-size: 10px; text-align: center; color: var(--ink-soft); } }
   @media (prefers-reduced-motion: reduce) { .wheel .dial { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: dew paper with a breath of new leaves and pomegranate, big tight type, the season wheel in a large
+     rounded frame of wheel paper with glass cards over two corners (the first prices, the chat), the main button glowing in
+     cypress. The wheel still turns to this month on load: that is the page's one signature moment. */
+  .hero { background: var(--dew); color: var(--cypress);
+    background-image: radial-gradient(55% 65% at 8% 12%, rgba(63,122,69,.18), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(196,56,46,.09), transparent 70%); }
+  .hero::after { display: none; }
+  .logo { color: var(--cypress); } .logo span + span { color: var(--shoot); }
+  .bar a { color: var(--cypress); border-bottom-color: var(--pomegranate); }
+  .now { border-color: var(--line); background: rgba(255,255,255,.6); color: var(--ink-soft); }
+  .now i { background: var(--pomegranate); box-shadow: 0 0 0 4px rgba(196,56,46,.14); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--cypress); }
+  .hero h1 em { color: var(--shoot); }
+  .hero .lead { color: var(--ink-soft); }
+  .hero .btn-sprout { background: var(--cypress); color: #fff; box-shadow: 0 16px 32px -14px rgba(24,59,45,.8), 0 2px 6px -2px rgba(24,59,45,.45); }
+  .hero .btn-sprout:hover { background: var(--cypress-deep); }
+  .hero .btn-ghost { background: #fff; color: var(--cypress); border: 0; box-shadow: inset 0 0 0 1.5px var(--line); }
+  .hero .btn-ghost:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--shoot); }
+  .area li { color: var(--ink-soft); border-bottom-color: #b5c6a8; }
+  .vis-col { min-width: 0; }
+  .visual { position: relative; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .visual::before { content: ""; position: absolute; inset: 4% 2% 16% 12%; border-radius: 34px;
+    background: radial-gradient(70% 70% at 50% 45%, #fff, var(--wheel) 75%); box-shadow: 0 0 0 1px var(--line), inset 0 1px 0 rgba(255,255,255,.8), 0 50px 90px -46px rgba(24,59,45,.55); }
+  .visual .wheel { position: absolute; width: 64%; max-width: none; left: 55%; top: 44%; transform: translate(-50%, -50%); margin: 0; }
+  .wheel .dial { filter: drop-shadow(0 24px 30px rgba(24,59,45,.28)); }
+  .hub { box-shadow: 0 0 0 6px var(--wheel), 0 0 0 7px #c5d3b9, 0 18px 30px -12px rgba(15,42,31,.55); }
+  .visual .hub .t { font-size: 14px; } .visual .hub .w { font-size: 12.5px; flex-wrap: wrap; }
+  .wheel-note { color: var(--ink-soft); margin-top: 44px; text-align: start; padding-inline-start: 4px; }
+  .glass { position: absolute; z-index: 4; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(24,59,45,.6), 0 4px 12px -6px rgba(24,59,45,.2); padding: 14px 16px; color: var(--cypress);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both .15s; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-price { top: -4%; inset-inline-end: -2%; width: min(256px, 45%); display: grid; gap: 1px; }
+  .g-price span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-price span svg { width: 14px; height: 14px; color: var(--drip); flex: none; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.55; }
+  .g-price p b { font: 800 14px/1.55 "Rubik", var(--body); color: var(--cypress); white-space: nowrap; }
+  .g-chat { bottom: -4%; inset-inline-start: -1%; width: min(270px, 50%); display: grid; gap: 6px; animation-delay: .35s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eaf0e4; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--cypress); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 1000px) { .visual { max-width: 500px; } }
+  @media (max-width: 560px) {
+    .visual { aspect-ratio: auto; display: grid; gap: 0; }
+    .visual::before { inset: 0 0 64px; border-radius: 28px; }
+    .visual .wheel { position: relative; left: auto; top: auto; transform: none; width: 88%; margin: 34px auto 12px; }
+    .g-price { display: none; }
+    .g-chat { position: relative; inset: auto; width: 90%; margin: 0 auto 0 0; }
+    .wheel-note { margin-top: 14px; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -228,7 +280,9 @@
         <ul class="area" aria-label="אזורי עבודה"><li>חדרה</li><li>עמק חפר</li><li>השרון</li><li>מושבים וקיבוצים</li></ul>
       </div>
 
-      <div>
+      <div class="vis-col">
+      <div class="visual">
+        <div class="glass g-price" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg>מחירים לדוגמה</span><p>אחזקה קבועה <b>350 עד 900 ₪</b></p><p>גיזום <b>400 עד 1,500 ₪</b></p><p>מערכת השקיה <b>800 עד 2,500 ₪</b></p></div>
         <div class="wheel" id="wheel">
           <svg class="dial" id="dial" viewBox="-300 -300 600 600" role="group" aria-label="גלגל העונות: מה עושים בגינה בכל חודש"></svg>
           <div class="pointer" aria-hidden="true"><b>החודש</b><i></i></div>
@@ -238,6 +292,8 @@
             <div class="w"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/></svg><span id="hub-w">טפטוף: פעם ביומיים</span></div>
           </div>
         </div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">יש לנו גינה של 80 מ״ר. כמה עולה אחזקה?</p><p class="a">בדרך כלל 350 עד 900 ₪ לחודש, לפי הגודל. אחזור אליכם לקבוע סיור.</p></div>
+      </div>
         <p class="wheel-note">לחצו על חודש בגלגל · תוכנית השקיה לדוגמה</p>
       </div>
     </div>
@@ -553,6 +609,19 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/garden.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+  /* the glass cards follow a fine pointer by a few pixels; never on touch, reduced motion or a11y-still */
+  (() => {
+    const box = document.querySelector(".hero .visual"), hero = box && box.closest(".hero");
+    if (!hero || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const cards = [...box.querySelectorAll(".glass")], still = () => document.documentElement.classList.contains("a11y-still");
+    let x = 0, y = 0, raf = 0;
+    const apply = () => { raf = 0; cards.forEach((c, i) => { const d = still() ? 0 : 5 + i * 3; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; }); };
+    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    const clamp = (v) => Math.max(-1, Math.min(1, v));
+    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; const r = box.getBoundingClientRect(); x = clamp((e.clientX - r.left - r.width / 2) / r.width); y = clamp((e.clientY - r.top - r.height / 2) / r.height); queue(); });
+    hero.addEventListener("pointerleave", () => { x = y = 0; queue(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; queue(); });
+  })();
 </script>
 </body>
 </html>

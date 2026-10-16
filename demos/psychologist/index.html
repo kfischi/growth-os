@@ -8,7 +8,7 @@
 <meta name="description" content="פסיכולוגית קלינית בחדרה ואונליין. טיפול פרטני, זוגי ולמתבגרים. מתחילים בשיחת היכרות קצרה בטלפון.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the therapy room seen through its tall arched window, and the appointment card you take home.
@@ -254,6 +254,67 @@
     .lines a { padding: 12px 14px; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn, .seat { transition: none; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top stays light and calm: linen with a breath of sage and dusk, big tight type, the room photo in a large rounded
+     frame with glass cards over it (where she sees people, a gentle question and its answer, the first step), the main
+     button glowing softly. Signature: the sheer curtains of the window draw aside once, and rest gathered at the sides.
+     The crisis line is untouched. */
+  .hero { background: var(--linen);
+    background-image: radial-gradient(55% 65% at 8% 18%, rgba(127,155,138,.30), transparent 70%), radial-gradient(42% 55% at 96% 2%, rgba(70,105,122,.12), transparent 70%), radial-gradient(60% 45% at 50% 110%, rgba(220,230,224,.9), transparent 70%); }
+  .light { opacity: .7; }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--slate); }
+  .hero h1 em { color: var(--lake); }
+  .hero .btn { min-height: 52px; }
+  .hero .btn-slate { box-shadow: 0 16px 32px -14px rgba(28,49,53,.62), 0 2px 6px -2px rgba(28,49,53,.32), inset 0 1px 0 rgba(255,255,255,.12); }
+  .hero .btn-line { border: 0; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line); }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--armchair); }
+  .hero-grid { gap: 56px; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
+
+  .window.visual { max-width: 540px; aspect-ratio: 1 / 1.04; justify-self: center; perspective: 900px; }
+  .arch { position: absolute; inset: 6% 3% 15% 15%; aspect-ratio: auto; padding: 0; border-radius: 34px; overflow: hidden; background: var(--dawn);
+    box-shadow: 0 0 0 1px rgba(203,216,208,.9), 0 50px 90px -46px rgba(28,49,53,.55), 0 18px 34px -24px rgba(45,90,72,.25); }
+  .arch .ps { border-radius: 0; height: 100%; }
+  .arch::after { inset: 0; border-radius: 34px; box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -90px 90px -70px rgba(28,49,53,.3); }
+  .sill { display: none; }
+  .sheer { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .sheer i { position: absolute; top: 0; bottom: 0; width: 13%; opacity: .62;
+    background: repeating-linear-gradient(90deg, rgba(249,251,248,.92) 0 9px, rgba(249,251,248,.55) 9px 15px, rgba(249,251,248,.85) 15px 22px); }
+  .sheer i:first-child { right: 0; box-shadow: -8px 0 18px -10px rgba(28,49,53,.3); }
+  .sheer i:last-child { left: 0; box-shadow: 8px 0 18px -10px rgba(28,49,53,.3); }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.75);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,49,53,.5), 0 4px 12px -6px rgba(45,90,72,.18);
+    padding: 14px 16px; color: var(--slate); font-variant-numeric: tabular-nums; line-height: 1.45; animation: lift .9s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .slip.glass { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(280px, 62%); transform: none; border-radius: 22px; padding: 15px 18px 14px; animation-delay: .2s; }
+  .slip::before { display: none; }
+  .slip b { font: 800 21px/1.2 "Rubik", var(--body); letter-spacing: -.015em; margin: 6px 0 4px; }
+  .g-h { display: flex !important; align-items: center; gap: 7px; }
+  .g-h svg { width: 16px; height: 16px; color: var(--leaf); flex: none; }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 2px; padding: 12px 15px; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--slate-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf); box-shadow: 0 0 0 4px rgba(45,90,72,.16); }
+  .g-day b { font: 800 16.5px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--slate-soft); }
+  .g-chat { top: 38%; inset-inline-end: -2%; width: min(50%, 236px); display: grid; gap: 6px; animation-delay: .35s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e6eee9; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--lake); color: #fff; border-end-start-radius: 4px; }
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.a11y-still) .sheer i { animation: part 2.2s .35s cubic-bezier(.45,.05,.25,1) both; }
+  }
+  @keyframes part { from { width: 51%; opacity: .9; } }
+  @media (max-width: 960px) { .window.visual { max-width: 460px; justify-self: center; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .hero h1 { font-size: clamp(38px, 11vw, 46px); line-height: 1.04; }
+    .window.visual { max-width: 100%; margin-inline-start: 0; aspect-ratio: 1 / 1.08; }
+    .g-chat { display: none; }
+    .arch { inset: 9% 0 17% 7%; }
+    .slip.glass { width: 74%; padding: 12px 14px 11px; }
+    .slip b { font-size: 18px; }
+    .g-day { padding: 10px 13px; } .g-day b { font-size: 15px; } .g-day small { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -285,10 +346,12 @@
         <span>במצב חירום או מחשבות על פגיעה עצמית: ער״ן <a href="tel:1201">1201</a>, או מד״א <a href="tel:101">101</a>.</span>
       </p>
     </div>
-    <div class="window">
-      <div class="arch"><figure class="ps" data-slot="portrait" data-src="../shared/photos/psychologist-work.webp" data-alt="פסיכולוגית יושבת בכורסה בחדר הטיפולים, ליד חלון" data-pos="22 50" data-icon="person" data-label="תמונה שלכם"></figure></div>
+    <div class="window visual">
+      <div class="arch"><figure class="ps" data-slot="portrait" data-src="../shared/photos/psychologist-work.webp" data-alt="פסיכולוגית יושבת בכורסה בחדר הטיפולים, ליד חלון" data-pos="22 50" data-icon="person" data-label="תמונה שלכם"></figure><span class="sheer" aria-hidden="true"><i></i><i></i></span></div>
       <div class="sill" aria-hidden="true"></div>
-      <div class="slip"><span>הצעד הראשון</span><b>שיחת היכרות בטלפון</b><span>רבע שעה בערך · בלי עלות</span></div>
+      <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>חדרה, או בזום מהבית</b><small>פגישה של 50 דקות, פעם בשבוע</small></div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">אפשר קודם רק לשאול כמה שאלות?</p><p class="a">כן. מתחילים בשיחת טלפון קצרה, בלי עלות ובלי התחייבות.</p></div>
+      <div class="slip glass"><span class="g-h"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.2 3.2 4 4.4c-.9.5-1.2 1.5-.8 2.4a17 17 0 0 0 10 10c.9.4 1.9.1 2.4-.8l1.2-2.2-3.4-2-1.4 1.4a11 11 0 0 1-5.2-5.2l1.4-1.4z"/></svg>הצעד הראשון</span><b>שיחת היכרות בטלפון</b><span>רבע שעה בערך · בלי עלות</span></div>
     </div>
   </div>
 </header>
@@ -536,6 +599,21 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-who]").forEach((b) => b.addEventListener("click", () => bot.open({ who: b.dataset.who })));
+
+  // The glass cards follow a fine pointer by a few pixels. Transform only, never for touch, reduced motion or a11y-still.
+  (function () {
+    const v = document.querySelector(".visual"), root = document.documentElement;
+    if (!v || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const cards = [...v.querySelectorAll(".glass")], rm = matchMedia("(prefers-reduced-motion: reduce)");
+    let x = 0, y = 0, raf = 0;
+    const paint = () => { raf = 0; const off = rm.matches || root.classList.contains("a11y-still");
+      cards.forEach((c, i) => { const d = 4 + i * 2.5; c.style.translate = off ? "" : `${(x * d).toFixed(2)}px ${(y * d).toFixed(2)}px`;
+        c.style.rotate = off ? "" : `${(-y).toFixed(3)} ${x.toFixed(3)} 0 ${(Math.hypot(x, y) * 3).toFixed(2)}deg`; }); };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    v.addEventListener("pointermove", (e) => { const r = v.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
+    v.addEventListener("pointerleave", () => { x = y = 0; ask(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; ask(); });
+  })();
   Guides.load("../shared/guides/psychologist.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 
   // A minute to breathe: started by hand, six breaths, stops by itself. With reduced motion only the words change.

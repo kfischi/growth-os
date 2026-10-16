@@ -8,7 +8,7 @@
 <meta name="description" content="ניקוי ספות, כורסאות, מזרנים, שטיחים וריפוד ברכב בחדרה והשרון. בוחרים בצ׳אט מה לנקות ורואים טווח מחיר, גם כשהמכונה עובדת.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: a fabric swatch book, and the sewn-in care label under the sofa cushion.
@@ -240,6 +240,50 @@
     .steps li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
     .steps .mono { font-size: 13px; }
   }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: undyed linen with a breath of petrol and one warm trace of the wine stain, big tight type,
+     the cushion in a large rounded frame (the wand still pulls its one clean stripe) and glass cards over it
+     (the job in progress, the first prices, the care label), the main button glowing in petrol. */
+  .hero { background: var(--linen);
+    background-image: radial-gradient(55% 65% at 8% 14%, rgba(11,79,108,.16), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(140,31,60,.07), transparent 70%), linear-gradient(180deg, #f7f8f7, var(--linen) 80%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--graphite); }
+  .hero h1 em { color: var(--petrol); font-size: .6em; letter-spacing: -.02em; line-height: 1.12; margin-top: 14px; }
+  .btn { border-radius: 999px; }
+  .hero .btn-petrol { box-shadow: 0 16px 32px -14px rgba(7,58,80,.75), 0 2px 6px -2px rgba(7,58,80,.4); }
+  .hero .btn-thread { background: #fff; }
+  .codes li { border-radius: 999px; padding: 6px 14px 6px 8px; }
+  .codes b { border-radius: 999px; padding: 1px 9px; font-variant-numeric: tabular-nums; }
+  .cushion-wrap { aspect-ratio: 1 / 1; padding: 0; }
+  .cushion { position: absolute; inset: 8% 2% 14% 16%; aspect-ratio: auto; border-radius: 34px;
+    box-shadow: inset 0 0 0 10px rgba(255,255,255,.08), inset 0 -40px 60px -30px rgba(0,0,0,.35), 0 0 0 1px rgba(26,35,38,.08), 0 50px 90px -46px rgba(7,58,80,.6); }
+  .cushion::before { border-radius: 22px; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(7,58,80,.6); padding: 14px 16px; color: var(--graphite);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--tx, 0) var(--ty, 0); transition: translate .35s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .busy { inset-inline-start: auto; inset-inline-end: 0; top: 0; max-width: 240px; font-size: 14px; animation-delay: .1s; }
+  .busy b { font-weight: 700; }
+  .busy b::before { background: var(--petrol); box-shadow: 0 0 0 4px rgba(11,79,108,.16); }
+  .busy span { color: var(--graphite-soft); }
+  .g-price { top: 34%; inset-inline-end: -1%; width: min(54%, 236px); display: grid; gap: 7px; font-size: 14px; animation-delay: .3s; }
+  .g-price small { font-size: 12.5px; font-weight: 700; color: var(--graphite-soft); letter-spacing: .02em; }
+  .g-price div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .g-price div + div { border-top: 1px dashed var(--seam); padding-top: 7px; }
+  .g-price b { font: 700 15px/1.2 "Rubik", var(--body); color: var(--petrol); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .label { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(220px, 52%); border-radius: 18px; transform: rotate(-2deg); animation-delay: .5s; }
+  .label::before { inset-inline-start: auto; inset-inline-end: 28px; height: 18px; top: -12px; background: var(--wine); width: 2px; border-radius: 2px; }
+  .label .mono { font-variant-numeric: tabular-nums; }
+  @keyframes lift-tag { from { opacity: 0; transform: translateY(18px) rotate(-2deg); } to { transform: rotate(-2deg); } }
+  .label.glass { animation-name: lift-tag; }
+  @media (max-width: 960px) { .cushion-wrap { max-width: 440px; } .g-price { inset-inline-end: 0; } }
+  @media (max-width: 560px) { .g-price { display: none; } .cushion { inset: 10% 0 16% 8%; } .cushion-wrap { padding: 0; } .busy { max-width: 72%; } .label { width: 62%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; } }
+  html.a11y-still .glass { animation: none; }
+  /* Signature: the wand pulls one clean petrol stripe across the cushion; on a computer, resting the pointer on the cushion lifts the wine stain out too. */
+  .wine { transition: opacity .9s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.4,0,.2,1); }
+  @media (hover: hover) and (pointer: fine) { .cushion:hover .wine { opacity: .08; transform: scale(.86); } }
+  @media (prefers-reduced-motion: reduce) { .wine { transition: none; } }
+  html.a11y-still .wine { transition: none; }
 </style>
 </head>
 <body>
@@ -293,8 +337,9 @@
           <span class="stripe"></span>
           <span class="wand"></span>
         </div>
-        <div class="busy"><b>באמצע עבודה, רעננה</b><span>הצ׳אט עונה בינתיים</span></div>
-        <div class="label"><span class="mono">W/S · 30°</span><span>ספת בד, 3 מושבים</span><span>מתייבשת עד הערב</span></div>
+        <div class="busy glass"><b>באמצע עבודה, רעננה</b><span>הצ׳אט עונה בינתיים</span></div>
+        <div class="glass g-price" aria-hidden="true"><small>מחירים לדוגמה</small><div><span>ספה 2 מושבים</span><b>280 עד 380 ₪</b></div><div><span>ספה 3 מושבים</span><b>350 עד 450 ₪</b></div><div><span>כורסה</span><b>150 עד 220 ₪</b></div></div>
+        <div class="label glass"><span class="mono">W/S · 30°</span><span>ספת בד, 3 מושבים</span><span>מתייבשת עד הערב</span></div>
       </div>
     </div>
   </div>
@@ -505,6 +550,27 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/upholstery.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+<script>
+  // Desktop with a fine pointer: the glass cards drift a few pixels with the pointer, each at its own depth. Never on touch, reduced motion or "עצירת תנועה".
+  (() => {
+    const v = document.querySelector(".cushion-wrap"), hero = v && v.closest(".hero");
+    if (!hero) return;
+    const ok = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
+    const still = () => document.documentElement.classList.contains("a11y-still");
+    const cards = [...v.querySelectorAll(".glass")];
+    let x = 0, y = 0, raf = 0;
+    const paint = () => { raf = 0;
+      cards.forEach((c, i) => { const d = 5 + i * 3.5; c.style.setProperty("--tx", (-x * d).toFixed(2) + "px"); c.style.setProperty("--ty", (-y * d).toFixed(2) + "px"); }); };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    hero.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || !ok.matches || still()) return;
+      const r = v.getBoundingClientRect(), cl = (n) => Math.max(-1, Math.min(1, n));
+      x = cl(((e.clientX - r.left) / r.width - .5) * 2); y = cl(((e.clientY - r.top) / r.height - .5) * 2); ask();
+    });
+    hero.addEventListener("pointerleave", () => { x = y = 0; ask(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; ask(); });
+  })();
 </script>
 </body>
 </html>

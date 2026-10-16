@@ -8,7 +8,7 @@
 <meta name="description" content="עיסוי טיפולי ברחובות: גב ועורף, עיסוי ספורט, רקמות עמוק, הרפיה ועיסוי בהריון, בקליניקה או בביקור בית. מסמנים איפה כואב, ורוני חוזר בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the body chart from the therapist's intake card, the back seen from behind, where the client marks
@@ -198,6 +198,78 @@
     html { scroll-behavior: auto; }
   }
   html.a11y-still .body-map .zone { transition: none; }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top gets a breath of sage and petrol on the chart paper, big tight Rubik, the anatomy plate becomes one large
+     rounded sheet with glass cards over its edges (where Roni treats, two prices by length, the chat), the main
+     button glowing in petrol.
+     Signature moment: on load one slow warm pass runs down the back, neck to legs, the way a palm opens a treatment.
+     It warms each zone for a moment and lets go. Never with reduced motion or html.a11y-still. */
+  .hero { background: var(--chart);
+    background-image: radial-gradient(50% 60% at 12% 26%, rgba(201,218,213,.9), transparent 70%), radial-gradient(42% 52% at 96% 0%, rgba(31,76,87,.10), transparent 70%); }
+  .bar { border-bottom-color: rgba(31,76,87,.14); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
+  .hero h1 em { font-family: "Rubik", var(--body); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; font-size: .5em; color: var(--petrol); }
+  .lead { color: var(--ink-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-petrol { box-shadow: 0 16px 32px -14px rgba(22,50,59,.75), 0 2px 6px -2px rgba(22,50,59,.35), inset 0 1px 0 rgba(255,255,255,.18); }
+  .hero .btn-line { background: #fff; box-shadow: inset 0 0 0 1.5px var(--line), 0 10px 22px -18px rgba(22,50,59,.5); }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--petrol); }
+  .facts { border-top: 1px solid var(--line); }
+  .facts b { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--petrol-deep); font-variant-numeric: tabular-nums; }
+  .row .p, .len-h b { font-variant-numeric: tabular-nums; }
+
+  .visual { position: relative; min-width: 0; padding-top: 26px; }
+  .plate { border-radius: 34px; border: 0; padding: 78px 26px 24px; background-color: var(--sheet);
+    box-shadow: 0 0 0 1px rgba(31,76,87,.12), inset 0 1px 0 #fff, 0 50px 90px -46px rgba(22,50,59,.55), 0 18px 34px -26px rgba(31,76,87,.4); }
+  .plate-h { border-bottom-width: 1.5px; }
+  .zones button { border-radius: 14px; }
+  .caution { border-radius: 4px 14px 14px 4px; }
+
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,50,59,.6), 0 4px 12px -6px rgba(31,76,87,.2);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both;
+    translate: calc(var(--px, 0) * var(--d, 10px)) calc(var(--py, 0) * var(--d, 10px)); transition: translate .6s cubic-bezier(.2,.7,.2,1); }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-where { top: 0; inset-inline-start: 30px; display: grid; gap: 1px; --d: 12px; }
+  .g-where svg { fill: var(--petrol); stroke: var(--petrol); }
+  .g-where b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-where small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { top: 0; inset-inline-end: -14px; width: 262px; display: grid; gap: 5px; animation-delay: .12s; --d: -9px; }
+  .g-price p { margin: 0; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 8px; align-items: baseline; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price i { font: 600 13px/1 var(--mono); font-style: normal; color: var(--muscle); direction: ltr; unicode-bidi: isolate; text-align: end; }
+  .g-price i::after { content: "′"; }
+  .g-price b { font-weight: 600; min-width: 0; } .g-price em { font-style: normal; font-weight: 700; color: var(--petrol-deep); white-space: nowrap; }
+  .g-chat { top: 63%; inset-inline-end: -30px; width: 214px; display: grid; gap: 6px; padding: 11px; animation-delay: .26s; --d: 16px; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e7eeec; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--petrol-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+
+  /* The warm pass: down the back, one zone after the other. */
+  @keyframes warm { 40% { fill: rgba(176,48,61,.34); stroke-dasharray: none; } }
+  .body-map .zone { animation: warm 1.1s ease-in-out; animation-delay: calc(.6s + var(--n) * .22s); }
+  .body-map [data-zone="neck"] { --n: 0; } .body-map [data-zone="shoulders"] { --n: 1; } .body-map [data-zone="upper"] { --n: 2; }
+  .body-map [data-zone="lower"] { --n: 3; } .body-map [data-zone="legs"] { --n: 4; }
+
+  @media (max-width: 1240px) { .g-chat { inset-inline-end: -8px; } .g-price { inset-inline-end: 0; } }
+  @media (max-width: 1020px) { .visual { max-width: 640px; width: 100%; justify-self: center; } }
+  @media (max-width: 640px) {
+    .visual { padding-top: 0; }
+    .plate { padding: 116px 12px 16px; border-radius: 28px; }
+    .g-chat { display: none; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-where { top: 12px; inset-inline-start: 12px; width: calc(50% - 18px); }
+    .g-where b { font-size: 14.5px; } .g-where small, .glass span { font-size: 12px; }
+    .g-price { top: 12px; inset-inline-end: 12px; width: calc(50% - 18px); gap: 3px; }
+    .g-price p { grid-template-columns: 22px minmax(0, 1fr); gap: 0 6px; font-size: 13px; line-height: 1.3; }
+    .g-price em { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass, .body-map .zone { animation: none; } .glass { translate: none; transition: none; } }
+  html.a11y-still .glass, html.a11y-still .body-map .zone { animation: none; }
+  html.a11y-still .glass { translate: none; transition: none; }
 </style>
 </head>
 <body>
@@ -225,6 +297,16 @@
         </ul>
       </div>
 
+      <div class="visual">
+      <div class="glass g-where" aria-hidden="true">
+        <span><svg viewBox="0 0 20 12" width="18" height="11"><rect x="1" y="2" width="18" height="3" rx="1.5"/><path d="M4 5 L2 11 M16 5 L18 11 M7 5 L5 11 M13 5 L15 11" fill="none" stroke-width="1.6" stroke-linecap="round"/></svg>איפה מטפלים</span>
+        <b>בקליניקה ברחובות</b><small>או ביקור בית עם מיטה מתקפלת</small>
+      </div>
+      <div class="glass g-price" aria-hidden="true">
+        <p><i>45</i><b>גב ועורף</b><em>220 עד 280 ₪</em></p>
+        <p><i>60</i><b>גוף מלא</b><em>280 עד 360 ₪</em></p>
+      </div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">תפוס לי הגב התחתון. מה מתאים?</p><p class="a">סמנו על המפה ובחרו אורך טיפול. אני חוזר לתאם בין טיפול לטיפול.</p></div>
       <div class="plate" id="map">
         <div class="plate-h"><span>הגב, מבט מאחור</span><b>לוח 1</b></div>
         <div class="plate-body">
@@ -270,6 +352,7 @@
         </div>
         <div class="pick" id="pick" aria-live="polite"><p class="hint">לוחצים על אזור במפה או ברשימה, ורואים מה מתאים לו.</p></div>
         <p class="caution" role="note"><span>כאב חד אחרי פציעה, נימול, חום או ניתוח לאחרונה? קודם לרופא. כאב בחזה: מד״א <a href="tel:101">101</a>. <a href="#g-doctor-first">מתי קודם לרופא</a></span></p>
+      </div>
       </div>
     </div>
   </div>
@@ -389,6 +472,21 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "massage" });
+  // The glass cards follow a fine pointer by a few pixels. Transform only, never on touch, reduced motion or a11y-still.
+  (function () {
+    const hero = document.querySelector(".hero"), root = document.documentElement;
+    const fine = matchMedia("(hover: hover) and (pointer: fine)"), calm = matchMedia("(prefers-reduced-motion: reduce)");
+    let raf = 0, x = 0, y = 0;
+    const set = (a, b) => { hero.style.setProperty("--px", a); hero.style.setProperty("--py", b); };
+    hero.addEventListener("pointermove", (e) => {
+      if (e.pointerType !== "mouse" || !fine.matches || calm.matches || root.classList.contains("a11y-still")) return;
+      const r = hero.getBoundingClientRect();
+      x = ((e.clientX - r.left) / r.width - .5).toFixed(3); y = ((e.clientY - r.top) / r.height - .5).toFixed(3);
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; set(x, y); });
+    });
+    hero.addEventListener("pointerleave", () => set(0, 0));
+    document.addEventListener("a11y-still", () => set(0, 0));
+  })();
   // The sample ranges, the same as the price list above. A range, never a promised price.
   const RANGE = {
     "45 דקות": "45 דקות, גב ועורף: 220 עד 280 ₪.",

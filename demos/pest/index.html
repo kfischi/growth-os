@@ -266,10 +266,11 @@
   .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--dusk-soft); }
   .proof b { color: var(--clear); font-variant-numeric: tabular-nums; }
   .entry { display: block; height: 580px; max-width: 560px; width: 100%; justify-self: center; }
-  .doorway { position: absolute; top: 0; bottom: 0; inset-inline-end: 3%; height: auto; padding: 16px 16px 0; border-radius: 34px; overflow: hidden;
+  .doorway { position: absolute; top: 0; bottom: 0; inset-inline-end: 9%; height: auto; padding: 16px 16px 0; border-radius: 34px; /* no clipping: the hanger hangs out over the frame */
     background: linear-gradient(180deg, #e4e7f2, var(--frame)); box-shadow: 0 0 0 1px #c9cde0, 0 50px 90px -46px rgba(28,39,83,.6); }
   .doorway::after { display: none; }
   .door { border-radius: 20px 20px 0 0; }
+  .mat { border-radius: 8px 8px 0 0; }
   .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; padding: 14px 16px; color: var(--dusk);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,39,83,.6), 0 4px 12px -6px rgba(28,39,83,.18);
@@ -291,10 +292,11 @@
   @media (max-width: 620px) {
     .hero-grid { gap: 30px; padding-bottom: 40px; }
     .entry { height: 548px; }
-    .doorway { inset-inline-end: 0; width: 300px; padding: 12px 12px 0; border-radius: 28px; }
+    .doorway { inset-inline-end: 44px; width: min(300px, calc(100% - 44px)); padding: 12px 12px 0; border-radius: 28px; }
     .g-chat { display: none; }
     .g-lic { top: 6%; }
-    .g-price { top: auto; bottom: 22%; width: min(230px, 64%); }
+    .g-price { top: auto; bottom: 22%; width: 164px; padding: 12px 14px; }
+    .g-price div { display: grid; gap: 0; padding: 6px 0; font-size: 14px; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; translate: none; } }
   html.a11y-still .glass { animation: none; transition: none; translate: none; }

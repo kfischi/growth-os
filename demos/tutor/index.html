@@ -214,19 +214,21 @@
   .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
 
   .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; perspective: 900px; }
-  .frame { position: absolute; inset: 7% 2% 15% 15%; border-radius: 34px; overflow: hidden; padding: 26px 26px 18px; display: flex; flex-direction: column;
+  .frame { position: absolute; inset: 4% 3% 24% 13%; border-radius: 34px; overflow: hidden; padding: 30px 30px 66px 34px; display: flex; flex-direction: column;
     box-shadow: 0 0 0 1px rgba(143,177,214,.55), inset 0 1px 0 #fff, 0 50px 90px -46px rgba(23,38,74,.5), 0 18px 34px -24px rgba(23,38,74,.25); }
   .frame::after { content: ""; position: absolute; top: 0; bottom: 0; inset-inline-start: 26px; width: 2px; background: var(--redpen); opacity: .45; pointer-events: none; }
   .frame svg { flex: 1 1 auto; min-height: 0; width: 100%; height: 100%; }
-  .work .eq { font-size: 19px; margin-top: 4px; }
-  .work .eq .fix { position: relative; display: inline-block; }
-  .ring { position: absolute; width: 46px; height: 34px; left: -15px; top: -4px; overflow: visible; pointer-events: none; }
+  .g-eq { inset-inline-start: 0; bottom: 7%; width: min(250px, 46%); padding: 13px 16px 12px; animation-delay: .3s; }
+  .g-eq .eq { font-size: 18px; line-height: 26px; margin-top: 6px; }
+  .g-eq .eq .fix { position: relative; display: inline-block; }
+  .g-eq .eq .why { font-size: 13.5px; margin-left: 10px; }
+  .g-eq .ring { position: absolute; width: 46px; height: 34px; left: -15px; top: -4px; overflow: visible; pointer-events: none; }
   .ring path { stroke-dasharray: 1; stroke-dashoffset: 0; }
   .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.75);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(23,38,74,.5), 0 4px 12px -6px rgba(23,38,74,.16);
     padding: 14px 16px; color: var(--ink); font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 2px; }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 2px; padding: 12px 15px; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
   .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: #2f8f62; box-shadow: 0 0 0 4px rgba(47,143,98,.16); }
   .g-day b { font: 800 16.5px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
@@ -235,7 +237,7 @@
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #eef4fb; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--ink); color: #fff; border-end-start-radius: 4px; }
-  .g-price { inset-inline-start: 0; bottom: 0; width: min(300px, 70%); animation-delay: .15s; padding: 15px 18px 13px; }
+  .g-price { inset-inline-end: 0; bottom: 0; width: min(290px, 52%); animation-delay: .15s; padding: 15px 18px 13px; }
   .g-h { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
   .g-h svg { width: 17px; height: 17px; color: var(--redpen); flex: none; }
   .g-price ul { list-style: none; margin: 8px 0 8px; padding: 0; }
@@ -245,18 +247,20 @@
   @media (prefers-reduced-motion: no-preference) {
     html:not(.a11y-still) .ring path { stroke-dashoffset: 1; animation: draw .9s 1.9s cubic-bezier(.6,.1,.3,1) forwards; }
   }
-  @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; } .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; } .visual { max-width: 480px; } }
   @media (max-width: 560px) {
     .hero h1 { font-size: clamp(36px, 10.4vw, 44px); line-height: 1.05; }
     .hero-grid { padding: 22px 0 56px; }
-    .g-chat { display: none; }
-    .frame { inset: 9% 0 22% 7%; padding: 16px 14px 10px; }
+    .visual { aspect-ratio: 1 / 1.08; }
+    .g-price { display: none; }
+    .frame { inset: 0 0 21% 0; padding: 20px 18px 44px 22px; }
     .frame::after { inset-inline-start: 14px; }
-    .work .eq { font-size: 15.5px; line-height: 22px; }
-    .work .eq .why { font-size: 13px; margin-left: 8px; }
-    .g-price { width: 78%; padding: 12px 14px 10px; }
-    .g-price li { font-size: 13.5px; padding: 4px 0; }
-    .g-day { padding: 11px 13px; } .g-day b { font-size: 15px; }
+    .g-day { top: auto; bottom: 0; inset-inline-start: 0; inset-inline-end: auto; padding: 11px 13px; }
+    .g-day b { font-size: 14.5px; } .g-day small, .g-day span { font-size: 12.5px; }
+    .g-eq { inset-inline-start: auto; inset-inline-end: 0; bottom: 3%; width: auto; padding: 10px 12px; }
+    .g-eq .g-h { display: none; }
+    .g-eq .eq { font-size: 14px; line-height: 21px; margin: 0; }
+    .g-eq .eq .why { display: none; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
@@ -318,9 +322,9 @@
         </svg>
       </div>
       <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>חדרה, עמק חפר והשרון</b><small>או בזום, באותו מחיר</small></div>
-      <div class="glass g-eq" aria-hidden="true">
+      <div class="glass g-eq work" aria-hidden="true">
         <span class="g-h">מהמחברת: פתרון ובדיקה</span>
-        <div class="eq work">
+        <div class="eq">
           <div>x² − 4x + 3 = 0</div>
           <div>(x − 1)(x − 3) = 0</div>
           <div>x₁ = 1 , x₂ = <s>−3</s><span class="fix">3<svg class="ring" viewBox="0 0 60 44" fill="none"><path pathLength="1" d="M33 5 C 12 3, 3 14, 5 25 C 7 37, 26 41, 41 37 C 55 33, 58 18, 49 10 C 43 5, 33 4, 24 7" stroke="#d23a3f" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="why">לבדוק סימן</span></div>
