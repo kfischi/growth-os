@@ -159,7 +159,7 @@
   .owner li span { color: var(--ink-soft); font-size: 16px; }
   .owner .ph-cap { color: var(--ink-soft); }
 
-  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
   footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
 
   @media (max-width: 1020px) {
@@ -499,7 +499,7 @@
         tip: { when: (v) => { len = v; return v in RANGE; }, get text() { return RANGE[len] + "\nזה טווח מהמחירון. את המחיר סוגרים איתי לפני הטיפול."; } } },
       { key: "place", label: "מקום", ask: "בקליניקה ברחובות, או ביקור בית?", chips: ["בקליניקה", "ביקור בית"],
         tip: { when: (v) => v === "ביקור בית", text: "ביקור בית: תוספת 80 עד 120 ₪, לפי המרחק. אני מגיע עם מיטה ומגבות." } },
-      { key: "town", label: "ישוב", ask: "באיזה ישוב?", chips: ["רחובות", "נס ציונה", "יבנה", "גדרה", "ישוב אחר"], show: (d) => d.place === "ביקור בית" },
+      { key: "town", label: "יישוב", ask: "באיזה יישוב?", chips: ["רחובות", "נס ציונה", "יבנה", "גדרה", "יישוב אחר"], show: (d) => d.place === "ביקור בית" },
       { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
       { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },

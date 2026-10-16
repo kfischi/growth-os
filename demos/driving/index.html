@@ -154,7 +154,7 @@
   .insta { margin: 34px 0 0; padding: 16px 0 0; border-top: 1px solid #3a444d; color: #dfe4e8; max-width: 56ch; }
   .owner .ph-cap { color: #b9c3cc; }
 
-  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
   footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--asphalt); padding-top: 18px; }
 
   @media (max-width: 960px) {
@@ -464,7 +464,7 @@
         show: (d) => { picked = d.lic; return true; },
         tip: { when: (v) => v.startsWith("כן"), get text() { return (RANGE[picked] || "") + "\nמחיר לשיעור לפי המחירון. מספר השיעורים משתנה מאדם לאדם."; } } },
       { key: "age", label: "גיל", ask: "בן או בת כמה מי שילמד?", chips: ["17", "18 עד 25", "מעל 25"] },
-      { key: "town", label: "איסוף", ask: "מאיפה לאסוף? ישוב, ואם אפשר גם שכונה.", chips: ["נתניה", "כפר יונה", "אבן יהודה", "קדימה צורן"], input: "text", placeholder: "ישוב או שכונה" },
+      { key: "town", label: "איסוף", ask: "מאיפה לאסוף? יישוב, ואם אפשר גם שכונה.", chips: ["נתניה", "כפר יונה", "אבן יהודה", "קדימה צורן"], input: "text", placeholder: "יישוב או שכונה" },
       { key: "day", label: "מתי", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
       { key: "hours", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "אחרי בית הספר", "ערב"], show: (d) => d.day !== "שישי בבוקר" },
       { key: "name", label: "שם", ask: "איך קוראים לכם? הורה או תלמיד, שניהם בסדר.", input: "text", placeholder: "שם" },

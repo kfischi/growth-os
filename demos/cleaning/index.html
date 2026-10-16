@@ -276,10 +276,11 @@
   .window .ps-img { width: 100%; height: 100%; object-fit: cover; }
   @media (min-width: 961px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .window-wrap { max-width: 580px; }
     .window { inset: 7% 0 12% 12%; } .g-chat { inset-inline-end: -3%; width: 212px; top: 42%; } }
+@media (max-width: 760px) { footer { padding-bottom: 160px; } } /* clear the floating chat, photo and accessibility buttons */
 </style>
 </head>
 <body>
-<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=cleaning">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=cleaning">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -544,7 +545,7 @@
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => {
-      let [lo, hi] = HOURS[d.size]; if (d.type === "אחרי שיפוץ או מעבר") { lo += 2; hi += 3; }
+      const [lo, hi] = HOURS[d.size];
       const rate = d.freq === "פעם אחת" ? RATE[d.type] : Math.min(RATE[d.type], 80);
       return `תודה ${d.name.split(" ")[0]}! ${d.type}, ${d.size}: בערך ${lo} עד ${hi} שעות, כלומר ${fmt(lo * rate)} עד ${fmt(hi * rate)} ₪.\nלחצו למטה, ונקבע מועד בוואטסאפ.`;
     },
@@ -567,8 +568,8 @@
       ] },
       { ask: "כל כמה זמן?", options: [
         { label: "פעם אחת", prefill: { freq: "פעם אחת" } },
-        { label: "כל שבוע", prefill: { freq: "כל שבוע" }, note: "בניקיון קבוע זה בדרך כלל לוקח פחות זמן מהפעם הראשונה." },
-        { label: "כל שבועיים", prefill: { freq: "כל שבועיים" } },
+        { label: "כל שבוע", mul: 80 / 90, prefill: { freq: "כל שבוע" }, note: "בניקיון קבוע: 80 ₪ לשעה, ובדרך כלל זה לוקח פחות זמן מהפעם הראשונה." },
+        { label: "כל שבועיים", mul: 80 / 90, prefill: { freq: "כל שבועיים" }, note: "בניקיון קבוע: 80 ₪ לשעה." },
       ] },
     ],
     note: "לפי שעות עבודה, לדוגמה. בסוף משלמים לפי הזמן בפועל.",
