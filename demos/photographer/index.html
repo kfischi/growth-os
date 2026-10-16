@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Secular+One&family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Amatic+SC:wght@700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/photographer-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the contact sheet on the light table. Strips of 35mm film printed in a row, each frame 3:2 with its edge number,
@@ -197,7 +198,7 @@
   @media (prefers-reduced-motion: reduce) { .grease-ring { animation: none; stroke-dashoffset: 0; } }
   html.a11y-still .grease-ring { animation: none; stroke-dashoffset: 0; }
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top turns light: the lamp's glow with a breath of grease pencil, big tight type, the contact sheet in a rounded
+     The top turns light: the lamp's glow with a breath of grease pencil, big tight type, the light-table picture in a rounded
      frame and glass cards over it (where he works, the first packages, the chat), the main button glowing. */
   .hero { background: var(--glow); border-bottom-color: #e3e6ea;
     background-image: radial-gradient(55% 65% at 8% 20%, rgba(192,24,60,.09), transparent 70%), radial-gradient(50% 60% at 96% 0%, rgba(132,150,170,.22), transparent 70%); }
@@ -208,23 +209,11 @@
   .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--grease); }
   .slip { border-radius: 20px; border-color: #e3e6ea; padding: 16px 18px 14px; }
   .slip input { border-radius: 12px; }
-  .visual { position: relative; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
-  .frame { position: absolute; inset: 9% 0 15% 14%; border-radius: 34px; overflow: hidden; background: var(--emulsion);
-    display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(29,24,32,.08), 0 50px 90px -46px rgba(29,24,32,.65); }
-  .frame .sheet { transform: none; filter: none; width: 104%; max-width: none; }
-  .frame .note { top: 56%; left: 47%; color: var(--grease-lit); text-shadow: 0 1px 0 #1d1820; }
-  .frame { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-  .glass { transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+  .visual { position: relative; aspect-ratio: 1 / .88; max-width: 560px; width: 100%; justify-self: center; }
+  .frame { position: absolute; inset: 9% 0 15% 14%; border-radius: 34px; overflow: hidden; background: #e2e7ec;
+    box-shadow: 0 0 0 1px rgba(29,24,32,.08), 0 50px 90px -46px rgba(29,24,32,.65); }
+  .frame .ps { aspect-ratio: auto; width: 100%; height: 100%; border-radius: 0; }
   .glass, .g-price li b { font-variant-numeric: tabular-nums; }
-  /* The signature moment: the lens opens once. Six blades leave a hexagon that grows and turns, and the sheet appears;
-     then the grease pencil circles the frame for the album. */
-  .iris { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; animation: iris-done 0s 1.6s forwards; }
-  .iris-g { transform: translate(50px, 50px) rotate(-40deg); animation: iris-turn 1.2s .35s cubic-bezier(.5,0,.2,1) forwards; }
-  .bl { fill: #2a2430; stroke: #6a6272; stroke-width: .5; animation: iris-open 1.2s .35s cubic-bezier(.5,0,.2,1) forwards; }
-  @keyframes iris-turn { to { transform: translate(50px, 50px) rotate(0deg); } }
-  @keyframes iris-open { to { transform: translateY(78px); } }
-  @keyframes iris-done { to { visibility: hidden; } }
-  .grease-ring { animation-delay: 1.5s; }
   .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(29,24,32,.55); padding: 14px 16px; color: var(--emulsion); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
@@ -243,9 +232,9 @@
   .g-chat .q { background: #eef1f4; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--emulsion); color: #fff; border-end-start-radius: 4px; }
   @media (max-width: 920px) { .visual { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
-  @media (max-width: 560px) { .g-chat { display: none; } .frame { inset: 11% 0 17% 6%; } .g-price { width: 84%; } .frame .note { font-size: 22px; } }
-  @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; } .frame { transition: none; } .iris { display: none; } }
-  html.a11y-still .glass { animation: none; transition: none; } html.a11y-still .frame { transition: none; } html.a11y-still .iris { display: none; }
+  @media (max-width: 560px) { .visual { aspect-ratio: 1 / 1; } .g-chat { display: none; } .frame { inset: 13% 0 28% 4%; } .g-price { width: 84%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -296,50 +285,11 @@
         </form>
       </div>
 
-      <div class="sheet-wrap visual" aria-hidden="true">
-        <div class="frame">
-        <svg class="sheet" viewBox="0 0 460 356" fill="none">
-          <rect width="460" height="356" rx="3" fill="#1d1820"/>
-          <g font-family="IBM Plex Mono, ui-monospace, monospace" font-size="7.5" fill="#b9b1c0" direction="ltr">
-            <!-- strip 1 -->
-            <rect x="14" y="16" width="432" height="104" fill="#2a2430"/>
-            <rect x="14" y="17" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="108" width="432" height="10" fill="url(#sprk)"/>
-            <use href="#s-table" x="22" y="32" width="96" height="64"/><use href="#s-arch" x="128" y="32" width="96" height="64"/><use href="#s-rings" x="234" y="32" width="96" height="64"/><use href="#s-arch" x="340" y="32" width="96" height="64"/>
-            <text x="24" y="104">11</text><text x="66" y="104">11A</text><text x="130" y="104">12</text><text x="172" y="104">12A</text><text x="236" y="104">13</text><text x="278" y="104">13A</text><text x="342" y="104">14</text><text x="384" y="104">14A</text>
-            <!-- strip 2 -->
-            <rect x="14" y="126" width="432" height="104" fill="#2a2430"/>
-            <rect x="14" y="127" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="218" width="432" height="10" fill="url(#sprk)"/>
-            <use href="#s-crowd" x="22" y="142" width="96" height="64"/><use href="#s-toast" x="128" y="142" width="96" height="64"/><use href="#s-tallit" x="234" y="142" width="96" height="64"/><use href="#s-rings" x="340" y="142" width="96" height="64"/>
-            <text x="24" y="214">15</text><text x="66" y="214">15A</text><text x="130" y="214">16</text><text x="172" y="214">16A</text><text x="236" y="214">17</text><text x="278" y="214">17A</text><text x="342" y="214">18</text><text x="384" y="214">18A</text>
-            <!-- strip 3 -->
-            <rect x="14" y="236" width="432" height="104" fill="#2a2430"/>
-            <rect x="14" y="237" width="432" height="10" fill="url(#sprk)"/><rect x="14" y="328" width="432" height="10" fill="url(#sprk)"/>
-            <use href="#s-baby" x="22" y="252" width="96" height="64"/><use href="#s-dance" x="128" y="252" width="96" height="64"/><use href="#s-dance" x="234" y="252" width="96" height="64"/><use href="#s-crowd" x="340" y="252" width="96" height="64"/>
-            <text x="24" y="324">19</text><text x="66" y="324">19A</text><text x="130" y="324">20</text><text x="172" y="324">20A</text><text x="236" y="324">21</text><text x="278" y="324">21A</text><text x="342" y="324">22</text><text x="384" y="324">22A</text>
-          </g>
-          <!-- grease pencil: one frame circled for the album, one crossed out -->
-          <g stroke="#ff5a7d" stroke-width="4" stroke-linecap="round">
-            <ellipse class="grease-ring" cx="176" cy="174" rx="58" ry="41" transform="rotate(-5 176 174)"/>
-            <path d="M346 38l84 52M430 38l-84 52" opacity=".9"/>
-          </g>
-          <!-- the loupe on frame 21 -->
-          <g transform="translate(282 284)">
-            <path d="M40 40l26 26" stroke="#4f4957" stroke-width="12" stroke-linecap="round"/>
-            <circle r="52" fill="#eef1f4" stroke="#4f4957" stroke-width="8"/>
-            <clipPath id="loupe-clip"><circle r="47"/></clipPath>
-            <g clip-path="url(#loupe-clip)"><use href="#s-dance" x="-90" y="-60" width="180" height="120"/></g>
-            <circle r="47" stroke="#fff" stroke-opacity=".4" stroke-width="2"/>
-          </g>
-        </svg>
-        <svg class="iris" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><g class="iris-g">
-          <g><rect class="bl" x="-90" y="0" width="180" height="120"/></g><g transform="rotate(60)"><rect class="bl" x="-90" y="0" width="180" height="120"/></g><g transform="rotate(120)"><rect class="bl" x="-90" y="0" width="180" height="120"/></g>
-          <g transform="rotate(180)"><rect class="bl" x="-90" y="0" width="180" height="120"/></g><g transform="rotate(240)"><rect class="bl" x="-90" y="0" width="180" height="120"/></g><g transform="rotate(300)"><rect class="bl" x="-90" y="0" width="180" height="120"/></g>
-        </g></svg>
-        <span class="note n1">לאלבום</span>
-        </div>
-        <div class="glass g-day"><span><svg class="ap" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2"/><path d="M10 1.8 13.6 8M18.2 10h-7.2M14.1 17.1 10.5 10.9M5.9 17.1 9.5 10.9M1.8 10H9M6.4 3.9 10 10"/></svg>מקבל פניות</span><b>חדרה, השרון והמרכז</b></div>
-        <div class="glass g-chat"><p class="q">היי, אתה פנוי ב־14.8?</p><p class="a">אבדוק ביומן ואחזור אליכם עם תשובה ותיק עבודות.</p></div>
-        <div class="glass g-price"><span class="t">מחירים לדוגמה</span><ul><li>חתונה<b>6,500 עד 11,000 ₪</b></li><li>בר או בת מצווה<b>3,200 עד 5,500 ₪</b></li><li>ברית או בריתה<b>1,200 עד 2,000 ₪</b></li></ul></div>
+      <div class="sheet-wrap visual">
+        <div class="frame"><figure class="ps" data-slot="hero" data-src="../shared/photos/photographer-work.webp" data-alt="ציור: דף קונטקט עם פריים מסומן בעיפרון אדום, זכוכית מגדלת, מצלמה ותמונות מודפסות על שולחן אור" data-pos="42 50" data-icon="camera" data-label="תמונה מאירוע"></figure></div>
+        <div class="glass g-day" aria-hidden="true"><span><svg class="ap" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2"/><path d="M10 1.8 13.6 8M18.2 10h-7.2M14.1 17.1 10.5 10.9M5.9 17.1 9.5 10.9M1.8 10H9M6.4 3.9 10 10"/></svg>מקבל פניות</span><b>חדרה, השרון והמרכז</b></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">היי, אתה פנוי ב־14.8?</p><p class="a">אבדוק ביומן ואחזור אליכם עם תשובה ותיק עבודות.</p></div>
+        <div class="glass g-price" aria-hidden="true"><span class="t">מחירים לדוגמה</span><ul><li>חתונה<b>6,500 עד 11,000 ₪</b></li><li>בר או בת מצווה<b>3,200 עד 5,500 ₪</b></li><li>ברית או בריתה<b>1,200 עד 2,000 ₪</b></li></ul></div>
       </div>
     </div>
   </div>
@@ -458,6 +408,8 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "photographer" });
+  // The hero photo is the first thing on screen: no lazy loading, high priority, its real size for the layout.
+  (function () { const h = document.querySelector(".frame .ps-img"); if (h) { h.loading = "eager"; h.fetchPriority = "high"; h.width = 800; h.height = 500; } })();
   // Sample ranges, the same as the packages above.
   const RANGES = { "חתונה": "6,500 עד 11,000 ₪", "בר / בת מצווה": "3,200 עד 5,500 ₪", "ברית / בריתה": "1,200 עד 2,000 ₪", "אירוע חברה": "700 עד 1,000 ₪ לשעה", "הצעה / זוגי": "800 עד 1,600 ₪" };
   const FOR = { "חתונה": "לחתונה", "בר / בת מצווה": "לבר או בת מצווה", "ברית / בריתה": "לברית או בריתה", "אירוע חברה": "לאירוע חברה", "הצעה / זוגי": "להצעה או לצילומי זוג" };
@@ -513,27 +465,6 @@
     });
   })();
   Guides.load("../shared/guides/photographer.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
-  // Smart luxury: on a computer with a mouse, the glass cards drift a few pixels with the pointer and the frame tilts a hair.
-  // Transform only, one frame at a time; nothing for touch, reduced motion or the accessibility menu's "עצירת תנועה".
-  (function () {
-    const v = document.querySelector(".visual");
-    if (!v || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    const cards = [...v.querySelectorAll(".glass")], fr = v.querySelector(".frame");
-    let raf = 0, x = 0, y = 0;
-    const apply = () => {
-      raf = 0;
-      cards.forEach((c, i) => { const d = 7 + i * 4; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; });
-      if (fr) fr.style.transform = x || y ? `perspective(1400px) rotateY(${(x * 3).toFixed(2)}deg) rotateX(${(-y * 3).toFixed(2)}deg)` : "";
-    };
-    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
-    v.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || still()) return;
-      const r = v.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; queue();
-    });
-    v.addEventListener("pointerleave", () => { x = y = 0; queue(); });
-    document.addEventListener("a11y-still", () => { x = y = 0; apply(); });
-  })();
 </script>
 </body>
 </html>

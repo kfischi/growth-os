@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/driving-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the driving-school car. The red and white learner plate "ל" on the rear window, the instrument cluster
@@ -208,7 +209,7 @@
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
      The top turns light: lane white with a breath of the plate's red and road-sign blue, big tight type, the car's photo
      in a rounded rear-window frame with glass cards over it (where he teaches, the first lessons, the chat), the main
-     button glowing. The signature moment: the "ל" plate flips onto the window once, like it was just stuck there. */
+     button glowing. The "ל" plate stays stuck on the corner of the window. */
   .hero { background: var(--lane); border-bottom-width: 0;
     background-image: radial-gradient(55% 65% at 6% 22%, rgba(196,18,47,.08), transparent 70%), radial-gradient(48% 60% at 98% 0%, rgba(29,79,145,.1), transparent 70%); }
   .hero::after { height: 8px; }
@@ -222,16 +223,15 @@
   .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--asphalt); }
   .facts { border-top: 1px solid #d5dbdf; }
   .facts b { font-variant-numeric: tabular-nums; }
-  .window.visual { padding: 0; background: none; border-radius: 0; box-shadow: none; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .window.visual { padding: 0; background: none; border-radius: 0; box-shadow: none; aspect-ratio: 1 / .88; max-width: 560px; width: 100%; justify-self: center; }
   .frame { position: absolute; inset: 9% 0 15% 14%; border-radius: 40px 40px 26px 26px; overflow: hidden; background: var(--kerb);
-    box-shadow: 0 0 0 1px rgba(28,34,40,.08), 0 50px 90px -46px rgba(28,34,40,.6); transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    box-shadow: 0 0 0 1px rgba(28,34,40,.08), 0 50px 90px -46px rgba(28,34,40,.6); }
   .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   .window .big { width: 22%; font-size: clamp(80px, 8.6vw, 116px); inset-inline-start: -2%; top: 2%; bottom: auto; z-index: 3;
-    box-shadow: inset 0 0 0 .06em #fff, 0 18px 30px -14px rgba(156,14,37,.55); animation: plate-flip 1s .45s cubic-bezier(.3,1.4,.5,1) both; }
-  @keyframes plate-flip { from { opacity: 0; transform: perspective(700px) rotateY(-95deg) rotate(-6deg); } 40% { opacity: 1; } to { transform: perspective(700px) rotateY(0) rotate(-6deg); } }
+    box-shadow: inset 0 0 0 .06em #fff, 0 18px 30px -14px rgba(156,14,37,.55); }
   .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,34,40,.55); padding: 14px 16px; color: var(--ink);
-    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
   .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 3px; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
@@ -248,9 +248,9 @@
   .g-chat .q { background: #edf0f2; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--asphalt); color: #fff; border-end-start-radius: 4px; }
   @media (max-width: 960px) { .window.visual { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
-  @media (max-width: 560px) { .g-chat { display: none; } .frame { inset: 11% 0 28% 6%; } .g-price { width: 84%; } .window .big { width: 20%; font-size: 21vw; } }
-  @media (prefers-reduced-motion: reduce) { .glass, .window .big { animation: none; transition: none; } .frame { transition: none; } }
-  html.a11y-still .glass, html.a11y-still .window .big { animation: none; transition: none; } html.a11y-still .frame { transition: none; }
+  @media (max-width: 560px) { .window.visual { aspect-ratio: 1 / 1; } .g-chat { display: none; } .frame { inset: 13% 0 28% 4%; } .g-price { width: 84%; } .window .big { width: 20%; font-size: 21vw; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -440,6 +440,8 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "driving" });
+  // The hero photo is the first thing on screen: no lazy loading, high priority, its real size for the layout.
+  (function () { const h = document.querySelector(".frame .ps-img"); if (h) { h.loading = "eager"; h.fetchPriority = "high"; h.width = 800; h.height = 500; } })();
   // The sample ranges, the same as the price list above. A range per lesson, never a promised price.
   const RANGE = {
     "B רכב פרטי": "שיעור של 40 דקות: 150 עד 180 ₪. שיעור כפול: 300 עד 360 ₪.",
@@ -478,27 +480,6 @@
   document.querySelectorAll("[data-day]").forEach((b) => b.addEventListener("click", () => bot.open({ day: b.dataset.day, hours: b.dataset.hours })));
   Guides.load("../shared/guides/driving.json", document.querySelector("[data-guides]"), {
     onAsk: (it) => bot.open(it.id === "first-lesson" ? { stage: "שיעור ראשון" } : undefined) });
-  // Smart luxury: on a computer with a mouse, the glass cards drift a few pixels with the pointer and the frame tilts a hair.
-  // Transform only, one frame at a time; nothing for touch, reduced motion or the accessibility menu's "עצירת תנועה".
-  (function () {
-    const v = document.querySelector(".visual");
-    if (!v || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    const cards = [...v.querySelectorAll(".glass")], fr = v.querySelector(".frame");
-    let raf = 0, x = 0, y = 0;
-    const apply = () => {
-      raf = 0;
-      cards.forEach((c, i) => { const d = 7 + i * 4; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; });
-      if (fr) fr.style.transform = x || y ? `perspective(1400px) rotateY(${(x * 3).toFixed(2)}deg) rotateX(${(-y * 3).toFixed(2)}deg)` : "";
-    };
-    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
-    v.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || still()) return;
-      const r = v.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; queue();
-    });
-    v.addEventListener("pointerleave", () => { x = y = 0; queue(); });
-    document.addEventListener("a11y-still", () => { x = y = 0; apply(); });
-  })();
 </script>
 </body>
 </html>

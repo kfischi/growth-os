@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/pest-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the door hanger the exterminator leaves on the handle. One side, coral: "בטיפול · לא להיכנס עד 14:30". The other, green: "אפשר לחזור הביתה".
@@ -253,8 +254,8 @@
     @keyframes sway-m { 0% { transform: scale(.86) rotate(11deg); } 22% { transform: scale(.86) rotate(-7deg); } 44% { transform: scale(.86) rotate(4deg); } 66% { transform: scale(.86) rotate(-2deg); } 84% { transform: scale(.86) rotate(.8deg); } 100% { transform: scale(.86) rotate(0); } }
   }
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top: dusk paper with a breath of lilac and the hanger's green, big tight type, the front door in a rounded frame
-     (the hanger still sways once and turns to its green side) and glass cards beside it (the licence and area, the first
+     The top: dusk paper with a breath of lilac and the hanger's green, big tight type, the work photo in a rounded frame
+     and glass cards over it (the licence and area, the first
      prices, the chat), the main button glowing in indigo. */
   .hero { background: var(--hush);
     background-image: radial-gradient(55% 70% at 6% 30%, rgba(184,191,220,.55), transparent 70%), radial-gradient(40% 50% at 96% 4%, rgba(28,116,87,.10), transparent 70%); }
@@ -265,38 +266,34 @@
   .hero .btn-line { background: #fff; border: 0; box-shadow: inset 0 0 0 1.5px var(--frame); }
   .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--dusk-soft); }
   .proof b { color: var(--clear); font-variant-numeric: tabular-nums; }
-  .entry { display: block; height: 580px; max-width: 560px; width: 100%; justify-self: center; }
-  .doorway { position: absolute; top: 0; bottom: 0; inset-inline-end: 9%; height: auto; padding: 16px 16px 0; border-radius: 34px; /* no clipping: the hanger hangs out over the frame */
-    background: linear-gradient(180deg, #e4e7f2, var(--frame)); box-shadow: 0 0 0 1px #c9cde0, 0 50px 90px -46px rgba(28,39,83,.6); }
-  .doorway::after { display: none; }
-  .door { border-radius: 20px 20px 0 0; }
-  .mat { border-radius: 8px 8px 0 0; }
+  .entry { display: block; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .frame-p { position: absolute; inset: 7% 15% 13% 1%; border-radius: 34px; overflow: hidden; background: var(--frame);
+    box-shadow: 0 0 0 1px #c9cde0, 0 50px 90px -46px rgba(28,39,83,.6), 0 12px 24px -16px rgba(28,39,83,.3); }
+  .frame-p .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   .glass { position: absolute; z-index: 6; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; padding: 14px 16px; color: var(--dusk);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,39,83,.6), 0 4px 12px -6px rgba(28,39,83,.18);
     animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-lic { top: 5%; inset-inline-start: 0; display: grid; gap: 3px; }
+  .g-lic { top: 0; inset-inline-start: 0; display: grid; gap: 3px; }
   .g-lic span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--dusk-soft); }
   .g-lic span svg { width: 14px; height: 16px; flex: none; }
   .g-lic b { font-weight: 800; font-size: 16.5px; line-height: 1.2; }
-  .g-chat { top: 25%; inset-inline-start: 4%; width: min(54%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat { top: 30%; inset-inline-start: 0; width: min(54%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #eceef7; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--dusk); color: #fff; border-end-start-radius: 4px; }
-  .g-price { top: 55%; inset-inline-start: 0; width: min(270px, 52%); display: grid; animation-delay: .15s; }
+  .g-price { top: auto; bottom: 0; inset-inline-start: 6%; width: min(270px, 52%); display: grid; animation-delay: .15s; }
   .g-price .h { font-size: 12.5px; color: var(--dusk-soft); margin-bottom: 4px; }
   .g-price div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #c9cde0; font-size: 14.5px; }
   .g-price div b { font-weight: 700; } .g-price div span { font-weight: 700; color: var(--clear); white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media (max-width: 980px) { .entry { max-width: 520px; } }
   @media (max-width: 620px) {
     .hero-grid { gap: 30px; padding-bottom: 40px; }
-    .entry { height: 548px; }
-    .doorway { inset-inline-end: 44px; width: min(300px, calc(100% - 44px)); padding: 12px 12px 0; border-radius: 28px; }
+    .frame-p { inset: 9% 0 15% 4%; border-radius: 28px; }
     .g-chat { display: none; }
-    .g-lic { top: 6%; }
-    .g-price { top: auto; bottom: 22%; width: 164px; padding: 12px 14px; }
-    .g-price div { display: grid; gap: 0; padding: 6px 0; font-size: 14px; }
+    .g-price { inset-inline-start: 0; width: min(270px, 74%); padding: 12px 14px; }
+    .g-price div { padding: 5px 0; font-size: 14px; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
@@ -328,36 +325,7 @@
       </div>
 
       <div class="entry">
-        <div class="doorway">
-          <div class="door" aria-hidden="true">
-            <span class="num">12</span><span class="peep"></span>
-            <span class="pan"></span><span class="pan"></span>
-          </div>
-          <span class="rose" aria-hidden="true"></span>
-          <span class="shadow" aria-hidden="true"></span>
-          <div class="hanger" id="hanger" role="img" aria-label="שלט על ידית הדלת. צד אחד: בטיפול, לא להיכנס עד 14:30. הצד השני: אפשר לחזור הביתה.">
-            <div class="hanger-in" aria-hidden="true">
-              <div class="face front">
-                <span class="brand">שקט · הדברה</span>
-                <span class="big">בטיפול</span>
-                <span class="until">לא להיכנס עד</span>
-                <span class="time">14:30</span>
-                <span class="rule"></span>
-                <small>ילדים וחיות: בחוץ, עם קערות המים</small>
-              </div>
-              <div class="face back">
-                <span class="brand">שקט · הדברה</span>
-                <span class="big">אפשר לחזור</span>
-                <span class="until">קודם מאווררים</span>
-                <span class="time heb">20 דקות</span>
-                <span class="rule"></span>
-                <small>תעודת טיפול מחכה לכם על השיש</small>
-              </div>
-            </div>
-          </div>
-          <button class="flip-btn" type="button" id="flip" aria-pressed="false">להפוך את השלט</button>
-          <span class="mat" aria-hidden="true">ברוכים השבים</span>
-        </div>
+        <div class="frame-p"><figure class="ps" data-slot="hero" data-src="../shared/photos/pest-work.webp" data-alt="מדביר עם כפפות כורע ליד ארונות המטבח" data-pos="24 40" data-icon="home" data-label="תמונה מעבודה"></figure></div>
         <div class="glass g-lic" aria-hidden="true"><span><svg viewBox="0 0 14 16" fill="none"><path d="M7 1 13 3.5V8c0 3.4-2.6 6-6 7-3.4-1-6-3.6-6-7V3.5L7 1Z" stroke="#1c7457" stroke-width="1.6" stroke-linejoin="round"/><path d="m4.4 8.2 1.9 1.9 3.4-3.6" stroke="#1c7457" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>מדביר מורשה</span><b>חדרה, עמק חפר והשרון</b></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">ראיתי ג׳וקים במטבח, ויש לנו תינוק.</p><p class="a">אני חוזר אליכם ומסביר מראש מה לשים בצד ומתי חוזרים הביתה.</p></div>
         <div class="glass g-price" aria-hidden="true"><span class="h">מחירים לדוגמה</span><div><b>ג׳וקים</b><span>250 עד 400 ₪</span></div><div><b>נמלים</b><span>250 עד 400 ₪</span></div><div><b>עכברים וחולדות</b><span>350 עד 700 ₪</span></div></div>

@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#f3f5f4">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,400..900&family=Rubik:wght@700;800&family=Cousine:wght@700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/appliance-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the energy label stuck on every new appliance: the stacked coloured bars, the black pointer, the condensed bold letters.
@@ -247,9 +248,9 @@
   }
   @media (prefers-reduced-motion: reduce) { .pointer, .btn, .row .go, .seg label { transition: none; } }
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top turns light: enamel with a breath of the label's greens, big tight type, the energy label itself as the large
-     rounded frame and two glass cards hanging off its corners (sample prices, the chat), the main button glowing.
-     Signature: the label prints itself once, bar after bar, and the black pointer climbs to its verdict. */
+     The top turns light: enamel with a breath of the label's greens, big tight type, the work photo in a large rounded frame
+     with glass cards over it (sample prices, the chat, a link to the repair-or-replace label), the main button glowing.
+     The label itself moves to its own section right under the top. */
   .hero { background: var(--enamel); background-image: radial-gradient(55% 65% at 6% 18%, rgba(95,158,138,.30), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(0,112,74,.12), transparent 70%); }
   .bar { border-bottom: 1px solid rgba(18,26,23,.14); }
   .bar a { color: var(--grade-a); }
@@ -262,38 +263,41 @@
   .hero .btn-line:hover { background: #fff; color: var(--label-ink); box-shadow: inset 0 0 0 1.5px var(--grade-a); }
   .facts { border-top: 1px solid rgba(18,26,23,.14); }
   .facts dt { font-family: "Rubik", var(--body); font-weight: 800; font-stretch: 100%; font-size: 26px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .visual { position: relative; min-width: 0; padding: 112px 0 104px; }
-  .elabel { position: relative; z-index: 1; border: 0; border-radius: 34px; overflow: hidden;
-    box-shadow: 0 0 0 1px rgba(18,26,23,.1), inset 0 1px 0 rgba(255,255,255,.6), 0 50px 90px -46px rgba(0,77,51,.55), 0 14px 30px -20px rgba(0,77,51,.3); }
-  .lab-head { padding: 18px 22px 14px; border-bottom: 2px solid var(--label-ink); }
-  .lab-head b { font-family: "Rubik", var(--body); font-weight: 800; font-stretch: 100%; letter-spacing: -.02em; font-size: 27px; }
-  .seg label { border-radius: 999px; }
-  .verdict { border-radius: 20px; }
+  .visual { position: relative; min-width: 0; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; }
+  .frame { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #dfe7e3; box-shadow: 0 0 0 1px rgba(18,26,23,.08), 0 50px 90px -46px rgba(0,77,51,.6); }
+  .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
   .glass { position: absolute; z-index: 3; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
-    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(0,77,51,.55); padding: 13px 16px; color: var(--label-ink);
-    translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); animation: lift .8s cubic-bezier(.2,.7,.2,1) both .9s; }
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(0,77,51,.55); padding: 13px 16px; color: var(--label-ink); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-price { top: 0; inset-inline-end: -26px; width: 250px; display: grid; }
+  .g-price { bottom: 0; inset-inline-start: 0; width: min(270px, 60%); display: grid; animation-delay: .15s; }
   .g-price > span { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--grade-a); padding-bottom: 6px; }
   .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px dashed #c5ceca; font-size: 14.5px; }
   .g-price i { font-style: normal; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .g-chat { bottom: 0; inset-inline-end: -26px; width: 260px; display: grid; gap: 6px; animation-delay: 1.05s; }
+  .g-chat { top: 30%; inset-inline-end: -1%; width: min(50%, 236px); display: grid; gap: 6px; animation-delay: .3s; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #e9eeeb; justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--grade-a); color: #fff; justify-self: start; border-end-start-radius: 4px; }
-  /* the label prints itself: the bars run out one after another, then the pointer climbs from the bottom bar */
-  .elabel.printing .grade { animation: print .42s cubic-bezier(.3,.8,.3,1) both; transform-origin: 100% 50%; }
-  .elabel.printing .grade:nth-child(2) { animation-delay: .08s; } .elabel.printing .grade:nth-child(3) { animation-delay: .16s; }
-  .elabel.printing .grade:nth-child(4) { animation-delay: .24s; } .elabel.printing .grade:nth-child(5) { animation-delay: .32s; }
-  .elabel.printing .pointer { transition: none; animation: fade .3s ease-out both .5s; }
-  @keyframes print { from { transform: scaleX(0); } }
-  @keyframes fade { from { opacity: 0; } }
-  @media (max-width: 1000px) { .visual { max-width: 560px; width: 100%; margin-inline: auto; } .g-price { inset-inline-end: -10px; } .g-chat { inset-inline-end: -10px; } }
-  @media (max-width: 560px) { .visual { padding: 0; } .g-chat { display: none; } .elabel { border-radius: 26px; }
-    .g-price { position: relative; inset: auto; width: auto; margin: 0 12px 14px; } }
-  @media (prefers-reduced-motion: reduce) { .glass, .elabel.printing .grade, .elabel.printing .pointer { animation: none; } .glass { transition: none; translate: none; } }
-  html.a11y-still .glass, html.a11y-still .elabel.printing .grade, html.a11y-still .elabel.printing .pointer { animation: none; }
-  html.a11y-still .glass { transition: none; translate: none; }
+  .g-label { top: 0; inset-inline-end: 0; display: flex; align-items: center; gap: 12px; text-decoration: none; padding: 11px 16px 11px 14px; }
+  .g-label:hover { background: #fff; }
+  .g-label .mini { display: grid; gap: 2px; width: 34px; flex: none; }
+  .g-label .mini i { height: 4px; border-radius: 2px; background: var(--grade-a); width: 60%; }
+  .g-label .mini i:nth-child(2) { background: var(--grade-b); width: 70%; } .g-label .mini i:nth-child(3) { background: var(--grade-c); width: 80%; }
+  .g-label .mini i:nth-child(4) { background: var(--grade-d); width: 90%; } .g-label .mini i:nth-child(5) { background: var(--grade-e); width: 100%; }
+  .g-label b { display: block; font: 800 16px/1.2 "Rubik", var(--body); }
+  .g-label small { font-size: 13px; color: var(--label-soft); }
+  /* the label, in its own section */
+  .label-sec { background: #fff; }
+  .label-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 56px; align-items: center; }
+  .label-side { min-width: 0; }
+  .label-side h2 { font-family: "Rubik", var(--body); font-weight: 800; font-stretch: 100%; letter-spacing: -.03em; font-size: clamp(38px, 4.4vw, 58px); line-height: 1.02; margin-bottom: 16px; }
+  .label-side p { margin: 0; color: var(--label-soft); max-width: 38ch; font-size: 18px; }
+  .elabel { border-width: 2px; border-radius: 26px; overflow: hidden; box-shadow: 0 50px 90px -50px rgba(0,77,51,.5), 0 14px 30px -22px rgba(0,77,51,.3); }
+  .seg label { border-radius: 999px; }
+  .verdict { border-radius: 18px; }
+  @media (max-width: 1000px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } .label-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; } }
+  @media (max-width: 560px) { .g-chat { display: none; } .frame { inset: 14% 0 20% 8%; } .g-price { width: 78%; } .g-label { padding: 9px 12px; } .elabel { border-radius: 20px; } .facts dt { font-size: 19px; letter-spacing: -.01em; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -322,8 +326,22 @@
       </div>
 
       <div class="visual">
-      <div class="glass g-price" aria-hidden="true" data-depth="1.3"><span><svg viewBox="0 0 16 16" width="15" height="15"><rect x="2.5" y="1.5" width="11" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 4.5h11" stroke="currentColor" stroke-width="1.4"/></svg>תיקון נפוץ, מחירים לדוגמה</span><p><b>מכונת כביסה</b><i>250 עד 600 ₪</i></p><p><b>מקרר</b><i>300 עד 800 ₪</i></p></div>
-      <div class="glass g-chat" aria-hidden="true" data-depth="1.7"><p class="q">המקרר בן 12. שווה לתקן?</p><p class="a">תלוי בתקלה. אחרי האבחון אגיד לכם בכנות, לפני שמתחילים.</p></div>
+        <div class="frame"><figure class="ps" data-slot="hero" data-src="../shared/photos/appliance-work.webp" data-alt="טכנאי כורע ליד מכונת כביסה פתוחה ומחזיק את המשאבה שהוציא" data-pos="55 40" data-icon="wrench" data-label="תמונה מעבודה"></figure></div>
+        <div class="glass g-price" aria-hidden="true"><span><svg viewBox="0 0 16 16" width="15" height="15"><rect x="2.5" y="1.5" width="11" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 4.5h11" stroke="currentColor" stroke-width="1.4"/></svg>תיקון נפוץ, מחירים לדוגמה</span><p><b>מכונת כביסה</b><i>250 עד 600 ₪</i></p><p><b>מקרר</b><i>300 עד 800 ₪</i></p></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">המקרר בן 12. שווה לתקן?</p><p class="a">תלוי בתקלה. אחרי האבחון אגיד לכם בכנות, לפני שמתחילים.</p></div>
+        <a class="glass g-label" href="#label"><span class="mini" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span><b>לתקן או להחליף?</b><small>כלל אצבע לפי מכשיר וגיל</small></span></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="label" class="label-sec">
+    <div class="wrap label-grid">
+      <div class="label-side">
+        <h2>שווה לתקן?</h2>
+        <p>בוחרים מכשיר וגיל, והחץ מראה כלל אצבע של טכנאי. את התשובה האמיתית תקבלו אחרי אבחון, לפני שמתחילים.</p>
+      </div>
       <div class="elabel" id="elabel">
         <div class="lab-head"><b>לתקן או להחליף?</b><span>כלל אצבע של טכנאי<br>לא במקום אבחון</span></div>
         <div class="lab-q">
@@ -361,12 +379,8 @@
         </div>
         <p class="lab-foot">לפני כל תיקון תקבלו מחיר. אם התיקון לא משתלם, אגיד את זה.</p>
       </div>
-      </div>
     </div>
-  </div>
-</header>
-
-<main>
+  </section>
   <section id="prices">
     <div class="wrap">
       <div class="head"><h2>כמה זה עולה</h2><p>מחירים לדוגמה לתיקון נפוץ. לחיצה פותחת את הצ׳אט.</p></div>
@@ -520,6 +534,8 @@
 <script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "appliance" });
+  // the hero photo is the first thing seen: load it at once, with its real size
+  { const hi = document.querySelector(".hero .frame .ps-img"); if (hi) { hi.loading = "eager"; hi.fetchPriority = "high"; hi.width = 800; hi.height = 500; } }
   const RANGES = { "מכונת כביסה": "250 עד 600", "מקרר": "300 עד 800", "מדיח כלים": "250 עד 550", "תנור": "250 עד 500", "מייבש": "250 עד 550" };
   const bot = LeadBot.init({
     estimate: { endpoint: "/api/estimate", trade: "תיקון מכשירי חשמל", prices: RANGES }, // a first look at the photo the customer attaches
@@ -563,34 +579,6 @@
   document.getElementById("lab-go").addEventListener("click", () => bot.open({ appliance: pick("lab-app") }));
   paintLabel();
 
-  // The one signature moment: the label prints once and the pointer climbs to its verdict. Not for reduced motion or "עצירת תנועה".
-  const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-  (function print() {
-    const lab = document.getElementById("elabel");
-    if (still()) return;
-    const g = ptr.style.getPropertyValue("--g");
-    lab.classList.add("printing"); ptr.style.setProperty("--g", 4);
-    const done = () => { lab.classList.remove("printing"); ptr.style.setProperty("--g", g); paintLabel(); };
-    const t = setTimeout(() => requestAnimationFrame(done), 820);
-    lab.addEventListener("change", () => { clearTimeout(t); lab.classList.remove("printing"); }, { once: true });
-    addEventListener("a11y-still", () => { clearTimeout(t); done(); }, { once: true });
-  })();
-
-  // Glass cards drift a few pixels with a fine pointer on desktop. Transform only; off for touch, reduced motion and "עצירת תנועה".
-  (function tilt() {
-    const area = document.querySelector(".hero .visual");
-    if (!area || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const cards = [...area.querySelectorAll(".glass")], hero = document.querySelector(".hero");
-    let raf = 0, x = 0, y = 0;
-    const paint = () => { raf = 0; cards.forEach((c) => { const d = +c.dataset.depth || 1; c.style.setProperty("--px", (x * 7 * d).toFixed(1) + "px"); c.style.setProperty("--py", (y * 6 * d).toFixed(1) + "px"); }); };
-    hero.addEventListener("pointermove", (e) => {
-      if (still() || e.pointerType !== "mouse") return;
-      const r = area.getBoundingClientRect();
-      x = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)); y = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / r.height));
-      if (!raf) raf = requestAnimationFrame(paint);
-    });
-    hero.addEventListener("pointerleave", () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); });
-  })();
 
   document.querySelectorAll(".row[data-appliance]").forEach((b) => b.addEventListener("click", () => bot.open({ appliance: b.dataset.appliance })));
   Estimate.init(document.querySelector("[data-estimate]"), {

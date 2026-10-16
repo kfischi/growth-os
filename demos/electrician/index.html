@@ -272,14 +272,13 @@
   html.a11y-still .brk.trip .case { animation: none; box-shadow: 0 0 0 4px rgba(255,90,31,.45); }
   html.a11y-still .brk .lever, html.a11y-still .hero, html.a11y-still .hero::before, html.a11y-still .hero h1 em, html.a11y-still .hero .lead, html.a11y-still .lamp .glass, html.a11y-still .lamp .halo { transition: none; }
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top is the lit plaster wall from the start, with a breath of safety orange and neutral blue, big tight Rubik,
-     the distribution panel in a large rounded frame under its bulb, glass cards from this page's own facts
-     (the area and warranty, the circuit schedule's first three prices, what the chat does), the main button glowing.
-     Signature: the kitchen breaker trips once as the page opens; flipping it back still lights the bulb and opens the chat. */
+     The top is the lit plaster wall, with a breath of safety orange and neutral blue, big tight Rubik, the sample photo
+     of a panel in a large rounded frame (in greys, like below: its earth wires read as yellow), glass cards from this
+     page's own facts (the area and warranty, the circuit schedule's first three prices, what the chat does), the main
+     button glowing. The only motion: the cards rise in once. */
   .hero, .hero.lit { --h-bg: var(--plaster); --h-fg: var(--conduit); --h-soft: var(--conduit-soft);
-    background-image: radial-gradient(50% 60% at 6% 14%, rgba(255,90,31,.13), transparent 70%), radial-gradient(44% 56% at 98% 0%, rgba(35,87,196,.10), transparent 70%), radial-gradient(36% 46% at 40% 100%, rgba(29,133,80,.06), transparent 70%); }
+    background-image: radial-gradient(50% 60% at 6% 14%, rgba(255,90,31,.12), transparent 70%), radial-gradient(44% 56% at 98% 0%, rgba(35,87,196,.10), transparent 70%); }
   .hero::before { display: none; }
-  .hero .logo b { color: var(--conduit); }
   .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin: 20px 0 18px; text-wrap: balance; }
   .hero h1 em, .hero.lit h1 em { color: var(--spark-ink); }
   .hero .btn { border-radius: 999px; }
@@ -289,60 +288,50 @@
   .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--spark-ink), 0 10px 24px -18px rgba(25,32,42,.45); }
   .hero .facts { border-top-color: #d5d8d2; }
   .hero .facts b { font-variant-numeric: tabular-nums; }
-  .hero-grid { align-items: center; padding-block: 18px 40px; }
-  .hero-copy { padding-bottom: 32px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 520px); align-items: center; padding-block: 24px 64px; }
+  .hero-copy { padding-bottom: 0; }
 
-  /* the visual: the panel in a large rounded frame, the bulb over it, glass cards on its edges */
-  .panel-col { padding: 128px 0 132px; }
-  .lamp { bottom: auto; top: -398px; left: 24%; margin-left: -60px; }
-  .hero.lit .lamp .glass { fill: #fff8f3; filter: drop-shadow(0 0 16px rgba(255,120,60,.75)) drop-shadow(0 0 4px rgba(255,90,31,.5)); }
-  .panel { margin-inline-end: 7%; border-radius: 34px; padding: 16px; background: linear-gradient(160deg, #222b37, var(--conduit)); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 54px 90px -46px rgba(25,32,42,.75), 0 18px 34px -26px rgba(185,58,11,.35); }
-  .panel-in { border-radius: 22px; padding: 18px 14px 18px; }
-  .panel-in::before { border-radius: 16px; inset: 8px; border-bottom: 1px solid rgba(0,0,0,.08); }
-  .rail { border-radius: 10px; }
-  .panel-col .brk { width: 50px; } .panel-col .brk.main { width: 66px; }
-  .brk.trip .lever { animation: trip .9s cubic-bezier(.3,1.5,.5,1) .7s both; }
-  .brk.trip .win { animation: tripwin .9s steps(1) .7s both; }
-  @keyframes trip { 0%, 30% { top: 34px; } 62% { top: 64px; } 100% { top: 61px; } }
-  @keyframes tripwin { 0% { background: var(--earth); box-shadow: 0 0 8px rgba(29,133,80,.8); } 40% { background: #fff; box-shadow: 0 0 18px 4px var(--spark); } 60% { background: var(--spark); } }
-
-  .gl { position: absolute; z-index: 3; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+  .visual { position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; min-width: 0; }
+  .frame { position: absolute; inset: 7% 2% 13% 15%; border-radius: 34px; overflow: hidden; background: #cfd2cb;
+    box-shadow: 0 0 0 1px rgba(25,32,42,.08), 0 54px 90px -46px rgba(25,32,42,.7), 0 18px 34px -26px rgba(185,58,11,.3); }
+  .frame img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 38% 50%; filter: grayscale(1) contrast(1.08); }
+  .gl { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; padding: 14px 16px; color: var(--conduit); font-size: 14px; line-height: 1.35;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 28px 50px -28px rgba(25,32,42,.6), 0 6px 14px -10px rgba(185,58,11,.3);
-    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; translate: var(--px, 0) var(--py, 0); transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 28px 50px -28px rgba(25,32,42,.6), 0 6px 14px -10px rgba(185,58,11,.28);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .g-day { top: 18px; inset-inline-start: 0; display: grid; gap: 3px; animation-delay: .15s; }
+  .g-day { top: 0; inset-inline-start: 0; display: grid; gap: 3px; animation-delay: .1s; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--conduit-soft); }
   .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--earth); box-shadow: 0 0 0 4px rgba(29,133,80,.16); }
   .g-day b { font: 800 17px/1.2 "Rubik", var(--body); letter-spacing: -.01em; }
   .g-day small { font-size: 12.5px; color: var(--conduit-soft); font-variant-numeric: tabular-nums; }
-  .g-price { bottom: 0; inset-inline-end: -3%; width: min(262px, 58%); padding: 14px 16px 10px; animation-delay: .3s; }
+  .g-price { bottom: 0; inset-inline-end: 0; width: min(282px, 62%); padding: 14px 16px 10px; animation-delay: .25s; }
   .g-price header { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding-bottom: 8px; border-bottom: 1.5px solid var(--conduit); }
   .g-price header b { font: 800 15px/1.2 "Rubik", var(--body); }
-  .g-price header span { font: 400 11.5px var(--mono); color: var(--conduit-soft); direction: ltr; }
+  .g-price header span { font-size: 11.5px; color: var(--conduit-soft); }
   .g-price ul { list-style: none; margin: 0; padding: 0; }
   .g-price li { display: flex; align-items: center; gap: 9px; padding: 7px 0; border-top: 1px dashed #cfd3cc; }
   .g-price li:first-child { border-top: 0; }
   .g-price li .tape { flex: none; font-size: 10.5px; padding: 2px 6px; min-width: 42px; text-align: center; }
   .g-price li span:not(.tape) { flex: 1; min-width: 0; }
   .g-price li b { font-weight: 700; color: var(--spark-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .g-chat { bottom: 34px; inset-inline-start: -4%; width: min(42%, 204px); display: grid; gap: 6px; padding: 12px; animation-delay: .45s; }
+  .g-chat { top: 25%; inset-inline-end: -2%; width: min(46%, 222px); display: grid; gap: 6px; padding: 12px; animation-delay: .4s; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: var(--bot-them); justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--conduit); color: #fff; border-end-start-radius: 4px; }
-  @media (max-width: 960px) { .panel-col { padding-top: 100px; } .g-chat { display: none; } }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; } .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
   @media (max-width: 520px) {
     .hero h1 { font-size: clamp(42px, 12vw, 54px); margin-top: 16px; }
-    .panel-col { padding: 82px 0 118px; }
-    .panel { margin-inline-end: 0; border-radius: 28px; padding: 10px; }
-    .panel-in { border-radius: 20px; padding: 14px 8px 16px; }
-    .panel-col .brk { width: 43px; } .panel-col .brk.main { width: 52px; }
-    .g-day { top: 6px; padding: 11px 13px; }
+    .hero-grid { padding-bottom: 48px; }
+    .visual { aspect-ratio: 1 / 1.08; }
+    .frame { inset: 9% 0 17% 6%; border-radius: 28px; }
+    .g-chat { display: none; }
+    .g-day { padding: 11px 13px; }
     .g-price { width: min(290px, 80%); padding: 12px 14px 8px; }
     .g-price li { padding: 6px 0; }
   }
-  @media (prefers-reduced-motion: reduce) { .gl, .brk.trip .lever, .brk.trip .win { animation: none; } .gl { transition: none; } }
-  html.a11y-still .gl, html.a11y-still .brk.trip .lever, html.a11y-still .brk.trip .win { animation: none; } html.a11y-still .gl { transition: none; }
+  @media (prefers-reduced-motion: reduce) { .gl { animation: none; } }
+  html.a11y-still .gl { animation: none; }
 </style>
 </head>
 <body>
@@ -369,39 +358,12 @@
           <li>אחריות <b data-edit="f3">12 חודשים</b></li>
         </ul>
       </div>
-      <div class="panel-col">
-        <svg class="lamp" viewBox="0 -290 120 520" aria-hidden="true">
-    <defs><radialGradient id="halo" cx="50%" cy="78%" r="50%"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".35" stop-color="#e8f0fb" stop-opacity=".55"/><stop offset="1" stop-color="#e8f0fb" stop-opacity="0"/></radialGradient></defs>
-    <circle class="halo" cx="60" cy="178" r="60" fill="url(#halo)"/>
-    <path d="M60 -290 V128" stroke="#5d6874" stroke-width="2.5"/>
-    <rect x="49" y="126" width="22" height="22" rx="3" fill="#3c4652"/>
-    <path class="glass" d="M60 148 c-16 0 -26 12 -26 27 c0 12 8 18 12 25 c2 4 2 8 3 11 h22 c1-3 1-7 3-11 c4-7 12-13 12-25 c0-15 -10-27 -26-27z"/>
-    <path d="M52 186 q4 -10 8 0 q4 10 8 0" fill="none" stroke="#8c97a3" stroke-width="1.6"/>
-  </svg>
-        <div class="panel">
-          <div class="panel-in">
-            <div class="panel-head">
-              <span class="warn"><svg viewBox="0 0 22 20" aria-hidden="true"><path d="M11 1 21 19H1z" fill="#ff5a1f" stroke="#19202a" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6 8 12h3l-1 4 4-6h-3z" fill="#19202a"/></svg>לוח דירתי</span>
-              <span class="ltr">230V · 40A</span>
-            </div>
-            <div class="rail" role="group" aria-label="לוח חשמל לדוגמה">
-              <button class="brk main" aria-label="מפסק ראשי"><span class="tape">ראשי</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">40A</span></span></button>
-              <button class="brk" aria-label="פחת"><span class="tape">פחת</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">30mA</span></span></button>
-              <button class="brk off trip" id="tripped" aria-label="מפסק המטבח קפץ. להרים אותו"><span class="tape">מטבח</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-              <button class="brk" aria-label="סלון"><span class="tape">סלון</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-              <button class="brk" aria-label="דוד"><span class="tape">דוד</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">16A</span></span></button>
-              <button class="brk" aria-label="מזגן"><span class="tape">מזגן</span><span class="case"><span class="win"></span><span class="slot"></span><span class="lever"></span><span class="amp">20A</span></span></button>
-            </div>
-            <div class="panel-foot">
-              <span class="hint" aria-live="polite">המפסק של המטבח קפץ. הרימו אותו</span>
-              <span class="sticker"><b>בדיקת לוח</b>רז שגב · רישיון לדוגמה</span>
-            </div>
-          </div>
-        </div>
+      <div class="visual">
+        <div class="frame"><img src="../shared/photos/electrician-panel.webp" width="520" height="390" alt="לוח חשמל פתוח: מפסקים וחיווט מסודר, ומברג בודק ליד" fetchpriority="high" decoding="async"></div>
         <div class="gl g-day" aria-hidden="true"><span><i></i>מקבלים פניות בצ׳אט</span><b>חדרה והשרון</b><small>14 שנה בשטח · אחריות 12 חודשים</small></div>
         <div class="gl g-chat" aria-hidden="true"><p class="q">החשמל קפץ ולא חוזר. מה עושים?</p><p class="a">ספרו מה קרה, אפשר גם תמונה של הלוח. הפרטים מגיעים אליי לוואטסאפ.</p></div>
         <div class="gl g-price" aria-label="מחירים לדוגמה מטבלת המעגלים">
-          <header><b>טבלת מעגלים</b><span>230V</span></header>
+          <header><b>טבלת מעגלים</b><span>להמחשה</span></header>
           <ul>
             <li><span class="tape" aria-hidden="true">פחת</span><span>איתור קצר</span><b>300 עד 600 ₪</b></li>
             <li><span class="tape" aria-hidden="true">16A</span><span>שקע או מתג</span><b>180 עד 350 ₪</b></li>
@@ -570,17 +532,6 @@
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
-  // The one motion moment: flip the tripped breaker and the blackout ends.
-  const hero = document.getElementById("hero"), hint = document.querySelector(".hint");
-  document.querySelectorAll(".brk").forEach((b) => b.addEventListener("click", () => {
-    if (b.classList.contains("trip")) {
-      b.classList.remove("off", "trip");
-      b.setAttribute("aria-label", "מפסק המטבח");
-      hero.classList.add("lit");
-      hint.textContent = "האור חזר. קפץ שוב? כתבו לי.";
-      setTimeout(() => bot.open({ issue: "החשמל קפץ" }), 1500);
-    } else b.classList.toggle("off");
-  }));
   document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
   Estimate.init(document.querySelector("[data-estimate]"), {
     pick: { ask: "מה צריך?", items: [
@@ -608,21 +559,6 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/electrician.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
-</script>
-<script>
-  /* the glass cards lean a little with the pointer: desktop with a fine pointer only, never for reduced motion or a11y-still */
-  (() => {
-    const col = document.querySelector(".panel-col"); if (!col || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const cards = [...col.querySelectorAll(".gl")], depth = [10, 16, 7];
-    const off = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    let raf = 0, x = 0, y = 0;
-    const paint = () => { raf = 0; cards.forEach((c, i) => { c.style.setProperty("--px", (x * depth[i]).toFixed(1) + "px"); c.style.setProperty("--py", (y * depth[i]).toFixed(1) + "px"); }); };
-    const hero = document.getElementById("hero");
-    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse" || off()) return; const r = col.getBoundingClientRect();
-      x = Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)); y = Math.max(-1, Math.min(1, (e.clientY - r.top - r.height / 2) / r.height)); if (!raf) raf = requestAnimationFrame(paint); });
-    hero.addEventListener("pointerleave", () => { x = y = 0; if (!raf) raf = requestAnimationFrame(paint); });
-    document.addEventListener("a11y-still", () => { x = y = 0; paint(); });
-  })();
 </script>
 </body>
 </html>

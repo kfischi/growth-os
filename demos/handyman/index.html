@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wdth,wght@62.5..100,400..900&family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
+<link rel="preload" as="image" href="../shared/photos/handyman-work.webp" fetchpriority="high">
 <style>
   /* Object: the green enamel toolbox, lid open, its trays sorted by job; next to it the list from the fridge.
      Detail: minutes per job that add up to one visit (מדף 30 דק׳, שידה 75 דק׳), dowels and screws, the price range per job.
@@ -253,7 +254,7 @@
   .shot figcaption { display: none; }
   .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(20,63,44,.6), 0 4px 12px -6px rgba(20,63,44,.2); padding: 14px 16px; color: var(--graphite);
-    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
   .note.glass { inset-inline-end: auto; inset-inline-start: 0; bottom: 0; width: min(300px, 60%); padding: 16px 18px 14px; transform: none; background-image: none; border-radius: 22px; animation-delay: .15s; }
   .note::before { display: none; }
@@ -263,15 +264,9 @@
   .note .total b { font-family: "Rubik", var(--body); font-stretch: normal; font-weight: 800; font-size: 19px; color: var(--enamel); }
   .g-price { top: 0; inset-inline-end: 0; width: min(240px, 46%); display: grid; gap: 2px; }
   .g-price span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--graphite-soft); margin-bottom: 4px; }
-  /* the signature moment: a small spirit level, its bubble drifts and settles in the middle once */
+  /* a small spirit level, bubble in the middle: the closed price is level */
   .lvl { width: 46px; height: 14px; flex: none; overflow: visible; }
   .lvl .lv-body { fill: var(--graphite); } .lvl .lv-end { fill: var(--safety); } .lvl .lv-vial { fill: #a9ddd2; } .lvl .lv-mark { stroke: var(--graphite); stroke-width: 1.2; } .lvl .lv-bub { fill: #f4fbf9; }
-  @media (prefers-reduced-motion: no-preference) {
-    html:not(.a11y-still) .lvl { animation: lvl-tilt 1.5s .7s cubic-bezier(.3,1.3,.5,1) both; transform-origin: 50% 50%; }
-    html:not(.a11y-still) .lvl .lv-bub { animation: lvl-bub 1.5s .7s cubic-bezier(.3,1.5,.4,1) both; }
-  }
-  @keyframes lvl-tilt { from { transform: rotate(-5deg); } to { transform: none; } }
-  @keyframes lvl-bub { from { transform: translateX(-6px); } 60% { transform: translateX(1.2px); } to { transform: none; } }
   .g-price p { margin: 0; display: flex; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.5; }
   .g-price p { font-variant-numeric: tabular-nums; }
   .g-price p b { font: 800 14px/1.5 "Rubik", var(--body); color: var(--graphite); white-space: nowrap; }
@@ -551,6 +546,8 @@
 <script src="../shared/estimate.js"></script>
 <script>
   PhotoSlots.init({ page: "handyman" });
+  /* the top photo is the first thing on screen: load it at once, with its size */
+  { const hi = document.querySelector('[data-slot="hero"] img'); if (hi) { hi.loading = "eager"; hi.fetchPriority = "high"; hi.width = 800; hi.height = 500; } }
   const HOURLY = "שעת עבודה, 180 עד 250 ₪";
   const PRICES = { "תליית טלוויזיה": "250 עד 450 ₪", "הרכבת רהיטים": "200 עד 500 ₪", "מדפים ותמונות": "150 עד 300 ₪", "תיקוני צבע": HOURLY, "כמה עבודות קטנות": "לפי הזמן, 180 עד 250 ₪ לשעה" };
   const bot = LeadBot.init({
@@ -593,19 +590,6 @@
     onAsk: (prefill) => bot.open(prefill),
   });
   Guides.load("../shared/guides/handyman.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
-  /* the glass cards follow a fine pointer by a few pixels; never on touch, reduced motion or a11y-still */
-  (() => {
-    const box = document.querySelector(".stack"), hero = box && box.closest(".hero");
-    if (!hero || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const cards = [...box.querySelectorAll(".glass")], still = () => document.documentElement.classList.contains("a11y-still");
-    let x = 0, y = 0, raf = 0;
-    const apply = () => { raf = 0; cards.forEach((c, i) => { const d = still() ? 0 : 5 + i * 3; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; }); };
-    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
-    const clamp = (v) => Math.max(-1, Math.min(1, v));
-    hero.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; const r = box.getBoundingClientRect(); x = clamp((e.clientX - r.left - r.width / 2) / r.width); y = clamp((e.clientY - r.top - r.height / 2) / r.height); queue(); });
-    hero.addEventListener("pointerleave", () => { x = y = 0; queue(); });
-    document.addEventListener("a11y-still", () => { x = y = 0; queue(); });
-  })();
 </script>
 </body>
 </html>

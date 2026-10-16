@@ -9,6 +9,7 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@500;700&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/nails-work.webp" fetchpriority="high">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the nail-shape chart on the studio wall and the polish rack under it: five fingers, each with its own shape,
@@ -218,81 +219,74 @@
   html.a11y-still .fingers .nail { transition: none; }
 
   /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
-     The top turns light: base-coat white with a breath of baby pink, big tight Rubik, the lacquer field becomes one
-     large rounded swatch holding the shape chart, glass cards over its edges (the studio hours, two prices from the
-     list, the chat), the main button glowing in lacquer.
-     Signature moment: on load the five nails get their coat once, brushed from the cuticle to the tip, one finger
-     after the other, and the shine lands last. Never with reduced motion or html.a11y-still. */
+     The top turns light: base-coat white with a breath of baby pink, big tight Rubik, the studio drawing large in a
+     rounded frame with glass cards over it (the hours, the chat, three prices from the list), the main button glowing
+     in lacquer. The shape chart keeps its lacquer field, as the band right under the top. */
   .hero { background: var(--basecoat); color: var(--ink);
-    background-image: radial-gradient(52% 62% at 14% 22%, rgba(242,169,196,.42), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(163,18,77,.09), transparent 70%); }
+    background-image: radial-gradient(52% 62% at 12% 22%, rgba(242,169,196,.42), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(163,18,77,.08), transparent 70%); }
   .hero::after { display: none; }
   .logo { color: var(--lacquer-deep); } .logo small { color: var(--ink-soft); }
   .bar a { color: var(--lacquer-deep); border-bottom-color: var(--lacquer); }
+  @media (min-width: 961px) { .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 26px 0 88px; } }
   .kicker { color: var(--lacquer); }
   .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
   .hero h1 em { color: var(--lacquer); font-weight: 700; letter-spacing: -.02em; line-height: 1.08; margin-top: 12px; }
   .lead { color: var(--ink-soft); }
-  .hero .btn-blush { background: var(--lacquer); color: #fff; box-shadow: 0 16px 32px -14px rgba(163,18,77,.8), 0 2px 6px -2px rgba(110,11,51,.4), inset 0 1px 0 rgba(255,255,255,.22); }
+  .hero .btn-blush { background: var(--lacquer); color: #fff; box-shadow: 0 16px 32px -14px rgba(163,18,77,.8), 0 2px 6px -2px rgba(110,11,51,.4); }
   .hero .btn-blush:hover { background: var(--lacquer-deep); }
-  .hero .btn-line { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line), 0 10px 22px -18px rgba(110,11,51,.5); }
+  .hero .btn-line { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
   .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--lacquer); }
   .facts { border-top-color: var(--line); }
   .facts li { color: var(--ink-soft); }
-  .facts b { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--lacquer-deep); font-variant-numeric: tabular-nums; }
-  .facts b { font-size: clamp(21px, 1.9vw, 25px); white-space: nowrap; }
+  .facts b { font: 800 clamp(21px, 1.9vw, 25px)/1.1 "Rubik", var(--body); letter-spacing: -.02em; color: var(--lacquer-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .row .p, .week-key li { font-variant-numeric: tabular-nums; }
-
-  .visual { position: relative; min-width: 0; padding-top: 34px; }
-  .chart { position: relative; isolation: isolate; overflow: hidden; border-radius: 34px; padding: 104px 30px 26px;
-    background: radial-gradient(70% 55% at 20% 0%, #c21b5f, transparent 70%), var(--lacquer);
-    box-shadow: 0 0 0 1px rgba(110,11,51,.18), inset 0 1px 0 rgba(255,255,255,.22), 0 50px 90px -46px rgba(110,11,51,.75), 0 18px 34px -24px rgba(163,18,77,.5); }
-  .chart::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(112deg, transparent 34%, rgba(255,255,255,.08) 46%, transparent 58%); } /* the gloss on the gel */
 
   .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(110,11,51,.6), 0 4px 12px -6px rgba(110,11,51,.18);
-    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both;
-    translate: calc(var(--px, 0) * var(--d, 10px)) calc(var(--py, 0) * var(--d, 10px)); transition: translate .6s cubic-bezier(.2,.7,.2,1); }
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
-  .glass span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
-  .g-day { top: 0; inset-inline-start: 34px; display: grid; gap: 2px; --d: 12px; }
-  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--lacquer); box-shadow: 0 0 0 4px rgba(163,18,77,.16); }
-  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); letter-spacing: -.01em; }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--lacquer); box-shadow: 0 0 0 4px rgba(163,18,77,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
   .g-day small { font-size: 13px; color: var(--ink-soft); }
-  .g-price { top: 0; inset-inline-end: 22px; width: 216px; display: grid; gap: 4px; animation-delay: .12s; --d: -9px; }
-  .g-price svg { fill: var(--lacquer); }
-  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14.5px; line-height: 1.35; }
-  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 4px; }
+  .g-price { display: grid; gap: 5px; animation-delay: .12s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
   .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--lacquer); white-space: nowrap; }
-  .g-chat { top: 47%; inset-inline-end: -30px; width: 204px; display: grid; gap: 6px; padding: 11px; animation-delay: .26s; --d: 16px; }
+  .g-chat { display: grid; gap: 6px; padding: 11px; animation-delay: .26s; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #f5e9ef; justify-self: start; border-end-start-radius: 4px; }
   .g-chat .a { background: var(--lacquer-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
+  .hframe { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #f3e4ea;
+    box-shadow: 0 0 0 1px rgba(110,11,51,.08), 0 50px 90px -46px rgba(110,11,51,.62), 0 18px 34px -26px rgba(110,11,51,.35); }
+  .hframe .ps { aspect-ratio: auto; height: 100%; border-radius: 0; border: 0; transform: none; box-shadow: none; }
 
-  /* The coat: brushed from the cuticle up to the tip, finger after finger, then the shine. */
-  @keyframes coat { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
-  @keyframes shine { from { opacity: 0; } }
-  .fingers .nail { animation: coat .62s cubic-bezier(.55,0,.25,1) both; animation-delay: calc(.45s + var(--n) * .13s); }
-  .fingers .shine { animation: shine .5s ease-out both; animation-delay: calc(1s + var(--n) * .13s); }
-  .fingers li:nth-child(1) { --n: 0; } .fingers li:nth-child(2) { --n: 1; } .fingers li:nth-child(3) { --n: 2; } .fingers li:nth-child(4) { --n: 3; } .fingers li:nth-child(5) { --n: 4; }
+  .g-day { top: 2%; inset-inline-end: 0; }
+  .g-chat { top: 38%; inset-inline-end: -1%; width: min(50%, 226px); }
+  .g-price { bottom: 2%; inset-inline-start: 0; width: min(290px, 66%); animation-delay: .15s; }
 
-  @media (max-width: 1100px) { .g-chat { inset-inline-end: -8px; width: 200px; } }
-  @media (max-width: 960px) { .visual { max-width: 560px; width: 100%; justify-self: center; } .chart { max-width: none; } }
+  .lacquer { background: var(--lacquer); color: #fff; position: relative; overflow: hidden; isolation: isolate; }
+  .lacquer::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(105deg, transparent 52%, rgba(255,255,255,.07) 64%, transparent 76%); } /* the gloss on the gel */
+  .lacquer .head p { color: #fde9f0; }
+  .shape-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 32px 64px; align-items: center; }
+  .shape-grid .head { display: block; margin: 0; }
+  .shape-grid .head p { margin-top: 14px; max-width: 34ch; }
+
+  @media (max-width: 960px) { .visual { max-width: 440px; } .g-chat { inset-inline-end: 0; } .shape-grid { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 560px) {
-    .visual { padding-top: 0; }
-    .chart { padding: 112px 16px 20px; border-radius: 28px; }
     .g-chat { display: none; }
-    .facts b { font-size: 20px; white-space: normal; }
+    .hframe { inset: 10% 0 16% 8%; border-radius: 28px; }
     .glass { padding: 10px 12px; border-radius: 16px; }
-    .g-day { top: 12px; inset-inline-start: 12px; width: calc(50% - 18px); }
-    .g-day b { font-size: 15px; } .g-day small, .glass span { font-size: 12px; }
-    .g-price { top: 12px; inset-inline-end: 12px; width: calc(50% - 18px); gap: 2px; }
-    .g-price p { display: grid; gap: 0; font-size: 13px; line-height: 1.3; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 78%; }
+    .facts b { font-size: 20px; white-space: normal; }
   }
-  @media (prefers-reduced-motion: reduce) { .glass, .fingers .nail, .fingers .shine { animation: none; } .glass { translate: none; transition: none; } }
-  html.a11y-still .glass, html.a11y-still .fingers .nail, html.a11y-still .fingers .shine { animation: none; }
-  html.a11y-still .glass { translate: none; transition: none; }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -320,41 +314,47 @@
         </ul>
       </div>
       <div class="visual">
-      <div class="glass g-day" aria-hidden="true"><span><i></i>שעות הסטודיו</span><b>א׳ עד ה׳ מ־9:00</b><small>שישי 8:30 עד 13:00</small></div>
-      <div class="glass g-price" aria-hidden="true">
-        <span><svg viewBox="0 0 12 18" width="10" height="15"><rect x="4" y="0" width="4" height="5" rx="1"/><rect x="1" y="5" width="10" height="13" rx="3"/></svg>מהמחירון</span>
-        <p><b>לק ג׳ל</b><em>120 עד 160 ₪</em></p>
-        <p><b>מילוי</b><em>160 עד 220 ₪</em></p>
-      </div>
-      <div class="glass g-chat" aria-hidden="true"><p class="q">כמה עולה בנייה בג׳ל?</p><p class="a">220 עד 340 ₪, לפי האורך. אני מאשרת תור בין לקוחה ללקוחה.</p></div>
-      <div class="chart" role="group" aria-label="לוח צורות הציפורניים">
-        <ul class="fingers" aria-hidden="true">
-          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V52 H12 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
-          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V58 Q48 48 38 48 H22 Q12 48 12 58 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
-          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V62 C48 34 12 34 12 62 Z"/><rect class="shine" x="17" y="58" width="5" height="42" rx="2.5"/></svg></li>
-          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 C48 46 36 26 30 20 C24 26 12 46 12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
-          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 L39 22 H21 L12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
-        </ul>
-        <ul class="shapes">
-          <li>מרובע</li><li>מרובע מעוגל</li><li>אובלי</li><li>שקד</li><li>בלרינה</li>
-        </ul>
-        <div class="rack" role="group" aria-label="לנסות צבע על הציפורניים">
-          <p class="rack-label">לנסות צבע:</p>
-          <button class="bottle" type="button" style="--c:#f2a9c4" data-polish="#f2a9c4" aria-pressed="true"><i></i><span>ורוד בייבי</span></button>
-          <button class="bottle" type="button" style="--c:#b3123f" data-polish="#b3123f" aria-pressed="false"><i></i><span>אדום דובדבן</span></button>
-          <button class="bottle" type="button" style="--c:#c98f7e" data-polish="#c98f7e" aria-pressed="false"><i></i><span>ניוד</span></button>
-          <button class="bottle" type="button" style="--c:#9f86dc" data-polish="#9f86dc" aria-pressed="false"><i></i><span>לילך</span></button>
-          <button class="bottle" type="button" style="--c:#1f5e52" data-polish="#1f5e52" aria-pressed="false"><i></i><span>ירוק בקבוק</span></button>
-          <button class="bottle" type="button" style="--c:#b8bfcb" data-polish="#b8bfcb" aria-pressed="false"><i></i><span>כרום</span></button>
+        <div class="hframe"><figure class="ps" data-slot="hero" data-src="../shared/photos/nails-work.webp" data-alt="שולחן מניקור: מנורת ג׳ל, מניפת דוגמאות צבע, בקבוקי לק על מדף ולוח צורות של ציפורניים" data-pos="50 50" data-icon="sparkle" data-label="תמונה מהסטודיו"></figure></div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>שעות הסטודיו</span><b>א׳ עד ה׳ מ־9:00</b><small>שישי 8:30 עד 13:00</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">כמה עולה בנייה בג׳ל?</p><p class="a">220 עד 340 ₪, לפי האורך. אני מאשרת תור בין לקוחה ללקוחה.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <p><b>לק ג׳ל</b><em>120 עד 160 ₪</em></p>
+          <p><b>בנייה בג׳ל</b><em>220 עד 300 ₪</em></p>
+          <p><b>מילוי</b><em>160 עד 220 ₪</em></p>
         </div>
-        <p class="now-colour" aria-live="polite">על הציפורניים: <b id="colour-name">ורוד בייבי</b></p>
-      </div>
       </div>
     </div>
   </div>
 </header>
 
 <main>
+  <section class="lacquer" id="shapes">
+    <div class="wrap shape-grid">
+      <div class="head"><h2>איזו צורה, איזה צבע?</h2><p>לוחצים על בקבוק, וחמש הציפורניים נצבעות בו. את הצורה בוחרים יחד בתור.</p></div>
+  <div class="chart" role="group" aria-label="לוח צורות הציפורניים">
+          <ul class="fingers" aria-hidden="true">
+            <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V52 H12 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
+            <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V58 Q48 48 38 48 H22 Q12 48 12 58 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
+            <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V62 C48 34 12 34 12 62 Z"/><rect class="shine" x="17" y="58" width="5" height="42" rx="2.5"/></svg></li>
+            <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 C48 46 36 26 30 20 C24 26 12 46 12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
+            <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 L39 22 H21 L12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
+          </ul>
+          <ul class="shapes">
+            <li>מרובע</li><li>מרובע מעוגל</li><li>אובלי</li><li>שקד</li><li>בלרינה</li>
+          </ul>
+          <div class="rack" role="group" aria-label="לנסות צבע על הציפורניים">
+            <p class="rack-label">לנסות צבע:</p>
+            <button class="bottle" type="button" style="--c:#f2a9c4" data-polish="#f2a9c4" aria-pressed="true"><i></i><span>ורוד בייבי</span></button>
+            <button class="bottle" type="button" style="--c:#b3123f" data-polish="#b3123f" aria-pressed="false"><i></i><span>אדום דובדבן</span></button>
+            <button class="bottle" type="button" style="--c:#c98f7e" data-polish="#c98f7e" aria-pressed="false"><i></i><span>ניוד</span></button>
+            <button class="bottle" type="button" style="--c:#9f86dc" data-polish="#9f86dc" aria-pressed="false"><i></i><span>לילך</span></button>
+            <button class="bottle" type="button" style="--c:#1f5e52" data-polish="#1f5e52" aria-pressed="false"><i></i><span>ירוק בקבוק</span></button>
+            <button class="bottle" type="button" style="--c:#b8bfcb" data-polish="#b8bfcb" aria-pressed="false"><i></i><span>כרום</span></button>
+          </div>
+          <p class="now-colour" aria-live="polite">על הציפורניים: <b id="colour-name">ורוד בייבי</b></p>
+      </div>
+    </div>
+  </section>
   <section id="week">
     <div class="wrap">
       <div class="head"><h2>מתי נוח לכם?</h2><p>שעות הסטודיו. לוחצים על זמן שנוח לכם, והוא נכנס לפנייה. התור נקבע כשאני מאשרת בוואטסאפ.</p></div>
@@ -517,21 +517,9 @@
 <script src="../shared/photoslots.js"></script>
 <script>
   PhotoSlots.init({ page: "nails" });
-  // The glass cards follow a fine pointer by a few pixels. Transform only, never on touch, reduced motion or a11y-still.
-  (function () {
-    const hero = document.querySelector(".hero"), root = document.documentElement;
-    const fine = matchMedia("(hover: hover) and (pointer: fine)"), calm = matchMedia("(prefers-reduced-motion: reduce)");
-    let raf = 0, x = 0, y = 0;
-    const set = (a, b) => { hero.style.setProperty("--px", a); hero.style.setProperty("--py", b); };
-    hero.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || !fine.matches || calm.matches || root.classList.contains("a11y-still")) return;
-      const r = hero.getBoundingClientRect();
-      x = ((e.clientX - r.left) / r.width - .5).toFixed(3); y = ((e.clientY - r.top) / r.height - .5).toFixed(3);
-      if (!raf) raf = requestAnimationFrame(() => { raf = 0; set(x, y); });
-    });
-    hero.addEventListener("pointerleave", () => set(0, 0));
-    document.addEventListener("a11y-still", () => set(0, 0));
-  })();
+  // The top photo is the first thing seen: load it at once, with its size known.
+  (function () { const im = document.querySelector(".hframe .ps-img"); if (!im) return;
+    im.loading = "eager"; im.fetchPriority = "high"; im.width = 800; im.height = 500; })();
   // The shape chart: a bottle paints the five nails.
   (function () {
     const chart = document.querySelector(".chart"), name = document.getElementById("colour-name");

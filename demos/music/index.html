@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>מאיה לב · שיעורי פסנתר וגיטרה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
-<script>(function () { var k = new URLSearchParams(location.search).get("i"); document.documentElement.dataset.i = /^(piano|keys|guitar|bass|drums)$/.test(k || "") ? k : "piano"; })();</script>
+<script>(function () { var k = new URLSearchParams(location.search).get("i"); document.documentElement.dataset.i = k = /^(piano|keys|guitar|bass|drums)$/.test(k || "") ? k : "piano"; if (k === "piano" || k === "keys") { var l = document.createElement("link"); l.rel = "preload"; l.as = "image"; l.href = "../shared/photos/music-work.webp"; l.setAttribute("fetchpriority", "high"); document.head.appendChild(l); } })();</script>
 <meta name="description" content="שיעורי פסנתר וגיטרה לילדים מגיל 6 ולמבוגרים, בכרכור או אצלכם בבית. שיעור ניסיון קצר לפני שמתחילים.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -256,7 +256,8 @@
      The top turns light: the paper inner sleeve with a breath of this record's colours, big tight type, the record and its
      sleeve in a rounded frame of the sleeve colour, glass cards over it (the trial lesson, the first lessons with prices,
      the chat), the main button glowing. Every instrument keeps its own colours through --sleeve and --spark.
-     The signature moment: the record slides out, then the tonearm swings onto it once. */
+     The frame shows the teacher's photo where the sample fits the instrument (piano, keys); otherwise the record still
+     slides out of its sleeve, as before. */
   .hero { background: var(--inner); color: var(--vinyl);
     background-image: radial-gradient(55% 65% at 6% 20%, color-mix(in srgb, var(--sleeve) 13%, transparent), transparent 70%), radial-gradient(45% 55% at 98% 0%, color-mix(in srgb, var(--spark) 12%, transparent), transparent 70%); }
   .hero::before { display: none; }
@@ -270,18 +271,18 @@
   .hero .btn-paper:hover { background: var(--sleeve-deep); }
   .hero .btn-ring { background: #fff; color: var(--vinyl); box-shadow: inset 0 0 0 1.5px #d3d7df; }
   .hero .btn-ring:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--sleeve); }
-  .stage { position: relative; aspect-ratio: 1 / 1; max-width: 560px; width: 100%; justify-self: center; min-width: 0; }
+  .stage { position: relative; aspect-ratio: 1 / .88; max-width: 560px; width: 100%; justify-self: center; min-width: 0; }
   .stage .frame { position: absolute; inset: 9% 0 15% 14%; border-radius: 34px; overflow: hidden; display: grid; place-items: center;
     background: radial-gradient(80% 70% at 85% 0%, rgba(255,255,255,.16), transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(0,0,0,.25), transparent 70%), var(--sleeve);
-    box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 50px 90px -46px color-mix(in srgb, var(--sleeve-deep) 85%, transparent); transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+    box-shadow: 0 0 0 1px rgba(255,255,255,.12) inset, 0 50px 90px -46px color-mix(in srgb, var(--sleeve-deep) 85%, transparent); }
   .stage .lp { width: 84%; transform: translateY(-4%); }
   .stage .cover .big { font-size: clamp(40px, 4.6vw, 64px); }
-  .arm { position: absolute; z-index: 3; left: -6%; top: -8%; width: 34%; height: auto; transform-origin: 20% 12.5%; filter: drop-shadow(0 6px 6px rgba(0,0,0,.35));
-    animation: arm-in 1s 1.25s cubic-bezier(.3,1.25,.5,1) both; }
-  @keyframes arm-in { from { transform: rotate(32deg); } }
+  .stage .hero-ph { position: absolute; inset: 0; aspect-ratio: auto; width: 100%; height: 100%; margin: 0; border-radius: 0; }
+  .stage.has-photo .lp { display: none; }
+  .stage.has-photo .frame { background: #dfe3ea; }
   .glass { position: absolute; z-index: 4; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
     border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px color-mix(in srgb, var(--sleeve-deep) 75%, transparent); padding: 14px 16px; color: var(--vinyl);
-    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; transition: translate .5s cubic-bezier(.2,.7,.2,1); }
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
   .g-day { top: 0; inset-inline-start: 6%; display: grid; gap: 3px; }
   .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--groove); }
@@ -299,9 +300,9 @@
   .g-chat .a { background: var(--sleeve); color: #fff; border-end-start-radius: 4px; }
   @media (max-width: 900px) { .stage { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
   @media (max-width: 620px) { .stage .lp { width: 86%; } .stage .cover .big { font-size: clamp(30px, 9vw, 44px); } }
-  @media (max-width: 560px) { .g-chat { display: none; } .stage { aspect-ratio: 1 / 1.06; } .stage .frame { inset: 15% 0 27% 0; } .stage .lp { width: 78%; } .g-day { inset-inline-start: 4%; padding: 10px 14px; } .g-price { width: 84%; } }
-  @media (prefers-reduced-motion: reduce) { .glass, .arm { animation: none; transition: none; } .stage .frame { transition: none; } }
-  html.a11y-still .glass, html.a11y-still .arm { animation: none; transition: none; } html.a11y-still .stage .frame { transition: none; }
+  @media (max-width: 560px) { .g-chat { display: none; } .stage { aspect-ratio: 1 / 1.06; } .stage.has-photo { aspect-ratio: 1 / 1; } .stage .frame { inset: 15% 0 27% 0; } .stage .lp { width: 78%; } .g-day { inset-inline-start: 4%; padding: 10px 14px; } .g-price { width: 84%; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
 </style>
 </head>
 <body>
@@ -327,10 +328,10 @@
           <a class="btn btn-ring" href="#" data-wa="היי מאיה, אשמח לשמוע על שיעורי נגינה">וואטסאפ ישיר</a>
         </div>
       </div>
-      <div class="stage" aria-hidden="true">
+      <div class="stage">
       <div class="frame">
-      <div class="lp">
-        <svg class="arm" viewBox="0 0 100 120" fill="none"><circle cx="20" cy="15" r="11" fill="#2a2c32" stroke="#4a4d55" stroke-width="2"/><circle cx="20" cy="15" r="4" fill="#c4c7cf"/><path d="M20 15 L44 66 L53 82" stroke="#d9dce2" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="47" y="78" width="11" height="15" rx="2" transform="rotate(-28 53 85)" fill="#eceef2"/></svg>
+      <figure class="ps hero-ph" data-slot="hero" data-alt="מורה בחדר הלימוד, יושבת ליד פסנתר, גיטרה ועמוד תווים" data-pos="50 40" data-icon="camera" data-label="תמונה מהשיעורים"></figure>
+      <div class="lp" aria-hidden="true">
         <div class="vinyl" id="vinyl"><div class="lbl"><span id="v-label">פסנתר</span><small>33⅓ · A</small></div></div>
         <div class="cover">
           <div class="cat"><span class="mono">ML-045</span><span>צד א׳ · צד ב׳</span></div>
@@ -340,9 +341,9 @@
         </div>
       </div>
       </div>
-        <div class="glass g-day"><span><svg class="nt" viewBox="0 0 20 20"><path d="M8 15.5V3.5l8-1.5v11.5"/><circle cx="5.6" cy="15.5" r="2.4"/><circle cx="13.6" cy="13.5" r="2.4"/></svg>שיעור ניסיון</span><b>30 דקות, לפני שמתחילים</b></div>
-        <div class="glass g-chat"><p class="q">אפשר להתחיל מאפס?</p><p class="a">בטח. ספרו מי לומד ואיפה נוח, ואחזור לקבוע שיעור ניסיון.</p></div>
-        <div class="glass g-price"><span class="t">שיעור של 45 דקות</span><ul id="g-lessons"></ul></div>
+        <div class="glass g-day" aria-hidden="true"><span><svg class="nt" viewBox="0 0 20 20"><path d="M8 15.5V3.5l8-1.5v11.5"/><circle cx="5.6" cy="15.5" r="2.4"/><circle cx="13.6" cy="13.5" r="2.4"/></svg>שיעור ניסיון</span><b>30 דקות, לפני שמתחילים</b></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">אפשר להתחיל מאפס?</p><p class="a">בטח. ספרו מי לומד ואיפה נוח, ואחזור לקבוע שיעור ניסיון.</p></div>
+        <div class="glass g-price" aria-hidden="true"><span class="t">שיעור של 45 דקות</span><ul id="g-lessons"></ul></div>
       </div>
     </div>
   </div>
@@ -463,7 +464,7 @@
       tag: "כרכור, חדרה ועמק חפר · מגיל 6 ועד מבוגרים", try: "נסו לנגן ↓",
       prog: [["פסנתר לילדים", "מגיל 6. שירים מוכרים, שתי ידיים, וקריאת תווים בקצב של הילד.", 150], ["מבוגרים שתמיד רצו", "מתחילים מאפס או חוזרים אחרי שנים. בלי מבחנים, בקצב שלכם.", 170], ["קלאסי ותווים", "יצירות, טכניקה וקריאה מהדף. הכנה לבחינות קונסרבטוריון.", 170], ["ממשיכים ומגמת מוזיקה", "תיאוריה, שמיעה והכנה לרסיטל או לבחינה.", 180]],
       styles: ["שירים ופופ", "קלאסי", "ג׳אז ואלתור", "עוד לא יודעים"], f3: "פסנתר אקוסטי בסטודיו. לבית, פסנתר חשמלי מספיק להתחלה", c2: "שיעור פסנתר",
-      photos: { portrait: "music-portrait", studio: "music-studio", lesson: "music-lesson" },
+      photos: { portrait: "music-portrait", studio: "music-studio", lesson: "music-lesson", hero: "music-work" },
     },
     keys: {
       label: "קלידים", teacher: "נועה ברק", initial: "נ", role: "מורה לקלידים · 10 שנה",
@@ -472,7 +473,7 @@
       tag: "חדרה, כרכור ועמק חפר · מגיל 8 ועד מבוגרים", try: "נסו לנגן, בצליל של פסנתר חשמלי ↓",
       prog: [["קלידים למתחילים", "מגיל 8. אקורדים בשתי ידיים ושירים ראשונים כבר בחודש הראשון.", 140], ["ליווי שירה ושירים", "ללוות את עצמכם או מישהו ששר. שומעים שיר ומוצאים את האקורדים.", 150], ["קלידים בלהקה", "סאונדים, התפקיד שלכם בשיר, ונגינה עם מתופף וגיטרה.", 170], ["הפקה במחשב", "קלידי מידי, תוכנת הפקה ושיר ראשון שאתם מקליטים בעצמכם.", 180]],
       styles: ["ליווי שירים", "להקה ובמה", "הפקה במחשב", "עוד לא יודעים"], f3: "אורגנית, פסנתר חשמלי וקלידי מידי", c2: "שיעור קלידים",
-      photos: { portrait: "music-portrait", studio: null, lesson: "music-lesson" },
+      photos: { portrait: "music-portrait", studio: null, lesson: "music-lesson", hero: "music-work" },
     },
     guitar: {
       label: "גיטרה", teacher: "יואב דגן", initial: "י", role: "מורה לגיטרה · 11 שנה",
@@ -521,7 +522,10 @@
   document.querySelectorAll(".ps[data-slot]").forEach((f) => { const ph = I.photos[f.dataset.slot]; if (ph) f.dataset.src = `../shared/photos/${ph}.webp`; else delete f.dataset.src; });
   document.querySelector('[data-slot="portrait"]').dataset.alt = `מורה ל${I.label}`;
   document.querySelectorAll("[data-wa]").forEach((a) => { a.dataset.wa = `היי ${I.teacher.split(" ")[0]}, הגעתי מהאתר ויש לי שאלה על שיעורי ${I.label}`; });
+  // the top: the sample photo where it fits the instrument (a teacher at the piano), otherwise the record in its sleeve
+  if (!I.photos.hero) document.querySelector(".hero-ph").remove(); else document.querySelector(".stage").classList.add("has-photo");
   PhotoSlots.init({ page: "music-" + KIND });
+  (function () { const h = document.querySelector(".hero-ph .ps-img"); if (h) { h.loading = "eager"; h.fetchPriority = "high"; h.width = 800; h.height = 500; } })();
 
   Instruments.mount(KIND, { visual: $("visual"), control: $("play"), last: $("last"), name: $("name") });
 
@@ -557,27 +561,6 @@
   Guides.load(`../shared/guides/music-${KIND}.json`, document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
   // Smart luxury: the glass cards on the record carry this instrument's first three lessons and prices.
   $("g-lessons").innerHTML = I.prog.slice(0, 3).map(([b, , p]) => `<li>${b}<b>${p} ₪</b></li>`).join("");
-  // Smart luxury: on a computer with a mouse, the glass cards drift a few pixels with the pointer and the frame tilts a hair.
-  // Transform only, one frame at a time; nothing for touch, reduced motion or the accessibility menu's "עצירת תנועה".
-  (function () {
-    const v = document.querySelector(".stage");
-    if (!v || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
-    const cards = [...v.querySelectorAll(".glass")], fr = v.querySelector(".frame");
-    let raf = 0, x = 0, y = 0;
-    const apply = () => {
-      raf = 0;
-      cards.forEach((c, i) => { const d = 7 + i * 4; c.style.translate = `${(-x * d).toFixed(1)}px ${(-y * d).toFixed(1)}px`; });
-      if (fr) fr.style.transform = x || y ? `perspective(1400px) rotateY(${(x * 3).toFixed(2)}deg) rotateX(${(-y * 3).toFixed(2)}deg)` : "";
-    };
-    const queue = () => { if (!raf) raf = requestAnimationFrame(apply); };
-    v.addEventListener("pointermove", (e) => {
-      if (e.pointerType !== "mouse" || still()) return;
-      const r = v.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; queue();
-    });
-    v.addEventListener("pointerleave", () => { x = y = 0; queue(); });
-    document.addEventListener("a11y-still", () => { x = y = 0; apply(); });
-  })();
 </script>
 </body>
 </html>
