@@ -143,6 +143,27 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     if (w < 860) await p.click("#tabChat");
   });
 
+  await check("the questionnaire: social profiles, cleaned by the server", async () => {
+    const waitQ = (re) => p.waitForFunction((src) => new RegExp(src).test(document.querySelector("#guide .q").textContent), re.source, { timeout: 10000 });
+    await waitQ(/להציג מחירים/); await p.click("#guide .row .btn"); // keep the prices
+    await waitQ(/דף לכל אזור/); await p.click("#guide > .skip");
+    await waitQ(/אינסטגרם, פייסבוק, טיקטוק או יוטיוב/);
+    assert.equal(await p.locator("#guide .socials input").count(), 4);
+    await p.fill('#guide input[data-net="instagram"]', "instagram.com/Oren.Mayim?igsh=abc");
+    await p.fill('#guide input[data-net="youtube"]', "javascript:alert(1)");
+    await p.click("#guide .socials + .btn");
+    await p.waitForFunction(() => /יוטיוב: זה לא נראה כמו פרופיל/.test(document.querySelector("#log").textContent), null, { timeout: 8000 });
+    assert.equal(await p.inputValue('#guide input[data-net="instagram"]'), "instagram.com/Oren.Mayim?igsh=abc", "what they typed stays");
+    await p.fill('#guide input[data-net="youtube"]', "");
+    await p.click("#guide .socials + .btn");
+    await waitQ(/תמונות/);
+    assert.deepEqual(T.ls_drafts.at(-1).content.social, { instagram: "https://www.instagram.com/oren.mayim/" });
+    if (w < 860) await p.click("#tabSite");
+    await p.frameLocator("#frame").locator('.social-links a[aria-label="אינסטגרם"]').waitFor({ timeout: 8000 });
+    if (w < 860) await p.click("#tabChat");
+    assert.equal(await overflow(), false);
+  });
+
   await check("a photo, resized in the browser", async () => {
     await p.evaluate(() => { document.querySelector("#photos").open = true; });
     await p.setInputFiles("#slots .slot:nth-child(1) input", path.join(ROOT, "shared/photos/plumber-portrait.webp"));

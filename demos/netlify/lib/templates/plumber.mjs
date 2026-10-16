@@ -3,6 +3,7 @@
 // render() escapes every value, so whatever the owner or the model typed can't break the page.
 import { israeliPhone } from "../leads.mjs";
 import { localBusiness } from "./schema.mjs";
+import { socialList, SOCIAL_KEYS } from "../social.mjs";
 import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog } from "./looks.mjs";
 export { LOOKS, lookOf, catalog };
 // The trades (trades/<id>.mjs): words, chat, questionnaire. The site is the same for all of them.
@@ -56,6 +57,8 @@ export const TOWNS = { min: 1, max: 12, itemMax: 22, label: "ישובים" };
 // A page per area the business really works in (published sites only): only from the owner's own words about it.
 // An area without a note of its own gets no page: a page per town with the name swapped is doorway spam to Google.
 export const REGIONS = { max: 5, nameMax: 30, townsMax: 12, noteMin: 60, noteMax: 500, responseMax: 14, label: "דפי אזורים" };
+// The owner's Instagram, Facebook, TikTok and YouTube (lib/social.mjs): plain links, no embeds, no pixels.
+export const SOCIAL = { keys: SOCIAL_KEYS, label: "רשתות חברתיות" };
 export const regionsReady = (c) => (c.regions || []).filter((r) => r && String(r.name || "").trim() && (r.towns || []).length && String(r.note || "").trim().length >= REGIONS.noteMin).slice(0, REGIONS.max);
 
 export const PHOTOS = {
@@ -99,6 +102,7 @@ export function emptyContent(tradeId = "plumber") {
   c.services = [];
   c.towns = [];
   c.regions = [];
+  c.social = {};
   c.look = "blueprint"; c.palette = "blue";  // the design, picked in the builder (looks.mjs)
   return c;
 }
@@ -123,6 +127,16 @@ export function missing(c) {
   if ((c.towns || []).length < TOWNS.min) out.push(TOWNS.label);
   return out;
 }
+
+// Single-colour icons (currentColor), so they take the look's own colours.
+const SOCIAL_ICONS = {
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/>',
+  facebook: '<path d="M13.6 21v-7.6h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.1H8v3h2.6V21z" fill="currentColor"/>',
+  tiktok: '<path d="M16.4 3c.3 2.2 1.7 3.7 4 3.9V10c-1.5 0-2.8-.4-4-1.2v6.4a5.6 5.6 0 1 1-5.6-5.6l.9.1v3.2a2.5 2.5 0 1 0 1.6 2.3V3z" fill="currentColor"/>',
+  youtube: '<rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9v6l5-3z" fill="currentColor"/>',
+};
+// The owner's profiles as plain links: no embed, no pixel, nothing loads from the networks.
+const socialLinks = (list) => list.map((x) => `<a href="${h(x.url)}" target="_blank" rel="noopener" aria-label="${h(x.label)}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">${SOCIAL_ICONS[x.net]}</svg></a>`).join("");
 
 const FAVICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><rect width="30" height="30" rx="7" fill="#0c2a68"/><path d="M15 5c3.3 5 6.5 8.2 6.5 12.3a6.5 6.5 0 0 1-13 0C8.5 13.2 11.7 10 15 5z" fill="#fff"/></svg>';
 // "Save to contacts": a vCard (3.0, UTF-8) with what a customer needs to find the business again.
@@ -211,6 +225,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const services = (c.services || []).slice(0, SERVICES.max);
   const towns = (c.towns || []).slice(0, TOWNS.max);
   const areas = regionsReady(c);
+  const social = socialList(c);
   const wa = israeliPhone(c.whatsapp), call = israeliPhone(c.phone) || wa;
   const waIntl = wa ? wa.intl : "";
   const callLocal = call ? call.local : "";
@@ -424,6 +439,7 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
       <p>${h(W.areaNote || (T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
       <button class="btn btn-signal" type="button" data-open-bot>לכתוב בצ׳אט</button>
       <a class="save-contact" href="${draft ? "#" : "contact.vcf"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את ${h(name)} באנשי הקשר</a>
+      ${social.length ? `<div class="social"><p>עקבו אחרינו</p><div class="social-links">${socialLinks(social)}</div></div>` : ""}
     </div>
   </div>
 </section>
@@ -558,6 +574,7 @@ ${GUIDES.items.map(guideItem).join("\n")}
 <style>${GUIDE_CSS}</style>
 <script type="application/ld+json">${js(faqSchema(GUIDES.items))}</script>`, "guides.html", true);
 
+  const socialBlock = social.length ? `\n<h2>עקבו אחרינו</h2>\n<p class="social-links">${socialLinks(social)}</p>` : "";
   // One page per service: the owner's own facts about it, the towns, the guides that speak about it, and a way in.
   // Real content for a real search ("פתיחת סתימה בחדרה"), never a page per town with the name swapped.
   const svcPages = draft ? {} : Object.fromEntries(services.filter((x) => String(x.name || "").trim()).map((x) => {
@@ -594,7 +611,7 @@ ${x.price ? `<p class="svc-note">המחיר הוא טווח לפי מה שבדר
 <ol class="svc-steps"><li>מתארים בצ׳אט מה צריך ואיפה, ואפשר לצרף תמונה.</li><li>הפרטים מגיעים ל${h(ownerFirst === "אנחנו" ? name : ownerFirst)} בוואטסאפ${has("response_time") ? `, וחוזרים אליכם תוך ${h(c.response_time)}` : ""}.</li><li>קובעים שעה ומסכמים את המחיר לפני העבודה.</li></ol>
 ${towns.length ? `<h2>איפה עובדים</h2>\n<p>${towns.map(h).join(" · ")}</p>` : ""}
 ${related.length ? `<h2>טיפים ושאלות</h2>\n<div class="gd">\n${related.map(guideItem).join("\n")}\n</div>\n<p><a href="guides.html">לכל הטיפים</a></p>` : ""}
-${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}`;
+${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}${socialBlock}`;
     const page = legal(`${sname}${area ? " ב" + area : ""}`, body, `
 <meta name="description" content="${h(sdesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
 <meta property="og:title" content="${h(sname)} · ${h(name)}">
@@ -634,7 +651,7 @@ ${String(r.note).trim().split(/\n+/).map((l) => `<p class="lead-in">${h(l)}</p>`
 <table class="svc-facts">${rows}</table>
 <p class="svc-ctas"><a class="gd-cta" href="./">${h(W.open)} בצ׳אט</a>${wa ? ` <a class="svc-alt" href="${h(wa)}">וואטסאפ</a>` : ""}${callLocal ? ` <a class="svc-alt" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}</p>
 ${services.length ? `<h2>מה עושים ב${h(rname)}</h2>\n<ul class="svc-more">${services.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}
-${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${areaPage(o.name)}">${h(trade)} ב${h(o.name)}</a></li>`).join("")}</ul>` : ""}`;
+${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${areaPage(o.name)}">${h(trade)} ב${h(o.name)}</a></li>`).join("")}</ul>` : ""}${socialBlock}`;
     const page = legal(title, body, `
 <meta name="description" content="${h(adesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
 <meta property="og:title" content="${h(title)} · ${h(name)}">
@@ -683,6 +700,7 @@ export function chatFacts(c) {
     "שירותים:",
     ...(c.services || []).map((s) => `- ${s.name}${s.detail ? ` (${s.detail})` : ""}${s.price ? `: ${s.price}` : ""}${s.time ? `, ${s.time}` : ""}`),
     c.price_note && `${c.price_note}.`,
+    socialList(c).length && `ברשתות: ${socialList(c).map((x) => `${x.label} ${x.url}`).join(", ")}.`,
   ];
   return lines.filter(Boolean).join("\n");
 }
@@ -861,6 +879,12 @@ const CSS = `
   .gd-more { margin: 16px 0 0; } .gd-more a { font-weight: 700; color: var(--accent); text-underline-offset: 4px; }
   .save-contact { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; color: inherit; font-weight: 600; text-underline-offset: 4px; }
   .save-contact svg { width: 22px; height: 22px; flex: none; }
+  .social { margin-top: 18px; }
+  .social p { margin: 0 0 8px; font-weight: 600; }
+  .social-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .social-links a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid currentColor; color: inherit; }
+  .social-links a:hover { background: color-mix(in srgb, currentColor 16%, transparent); }
+  .social-links svg { width: 22px; height: 22px; }
   .ba-sec { background: var(--surface); }
   .ba { position: relative; overflow: hidden; aspect-ratio: 4 / 3; max-width: 880px; margin-inline: auto; border: 1px solid var(--rule); border-radius: 6px; direction: ltr; user-select: none; touch-action: pan-y; background: var(--tint); }
   .ba > .ps, .ba-before > .ps { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -926,6 +950,10 @@ const SERVICE_CSS = `
   .svc-ctas { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .svc-alt { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1.5px solid var(--rule); border-radius: 10px; text-decoration: none; color: var(--ink); font-weight: 600; background: #fff; }
   .svc-note { color: var(--soft); font-size: 15px; }
+  .social-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .social-links a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--rule); background: #fff; color: var(--link); }
+  .social-links a:hover { border-color: var(--link); }
+  .social-links svg { width: 22px; height: 22px; }
   .svc-steps { padding-inline-start: 22px; } .svc-steps li { margin: 6px 0; }
   .svc-more { list-style: none; padding: 0; display: grid; gap: 8px; }
   .svc-more li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--rule); padding-bottom: 8px; }

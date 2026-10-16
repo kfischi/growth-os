@@ -50,6 +50,7 @@ step "site builder (API, against fakes)"
 node scripts/tests/site-builder.test.mjs 2>/dev/null || { node scripts/tests/site-builder.test.mjs; fail=1; }
 node scripts/tests/billing.test.mjs 2>/dev/null || { node scripts/tests/billing.test.mjs; fail=1; }
 node scripts/tests/area-pages.test.mjs 2>/dev/null || { node scripts/tests/area-pages.test.mjs; fail=1; }
+node scripts/tests/social.test.mjs 2>/dev/null || { node scripts/tests/social.test.mjs; fail=1; }
 node scripts/tests/search.test.mjs 2>/dev/null || { node scripts/tests/search.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
 node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-chat.test.mjs; fail=1; }

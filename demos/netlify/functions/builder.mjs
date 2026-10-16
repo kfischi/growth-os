@@ -3,7 +3,7 @@
 //   GET    /api/builder/state                                             -> { state }
 //   POST   /api/builder/chat      { message, rev }                        -> { reply, state }
 //   POST   /api/builder/learn     { text?, images?: [dataURL x3], rev }    -> { reply, changed, state, draft }   "למדו את העסק שלי"
-//   POST   /api/builder/answer    { set, services, towns, regions, style, rev }   an answer picked in the questionnaire,
+//   POST   /api/builder/answer    { set, services, towns, regions, social, style, rev }   an answer picked in the questionnaire,
 //                                 or the design ({ look, palette }), no AI -> { state }
 //   POST   /api/builder/photo?slot=portrait   body: the JPEG/WebP bytes    -> { state }
 //   DELETE /api/builder/photo?slot=portrait                               -> { state }
@@ -152,6 +152,7 @@ export default async (req, context) => {
         services: Array.isArray(body.services) ? body.services : null,
         towns: Array.isArray(body.towns) ? body.towns.slice(0, 40) : null,
         regions: Array.isArray(body.regions) ? body.regions.slice(0, 8) : null,
+        social: body.social && typeof body.social === "object" && !Array.isArray(body.social) ? Object.fromEntries(["instagram", "facebook", "tiktok", "youtube"].filter((k) => typeof body.social[k] === "string").map((k) => [k, body.social[k].slice(0, 300)])) : null,
         style: body.style && typeof body.style === "object" ? { look: String(body.style.look || ""), palette: String(body.style.palette || "") } : null,
       };
       const { content, changed, errors } = applyUpdate(templateOf(d), d.content, update);

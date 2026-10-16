@@ -155,12 +155,16 @@
   .launch { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; background: #fff; }
   .launch summary { cursor: pointer; font-weight: 700; color: var(--ink); }
   .launch ol { margin: 8px 0; padding-inline-start: 18px; font-size: 14px; color: var(--ink); }
+  .launch .net { margin: 14px 0 2px; font-size: 14px; color: var(--ink); }
   .textbox, .linkbox { white-space: pre-line; background: var(--paper); border-radius: 8px; padding: 8px 10px; color: var(--ink) !important; overflow-wrap: anywhere; }
   .regions { display: grid; gap: 10px; }
   .region-card { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
   .region-card legend { font-weight: 700; font-size: 14px; padding: 0 4px; }
   .region-card textarea { min-height: 72px; }
   .region-card .count { color: var(--slate); font-size: 12px; }
+  .socials { display: grid; gap: 8px; margin-bottom: 10px; }
+  .socials label { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14px; font-weight: 600; }
+  .socials input[type=text] { min-height: 44px; }
   .approve .total { color: var(--ink); font-weight: 700; font-size: 15px; }
   .approve ul { margin: 0 0 8px; padding-inline-start: 18px; font-size: 14px; }
   .linkish { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; }
@@ -230,7 +234,7 @@
       <option value="plumber">אינסטלטור</option><option value="electrician">חשמלאי</option><option value="ac">טכנאי מזגנים</option>
       <option value="locksmith">מנעולן</option><option value="towing">גרר ושירותי דרך</option><option value="appliance">טכנאי מכשירי חשמל</option><option value="pest">מדביר</option>
       <option value="handyman">הנדימן</option><option value="renovation">שיפוצים</option><option value="cleaning">ניקיון</option>
-      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="cosmetics">קוסמטיקה ויופי</option><option value="photographer">צלם אירועים</option><option value="trainer">מאמן כושר</option>
+      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="cosmetics">קוסמטיקה ויופי</option><option value="barber">ספרות</option><option value="massage">עיסוי ומסאז׳</option><option value="photographer">צלם אירועים</option><option value="trainer">מאמן כושר</option>
       <option value="tutor">מורה פרטי</option><option value="music">מורה למוזיקה</option><option value="psychologist">פסיכולוג/ית</option>
       <option value="social-worker">עובד/ת סוציאלי/ת</option>
     </select>
@@ -320,7 +324,7 @@
       <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 1,900 ₪ הקמה, ו-390 ₪ לחודש, לפני מע״מ.</span></div></label>
       <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש, לפני מע״מ.</span></div></label>
     </div>
-    <p class="note">בלי התחייבות: מבטלים בהודעה של 30 יום. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
+    <p class="note">בלי התחייבות: מבטלים מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
     <p class="err" id="approveErr" role="alert"></p>
     <div class="row"><button class="btn" value="ok" id="approveGo">מאשרים</button><button class="btn quiet" value="cancel" formnovalidate>עוד לא</button></div>
   </form>
@@ -558,7 +562,7 @@
         pk.addEventListener('change', showTotal); showTotal();
       }
       const go = btn('לתשלום מאובטח', pay); go.disabled = !a; box.append(go);
-      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. החשבונית נשלחת אליכם מיד. בלי התחייבות: מבטלים בהודעה של 30 יום.').className = 'note';
+      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. החשבונית נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
       p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
@@ -655,7 +659,7 @@
     }
   }
 
-  // The first visitors: Google Business Profile, a WhatsApp status, local groups. Each with its own link.
+  // The first visitors: Google Business Profile, a WhatsApp status, local groups, the bio of each network. Each with its own link.
   function paintLaunch(box, k) {
     box.append(h3('להביא את הלקוחות הראשונים'));
     const note = el('p', 'note', 'אתר חדש מתחיל להופיע בגוגל בהדרגה. בשבועות הראשונים רוב הכניסות מגיעות מכאן.'); box.append(note);
@@ -672,6 +676,13 @@
     s.append(el('p', 'textbox', k.status.text), copy(k.status.text));
     const p = card('3. קבוצות של השכונה והעיר', 'רק בקבוצות שמותר בהן לפרסם, ולא יותר מפעם בכמה שבועות.');
     p.append(el('p', 'textbox', k.groups.text), copy(k.groups.text));
+    if (k.social && k.social.length) {
+      const n = card('4. הקישור לאתר ברשתות', 'כך מי שמגיע לפרופיל שלכם ברשתות מוצא את האתר בלחיצה.');
+      for (const x of k.social) {
+        n.append(el('h4', 'net', x.name), el('p', null, x.how));
+        const lk = el('p', 'linkbox'); lk.append(ltr(x.link)); n.append(lk, copy(x.link, 'להעתיק את הקישור'));
+      }
+    }
     if (k.tracked) box.append(el('p', 'note', 'לכל ערוץ קישור משלו, ובפאנל רואים כמה כניסות ופניות הגיעו מכל אחד.'));
   }
 
@@ -746,7 +757,7 @@
     bubble('sys', r.data.domain === 'live' ? 'הדומיין מחובר! האתר עבר לכתובת החדשה.' : 'עוד לא. לפעמים זה לוקח עד 48 שעות, ואנחנו ממשיכים לבדוק לבד.');
   }
   async function cancelSub(b) {
-    if (!confirm('לבטל את המנוי? הוא יישאר פעיל עוד 30 יום, ואחר כך המענה האוטומטי והצ׳אט ייכבו. האתר והדומיין נשארים שלכם.')) return;
+    if (!confirm('לבטל את המנוי? הוא יישאר פעיל עד סוף התקופה ששולמה, ואחר כך המענה האוטומטי והצ׳אט ייכבו. האתר והדומיין נשארים שלכם.')) return;
     b.disabled = true; const r = await call('cancel', { body: {} }); b.disabled = false;
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
     setBilling(r.data); bubble('sys', 'המנוי בוטל. אפשר לחזור בכם עד סוף התקופה.');
@@ -788,6 +799,7 @@
 
   /* ---------- the questionnaire: pick an answer, type what isn't listed; no AI involved ---------- */
   const guideBox = $('#guide');
+  let socialTyped = null; // the social step's fields, kept between redraws
   const doneKey = () => 'nr-guide-' + String(cred || '').split(':')[0];
   const doneSet = () => { try { return new Set(JSON.parse(localStorage.getItem(doneKey()) || '[]')); } catch (e) { return new Set(); } };
   const markDone = (id) => { const d = doneSet(); d.add(id); try { localStorage.setItem(doneKey(), JSON.stringify([...d])); } catch (e) { /* private mode */ } };
@@ -807,6 +819,7 @@
     if (st.type === 'copy') return st.id === 'headline' ? Boolean(c.headline_2) : Boolean(String(c[Object.keys(st.options[0])[0]] || '').trim());
     if (st.type === 'photos') return Object.keys(s.photos || {}).length > 0;
     if (st.type === 'regions') return (c.regions || []).length > 0;
+    if (st.type === 'social') return Object.keys(c.social || {}).length > 0;
     return false;
   }
 
@@ -1017,6 +1030,25 @@
       });
       const r = el('div', 'row'); r.append(save, add);
       guideBox.append(list, r);
+    } else if (st.type === 'social') {
+      // One field per network: a link or a handle. The server cleans it into the profile's address, or says why not.
+      // What they typed stays while they fix one the server refused (the guide is drawn again after every answer).
+      const typed = socialTyped || (socialTyped = { ...(c.social || {}) }), box = el('div', 'socials'), inputs = {};
+      for (const n of st.networks) {
+        const row = el('label'); const i = el('input'); i.type = 'text'; i.dir = 'ltr'; i.inputMode = 'url';
+        i.autocomplete = 'off'; i.spellcheck = false; i.setAttribute('autocapitalize', 'off'); i.maxLength = 300;
+        i.placeholder = n.placeholder; i.value = typed[n.key] || ''; i.dataset.net = n.key;
+        i.addEventListener('input', () => { typed[n.key] = i.value; });
+        row.append(el('span', null, n.label), i); box.append(row); inputs[n.key] = i;
+      }
+      const save = el('button', 'btn', 'שמירה'); save.type = 'button';
+      save.addEventListener('click', async () => {
+        const social = Object.fromEntries(Object.entries(inputs).map(([k, i]) => [k, i.value.trim()]));
+        const names = st.networks.filter((n) => social[n.key]).map((n) => n.label);
+        if (!names.length) { bubble('fail', 'כתבו לפחות רשת אחת, או דלגו.'); return; }
+        if (await answer(st, { social }, names.join(', '))) { socialTyped = null; markDone('social'); paint(); }
+      });
+      guideBox.append(box, save);
     } else if (st.type === 'photos') {
       const open = el('button', 'btn', 'לתמונות'); open.type = 'button';
       open.addEventListener('click', () => { $('#photos').open = true; $('#photos').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });

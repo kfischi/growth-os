@@ -43,6 +43,13 @@ export function guideFor(T) {
       { id: "headline", type: "copy", ask: "איזו כותרת מתאימה לכם?", options: g.headlines },
       { id: "intro", type: "copy", ask: "ואיזו פסקת פתיחה? היא מופיעה מתחת לכותרת.", options: g.intros },
       { id: "regions", type: "regions", optional: true, ask: "רוצים דף לכל אזור שאתם עובדים בו? מי שמחפש בגוגל את התחום באזור שלו מגיע ישר אליו. כתבו על כל אזור משפט או שניים משלכם: כמה אתם קרובים, מה עשיתם שם, מה נפוץ שם. אזור בלי מילים שלכם לא מקבל דף." },
+      { id: "social", type: "social", optional: true, ask: "יש לעסק אינסטגרם, פייסבוק, טיקטוק או יוטיוב? נחבר אותם לאתר: מי שמגיע לאתר יראה את העבודות שלכם ברשתות, ומי שמגיע מהרשתות ימצא את האתר. מדביקים קישור לפרופיל או כותבים את שם המשתמש.",
+        networks: [
+          { key: "instagram", label: "אינסטגרם", placeholder: "למשל: @shai.barber" },
+          { key: "facebook", label: "פייסבוק", placeholder: "למשל: facebook.com/ShaiBarber" },
+          { key: "tiktok", label: "טיקטוק", placeholder: "למשל: @shai.barber" },
+          { key: "youtube", label: "יוטיוב", placeholder: "למשל: @ShaiBarber" },
+        ] },
       { id: "photos", type: "photos", ask: g.photosAsk || "נשאר להוסיף תמונות: אחת שלכם ועד שלוש של העבודה. יש לכם תמונה של אותה עבודה לפני ואחרי? באתר היא תופיע עם פס להשוואה. הכול בכפתור \"תמונות וסרטון\" מתחת לשיחה. לא חובה, אבל לקוחות סומכים על מי שהם רואים." },
     ],
   };

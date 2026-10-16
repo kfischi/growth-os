@@ -1,6 +1,7 @@
 // Schema.org JSON-LD for a business's site, from the facts the owner gave in the builder, so Google
 // understands what the business is, where it works, when it is open and what it charges.
 // Only facts: nothing is added that the owner didn't say (no ratings, no address, no opening hours guessed).
+import { socialList } from "../social.mjs";
 
 // The trade, as Google knows it. Anything else is a home services business.
 const TYPES = [
@@ -55,6 +56,7 @@ export function localBusiness(c, { phone = "", image = "", url = "", description
   const s = (v) => String(v || "").trim();
   const towns = (c.towns || []).map(s).filter(Boolean);
   const hours = openingHours(c.hours);
+  const sameAs = socialList(c).map((x) => x.url); // the owner's own profiles, so Google ties them to the business
   const offers = (c.services || []).filter((x) => s(x.name)).map((x) => {
     const price = priceRange(x.price);
     return {
@@ -74,6 +76,7 @@ export function localBusiness(c, { phone = "", image = "", url = "", description
     ...(s(c.owner_name) ? { founder: { "@type": "Person", name: s(c.owner_name) } } : {}),
     ...(towns.length || s(c.area) ? { areaServed: towns.length ? towns : s(c.area) } : {}),
     ...(hours ? { openingHoursSpecification: [hours] } : {}),
+    ...(sameAs.length ? { sameAs } : {}),
     ...(offers.length ? { hasOfferCatalog: { "@type": "OfferCatalog", name: s(c.trade) || "שירותים", itemListElement: offers } } : {}),
     knowsLanguage: "he",
   };

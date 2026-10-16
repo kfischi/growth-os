@@ -20,7 +20,9 @@ const regions = [
   { name: "חדרה", towns: ["חדרה"], response: "20 דק׳", note: "אני גר בחדרה ומגיע לרוב הקריאות בעיר תוך 20 דקות. בבניינים הישנים כאן החלפתי עשרות דודים וצנרת." },
   { name: "עמק חפר", towns: ["עמק חפר", "כפר יונה"], response: "", note: "בעמק חפר אני עובד בעיקר במושבים: הרבה בתים פרטיים, צנרת חיצונית ודודי שמש על הגג." },
 ];
-const site = P.render({ ...SAMPLE, regions, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
+// The owner's profiles: a row of icon links in the contact section and on the service and area pages.
+const social = { instagram: "https://www.instagram.com/oren.mayim/", facebook: "https://www.facebook.com/OrenMayim", tiktok: "https://www.tiktok.com/@oren.mayim", youtube: "https://www.youtube.com/@OrenMayim" };
+const site = P.render({ ...SAMPLE, regions, social, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
 for (const [name, html] of Object.entries(site)) fs.writeFileSync(path.join(out, name), html);
 fs.writeFileSync(path.join(out, "area.html"), site[P.areaPage("חדרה")]);
 for (const [name, body] of Object.entries(P.STATIC_FILES)) fs.writeFileSync(path.join(out, name), body);
@@ -45,7 +47,7 @@ import("../../demos/netlify/lib/templates/trades/index.mjs").then(async ({ TRADE
     const g = T.guide, when = whenText(g.response[1]);
     const c = { ...P.emptyContent(T.id), business_name: "עסק לדוגמה", owner_name: "דנה כהן", area: "חדרה והסביבה", response_time: g.response[1], hours: g.hours[1],
       whatsapp: "0526359513", headline_1: g.headlines[0].headline_1, headline_2: (g.headlines[0].headline_2 || "").replace("{when}", when),
-      intro: g.intros[0].intro.replace("{when}", when), services: g.services.slice(0, 5), towns: ["חדרה", "נתניה", "כפר יונה"] };
+      intro: g.intros[0].intro.replace("{when}", when), services: g.services.slice(0, 5), towns: ["חדרה", "נתניה", "כפר יונה"], social: { instagram: social.instagram } };
     const dir = path.join(out, `trade-${T.id}`);
     fs.mkdirSync(dir, { recursive: true }); fs.cpSync(path.join(out, "assets"), path.join(dir, "assets"), { recursive: true });
     for (const [name, html] of Object.entries(P.render(c, { mode: "site", leads: null, photos: {} }))) fs.writeFileSync(path.join(dir, name), html);
