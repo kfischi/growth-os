@@ -192,6 +192,75 @@
     .clipped.wide { width: 100%; }
   }
   @media (prefers-reduced-motion: reduce) { .draw path.curve { animation: none; stroke-dashoffset: 0; } }
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: cool notebook white with a breath of ballpoint blue and red pen, big tight type, the worked
+     graph on its own squared page in a rounded frame, glass cards over it (where she teaches, the chat, the first
+     prices), the main button glowing. Signature: after the parabola, the teacher's red pen circles the corrected root. */
+  .hero.squares { background-color: var(--paper); background-size: auto;
+    background-image: radial-gradient(52% 62% at 8% 20%, rgba(143,177,214,.34), transparent 70%), radial-gradient(40% 50% at 96% 4%, rgba(210,58,63,.07), transparent 70%), radial-gradient(60% 50% at 70% 110%, rgba(207,224,241,.6), transparent 70%); }
+  .hero::after, .margin-note { display: none; }
+  .bar { height: auto; padding-block: 22px 10px; }
+  .topic { height: auto; line-height: 1.5; }
+  .hero-grid { padding: 34px 0 84px; gap: 56px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); text-wrap: balance; }
+  .hero h1 em { color: var(--redpen); white-space: normal; }
+  .hero h1 em::after { bottom: -.06em; opacity: .55; }
+  .hero p.lead { line-height: 1.6; margin: 26px 0 30px; }
+  .btn { border-radius: 999px; }
+  .hero .btn { min-height: 52px; padding: 13px 26px; }
+  .hero .btn-ink { box-shadow: 0 16px 32px -14px rgba(23,38,74,.7), 0 2px 6px -2px rgba(23,38,74,.4), inset 0 1px 0 rgba(255,255,255,.14); transition: background .2s, transform .2s; }
+  .hero .btn-ink:hover { transform: translateY(-1px); }
+  .hero .btn-line { border: 0; background: #fff; box-shadow: inset 0 0 0 1.5px var(--grid-deep); }
+  .hero .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
+
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; perspective: 900px; }
+  .frame { position: absolute; inset: 7% 2% 15% 15%; border-radius: 34px; overflow: hidden; padding: 26px 26px 18px; display: flex; flex-direction: column;
+    box-shadow: 0 0 0 1px rgba(143,177,214,.55), inset 0 1px 0 #fff, 0 50px 90px -46px rgba(23,38,74,.5), 0 18px 34px -24px rgba(23,38,74,.25); }
+  .frame::after { content: ""; position: absolute; top: 0; bottom: 0; inset-inline-start: 26px; width: 2px; background: var(--redpen); opacity: .45; pointer-events: none; }
+  .frame svg { flex: 1 1 auto; min-height: 0; width: 100%; height: 100%; }
+  .work .eq { font-size: 19px; margin-top: 4px; }
+  .work .eq .fix { position: relative; display: inline-block; }
+  .ring { position: absolute; width: 46px; height: 34px; left: -15px; top: -4px; overflow: visible; pointer-events: none; }
+  .ring path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.75);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(23,38,74,.5), 0 4px 12px -6px rgba(23,38,74,.16);
+    padding: 14px 16px; color: var(--ink); font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 2px; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: #2f8f62; box-shadow: 0 0 0 4px rgba(47,143,98,.16); }
+  .g-day b { font: 800 16.5px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-chat { top: 37%; inset-inline-end: -2%; width: min(50%, 236px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #eef4fb; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--ink); color: #fff; border-end-start-radius: 4px; }
+  .g-price { inset-inline-start: 0; bottom: 0; width: min(300px, 70%); animation-delay: .15s; padding: 15px 18px 13px; }
+  .g-h { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-h svg { width: 17px; height: 17px; color: var(--redpen); flex: none; }
+  .g-price ul { list-style: none; margin: 8px 0 8px; padding: 0; }
+  .g-price li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--grid-deep); font-size: 14.5px; }
+  .g-price li b { font: 700 15px/1.2 "Rubik", var(--body); white-space: nowrap; }
+  .g-price em { font-style: normal; font-family: var(--display); color: var(--redpen); font-size: 14.5px; }
+  @media (prefers-reduced-motion: no-preference) {
+    html:not(.a11y-still) .ring path { stroke-dashoffset: 1; animation: draw .9s 1.9s cubic-bezier(.6,.1,.3,1) forwards; }
+  }
+  @media (max-width: 960px) { .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; } .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .hero h1 { font-size: clamp(36px, 10.4vw, 44px); line-height: 1.05; }
+    .hero-grid { padding: 22px 0 56px; }
+    .g-chat { display: none; }
+    .frame { inset: 9% 0 22% 7%; padding: 16px 14px 10px; }
+    .frame::after { inset-inline-start: 14px; }
+    .work .eq { font-size: 15.5px; line-height: 22px; }
+    .work .eq .why { font-size: 13px; margin-left: 8px; }
+    .g-price { width: 78%; padding: 12px 14px 10px; }
+    .g-price li { font-size: 13.5px; padding: 4px 0; }
+    .g-day { padding: 11px 13px; } .g-day b { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+  html.a11y-still .draw path.curve { animation: none; stroke-dashoffset: 0; }
 </style>
 </head>
 <body>
@@ -390,6 +459,21 @@
   document.querySelectorAll("[data-level]").forEach((b) => b.addEventListener("click", () => bot.open({ level: b.dataset.level })));
   document.querySelectorAll("[data-subject]").forEach((b) => b.addEventListener("click", () => bot.open({ subject: b.dataset.subject })));
   Guides.load("../shared/guides/tutor.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+
+  // The glass cards follow a fine pointer by a few pixels. Transform only, never for touch, reduced motion or a11y-still.
+  (function () {
+    const v = document.querySelector(".visual"), root = document.documentElement;
+    if (!v || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const cards = [...v.querySelectorAll(".glass")], rm = matchMedia("(prefers-reduced-motion: reduce)");
+    let x = 0, y = 0, raf = 0;
+    const paint = () => { raf = 0; const off = rm.matches || root.classList.contains("a11y-still");
+      cards.forEach((c, i) => { const d = 5 + i * 3; c.style.translate = off ? "" : `${(x * d).toFixed(2)}px ${(y * d).toFixed(2)}px`;
+        c.style.rotate = off ? "" : `${(-y).toFixed(3)} ${x.toFixed(3)} 0 ${(Math.hypot(x, y) * 4).toFixed(2)}deg`; }); };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    v.addEventListener("pointermove", (e) => { const r = v.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
+    v.addEventListener("pointerleave", () => { x = y = 0; ask(); });
+    document.addEventListener("a11y-still", () => { x = y = 0; ask(); });
+  })();
 </script>
 </body>
 </html>

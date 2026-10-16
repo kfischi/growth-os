@@ -272,7 +272,6 @@
   /* Signature: the squeegee wipes the fog, then one glint runs over the clean glass and the two sparkles catch the light. */
   .glass { box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(23,44,85,.55); translate: var(--tx, 0) var(--ty, 0); transition: translate .35s cubic-bezier(.2,.7,.2,1); }
   .next b, .facts b, .g-chat p { font-variant-numeric: tabular-nums; }
-  .window { transform: perspective(1400px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .45s cubic-bezier(.2,.7,.2,1); }
   .window::after { content: ""; position: absolute; inset: -10% auto -10% 0; width: 34%; z-index: 5; pointer-events: none; opacity: 0;
     background: linear-gradient(100deg, transparent, rgba(255,255,255,.55) 45%, rgba(255,255,255,.12) 60%, transparent); transform: translateX(-120%) skewX(-12deg);
     animation: glint 1.1s 2.55s cubic-bezier(.4,0,.2,1) forwards; }
@@ -280,7 +279,7 @@
   .drops path { transform-box: fill-box; transform-origin: center; animation: twinkle .7s cubic-bezier(.3,1.6,.5,1) both 2.9s; }
   .drops path + path { animation-delay: 3.05s; }
   @keyframes twinkle { from { opacity: 0; transform: scale(.2) rotate(-40deg); } }
-  @media (prefers-reduced-motion: reduce) { .window::after { display: none; } .drops path { animation: none; } .window, .glass { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .window::after { display: none; } .drops path { animation: none; } .glass { transition: none; } }
   html.a11y-still .window::after, body.ps-edit .window::after { display: none; } html.a11y-still .drops path { animation: none; }
 </style>
 </head>
@@ -585,17 +584,16 @@
   Guides.load("../shared/guides/cleaning.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
 </script>
 <script>
-  // Desktop with a fine pointer: the glass cards drift a few pixels with the pointer and the window tilts a hair. Never on touch, reduced motion or "עצירת תנועה".
+  // Desktop with a fine pointer: the glass cards drift a few pixels with the pointer, each at its own depth. Never on touch, reduced motion or "עצירת תנועה".
   (() => {
     const v = document.querySelector(".window-wrap"), hero = v && v.closest(".hero");
     if (!hero) return;
     const ok = matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)");
     const still = () => document.documentElement.classList.contains("a11y-still");
-    const cards = [...v.querySelectorAll(".glass")], win = v.querySelector(".window");
+    const cards = [...v.querySelectorAll(".glass")];
     let x = 0, y = 0, raf = 0;
     const paint = () => { raf = 0;
-      cards.forEach((c, i) => { const d = 5 + i * 3.5; c.style.setProperty("--tx", (-x * d).toFixed(2) + "px"); c.style.setProperty("--ty", (-y * d).toFixed(2) + "px"); });
-      win.style.setProperty("--ry", (x * 2.2).toFixed(2) + "deg"); win.style.setProperty("--rx", (-y * 1.6).toFixed(2) + "deg"); };
+      cards.forEach((c, i) => { const d = 5 + i * 3.5; c.style.setProperty("--tx", (-x * d).toFixed(2) + "px"); c.style.setProperty("--ty", (-y * d).toFixed(2) + "px"); }); };
     const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
     hero.addEventListener("pointermove", (e) => {
       if (e.pointerType !== "mouse" || !ok.matches || still()) return;

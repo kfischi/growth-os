@@ -239,6 +239,7 @@
   .facts { border-top-color: var(--line); }
   .facts li { color: var(--ink-soft); }
   .facts b { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.02em; color: var(--lacquer-deep); font-variant-numeric: tabular-nums; }
+  .facts b { font-size: clamp(22px, 2.1vw, 27px); white-space: nowrap; }
   .row .p, .week-key li { font-variant-numeric: tabular-nums; }
 
   .visual { position: relative; min-width: 0; padding-top: 34px; }
@@ -264,7 +265,7 @@
   .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14.5px; line-height: 1.35; }
   .g-price p + p { border-top: 1px dashed var(--line); padding-top: 4px; }
   .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--lacquer); white-space: nowrap; }
-  .g-chat { top: 44%; inset-inline-end: -26px; width: 218px; display: grid; gap: 6px; padding: 11px; animation-delay: .26s; --d: 16px; }
+  .g-chat { top: 47%; inset-inline-end: -30px; width: 204px; display: grid; gap: 6px; padding: 11px; animation-delay: .26s; --d: 16px; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: #f5e9ef; justify-self: start; border-end-start-radius: 4px; }
   .g-chat .a { background: var(--lacquer-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
@@ -282,6 +283,7 @@
     .visual { padding-top: 0; }
     .chart { padding: 112px 16px 20px; border-radius: 28px; }
     .g-chat { display: none; }
+    .facts b { font-size: 20px; white-space: normal; }
     .glass { padding: 10px 12px; border-radius: 16px; }
     .g-day { top: 12px; inset-inline-start: 12px; width: calc(50% - 18px); }
     .g-day b { font-size: 15px; } .g-day small, .glass span { font-size: 12px; }
@@ -324,7 +326,7 @@
         <p><b>לק ג׳ל</b><em>120 עד 160 ₪</em></p>
         <p><b>מילוי</b><em>160 עד 220 ₪</em></p>
       </div>
-      <div class="glass g-chat" aria-hidden="true"><p class="q">כמה עולה בנייה בג׳ל?</p><p class="a">220 עד 340 ₪, לפי האורך. ליה מאשרת תור בין לקוחה ללקוחה.</p></div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">כמה עולה בנייה בג׳ל?</p><p class="a">220 עד 340 ₪, לפי האורך. אני מאשרת תור בין לקוחה ללקוחה.</p></div>
       <div class="chart" role="group" aria-label="לוח צורות הציפורניים">
         <ul class="fingers" aria-hidden="true">
           <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V52 H12 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>

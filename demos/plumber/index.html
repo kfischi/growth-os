@@ -86,7 +86,9 @@
      (24/7 calls, the first three prices, what the chat does), the red main button glowing.
      Signature: the needle climbs to 3 bar, then one drop forms at the pipe's joint and falls once. */
   .hero { color: var(--ink); background-color: var(--limescale);
-    background-image: radial-gradient(52% 62% at 8% 12%, rgba(234,168,119,.30), transparent 70%), radial-gradient(46% 58% at 96% 2%, rgba(35,112,179,.13), transparent 70%), radial-gradient(40% 50% at 30% 100%, rgba(15,67,83,.08), transparent 70%); }
+    background-image: radial-gradient(52% 62% at 8% 12%, rgba(234,168,119,.30), transparent 70%), radial-gradient(46% 58% at 96% 2%, rgba(35,112,179,.13), transparent 70%), radial-gradient(40% 50% at 30% 100%, rgba(15,67,83,.08), transparent 70%),
+      linear-gradient(rgba(11,51,64,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(11,51,64,.045) 1px, transparent 1px);
+    background-size: auto, auto, auto, 56px 56px, 56px 56px; background-position: 0 0, 0 0, 0 0, -1px -1px, -1px -1px; }
   .hero::after { display: none; }
   .hero .logo { color: var(--ink); }
   .hero .bar nav a { color: var(--ink-soft); } .hero .bar nav a:hover { color: var(--ink); border-color: var(--copper); }
@@ -143,18 +145,19 @@
   .g-price li i.cold { background: var(--cold-line); } .g-price li i.hot { background: var(--hot-line); }
   .g-price li span { flex: 1; min-width: 0; }
   .g-price li b { font-weight: 700; color: var(--copper-deep); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .g-chat { top: 44%; inset-inline-end: -5%; width: min(50%, 232px); display: grid; gap: 6px; padding: 12px; animation-delay: .45s; }
+  .g-chat { top: 31%; inset-inline-end: -5%; width: min(50%, 232px); display: grid; gap: 6px; padding: 12px; animation-delay: .45s; }
   .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
   .g-chat .q { background: var(--bot-them); justify-self: end; border-end-end-radius: 4px; }
   .g-chat .a { background: var(--deepwater); color: #fff; border-end-start-radius: 4px; }
   @media (max-width: 980px) { .rig { width: min(100%, 460px); margin: 40px auto 8px; } }
   @media (max-width: 620px) {
-    .rig { --g: 92px; --top: 21%; width: 100%; aspect-ratio: 1 / 1.1; margin-top: 30px; }
-    .reel { inset-inline-start: 6%; inset-inline-end: 6%; bottom: 13%; }
+    .rig { --g: 92px; --top: 19%; width: 100%; aspect-ratio: 1 / 1.22; margin-top: 30px; }
+    .reel { inset-inline-start: 5%; inset-inline-end: 5%; bottom: 17%; }
     .reel-frame { border-radius: 28px; }
     .g-chat { display: none; }
     .g-day { inset-inline-start: 0; top: calc(var(--top) + 18px); padding: 11px 13px; }
-    .g-price { width: 68%; }
+    .g-price { width: min(280px, 74%); padding: 12px 14px 8px; }
+    .g-price li { padding: 6px 0; }
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; transition: none; } .drip { display: none; } }
   html.a11y-still .glass { animation: none; transition: none; } html.a11y-still .drip { display: none; }
@@ -215,7 +218,7 @@
         <ul>
           <li><i aria-hidden="true"></i><span>סתימה</span><b>250 עד 450 ₪</b></li>
           <li><i class="cold" aria-hidden="true"></i><span>נזילה</span><b>300 עד 650 ₪</b></li>
-          <li><i class="hot" aria-hidden="true"></i><span>דוד חשמל או שמש</span><b>350 עד 2,800 ₪</b></li>
+          <li><i class="hot" aria-hidden="true"></i><span>דוד ומים חמים</span><b>350 עד 2,800 ₪</b></li>
         </ul>
       </div>
     </div>
