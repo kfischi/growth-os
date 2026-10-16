@@ -167,7 +167,7 @@ label{display:block;font-size:14px;color:#5b5f72;margin:10px 0 4px}.f{border:1px
 .lock{margin-top:12px;font-size:13px;color:#5b5f72;text-align:center}</style>
 <div class="c"><h1>תשלום מאובטח</h1><p class="s">Easy Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪</p>
 <label>מספר כרטיס</label><div class="f">4580 •••• •••• 1234</div><div class="row"><div><label>תוקף</label><div class="f">12/28</div></div><div><label>CVV</label><div class="f">•••</div></div></div>
-<a class="pay" href="?go=1">לשלם</a><p class="lock">החשבונית נשלחת אליכם מיד אחרי התשלום</p></div></html>` });
+<a class="pay" href="?go=1">לשלם</a><p class="lock">הקבלה נשלחת אליכם מיד אחרי התשלום</p></div></html>` });
 });
 await p.route(/^https:\/\/x\.supabase\.co\/storage\/v1\/object\/public\/builder\//, (r) => {
   const key = new URL(r.request().url()).pathname.replace("/storage/v1/object/public/builder/", "");

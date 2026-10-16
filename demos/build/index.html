@@ -619,7 +619,7 @@
       box.append(terms);
       const go = btn('לתשלום מאובטח', pay); go.disabled = !a || !tick.checked; box.append(go);
       tick.addEventListener('change', () => { go.disabled = !a || !tick.checked; });
-      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. החשבונית נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
+      p('התשלום בכרטיס אשראי בדף המאובטח של Grow. הקבלה נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
       p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
@@ -628,7 +628,7 @@
           const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
           a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
         }
-      } else p('נשלח לכם בוואטסאפ חשבונית ופרטים לתשלום, בדרך כלל באותו יום.');
+      } else p('נשלח לכם בוואטסאפ את פרטי התשלום, בדרך כלל באותו יום. הקבלה מגיעה אחרי התשלום.');
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'paid') {
       if (billing && billing.publishing === 'working' && billing.address) { p('התשלום התקבל, תודה! האתר עולה לאוויר עכשיו. זה לוקח בדרך כלל פחות מדקה.'); watchPublish(); }
@@ -709,7 +709,7 @@
       else if (sub.state === 'ended') p('המנוי הסתיים. האתר והדומיין שלכם נשארים.');
     }
     if (b.invoices && b.invoices.length) {
-      box.append(h3('חשבוניות'));
+      box.append(h3('קבלות'));
       const ul = document.createElement('ul');
       for (const i of b.invoices) { const li = document.createElement('li'); const a = document.createElement('a'); a.href = i.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = (i.number ? 'מס׳ ' + i.number + ' · ' : '') + nis(i.sum) + ' · ' + dateHe(i.date); li.append(a); ul.append(li); }
       box.append(ul);
