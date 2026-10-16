@@ -1,5 +1,5 @@
 {
-  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 203.63 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0, s1 5.79, s2 13.21, s3 26.29, s4 34.32, s5 42.23, s6 48.76, s7 67.06, s8 75.99, s9 84.11, s10 92.91, m1 106.9, m2 111.35, m3 117.12, m4 123.61, m5 129.69, m6 136.25, m7 142.02, m8 148.32, m9 153.94, m10 159.33, m11 165.25, m12 171.2, m13 180.55, m14 184.72, end 190.71, cta 197.33 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). The maya.mp3 in the repo is the old five-minute script: don't use it with these lines.",
+  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 214.23 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0, s1 6.02, s2 21.95, s3 35.5, s4 43.87, s5 51.73, s6 58.53, s7 77.13, s8 86.21, s9 94.42, s10 103.63, m1 117.4, m2 121.87, m3 127.58, m4 134.1, m5 140.16, m6 146.67, m7 152.43, m8 158.6, m9 164.28, m10 169.68, m11 175.71, m12 181.64, m13 191.1, m14 195.27, end 201.26, cta 207.91 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). The maya.mp3 in the repo is the old five-minute script: don't use it with these lines.",
   "lines": [
     {
       "beat": "hook",
@@ -8,136 +8,136 @@
     },
     {
       "beat": "s1",
-      "at": 6,
+      "at": 6.2,
       "text": "בוחרים תחום. לכל תחום יש אתר לדוגמה, ורואים אותו מיד בטלפון."
     },
     {
       "beat": "s2",
-      "at": 13.4,
+      "at": 22.1,
       "text": "ככה האתר ייראה ללקוחות: שירותים ומחירים, וואטסאפ וחיוג. ובפינה, נציג AI ששואל מה צריך, והלקוח עונה בלחיצה.",
       "say": "ככה האתר ייראה ללקוחות: שירותים ומחירים, וואטסאפ וחיוג. ובפינה, נציג A.I ששואל מה צריך, והלקוח עונה בלחיצה."
     },
     {
       "beat": "s3",
-      "at": 26.5,
+      "at": 35.7,
       "text": "לוחצים ״לבנות את האתר שלי״. שם וטלפון, וזהו. משמאל האתר, מימין השאלות."
     },
     {
       "beat": "s4",
-      "at": 34.5,
+      "at": 44.1,
       "text": "בוחרים תבנית מתוך שש, והאתר שלכם מתחלף מול העיניים."
     },
     {
       "beat": "s5",
-      "at": 42.4,
+      "at": 51.9,
       "text": "ערכת צבעים, בלחיצה. אפשר להחליף גם אחר כך."
     },
     {
       "beat": "s6",
-      "at": 49,
+      "at": 58.7,
       "text": "עכשיו כמה שאלות, אחת בכל פעם. שם העסק, האזור והישובים, השירותים, ומחירים לדוגמה שמשאירים או משנים. זמן חזרה, שעות, שנים בתחום ואחריות. כותרת מוכנה, והאינסטגרם והפייסבוק שלכם. כל תשובה נכנסת לאתר מיד, ורואים בדיוק מה הלקוחות יראו."
     },
     {
       "beat": "s7",
-      "at": 67.3,
+      "at": 77.3,
       "text": "מעלים תמונה שלכם ותמונות מהעבודה, ישר מהטלפון. הכול מתכווץ לבד, והן כבר באתר."
     },
     {
       "beat": "s8",
-      "at": 76.2,
+      "at": 86.4,
       "text": "עוברים על כל האתר, בדיוק כמו שיעלה. משהו לא יושב? כותבים בצ׳אט."
     },
     {
       "beat": "s9",
-      "at": 84.3,
+      "at": 94.6,
       "text": "מאשרים ובוחרים חבילה: נציג AI, עם הצ׳אט והפניות, או נוכחות.",
       "say": "מאשרים ובוחרים חבילה: נציג A.I, עם הצ׳אט והפניות, או נוכחות."
     },
     {
       "beat": "s10",
-      "at": 93.1,
+      "at": 103.8,
       "text": "בוחרים כתובת, משלמים בכרטיס בדף מאובטח, והאתר עולה לאוויר לבד, תוך דקה. עם ערכה להבאת הלקוחות הראשונים."
     },
     {
       "beat": "m1",
-      "at": 107.1,
+      "at": 117.6,
       "text": "האתר באוויר, בכתובת שלכם."
     },
     {
       "beat": "m2",
-      "at": 111.5,
+      "at": 122.1,
       "text": "לקוח נכנס באמצע הלילה? הצ׳אט עונה לו, ושואל מה צריך."
     },
     {
       "beat": "m3",
-      "at": 117.3,
+      "at": 127.8,
       "text": "מצרף תמונה, ומקבל הערכה ראשונית."
     },
     {
       "beat": "m4",
-      "at": 123.8,
+      "at": 134.3,
       "text": "ואישור בוואטסאפ, מהמספר שלכם."
     },
     {
       "beat": "m5",
-      "at": 129.9,
+      "at": 140.4,
       "text": "התראה אליכם, ותזכורת אם עוד לא חזרתם."
     },
     {
       "beat": "m6",
-      "at": 136.4,
+      "at": 146.9,
       "text": "ביקורת בגוגל, רק באישור שלכם."
     },
     {
       "beat": "m7",
-      "at": 142.2,
+      "at": 152.6,
       "text": "צ׳אט AI עונה מהמחירון, ולא ממציא.",
       "say": "צ׳אט A.I עונה מהמחירון, ולא ממציא."
     },
     {
       "beat": "m8",
-      "at": 148.5,
+      "at": 158.8,
       "text": "כל הפניות בלוח אחד, מסודרות."
     },
     {
       "beat": "m9",
-      "at": 154.1,
+      "at": 164.5,
       "text": "כניסות, פניות והופעות בגוגל."
     },
     {
       "beat": "m10",
-      "at": 159.5,
+      "at": 169.9,
       "text": "קישור לכל רשת, ו־QR להדפסה.",
       "say": "קישור לכל רשת, וקיו־אר להדפסה."
     },
     {
       "beat": "m11",
-      "at": 165.4,
+      "at": 175.9,
       "text": "ובכל חודש, סיכום בוואטסאפ."
     },
     {
       "beat": "m12",
-      "at": 171.4,
+      "at": 181.8,
       "text": "כותבים ״חירום״ בוואטסאפ, והאתר מתעדכן. גם ״עסוק״ ו״פנוי״."
     },
     {
       "beat": "m13",
-      "at": 180.8,
+      "at": 191.3,
       "text": "והרשתות שלכם, באתר."
     },
     {
       "beat": "m14",
-      "at": 184.9,
+      "at": 195.5,
       "text": "דף לכל שירות, כדי שימצאו אתכם בגוגל."
     },
     {
       "beat": "end",
-      "at": 190.9,
+      "at": 201.5,
       "text": "שתי חבילות, בלי התחייבות. מחירים סופיים."
     },
     {
       "beat": "cta",
-      "at": 197.5,
+      "at": 208.1,
       "text": "אף פנייה לא הולכת לאיבוד. הקישור על המסך."
     }
   ]
