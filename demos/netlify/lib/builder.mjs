@@ -44,8 +44,9 @@ export const MAX_POSTER_BYTES = 400_000;
 // The same limits for each of the short videos on the site ("סרטונים מהעבודה", up to t.VIDEOS.max of them).
 export const STALE_DAYS = 30;         // an unapproved draft nobody touched for this long is deleted
 
-const MODEL = () => process.env.BUILDER_MODEL || "claude-opus-5-5";
-// BUILDER_MODEL may be a faster model. Each family takes different settings:
+const MODEL = () => process.env.BUILDER_MODEL || "claude-sonnet-5-5";
+// Sonnet 5.5 by default: owners found the chat slow on Opus, and filling fields from short answers needs no more.
+// BUILDER_MODEL can name another model (claude-opus-5-5, claude-haiku-5-5). Each family takes different settings:
 // Opus: the server-side fallback on a refusal. Sonnet 5.5: thinking off is "between_tools".
 // Haiku 5.5: no server-side fallback, thinking off is "disabled". A refusal is handled below either way.
 function modelOptions(model) {
@@ -395,7 +396,7 @@ export function publicState(d) {
     // The questionnaire (answers to pick from) while the site is being built, not while editing a live one.
     guide: !editing(d) && t.GUIDE ? t.GUIDE : null,
     // The looks and palettes to pick from, and the current pick.
-    looks: t.catalog ? t.catalog() : null,
+    looks: t.catalog ? t.catalog((d.content && d.content.trade_id) || t.id) : null,
     style: t.lookOf ? { look: t.lookOf(d.content).id, palette: t.lookOf(d.content).pid } : null,
     heroAI: heroAI(),
     site: d.status === "published" && d.site_host ? "https://" + d.site_host + "/" : null,

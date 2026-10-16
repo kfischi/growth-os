@@ -1,4 +1,4 @@
-// The looks of the plumber template: six layouts on the same content, each with eight colour palettes.
+// The looks of the plumber template: nine layouts on the same content (each trade sees the ones that suit it, looksFor), each with eight colour palettes.
 // The owner picks one in the builder ("עיצוב") and sees the draft change next to the chat.
 // A look is fonts, a few CSS overrides and the picture at the top of the page. A palette is only colours.
 // No yellow in any palette (house rule). Text on every colour keeps WCAG AA contrast.
@@ -108,6 +108,39 @@ function mosaicTiles({ h, c }) {
     </div>`;
 }
 
+// The studio's arch: the business's first letter set big in a soft arch, the trade under it. Nothing invented.
+function studioArch({ h, c }) {
+  const letter = String(c.business_name || "").trim().charAt(0) || "·";
+  return `<div class="arch" aria-hidden="true"><span class="ar-l">${h(letter)}</span><span class="ar-cap">${h(String(c.trade || "").trim().slice(0, 24))}</span></div>`;
+}
+
+// The treatment menu: the owner's own first services and prices, with dotted lines between, like a salon's price list.
+function treatmentMenu({ h, v, c, draft, words = {} }) {
+  const rows = (Array.isArray(c.services) ? c.services : []).filter((s) => s && String(s.name || "").trim()).slice(0, 5)
+    .map((s) => `<li><span class="mc-n">${h(String(s.name).trim())}</span><i aria-hidden="true"></i>${String(s.price || "").trim() ? `<span class="mc-p">${h(String(s.price).trim())}</span>` : ""}</li>`).join("");
+  const body = rows || (draft ? `<li><span class="mc-n"><span class="todo">השירותים והמחירים שלכם</span></span></li>` : "");
+  return `<div class="menu-card">
+      <span class="mc-head">${h(words.jobs || "המחירון")}</span>
+      <b class="mc-name">${v("business_name")}</b>
+      ${body ? `<ul class="mc-list">${body}</ul>` : ""}
+      <span class="mc-foot">${v("area")}</span>
+    </div>`;
+}
+
+// The appointment card: when to reach the business and how fast it answers. The owner confirms every slot,
+// so the card never shows a free slot or a booked time.
+function appointmentCard({ h, v, has, c }) {
+  const row = (k, val) => `<div class="ap-row"><span>${k}</span><b>${val}</b></div>`;
+  return `<div class="appt">
+      <div class="ap-top mono"><span>כרטיס תור</span><span>${v("area")}</span></div>
+      <b class="ap-name">${v("business_name")}</b>
+      <div class="ap-times" aria-hidden="true"><span>בוקר</span><span>צהריים</span><span>ערב</span></div>
+      ${has("hours") ? row("שעות", h(c.hours)) : ""}
+      ${has("response_time") ? row("חוזרים", `תוך ${h(c.response_time)}`) : ""}
+      <p class="ap-foot">בוחרים זמן שנוח לכם, ואנחנו מאשרים.</p>
+    </div>`;
+}
+
 export const LOOKS = {
   blueprint: {
     label: "שרטוט",
@@ -211,21 +244,82 @@ export const LOOKS = {
       forest: { label: "יער", accent: "#2d5638", deep: "#1f3d27", signal: "#9c2f4f", paper: "#f7f9f6", tint: "#e3ece4", ink: "#17221a", inkSoft: "#4f5d52", rule: "#d3dfd5", soft: "#bcd6c2", text: "#e1efe4", linew: "#eff7f1", psA: "#8fbf9b" },
     },
   },
+  studio: {
+    label: "סטודיו",
+    note: "רך ואלגנטי, עם קשת ואות גדולה. לטיפולים ויופי",
+    fonts: "family=Frank+Ruhl+Libre:wght@500;700&family=Assistant:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500",
+    dark: false,
+    visual: studioArch,
+    palettes: {
+      blush: { label: "ורוד פודרה", accent: "#9b3a5a", deep: "#6e2640", signal: "#9b3a5a", paper: "#fbf6f4", tint: "#f4e6e6", ink: "#2b1a1f", inkSoft: "#65525a", rule: "#ead9db", soft: "#efc6d2", text: "#f8e7ec", linew: "#fdf2f5", psA: "#e7b3c2" },
+      nude: { label: "ניוד", accent: "#7a4e3a", deep: "#563525", signal: "#7a4e3a", paper: "#faf6f1", tint: "#f1e7dc", ink: "#2a1f18", inkSoft: "#63564c", rule: "#e6d9cb", soft: "#e2c7b3", text: "#f5e8dd", linew: "#fbf3ec", psA: "#d9b49b" },
+      sage: { label: "מרווה", accent: "#3d6150", deep: "#284438", signal: "#3d6150", paper: "#f6f8f4", tint: "#e7eee6", ink: "#1b241f", inkSoft: "#505d55", rule: "#d6e0d6", soft: "#c1d8c8", text: "#e3efe6", linew: "#f0f6f1", psA: "#a9c7b2" },
+      mauve: { label: "סגול עדין", accent: "#6d4a7e", deep: "#4c3159", signal: "#6d4a7e", paper: "#f9f6fa", tint: "#eee6f1", ink: "#241b29", inkSoft: "#5c5263", rule: "#e2d8e6", soft: "#d8c3e1", text: "#f1e6f5", linew: "#f8f2fa", psA: "#c8acd6" },
+      ink: { label: "שחור ושמנת", accent: "#26232a", deep: "#151317", signal: "#8e3b4f", paper: "#f8f5ef", tint: "#ece7dd", ink: "#1c1a1e", inkSoft: "#56525a", rule: "#ded8cc", soft: "#c9c3cc", text: "#ece8ee", linew: "#f5f1ea", psA: "#cfc6b6" },
+      clay: { label: "טרקוטה", accent: "#9a4630", deep: "#6e301f", signal: "#9a4630", paper: "#fbf6f2", tint: "#f3e4da", ink: "#2a1b15", inkSoft: "#64544c", rule: "#ead8cc", soft: "#eec3b2", text: "#f8e6de", linew: "#fcf1eb", psA: "#e2a690" },
+      ocean: { label: "ים שקט", accent: "#2e5e6e", deep: "#1e424e", signal: "#2e5e6e", paper: "#f4f8f8", tint: "#e2eef0", ink: "#152227", inkSoft: "#4b5c62", rule: "#d1e0e3", soft: "#b4d3db", text: "#e0eff2", linew: "#eef6f8", psA: "#9cc4cf" },
+      wine: { label: "יין", accent: "#7a2840", deep: "#561a2c", signal: "#7a2840", paper: "#faf5f5", tint: "#f1e3e6", ink: "#2a161c", inkSoft: "#645158", rule: "#e7d4d9", soft: "#e4b9c6", text: "#f6e2e8", linew: "#fbf0f3", psA: "#d79aae" },
+    },
+  },
+  menu: {
+    label: "מחירון",
+    note: "כמו מחירון של סלון: הטיפולים שלכם, עם קווים מנוקדים עד המחיר",
+    fonts: "family=Bellefair&family=Heebo:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500",
+    dark: false,
+    visual: treatmentMenu,
+    palettes: {
+      rose: { label: "ורד", accent: "#8f3352", deep: "#65223a", signal: "#8f3352", paper: "#fbf7f6", tint: "#f3e5e7", ink: "#2a191e", inkSoft: "#655259", rule: "#e8d6da", soft: "#ecc2cf", text: "#f7e5eb", linew: "#fcf1f4", psA: "#e2a9ba" },
+      sand: { label: "חול", accent: "#6f4d33", deep: "#4d3523", signal: "#6f4d33", paper: "#faf7f2", tint: "#efe7db", ink: "#271e17", inkSoft: "#60554c", rule: "#e3d8c9", soft: "#dfc8b2", text: "#f3e8dd", linew: "#faf4ec", psA: "#d2b597" },
+      olive: { label: "זית", accent: "#4f5a2e", deep: "#363e1f", signal: "#4f5a2e", paper: "#f8f8f2", tint: "#eceddf", ink: "#20221a", inkSoft: "#575a4d", rule: "#dddfcd", soft: "#cdd3b0", text: "#eef0e2", linew: "#f6f7ee", psA: "#bfc79a" },
+      lilac: { label: "לילך", accent: "#5f4a8a", deep: "#423262", signal: "#5f4a8a", paper: "#f8f7fb", tint: "#ebe7f3", ink: "#211d2b", inkSoft: "#595466", rule: "#ddd8e8", soft: "#cdc2e6", text: "#ede8f8", linew: "#f6f3fb", psA: "#b8aad9" },
+      noir: { label: "שחור", accent: "#1f1d22", deep: "#111013", signal: "#8c3a4e", paper: "#f7f5f2", tint: "#ebe8e3", ink: "#1a181c", inkSoft: "#55525a", rule: "#dcd8d2", soft: "#c4c0c8", text: "#ebe9ee", linew: "#f4f2ef", psA: "#c9c2b8" },
+      coral: { label: "אלמוג", accent: "#a13f3a", deep: "#742c28", signal: "#a13f3a", paper: "#fcf7f5", tint: "#f5e4e1", ink: "#2b1917", inkSoft: "#66524f", rule: "#ecd6d2", soft: "#f0c1ba", text: "#f9e4e1", linew: "#fdf1ef", psA: "#e9a59c" },
+      teal: { label: "טורקיז", accent: "#1f6363", deep: "#144646", signal: "#1f6363", paper: "#f4f8f7", tint: "#e1eeec", ink: "#142323", inkSoft: "#4a5e5d", rule: "#d0e1de", soft: "#aed6d2", text: "#def0ee", linew: "#eef7f6", psA: "#94c7c1" },
+      plum: { label: "שזיף", accent: "#5e2a5c", deep: "#421d41", signal: "#5e2a5c", paper: "#faf6f9", tint: "#efe3ee", ink: "#26172a", inkSoft: "#5f5162", rule: "#e4d5e3", soft: "#dcbcd9", text: "#f3e3f2", linew: "#faf1f9", psA: "#cc9fc8" },
+    },
+  },
+  appointment: {
+    label: "כרטיס תור",
+    note: "רקע כהה וכרטיס תור בהיר: שעות, זמן חזרה, ובוחרים זמן נוח",
+    fonts: "family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500",
+    dark: true,
+    visual: appointmentCard,
+    palettes: {
+      plum: { label: "שזיף", hero: "#3b2140", deep: "#2a172e", accent: "#7a3d7f", signal: "#7a3d7f", paper: "#faf6fa", tint: "#f0e6f1", ink: "#24172a", inkSoft: "#5c5063", rule: "#e2d5e4", soft: "#d6b9db", text: "#efe2f2", linew: "#f6eef8", psA: "#c79acd" },
+      rose: { label: "ורד עמוק", hero: "#4a1f30", deep: "#341522", accent: "#9b3558", signal: "#9b3558", paper: "#fbf6f7", tint: "#f4e4e9", ink: "#2b171e", inkSoft: "#655158", rule: "#ead5dc", soft: "#efbfd0", text: "#f8e3ea", linew: "#fcf0f4", psA: "#e2a2b8" },
+      forest: { label: "יער", hero: "#1d3328", deep: "#13241c", accent: "#2f6a4f", signal: "#2f6a4f", paper: "#f5f8f5", tint: "#e4eee7", ink: "#17221c", inkSoft: "#4e5d55", rule: "#d3e0d7", soft: "#b2d4c0", text: "#e1efe6", linew: "#eff7f2", psA: "#97c3a9" },
+      navy: { label: "כחול לילה", hero: "#1a2442", deep: "#11182f", accent: "#33508f", signal: "#33508f", paper: "#f5f6fa", tint: "#e6e9f3", ink: "#161b2b", inkSoft: "#4f5568", rule: "#d6dbe8", soft: "#b8c4e6", text: "#e3e8f7", linew: "#f0f3fb", psA: "#9eb0e0" },
+      cocoa: { label: "קקאו", hero: "#33231c", deep: "#231812", accent: "#7b4a35", signal: "#7b4a35", paper: "#faf6f2", tint: "#f0e6dd", ink: "#28201a", inkSoft: "#61574e", rule: "#e4d8cc", soft: "#dfc2ae", text: "#f4e7dc", linew: "#faf2ea", psA: "#d1a88d" },
+      charcoal: { label: "פחם", hero: "#1f1f24", deep: "#141418", accent: "#4a4752", signal: "#8e3b52", paper: "#f6f5f4", tint: "#eae8e6", ink: "#1b1a1e", inkSoft: "#55535a", rule: "#dbd8d5", soft: "#c3c0c8", text: "#eceaee", linew: "#f4f3f1", psA: "#bdb7c2" },
+      berry: { label: "פטל", hero: "#41162f", deep: "#2e0f21", accent: "#8f2759", signal: "#8f2759", paper: "#fbf5f8", tint: "#f4e2eb", ink: "#2a1520", inkSoft: "#644f5a", rule: "#ead2de", soft: "#efb8d2", text: "#f9e1ed", linew: "#fdeff6", psA: "#e098bb" },
+      sea: { label: "ים", hero: "#14303a", deep: "#0d2129", accent: "#22657a", signal: "#22657a", paper: "#f3f8f9", tint: "#e0eef1", ink: "#13232a", inkSoft: "#495d64", rule: "#cfe0e4", soft: "#aad2dc", text: "#ddeff3", linew: "#edf7f9", psA: "#8fc2cf" },
+    },
+  },
 };
+
+// Which looks a trade sees. The technicians' looks (a blueprint, a van, a job card, a dispatch board) don't suit
+// a beauty clinic or a lesson; the studio, the price list and the appointment card don't suit a plumber.
+const CARE = new Set(["cosmetics", "nails", "barber", "massage", "trainer", "psychologist", "social-worker", "photographer", "driving", "tutor", "music"]);
+const GROUPS = {
+  work: ["blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"],
+  care: ["studio", "menu", "appointment", "mosaic", "certificate"],
+};
+export const looksFor = (tradeId) => GROUPS[CARE.has(tradeId) ? "care" : "work"];
+export const defaultLook = (tradeId) => looksFor(tradeId)[0];
 
 export const DEFAULT_LOOK = "blueprint";
 
 // The look and palette a content object asks for, or the defaults.
 export function lookOf(c) {
-  const id = Object.hasOwn(LOOKS, c && c.look) ? c.look : DEFAULT_LOOK;
+  const id = Object.hasOwn(LOOKS, c && c.look) ? c.look : defaultLook(c && c.trade_id);
   const look = LOOKS[id];
   const pid = Object.hasOwn(look.palettes, c && c.palette) ? c.palette : Object.keys(look.palettes)[0];
   return { id, look, pid, p: look.palettes[pid] };
 }
 
 // What the builder page shows: the looks, their palettes and a few colours of each to draw the swatch.
-export function catalog() {
-  return Object.entries(LOOKS).map(([id, l]) => ({
+export function catalog(tradeId) {
+  return looksFor(tradeId).map((id) => [id, LOOKS[id]]).map(([id, l]) => ({
     id, label: l.label, note: l.note,
     palettes: Object.entries(l.palettes).map(([pid, p]) => ({ id: pid, label: p.label, swatch: [l.dark ? p.hero : p.paper, p.accent, p.signal] })),
   }));
@@ -357,6 +451,74 @@ export const LOOK_CSS = {
   .db-row span { color: var(--hero-soft); font-family: var(--mono); font-size: 13px; }
   .db-row b { color: var(--hero-text); font-weight: 700; text-align: left; overflow-wrap: anywhere; }
   .db-num { margin-top: 12px; font: 900 clamp(30px, 5vw, 44px)/1 var(--display); color: #fff; text-decoration: none; letter-spacing: -.02em; direction: ltr; text-align: right; }
+`,
+  studio: `
+  :root { --display: "Frank Ruhl Libre", "Times New Roman", serif; --body: "Assistant", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 22px; --bot-radius-msg: 18px; --bot-radius-pill: 999px; --bot-radius-input: 16px; }
+  h1, h2, h3, .logo { font-weight: 500; letter-spacing: -.01em; }
+  .hero { background-image: radial-gradient(ellipse at 85% 10%, var(--tint) 0 38%, transparent 62%); background-size: auto; }
+  .hero h1 { color: var(--deep); font-size: clamp(40px, 6vw, 72px); line-height: 1.05; }
+  .hero h1 span { background: none; color: inherit; padding: 0; }
+  .hero .tag { color: var(--accent); letter-spacing: .08em; }
+  .btn { border-radius: 999px; }
+  .btn-signal { background: var(--accent); }
+  .btn-ghost { border-color: var(--accent); color: var(--accent); }
+  .badge, .order, .live { border-radius: 18px; }
+  .order { border-width: 1px; }
+  .facts b { color: var(--deep); font-family: var(--display); font-weight: 700; }
+  .arch { position: relative; justify-self: center; width: min(100%, 330px); aspect-ratio: 3 / 4; border-radius: 999px 999px 26px 26px;
+    background: linear-gradient(175deg, var(--tint), color-mix(in srgb, var(--ps-a) 55%, var(--tint))); border: 1px solid var(--rule);
+    display: grid; place-items: center; align-content: center; gap: 6px; }
+  .arch::before { content: ""; position: absolute; inset: -14px; border: 1px solid var(--accent); border-radius: inherit; opacity: .55; }
+  .ar-l { font: 500 clamp(110px, 14vw, 170px)/1 var(--display); color: var(--deep); }
+  .ar-cap { font-size: 14px; letter-spacing: .14em; color: var(--ink-soft); }
+  @media (max-width: 880px) { .arch { width: min(100%, 230px); } }
+`,
+  menu: `
+  :root { --display: "Bellefair", "Times New Roman", serif; --body: "Heebo", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 14px; --bot-radius-msg: 12px; --bot-radius-pill: 999px; --bot-radius-input: 10px; }
+  h1, h2, h3, .logo { font-weight: 400; letter-spacing: 0; }
+  .hero { background-image: none; border-bottom: 1px solid var(--rule); }
+  .hero h1 { color: var(--deep); font-size: clamp(42px, 6.4vw, 78px); line-height: 1.04; }
+  .hero h1 span { background: none; color: inherit; padding: 0; }
+  .hero .tag { color: var(--accent); }
+  .btn { border-radius: 999px; }
+  .btn-signal { background: var(--accent); }
+  .btn-ghost { border-color: var(--accent); color: var(--accent); }
+  .badge, .live { border-radius: 999px; }
+  .order { border-width: 1px; border-radius: 6px; }
+  .menu-card { justify-self: center; width: min(100%, 430px); background: #fff; color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
+    padding: 30px 30px 24px; box-shadow: 0 0 0 8px var(--tint), 0 30px 60px -40px rgba(0,0,0,.35); display: grid; gap: 4px; text-align: center; }
+  .mc-head { font-size: 13px; letter-spacing: .2em; color: var(--accent); }
+  .mc-name { font: 400 clamp(28px, 3.4vw, 36px)/1.1 var(--display); color: var(--deep); overflow-wrap: anywhere; }
+  .mc-list { list-style: none; margin: 16px 0 6px; padding: 0; display: grid; gap: 10px; text-align: start; }
+  .mc-list li { display: flex; align-items: baseline; gap: 8px; font-size: 15px; }
+  .mc-n { min-width: 0; overflow-wrap: anywhere; }
+  .mc-list i { flex: 1 1 24px; min-width: 24px; border-bottom: 2px dotted var(--rule); transform: translateY(-4px); }
+  .mc-p { flex: none; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .mc-foot { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--ink-soft); }
+  @media (max-width: 880px) { .menu-card { padding: 22px 18px 18px; } }
+`,
+  appointment: `
+  :root { --display: "Rubik", system-ui, sans-serif; --body: "Rubik", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 18px; --bot-radius-msg: 14px; --bot-radius-pill: 999px; --bot-radius-input: 12px; }
+  h1, h2, h3, .logo { font-weight: 700; letter-spacing: -.015em; }
+  .hero { background-image: radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--ps-a) 22%, transparent) 0 30%, transparent 55%); background-size: auto; }
+  .hero h1 { font-size: clamp(38px, 5.2vw, 64px); }
+  .hero h1 span { background: none; padding: 0; color: inherit; }
+  .btn { border-radius: 999px; }
+  .hero .btn-signal { background: #fff; color: var(--deep); }
+  .badge, .order, .live { border-radius: 16px; }
+  .appt { justify-self: center; width: min(100%, 400px); background: #fff; color: var(--ink); border-radius: 22px; padding: 22px 24px 20px;
+    box-shadow: 0 30px 60px -30px rgba(0,0,0,.55); display: grid; gap: 12px; }
+  .ap-top { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--ink-soft); }
+  .ap-top span:first-child { color: var(--accent); font-weight: 500; }
+  .ap-name { font: 700 clamp(22px, 3vw, 28px)/1.15 var(--display); color: var(--deep); overflow-wrap: anywhere; }
+  .ap-times { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .ap-times span { text-align: center; padding: 10px 4px; border-radius: 12px; border: 1.5px solid var(--rule); font-weight: 500; font-size: 14px; color: var(--ink); }
+  .ap-row { display: flex; justify-content: space-between; gap: 12px; padding-top: 10px; border-top: 1px solid var(--rule); font-size: 14.5px; }
+  .ap-row span { color: var(--ink-soft); } .ap-row b { text-align: end; }
+  .hero .appt .ap-foot { margin: 0; max-width: none; font-size: 13.5px; color: var(--ink-soft); }
 `,
   mosaic: `
   :root { --display: "Varela Round", "Rubik", system-ui, sans-serif; --body: "Rubik", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
