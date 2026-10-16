@@ -141,7 +141,38 @@ function appointmentCard({ h, v, has, c }) {
     </div>`;
 }
 
+// Smart luxury: the owner's photo in a large rounded frame, with three glass cards over it, all from the owner's
+// own facts: the name with a live dot, the first services with their prices, and what the chat does.
+function luxeStage({ h, v, has, c, words = {}, heroImg = "", sample = false, svc = [] }) {
+  const rows = svc.slice(0, 3).map((s) => `<li><span>${h(String(s.name || "").trim())}</span>${String(s.price || "").trim() ? `<b>${h(String(s.price).trim())}</b>` : ""}</li>`).join("");
+  const ask = String(words.open || "לקבוע").trim();
+  return `<div class="lx-stage" aria-hidden="true">
+      <div class="lx-photo${heroImg ? " has" : ""}"${heroImg ? ` style="background-image: url('${h(heroImg)}')"` : ""}>${sample ? `<span class="lx-tag">תמונה לדוגמה</span>` : ""}</div>
+      <div class="lx-card lx-status"><span class="lx-live"><i></i>${has("hours") ? h(c.hours) : "מקבלים פניות"}</span><b>${v("business_name")}</b></div>
+      ${rows ? `<div class="lx-card lx-list"><span class="lx-k">${h(words.jobs || "המחירון")}</span><ul>${rows}</ul></div>` : ""}
+      <div class="lx-card lx-chat"><p class="q">היי, אפשר ${h(ask)}?</p><p class="a">בטח. כמה שאלות קצרות, והפרטים אצלנו בוואטסאפ.</p></div>
+    </div>`;
+}
+
 export const LOOKS = {
+  luxe: {
+    label: "יוקרה חכמה",
+    note: "בהיר ונקי, כותרת גדולה, ותמונה עם כרטיסי זכוכית מעליה",
+    fonts: "family=Rubik:wght@300;400;500;700;800&family=IBM+Plex+Mono:wght@400;500",
+    dark: false,
+    photoInVisual: true,
+    visual: luxeStage,
+    palettes: {
+      violet: { label: "סגול", accent: "#5428e0", deep: "#3a17b0", signal: "#c2136f", paper: "#fcfbff", tint: "#f1edfd", ink: "#17112e", inkSoft: "#4a4462", rule: "#e4def5", soft: "#cdbff7", text: "#ece6ff", linew: "#f6f3ff", psA: "#b9a6f7" },
+      rose: { label: "ורד", accent: "#b0245e", deep: "#7f1843", signal: "#8f1d4d", paper: "#fffafb", tint: "#fbe9ef", ink: "#2a121b", inkSoft: "#6a4b57", rule: "#f1d9e2", soft: "#f3bfd2", text: "#fde6ee", linew: "#fff3f7", psA: "#f2a7c1" },
+      plum: { label: "שזיף", accent: "#6b2f8f", deep: "#4a1f64", signal: "#b0245e", paper: "#fdfaff", tint: "#f2e8f8", ink: "#23142c", inkSoft: "#5d4c66", rule: "#e6d8ee", soft: "#d9bfe8", text: "#f2e6f8", linew: "#faf4fd", psA: "#d0a8e6" },
+      ocean: { label: "ים", accent: "#1f5fa8", deep: "#133f73", signal: "#b0245e", paper: "#f9fbff", tint: "#e7f0fb", ink: "#0f1b2c", inkSoft: "#47566b", rule: "#d5e1f0", soft: "#b5cdee", text: "#e3eefb", linew: "#f1f6fd", psA: "#9cc0ef" },
+      forest: { label: "יער", accent: "#1f6b4f", deep: "#134a36", signal: "#8f2f5a", paper: "#f9fcfa", tint: "#e5f2ec", ink: "#10221a", inkSoft: "#485c53", rule: "#d3e6dc", soft: "#b2dbc8", text: "#e1f2ea", linew: "#f0f8f4", psA: "#9fd1b9" },
+      cocoa: { label: "קקאו", accent: "#7a4a32", deep: "#553222", signal: "#8f2f5a", paper: "#fdfaf7", tint: "#f4ebe3", ink: "#2a1d15", inkSoft: "#65564b", rule: "#e8dccf", soft: "#e3c7b2", text: "#f6eadf", linew: "#fbf5ef", psA: "#ddb699" },
+      ink: { label: "שחור", accent: "#1d1b26", deep: "#0f0e15", signal: "#c2136f", paper: "#fbfbfd", tint: "#eeeef3", ink: "#16151c", inkSoft: "#4f4d5a", rule: "#e0dfe7", soft: "#c9c7d4", text: "#eceaf2", linew: "#f6f5f9", psA: "#c7c1e0" },
+      coral: { label: "אלמוג", accent: "#b33b2e", deep: "#84291f", signal: "#5428e0", paper: "#fffaf8", tint: "#fbe9e5", ink: "#2b1512", inkSoft: "#6a4f4b", rule: "#f1dad5", soft: "#f3c2b9", text: "#fde7e3", linew: "#fff4f1", psA: "#f0a99c" },
+    },
+  },
   blueprint: {
     label: "שרטוט",
     note: "דף שרטוט טכני עם רשת קווים",
@@ -301,8 +332,8 @@ export const LOOKS = {
 // a beauty clinic or a lesson; the studio, the price list and the appointment card don't suit a plumber.
 const CARE = new Set(["cosmetics", "nails", "barber", "massage", "trainer", "psychologist", "social-worker", "photographer", "driving", "tutor", "music"]);
 const GROUPS = {
-  work: ["blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"],
-  care: ["studio", "menu", "appointment", "mosaic", "certificate"],
+  work: ["luxe", "blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"],
+  care: ["luxe", "studio", "menu", "appointment", "mosaic", "certificate"],
 };
 export const looksFor = (tradeId) => GROUPS[CARE.has(tradeId) ? "care" : "work"];
 export const defaultLook = (tradeId) => looksFor(tradeId)[0];
@@ -344,6 +375,60 @@ export const themeColor = (look, p) => (look.dark ? p.hero : p.accent);
 
 // Per look: fonts and the few rules that make it its own. The shared CSS in plumber.mjs uses only the variables.
 export const LOOK_CSS = {
+  luxe: `
+  /* Smart luxury (the owner's pick from the ChatGPT directions): near-white paper with a breath of the palette, big
+     tight Rubik, one photo in a rounded frame with three glass cards over it, buttons with a soft glow. */
+  :root { --display: "Rubik", system-ui, sans-serif; --body: "Rubik", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --grid: transparent;
+    --bot-radius: 22px; --bot-radius-msg: 18px; --bot-radius-pill: 999px; --bot-radius-input: 16px; }
+  h1, h2, h3, .logo { font-weight: 800; letter-spacing: -.025em; }
+  h2 { font-size: clamp(32px, 4.4vw, 52px); line-height: 1.08; }
+  .hero { background-image: radial-gradient(55% 60% at 12% 18%, color-mix(in srgb, var(--ps-a) 30%, transparent), transparent 72%),
+    radial-gradient(45% 55% at 95% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); background-size: auto; }
+  .hero h1 { font-size: clamp(40px, 5vw, 66px); line-height: 1.04; color: var(--ink); }
+  .hero h1 span { background: none; color: inherit; padding: 0; }
+  .hero h1 span + br + span { color: var(--accent); }
+  .hero .tag { color: var(--accent); }
+  .btn { border-radius: 999px; }
+  .btn-signal { background: var(--accent); box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--accent) 85%, transparent), 0 2px 6px -2px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .btn-ghost { border-color: var(--rule); color: var(--ink); background: #fff; }
+  .facts b { color: var(--ink); }
+  .order { border: 0; border-radius: 24px; background: #fff; overflow: hidden; box-shadow: 0 0 0 1px var(--rule), 0 30px 60px -42px rgba(30,20,60,.4); }
+  .badge, .live { border-radius: 20px; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 26px; box-shadow: 0 30px 60px -36px rgba(30,20,60,.45); }
+  .detail .ring { max-width: 300px; aspect-ratio: 4 / 5; border-radius: 26px; padding: 0; border: 0; overflow: hidden; box-shadow: 0 30px 60px -36px rgba(0,0,0,.55); }
+  .detail .ring::after { display: none; }
+  .detail .ps { border-radius: 26px; }
+  .ps.ph { border: 0 !important; background: linear-gradient(160deg, color-mix(in srgb, #fff 16%, transparent), color-mix(in srgb, var(--ps-a) 30%, transparent)) !important; border-radius: 26px; }
+  .badge .ps.ph { background: linear-gradient(160deg, var(--tint), color-mix(in srgb, var(--ps-a) 45%, var(--tint))) !important; }
+  .lx-stage { position: relative; justify-self: center; width: min(100%, 540px); aspect-ratio: 1 / 1; }
+  .lx-photo { position: absolute; inset: 7% 3% 13% 15%; border-radius: 34px; overflow: hidden;
+    background: linear-gradient(160deg, var(--tint), color-mix(in srgb, var(--ps-a) 60%, var(--tint))) center / cover no-repeat;
+    box-shadow: 0 0 0 1px var(--rule), 0 50px 90px -46px rgba(30,20,60,.5); }
+  .lx-photo.has { background-size: cover; }
+  .lx-tag { position: absolute; bottom: 12px; inset-inline-start: 12px; padding: 4px 11px; border-radius: 999px; background: rgba(17,17,24,.72); color: #fff; font-size: 12px; font-weight: 600; }
+  .lx-card { position: absolute; background: color-mix(in srgb, #fff 84%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid color-mix(in srgb, #fff 60%, var(--rule)); border-radius: 20px; padding: 14px 16px; color: var(--ink); font-size: 14px; line-height: 1.4;
+    box-shadow: 0 26px 50px -28px rgba(30,20,60,.5); animation: lx-in .8s cubic-bezier(.2,.7,.2,1) both; min-width: 0; }
+  .lx-status { top: 0; inset-inline-end: 0; display: grid; gap: 4px; max-width: 64%; }
+  .lx-status b { font-size: 17px; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
+  .lx-live { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-soft); font-size: 12.5px; }
+  .lx-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 0 4px color-mix(in srgb, var(--signal) 18%, transparent); }
+  .lx-list { bottom: 0; inset-inline-start: 0; width: min(80%, 310px); animation-delay: .15s; }
+  .lx-k { display: block; font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+  .lx-list ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  .lx-list li { display: flex; justify-content: space-between; gap: 10px; }
+  .lx-list li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lx-list li b { flex: none; color: var(--accent); font-weight: 700; }
+  .lx-chat { top: 40%; inset-inline-end: -2%; width: min(56%, 230px); display: grid; gap: 6px; animation-delay: .3s; }
+  .lx-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13px; }
+  .lx-chat .q { background: var(--tint); justify-self: end; border-end-end-radius: 4px; }
+  .lx-chat .a { background: var(--accent); color: #fff; border-end-start-radius: 4px; }
+  @keyframes lx-in { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  @media (prefers-reduced-motion: reduce) { .lx-card { animation: none; } }
+  html.a11y-still .lx-card { animation: none; }
+  @media (max-width: 880px) { .lx-stage { width: min(100%, 420px); } .lx-chat { inset-inline-end: 0; } }
+`,
   blueprint: `
   :root { --display: "Secular One", "IBM Plex Sans Hebrew", sans-serif; --body: "IBM Plex Sans Hebrew", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace; }
   .drawing { width: 100%; height: auto; max-width: 560px; justify-self: center; }
@@ -466,6 +551,8 @@ export const LOOK_CSS = {
   .badge, .order, .live { border-radius: 18px; }
   .order { border-width: 1px; }
   .facts b { color: var(--deep); font-family: var(--display); font-weight: 700; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .arch { position: relative; justify-self: center; width: min(100%, 330px); aspect-ratio: 3 / 4; border-radius: 999px 999px 26px 26px;
     background: linear-gradient(175deg, var(--tint), color-mix(in srgb, var(--ps-a) 55%, var(--tint))); border: 1px solid var(--rule);
     display: grid; place-items: center; align-content: center; gap: 6px; }
@@ -487,6 +574,8 @@ export const LOOK_CSS = {
   .btn-ghost { border-color: var(--accent); color: var(--accent); }
   .badge, .live { border-radius: 999px; }
   .order { border-width: 1px; border-radius: 6px; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .menu-card { justify-self: center; width: min(100%, 430px); background: #fff; color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
     padding: 30px 30px 24px; box-shadow: 0 0 0 8px var(--tint), 0 30px 60px -40px rgba(0,0,0,.35); display: grid; gap: 4px; text-align: center; }
   .mc-head { font-size: 13px; letter-spacing: .2em; color: var(--accent); }
@@ -509,6 +598,8 @@ export const LOOK_CSS = {
   .btn { border-radius: 999px; }
   .hero .btn-signal { background: #fff; color: var(--deep); }
   .badge, .order, .live { border-radius: 16px; }
+  .lanyard::before, .lanyard .clip, .badge .code { display: none; }
+  .badge { transform: none; border-radius: 22px; }
   .appt { justify-self: center; width: min(100%, 400px); background: #fff; color: var(--ink); border-radius: 22px; padding: 22px 24px 20px;
     box-shadow: 0 30px 60px -30px rgba(0,0,0,.55); display: grid; gap: 12px; }
   .ap-top { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--ink-soft); }

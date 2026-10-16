@@ -4,7 +4,7 @@
 import { israeliPhone } from "../leads.mjs";
 import { localBusiness } from "./schema.mjs";
 import { socialList, SOCIAL_KEYS } from "../social.mjs";
-import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog } from "./looks.mjs";
+import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog, defaultLook } from "./looks.mjs";
 export { LOOKS, lookOf, catalog };
 // The trades (trades/<id>.mjs): words, chat, questionnaire. The site is the same for all of them.
 import { tradeOf } from "./trades/index.mjs";
@@ -120,7 +120,7 @@ export function emptyContent(tradeId = "plumber") {
   c.towns = [];
   c.regions = [];
   c.social = {};
-  c.look = "blueprint"; c.palette = "blue";  // the design, picked in the builder (looks.mjs)
+  c.look = defaultLook(c.trade_id); c.palette = Object.keys(LOOKS[c.look].palettes)[0];  // the design, picked in the builder (looks.mjs); each trade starts in its own
   return c;
 }
 
@@ -226,23 +226,62 @@ export function faqSchema(items) {
 // Opens the item a link points to (#g-<id>), also in browsers that don't do it on their own.
 const GUIDE_JS = `(function(){function o(){var m=/^#g-([\\w-]+)$/.exec(location.hash);if(!m)return;var d=document.getElementById("g-"+m[1]);if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView({block:"start"});}}addEventListener("hashchange",o);o();})();`;
 
+// What a draft shows before the owner writes their own: the trade's first headline and intro from the questionnaire,
+// and its first four services with their sample ranges. Shown only in a draft, marked "לדוגמה"; never published.
+function sampleContent(T) {
+  const g = T.guide || {}, r = (g.response || [])[1] || (g.response || [])[0] || "";
+  const when = !r ? "מהר" : /^(באותו|עוד|מחר)/.test(r) ? r : "תוך " + r;
+  const fill = (x) => String(x || "").replace(/\{when\}/g, when).trim();
+  const hl = (g.headlines || [])[0] || {}, it = (g.intros || [])[0] || {};
+  return { headline_1: fill(hl.headline_1), headline_2: fill(hl.headline_2), intro: fill(it.intro), response_time: r, services: (g.services || []).slice(0, 4) };
+}
+
+// The sample at the top of a draft per trade, from the demos' own pictures (shared/photos: photos for the first sixteen
+// trades, flat illustrations for the newer nine until real photos are made).
+const SAMPLE_HEROES = Object.fromEntries(Object.entries({
+  plumber: "plumber-siphon", ac: "ac-work", appliance: "appliance-work", barber: "barber-work", cleaning: "cleaning-portrait",
+  cosmetics: "cosmetics-work", driving: "driving-work", electrician: "electrician-panel", garden: "garden-work",
+  handyman: "handyman-work", locksmith: "locksmith-work", massage: "massage-work", movers: "movers-truck", music: "music-work",
+  nails: "nails-work", pest: "pest-work", photographer: "photographer-work", psychologist: "psychologist-work",
+  renovation: "renovation-drywall", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
+  trainer: "trainer-squat", tutor: "tutor-lesson", upholstery: "upholstery-work",
+}).map(([k, f]) => [k, `/shared/photos/${f}.webp`]));
+export const sampleHeroOf = (tradeId) => SAMPLE_HEROES[tradeId] || "";
+// Sample work photos and a portrait for a draft's empty frames, where the demos have real photos of that trade.
+const P_ = (t, ...f) => [t, f.map((x) => `/shared/photos/${t}-${x}.webp`)];
+const SAMPLE_WORKS = Object.fromEntries([
+  P_("plumber", "leak", "drain", "siphon"), P_("ac", "room", "work"), P_("appliance", "room", "work"), P_("cleaning", "office", "window", "marble"),
+  P_("garden", "pruning", "drip", "pomegranate"), P_("handyman", "room", "work"), P_("locksmith", "cylinder", "work"), P_("movers", "loading", "piano", "team"),
+  P_("music", "studio", "lesson"), P_("pest", "room", "work"), P_("psychologist", "room"), P_("social-worker", "room"), P_("trainer", "deadlift", "park", "squat"),
+  P_("tutor", "desk", "notebook", "lesson"),
+]);
+const SAMPLE_PORTRAITS = Object.fromEntries(["plumber", "ac", "appliance", "cleaning", "electrician", "garden", "handyman", "locksmith", "music", "pest", "psychologist", "social-worker", "tutor"]
+  .map((t) => [t, `/shared/photos/${t}-portrait.webp`]));
+
 export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, clips = [], sizes = {}, url = "", credit = null, now = new Date() } = {}) {
   const draft = mode === "draft";
   // The top: the owner's pick of a photo or the video (heroKind); the other one isn't shown or published.
   const hero = heroKind(c, { photo: Boolean(photos.hero), video: Boolean(video) });
-  const heroImg = hero === "photo" ? photos.hero : "";
   const heroVideo = hero === "video" ? video : null;
+  // A draft with no photo or video of the owner's own at the top shows the trade's sample picture, labelled as such,
+  // so the owner sees what a photo there does. Never published: a real site shows only the owner's own photos.
+  const sampleHero = draft && !photos.hero && !heroVideo ? SAMPLE_HEROES[tradeOf(c.trade_id).id] || "" : "";
+  const heroImg = hero === "photo" ? photos.hero : sampleHero;
   clips = (Array.isArray(clips) ? clips : []).filter((x) => x && x.src && x.poster).slice(0, VIDEOS.max);
   const L = lookOf(c);
+  const inVis = Boolean(L.look.photoInVisual && heroImg); // a look that frames the top photo itself (luxe) instead of a background
   const T = tradeOf(c.trade_id), W = T.words;
   if (!draft) {
     const m = missing(c);
     if (m.length) throw new Error("missing: " + m.join(", "));
   }
-  // An empty field: in a draft, a dashed box with what goes there; on a site, nothing.
+  // An empty field: in a draft, the trade's own suggestion (the questionnaire's first headline and intro, marked as a
+  // sample) or a soft box with what goes there; on a site, nothing. Publishing still needs the owner's own words.
+  const EG = draft ? sampleContent(T) : {};
   const v = (k) => {
     const val = String(c[k] || "").trim();
     if (val) return h(val);
+    if (draft && EG[k]) return `<span class="eg">${h(EG[k])}</span>`;
     return draft ? `<span class="todo">${h(FIELDS[k].label)}</span>` : "";
   };
   const has = (k) => Boolean(String(c[k] || "").trim());
@@ -259,12 +298,17 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const trade = String(c.trade || "").trim();
   const owner = String(c.owner_name || "").trim();
   const ownerFirst = firstName(owner) || "אנחנו";
-  const showTime = services.some((s) => s.time), showPrice = services.some((s) => s.price);
+  const egServices = draft && !services.length ? EG.services || [] : [];
+  const listed = services.length ? services : egServices;
+  const showTime = listed.some((s) => s.time), showPrice = listed.some((s) => s.price);
   const ranges = Object.fromEntries(services.filter((s) => s.price).map((s) => [s.name, s.price]));
   const robots = draft ? '<meta name="robots" content="noindex, nofollow">\n' : "";
   const dims = (slot) => { const z = sizes[slot]; return Array.isArray(z) && z[0] > 0 && z[1] > 0 ? ` width="${Math.round(z[0])}" height="${Math.round(z[1])}"` : ""; };
+  // An empty frame in a draft: the trade's sample photo where the demos have one (labelled), else a soft box.
+  const sampleOf = (slot) => !draft ? "" : slot === "portrait" ? SAMPLE_PORTRAITS[T.id] || "" : (SAMPLE_WORKS[T.id] || [])[WORKS.indexOf(slot)] || "";
   const photo = (slot, alt, extra = "") => photos[slot]
     ? `<figure class="ps has-img"><img src="${h(photos[slot])}" alt="${h(alt)}"${dims(slot)} loading="lazy" decoding="async"${extra}></figure>`
+    : sampleOf(slot) ? `<figure class="ps has-img eg-photo"><img src="${h(sampleOf(slot))}" alt="" loading="lazy" decoding="async"><span>לדוגמה</span></figure>`
     : draft ? `<figure class="ps ph"><span>${h(PHOTOS[slot].label)}<br>מעלים ב״תמונות״</span></figure>` : "";
   const area = String(c.area || "").trim();
   const GUIDES = guidesOf(T, services);
@@ -298,14 +342,17 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
 
   const rows = services.length
     ? services.map((s) => `<tr><td><b>${draft ? h(s.name) : `<a class="svc-link" href="${servicePage(s.name)}">${h(s.name)}</a>`}</b>${s.detail ? `<small>${h(s.detail)}</small>` : ""}</td>${showTime ? `<td class="hide-sm">${h(s.time || "")}</td>` : ""}${showPrice ? `<td class="price">${h(s.price || "לפי הצעת מחיר")}</td>` : ""}<td><button type="button" data-open-bot>${h(W.open)}</button></td></tr>`).join("\n          ")
+    : egServices.length ? egServices.map((s) => `<tr class="eg-row"><td><b>${h(s.name)}</b>${s.detail ? `<small>${h(s.detail)}</small>` : ""}</td>${showTime ? `<td class="hide-sm">${h(s.time || "")}</td>` : ""}${showPrice ? `<td class="price">${h(s.price || "")}</td>` : ""}<td></td></tr>`).join("\n          ")
     : `<tr><td colspan="4"><span class="todo">${h(SERVICES.label)}</span></td></tr>`;
 
   // Up to six work photos. A draft shows the first three frames even when empty, the others only once filled.
-  const works = WORKS.filter((s, i) => photos[s] || (draft && i < DRAFT_WORKS));
+  // Without a sample photo of the trade, one empty frame says where the photos go, not three.
+  const draftWorks = (SAMPLE_WORKS[T.id] || []).length ? DRAFT_WORKS : 1;
+  const works = WORKS.filter((s, i) => photos[s] || (draft && i < draftWorks));
   const letters = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳"];
   const details = works.map((s, i) => {
     const title = String(c[PHOTOS[s].title] || "").trim();
-    return `<div class="detail"><div class="ring">${photo(s, title || `עבודה של ${name}`)}</div><span class="mono">פרט ${letters[i]}</span>${title ? `<h3>${h(title)}</h3>` : draft ? `<h3><span class="todo">כותרת לתמונה</span></h3>` : ""}</div>`;
+    return `<div class="detail"><div class="ring">${photo(s, title || `עבודה של ${name}`)}</div><span class="mono">פרט ${letters[i]}</span>${title ? `<h3>${h(title)}</h3>` : draft && !photos[s] && sampleOf(s) ? "" : draft ? `<h3><span class="todo">כותרת לתמונה</span></h3>` : ""}</div>`;
   }).join("\n          ");
   // Before and after: a slider once both photos are in. The draft shows the frame as soon as one is.
   const hasBA = Boolean(photos.before && photos.after);
@@ -328,7 +375,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const portrait = photos.portrait ? photo("portrait", owner || name, ' style="object-position:50% 35%"')
     : draft ? photo("portrait", "") : `<div class="ps mono-letter" aria-hidden="true">${h(ownerFirst.slice(0, 1))}</div>`;
 
-  const steps = T.steps.map(([t, h3, p], i) => [i === 2 ? `${t} · תוך ${String(c.response_time || "").trim() || "…"}` : t, h3, p]).map(([t, h3, p]) => `<div class="step"><span class="mono">${h(t)}</span><h3>${h(h3)}</h3><p>${h(p)}</p></div>`).join("\n      ");
+  const steps = T.steps.map(([t, h3, p], i) => [i === 2 ? `${t} · תוך ${String(c.response_time || "").trim() || (draft && EG.response_time) || "…"}` : t, h3, p]).map(([t, h3, p]) => `<div class="step"><span class="mono">${h(t)}</span><h3>${h(h3)}</h3><p>${h(p)}</p></div>`).join("\n      ");
 
   // The line at the bottom of every page: who built the site, with a link home (the brand's name as the link, nothing more).
   const creditLine = credit && credit.name ? `<p class="credit">האתר נבנה ב-<a href="${draft || !credit.url ? "#" : h(credit.url)}" rel="noopener">${h(credit.name)}</a> · אתרים שבונים עסקים</p>` : "";
@@ -363,7 +410,8 @@ ${fontHead}
 </head>
 <body class="look-${L.id}">
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
-<header class="hero${heroImg ? " has-bg" : ""}"${heroImg ? ` style="--hero-img: url('${h(heroImg)}')"` : ""}>
+<header class="hero${heroImg && !inVis ? " has-bg" : ""}"${heroImg && !inVis ? ` style="--hero-img: url('${h(heroImg)}')"` : ""}>${sampleHero && !inVis ? `
+  <span class="sample-tag">תמונה לדוגמה · מעלים תמונה או סרטון משלכם</span>` : ""}
   <div class="wrap bar">
     <div class="logo"><svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 3c4 6 8 10 8 15a8 8 0 0 1-16 0c0-5 4-9 8-15z" fill="currentColor"/></svg><span>${v("business_name")}</span></div>
     ${callLocal ? `<a class="live mono" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}
@@ -371,7 +419,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
   <div class="wrap hero-grid">
     <div>
       <div class="tag mono">${v("trade")} · ${v("area")}${has("hours") ? " · " + h(c.hours) : ""}</div>
-      <h1><span>${v("headline_1")}</span>${has("headline_2") ? `<br><span>${h(c.headline_2)}</span>` : ""}</h1>
+      <h1><span>${v("headline_1")}</span>${has("headline_2") || EG.headline_2 ? `<br><span>${v("headline_2")}</span>` : ""}</h1>
       <p>${v("intro")}</p>
       <div class="ctas">
         <button class="btn btn-signal" type="button" data-open-bot>${h(W.open)} בצ׳אט</button>
@@ -382,7 +430,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>${leads ? `
       <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
-    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id })}
+    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg && !inVis ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id, heroImg, sample: Boolean(sampleHero), svc: listed })}
   </div>
 </header>
 ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(T.crisis)}</p>\n` : ""}
@@ -390,7 +438,7 @@ ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(
 
 <section>
   <div class="wrap">
-    <div class="head"><h2>${h(W.jobs)}</h2>${has("price_note") && showPrice ? `<span class="mono">${h(c.price_note)}</span>` : ""}</div>
+    <div class="head"><h2>${h(W.jobs)}</h2>${egServices.length ? `<span class="mono eg-note">לדוגמה · משנים בשאלון או בצ׳אט</span>` : has("price_note") && showPrice ? `<span class="mono">${h(c.price_note)}</span>` : ""}</div>
     <div class="order">
       <div class="order-top mono" style="grid-template-columns: repeat(${top.length}, minmax(0, 1fr))">
         ${top.join("\n        ")}
@@ -1005,8 +1053,13 @@ const CSS = `
 `;
 
 const DRAFT_CSS = `
+  .sample-tag { position: absolute; z-index: 3; bottom: 12px; inset-inline-end: 12px; padding: 5px 12px; border-radius: 999px; background: rgba(17,17,24,.72); color: #fff; font: 600 12.5px/1.3 var(--body); }
   .ribbon { position: sticky; top: 0; z-index: 50; background: #1d1b2e; color: #fff; text-align: center; font: 600 14px var(--body); padding: 8px 16px; }
-  .todo { display: inline-block; border: 1.5px dashed currentColor; border-radius: 4px; padding: 0 .3em; opacity: .75; font-style: normal; }
+  .todo { display: inline-block; border: 0; border-radius: 8px; padding: 0 .35em; background: color-mix(in srgb, currentColor 10%, transparent); opacity: .72; font-style: normal; }
+  .eg { text-decoration: underline dotted color-mix(in srgb, currentColor 45%, transparent); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+  .eg-row td { opacity: .82; }
+  .eg-photo { position: relative; } .eg-photo > span { position: absolute; bottom: 8px; inset-inline-end: 8px; padding: 2px 9px; border-radius: 999px; background: rgba(17,17,24,.7); color: #fff; font: 600 11.5px/1.4 var(--body); }
+  .eg-note { background: var(--tint); color: var(--ink-soft); padding: 3px 10px; border-radius: 999px; }
   .ps.ph { display: grid; place-items: center; text-align: center; color: var(--line-w); font: 600 14px/1.4 var(--body); border: 2px dashed var(--on-deep-line-strong); background: rgba(255,255,255,.06); }
   .badge .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: var(--tint); }
   .ba .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: var(--tint); border-radius: 0; }
