@@ -280,7 +280,7 @@
         <h1><span data-edit="h1a">איפה כואב לכם?</span> <em data-edit="h1b">מסמנים על המפה, ואני חוזר אליכם.</em></h1>
         <p class="lead">בזמן טיפול הידיים שלי עסוקות והטלפון בשקט. כאן בוחרים עיסוי ואורך טיפול, שומעים טווח מחיר ומשאירים מתי נוח לכם. בין טיפול לטיפול אני חוזר לתאם.</p>
         <div class="ctas">
-          <button class="btn btn-petrol" type="button" data-open-bot>לקבוע עיסוי</button>
+          <button class="btn btn-petrol" type="button" data-open-bot>לבקש תור</button>
           <a class="btn btn-line" href="#" data-wa="היי רוני, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
         </div>
         <ul class="facts">
@@ -441,7 +441,7 @@
                 <div class="ph-msg" id="ph-msg">פנייה לעיסוי מהאתר (דמו)
 עיסוי: גב ועורף
 איפה: גב תחתון
-אורך: 60 דקות
+אורך: 45 דקות
 מקום: ביקור בית, נס ציונה
 ימים: א׳ עד ה׳
 שעות: ערב
@@ -483,7 +483,7 @@
   let len = ""; // the length, for the price answer
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "רוני · עיסוי טיפולי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "ר", launcher: "לקבוע עיסוי", hint: "נציג AI",
+    name: "רוני · עיסוי טיפולי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "ר", launcher: "לבקש תור", hint: "נציג AI",
     greet: "היי, כאן רוני. כרגע הידיים שלי בטיפול.\nכמה שאלות קצרות, ואחזור אליכם בין טיפול לטיפול.",
     steps: [
       { key: "kind", label: "עיסוי", ask: "איזה עיסוי מתאים לכם?", chips: ["גב ועורף", "עיסוי ספורט", "רקמות עמוק", "הרפיה", PREG, UNSURE] },
