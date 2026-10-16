@@ -8,7 +8,7 @@
 <meta name="description" content="קליניקת יופי בכפר סבא: טיפולי פנים, הסרת שיער, גבות וריסים, מניקור ואיפור לאירוע. בוחרים טיפול בצ׳אט וקובעים תור בוואטסאפ.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Assistant:wght@400;600;700&family=Playpen+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Miriam+Libre:wght@400;700&family=Rubik:wght@700;800&family=Assistant:wght@400;600;700&family=Playpen+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/phone.css">
 <style>
   /* Object: the appointment card from the clinic's reception desk, with its punched hole and the fields filled in by hand,
@@ -182,6 +182,45 @@
     .btn, .slot { transition: none; }
   }
   html.a11y-still .card { animation: none; }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top turns light: porcelain with a breath of blush, big tight type, the photo in a rounded frame and glass
+     cards over it (the appointment card, the day's hours, the chat), the main button glowing. */
+  .hero { background: var(--porcelain); color: var(--ink);
+    background-image: radial-gradient(55% 65% at 10% 15%, rgba(233,184,201,.55), transparent 70%), radial-gradient(45% 55% at 95% 0%, rgba(168,68,107,.12), transparent 70%); }
+  .logo { color: var(--mulberry); } .logo small { color: var(--ink-soft); }
+  .bar a { color: var(--mulberry); border-bottom-color: var(--rosewood); }
+  .kicker { color: var(--rosewood); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; color: var(--ink); }
+  .hero h1 em { color: var(--rosewood); }
+  .lead { color: var(--ink-soft); }
+  .btn { border-radius: 999px; }
+  .hero .btn-blush { background: var(--mulberry); color: #fff; box-shadow: 0 16px 32px -14px rgba(91,33,64,.75), 0 2px 6px -2px rgba(91,33,64,.4); }
+  .hero .btn-blush:hover { background: var(--mulberry-deep); }
+  .hero .btn-line { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .hero .btn-line:hover { background: #fff; box-shadow: inset 0 0 0 1.5px var(--rosewood); }
+  .facts { border-top-color: var(--line); }
+  .facts li { color: var(--ink-soft); } .facts b { font-family: "Rubik", var(--body); font-weight: 800; color: var(--mulberry); }
+  .visual { padding: 0; aspect-ratio: 1 / 1; max-width: 560px; justify-self: center; width: 100%; }
+  .frame { position: absolute; inset: 8% 2% 14% 16%; padding: 0; border-radius: 34px; overflow: hidden; background: var(--linen); box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(69,22,49,.55); }
+  .frame .ps { aspect-ratio: auto; height: 100%; border-radius: 0; }
+  .glass { position: absolute; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: 0 26px 50px -28px rgba(69,22,49,.55); padding: 14px 16px; color: var(--ink); animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .card { inset-inline-start: 0; bottom: 0; width: min(310px, 74%); transform: none; animation: lift .8s cubic-bezier(.2,.7,.2,1) both .15s; border-radius: 22px; }
+  .card::before { display: none; }
+  .g-day { top: 0; inset-inline-end: 0; display: grid; gap: 3px; }
+  .g-day span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-day span i { width: 8px; height: 8px; border-radius: 50%; background: var(--rosewood); box-shadow: 0 0 0 4px rgba(168,68,107,.18); }
+  .g-day b { font: 800 17px/1.2 "Rubik", var(--body); color: var(--ink); }
+  .g-chat { top: 36%; inset-inline-end: -1%; width: min(52%, 230px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #f3e7ec; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--mulberry); color: #fff; border-end-start-radius: 4px; }
+  @media (max-width: 960px) { .visual { max-width: 440px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) { .g-chat { display: none; } .frame { inset: 10% 0 16% 8%; } .card { width: 80%; } }
+  @media (prefers-reduced-motion: reduce) { .glass, .card { animation: none; } }
+  html.a11y-still .glass, html.a11y-still .card { animation: none; }
 </style>
 </head>
 <body>
@@ -210,7 +249,9 @@
       </div>
       <div class="visual">
         <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/cosmetics-work.webp" data-alt="חדר טיפולים: מגבות מקופלות, קערת קרמיקה, בקבוקי טיפוח ומיטת טיפולים" data-pos="50 50" data-icon="sparkle" data-label="תמונה מהקליניקה"></figure></div>
-        <div class="card" aria-label="כרטיס תור לדוגמה">
+        <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>א׳ עד ה׳ · 9:00 עד 19:00</b></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">היי, אפשר תור לשלישי?</p><p class="a">בטח. איזה טיפול? אני מאשרת בין טיפול לטיפול.</p></div>
+        <div class="card glass" aria-label="כרטיס תור לדוגמה">
           <div class="card-h"><b>מיה</b><span>כרטיס תור</span></div>
           <dl>
             <div><dt>טיפול</dt><dd>טיפול פנים קלאסי</dd></div>
