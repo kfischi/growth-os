@@ -15,7 +15,8 @@ import { launchKit } from "./launch.mjs";
 
 // Keep in step with #plans in demos/index.html, the approval dialog in demos/build/index.html and the chats' prompts.
 export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 1900, month: 390 } };
-export const CYCLES = ["month", "year"];
+// Monthly only: no prepayment, so no refunds of unused months. BILLING_YEAR=1 turns the year ahead back on.
+export const cycles = () => (process.env.BILLING_YEAR === "1" ? ["month", "year"] : ["month"]);
 const YEAR_MONTHS = 10; // the annual prepayment: 12 months for the price of 10
 export const RETRY_DAYS = 3, MAX_FAILS = 4;
 const PKG_HE = { presence: "נוכחות", ai: "נציג AI" };
@@ -76,7 +77,7 @@ export async function checkout(d, { cycle, origin }) {
   } else {
     if (d.status !== "client_approved" || d.paid_at) return { error: "locked" };
     if (!d.slug_wish) return { error: "no_address" };
-    if (!CYCLES.includes(cycle)) return { error: "bad_cycle" };
+    if (!cycles().includes(cycle)) return { error: "bad_cycle" };
     kind = "setup"; sum = checkoutSum(d.package, cycle);
     description = `Easy Landing - ${PKG_HE[d.package]} - הקמה${cycle === "year" ? " ושנה מראש" : ""}`;
   }
@@ -195,6 +196,7 @@ export async function billingView(d) {
     on: growOn(),
     address: d.slug_wish ? { slug: d.slug_wish, host: hostFor(d.slug_wish), domain: d.domain_wish || null } : null,
     // Before VAT, as the site shows them, and what is charged today with VAT for each plan.
+    annual: cycles().includes("year"),
     prices: d.package ? { setup: PRICES[d.package].setup, month: PRICES[d.package].month, year: netPeriod(d.package, "year"), vat: vatRate(), today: { month: checkoutSum(d.package, "month"), year: checkoutSum(d.package, "year") } } : null,
     sub: b ? { state: b.state, cycle: b.cycle, amount: b.amount, next: b.next_charge_at, end: b.end_at || null, card: b.card_suffix || null } : null,
     invoices: payments.filter((p) => p.invoice_url).map((p) => ({ url: p.invoice_url, number: p.invoice_number, sum: Number(p.sum), date: p.paid_at })),

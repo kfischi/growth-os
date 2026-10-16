@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ניר · ניקוי ספות ושטיחים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="ניקוי ספות, כורסאות, מזרנים, שטיחים וריפוד ברכב בחדרה והשרון. בוחרים בצ׳אט מה לנקות ורואים טווח מחיר, גם כשהמכונה עובדת.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Secular+One&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a fabric swatch book, and the sewn-in care label under the sofa cushion.
+     Detail: the care codes W, S, W/S and X, seats and square metres, drying hours, the extraction tool's wet stripe.
+     Bold move: one huge grimy cushion in the hero, with a single clean stripe pulled across it by the extraction wand.
+     The true petrol colour of the fabric shows only inside the stripe. Everything else is quiet linen and thread. */
+  :root {
+    --linen: #eef0ef;          /* page: undyed linen */
+    --weft: #e1e6e4;           /* soft panels, the weave */
+    --seam: #c5cecb;           /* lines, stitching */
+    --graphite: #1a2326;       /* text */
+    --graphite-soft: #4a575b;  /* quiet text */
+    --petrol: #0b4f6c;         /* the sofa's true colour under the dirt: buttons, brand */
+    --petrol-deep: #073a50;
+    --grime: #a2988a;          /* a year of use: decoration only */
+    --wine: #8c1f3c;           /* the wine stain: the one warm mark */
+    --display: "Secular One", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--graphite);
+    --bot-bg: #fff; --bot-fg: var(--graphite); --bot-line: var(--seam); --bot-muted: var(--graphite-soft);
+    --bot-accent: var(--petrol); --bot-accent-fg: #fff; --bot-them: #e8eeee; --bot-me: var(--petrol-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 14px; --bot-radius-input: 8px; --bot-focus: var(--wine);
+    --guide-alert: var(--wine);
+    --ps-a: #c9d6d8; --ps-b: #6f8e98; --ps-ui: var(--graphite); --ps-edit: var(--petrol);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--linen); color: var(--graphite); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--wine); outline-offset: 3px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.1; margin: 0; }
+  .mono { font-family: var(--mono); }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 12px 24px; font: 700 17px var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 8px; transition: background .15s, box-shadow .15s; }
+  .btn-petrol { background: var(--petrol); color: #fff; box-shadow: 0 12px 26px -14px rgba(7,58,80,.9); }
+  .btn-petrol:hover { background: var(--petrol-deep); }
+  .btn-thread { background: #fff; color: var(--graphite); box-shadow: inset 0 0 0 1.5px var(--seam); }
+  .btn-thread:hover { box-shadow: inset 0 0 0 1.5px var(--graphite); }
+
+  .demo { background: var(--graphite); color: #c9d3d5; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- the top ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo svg { width: 36px; height: 36px; flex: none; }
+  .logo b { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; }
+  .logo small { font-size: 14.5px; color: var(--graphite-soft); }
+  .bar a { font-weight: 700; text-decoration: none; padding: 8px 16px; border-radius: 8px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--seam); font-size: 16px; }
+
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(28px, 5vw, 64px); align-items: center; padding-block: 16px 76px; }
+  .hero-copy { min-width: 0; }
+  .ask-line { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--graphite-soft); }
+  .ask-line::before { content: ""; width: 26px; height: 2px; background: var(--wine); }
+  .hero h1 { font-size: clamp(44px, 6vw, 78px); margin: 12px 0 18px; letter-spacing: -.005em; }
+  .hero h1 em { font-style: normal; color: var(--petrol); display: block; font-size: .62em; margin-top: 10px; }
+  .hero .lead { font-size: 20px; color: var(--graphite-soft); max-width: 38ch; margin: 0 0 26px; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .codes { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 28px 0 0; }
+  .codes li { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--seam); border-radius: 4px; padding: 6px 12px 6px 10px; font-size: 15px; }
+  .codes b { font-family: var(--mono); font-weight: 600; font-size: 13.5px; color: #fff; background: var(--petrol); border-radius: 3px; padding: 1px 7px; }
+
+  /* the cushion: a year of use, and one clean stripe */
+  .cushion-wrap { position: relative; min-width: 0; width: 100%; max-width: 560px; justify-self: center; padding: 10px 0 34px; }
+  .cushion { position: relative; aspect-ratio: 5 / 4; border-radius: 46px; overflow: hidden;
+    background:
+      radial-gradient(38% 30% at 30% 72%, rgba(92,78,62,.42), transparent 70%),
+      radial-gradient(22% 18% at 74% 30%, rgba(92,78,62,.32), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.10) 0 2px, transparent 2px 5px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.08) 0 2px, transparent 2px 5px),
+      linear-gradient(160deg, #b2a99c, var(--grime) 55%, #8f8577);
+    box-shadow: inset 0 0 0 10px rgba(255,255,255,.08), inset 0 -40px 60px -30px rgba(0,0,0,.35), 0 40px 70px -40px rgba(26,35,38,.65); }
+  .cushion::before { content: ""; position: absolute; inset: 18px; border-radius: 32px; border: 2px dashed rgba(255,255,255,.35); pointer-events: none; z-index: 3; }
+  .wine { position: absolute; width: 17%; aspect-ratio: 1.3; left: 14%; top: 18%; border-radius: 48% 52% 44% 56% / 55% 45% 58% 42%; background: radial-gradient(circle at 45% 45%, rgba(110,26,48,.62), rgba(110,26,48,.35) 60%, transparent 72%); }
+  .paws { position: absolute; left: 58%; top: 66%; width: 20%; opacity: .45; }
+  .stripe { position: absolute; z-index: 2; left: -10%; right: -10%; top: 37%; height: 30%; transform: rotate(-7deg);
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.10) 0 2px, transparent 2px 5px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 2px, transparent 2px 5px),
+      linear-gradient(180deg, #0f6386, var(--petrol) 60%, #0a4762);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.18);
+    clip-path: inset(0 0 0 0); animation: pull 2.2s .6s cubic-bezier(.5,.05,.3,1) both; }
+  .stripe::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.16) 50%, rgba(255,255,255,0)); }
+  /* the wand rides the leading edge of the stripe, right to left */
+  .wand { position: absolute; z-index: 4; top: 33%; height: 38%; width: 22px; left: 104%; margin-left: -11px; transform: rotate(-7deg); border-radius: 6px;
+    background: linear-gradient(90deg, #0d1416, #3a4549 55%, #0d1416); box-shadow: 0 0 0 3px rgba(255,255,255,.5), 0 12px 24px rgba(0,0,0,.35);
+    animation: wand 2.2s .6s cubic-bezier(.5,.05,.3,1) both; }
+  @keyframes pull { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes wand { 0% { left: 104%; opacity: 1; } 90% { opacity: 1; } 100% { left: -6%; opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .stripe { animation: none; } .wand { display: none; } }
+  html.a11y-still .stripe { animation: none; } html.a11y-still .wand { display: none; }
+
+  .label { position: absolute; z-index: 5; inset-inline-end: -14px; bottom: 0; width: 196px; background: #fff; border-radius: 3px; padding: 12px 14px 14px; transform: rotate(3deg);
+    box-shadow: 0 18px 30px -18px rgba(26,35,38,.6), inset 0 0 0 1px var(--seam); font-size: 14px; line-height: 1.45; }
+  .label::before { content: ""; position: absolute; top: -10px; inset-inline-start: 22px; width: 2px; height: 16px; background: var(--seam); }
+  .label .mono { font-size: 22px; font-weight: 600; letter-spacing: .04em; color: var(--petrol); display: block; line-height: 1.1; }
+  .label span { color: var(--graphite-soft); display: block; }
+  .busy { position: absolute; z-index: 5; inset-inline-start: -8px; top: 0; background: var(--graphite); color: #fff; border-radius: 8px; padding: 9px 14px; font-size: 14.5px; line-height: 1.35; max-width: 230px; box-shadow: 0 16px 30px -16px rgba(0,0,0,.6); }
+  .busy b { display: flex; align-items: center; gap: 8px; }
+  .busy b::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #5fc3a8; box-shadow: 0 0 0 4px rgba(95,195,168,.25); flex: none; }
+  .busy span { color: #c9d3d5; }
+
+  /* ---------- sections ---------- */
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 32px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 54px); }
+  .head p { margin: 0; color: var(--graphite-soft); max-width: 42ch; }
+  .fine { font-size: 14.5px; color: var(--graphite-soft); margin: 18px 0 0; }
+
+  /* the swatch book: one swatch per thing we clean, pinked at the bottom like a cut sample */
+  .book { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 14px; }
+  .sw { min-width: 0; background: #fff; display: flex; flex-direction: column; box-shadow: inset 0 0 0 1px var(--seam); border-radius: 4px 4px 0 0; padding-bottom: 12px;
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%; mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 14px 100%; }
+  .sw .tex { height: 96px; border-radius: 4px 4px 0 0; position: relative; }
+  .sw .tex i { position: absolute; top: 10px; inset-inline-start: 10px; font: 600 12.5px var(--mono); font-style: normal; background: rgba(255,255,255,.92); color: var(--graphite); padding: 2px 7px; border-radius: 3px; }
+  .t-linen { background: repeating-linear-gradient(0deg, rgba(255,255,255,.14) 0 2px, transparent 2px 5px), repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 5px), #6e8790; }
+  .t-velvet { background: linear-gradient(115deg, rgba(255,255,255,.18), transparent 40%, rgba(0,0,0,.18) 70%, rgba(255,255,255,.10)), var(--petrol); }
+  .t-leather { background: radial-gradient(circle at 30% 40%, rgba(255,255,255,.12) 0 1px, transparent 2px) 0 0 / 7px 7px, linear-gradient(140deg, #7a5040, #5a3829); }
+  .t-rug { background: repeating-linear-gradient(45deg, #8c1f3c 0 10px, #e9e3df 10px 20px, #1a2326 20px 26px, #e9e3df 26px 36px); }
+  .t-quilt { background: radial-gradient(circle, #c5cecb 0 2px, transparent 3px) 0 0 / 22px 22px, linear-gradient(45deg, transparent 47%, #d7dedc 48% 52%, transparent 53%) 0 0 / 22px 22px, linear-gradient(-45deg, transparent 47%, #d7dedc 48% 52%, transparent 53%) 0 0 / 22px 22px, #f4f6f5; }
+  .t-car { background: repeating-linear-gradient(90deg, #2c3639 0 14px, #1f2729 14px 16px), #2c3639; }
+  .t-chair { background: repeating-linear-gradient(0deg, rgba(255,255,255,.12) 0 3px, transparent 3px 7px), #4f6b5f; }
+  .t-pet { background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.18) 0 4px, transparent 5px) 0 0 / 18px 18px, #6c5b70; }
+  .sw .bd { padding: 14px 14px 10px; display: grid; gap: 2px; flex: 1; }
+  .sw h3 { font-size: 22px; }
+  .sw .p { font-weight: 700; font-size: 17px; color: var(--petrol); }
+  .sw small { color: var(--graphite-soft); font-size: 14px; line-height: 1.45; }
+  .sw button { margin: 4px 14px 8px; align-self: flex-start; min-height: 40px; padding: 7px 14px; border: 1.5px solid var(--seam); background: #fff; border-radius: 6px; font: 700 14.5px var(--body); color: var(--graphite); cursor: pointer; }
+  .sw button:hover { border-color: var(--petrol); color: var(--petrol); }
+
+  /* before and after, on the fabric itself */
+  .ba-sec { background: #fff; }
+  .ba-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+  .ba { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 10; background: var(--weft); direction: ltr; user-select: none; touch-action: pan-y; box-shadow: 0 34px 70px -44px rgba(26,35,38,.7); }
+  .ba svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .ba .before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+  .ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 4px; margin-left: -2px; background: #fff; pointer-events: none; }
+  .ba .knob { position: absolute; top: 50%; left: 50%; width: 30px; height: 84px; margin: -42px 0 0 -15px; border-radius: 8px; background: var(--graphite); box-shadow: 0 0 0 3px #fff, 0 8px 20px rgba(0,0,0,.3); display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 700; }
+  .ba .tag { position: absolute; top: 16px; padding: 5px 12px; border-radius: 4px; font-size: 14px; font-weight: 700; direction: rtl; }
+  .ba .tag.b { left: 16px; background: rgba(26,35,38,.78); color: #fff; }
+  .ba .tag.a { right: 16px; background: #fff; color: var(--graphite); }
+  .ba input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; margin: 0; }
+  .ba input:focus-visible + .handle .knob { outline: 3px solid var(--wine); outline-offset: 5px; }
+  .ba .ps { position: absolute; inset: 0; background: transparent; }
+  .ba .ps-chip { display: none; }
+  .ba [data-slot="after"] .ps-tools { left: auto; right: 14px; transform: none; top: 56px; }
+  .ba [data-slot="before"] .ps-tools { left: 14px; transform: none; top: 56px; }
+  .ba .handle, .ba .tag { z-index: 4; }
+  .ba input { z-index: 3; }
+  body.ps-edit .ba input { pointer-events: none; }
+  .ba-copy h2 { font-size: clamp(32px, 4vw, 48px); margin-bottom: 14px; }
+  .ba-copy p { color: var(--graphite-soft); margin: 0 0 14px; }
+  .ba-copy .hint { font-size: 15px; }
+  .honest { border-inline-start: 4px solid var(--wine); padding: 4px 14px; color: var(--graphite) !important; }
+
+  /* how it goes: the care label */
+  .care-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 70px); align-items: start; }
+  .care-copy h2 { font-size: clamp(34px, 4.6vw, 54px); margin-bottom: 16px; }
+  .care-copy p { color: var(--graphite-soft); margin: 0 0 14px; max-width: 40ch; }
+  .tagcard { position: relative; background: #fff; border-radius: 4px; padding: 26px 26px 22px; box-shadow: 0 30px 60px -40px rgba(26,35,38,.6), inset 0 0 0 1px var(--seam); min-width: 0; }
+  .tagcard::before { content: ""; position: absolute; top: 0; inset-inline: 0; height: 12px; background: repeating-linear-gradient(90deg, var(--seam) 0 6px, transparent 6px 10px); opacity: .7; }
+  .codes-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 6px 0 22px; }
+  .codes-row div { border: 1.5px solid var(--graphite); border-radius: 4px; padding: 8px 6px; text-align: center; min-width: 0; }
+  .codes-row b { display: block; font: 600 22px var(--mono); line-height: 1.1; }
+  .codes-row span { font-size: 13px; color: var(--graphite-soft); line-height: 1.3; display: block; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .steps li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding: 13px 0; border-top: 1px dashed var(--seam); }
+  .steps .mono { font-size: 14px; font-weight: 600; color: var(--petrol); padding-top: 3px; white-space: nowrap; }
+  .steps b { display: block; font-size: 18px; }
+  .steps span { color: var(--graphite-soft); font-size: 16px; }
+
+  .work { margin: 0; }
+  .work .ps { aspect-ratio: 16 / 10; border-radius: 4px;
+    -webkit-mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 16px 51% repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 51% repeat-x;
+    mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 16px 51% repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 51% repeat-x; }
+  .work .ps-chip { display: none; }
+  .work figcaption { font-size: 15px; color: var(--graphite-soft); margin-top: 10px; }
+
+  .calc { background: var(--weft); }
+  .calc .head { margin-bottom: 26px; }
+
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner h2 { font-size: clamp(34px, 4.6vw, 54px); margin-bottom: 16px; }
+  .owner p { color: var(--graphite-soft); max-width: 44ch; margin: 0 0 12px; }
+  .ph-cap { color: var(--graphite-soft); }
+
+  footer { padding-block: 34px 96px; color: var(--graphite-soft); font-size: 15px; }
+  footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--seam); padding-top: 18px; }
+
+  @media (max-width: 1020px) { .book { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); padding-bottom: 56px; }
+    .cushion-wrap { max-width: 480px; }
+    .ba-grid, .care-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    body { font-size: 17px; }
+    section { padding-block: 60px; }
+    .bar { padding-block: 14px; }
+    .logo b { font-size: 26px; }
+    .logo small { display: none; }
+    .hero h1 { font-size: 40px; margin: 10px 0 14px; }
+    .hero .lead { font-size: 17.5px; margin-bottom: 20px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .codes { margin-top: 22px; }
+    .codes li { font-size: 14px; }
+    .cushion-wrap { padding: 46px 6px 52px; }
+    .cushion { border-radius: 30px; }
+    .cushion::before { inset: 12px; border-radius: 22px; }
+    .label { inset-inline-end: 0; width: 170px; padding: 10px 12px 12px; font-size: 13px; }
+    .label .mono { font-size: 19px; }
+    .busy { inset-inline-start: 0; font-size: 13.5px; padding: 8px 12px; }
+    .book { gap: 14px 10px; }
+    .sw .tex { height: 74px; }
+    .sw h3 { font-size: 19px; }
+    .sw .p { font-size: 15.5px; }
+    .sw small { font-size: 13px; }
+    .sw .bd { padding: 12px 10px 8px; }
+    .sw button { margin-inline: 10px; font-size: 14px; }
+    .ba { aspect-ratio: 4 / 3.4; }
+    .ba .tag { top: 12px; font-size: 13px; padding: 4px 10px; }
+    .ba .tag.b { left: 12px; } .ba .tag.a { right: 12px; }
+    .tagcard { padding: 22px 16px 16px; }
+    .codes-row { gap: 6px; }
+    .codes-row b { font-size: 18px; }
+    .codes-row span { font-size: 11.5px; }
+    .steps li { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
+    .steps .mono { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=upholstery">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="weave" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect width="10" height="10" fill="#0b4f6c"/>
+      <path d="M0 2.5 H10 M0 7.5 H10" stroke="#ffffff" stroke-opacity=".10" stroke-width="2"/>
+      <path d="M2.5 0 V10 M7.5 0 V10" stroke="#000000" stroke-opacity=".12" stroke-width="2"/>
+    </pattern>
+    <symbol id="fabric" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+      <rect width="1600" height="1000" fill="url(#weave)"/>
+      <path d="M0 520 C 400 470, 1200 570, 1600 510" stroke="#063247" stroke-width="26" fill="none" opacity=".55"/>
+      <path d="M0 520 C 400 470, 1200 570, 1600 510" stroke="#ffffff" stroke-width="3" stroke-dasharray="16 14" fill="none" opacity=".35" transform="translate(0 -26)"/>
+      <ellipse cx="800" cy="140" rx="900" ry="120" fill="#ffffff" opacity=".07"/>
+      <ellipse cx="800" cy="980" rx="900" ry="160" fill="#000000" opacity=".16"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="9" width="34" height="22" rx="8" fill="#a2988a"/><path d="M3 22 L37 15 V24 L3 31 Z" fill="#0b4f6c"/><rect x="3" y="9" width="34" height="22" rx="8" fill="none" stroke="#1a2326" stroke-width="2"/></svg>
+        <b data-edit="name">ניר</b><small>ניקוי ספות ושטיחים</small>
+      </div>
+      <a href="#" data-wa="היי ניר, הגעתי מהאתר ואשמח לשמוע כמה עולה ניקוי">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="ask-line">השאלה הראשונה בכל פנייה</span>
+        <h1 data-edit="h1">״כמה עולה ספה של 3 מושבים?״<em>התשובה כאן, גם כשהמכונה עובדת.</em></h1>
+        <p class="lead">באמצע עבודה המכונה רועשת, ואני לא שומע את הטלפון. בצ׳אט בוחרים מה לנקות ורואים טווח מחיר. הפרטים מגיעים אליי לוואטסאפ.</p>
+        <div class="ctas">
+          <button class="btn btn-petrol" type="button" data-open-bot>לבדוק מחיר</button>
+          <a class="btn btn-thread" href="#" data-wa="היי ניר, יש לי שאלה על ניקוי ספה">וואטסאפ</a>
+        </div>
+        <ul class="codes">
+          <li><b>3</b>ספה 3 מושבים: 350 עד 450 ₪</li>
+          <li><b>W/S</b>בודק את הבד לפני</li>
+          <li><b dir="ltr">4–8</b>שעות ייבוש</li>
+        </ul>
+      </div>
+      <div class="cushion-wrap">
+        <div class="cushion" role="img" aria-label="כרית ספה מלוכלכת, ופס נקי אחד שהמכונה עברה עליו">
+          <span class="wine"></span>
+          <svg class="paws" viewBox="0 0 100 60" aria-hidden="true"><g fill="#4f4235"><circle cx="16" cy="40" r="7"/><circle cx="8" cy="30" r="3"/><circle cx="16" cy="26" r="3"/><circle cx="24" cy="30" r="3"/><circle cx="62" cy="22" r="7"/><circle cx="54" cy="12" r="3"/><circle cx="62" cy="8" r="3"/><circle cx="70" cy="12" r="3"/></g></svg>
+          <span class="stripe"></span>
+          <span class="wand"></span>
+        </div>
+        <div class="busy"><b>באמצע עבודה, רעננה</b><span>הצ׳אט עונה בינתיים</span></div>
+        <div class="label"><span class="mono">W/S · 30°</span><span>ספת בד, 3 מושבים</span><span>מתייבשת עד הערב</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="list">
+    <div class="wrap">
+      <div class="head"><h2>מה מנקים, ובכמה</h2><p>מחירים לדוגמה. המחיר הסופי אחרי שאראה את הבד והכתמים, ולפני שמתחילים.</p></div>
+      <div class="book">
+        <div class="sw"><div class="tex t-linen"><i>W</i></div><div class="bd"><h3>ספה 2 מושבים</h3><span class="p">280 עד 380 ₪</span><small>שאיבה, הזרקה ושאיבה חוזרת · 40 דקות</small></div><button type="button" data-item="ספה" data-size="2 מושבים">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-velvet"><i>W/S</i></div><div class="bd"><h3>ספה 3 מושבים</h3><span class="p">350 עד 450 ₪</span><small>הכי מבוקש · שעה</small></div><button type="button" data-item="ספה" data-size="3 מושבים">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-linen" style="background-color:#56707a"><i>W</i></div><div class="bd"><h3>פינה או מודולרית</h3><span class="p">450 עד 650 ₪</span><small>4 מושבים ומעלה · שעה וחצי</small></div><button type="button" data-item="ספה" data-size="פינה, 4 ומעלה">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-leather"><i>S</i></div><div class="bd"><h3>כורסה</h3><span class="p">150 עד 220 ₪</span><small>גם עור, בחומר לעור · 20 דקות</small></div><button type="button" data-item="כורסה">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-chair"><i>W</i></div><div class="bd"><h3>כיסאות אוכל</h3><span class="p">40 עד 60 ₪ לכיסא</span><small>מושב ומשענת · 10 דקות לכיסא</small></div><button type="button" data-item="פינת אוכל / כיסאות">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-quilt"><i>W</i></div><div class="bd"><h3>מזרן</h3><span class="p">150 עד 350 ₪</span><small>יחיד או זוגי, שני הצדדים</small></div><button type="button" data-item="מזרן">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-rug"><i>W</i></div><div class="bd"><h3>שטיח</h3><span class="p">25 עד 35 ₪ למ״ר</span><small>בבית, בלי לקחת למפעל</small></div><button type="button" data-item="שטיח">לבדוק מועד</button></div>
+        <div class="sw"><div class="tex t-car"><i>W/S</i></div><div class="bd"><h3>ריפוד ברכב</h3><span class="p">200 עד 450 ₪</span><small>קדמיים או כל המושבים</small></div><button type="button" data-item="ריפוד ברכב">לבדוק מועד</button></div>
+      </div>
+      <p class="fine">שתן או ריח של חיות: נטרול באנזימים, 80 עד 150 ₪ בתוספת לניקוי. המחירים כאן לדוגמה. אצלכם יופיעו המחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="ba-sec">
+    <div class="wrap ba-grid">
+      <div class="ba" id="ba" style="--pos:50%">
+        <figure class="ps" data-slot="after" data-label="תמונת אחרי"><svg class="ps-ph" role="img" aria-label="הבד של הספה אחרי ניקוי" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><use href="#fabric" width="1600" height="1000"/></svg></figure>
+        <div class="before">
+          <figure class="ps" data-slot="before" data-label="תמונת לפני"><svg class="ps-ph" role="img" aria-label="הבד של הספה לפני ניקוי, עם כתם יין ועקבות של כלב" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"><use href="#fabric" width="1600" height="1000"/>
+            <rect width="1600" height="1000" fill="#8a7f70" opacity=".62"/>
+            <g fill="#5c4e3e" opacity=".32"><ellipse cx="260" cy="260" rx="240" ry="150"/><ellipse cx="560" cy="820" rx="300" ry="150"/><ellipse cx="720" cy="300" rx="120" ry="80"/></g>
+            <path d="M250 560 C 230 500, 300 470, 350 500 C 380 450, 470 460, 470 520 C 540 530, 540 610, 480 630 C 470 700, 380 700, 360 660 C 300 690, 230 650, 260 610 C 220 600, 220 570, 250 560 Z" fill="#6e1a30" opacity=".62"/>
+            <circle cx="520" cy="480" r="16" fill="#6e1a30" opacity=".5"/><circle cx="200" cy="520" r="10" fill="#6e1a30" opacity=".45"/><circle cx="545" cy="660" r="8" fill="#6e1a30" opacity=".45"/>
+            <g fill="#3f3428" opacity=".5"><g transform="translate(640 700) rotate(-20)"><ellipse cx="0" cy="40" rx="26" ry="22"/><circle cx="-30" cy="4" r="10"/><circle cx="-10" cy="-8" r="10"/><circle cx="12" cy="-8" r="10"/><circle cx="32" cy="4" r="10"/></g><g transform="translate(720 560) rotate(-20)"><ellipse cx="0" cy="40" rx="26" ry="22"/><circle cx="-30" cy="4" r="10"/><circle cx="-10" cy="-8" r="10"/><circle cx="12" cy="-8" r="10"/><circle cx="32" cy="4" r="10"/></g><g transform="translate(600 420) rotate(-20)"><ellipse cx="0" cy="40" rx="26" ry="22"/><circle cx="-30" cy="4" r="10"/><circle cx="-10" cy="-8" r="10"/><circle cx="12" cy="-8" r="10"/><circle cx="32" cy="4" r="10"/></g></g>
+          </svg></figure>
+        </div>
+        <input type="range" min="0" max="100" value="50" aria-label="להזיז כדי להשוות לפני ואחרי">
+        <div class="handle"><span class="knob" aria-hidden="true">⇆</span></div>
+        <span class="tag b">לפני</span><span class="tag a">אחרי</span>
+      </div>
+      <div class="ba-copy">
+        <h2>אותו בד, שעה אחרי</h2>
+        <p>כתם יין, עקבות של הכלב ושנה של שימוש. גררו את הפס וראו את הצבע האמיתי של הספה.</p>
+        <p class="honest">לא כל כתם יורד עד הסוף. כתם ישן, או כתם שעבר חום, אני אומר לכם מראש, אחרי שאראה תמונה.</p>
+        <p class="hint">בכפתור "לנסות עם התמונות שלכם" מחליפים את הציור בתמונות לפני ואחרי מהעבודות שלכם.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="care">
+    <div class="wrap care-grid">
+      <div class="care-copy">
+        <h2>קודם התווית, אחר כך המכונה</h2>
+        <p>מתחת לכרית יש תווית עם קוד. הוא אומר במה מותר לנקות את הבד, ואני בודק אותו לפני שמתחילים.</p>
+        <figure class="work">
+          <div class="ps" data-slot="work" data-src="../shared/photos/upholstery-work.webp" data-alt="ציור: ראש שאיבה עובר על ספה ומשאיר פס נקי" data-pos="50 50" data-icon="sparkle" data-label="תמונה מעבודה"></div>
+          <figcaption>התמונה כאן מתחלפת בתמונה מעבודה שלכם.</figcaption>
+        </figure>
+      </div>
+      <div class="tagcard" aria-label="תווית ניקוי: הקודים והשלבים">
+        <div class="codes-row">
+          <div><b>W</b><span>על בסיס מים</span></div>
+          <div><b>S</b><span>רק חומר יבש</span></div>
+          <div><b>W/S</b><span>גם וגם</span></div>
+          <div><b>X</b><span>רק שאיבת אבק</span></div>
+        </div>
+        <ol class="steps">
+          <li><span class="mono">5 דק׳</span><div><b>בודק את הבד</b><span>קורא את התווית, ומנסה את החומר בפינה נסתרת.</span></div></li>
+          <li><span class="mono">10 דק׳</span><div><b>שאיבה יבשה</b><span>אבק, פירורים ושיער של חיות, לפני שמרטיבים.</span></div></li>
+          <li><span class="mono">30 דק׳</span><div><b>הזרקה ושאיבה חוזרת</b><span>המכונה מזריקה תמיסה ושואבת אותה עם הלכלוך.</span></div></li>
+          <li><span class="mono"><span class="ltr">4–8</span> ש׳</span><div><b>ייבוש</b><span>חלון פתוח עוזר. אפשר לשבת כשהבד יבש למגע.</span></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה לנקות, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+      <p class="fine">הדף לדוגמה. אצלכם המחשבון יציג את המחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עם כתם עכשיו, ושאלות שחוזרות. ידע כללי מהשטח.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner" style="padding-top:0">
+    <div class="wrap owner-grid">
+      <div>
+        <h2>מה ניר מקבל</h2>
+        <p>מה לנקות, הגודל, הבד, הכתמים, הישוב והימים, בהודעה אחת, ותמונה אם צירפתם. בהפסקה בין עבודה לעבודה אני חוזר עם מחיר ומועד.</p>
+        <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
+      </div>
+      <div>
+        <div class="phone">
+          <div class="ph-screen">
+            <div class="ph-top"><span class="ph-av">ש</span><div><b>שירה לוי</b><small>מהאתר</small></div></div>
+            <div class="ph-chat">
+              <span class="ph-day">היום</span>
+              <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו ניקוי ספות)
+מה: ספה
+גודל: 3 מושבים
+בד: בד
+כתמים: שתן או ריח של חיות
+ישוב: כפר סבא
+ימים: א׳ עד ה׳
+שם: שירה לוי
+טלפון: 052-3344556<time>13:05</time></div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap">ככה הפנייה מגיעה</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>ניר ניקוי ספות · דף לדוגמה, העסק בדוי · <a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a></span>
+    <a href="../">רוצים דף כזה לעסק שלכם?</a>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  // Before/after slider
+  const ba = document.getElementById("ba"), range = ba.querySelector("input");
+  range.addEventListener("input", () => ba.style.setProperty("--pos", range.value + "%"));
+
+  PhotoSlots.init({ page: "upholstery" });
+
+  // The sample prices, the same as the swatches above. One table feeds the chat and the calculator.
+  // base: the item's range; each size adds (add) or multiplies (mul) it, like Estimate does.
+  const ITEMS = {
+    "ספה": { base: [280, 380], ask: "כמה מושבים?", sizes: [["2 מושבים"], ["3 מושבים", { add: [70, 70] }], ["פינה, 4 ומעלה", { add: [170, 270] }]] },
+    "פינת אוכל / כיסאות": { base: [40, 60], ask: "כמה כיסאות?", sizes: [["עד 4 כיסאות", { mul: [4, 4] }], ["5 עד 8 כיסאות", { mul: [5, 8] }], ["9 ומעלה", { mul: [9, 12] }]] },
+    "שטיח": { base: [25, 35], ask: "מה הגודל?", sizes: [["עד 6 מ״ר", { mul: [4, 6] }], ["6 עד 12 מ״ר", { mul: [6, 12] }], ["מעל 12 מ״ר", { mul: [12, 20] }]] },
+    "מזרן": { base: [150, 220], ask: "איזה מזרן?", sizes: [["יחיד"], ["זוגי", { add: [100, 130] }]] },
+    "כורסה": { base: [150, 220], ask: "כמה כורסאות?", sizes: [["כורסה אחת"], ["שתי כורסאות", { mul: [2, 2] }], ["שלוש ומעלה", { mul: [3, 4] }]] },
+    "ריפוד ברכב": { base: [200, 300], ask: "אילו מושבים?", sizes: [["מושבים קדמיים"], ["כל המושבים", { add: [150, 150] }], ["רכב 7 מקומות", { add: [250, 300] }]] },
+  };
+  const STAINS = [["רק רענון"], ["כתמים", { add: [50, 100] }], ["שתן או ריח של חיות", { add: [80, 150] }], ["גם וגם", { add: [120, 220] }]];
+  const pair = (v, d) => (v == null ? [d, d] : v);
+  const r10 = (x) => Math.round(x / 10) * 10;
+  function rangeOf(d) {
+    const it = ITEMS[d.item]; if (!it) return null;
+    let [lo, hi] = it.base;
+    const sz = (it.sizes.find((s) => s[0] === d.size) || [])[1] || {};
+    const st = (STAINS.find((s) => s[0] === d.stains) || [])[1] || {};
+    for (const f of [sz, st]) { const m = pair(f.mul, 1), a = pair(f.add, 0); lo = lo * m[0] + a[0]; hi = hi * m[1] + a[1]; }
+    return [r10(lo), r10(hi)];
+  }
+  const fmt = (n) => n.toLocaleString("he-IL");
+  let stain = ""; // the last stains answer, for its tip
+  const sizeSteps = Object.entries(ITEMS).map(([name, it]) => ({ key: "size", label: "גודל", ask: it.ask, chips: it.sizes.map((s) => s[0]), show: (d) => d.item === name }));
+
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "ניר · ניקוי ספות", subtitle: "מחיר ומועד, גם כשהמכונה עובדת", initial: "נ", launcher: "לבדוק מחיר", hint: "נציג AI",
+    greet: "היי, כאן ניר. אני כנראה באמצע עבודה.\nכמה שאלות קצרות, ותקבלו טווח מחיר.",
+    steps: [
+      { key: "item", label: "מה", ask: "מה צריך לנקות?", chips: Object.keys(ITEMS) },
+      ...sizeSteps,
+      { key: "fabric", label: "בד", ask: "מאיזה בד?", chips: ["בד", "עור", "קטיפה", "לא בטוחים"], show: (d) => d.item !== "שטיח",
+        tip: { when: (v) => v === "עור", text: "עור לא מנקים בחומר של ספות בד. אני מגיע עם חומר לעור, ומזין אותו בסוף.", id: "leather", link: "איך שומרים על עור" } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הכתם או של הבד? ככה המחיר מדויק יותר.", photo: true, skip: "בלי תמונה" },
+      { key: "stains", label: "כתמים", ask: "יש כתמים או ריח?", chips: STAINS.map((s) => s[0]),
+        tip: { when: (v) => { stain = v; return v !== "רק רענון"; },
+          get text() { return stain === "שתן או ריח של חיות" ? "עד שאגיע: סופגים חזק עם נייר. בלי אקונומיקה, ובלי פן." : "עד שאגיע: סופגים במגבת לבנה, לא משפשפים, ולא מייבשים בפן."; },
+          get id() { return stain === "שתן או ריח של חיות" ? "pet-accident" : "fresh-stain"; }, link: "מה עושים עכשיו, צעד אחרי צעד" } },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => {
+      const r = rangeOf(d);
+      const price = r ? `${d.item}, ${d.size}${d.stains && d.stains !== "רק רענון" ? ", עם הטיפול בכתמים" : ""}: בדרך כלל ${fmt(r[0])} עד ${fmt(r[1])} ₪.` : "";
+      return `תודה ${d.name.split(" ")[0]}! ${price}\nהמחיר הסופי אחרי שאראה את הבד. לחצו למטה, ונקבע מועד בוואטסאפ.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו ניקוי ספות)\nמה: ${d.item}\nגודל: ${d.size}${d.fabric ? "\nבד: " + d.fabric : ""}\nכתמים: ${d.stains}\nישוב: ${d.city}\nימים: ${d.days}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-item]").forEach((b) => b.addEventListener("click", () => {
+    const p = { item: b.dataset.item }; if (b.dataset.size) p.size = b.dataset.size; bot.open(p);
+  }));
+
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה מנקים?", items: Object.entries(ITEMS).map(([label, it]) => ({ label, range: it.base, prefill: { item: label } })) },
+    factors: [
+      ...Object.entries(ITEMS).map(([name, it]) => ({ ask: it.ask, for: [name], options: it.sizes.map(([label, f]) => ({ label, ...(f || {}), prefill: { size: label } })) })),
+      { ask: "יש כתמים או ריח?", options: STAINS.map(([label, f]) => ({ label, ...(f || {}), prefill: { stains: label },
+        note: label === "רק רענון" ? "" : "כתם ישן לא תמיד יורד עד הסוף. אגיד לכם מראש, אחרי שאראה תמונה." })) },
+    ],
+    note: "טווח לדוגמה. המחיר הסופי אחרי שאראה את הבד והכתמים, ולפני שמתחילים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/upholstery.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

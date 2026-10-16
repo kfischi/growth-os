@@ -1,0 +1,76 @@
+// Upholstery and carpet cleaning (ניקוי ספות ושטיחים), as the site builder knows the trade: the words, the chat,
+// the questionnaire's answers to pick. Same shape and rules as trades/plumber.mjs. Check: node scripts/tests/trades.test.mjs upholstery
+// Not an urgent trade: no urgency question. A photo of the stain or the fabric helps the owner give a range.
+// The guides say stop and ask a professional for mould or anything that looks like a health risk; never "every stain comes out".
+export default {
+  id: "upholstery",
+  label: "ניקוי ספות",
+  trade: "ניקוי ספות ושטיחים",
+  guides: ["upholstery"],
+  schema: "HomeAndConstructionBusiness",
+  urgent: false,
+  words: {
+    jobs: "מה מנקים",
+    col: "מה מנקים",
+    time: "כמה זמן",
+    open: "לבדוק מחיר",
+    how: "מה קורה כשמזמינים",
+    status: "מקבלים הזמנות",
+    subtitle: "עונה מיד, גם כשהמכונה עובדת",
+    waHello: "אשמח לשמוע כמה עולה לנקות ספה. אפשר לחזור אליי?",
+    lead: "פנייה",
+  },
+  steps: [
+    ["שלב 1 · 30 שניות", "מספרים בצ׳אט", "מה מנקים, מה הגודל, ותמונה של הכתם אם יש."],
+    ["שלב 2 · מיד", "הפרטים אצלי", "הפרטים מגיעים אליי בוואטסאפ, גם כשאני באמצע עבודה."],
+    ["שלב 3", "מחיר ומועד", "אחזור עם מחיר לפי הבד והכתמים, ונקבע יום."],
+  ],
+  chat: {
+    issue: { label: "מה מנקים", ask: "מה צריך לנקות?" },
+    photo: "יש תמונה של הכתם או של הבד? ככה המחיר מדויק יותר.",
+    extra: [
+      { key: "fabric", label: "בד", ask: "מאיזה בד?", chips: ["בד", "עור", "קטיפה", "לא בטוחים"] },
+      { key: "stains", label: "כתמים", ask: "יש כתמים או ריח?", chips: ["רק רענון", "כתמים", "שתן או ריח של חיות", "גם וגם"] },
+    ],
+    urgency: null,
+    priceNote: "המחיר הסופי אחרי שאראה את הבד והכתמים.",
+  },
+  privacyWhat: "שם, טלפון, מה לנקות, סוג הבד, כתמים או ריח והישוב, ותמונה אם בחרתם לצרף",
+  fields: {
+    headline_1: "כמה עולה לנקות ספה?",
+    price_note: "טווחי מחיר · המחיר הסופי אחרי שרואים את הבד",
+    business_hint: "למשל: ניר ניקוי ספות",
+    ba_hint: "מה רואים ואיפה, למשל: ספת בד אפורה אחרי ניקוי, רעננה",
+    video_hint: "מה רואים בסרטון, למשל: שאיבה של כרית ספה",
+  },
+  guide: {
+    services: [
+      { name: "ספה 2 מושבים", detail: "שאיבה, ניקוי בהזרקה ושאיבה חוזרת", time: "40 דקות", price: "280 עד 380 ₪" },
+      { name: "ספה 3 מושבים", detail: "שאיבה, ניקוי בהזרקה ושאיבה חוזרת", time: "שעה", price: "350 עד 450 ₪" },
+      { name: "פינה או ספה מודולרית", detail: "4 מושבים ומעלה", time: "שעה וחצי", price: "450 עד 650 ₪" },
+      { name: "כורסה", detail: "כולל משענות וכרית", time: "20 דקות", price: "150 עד 220 ₪" },
+      { name: "כיסאות פינת אוכל", detail: "מושב ומשענת מרופדים, לכיסא", time: "10 דקות לכיסא", price: "40 עד 60 ₪ לכיסא" },
+      { name: "מזרן יחיד", detail: "שני הצדדים, כולל נטרול אבק", time: "30 דקות", price: "150 עד 220 ₪" },
+      { name: "מזרן זוגי", detail: "שני הצדדים, כולל נטרול אבק", time: "45 דקות", price: "250 עד 350 ₪" },
+      { name: "שטיח", detail: "ניקוי בבית, לפי מ״ר", time: "לפי הגודל", price: "25 עד 35 ₪ למ״ר" },
+      { name: "ריפוד ברכב", detail: "כל המושבים, כולל שאיבה", time: "שעה וחצי", price: "350 עד 450 ₪" },
+      { name: "טיפול בשתן וריח של חיות", detail: "אנזימים לנטרול ריח, בתוספת לניקוי", time: "15 דקות", price: "80 עד 150 ₪" },
+    ],
+    response: ["15 דק׳", "30 דק׳", "שעה", "שעתיים", "באותו יום"],
+    hours: ["א׳–ה׳ 8:00–19:00", "א׳–ו׳ 8:00–14:00", "א׳–ה׳ 9:00–20:00"],
+    warranty: null,
+    headlines: [
+      { headline_1: "כמה עולה לנקות ספה?", headline_2: "טווח מחיר כאן בצ׳אט." },
+      { headline_1: "ספה, שטיח או מזרן?", headline_2: "חוזר אליכם {when}." },
+      { headline_1: "כתם על הספה?", headline_2: "שלחו תמונה." },
+      { headline_1: "המכונה עובדת.", headline_2: "הצ׳אט עונה בינתיים." },
+    ],
+    intros: [
+      { intro: "כותבים לי מה לנקות ומה הגודל, ושולחים תמונה של הכתם. הפרטים מגיעים אליי לוואטסאפ, ואחזור אליכם {when} עם מחיר." },
+      { intro: "באמצע עבודה המכונה רועשת ואני לא שומע את הטלפון. כתבו כאן מה צריך, ואחזור אליכם {when}." },
+      { intro: "ספות, כורסאות, מזרנים, שטיחים וריפוד ברכב. מחיר לפי הבד והכתמים, וסיכום ברור לפני שמתחילים. אחזור אליכם {when}." },
+    ],
+    servicesAsk: "מה אתם מנקים, ובכמה?",
+    photosAsk: "תמונות לפני ואחרי של ספות ושטיחים שניקיתם, ותמונה של המכונה בעבודה. בלי פנים של לקוחות ובלי פרטים מהבית שלהם.",
+  },
+};

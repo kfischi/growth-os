@@ -11,4 +11,4 @@ ac, pest, appliance, handyman, psychologist, social-worker (-work card, -portrai
 
 music-work, music-portrait, music-studio, music-lesson: generated with Figma AI; the piano brand name on the fallboard removed.
 
-towing-work, cosmetics-work, photographer-work, barber-work, massage-work: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these three demos.
+towing-work, cosmetics-work, photographer-work, barber-work, massage-work, nails-work, driving-work, upholstery-work, shutters-work: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these three demos.

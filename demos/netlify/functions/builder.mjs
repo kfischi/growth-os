@@ -281,6 +281,8 @@ export default async (req, context) => {
     if (action === "pay" && req.method === "POST") {
       const body = await req.json().catch(() => ({}));
       if (payLimited(ip)) return json({ error: "rate_limited" }, 429);
+      if (body.terms !== true) return json({ error: "terms" }, 409); // demos/terms/ accepted before paying
+      if (!d.terms_at) d = await saveDraft(d, { terms_at: new Date().toISOString() });
       const r = await checkout(d, { cycle: body.cycle, origin: new URL(req.url).origin });
       if (r.error) return json({ error: r.error }, r.error === "not_configured" ? 503 : r.error === "pay_failed" ? 502 : 409);
       return json({ url: r.url });

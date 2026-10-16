@@ -16,7 +16,7 @@
 /* 1. The object: a concierge's desk card. Quiet paper, one precise ink, and a small fuchsia mark wherever something
       was answered. The phone on the page is the business's front desk.
    2. The detail only this subject has: the enquiry and its clock. Real times ("21:47"), "✓✓", "טיפלתי",
-      the 21 businesses in four groups, in their own colours, and the two real prices.
+      the 25 businesses in four groups, in their own colours, and the two real prices.
    3. The one bold move: very large, tightly set Rubik 800 headlines on near-white, with the fuchsia full stop as the
       only ornament. Everything else is hairlines, lilac fields and whitespace. Motion lives only where it explains
       something: the phone that turns into your trade, the enquiry that gets answered, the numbers that count.
@@ -702,7 +702,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <div class="head reveal">
           <p class="kicker">דוגמאות</p>
           <h2 id="t-trades">בחרו את התחום שלכם<span class="dot">.</span></h2>
-          <p class="sub">21 עסקים לדוגמה. בוחרים סוג ותחום, והטלפון מראה איך האתר שלכם ייראה.</p>
+          <p class="sub">25 עסקים לדוגמה. בוחרים סוג ותחום, והטלפון מראה איך האתר שלכם ייראה.</p>
         </div>
         <div class="cats" id="cats" role="group" aria-label="סוג העסק"><button type="button" data-cat="urgent" aria-pressed="true">תקלות דחופות</button><button type="button" data-cat="home" aria-pressed="false">בית וחצר</button><button type="button" data-cat="care" aria-pressed="false">תורים וטיפולים</button><button type="button" data-cat="learn" aria-pressed="false">שיעורים ואירועים</button></div>
         <ul class="chips" id="chips" aria-label="תחומים"></ul>
@@ -760,7 +760,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <li class="need"><label><input type="checkbox" value="ai"><span>התראה ותזכורת לחזור</span><small>נציג AI</small></label></li>
             <li class="need"><label><input type="checkbox" value="ai"><span>כל הפניות בלוח אחד</span><small>נציג AI</small></label></li>
           </ul>
-          <div class="period" role="group" aria-label="איך משלמים"><button type="button" data-period="m" aria-pressed="true">חודשי</button><button type="button" data-period="y" aria-pressed="false">שנה מראש</button></div>
           <div class="fit" aria-live="polite">
             <p>מתאים לכם: <b class="fit-name" id="fitName">נוכחות</b></p>
             <p class="fit-price" id="fitPrice"><bdi>1,500 ₪</bdi> הקמה</p>
@@ -769,7 +768,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         </form>
       </div>
       <div class="terms reveal">
-        <p><b>שנה מראש:</b> 12 חודשים במחיר של 10.</p>
         <p><b>בלי התחייבות:</b> מבטלים מתי שרוצים, והחיוב נעצר.</p>
         <p><b>משנים לבד:</b> כלול בתשלום החודשי.</p>
         <p><b>מפסיקים לשלם?</b> הדף והדומיין נשארים שלכם.</p>
@@ -829,21 +827,25 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['towing', 'גרר ושירותי דרך', 'עידו מצברים וגרר', 'תקועים בדרך? כתבו, וחוזרים עם זמן הגעה.', 'towing-work', '50% 50%', '#e9ecf0', '#13171e', '#b02815', '#fff', '#1f56a6', 'urgent'],
     ['electrician', 'חשמלאי', 'רז שגב', 'החשמל קפץ ולא חוזר?', 'electrician-portrait', '50% 35%', '#202427', '#f4f5f6', '#ff5a1f', '#202427', '#ff5a1f', 'urgent'],
     ['locksmith', 'מנעולן', 'עידו מפתח', 'ננעלתם בחוץ? כתבו, ועידו חוזר עם זמן הגעה.', 'locksmith-work', '50% 40%', '#e6e9ec', '#6e1b24', '#6e1b24', '#fff', '#9aa3ab', 'urgent'],
+    ['shutters', 'תריסים', 'בני תריסים', 'התריס נתקע? כתבו, ואני חוזר עם זמן הגעה.', 'shutters-work', '50% 45%', '#e9eef1', '#16232c', '#0d6b63', '#fff', '#6c7a85', 'urgent'],
     ['ac', 'טכנאי מזגנים', 'אלון קור', 'המזגן לא מקרר? כותבים, ואנחנו חוזרים.', 'ac-work', '50% 40%', '#e6f1f6', '#0d2235', '#0d2235', '#e6f1f6', '#0d2235', 'urgent'],
     ['appliance', 'מכשירי חשמל', 'רועי שטרן', 'לתקן או להחליף? אגיד לכם בכנות.', 'appliance-work', '50% 40%', '#eef1f8', '#1d3bb3', '#1d3bb3', '#fff', '#1d3bb3', 'urgent'],
     ['pest', 'הדברה', 'שקט', 'מזיקים בבית? מטפלים, ואתם חוזרים לבית שקט.', 'pest-work', '50% 40%', '#e6efe8', '#1d4a35', '#1d4a35', '#fff', '#1d4a35', 'home'],
     ['movers', 'הובלות', 'דרור הובלות', 'עוברים דירה? מחיר סגור לפני שמעמיסים.', 'movers-truck', '45% 50%', '#f6efe6', '#181512', '#c69c6d', '#181512', '#181512', 'home'],
     ['cleaning', 'ניקיון', 'שקד', 'אותה מנקה, כל שבוע, באותה שעה.', 'cleaning-portrait', '60% 40%', '#dceeec', '#0f3b3a', '#0f3b3a', '#fff', '#0f3b3a', 'home'],
+    ['upholstery', 'ניקוי ספות ושטיחים', 'ניר ניקוי ספות', 'כמה עולה ספה של 3 מושבים? התשובה כאן.', 'upholstery-work', '40% 60%', '#eef0ef', '#1a2326', '#0b4f6c', '#fff', '#8c1f3c', 'home'],
     ['handyman', 'הנדימן', 'דורון', 'כל הרשימה. ביקור אחד.', 'handyman-work', '50% 40%', '#f3ebe2', '#1f2225', '#b98d63', '#1f2225', '#1f2225', 'home'],
     ['renovation', 'שיפוצים', 'נתן אדלר', 'שיפוץ עם לוח זמנים שאפשר לסמוך עליו.', 'renovation-drywall', '50% 35%', '#2f5d4e', '#fff', '#fff', '#2f5d4e', '#fff', 'home'],
     ['garden', 'גינון', 'עומר גנים', 'הגינה שלכם, בכל עונה של השנה.', 'garden-work', '50% 40%', '#1f4d36', '#f3efe6', '#f3efe6', '#1f4d36', '#f3efe6', 'home'],
     ['cosmetics', 'קוסמטיקה ויופי', 'מיה קליניקת יופי', 'הידיים בטיפול. הצ׳אט עונה בינתיים.', 'cosmetics-work', '50% 50%', '#f6f0f2', '#2f1f27', '#5b2140', '#fff', '#a8446b', 'care'],
+    ['nails', 'בניית ציפורניים', 'ליה נייל סטודיו', 'כמה עולה ג׳ל? התשובה כאן, גם באמצע בנייה.', 'nails-work', '50% 50%', '#f8f4f6', '#25131c', '#a3124d', '#fff', '#6e0b33', 'care'],
     ['barber', 'ספרות', 'המספרה של שי', 'יש תור היום? שאלו כאן, ושי חוזר עם שעה.', 'barber-work', '50% 50%', '#f2f5f7', '#121a26', '#16223a', '#fff', '#b4182d', 'care'],
     ['massage', 'עיסוי ומסאז׳', 'רוני עיסוי טיפולי', 'הגב תפוס? מסמנים איפה, ורוני חוזר.', 'massage-work', '50% 50%', '#f1f4f3', '#16323b', '#1f4c57', '#fff', '#b0303d', 'care'],
     ['trainer', 'מאמנת כושר', 'יעל ברק', 'הפעם זה נשאר.', 'trainer-cover', '50% 30%', '#24352f', '#f1efe8', '#f1efe8', '#24352f', '#f1efe8', 'care'],
     ['psychologist', 'פסיכולוגית', 'תמר גלעד', 'מקום שקט לדבר על מה שקשה.', 'psychologist-work', '50% 40%', '#e3ebe6', '#1f3d36', '#1f3d36', '#fff', '#b9cbc2', 'care'],
     ['social-worker', 'עובדת סוציאלית', 'יעל שחר', 'משהו בבית לא מסתדר? מתחילים בשיחת היכרות.', 'social-worker-work', '50% 40%', '#f3f5f2', '#134e4a', '#134e4a', '#fff', '#d99a96', 'care'],
     ['photographer', 'צלם אירועים', 'יונתן צילום', 'בודקים תאריך ומקבלים תיק עבודות בוואטסאפ.', 'photographer-work', '40% 50%', '#eef1f4', '#1d1820', '#1d1820', '#fff', '#c0183c', 'learn'],
+    ['driving', 'מורה לנהיגה', 'גיל לימודי נהיגה', 'מתחילים ללמוד נהיגה? גיל חוזר עם שעה.', 'driving-work', '50% 60%', '#f5f6f3', '#151a1f', '#c4122f', '#fff', '#1d4f91', 'learn'],
     ['tutor', 'מורה פרטית', 'נועה שגיא', 'מתמטיקה ואנגלית, מכיתה ד׳ ועד הבגרות.', 'tutor-portrait', '50% 35%', '#fbfcff', '#1b2a55', '#1b2a55', '#fff', '#d93a3a', 'learn'],
     ['music', 'מורה לנגינה', 'מאיה לב', 'שיעורי פסנתר, מהשיר שאתם אוהבים.', 'music-work', '50% 35%', '#f3f4f6', '#8e2236', '#8e2236', '#fff', '#15161a', 'learn'],
   ].map(([id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat]) => ({ id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat }));
@@ -893,19 +895,16 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   (() => {
     const f = $('#builder'), PL = { p: { name: 'נוכחות', setup: 1500, m: 150 }, ai: { name: 'נציג AI', setup: 1900, m: 390 } };
     const nis = (n) => `<bdi>${n.toLocaleString('he-IL')} ₪</bdi>`;
-    let period = 'm';
     const draw = () => {
       const fit = $$('input', f).some((x) => x.checked && x.value === 'ai') ? 'ai' : 'p', p = PL[fit];
       $$('.plan').forEach((el) => el.classList.toggle('fits', el.dataset.plan === fit));
       $$('.plan .per').forEach((el) => { const m = +el.dataset.m;
-        el.innerHTML = period === 'm' ? `${nis(m)} לחודש<small>או ${nis(m * 10)} לשנה מראש. לפני מע״מ</small>` : `${nis(m * 10)} לשנה<small>12 חודשים במחיר של 10, במקום ${nis(m * 12)}. לפני מע״מ</small>`; });
+        el.innerHTML = `${nis(m)} לחודש<small>לפני מע״מ. מבטלים מתי שרוצים</small>`; });
       $('#fitName').textContent = p.name;
       $('#fitPrice').innerHTML = `${nis(p.setup)} הקמה`;
-      $('#fitPer').innerHTML = period === 'm' ? `ועוד ${nis(p.m)} לחודש, לפני מע״מ` : `ועוד ${nis(p.m * 10)} לשנה, במקום ${nis(p.m * 12)}. לפני מע״מ`;
+      $('#fitPer').innerHTML = `ועוד ${nis(p.m)} לחודש, לפני מע״מ`;
     };
     f.addEventListener('change', draw);
-    $$('[data-period]', f).forEach((b) => b.addEventListener('click', () => { period = b.dataset.period;
-      $$('[data-period]', f).forEach((x) => x.setAttribute('aria-pressed', String(x === b))); draw(); }));
     draw();
   })();
 

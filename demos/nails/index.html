@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ליה נייל סטודיו · בניית ציפורניים בנס ציונה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="סטודיו לציפורניים בנס ציונה: לק ג׳ל, בנייה בג׳ל, מילוי, פדיקור והסרה. בוחרים טיפול בצ׳אט, רואים טווח מחיר, וליה חוזרת לאשר תור בוואטסאפ.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=David+Libre:wght@500;700&family=Rubik:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the nail-shape chart on the studio wall and the polish rack under it: five fingers, each with its own shape,
+             painted from a row of bottles, and the LED lamp on the desk.
+     Detail: square, squoval, oval, almond and ballerina; 90 minutes for a gel build, 60 seconds under the lamp per coat,
+             three to four weeks until a fill, 5 to 15 ₪ a nail for a design; morning, noon and evening slots.
+     Bold move: one glossy raspberry-lacquer field holding a giant shape chart of five fingers. The visitor taps a bottle
+             and the five nails take its colour.
+     Motion: only that repaint (a short fill transition), none with reduced motion. No yellow and no gold: chrome is silver. */
+  :root {
+    --lacquer: #a3124d;        /* raspberry gel, the one saturated field */
+    --lacquer-deep: #6e0b33;
+    --blush: #ffd0e1;          /* text and accents on the lacquer */
+    --basecoat: #f8f4f6;       /* the page: a cool base-coat white, not cream */
+    --card: #ffffff;
+    --skin: #f6e1d8;           /* the fingers on the chart */
+    --cuticle: #e3c3b6;
+    --lamp: #5a3fc0;           /* the LED lamp's violet, for the lamp section only */
+    --lamp-wash: #ece8fb;
+    --chrome: #b8bfcb;
+    --ink: #25131c;
+    --ink-soft: #6b5560;
+    --line: #e8dbe2;
+    --display: "David Libre", "Rubik", "Arial Hebrew", serif;
+    --body: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --polish: #f2a9c4;
+    --phone-frame: var(--lacquer-deep);
+    --bot-bg: var(--card); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--lacquer); --bot-accent-fg: #fff; --bot-them: #f5e9ef; --bot-me: var(--lacquer-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 16px;
+    --guide-alert: var(--lacquer-deep);
+    --ps-a: #f2c2d4; --ps-b: var(--lacquer); --ps-ui: var(--ink); --ps-edit: var(--lacquer);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--basecoat); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--lacquer); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.08; margin: 0; }
+  h2 { font-size: clamp(34px, 4.6vw, 54px); }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .mono { font-family: var(--mono); font-weight: 500; }
+  section { padding-block: 92px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 36px; }
+  .head p { margin: 0; max-width: 52ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .2s, transform .2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-blush { background: var(--blush); color: var(--lacquer-deep); }
+  .btn-blush:hover { background: #ffe3ed; }
+  .btn-line { box-shadow: inset 0 0 0 2px rgba(255,208,225,.75); color: #fff; background: transparent; }
+  .btn-line:hover { background: rgba(255,255,255,.1); }
+
+  .demo { background: var(--ink); color: #e3d3da; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Hero: the lacquer field and the shape chart ---------- */
+  .hero { background: var(--lacquer); color: #fff; position: relative; overflow: hidden; }
+  .hero::after { content: ""; position: absolute; inset: 0 0 auto auto; width: 42%; height: 100%; pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.07) 48%, transparent 62%); } /* the gloss on the gel */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; position: relative; z-index: 1; }
+  .logo { font-family: var(--display); font-size: 36px; line-height: 1; font-weight: 700; }
+  .logo small { display: block; font: 500 14px/1.3 var(--body); color: var(--blush); margin-top: 6px; }
+  .bar a { color: #fff; font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--blush); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 56px; align-items: center; padding: 30px 0 84px; position: relative; z-index: 1; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--blush); font-weight: 500; font-size: 16px; }
+  .hero h1 { font-size: clamp(44px, 5vw, 70px); margin-bottom: 22px; text-wrap: balance; }
+  .hero h1 em { font-style: normal; color: var(--blush); display: block; font-size: .72em; margin-top: 8px; }
+  .lead { font-size: 20px; max-width: 36ch; margin: 0 0 30px; color: #fde9f0; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 38px 0 0; padding: 18px 0 0; border-top: 1px solid rgba(255,208,225,.4); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: #fbdfe9; }
+  .facts b { display: block; font: 700 28px/1.1 var(--display); color: #fff; margin-bottom: 4px; }
+
+  .chart { min-width: 0; }
+  .fingers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-items: end;
+    border-bottom: 3px solid rgba(255,208,225,.55); }
+  .fingers li { min-width: 0; text-align: center; }
+  .fingers li:nth-child(1) { padding-bottom: 34px; }
+  .fingers li:nth-child(2) { padding-bottom: 8px; }
+  .fingers li:nth-child(4) { padding-bottom: 12px; }
+  .fingers li:nth-child(5) { padding-bottom: 46px; }
+  .fingers svg { display: block; width: 100%; max-width: 92px; height: auto; margin: 0 auto -3px; }
+  .fingers .skin { fill: var(--skin); }
+  .fingers .cut { fill: none; stroke: var(--cuticle); stroke-width: 2; }
+  .fingers .nail { fill: var(--polish); transition: fill .35s ease; }
+  .fingers .shine { fill: #fff; opacity: .38; }
+  .shapes { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .shapes li { min-width: 0; text-align: center; font-size: 14px; line-height: 1.3; color: #fde9f0; font-weight: 500; }
+  .rack { margin: 26px 0 0; display: flex; gap: 8px 14px; flex-wrap: wrap; align-items: start; }
+  .rack-label { flex-basis: 100%; margin: 0; font-size: 15px; color: var(--blush); }
+  .bottle { width: 64px; display: grid; justify-items: center; gap: 6px; border: 0; background: none; padding: 4px 0; color: #fff; font: 500 13px/1.25 var(--body); cursor: pointer; }
+  .bottle i { display: block; width: 30px; height: 44px; border-radius: 8px; background: var(--c); position: relative; box-shadow: inset -6px 0 0 rgba(255,255,255,.18), 0 0 0 2px rgba(255,255,255,.35); margin-top: 16px; }
+  .bottle i::before { content: ""; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); width: 14px; height: 16px; border-radius: 3px 3px 0 0; background: #2a1820; }
+  .bottle[aria-pressed="true"] i { box-shadow: inset -6px 0 0 rgba(255,255,255,.18), 0 0 0 3px #fff, 0 0 0 6px var(--lacquer-deep); }
+  .bottle[aria-pressed="true"] span { text-decoration: underline; text-underline-offset: 4px; }
+  .now-colour { margin: 10px 0 0; font-size: 15px; color: #fde9f0; }
+
+  /* ---------- The week: a polish bottle per day ---------- */
+  .week { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+  .day { min-width: 0; display: grid; gap: 6px; }
+  .day h3 { font: 700 16px/1.2 var(--body); text-align: center; color: #fff; background: var(--ink); border-radius: 10px 10px 4px 4px; padding: 10px 4px; margin-inline: 14%; }
+  .day h3 small { display: block; font-weight: 400; font-size: 12.5px; color: #e3d3da; }
+  .day-body { display: grid; gap: 6px; padding: 8px; background: var(--card); border: 2px solid var(--lacquer); border-radius: 18px; }
+  .slot { min-height: 50px; min-width: 0; border: 0; background: #fbe6ee; border-radius: 12px; font: 700 15px/1.2 var(--body); color: var(--lacquer-deep); cursor: pointer; padding: 6px 2px; transition: background .15s, color .15s; }
+  .slot:hover { background: var(--lacquer); color: #fff; }
+  .shut { min-height: 50px; border-radius: 12px; background: repeating-linear-gradient(135deg, #f1e7ec 0 6px, #fbf7f9 6px 12px); display: grid; place-items: center; font-size: 13px; color: var(--ink-soft); }
+  .week-key { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--ink-soft); }
+  .week-key b { color: var(--ink); }
+
+  /* ---------- Treatments: a strip of colour per group ---------- */
+  .menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 40px; }
+  .group { min-width: 0; display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 0 18px; }
+  .group::before { content: ""; border-radius: 7px; background: var(--c); box-shadow: inset -4px 0 0 rgba(255,255,255,.25); }
+  .group-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 4px; flex-wrap: wrap; }
+  .group h3 { font-size: 27px; }
+  .ask { border: 0; background: none; padding: 6px 0; font: 700 15px var(--body); color: var(--lacquer); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .row b { font-weight: 500; font-size: 17px; }
+  .row .p { font-weight: 700; color: var(--lacquer); white-space: nowrap; }
+  .row small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 15px; }
+  .fine { margin: 26px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Under the lamp: one build, minute by minute ---------- */
+  .lamp { background: var(--lamp-wash); }
+  .build { display: grid; grid-template-columns: 15fr 35fr 20fr 20fr; gap: 4px; margin: 0; padding: 0; list-style: none; }
+  .build li { min-width: 0; border-top: 10px solid var(--lamp); padding: 12px 10px 0 0; font-size: 15.5px; line-height: 1.4; }
+  .build li:nth-child(2) { border-color: #7a63d6; }
+  .build li:nth-child(3) { border-color: #9b89e3; }
+  .build li:nth-child(4) { border-color: var(--lacquer); }
+  .build b { display: block; font: 700 22px/1.2 var(--display); color: var(--lamp); margin-bottom: 4px; }
+  .build b .mono { font-size: .92em; }
+  .build li:nth-child(4) b { color: var(--lacquer); }
+  .lamp-note { margin: 34px 0 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 48px; }
+  .lamp-note p { margin: 0; font-size: 19px; }
+  .lamp-note p + p { color: var(--ink-soft); font-size: 17px; }
+  .sec { font: 500 15px var(--body); color: var(--lamp); background: var(--card); border-radius: 999px; padding: 2px 10px; white-space: nowrap; }
+
+  /* ---------- The studio ---------- */
+  .studio-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+  .frame { background: var(--card); padding: 10px; border-radius: 22px; border: 1px solid var(--line); min-width: 0; }
+  .frame .ps { aspect-ratio: 16 / 10; border-radius: 14px; }
+  .studio-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 28px; margin: 0; }
+  .studio-facts div { min-width: 0; border-top: 3px solid var(--lacquer); padding-top: 12px; }
+  .studio-facts dt { font: 700 clamp(28px, 3vw, 38px)/1.1 var(--display); color: var(--lacquer); margin-bottom: 4px; }
+  .studio-facts dd { margin: 0; font-size: 16px; }
+  .insta { margin: 30px 0 0; font-size: 18px; max-width: 46ch; }
+
+  /* ---------- Owner ---------- */
+  .owner { background: var(--lacquer-deep); color: #fff; }
+  .owner .head p { color: #f1cfdc; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 26px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--blush); color: var(--lacquer-deep); font: 700 20px/1 var(--display); }
+  .owner li b { display: block; font-size: 20px; font-weight: 500; }
+  .owner li span { color: #f1cfdc; font-size: 16px; }
+  .owner .ph-cap { color: #f1cfdc; }
+
+  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--lacquer); padding-top: 18px; }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-bottom: 64px; }
+    .chart { max-width: 560px; }
+    .week { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .menu { grid-template-columns: minmax(0, 1fr); }
+    .lamp-note { grid-template-columns: minmax(0, 1fr); }
+    .studio-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 560px) {
+    section { padding-block: 64px; }
+    body { font-size: 17px; }
+    .hero h1 { font-size: clamp(40px, 11.4vw, 54px); }
+    .lead { font-size: 18px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 21px; }
+    .facts li { font-size: 13px; }
+    .hero::after { display: none; }
+    .fingers, .shapes { gap: 6px; }
+    .fingers svg { max-width: 62px; }
+    .fingers li:nth-child(1) { padding-bottom: 22px; } .fingers li:nth-child(5) { padding-bottom: 30px; }
+    .shapes li { font-size: 12.5px; }
+    .rack { gap: 6px 4px; }
+    .bottle { width: 56px; font-size: 12.5px; }
+    .week { gap: 8px; }
+    .day h3 { margin-inline: 8%; }
+    .day-body { padding: 6px; border-radius: 14px; }
+    .slot { font-size: 14px; }
+    .group h3 { font-size: 24px; }
+    .group { gap: 0 14px; grid-template-columns: 10px minmax(0, 1fr); }
+    .build { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .build li { border-top: 0; border-inline-start: 8px solid var(--lamp); padding: 2px 14px 2px 0; }
+    .build li:nth-child(2) { border-color: #7a63d6; } .build li:nth-child(3) { border-color: #9b89e3; } .build li:nth-child(4) { border-color: var(--lacquer); }
+    .lamp-note p { font-size: 17.5px; }
+    .studio-facts { gap: 18px; }
+    .studio-facts dd { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fingers .nail, .btn, .slot { transition: none; }
+  }
+  html.a11y-still .fingers .nail { transition: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=nails">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">ליה</span><small>נייל סטודיו · נס ציונה</small></div>
+      <a href="#" data-wa="היי ליה, הגעתי מהאתר ואשמח לקבוע תור">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">לק ג׳ל, בנייה בג׳ל, מילוי ופדיקור</p>
+        <h1><span data-edit="h1a">כמה עולה ג׳ל, ומתי יש תור?</span> <em data-edit="h1b">התשובה כאן, גם כשאני באמצע בנייה.</em></h1>
+        <p class="lead">בנייה לוקחת שעה וחצי, ושתי הידיים שלי תפוסות. כאן בוחרים טיפול ורואים מחיר. אני חוזרת לאשר תור בין לקוחה ללקוחה.</p>
+        <div class="ctas">
+          <button class="btn btn-blush" type="button" data-open-bot>לבקש תור</button>
+          <a class="btn btn-line" href="#" data-wa="היי ליה, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b>90 דקות</b>בנייה בג׳ל</li>
+          <li><b>3 עד 4 שבועות</b>עד המילוי</li>
+          <li><b>60 שניות</b>במנורה לכל שכבה</li>
+        </ul>
+      </div>
+      <div class="chart" role="group" aria-label="לוח צורות הציפורניים">
+        <ul class="fingers" aria-hidden="true">
+          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V52 H12 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
+          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V58 Q48 48 38 48 H22 Q12 48 12 58 Z"/><rect class="shine" x="17" y="60" width="5" height="40" rx="2.5"/></svg></li>
+          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V62 C48 34 12 34 12 62 Z"/><rect class="shine" x="17" y="58" width="5" height="42" rx="2.5"/></svg></li>
+          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 C48 46 36 26 30 20 C24 26 12 46 12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
+          <li><svg viewBox="0 0 60 200"><rect class="skin" x="6" y="62" width="48" height="160" rx="24"/><path class="cut" d="M10 104 Q10 130 30 130 Q50 130 50 104"/><path class="nail" d="M12 104 Q12 124 30 124 Q48 124 48 104 V64 L39 22 H21 L12 64 Z"/><rect class="shine" x="17" y="54" width="5" height="46" rx="2.5"/></svg></li>
+        </ul>
+        <ul class="shapes">
+          <li>מרובע</li><li>מרובע מעוגל</li><li>אובלי</li><li>שקד</li><li>בלרינה</li>
+        </ul>
+        <div class="rack" role="group" aria-label="לנסות צבע על הציפורניים">
+          <p class="rack-label">לנסות צבע:</p>
+          <button class="bottle" type="button" style="--c:#f2a9c4" data-polish="#f2a9c4" aria-pressed="true"><i></i><span>ורוד בייבי</span></button>
+          <button class="bottle" type="button" style="--c:#b3123f" data-polish="#b3123f" aria-pressed="false"><i></i><span>אדום דובדבן</span></button>
+          <button class="bottle" type="button" style="--c:#c98f7e" data-polish="#c98f7e" aria-pressed="false"><i></i><span>ניוד</span></button>
+          <button class="bottle" type="button" style="--c:#9f86dc" data-polish="#9f86dc" aria-pressed="false"><i></i><span>לילך</span></button>
+          <button class="bottle" type="button" style="--c:#1f5e52" data-polish="#1f5e52" aria-pressed="false"><i></i><span>ירוק בקבוק</span></button>
+          <button class="bottle" type="button" style="--c:#b8bfcb" data-polish="#b8bfcb" aria-pressed="false"><i></i><span>כרום</span></button>
+        </div>
+        <p class="now-colour" aria-live="polite">על הציפורניים: <b id="colour-name">ורוד בייבי</b></p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="week">
+    <div class="wrap">
+      <div class="head"><h2>מתי נוח לכם?</h2><p>שעות הסטודיו. לוחצים על זמן שנוח לכם, והוא נכנס לפנייה. התור נקבע כשאני מאשרת בוואטסאפ.</p></div>
+      <div class="week" role="group" aria-label="שעות הסטודיו לפי ימים">
+        <div class="day"><h3>א׳<small>ראשון</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="בוקר" aria-label="ראשון בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="צהריים" aria-label="ראשון בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="ראשון" data-slot-time="ערב" aria-label="ראשון בערב">ערב</button></div></div>
+        <div class="day"><h3>ב׳<small>שני</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="שני" data-slot-time="בוקר" aria-label="שני בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="שני" data-slot-time="צהריים" aria-label="שני בצהריים">צהריים</button>
+          <span class="shut">סגור</span></div></div>
+        <div class="day"><h3>ג׳<small>שלישי</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="בוקר" aria-label="שלישי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="צהריים" aria-label="שלישי בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="שלישי" data-slot-time="ערב" aria-label="שלישי בערב">ערב</button></div></div>
+        <div class="day"><h3>ד׳<small>רביעי</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="רביעי" data-slot-time="בוקר" aria-label="רביעי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="רביעי" data-slot-time="צהריים" aria-label="רביעי בצהריים">צהריים</button>
+          <span class="shut">סגור</span></div></div>
+        <div class="day"><h3>ה׳<small>חמישי</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="בוקר" aria-label="חמישי בבוקר">בוקר</button>
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="צהריים" aria-label="חמישי בצהריים">צהריים</button>
+          <button class="slot" type="button" data-day="חמישי" data-slot-time="ערב" aria-label="חמישי בערב">ערב</button></div></div>
+        <div class="day"><h3>ו׳<small>שישי</small></h3><div class="day-body">
+          <button class="slot" type="button" data-day="שישי" data-slot-time="בוקר" aria-label="שישי בבוקר">בוקר</button>
+          <span class="shut">סגור</span>
+          <span class="shut">סגור</span></div></div>
+      </div>
+      <ul class="week-key">
+        <li><b>בוקר</b> 9:00 עד 12:00</li>
+        <li><b>צהריים</b> 12:00 עד 16:00</li>
+        <li><b>ערב</b> 16:00 עד 20:00</li>
+        <li><b>שישי</b> 8:30 עד 13:00</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="menu" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>הטיפולים</h2><p>מחירים לדוגמה. הטווח לפי האורך והעיצוב, והמחיר הסופי כשרואים את הציפורניים.</p></div>
+      <div class="menu">
+        <div class="group" style="--c:#f2a9c4"><div>
+          <div class="group-h"><h3>לק ג׳ל</h3><button class="ask" type="button" data-treat="לק ג׳ל">לבקש תור ללק ג׳ל</button></div>
+          <div class="row"><b>לק ג׳ל על ציפורן טבעית</b><span class="p">120 עד 160 ₪</span><small>הכנה, לק ג׳ל וטופ · 60 דקות</small></div>
+          <div class="row"><b>לק ג׳ל עם חיזוק</b><span class="p">150 עד 180 ₪</span><small>שכבת בסיס מחזקת לציפורן חלשה · 75 דקות</small></div>
+        </div></div>
+        <div class="group" style="--c:#a3124d"><div>
+          <div class="group-h"><h3>בנייה בג׳ל</h3><button class="ask" type="button" data-treat="בנייה בג׳ל">לבקש תור לבנייה</button></div>
+          <div class="row"><b>בנייה בג׳ל</b><span class="p">220 עד 300 ₪</span><small>אורך וצורה לבחירה, כולל צבע אחד · 90 דקות</small></div>
+          <div class="row"><b>בנייה ארוכה</b><span class="p">280 עד 340 ₪</span><small>שקד, בלרינה או מרובע ארוך · שעתיים</small></div>
+        </div></div>
+        <div class="group" style="--c:#9f86dc"><div>
+          <div class="group-h"><h3>מילוי</h3><button class="ask" type="button" data-treat="מילוי">לבקש תור למילוי</button></div>
+          <div class="row"><b>מילוי</b><span class="p">160 עד 220 ₪</span><small>אחרי שלושה עד ארבעה שבועות · 75 דקות</small></div>
+          <div class="row"><b>תיקון ציפורן אחת</b><span class="p">20 עד 30 ₪</span><small>שבר או התרוממות בין מילוי למילוי · 10 דקות</small></div>
+        </div></div>
+        <div class="group" style="--c:#c98f7e"><div>
+          <div class="group-h"><h3>פדיקור</h3><button class="ask" type="button" data-treat="פדיקור">לבקש תור לפדיקור</button></div>
+          <div class="row"><b>פדיקור קלאסי</b><span class="p">130 עד 170 ₪</span><small>טיפול בכפות הרגליים ולק רגיל · 50 דקות</small></div>
+          <div class="row"><b>פדיקור עם לק ג׳ל</b><span class="p">160 עד 220 ₪</span><small>טיפול בכפות הרגליים ולק ג׳ל · 60 דקות</small></div>
+        </div></div>
+        <div class="group" style="--c:#b8bfcb"><div>
+          <div class="group-h"><h3>הסרה</h3><button class="ask" type="button" data-treat="הסרה">לבקש תור להסרה</button></div>
+          <div class="row"><b>הסרת ג׳ל או בנייה</b><span class="p">50 עד 80 ₪</span><small>הסרה עדינה, בלי תלישה · 30 דקות</small></div>
+        </div></div>
+        <div class="group" style="--c:#1f5e52"><div>
+          <div class="group-h"><h3>עיצובים</h3></div>
+          <div class="row"><b>עיצוב לציפורן</b><span class="p">5 עד 15 ₪</span><small>פרנץ׳, ציור, כרום או אבנים · לכל ציפורן</small></div>
+        </div></div>
+      </div>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="lamp" id="lamp">
+    <div class="wrap">
+      <div class="head"><h2>שעה וחצי, שתי ידיים תפוסות</h2><p>ככה נראית בנייה בג׳ל אצלי, דקה אחרי דקה.</p></div>
+      <ol class="build">
+        <li><b><span class="mono">15</span> דק׳</b>הכנה: פצירה, עור וניקוי</li>
+        <li><b><span class="mono">35</span> דק׳</b>בסיס ובנייה, שכבה אחרי שכבה</li>
+        <li><b><span class="mono">20</span> דק׳</b>צורה ופצירה</li>
+        <li><b><span class="mono">20</span> דק׳</b>צבע וטופ, <span class="sec"><span class="mono">60</span> שניות</span> במנורה לכל שכבה</li>
+      </ol>
+      <div class="lamp-note">
+        <p>בזמן הזה הטלפון בצד וההודעות מחכות. לכן יש כאן צ׳אט: הוא עונה על מחיר ושעות, אוסף את הפרטים, ואני חוזרת בין לקוחה ללקוחה.</p>
+        <p>את העבודות אני מעלה לאינסטגרם. מי שהגיעו מגוגל או מקישור של חברה שואלים כאן מחיר ומבקשים תור.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="studio">
+    <div class="wrap">
+      <div class="head"><h2>בסטודיו</h2><p>סטודיו פרטי בנס ציונה, עם חניה ליד הבניין.</p></div>
+      <div class="studio-grid">
+        <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/nails-work.webp" data-alt="שולחן מניקור: מנורת ג׳ל, מניפת דוגמאות צבע, בקבוקי לק על מדף ולוח צורות של ציפורניים" data-pos="50 50" data-icon="sparkle" data-label="תמונה מהסטודיו"></figure></div>
+        <div>
+          <dl class="studio-facts">
+            <div><dt data-edit="f1">9 שנים</dt><dd>בבניית ציפורניים</dd></div>
+            <div><dt>מעוקרים</dt><dd>כלי המתכת, אחרי כל לקוחה</dd></div>
+            <div><dt>חדשה</dt><dd>פצירה חד־פעמית לכל לקוחה</dd></div>
+            <div><dt>לקוחה אחת</dt><dd>בכל פעם, בלי המתנה</dd></div>
+          </dl>
+          <p class="insta">יש לכם תמונה של עיצוב שאהבתם? צרפו אותה בצ׳אט. ככה אני יודעת כמה זמן לשריין לכם.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לדעת לפני בנייה ואחריה. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה ליה רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוחה בוחרת טיפול ושעות</b><span>ושומעת טווח מחיר מהמחירון, בלי לחכות שתסיימו בנייה.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>איזה טיפול, באילו ימים, אם זו פעם ראשונה, ותמונה של העיצוב.</span></div></li>
+          <li><div><b>בין לקוחה ללקוחה מאשרים תור</b><span>הודעה אחת, במקום עשר שאלות על מחיר.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">נ</span><div><b>נועה לוי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לתור מהאתר (דמו)
+טיפול: בנייה בג׳ל
+מחיר: ביקשה טווח
+ימים: א׳ עד ה׳
+שעות: ערב
+ביקור: פעם ראשונה
+שם: נועה לוי
+טלפון: 052-7654321
+יש לי תמונה של העיצוב, אשלח אותה כאן.<time>13:20</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לטכנאית</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>ליה נייל סטודיו · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "nails" });
+  // The shape chart: a bottle paints the five nails.
+  (function () {
+    const chart = document.querySelector(".chart"), name = document.getElementById("colour-name");
+    chart.querySelectorAll("[data-polish]").forEach((b) => b.addEventListener("click", () => {
+      chart.style.setProperty("--polish", b.dataset.polish);
+      chart.querySelectorAll("[data-polish]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      name.textContent = b.textContent.trim();
+    }));
+  })();
+  // The sample ranges, the same as the price list above. A range, never a promised price.
+  const RANGE = {
+    "לק ג׳ל": "לק ג׳ל: 120 עד 160 ₪. עם חיזוק: 150 עד 180 ₪.",
+    "בנייה בג׳ל": "בנייה בג׳ל: 220 עד 340 ₪, לפי האורך.",
+    "מילוי": "מילוי: 160 עד 220 ₪, לפי הזמן מהבנייה.",
+    "פדיקור": "פדיקור: 130 עד 170 ₪. עם לק ג׳ל: 160 עד 220 ₪.",
+    "הסרה": "הסרת ג׳ל או בנייה: 50 עד 80 ₪.",
+  };
+  const UNSURE = "עוד לא יודעת";
+  let picked = ""; // the treatment, for the price answer
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "ליה · נייל סטודיו", subtitle: "מבקשים תור, גם כשאני באמצע בנייה", initial: "ל", launcher: "לבקש תור", hint: "נציג AI",
+    greet: "היי, כאן ליה. אני כנראה באמצע בנייה, עם שתי ידיים בג׳ל.\nכמה שאלות קצרות, והפרטים מגיעים אליי לוואטסאפ.",
+    steps: [
+      { key: "treatment", label: "טיפול", ask: "איזה טיפול מעניין אתכם?", chips: ["לק ג׳ל", "בנייה בג׳ל", "מילוי", "פדיקור", "הסרה", UNSURE] },
+      { key: "price", label: "מחיר", ask: "רוצים לשמוע טווח מחיר?", chips: ["כן, כמה זה עולה?", "לא, רק תור"],
+        show: (d) => { picked = d.treatment; return d.treatment !== UNSURE; },
+        tip: { when: (v) => v.startsWith("כן"), get text() { return (RANGE[picked] || "") + "\nזה טווח מהמחירון. המחיר הסופי לפי האורך והעיצוב."; } } },
+      { key: "photo", label: "תמונה", ask: (d) => (d.treatment === UNSURE ? "אין בעיה, נחליט יחד. " : "") + "יש תמונה של עיצוב שאהבתם? ככה אדע כמה זמן לשריין.", photo: true,
+        show: (d) => d.treatment !== "הסרה" },
+      { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "first", label: "ביקור", ask: "הייתם אצלי בעבר?", chips: ["פעם ראשונה", "כבר הייתי אצלך"],
+        tip: { when: (v) => v === "פעם ראשונה", text: "בפעם הראשונה ספרו לי על אלרגיה לג׳ל, על פטרייה או על טיפול תרופתי.", id: "first-visit", link: "מה כדאי לדעת לפני" } },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה. התור נקבע כשאני חוזרת ומאשרת יום ושעה.`,
+    summary: (d) => `פנייה לתור מהאתר (דמו)\nטיפול: ${d.treatment}${d.price ? "\nמחיר: " + (d.price.startsWith("כן") ? "ביקשו טווח" : "לא שאלו") : ""}\nימים: ${d.days}\nשעות: ${d.slot}\nביקור: ${d.first}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-treat]").forEach((b) => b.addEventListener("click", () => bot.open({ treatment: b.dataset.treat })));
+  document.querySelectorAll("[data-day]").forEach((b) => b.addEventListener("click", () => bot.open({ days: "יום " + b.dataset.day, slot: b.dataset.slotTime })));
+  Guides.load("../shared/guides/nails.json", document.querySelector("[data-guides]"), { onAsk: (it) => bot.open(it.id === "lifting" ? { treatment: "מילוי" } : undefined) });
+</script>
+</body>
+</html>

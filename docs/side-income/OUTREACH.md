@@ -60,6 +60,10 @@
 | צלם אירועים | https://service-pro-web.netlify.app/photographer/?utm_source=whatsapp |
 | ספרות | https://service-pro-web.netlify.app/barber/?utm_source=whatsapp |
 | עיסוי ומסאז׳ | https://service-pro-web.netlify.app/massage/?utm_source=whatsapp |
+| בניית ציפורניים | https://service-pro-web.netlify.app/nails/?utm_source=whatsapp |
+| מורה לנהיגה | https://service-pro-web.netlify.app/driving/?utm_source=whatsapp |
+| ניקוי ספות ושטיחים | https://service-pro-web.netlify.app/upholstery/?utm_source=whatsapp |
+| תריסים | https://service-pro-web.netlify.app/shutters/?utm_source=whatsapp |
 | הדברה | https://service-pro-web.netlify.app/pest/?utm_source=whatsapp |
 | טכנאי מכשירי חשמל | https://service-pro-web.netlify.app/appliance/?utm_source=whatsapp |
 | הנדימן | https://service-pro-web.netlify.app/handyman/?utm_source=whatsapp |

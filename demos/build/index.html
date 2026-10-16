@@ -210,6 +210,8 @@
     .items { grid-template-columns: minmax(0, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.terms-ok { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; font-size: .95rem; }
+.terms-ok input { inline-size: 20px; block-size: 20px; margin: 0; }
 </style>
 </head>
 <body>
@@ -232,10 +234,10 @@
     <label for="fTrade">מה התחום שלכם?</label>
     <select id="fTrade">
       <option value="plumber">אינסטלטור</option><option value="electrician">חשמלאי</option><option value="ac">טכנאי מזגנים</option>
-      <option value="locksmith">מנעולן</option><option value="towing">גרר ושירותי דרך</option><option value="appliance">טכנאי מכשירי חשמל</option><option value="pest">מדביר</option>
-      <option value="handyman">הנדימן</option><option value="renovation">שיפוצים</option><option value="cleaning">ניקיון</option>
-      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="cosmetics">קוסמטיקה ויופי</option><option value="barber">ספרות</option><option value="massage">עיסוי ומסאז׳</option><option value="photographer">צלם אירועים</option><option value="trainer">מאמן כושר</option>
-      <option value="tutor">מורה פרטי</option><option value="music">מורה למוזיקה</option><option value="psychologist">פסיכולוג/ית</option>
+      <option value="locksmith">מנעולן</option><option value="towing">גרר ושירותי דרך</option><option value="shutters">תריסים</option><option value="appliance">טכנאי מכשירי חשמל</option><option value="pest">מדביר</option>
+      <option value="handyman">הנדימן</option><option value="renovation">שיפוצים</option><option value="cleaning">ניקיון</option><option value="upholstery">ניקוי ספות ושטיחים</option>
+      <option value="garden">גינון</option><option value="movers">הובלות</option><option value="cosmetics">קוסמטיקה ויופי</option><option value="nails">בניית ציפורניים</option><option value="barber">ספרות</option><option value="massage">עיסוי ומסאז׳</option><option value="photographer">צלם אירועים</option><option value="trainer">מאמן כושר</option>
+      <option value="driving">מורה לנהיגה</option><option value="tutor">מורה פרטי</option><option value="music">מורה למוזיקה</option><option value="psychologist">פסיכולוג/ית</option>
       <option value="social-worker">עובד/ת סוציאלי/ת</option>
     </select>
     <label for="fName">איך קוראים לכם?</label>
@@ -392,6 +394,7 @@
     bad_domain: 'הדומיין לא נראה תקין. כתבו אותו כך: example.co.il',
     domain_taken: 'הדומיין הזה כבר מחובר לאתר אחר אצלנו. אם הוא שלכם, כתבו לנו.',
     no_address: 'קודם בוחרים כתובת לאתר.',
+    terms: 'כדי לשלם צריך לאשר את תנאי השימוש והביטולים.',
     pay_failed: 'לא הצלחנו לפתוח את דף התשלום. נסו שוב בעוד רגע, או כתבו לנו.',
     no_subscription: 'אין כאן מנוי פעיל.',
     no_changes: 'אין שינויים לפרסם.',
@@ -554,14 +557,21 @@
       const pr = billing.prices;
       if (pr) {
         const pk = document.createElement('div'); pk.className = 'pkgs';
-        pk.append(cycleOpt('month', 'חודשי', nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש. לפני מע״מ.', true),
-          cycleOpt('year', 'שנה מראש', nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10. לפני מע״מ.', false));
+        pk.append(cycleOpt('month', 'חודשי', nis(pr.setup) + ' הקמה, ואחר כך ' + nis(pr.month) + ' בחודש. לפני מע״מ.', true));
+        if (billing.annual) pk.append(cycleOpt('year', 'שנה מראש', nis(pr.setup + pr.year) + ': ההקמה ו-12 חודשים במחיר 10. לפני מע״מ.', false));
         box.append(pk);
         const total = p(''); total.className = 'total';
         const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = 'לתשלום היום, כולל מע״מ: ' + nis(pr.today[c ? c.value : 'month']); };
         pk.addEventListener('change', showTotal); showTotal();
       }
-      const go = btn('לתשלום מאובטח', pay); go.disabled = !a; box.append(go);
+      // The terms first (demos/terms/): paying means accepting them, and the server records when.
+      const terms = document.createElement('label'); terms.className = 'terms-ok';
+      const tick = document.createElement('input'); tick.type = 'checkbox'; tick.id = 'termsOk';
+      const tl = document.createElement('a'); tl.href = '../terms/'; tl.target = '_blank'; tl.rel = 'noopener'; tl.textContent = 'תנאי השימוש והביטולים';
+      terms.append(tick, document.createTextNode(' מאשרים את '), tl);
+      box.append(terms);
+      const go = btn('לתשלום מאובטח', pay); go.disabled = !a || !tick.checked; box.append(go);
+      tick.addEventListener('change', () => { go.disabled = !a || !tick.checked; });
       p('התשלום בכרטיס אשראי בדף המאובטח של Grow. החשבונית נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
@@ -726,7 +736,7 @@
   async function pay(b) {
     const c = document.querySelector('input[name=cycle]:checked');
     b.disabled = true; const label = b.textContent; b.textContent = 'פותחים את דף התשלום…';
-    const r = await call('pay', { body: { cycle: c ? c.value : 'month' } });
+    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: !!($('#termsOk') || {}).checked } });
     if (r.ok && /^https:\/\//.test(r.data.url)) { location.href = r.data.url; return; }
     b.disabled = false; b.textContent = label;
     const f = bubble('fail', say(r.data.error)); f.append(' ', waLink('לוואטסאפ', 'היי, נתקעתי בתשלום על האתר שלי.'));

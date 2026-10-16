@@ -6,7 +6,7 @@ import { createHash } from "node:crypto";
 import { SAMPLE } from "./builder-sample.mjs";
 import { T, ai, gh, DEF, nl, sentWa } from "./builder-fakes.mjs";
 
-Object.assign(process.env, { GROW_USER_ID: "u-test", GROW_PAGE_CODE: "pc-test", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "sites.example.co.il" });
+Object.assign(process.env, { GROW_USER_ID: "u-test", GROW_PAGE_CODE: "pc-test", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "sites.example.co.il", BILLING_YEAR: "1" }); // the year ahead is off on the site; on here to test it
 
 /* ---------------- a fake Grow ---------------- */
 const grow = { calls: [], processes: new Map(), refuse: false, n: 0 };
@@ -81,10 +81,14 @@ const other = draft();
 r = await J(await req(other, "address", { body: { slug: "oren-mayim", rev: other.rev } })); assert.equal(r.error, "slug_taken");
 
 /* ---------------- checkout ---------------- */
-r = await J(await req(other, "pay", { body: { cycle: "month" } })); assert.equal(r.error, "no_address", "an address first");
-r = await J(await req(D, "pay", { body: { cycle: "weekly" } })); assert.equal(r.error, "bad_cycle");
-r = await J(await req(D, "pay", { body: { cycle: "year" } }));
-assert.equal(r.status, 200, JSON.stringify(r)); assert.match(r.url, /^https:\/\/sandbox\.meshulam\.co\.il\/pay\//);
+r = await J(await req(D, "pay", { body: { cycle: "month" } })); assert.equal(r.error, "terms", "the terms are accepted before paying"); assert.ok(!D.terms_at);
+r = await J(await req(other, "pay", { body: { cycle: "month", terms: true } })); assert.equal(r.error, "no_address", "an address first");
+r = await J(await req(D, "pay", { body: { cycle: "weekly", terms: true } })); assert.equal(r.error, "bad_cycle");
+delete process.env.BILLING_YEAR;
+r = await J(await req(D, "pay", { body: { cycle: "year", terms: true } })); assert.equal(r.error, "bad_cycle", "monthly only by default");
+process.env.BILLING_YEAR = "1";
+r = await J(await req(D, "pay", { body: { cycle: "year", terms: true } }));
+assert.equal(r.status, 200, JSON.stringify(r)); assert.match(r.url, /^https:\/\/sandbox\.meshulam\.co\.il\/pay\//); assert.ok(D.terms_at, "when the terms were accepted");
 let [name, f] = grow.calls.at(-1);
 assert.equal(name, "createPaymentProcess");
 assert.equal(f.sum, "6844.00", "the setup and 10 months for the year, with VAT"); assert.equal(f.saveCardToken, "1"); assert.equal(f.paymentNum, "1");
@@ -190,7 +194,7 @@ assert.equal(T.ls_clients.find((c) => c.slug === "oren-mayim").active, false, "t
 r = await J(await req(D, "state", { method: "GET" })); assert.equal(r.billing.sub.state, "suspended");
 // the owner updates the card: the amount due, then everything is back
 grow.refuse = false;
-r = await J(await req(D, "pay", { body: {} })); assert.equal(r.status, 200, JSON.stringify(r));
+r = await J(await req(D, "pay", { body: { terms: true } })); assert.equal(r.status, 200, JSON.stringify(r));
 [name, f] = grow.calls.at(-1); assert.equal(f.sum, "390.00"); assert.equal(f.saveCardToken, "1");
 pay = T.ls_payments.at(-1); assert.equal(pay.kind, "card");
 grow.processes.get(pay.process_id).paid = true;
@@ -218,7 +222,7 @@ r = await J(await req(D, "cancel", { body: {} })); assert.equal(r.error, "no_sub
 /* ---------------- a failed publish is tried again ---------------- */
 const E = draft();
 await J(await req(E, "address", { body: { slug: "second-site", rev: E.rev } }));
-r = await J(await req(E, "pay", { body: { cycle: "month" } }));
+r = await J(await req(E, "pay", { body: { cycle: "month", terms: true } }));
 pay = T.ls_payments.at(-1); assert.equal(pay.sum, 2242, "monthly: the setup today, with VAT");
 grow.processes.get(pay.process_id).paid = true;
 const token = process.env.GITHUB_TOKEN; delete process.env.GITHUB_TOKEN; // the repo is down

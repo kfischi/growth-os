@@ -12,7 +12,7 @@ import { T, ai, DEF } from "./builder-fakes.mjs";
 import { SAMPLE } from "./builder-sample.mjs";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
-Object.assign(process.env, { GROW_USER_ID: "u-test", GROW_PAGE_CODE: "pc-test", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "sites.example.co.il" });
+Object.assign(process.env, { GROW_USER_ID: "u-test", GROW_PAGE_CODE: "pc-test", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "sites.example.co.il", BILLING_YEAR: "1" }); // the year ahead is off on the site; on here to test its page
 
 const grow = { processes: new Map(), n: 0 };
 const fakeFetch = globalThis.fetch;
@@ -86,6 +86,8 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.waitForFunction(() => !document.querySelector("#addrDlg").open);
     assert.equal(D.slug_wish, slug); assert.equal(D.domain_wish, "oren-mayim" + n + ".co.il");
     assert.match(await p.textContent("#approveBox"), new RegExp("הכתובת: " + slug + "\\.sites"));
+    assert.equal(await p.isDisabled("text=לתשלום מאובטח"), true, "the terms first");
+    await p.check("#termsOk");
     assert.equal(await p.isEnabled("text=לתשלום מאובטח"), true);
     if (SHOTS) await p.screenshot({ path: `${SHOTS}/pay-${w}.png` });
   });
