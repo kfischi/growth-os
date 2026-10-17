@@ -304,6 +304,8 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   clips = (Array.isArray(clips) ? clips : []).filter((x) => x && x.src && x.poster).slice(0, VIDEOS.max);
   const L = lookOf(c);
   const inVis = Boolean(L.look.photoInVisual && heroImg); // a look that frames the top photo itself (luxe) instead of a background
+  // That frame is never left empty on a real site: without a top photo it shows the first work photo, or the owner's.
+  const frameImg = heroImg || (L.look.photoInVisual ? WORKS.map((x) => photos[x]).find(Boolean) || photos.portrait || "" : "");
   const T = tradeFor(c), W = T.words;
   if (!draft) {
     const m = missing(c);
@@ -468,7 +470,7 @@ ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר �
       </div>${leads ? `
       <p class="avail-line"><span class="live mono" data-avail hidden><i></i></span></p>` : ""}
     </div>
-    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg && !inVis ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id, heroImg, sample: Boolean(sampleHero), svc: listed })}
+    ${heroVideo ? reel(heroVideo, String(c.video_title || "").trim()) : heroImg && !inVis ? "<div></div>" : L.look.visual({ h, v, has, c, callLocal, prettyPhone, draft, yearsHe, words: W, tradeId: T.id, heroImg: frameImg, sample: Boolean(sampleHero), svc: listed })}
   </div>
 </header>
 ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(T.crisis)}</p>\n` : ""}

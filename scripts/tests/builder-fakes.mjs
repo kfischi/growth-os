@@ -77,7 +77,7 @@ globalThis.fetch = async (url, opt = {}) => {
       nl.have.add(h); nl.uploads.push(path); nl.bodies.set(path, Buffer.from(opt.body).toString("utf8")); return res({});
     }
     if (method === "GET" && p === "/dns_zones") return res(nl.zones);
-    if ((m = /^\/dns_zones\/(\w+)\/dns_records$/.exec(p))) {
+    if ((m = /^\/dns_zones\/([\w-]+)\/dns_records$/.exec(p))) {
       if (method === "GET") return res(nl.records.filter((r) => r.zone === m[1]));
       if (method === "POST") { nl.records.push({ zone: m[1], ...body }); return res(body, 201); }
     }
