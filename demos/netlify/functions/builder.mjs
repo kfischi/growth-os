@@ -89,6 +89,9 @@ export default async (req, context) => {
 
       const key = newKey();
       const content = { ...TEMPLATES[template].emptyContent(), owner_name: name, whatsapp: phone.local };
+      // "תחום אחר": the owner names their trade and picked the closest demo (template) for the design.
+      const own = clip(body.own_trade, 24).replace(/[<>]/g, "");
+      if (own.length >= 2) Object.assign(content, { trade: own, custom_trade: true, headline_1: "" });
       const [d] = await db("POST", "ls_drafts", {
         key_hash: sha256(key), template, content, owner_name: name, owner_phone: phone.intl, ip_hash: sha256("ip:" + ip),
       }, "return=representation");

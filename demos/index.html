@@ -346,6 +346,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .bar.open .menu-btn i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 .nav-film::before { content: ""; display: inline-block; margin-inline-end: 6px; border-block: 5px solid transparent; border-left: 8px solid var(--fuchsia); vertical-align: 1px; }
 .pick-more { margin-top: 6px; font-size: .95rem; color: var(--ink-2); }
+.pick-other { margin-top: 14px; padding: 12px 16px; border-radius: 14px; background: var(--lilac); color: var(--ink); }
+.pick-other a { font-weight: 700; color: var(--violet); white-space: nowrap; }
 .end .btn.ghost-end { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .7); }
 .end .btn.ghost-end:hover { background: rgb(255 255 255 / .1); }
 .dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 60%, transparent); }
@@ -705,6 +707,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <div class="cats" id="cats" role="group" aria-label="סוג העסק"><button type="button" data-cat="urgent" aria-pressed="true">תקלות דחופות</button><button type="button" data-cat="home" aria-pressed="false">בית וחצר</button><button type="button" data-cat="care" aria-pressed="false">תורים וטיפולים</button><button type="button" data-cat="learn" aria-pressed="false">שיעורים ואירועים</button></div>
         <ul class="chips" id="chips" aria-label="תחומים"></ul>
         <p class="pick-note">העסקים בדוגמאות הם עסקים בדויים.</p>
+        <p class="pick-other"><b>לא מצאתם את התחום שלכם?</b> בוחרים את הדמו הכי קרוב, ומשנים בבונה לפי העסק שלכם. <a href="build/?t=other">לבנות לתחום אחר</a></p>
         <p class="pick-more"><a href="all/">כל הדוגמאות, עם הסבר</a> · <a href="leads-demo/">מערכת הלידים מבפנים</a> · <a href="ai-agent/">הנציג החכם בפעולה</a></p>
       </div>
       <div class="stage" id="stage">

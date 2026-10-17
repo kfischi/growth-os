@@ -396,7 +396,7 @@ export function publicState(d) {
     pay: d.status === "client_approved" && d.package && !d.paid_at && !process.env.GROW_PAGE_CODE ? payLinks(d.package) : [],
     edit: editing(d) ? editState(d) : null,
     // The questionnaire (answers to pick from) while the site is being built, not while editing a live one.
-    guide: !editing(d) && t.GUIDE ? t.GUIDE : null,
+    guide: !editing(d) && t.GUIDE ? (d.content && d.content.custom_trade ? ownTradeGuide(t.GUIDE) : t.GUIDE) : null,
     // The looks and palettes to pick from, and the current pick.
     looks: t.catalog ? t.catalog((d.content && d.content.trade_id) || t.id) : null,
     style: t.lookOf ? { look: t.lookOf(d.content).id, palette: t.lookOf(d.content).pid } : null,
@@ -470,7 +470,7 @@ const EDIT_ORDER = `The site is already live. The owner came back to change it.
 
 function systemPrompt(t, mode) {
   return `You are the site builder of Easy Landing ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
-You talk with the owner of a ${t.label} business. Together you fill in the content of their one-page site. The page next to the chat shows the draft and updates after every answer. You never write HTML: you only set the fields below.
+You talk with the owner of a ${t.label} business (or, when the draft state has own_trade, of that business, on the ${t.label} design: then every service, headline and intro is for own_trade, never for ${t.label}). Together you fill in the content of their one-page site. The page next to the chat shows the draft and updates after every answer. You never write HTML: you only set the fields below.
 
 Speak as the studio: "אנחנו", never a person's name, even if asked who is behind it.
 
@@ -519,12 +519,22 @@ function outputSchema(t) {
   };
 }
 
+// "תחום אחר": the questionnaire without the demo trade's own services, prices, headlines and intros (they belong to
+// another trade); the chat asks for those instead.
+const OWN_TRADE_SKIP = new Set(["services", "prices", "headline", "intro"]);
+function ownTradeGuide(g) {
+  return { ...g, services: [], steps: g.steps.filter((s) => !OWN_TRADE_SKIP.has(s.id)) };
+}
+
 function stateFor(d) {
   const t = templateOf(d);
   const fields = Object.fromEntries(Object.keys(t.FIELDS).map((k) => [k, d.content[k] || ""]));
   return JSON.stringify({
     fields, services: d.content.services || [], towns: d.content.towns || [], regions: d.content.regions || [], social: d.content.social || {},
     photos: Object.keys(d.photos || {}), video: Boolean(d.video), top_of_site: heroOf(t, d) || "drawing", videos: clipList(d).length, missing_required: t.missing(d.content),
+    // "תחום אחר": the owner's own trade, on the design of the closest demo. Services, headlines and the intro are for
+    // this trade, never the demo's.
+    ...(d.content.custom_trade ? { own_trade: d.content.trade || "", design_from_demo: t.label } : {}),
   });
 }
 

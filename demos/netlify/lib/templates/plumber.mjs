@@ -107,9 +107,37 @@ export function fieldsFor(tradeId) {
 export function guidesOf(T, services = []) {
   const names = services.map((x) => String((x && x.name) || "")).join(" ");
   const picked = T.guides.filter((g) => typeof g === "string" || !g.when || new RegExp(g.when).test(names));
-  const files = (picked.length ? picked : [T.guides[0]]).map((g) => GUIDE_FILES[typeof g === "string" ? g : g.file]).filter(Boolean);
+  const files = (picked.length ? picked : T.guides.slice(0, 1)).map((g) => GUIDE_FILES[typeof g === "string" ? g : g.file]).filter(Boolean);
   const seen = new Set();
   return { items: files.flatMap((f) => f.items).filter((it) => !seen.has(it.id) && seen.add(it.id)) };
+}
+
+// A business whose trade has no demo of its own ("תחום אחר" in the builder): the owner picks the closest demo for the
+// design and the sample picture, and names their own trade (content.trade, content.custom_trade). The site then speaks
+// plainly: its own steps, a neutral chat, no trade guides (they would be another trade's know-how), schema LocalBusiness.
+const CUSTOM = {
+  guides: [], schema: "LocalBusiness", urgent: false, guide: null,
+  steps: [
+    ["שלב 1 · דקה", "כותבים מה צריך", "כמה שאלות קצרות בצ׳אט. אפשר לצרף תמונה."],
+    ["שלב 2 · מיד", "הפרטים אצלנו", "הפנייה מגיעה אלינו לוואטסאפ, עם כל מה שכתבתם."],
+    ["שלב 3", "חוזרים אליכם", "מסכמים מה צריך, מתי ובכמה."],
+  ],
+  chat: {
+    issue: { label: "מה צריך", ask: "במה אפשר לעזור?" },
+    photo: "יש תמונה שתעזור לנו להבין? אפשר גם לדלג.",
+    extra: [{ key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["היום", "השבוע", "גמיש"] }],
+    urgency: null,
+    priceNote: "המחיר הסופי נקבע אחרי שמבינים מה צריך.",
+  },
+  privacyWhat: "שם, טלפון, מה ביקשתם, מתי נוח לכם, ותמונה אם בחרתם לצרף",
+};
+const CUSTOM_WORDS = { jobs: "השירותים שלנו", col: "שירות", time: "משך", open: "לשלוח פנייה", how: "מה קורה כששולחים פנייה",
+  subtitle: "נחזור אליכם בהקדם", waHello: "היי, הגעתי מהאתר. אפשר לחזור אליי?", lead: "פנייה" };
+export function tradeFor(c) {
+  const T = tradeOf(c && c.trade_id);
+  if (!(c && c.custom_trade)) return T;
+  const trade = String(c.trade || "").trim() || T.trade;
+  return { ...T, ...CUSTOM, chat: { ...T.chat, ...CUSTOM.chat }, words: { ...T.words, ...CUSTOM_WORDS }, trade, label: trade, custom: true };
 }
 
 export function emptyContent(tradeId = "plumber") {
@@ -270,14 +298,14 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   clips = (Array.isArray(clips) ? clips : []).filter((x) => x && x.src && x.poster).slice(0, VIDEOS.max);
   const L = lookOf(c);
   const inVis = Boolean(L.look.photoInVisual && heroImg); // a look that frames the top photo itself (luxe) instead of a background
-  const T = tradeOf(c.trade_id), W = T.words;
+  const T = tradeFor(c), W = T.words;
   if (!draft) {
     const m = missing(c);
     if (m.length) throw new Error("missing: " + m.join(", "));
   }
   // An empty field: in a draft, the trade's own suggestion (the questionnaire's first headline and intro, marked as a
   // sample) or a soft box with what goes there; on a site, nothing. Publishing still needs the owner's own words.
-  const EG = draft ? sampleContent(T) : {};
+  const EG = draft && !T.custom ? sampleContent(T) : {};
   const v = (k) => {
     const val = String(c[k] || "").trim();
     if (val) return h(val);
@@ -492,7 +520,7 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
   </div>
 </section>
 ` : ""}
-<section class="guides-sec" id="guides">
+${GUIDES.items.length ? `<section class="guides-sec" id="guides">
   <div class="wrap">
     <div class="head"><h2>${urgentGuides.length ? "מה עושים עד שמגיעים" : "טיפים ושאלות נפוצות"}</h2>${urgentGuides.length ? '<span class="mono">ועוד טיפים ושאלות שחוזרות</span>' : ""}</div>
     <div class="gd">
@@ -500,7 +528,7 @@ ${leads ? `<section class="tst-sec" id="testimonials" data-testimonials hidden>
     </div>
     <p class="gd-more"><a href="${draft ? "#" : "guides.html"}">לכל הטיפים והשאלות (${GUIDES.items.length})</a></p>
   </div>
-</section>
+</section>` : ""}
 
 <section class="area">
   <div class="wrap row">
@@ -740,9 +768,9 @@ ${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${ot
   const today = now.toISOString().slice(0, 10);
   const seo = site ? {
     "robots.txt": `User-agent: *\nAllow: /\n\nSitemap: ${site}sitemap.xml\n`,
-    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", ...Object.keys(svcPages), ...Object.keys(areaPages), "guides.html"].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
+    "sitemap.xml": `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${["", ...Object.keys(svcPages), ...Object.keys(areaPages), ...(GUIDES.items.length ? ["guides.html"] : [])].map((f) => `  <url><loc>${h(site + f)}</loc><lastmod>${today}</lastmod></url>`).join("\n")}\n</urlset>\n`,
   } : {};
-  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { "guides.html": guidesPage, "contact.vcf": vcard(c), ...svcPages, ...areaPages, ...seo }) };
+  return { "index.html": index, "privacy.html": privacy, "accessibility.html": accessibility, ...(draft ? {} : { ...(GUIDES.items.length ? { "guides.html": guidesPage } : {}), "contact.vcf": vcard(c), ...svcPages, ...areaPages, ...seo }) };
 }
 
 export const HEADERS = `# Netlify headers for this site. Applied however the site is deployed (Git or CLI).
