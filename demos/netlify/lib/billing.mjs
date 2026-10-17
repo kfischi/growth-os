@@ -261,6 +261,8 @@ export async function billingView(d) {
     prices: d.package ? { setup: PRICES[d.package].setup, month: PRICES[d.package].month, year: netPeriod(d.package, "year"), vat: vatRate(), today: { month: checkoutSum(d.package, "month"), year: checkoutSum(d.package, "year") } } : null,
     sub: b ? { state: b.state, cycle: b.cycle, amount: b.amount, next: b.next_charge_at, end: b.end_at || null, card: b.card_suffix || null } : null,
     invoices: payments.filter((p) => p.invoice_url).map((p) => ({ url: p.invoice_url, number: p.invoice_number, sum: Number(p.sum), date: p.paid_at })),
+    // The terms were accepted (the tick, recorded by /api/builder/pay), in both modes.
+    terms: Boolean(d.terms_at),
     publishing: d.status === "paid" ? (d.publish_error && (d.publish_tries || 0) >= 3 ? "stuck" : "working") : null,
     // The owner's own domain after publishing: the two records for their registrar while it waits.
     domain: d.domain ? { name: d.domain, state: d.domain_state || "none", dns: d.domain_state === "waiting" && d.site_netlify ? dnsSteps(d.domain, { netlifyHost: d.site_netlify }) : null } : null,
@@ -383,6 +385,7 @@ export async function runPending(now = new Date()) {
       else if (!r.paid && new Date(p.created_at) < new Date(since)) { await db("PATCH", `ls_payments?id=eq.${q(p.id)}&status=eq.pending`, { status: "expired" }); out.expired++; }
     } catch (e) { console.error("pending payment", p.id, e.message); }
   }
+  const tried = new Set();
   // A setup Grow paid whose draft never turned paid (the save clashed, or the run was cut off right after the payment).
   for (const p of await db("GET", `ls_payments?kind=eq.setup&status=eq.paid&error=is.null&paid_at=gte.${q(iso(now.getTime() - 2 * DAY))}&paid_at=lte.${q(iso(now.getTime() - 5 * 60 * 1000))}&select=*&limit=50`)) {
     try {
@@ -391,13 +394,13 @@ export async function runPending(now = new Date()) {
       let token = {};
       if (p.process_id) { const info = await processInfo(p.process_id, p.process_token).catch(() => null); if (info && info.cardToken) token = { card_token: info.cardToken, card_suffix: info.cardSuffix || null }; }
       const r = await finishSetup(p, d, token);
-      if (r.draft) { out.settled++; if ((await autoPublish(r.draft)).state === "live") out.published++; }
+      if (r.draft) { out.settled++; tried.add(d.id); if ((await autoPublish(r.draft)).state === "live") out.published++; }
     } catch (e) { console.error("paid setup", p.id, e.message); }
   }
   // Paid more than 5 minutes ago and still not live: the publish right after the payment failed or never ran
   // (also a payment כפיר marked by hand, for a bank transfer).
   for (const d of await db("GET", `ls_drafts?status=eq.paid&paid_at=lte.${q(iso(now.getTime() - 5 * 60 * 1000))}&select=*&limit=20`)) {
-    if (!d.slug_wish || (d.publish_tries || 0) >= 3) continue;
+    if (!d.slug_wish || (d.publish_tries || 0) >= 3 || tried.has(d.id)) continue;
     const r = await autoPublish(d);
     if (r.state === "live") out.published++;
   }
