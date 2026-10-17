@@ -140,7 +140,7 @@
   .owner li span { color: #e2c9d3; font-size: 16px; }
   .owner .ph-cap { color: #e2c9d3; }
 
-  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
   footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--mulberry); padding-top: 18px; }
 
   @media (max-width: 960px) {
@@ -238,7 +238,7 @@
         <h1><span data-edit="h1a">הידיים שלי בטיפול.</span> <em data-edit="h1b">הצ׳אט עונה לכם בינתיים.</em></h1>
         <p class="lead">בזמן טיפול אני לא עונה לטלפון. כאן בוחרים טיפול, שומעים טווח מחיר ומשאירים שעה שנוחה לכם. אני חוזרת לאשר בין טיפול לטיפול.</p>
         <div class="ctas">
-          <button class="btn btn-blush" type="button" data-open-bot>לקבוע תור</button>
+          <button class="btn btn-blush" type="button" data-open-bot>לבקש תור</button>
           <a class="btn btn-line" href="#" data-wa="היי מיה, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
         </div>
         <ul class="facts">
@@ -249,14 +249,14 @@
       </div>
       <div class="visual">
         <div class="frame"><figure class="ps" data-slot="cover" data-src="../shared/photos/cosmetics-work.webp" data-alt="חדר טיפולים: מגבות מקופלות, קערת קרמיקה, בקבוקי טיפוח ומיטת טיפולים" data-pos="50 50" data-icon="sparkle" data-label="תמונה מהקליניקה"></figure></div>
-        <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>א׳ עד ה׳ · 9:00 עד 19:00</b></div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>מקבלת פניות</span><b>א׳ עד ה׳ · 9:00 עד 20:00</b></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">היי, אפשר תור לשלישי?</p><p class="a">בטח. איזה טיפול? אני מאשרת בין טיפול לטיפול.</p></div>
-        <div class="card glass" aria-label="כרטיס תור לדוגמה">
-          <div class="card-h"><b>מיה</b><span>כרטיס תור</span></div>
+        <div class="card glass" aria-label="בקשת תור לדוגמה">
+          <div class="card-h"><b>מיה</b><span>בקשת תור</span></div>
           <dl>
             <div><dt>טיפול</dt><dd>טיפול פנים קלאסי</dd></div>
             <div><dt>יום</dt><dd>שלישי</dd></div>
-            <div><dt>שעה</dt><dd><span class="ltr">10:30</span></dd></div>
+            <div><dt>שעה</dt><dd>בוקר</dd></div>
           </dl>
           <p class="card-note">לפני הטיפול: <span class="hand">בלי רטינול שלושה ימים</span></p>
         </div>
@@ -418,7 +418,7 @@
   let picked = ""; // the treatment, for the price answer
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "מיה · קליניקת יופי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "מ", launcher: "לקבוע תור", hint: "נציג AI",
+    name: "מיה · קליניקת יופי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "מ", launcher: "לבקש תור", hint: "נציג AI",
     greet: "היי, כאן מיה. אני כנראה באמצע טיפול.\nכמה שאלות קצרות, והפרטים מגיעים אליי לוואטסאפ לקבוע תור.",
     steps: [
       { key: "treatment", label: "טיפול", ask: "איזה טיפול מעניין אתכם?", chips: ["טיפול פנים", "הסרת שיער", "גבות וריסים", "מניקור / פדיקור", "איפור לאירוע", UNSURE] },

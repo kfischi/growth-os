@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /api/
+Disallow: /draft/
+Disallow: /p/
+Disallow: /r/
+
+Sitemap: https://service-pro-web.netlify.app/sitemap.xml

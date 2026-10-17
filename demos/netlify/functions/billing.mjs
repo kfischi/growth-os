@@ -1,5 +1,5 @@
-// Netlify Scheduled Function: every day at 06:10 Israel time (03:10 UTC). Charges the monthly (or yearly) payment
-// on the saved card of every subscription due today, and ends the cancelled ones whose 30 days' notice is over.
+// Netlify Scheduled Function: every day at 03:10 UTC (06:10 in Israel in summer, 05:10 in winter). Charges the monthly
+// (or yearly) payment on the saved card of every subscription due today, and ends the cancelled ones whose paid period is over.
 // lib/billing.mjs has the rules: a refused card is tried again after 3 days, and after 4 refusals the lead system pauses.
 import { configured } from "../lib/leads.mjs";
 import { runBilling } from "../lib/billing.mjs";

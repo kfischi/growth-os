@@ -164,7 +164,7 @@
   .owner .ph-cap { color: var(--frond); }
   .owner .phone { --phone-frame: var(--cypress-deep); }
 
-  footer { padding-block: 34px 96px; color: var(--ink-soft); font-size: 14px; }
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
 
   @media (max-width: 1000px) {
@@ -455,7 +455,7 @@
       </div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, גודל הגינה, כל כמה זמן, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, גודל הגינה, כל כמה זמן, יישוב וטלפון. בלי טופס ארוך.</span></div></li>
           <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>כבר יודעים אם זו גינה של 40 מ״ר או חצי דונם, לפני שמרימים טלפון.</span></div></li>
           <li><div><b>קובעים סיור ונותנים מחיר סגור</b><span>הצ׳אט עונה גם כשהידיים באדמה ואין איך לענות לטלפון.</span></div></li>
         </ol>
@@ -469,7 +469,7 @@
 שירות: אחזקה קבועה
 גינה: 50 עד 200 מ״ר
 תדירות: ביקור כל שבועיים
-ישוב: אביחיל
+יישוב: אביחיל
 שם: רונית לוי
 טלפון: 052-7654321<time>18:20</time></div>
               </div>
@@ -584,13 +584,13 @@
       { key: "freq", label: "תדירות",
         ask: (d) => d.service === "אחזקה קבועה" ? "כל כמה זמן להגיע?" : "זו עבודה חד פעמית, או שתרצו גם ביקור קבוע?",
         chips: [{ label: "פעם אחת", value: "עבודה חד פעמית" }, { label: "כל שבועיים", value: "ביקור כל שבועיים" }, { label: "פעם בחודש", value: "ביקור פעם בחודש" }] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב הגינה?", input: "text", placeholder: "למשל: אביחיל" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב הגינה?", input: "text", placeholder: "למשל: אביחיל" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.service}, גינה ${d.size}, ${d.freq}, ב${d.city}.\n${RANGES[d.service]}. קובעים סיור קצר בגינה ונותנים מחיר סגור.`,
-    summary: (d) => `פנייה מהאתר (דמו גינון)\nשירות: ${d.service}\nגינה: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    summary: (d) => `פנייה מהאתר (דמו גינון)\nשירות: ${d.service}\nגינה: ${d.size}\nתדירות: ${d.freq}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
@@ -604,9 +604,9 @@
     ] },
     factors: [
       { ask: "מה גודל הגינה, בערך?", for: ["אחזקה קבועה", "גיזום", "מערכת השקיה"], options: [
-        { label: "עד 50 מ״ר", mul: 0.75, prefill: { size: "עד 50 מ״ר" } },
+        { label: "עד 50 מ״ר", mul: 0.78, prefill: { size: "עד 50 מ״ר" } },
         { label: "50 עד 200 מ״ר", prefill: { size: "50 עד 200 מ״ר" } },
-        { label: "מעל 200 מ״ר", mul: 1.4, prefill: { size: "מעל 200 מ״ר" } },
+        { label: "מעל 200 מ״ר", mul: 1.38, prefill: { size: "מעל 200 מ״ר" } },
       ] },
     ],
     note: "טווח מקובל, לדוגמה. המחיר הסופי אחרי סיור בגינה.",

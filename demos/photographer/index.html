@@ -157,7 +157,7 @@
   .owner li span { color: #c9c3cf; font-size: 15.5px; }
   .owner .ph-cap { color: #b9b1c0; }
 
-  footer { padding-block: 34px 96px; color: var(--dim); font-size: 14px; }
+  footer { padding-block: 34px 150px; color: var(--dim); font-size: 14px; }
   footer .row { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid #cfd5dc; padding-top: 18px; }
   footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
 
@@ -301,7 +301,7 @@
       <div class="head"><h2>חבילות צילום</h2><span class="mono">מחירים לדוגמה · לפי שעות ומספר אורחים · לחיצה פותחת את הצ׳אט</span></div>
       <div class="order">
         <div class="edge mono" aria-hidden="true"><span>יונתן צילום</span><span class="sprockets"></span><span dir="ltr">400 · 35</span></div>
-        <button class="pk" type="button" data-event="חתונה"><span><b>חתונה</b><span class="d">מההתארגנות ועד הרחבה. גלריה ערוכה ותמונות ראשונות תוך שבוע.</span></span><span class="h">6 עד 8 שעות</span><span class="p">6,500 עד 11,000 ₪<small>צלם שני: בתוספת</small></span></button>
+        <button class="pk" type="button" data-event="חתונה"><span><b>חתונה</b><span class="d">מההתארגנות ועד הרחבה. תמונות ראשונות תוך שבוע, והגלריה הערוכה תוך 4 עד 6 שבועות.</span></span><span class="h">6 עד 8 שעות</span><span class="p">6,500 עד 11,000 ₪<small>צלם שני: בתוספת</small></span></button>
         <button class="pk" type="button" data-event="בר / בת מצווה"><span><b>בר או בת מצווה</b><span class="d">הטקס, קבלת הפנים, המשפחה והרחבה.</span></span><span class="h">3 עד 5 שעות</span><span class="p">3,200 עד 5,500 ₪</span></button>
         <button class="pk" type="button" data-event="ברית / בריתה"><span><b>ברית או בריתה</b><span class="d">הטקס, הסבים והסבתות, והאורחים.</span></span><span class="h">שעה עד שעתיים</span><span class="p">1,200 עד 2,000 ₪</span></button>
         <button class="pk" type="button" data-event="אירוע חברה"><span><b>אירוע חברה</b><span class="d">כנס, ערב צוות או השקה. תמונות לרשתות כבר למחרת.</span></span><span class="h">לפי שעות</span><span class="p">700 עד 1,000 ₪<small>לשעה</small></span></button>
@@ -424,7 +424,7 @@
       { key: "date", label: "תאריך", ask: "יש כבר תאריך? אפשר גם לכתוב אותו כאן.", chips: ["יש תאריך", "עוד לא סגרנו"], input: "text", placeholder: "למשל: 14.8",
         tip: { when: (v) => v === "עוד לא סגרנו", id: "book-early", text: "אין בעיה. כשיהיו לכם שניים או שלושה תאריכים אפשריים, אבדוק את כולם.", link: "כמה זמן מראש לסגור צלם" } },
       { key: "dateval", label: "תאריך", ask: "מה התאריך?", input: "text", placeholder: "למשל: 14.8.2027", show: (d) => d.date === "יש תאריך" },
-      { key: "place", label: "מקום", ask: "איפה האירוע? אולם, ישוב או אזור.", chips: ["חדרה והסביבה", "השרון", "המרכז", "הצפון"], input: "text", placeholder: "למשל: גן אירועים בעמק חפר" },
+      { key: "place", label: "מקום", ask: "איפה האירוע? אולם, יישוב או אזור.", chips: ["חדרה והסביבה", "השרון", "המרכז", "הצפון"], input: "text", placeholder: "למשל: גן אירועים בעמק חפר" },
       { key: "guests", label: "אורחים", ask: "בערך כמה אורחים?", chips: ["עד 100", "100 עד 250", "250 עד 400", "מעל 400"], show: (d) => d.event !== "אירוע חברה" && d.event !== "הצעה / זוגי" },
       { key: "hours", label: "שעות", ask: "כמה שעות צילום בערך?", chips: ["עד 3 שעות", "3 עד 5 שעות", "יום שלם"], show: (d) => d.event === "אירוע חברה" },
       { key: "portfolio", label: "תיק עבודות", ask: "לשלוח לכם תיק עבודות בוואטסאפ? אירוע שלם, לא רק התמונות הכי יפות.", chips: ["שלחו לי תיק עבודות", "לא צריך, תודה"] },

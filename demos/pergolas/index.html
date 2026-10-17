@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אופק פרגולות · פרגולות וסוככים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="פרגולות אלומיניום ועץ, סוככים חשמליים ופרגולות ביוקלימטיות בראשון לציון והסביבה. כותבים בצ׳אט סוג, מקום ומידות, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2b3138">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/pergolas-work.webp" fetchpriority="high">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the measured plan. A pergola drawn from above with its dimension lines (4.00 on 3.00), the posts as squares,
+     the slats as lines, and the striped shade it throws on the deck.
+     Detail: אורך על רוחב, מ״ר, אלומיניום אנתרציט, עץ, סוכך זרוע, ביוקלימטית עם שלבים שמסתובבים, ביקור מדידה, היתר.
+     Bold move: the price list is a row of plans, each with its own dimension line; the calculator multiplies the price
+     per square metre by the size. Anthracite and wood; the sky only as a breath. */
+  :root {
+    --sky: #eef2f5;
+    --anthracite: #2b3138;
+    --alu: #4a525c;
+    --wood: #7a4b2a;           /* buttons and the one warm colour */
+    --wood-deep: #5e3a20;
+    --shade: #dfe6ec;
+    --ink: #20252b;
+    --ink-soft: #505a64;
+    --line: #d2d9df;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--anthracite);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--wood); --bot-accent-fg: #fff; --bot-them: #eef2f5; --bot-me: var(--anthracite); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px; --bot-focus: var(--anthracite);
+    --ps-a: #d2dbe2; --ps-b: #4a525c; --ps-ui: var(--anthracite); --ps-edit: var(--wood);
+    --guide-alert: var(--wood);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--sky); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--wood); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .mono { font-family: var(--mono); font-weight: 500; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--wood); color: #fff; box-shadow: 0 16px 32px -14px rgba(122,75,42,.8), 0 2px 6px -2px rgba(122,75,42,.4); }
+  .btn-main:hover { background: var(--wood-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--wood); }
+
+  .demo { background: var(--anthracite); color: #c9d0d6; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(43,49,56,.96); color: #fff; backdrop-filter: blur(8px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: #c9d0d6; font-weight: 500; font-size: .74em; }
+  .logo .k { width: 28px; height: 22px; border-top: 5px solid #fff; background: repeating-linear-gradient(90deg, transparent 0 4px, #8b96a1 4px 6px); box-shadow: inset 4px 0 0 #fff, inset -4px 0 0 #fff; }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; background: #fff; color: var(--anthracite); }
+  .top-a .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+
+  .hero { position: relative; overflow: hidden; background: var(--sky);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(173,199,220,.5), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(122,75,42,.10), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--wood); font-weight: 700; }
+  .kicker .now i { width: 16px; height: 9px; border-top: 3px solid var(--wood); background: repeating-linear-gradient(90deg, transparent 0 3px, var(--wood) 3px 4px); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--wood); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--wood); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #e3e9ee;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(32,37,43,.55), 0 12px 24px -16px rgba(122,75,42,.25); }
+  .frame-l .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(32,37,43,.5), 0 4px 12px -6px rgba(122,75,42,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eef2f5; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--wood); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--wood); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The plans: each type drawn from above, with its dimension line */
+  .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .plan { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 20px; background: #fff;
+    box-shadow: 0 0 0 1px var(--line), 0 24px 40px -34px rgba(32,37,43,.5); transition: box-shadow .15s; }
+  .plan:hover { box-shadow: 0 0 0 2px var(--wood), 0 24px 40px -34px rgba(32,37,43,.5); }
+  .plan:focus-visible { outline: 3px solid var(--wood); outline-offset: 3px; }
+  .plan svg { display: block; width: 100%; height: auto; margin-bottom: 8px; }
+  .plan b { font-size: 20px; line-height: 1.25; }
+  .plan span { color: var(--ink-soft); font-size: 14.5px; line-height: 1.45; }
+  .plan .pr { margin-top: auto; padding-top: 10px; font-weight: 700; font-size: 17px; color: var(--wood); font-variant-numeric: tabular-nums; }
+  .plan .pr small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+  .permit { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
+  .permit::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 2px; background: var(--wood); transform: translateY(-1px); }
+  .permit a { color: var(--wood); font-weight: 700; }
+
+  .calc { background: var(--anthracite); color: #fff;
+    --bot-bg: #353c45; --bot-fg: #fff; --bot-line: #58616c; --bot-muted: #c9d0d6; --bot-accent: #fff; --bot-accent-fg: var(--anthracite); --bot-focus: #fff; }
+  .calc .head p { color: #c9d0d6; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  .visit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .visit li { list-style: none; padding: 20px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+  .visit ol { margin: 0; padding: 0; display: contents; }
+  .visit .mono { display: block; color: var(--wood); font-size: 13px; margin-bottom: 8px; }
+  .visit b { display: block; font-size: 18px; } .visit span { color: var(--ink-soft); font-size: 15px; }
+
+  .guides { background: #e3e9ee; }
+  .owner { background: var(--anthracite); color: #e7ebee; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #c9d0d6; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 12px; background: var(--wood); display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: #c9d0d6; font-size: 15.5px; }
+  .owner .ph-cap { color: #c9d0d6; }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat, photo and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .plan { padding: 14px; }
+    .plan b { font-size: 17px; }
+    .plan span { font-size: 13.5px; }
+    .plan .pr { font-size: 15px; }
+    .visit { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .plan { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=pergolas">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">אופק</span><span class="n2" data-edit="name2">פרגולות וסוככים</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>לבקש הצעת מחיר</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על פרגולה">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>ביקור מדידה לפני מחיר סופי</span><span>ראשון לציון · חולון · נס ציונה · רחובות</span></div>
+    <h1><span data-edit="h1a">צל במרפסת, בגינה או על הגג.</span> <em data-edit="h1b">כותבים סוג, מקום ומידות, ו<b>חוזרים עם הערכת מחיר.</b></em></h1>
+    <p class="lede">פרגולת אלומיניום או עץ, סוכך חשמלי או פרגולה ביוקלימטית. ארבע שאלות בצ׳אט, והפרטים מגיעים לוואטסאפ, גם כשאנחנו על פיגום בהתקנה.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לבקש הצעת מחיר</button>
+      <a class="btn btn-ghost" href="#calc">כמה זה יעלה?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>14 שנה</dt><dd>מתקינים פרגולות ברמת השפלה</dd></div>
+      <div><dt>ביקור מדידה</dt><dd>לפני כל מחיר סופי</dd></div>
+      <div><dt>5 שנים</dt><dd>אחריות על השלד והחיבורים</dd></div>
+      <div><dt>גם לעסקים</dt><dd>חזיתות, מסעדות וחנויות</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l"><figure class="ps" data-slot="hero" data-src="../shared/photos/pergolas-work.webp" data-alt="פרגולת אלומיניום אפורה מעל דק עץ, עם שולחן, כורסאות וסרט מדידה על הרצפה" data-pos="45 50" data-icon="home" data-label="תמונה שלכם"></figure></div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">הצעת מחיר לפרגולת אלומיניום למרפסת, בערך 4 על 3</p><p class="a">בערך 12 מ״ר. שלחו תמונה, וחוזרים עם הערכה וביקור מדידה.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה · למ״ר</span><div><b>פרגולת אלומיניום</b><span>850 עד 1,300 ₪</span></div><div><b>פרגולת עץ</b><span>700 עד 1,100 ₪</span></div><div><b>ביוקלימטית</b><span>2,200 עד 3,500 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="types">
+    <div class="wrap">
+      <div class="head"><h2>איזו פרגולה?</h2><p>מחירים לדוגמה למ״ר. לוחצים על סוג, והצ׳אט נפתח איתו.</p></div>
+      <div class="plans">
+        <button class="plan" type="button" data-type="פרגולת אלומיניום">
+          <svg viewBox="0 0 200 120" aria-hidden="true"><rect x="20" y="18" width="160" height="80" fill="#eef2f5" stroke="#2b3138" stroke-width="4"/><g stroke="#4a525c" stroke-width="3"><path d="M40 18v80M60 18v80M80 18v80M100 18v80M120 18v80M140 18v80M160 18v80"/></g><g fill="#2b3138"><rect x="14" y="12" width="12" height="12"/><rect x="174" y="12" width="12" height="12"/><rect x="14" y="92" width="12" height="12"/><rect x="174" y="92" width="12" height="12"/></g><path d="M20 112h160M20 108v8M180 108v8" stroke="#7a4b2a" stroke-width="2"/></svg>
+          <b>פרגולת אלומיניום</b><span>בלי תחזוקה, בצבע שבוחרים. שלבים פתוחים או כיסוי.</span><span class="pr">850 עד 1,300 ₪<small>למ״ר, כולל התקנה</small></span></button>
+        <button class="plan" type="button" data-type="פרגולת עץ">
+          <svg viewBox="0 0 200 120" aria-hidden="true"><rect x="20" y="18" width="160" height="80" fill="#f3ece5" stroke="#7a4b2a" stroke-width="5"/><g stroke="#a06a43" stroke-width="5"><path d="M44 18v80M72 18v80M100 18v80M128 18v80M156 18v80"/></g><g fill="#5e3a20"><rect x="14" y="12" width="13" height="13"/><rect x="173" y="12" width="13" height="13"/><rect x="14" y="91" width="13" height="13"/><rect x="173" y="91" width="13" height="13"/></g><path d="M20 112h160M20 108v8M180 108v8" stroke="#7a4b2a" stroke-width="2"/></svg>
+          <b>פרגולת עץ</b><span>עץ אורן או אלון. שמן פעם בשנה או שנתיים.</span><span class="pr">700 עד 1,100 ₪<small>למ״ר, כולל התקנה</small></span></button>
+        <button class="plan" type="button" data-type="סוכך חשמלי">
+          <svg viewBox="0 0 200 120" aria-hidden="true"><rect x="20" y="14" width="160" height="12" rx="4" fill="#2b3138"/><path d="M24 26h152l-8 66H32z" fill="#dfe6ec" stroke="#4a525c" stroke-width="3"/><g stroke="#c9d0d6" stroke-width="6"><path d="M50 26l-4 66M80 26l-2 66M110 26v66M140 26l2 66"/></g><path d="M32 92h136" stroke="#2b3138" stroke-width="5"/><path d="M20 112h160M20 108v8M180 108v8" stroke="#7a4b2a" stroke-width="2"/></svg>
+          <b>סוכך חשמלי</b><span>נפתח ונסגר בשלט. לשמש, לא לגשם ולא לרוח.</span><span class="pr">600 עד 1,000 ₪<small>למ״ר, כולל מנוע</small></span></button>
+        <button class="plan" type="button" data-type="פרגולה ביוקלימטית">
+          <svg viewBox="0 0 200 120" aria-hidden="true"><rect x="20" y="18" width="160" height="80" fill="#eef2f5" stroke="#2b3138" stroke-width="5"/><g fill="#4a525c"><rect x="30" y="24" width="140" height="7" transform="rotate(-6 100 27)"/><rect x="30" y="38" width="140" height="7" transform="rotate(-6 100 41)"/><rect x="30" y="52" width="140" height="7" transform="rotate(-6 100 55)"/><rect x="30" y="66" width="140" height="7" transform="rotate(-6 100 69)"/><rect x="30" y="80" width="140" height="7" transform="rotate(-6 100 83)"/></g><path d="M20 112h160M20 108v8M180 108v8" stroke="#7a4b2a" stroke-width="2"/></svg>
+          <b>פרגולה ביוקלימטית</b><span>שלבים שמסתובבים: צל, אוורור, או סגור לגשם.</span><span class="pr">2,200 עד 3,500 ₪<small>למ״ר, כולל מנוע</small></span></button>
+      </div>
+      <p class="permit">לפני שמזמינים: פרגולה צריכה לפעמים היתר, ובבית משותף גם הסכמה של השכנים. <a href="#g-permit">מה בודקים מול הרשות</a></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים סוג, גודל ומקום, ורואים טווח: מחיר למ״ר כפול השטח. המחיר הסופי אחרי ביקור מדידה.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="visit">
+    <div class="wrap">
+      <div class="head"><h2>ככה זה מתקדם</h2><p>מהפנייה בצ׳אט ועד פרגולה עומדת.</p></div>
+      <div class="visit"><ol>
+        <li><span class="mono">01</span><b>מידות ותמונה בצ׳אט</b><span>סוג, מקום ומידות בערך. מקבלים הערכת מחיר.</span></li>
+        <li><span class="mono">02</span><b>ביקור מדידה</b><span>מודדים, בודקים קיר, ניקוז וכיוון שמש, ונותנים מחיר סופי.</span></li>
+        <li><span class="mono">03</span><b>התקנה</b><span>בדרך כלל יום עבודה עד שלושה, לפי הגודל והסוג.</span></li>
+      </ol></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>היתרים, צל מול גשם, רוח ותחזוקה.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>סוג, מקום, מידות וישוב, ותמונה של המקום. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה עם השטח במ״ר</b><span>הצ׳אט מחשב את השטח מהמידות, ויודעים מראש אם זה שווה ביקור.</span></div></li>
+          <li><div><b>חוזרים עם הערכה וקובעים מדידה</b><span>גם כשאתם על פיגום, הלקוח לא מחכה בלי תשובה.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ד</span><div><b>דנה שמעוני</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו פרגולות)
+סוג: פרגולת אלומיניום
+איפה: מרפסת
+מידות: 4 על 3 (בערך 12 מ״ר)
+ישוב: ראשון לציון
+שם: דנה שמעוני
+טלפון: 052-7654321<time>11:45</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למתקין</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>אופק פרגולות · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  PhotoSlots.init({ page: "pergolas" });
+  const PER_M2 = { "פרגולת אלומיניום": [850, 1300], "פרגולת עץ": [700, 1100], "סוכך חשמלי": [600, 1000], "פרגולה ביוקלימטית": [2200, 3500] };
+  const nis = (n) => n.toLocaleString("he-IL");
+  // "4 על 3", "4x3", "4 * 3.5": the area in square metres, or null
+  const areaOf = (s) => { const m = String(s || "").replace(/,/g, ".").match(/(\d+(?:\.\d+)?)\s*(?:על|x|X|×|\*)\s*(\d+(?:\.\d+)?)/); if (!m) return null; const a = +m[1] * +m[2]; return a > 0 && a < 1000 ? Math.round(a) : null; };
+  const sizeText = (s) => { const a = areaOf(s); return a ? `${s} (בערך ${a} מ״ר)` : s; };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "אופק · פרגולות וסוככים", subtitle: "חוזרים עם הערכה וביקור מדידה", initial: "א", launcher: "הצעת מחיר", hint: "נציג AI",
+    greet: "היי, כאן אופק פרגולות.\nכמה שאלות קצרות, והפרטים מגיעים אלינו בוואטסאפ.",
+    steps: [
+      { key: "type", label: "סוג", ask: "איזו פרגולה מעניינת אתכם?", chips: ["פרגולת אלומיניום", "פרגולת עץ", "סוכך חשמלי", "פרגולה ביוקלימטית", "עוד לא יודעים"] },
+      { key: "where", label: "איפה", ask: "איפה היא תעמוד?", chips: ["מרפסת", "גינה", "גג", "חזית של עסק"] },
+      { key: "size", label: "מידות", ask: "מה המידות, בערך? אורך על רוחב, במטרים.", input: "text", placeholder: "למשל: 4 על 3" },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המקום? כך רואים את הקיר ואת הגישה.", photo: true },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: ראשון לציון" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const r = PER_M2[d.type], a = areaOf(d.size);
+      const price = r && a ? `בדרך כלל ${nis(r[0])} עד ${nis(r[1])} ₪ למ״ר, כלומר בערך ${nis(r[0] * a)} עד ${nis(r[1] * a)} ₪. המחיר הסופי אחרי ביקור מדידה.`
+        : r ? `בדרך כלל ${nis(r[0])} עד ${nis(r[1])} ₪ למ״ר. המחיר הסופי אחרי ביקור מדידה.` : "את המחיר נותנים אחרי ביקור מדידה.";
+      return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.type}, ${d.where}, ${sizeText(d.size)}, ב${d.city}.\n${price}`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו פרגולות)\nסוג: ${d.type}\nאיפה: ${d.where}\nמידות: ${sizeText(d.size)}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-type]").forEach((b) => b.addEventListener("click", () => bot.open({ type: b.dataset.type })));
+  const ROOFED = ["פרגולת אלומיניום", "פרגולת עץ"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "איזה סוג?", items: Object.entries(PER_M2).map(([label, range]) => ({ label, range, prefill: { type: label } })) },
+    factors: [
+      { ask: "כמה גדול, בערך?", options: [
+        { label: "3 על 3 · 9 מ״ר", mul: 9, prefill: { size: "3 על 3" } },
+        { label: "4 על 3 · 12 מ״ר", mul: 12, prefill: { size: "4 על 3" } },
+        { label: "5 על 4 · 20 מ״ר", mul: 20, prefill: { size: "5 על 4" } },
+        { label: "6 על 5 · 30 מ״ר", mul: 30, prefill: { size: "6 על 5" }, note: "בגודל כזה בודקים אם צריך עמוד באמצע." },
+      ] },
+      { ask: "מה מעל הראש?", for: ROOFED, options: [
+        { label: "שלבים פתוחים, לצל" },
+        { label: "כיסוי שעוצר גשם", mul: [1.2, 1.35], note: "כיסוי פוליקרבונט או לוחות מבודדים, עם שיפוע ומרזב." },
+      ] },
+      { ask: "איפה?", options: [
+        { label: "מרפסת", prefill: { where: "מרפסת" } },
+        { label: "גינה", prefill: { where: "גינה" } },
+        { label: "גג", add: [800, 2000], prefill: { where: "גג" }, note: "על גג צריך לפעמים מנוף או הרמה של החלקים, והמחיר עולה." },
+        { label: "חזית של עסק", prefill: { where: "חזית של עסק" }, note: "בחזית של עסק בודקים גם מה העירייה מתירה." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה: מחיר למ״ר כפול השטח. המחיר הסופי אחרי ביקור מדידה.",
+    cta: "לבקש הצעה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/pergolas.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

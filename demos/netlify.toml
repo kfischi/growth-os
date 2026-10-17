@@ -24,6 +24,25 @@
   to = "/"
   status = 301
 
+# Every static page. Nothing on this site is framed by another site; the builder frames its own draft
+# (srcdoc, or /draft/ from a function that sets its own headers), so SAMEORIGIN keeps it working.
+# Netlify applies these to static files only, not to function responses (each function sets its own).
+# The rules below for /panel/* and /build/* add stricter values for the same names.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Content-Security-Policy = "frame-ancestors 'self'"
+    Permissions-Policy = "geolocation=(), microphone=()"
+
+# A contact card, if one is ever published here (client sites get theirs from their own _headers).
+[[headers]]
+  for = "/*.vcf"
+  [headers.values]
+    Content-Type = "text/vcard; charset=utf-8"
+
 [[headers]]
   for = "/leads-demo/*"
   [headers.values]
@@ -123,6 +142,7 @@
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-store"
     X-Frame-Options = "DENY"
+    Content-Security-Policy = "frame-ancestors 'none'"
     Referrer-Policy = "no-referrer"
     X-Content-Type-Options = "nosniff"
 
@@ -141,6 +161,7 @@
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-store"
     X-Frame-Options = "DENY"
+    Content-Security-Policy = "frame-ancestors 'none'"
     Referrer-Policy = "no-referrer"
     X-Content-Type-Options = "nosniff"
 

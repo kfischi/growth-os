@@ -159,7 +159,7 @@
   .owner li span { color: var(--ink-soft); font-size: 16px; }
   .owner .ph-cap { color: var(--ink-soft); }
 
-  footer { padding-block: 34px 100px; color: var(--ink-soft); font-size: 15px; }
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
   footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 2px solid var(--ink); padding-top: 18px; }
 
   @media (max-width: 1020px) {
@@ -280,7 +280,7 @@
         <h1><span data-edit="h1a">איפה כואב לכם?</span> <em data-edit="h1b">מסמנים על המפה, ואני חוזר אליכם.</em></h1>
         <p class="lead">בזמן טיפול הידיים שלי עסוקות והטלפון בשקט. כאן בוחרים עיסוי ואורך טיפול, שומעים טווח מחיר ומשאירים מתי נוח לכם. בין טיפול לטיפול אני חוזר לתאם.</p>
         <div class="ctas">
-          <button class="btn btn-petrol" type="button" data-open-bot>לקבוע עיסוי</button>
+          <button class="btn btn-petrol" type="button" data-open-bot>לבקש תור</button>
           <a class="btn btn-line" href="#" data-wa="היי רוני, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
         </div>
         <ul class="facts">
@@ -441,7 +441,7 @@
                 <div class="ph-msg" id="ph-msg">פנייה לעיסוי מהאתר (דמו)
 עיסוי: גב ועורף
 איפה: גב תחתון
-אורך: 60 דקות
+אורך: 45 דקות
 מקום: ביקור בית, נס ציונה
 ימים: א׳ עד ה׳
 שעות: ערב
@@ -483,7 +483,7 @@
   let len = ""; // the length, for the price answer
   const bot = LeadBot.init({
     whatsapp: "972526359513",
-    name: "רוני · עיסוי טיפולי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "ר", launcher: "לקבוע עיסוי", hint: "נציג AI",
+    name: "רוני · עיסוי טיפולי", subtitle: "מבקשים תור, גם כשאני בטיפול", initial: "ר", launcher: "לבקש תור", hint: "נציג AI",
     greet: "היי, כאן רוני. כרגע הידיים שלי בטיפול.\nכמה שאלות קצרות, ואחזור אליכם בין טיפול לטיפול.",
     steps: [
       { key: "kind", label: "עיסוי", ask: "איזה עיסוי מתאים לכם?", chips: ["גב ועורף", "עיסוי ספורט", "רקמות עמוק", "הרפיה", PREG, UNSURE] },
@@ -499,7 +499,7 @@
         tip: { when: (v) => { len = v; return v in RANGE; }, get text() { return RANGE[len] + "\nזה טווח מהמחירון. את המחיר סוגרים איתי לפני הטיפול."; } } },
       { key: "place", label: "מקום", ask: "בקליניקה ברחובות, או ביקור בית?", chips: ["בקליניקה", "ביקור בית"],
         tip: { when: (v) => v === "ביקור בית", text: "ביקור בית: תוספת 80 עד 120 ₪, לפי המרחק. אני מגיע עם מיטה ומגבות." } },
-      { key: "town", label: "ישוב", ask: "באיזה ישוב?", chips: ["רחובות", "נס ציונה", "יבנה", "גדרה", "ישוב אחר"], show: (d) => d.place === "ביקור בית" },
+      { key: "town", label: "יישוב", ask: "באיזה יישוב?", chips: ["רחובות", "נס ציונה", "יבנה", "גדרה", "יישוב אחר"], show: (d) => d.place === "ביקור בית" },
       { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
       { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },

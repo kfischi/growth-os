@@ -6,6 +6,7 @@ import { SAMPLE } from "./builder-sample.mjs";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 
 import { T, storage, sentWa, aiCalls, ai, gh, DEF, imageCalls, nl, indexNow } from "./builder-fakes.mjs";
+const { TEMPLATES } = await import("../../demos/netlify/lib/builder.mjs");
 // What the model was told about the draft in its last turn.
 const aiCallsState = () => { const m = aiCalls.at(-1).messages.at(-1).content; return typeof m === "string" ? m : m[0].text; };
 
@@ -31,6 +32,17 @@ r = await J(await req("start", { body: { name: "אורן", phone: "0526359513" }
 r = await J(await req("start", { body: { name: "בוט", phone: "0526359513", consent: true, company: "x" } })); assert.equal(r.status, 429); assert.equal(T.ls_drafts.length, 0);
 r = await J(await req("start", { body: { name: "אורן", phone: "0526359513", consent: true, template: "constructor" }, ip: "2.2.2.2" }));
 assert.equal(r.status, 201, "an odd template name falls back to plumber"); assert.equal(T.ls_drafts[0].template, "plumber"); T.ls_drafts.length = 0;
+// "תחום אחר": the owner's own trade on the closest demo's design; a neutral site, no other trade's guides or samples.
+r = await J(await req("start", { body: { name: "דנה", phone: "0526359513", consent: true, template: "massage", own_trade: "וטרינרית <b>" }, ip: "3.3.3.3" }));
+assert.equal(r.status, 201); { const c = T.ls_drafts[0].content;
+  assert.equal(T.ls_drafts[0].template, "massage"); assert.equal(c.trade, "וטרינרית b"); assert.equal(c.custom_trade, true); assert.equal(c.headline_1, "");
+  assert.ok(r.state.guide && !r.state.guide.steps.some((s) => ["services", "prices", "headline", "intro"].includes(s.id)) && r.state.guide.services.length === 0, "the questionnaire leaves out the demo's own services and headlines");
+  const site = TEMPLATES.massage.render({ ...c, business_name: "מרפאת דנה", headline_1: "טיפול רגוע לחיות שלכם", headline_2: "", intro: "מרפאה קטנה", services: [{ name: "חיסון", price: "150 ₪" }], towns: ["חדרה"], area: "חדרה", response_time: "שעה" }, { mode: "site", leads: null, photos: {} });
+  assert.ok(!site["guides.html"] && !/id="guides"/.test(site["index.html"]), "no guides of another trade");
+  assert.match(site["index.html"], /"@type":"LocalBusiness"/); assert.match(site["index.html"], /במה אפשר לעזור\?/); assert.ok(!/עיסוי/.test(site["index.html"].replace(/<style[\s\S]*?<\/style>/g, "")), "no massage words");
+  const draft = TEMPLATES.massage.render(c, { mode: "draft" })["index.html"]; assert.ok(!/class="eg-row"/.test(draft), "no sample services of the demo's trade");
+}
+T.ls_drafts.length = 0;
 r = await J(await req("start", { body: { name: "אורן לוי", phone: "+972 52-635-9513", consent: true } }));
 assert.equal(r.status, 201, JSON.stringify(r)); assert.ok(r.id && r.key.length >= 32);
 const D = T.ls_drafts[0];

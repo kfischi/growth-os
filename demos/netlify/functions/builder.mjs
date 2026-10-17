@@ -21,7 +21,7 @@
 //   POST   /api/builder/pay       { cycle: "month" | "year" }  -> { url }   Grow's payment page (or a new card after a refusal)
 //   POST   /api/builder/pay-check  back from Grow: asks Grow about the checkout -> { state, billing }
 //   POST   /api/builder/domain-check  is the owner's domain pointing here yet?   -> { state, billing }
-//   POST   /api/builder/cancel | resume   the subscription, 30 days' notice    -> { billing }
+//   POST   /api/builder/cancel | resume   the subscription: no notice, runs to the end of what was paid -> { billing }
 //   POST   /api/builder/panel-seen  the panel link was saved: forget it         -> { billing }
 //   POST   /api/builder/help      { message }   to כפיר on WhatsApp, from any step  -> { sent }
 // Self edit, on a published site whose owner may change it (0004_self_edit.sql):
@@ -89,6 +89,9 @@ export default async (req, context) => {
 
       const key = newKey();
       const content = { ...TEMPLATES[template].emptyContent(), owner_name: name, whatsapp: phone.local };
+      // "תחום אחר": the owner names their trade and picked the closest demo (template) for the design.
+      const own = clip(body.own_trade, 24).replace(/[<>]/g, "");
+      if (own.length >= 2) Object.assign(content, { trade: own, custom_trade: true, headline_1: "" });
       const [d] = await db("POST", "ls_drafts", {
         key_hash: sha256(key), template, content, owner_name: name, owner_phone: phone.intl, ip_hash: sha256("ip:" + ip),
       }, "return=representation");

@@ -27,9 +27,14 @@ import nails from "./nails.mjs";
 import driving from "./driving.mjs";
 import upholstery from "./upholstery.mjs";
 import shutters from "./shutters.mjs";
+import security from "./security.mjs";
+import yoga from "./yoga.mjs";
+import dogTrainer from "./dog-trainer.mjs";
+import pergolas from "./pergolas.mjs";
+import roofing from "./roofing.mjs";
 
-export const TRADES = Object.fromEntries([plumber, electrician, ac, locksmith, towing, shutters, appliance, pest, handyman, renovation, cleaning,
-  upholstery, garden, movers, cosmetics, nails, barber, massage, photographer, driving, trainer, tutor, music, psychologist, socialWorker].map((t) => [t.id, t]));
+export const TRADES = Object.fromEntries([plumber, electrician, ac, locksmith, towing, shutters, roofing, appliance, pest, handyman, renovation, cleaning,
+  upholstery, garden, pergolas, security, movers, cosmetics, nails, barber, massage, yoga, photographer, driving, trainer, tutor, music, dogTrainer, psychologist, socialWorker].map((t) => [t.id, t]));
 export const tradeOf = (id) => TRADES[id] || TRADES.plumber;
 // For tests of a trade file before it is listed here (scripts/tests/trades.test.mjs <id>).
 export const register = (T) => { TRADES[T.id] = T; };

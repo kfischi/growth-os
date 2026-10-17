@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>סטודיו אלה · יוגה ופילאטיס</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<script>/* the switch, before paint: ?c=pilates opens the pilates side */
+  if (new URLSearchParams(location.search).get("c") === "pilates") document.documentElement.dataset.c = "pilates";</script>
+<meta name="description" content="יוגה ופילאטיס על מזרן ועל רפורמר במודיעין, בקבוצות קטנות. מספרים בצ׳אט מה מעניין אתכם, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#24182a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/yoga-work.webp" fetchpriority="high">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the studio's week, written on the board by the door: days, hours, the class and its level, and next to it
+     the price board. A mat in the morning light, and a reformer by the tall windows.
+     Detail: ויניאסה, האטה, פילאטיס מזרן, רפורמר, כרטיסייה של 10, מנוי חודשי, שיעור ניסיון, "מתחילים".
+     Bold move: the switch "יוגה" / "פילאטיס" turns the page: the drawing (a mat, or a reformer), the prices, the week
+     (its own classes light up) and the chat's first question. Quiet otherwise: sage paper, deep plum, one clay mark. */
+  :root {
+    --paper: #f1f4ef;          /* sage-tinted wall */
+    --sage: #7c9a82;
+    --sage-deep: #3f5d48;
+    --plum: #5b2a5e;           /* the mat: buttons and the one strong colour */
+    --plum-deep: #43204a;
+    --clay: #9c4f36;           /* a block, a small mark */
+    --ink: #24182a;
+    --ink-soft: #5a4f5e;
+    --line: #d6ddd3;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--plum); --bot-accent-fg: #fff; --bot-them: #eef1ec; --bot-me: var(--sage-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px; --bot-focus: var(--ink);
+    --ps-a: #cfd9cc; --ps-b: #7c9a82; --ps-ui: var(--ink); --ps-edit: var(--plum);
+    --guide-alert: var(--plum);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+  html[data-c="pilates"] .m-yoga, html:not([data-c="pilates"]) .m-pil { display: none !important; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--plum); color: #fff; box-shadow: 0 16px 32px -14px rgba(91,42,94,.8), 0 2px 6px -2px rgba(91,42,94,.4); }
+  .btn-main:hover { background: var(--plum-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--plum); }
+
+  .demo { background: var(--ink); color: #d9cfdc; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(241,244,239,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--sage-deep); font-weight: 500; font-size: .74em; }
+  .logo .k { width: 28px; height: 28px; border-radius: 50%; background: radial-gradient(circle at 50% 70%, var(--plum) 0 7px, transparent 7.5px), radial-gradient(circle at 50% 50%, #fff 0 13px, var(--sage) 13.5px); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+
+  .switch { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line), 0 10px 26px -18px rgba(36,24,42,.5); max-width: 100%; }
+  .switch button { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; padding: 9px 26px; border-radius: 999px; text-align: center; font-weight: 700; font-size: 16px; color: var(--ink-soft); white-space: nowrap; transition: background .2s, color .2s; }
+  .switch button:hover { color: var(--ink); }
+  .switch button[aria-pressed="true"] { background: var(--sage-deep); color: #fff; }
+  .switch button:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+
+  .hero { position: relative; overflow: hidden; background: var(--paper);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(124,154,130,.32), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(91,42,94,.10), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "sw win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 44px 0 0; }
+  .sw-wrap { grid-area: sw; margin-bottom: 22px; }
+  .kicker { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 14px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--sage-deep); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--sage); box-shadow: 0 0 0 3px rgba(124,154,130,.25); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--plum); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--plum); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #e3e8e0;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(36,24,42,.55), 0 12px 24px -16px rgba(91,42,94,.25); }
+  .frame-l .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 22px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(36,24,42,.5), 0 4px 12px -6px rgba(91,42,94,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eef1ec; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--plum); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--plum); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The week board */
+  .week { background: #fff; border-radius: 28px; padding: 22px; box-shadow: 0 0 0 1px var(--line), 0 40px 70px -46px rgba(36,24,42,.45); }
+  .week-cap { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 0 4px 16px; font-size: 14.5px; color: var(--ink-soft); }
+  .week-cap b { color: var(--clay); font-weight: 700; }
+  .days { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+  .day h3 { font-size: 16px; font-weight: 700; color: var(--sage-deep); padding: 0 4px 8px; border-bottom: 2px solid var(--line); margin-bottom: 8px; }
+  .cls { all: unset; box-sizing: border-box; cursor: pointer; display: block; width: 100%; margin-bottom: 8px; padding: 10px 12px; border-radius: 14px; background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); transition: background .15s, opacity .2s; }
+  .cls:hover { box-shadow: inset 0 0 0 1.5px var(--plum); }
+  .cls:focus-visible { outline: 3px solid var(--plum); outline-offset: 2px; }
+  .cls time { display: block; font: 500 13px/1.2 var(--mono); color: var(--ink-soft); direction: ltr; text-align: right; }
+  .cls b { display: block; font-size: 15px; line-height: 1.3; margin-top: 3px; }
+  .cls small { display: block; font-size: 12.5px; color: var(--ink-soft); }
+  .cls[data-k="pilates"] { background: #f3eef4; }
+  html:not([data-c="pilates"]) .cls[data-k="pilates"], html[data-c="pilates"] .cls[data-k="yoga"] { opacity: .45; }
+  html:not([data-c="pilates"]) .cls[data-k="yoga"], html[data-c="pilates"] .cls[data-k="pilates"] { box-shadow: inset 0 0 0 1.5px var(--sage); }
+  .health { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; color: var(--ink); }
+  .health::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--clay); transform: translateY(-1px); }
+  .health a { color: var(--plum); font-weight: 700; }
+
+  /* The price board */
+  .prices { background: var(--sage-deep); color: #fff; }
+  .prices .head p { color: #d6e2d8; }
+  .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .pc { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 22px 20px; border-radius: 22px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); transition: background .15s; }
+  .pc:hover { background: rgba(255,255,255,.14); }
+  .pc:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .pc small { font-size: 13.5px; color: #d6e2d8; }
+  .pc b { font-size: 21px; line-height: 1.2; }
+  .pc .pr { margin-top: auto; padding-top: 12px; font-weight: 800; font-size: 30px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .pc .pr span { font-size: 15px; font-weight: 500; color: #d6e2d8; margin-inline-start: 6px; }
+  .pc.hot { background: #fff; color: var(--ink); box-shadow: 0 30px 50px -30px rgba(0,0,0,.5); }
+  .pc.hot small, .pc.hot .pr span { color: var(--ink-soft); }
+  .pc.hot .pr { color: var(--plum); }
+  .pc.hot:focus-visible { outline-color: var(--plum); }
+  .board-note { margin: 16px 4px 0; font-size: 15px; color: #d6e2d8; }
+
+  /* Who teaches */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 60px; align-items: center; }
+  .frame { background: #fff; padding: 12px; border-radius: 28px; box-shadow: 0 0 0 1px var(--line), 0 50px 80px -40px rgba(36,24,42,.45); }
+  .frame .ps { aspect-ratio: 8 / 5; border-radius: 20px; }
+  .who-copy h2 { font-size: clamp(34px, 4.4vw, 52px); margin-bottom: 14px; }
+  .who-copy > p { color: var(--ink-soft); margin: 0 0 20px; max-width: 46ch; }
+  .ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .ticks li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .ticks li::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--sage); transform: translateY(2px); }
+
+  .guides { background: #e6ebe3; }
+  .owner { background: var(--ink); color: #eee6ef; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #c9bccc; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--sage); display: grid; place-items: center; font-weight: 800; font-size: 20px; color: var(--ink); }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: #c9bccc; font-size: 15.5px; }
+  .owner .ph-cap { color: #c9bccc; }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat, photo and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .days { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+    .frame { max-width: 520px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "h1" "lede" "cta" "win" "facts"; padding-top: 22px; }
+    .switch { display: grid; width: 100%; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .week { padding: 14px; border-radius: 22px; }
+    .days { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .board { grid-template-columns: minmax(0, 1fr); }
+    .pc .pr { font-size: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .cls, .pc, .switch button { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=yoga">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">סטודיו אלה</span><span class="n2" data-edit="name2">יוגה ופילאטיס</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-ask>לקבוע שיעור ניסיון</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על השיעורים">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="sw-wrap">
+      <div class="kicker"><span class="now"><i aria-hidden="true"></i>שיעורי בוקר וערב</span><span>מודיעין · מרכז העיר</span></div>
+      <div class="switch" role="group" aria-label="מה מעניין אתכם?">
+        <button type="button" data-c="yoga" aria-pressed="true">יוגה</button>
+        <button type="button" data-c="pilates" aria-pressed="false">פילאטיס</button>
+      </div>
+    </div>
+    <h1 class="m-yoga"><span data-edit="h1a">יוגה בקבוצות קטנות.</span> <em data-edit="h1b">ויניאסה, האטה ויוגה רכה. <b>מתחילים בשיעור ניסיון.</b></em></h1>
+    <h1 class="m-pil"><span data-edit="h1a-pil">פילאטיס על מזרן ועל רפורמר.</span> <em data-edit="h1b-pil">חיזוק לגב ולבטן, <b>בקבוצה קטנה או בשיעור פרטי.</b></em></h1>
+    <p class="lede m-yoga">כותבים בצ׳אט מה מעניין אתכם, איזה ניסיון יש ובאילו שעות נוח. הפרטים מגיעים אליי לוואטסאפ, גם באמצע שיעור, ואני חוזרת לאשר יום ושעה.</p>
+    <p class="lede m-pil">על מזרן או על מכשיר, מתחילים או מתרגלים קבוע. כותבים בצ׳אט מה מעניין אתכם, והפרטים מגיעים אליי לוואטסאפ. אני חוזרת לאשר יום ושעה.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-ask>לקבוע שיעור ניסיון</button>
+      <a class="btn btn-ghost" href="#week">לראות שעות לדוגמה</a>
+    </div>
+    <dl class="facts m-yoga">
+      <div><dt>12 שנה</dt><dd>מלמדת יוגה ופילאטיס</dd></div>
+      <div><dt>עד 12</dt><dd>מתאמנים בשיעור קבוצתי</dd></div>
+      <div><dt>50 ₪</dt><dd>שיעור ניסיון ביוגה</dd></div>
+      <div><dt>מזרנים</dt><dd>וכל הציוד בסטודיו</dd></div>
+    </dl>
+    <dl class="facts m-pil">
+      <div><dt>6 רפורמרים</dt><dd>קבוצה קטנה במכשירים</dd></div>
+      <div><dt>מזרן או מכשיר</dt><dd>לפי מה שמתאים לכם</dd></div>
+      <div><dt>70 ₪</dt><dd>שיעור ניסיון ברפורמר</dd></div>
+      <div><dt>שיעור פרטי</dt><dd>גם אחרי הפסקה ארוכה</dd></div>
+    </dl>
+
+    <div class="win">
+      <div class="frame-l m-yoga"><figure class="ps" data-slot="hero" data-src="../shared/photos/yoga-work.webp" data-alt="סטודיו ליוגה באור בוקר: מזרן, בלוקים, שמיכות ועציץ ליד חלון גדול" data-pos="45 60" data-icon="sparkle" data-label="תמונה שלכם"></figure></div>
+      <div class="frame-l m-pil"><figure class="ps" data-slot="hero-pil" data-src="../shared/photos/yoga-reformer.webp" data-alt="מכשיר רפורמר לפילאטיס ליד חלונות גבוהים, עם כדור וטבעת על הרצפה" data-pos="55 55" data-icon="sparkle" data-label="תמונה שלכם"></figure></div>
+      <div class="glass g-note m-yoga" aria-hidden="true"><p class="q">אף פעם לא עשיתי יוגה. זה מתאים?</p><p class="a">בטח. ספרו בצ׳אט מתי נוח, ואחזור לקבוע שיעור ניסיון.</p></div>
+      <div class="glass g-note m-pil" aria-hidden="true"><p class="q">יש לי כאבי גב. אפשר פילאטיס?</p><p class="a">קודם שאלה לרופא. ספרו לי בצ׳אט, ונתאים שיעור.</p></div>
+      <div class="glass g-jobs m-yoga" aria-hidden="true"><span class="h">מחירים לדוגמה · יוגה</span><div><b>שיעור ניסיון</b><span>50 ₪</span></div><div><b>כרטיסייה של 10</b><span>650 ₪</span></div><div><b>מנוי חודשי</b><span>390 ₪</span></div></div>
+      <div class="glass g-jobs m-pil" aria-hidden="true"><span class="h">מחירים לדוגמה · רפורמר</span><div><b>שיעור ניסיון</b><span>70 ₪</span></div><div><b>כרטיסייה של 10</b><span>1,150 ₪</span></div><div><b>מנוי חודשי</b><span>590 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="week">
+    <div class="wrap">
+      <div class="head"><h2>השבוע בסטודיו</h2><p>מערכת שעות לדוגמה. לוחצים על שיעור, והצ׳אט נפתח איתו. את השעה מאשרים איתכם.</p></div>
+      <div class="week">
+        <div class="week-cap"><span><b>לדוגמה</b> · השיעורים <span class="m-yoga">של יוגה</span><span class="m-pil">של פילאטיס</span> מסומנים</span><span>כל שיעור 55 עד 75 דקות</span></div>
+        <div class="days">
+          <div class="day"><h3>ראשון</h3>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"בוקר"}'><time>07:00</time><b>ויניאסה</b><small>כל הרמות</small></button>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מכשירים","slot":"ערב"}'><time>19:00</time><b>רפורמר</b><small>מתחילים</small></button></div>
+          <div class="day"><h3>שני</h3>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מזרן","slot":"בוקר"}'><time>09:00</time><b>פילאטיס מזרן</b><small>כל הרמות</small></button>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"ערב"}'><time>20:00</time><b>האטה יוגה</b><small>רגוע</small></button></div>
+          <div class="day"><h3>שלישי</h3>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מכשירים","slot":"בוקר"}'><time>08:00</time><b>רפורמר</b><small>ממשיכים</small></button>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"ערב"}'><time>19:30</time><b>ויניאסה</b><small>מתחילים</small></button></div>
+          <div class="day"><h3>רביעי</h3>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"צהריים"}'><time>12:30</time><b>יוגה רכה</b><small>גם אחרי הפסקה</small></button>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מזרן","slot":"ערב"}'><time>18:30</time><b>פילאטיס מזרן</b><small>כל הרמות</small></button></div>
+          <div class="day"><h3>חמישי</h3>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מכשירים","slot":"בוקר"}'><time>07:30</time><b>רפורמר</b><small>מתחילים</small></button>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"ערב"}'><time>20:00</time><b>האטה יוגה</b><small>רגוע</small></button></div>
+          <div class="day"><h3>שישי</h3>
+            <button class="cls" type="button" data-k="yoga" data-pre='{"kind":"יוגה","slot":"שישי בבוקר"}'><time>08:30</time><b>ויניאסה</b><small>כל הרמות</small></button>
+            <button class="cls" type="button" data-k="pilates" data-pre='{"kind":"פילאטיס מכשירים","slot":"שישי בבוקר"}'><time>10:00</time><b>רפורמר</b><small>כל הרמות</small></button></div>
+        </div>
+      </div>
+      <p class="health">בהריון, אחרי פציעה או ניתוח, או עם בעיות גב? מתייעצים קודם עם הרופא, ומספרים לי לפני השיעור. <a href="#g-doctor-first">מתי מתייעצים עם רופא</a></p>
+    </div>
+  </section>
+
+  <section class="prices" id="prices">
+    <div class="wrap">
+      <div class="head"><h2 class="m-yoga">מחירים · יוגה ופילאטיס מזרן</h2><h2 class="m-pil">מחירים · פילאטיס מכשירים</h2><p>מחירים לדוגמה. לוחצים על כרטיס, והצ׳אט נפתח איתו.</p></div>
+      <div class="board m-yoga">
+        <button class="pc hot" type="button" data-pre='{"format":"שיעור ניסיון בקבוצה"}'><small>פעם ראשונה</small><b>שיעור ניסיון</b><span class="pr">50 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"שיעור בודד"}'><small>בלי התחייבות</small><b>שיעור בודד</b><span class="pr">80 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"מנוי או כרטיסייה"}'><small>בתוקף 4 חודשים</small><b>כרטיסייה של 10</b><span class="pr">650 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"מנוי או כרטיסייה"}'><small>עד שני שיעורים בשבוע</small><b>מנוי חודשי</b><span class="pr">390 ₪<span>לחודש</span></span></button>
+      </div>
+      <div class="board m-pil">
+        <button class="pc hot" type="button" data-pre='{"format":"שיעור ניסיון בקבוצה"}'><small>פעם ראשונה, על רפורמר</small><b>שיעור ניסיון</b><span class="pr">70 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"שיעור בודד"}'><small>קבוצה של עד 6</small><b>שיעור בודד</b><span class="pr">130 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"מנוי או כרטיסייה"}'><small>בתוקף 4 חודשים</small><b>כרטיסייה של 10</b><span class="pr">1,150 ₪</span></button>
+        <button class="pc" type="button" data-pre='{"format":"מנוי או כרטיסייה"}'><small>עד שני שיעורים בשבוע</small><b>מנוי חודשי</b><span class="pr">590 ₪<span>לחודש</span></span></button>
+      </div>
+      <p class="board-note">שיעור פרטי, ביוגה או בפילאטיס: 260 ₪. שיעור זוגי: 170 ₪ לאדם.</p>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap who-grid">
+      <div class="frame"><figure class="ps" data-slot="work" data-src="../shared/photos/yoga-reformer.webp" data-alt="מכשיר רפורמר לפילאטיס ליד חלונות גבוהים" data-pos="55 55" data-icon="sparkle" data-label="תמונה שלכם"></figure></div>
+      <div class="who-copy">
+        <h2>מי מלמדת?</h2>
+        <p data-edit="who">אני אלה. 12 שנה אני מלמדת יוגה ופילאטיס, ובונה כל שיעור כך שגם מי שמתחיל ירגיש בבית.</p>
+        <ul class="ticks">
+          <li><span>לכל תרגיל יש גרסה קלה יותר. שואלים, ואני מראה.</span></li>
+          <li><span>לפני השיעור הראשון מספרים לי על פציעות ומגבלות.</span></li>
+          <li><span>את השיעור מאשרים איתכם בטלפון או בוואטסאפ.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה ההבדל בין יוגה לפילאטיס, מה להביא, ומתי שואלים קודם את הרופא.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעלת העסק מקבלת</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>המתאמנת עונה על כמה שאלות</b><span>יוגה או פילאטיס, ניסיון, מתי נוח, ושאלת בריאות אחת. בלי טופס.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>גם באמצע שיעור. רואים מראש אם צריך לשאול על מגבלה.</span></div></li>
+          <li><div><b>חוזרים ומאשרים שיעור</b><span>אתם מאשרים כל שעה. הצ׳אט לא קובע לבד ולא מבטיח מקום.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אברהם</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו יוגה ופילאטיס)
+סוג: יוגה
+ניסיון: מתחילים
+מה מעניין: שיעור ניסיון בקבוצה
+בריאות: לא סימנו מגבלה
+מתי נוח: ערב
+שם: מיכל אברהם
+טלפון: 052-7654321<time>13:10</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לסטודיו</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>סטודיו אלה · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "yoga" });
+  const root = document.documentElement;
+  const isPil = () => root.dataset.c === "pilates";
+  // the sample prices on the page, by class kind and what they asked for
+  const PRICE = {
+    mat: { "שיעור ניסיון בקבוצה": "שיעור ניסיון 50 ₪", "שיעור בודד": "שיעור בודד 80 ₪", "מנוי או כרטיסייה": "כרטיסייה של 10 ב־650 ₪, מנוי חודשי 390 ₪" },
+    reformer: { "שיעור ניסיון בקבוצה": "שיעור ניסיון 70 ₪", "שיעור בודד": "שיעור בודד 130 ₪", "מנוי או כרטיסייה": "כרטיסייה של 10 ב־1,150 ₪, מנוי חודשי 590 ₪" },
+    private: { "שיעור פרטי": "שיעור פרטי 260 ₪", "שיעור זוגי": "170 ₪ לאדם" },
+  };
+  const priceOf = (d) => PRICE.private[d.format] || (d.kind === "פילאטיס מכשירים" ? PRICE.reformer : PRICE.mat)[d.format] || "";
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "סטודיו אלה · יוגה ופילאטיס", subtitle: "חוזרת אליכם לאשר שיעור", initial: "א", launcher: "לקבוע שיעור", hint: "נציג AI",
+    greet: "היי, כאן אלה מהסטודיו.\nכמה שאלות קצרות, והפרטים אצלי בוואטסאפ.",
+    steps: [
+      { key: "kind", label: "סוג", ask: "יוגה או פילאטיס?", get chips() { return isPil() ? ["פילאטיס מכשירים", "פילאטיס מזרן", "יוגה", "עוד לא יודעים"] : ["יוגה", "פילאטיס מזרן", "פילאטיס מכשירים", "עוד לא יודעים"]; } },
+      { key: "level", label: "ניסיון", ask: "איזה ניסיון יש לכם?", chips: ["מתחילים", "קצת ניסיון", "מתרגלים קבוע"] },
+      { key: "format", label: "מה מעניין", ask: "מה מעניין אתכם?", chips: ["שיעור ניסיון בקבוצה", "שיעור בודד", "מנוי או כרטיסייה", "שיעור פרטי", "שיעור זוגי"] },
+      { key: "health", label: "בריאות", ask: "שאלה אחת לפני: הריון, פציעה, ניתוח לאחרונה או בעיות גב?", chips: ["לא", "כן, משהו מזה"],
+        tip: { when: (v) => v !== "לא", id: "doctor-first", link: "מתי מתייעצים עם רופא", text: "במקרה כזה מתייעצים קודם עם הרופא, ומתחילים רק באישורו.\nאפשר להמשיך, ונדבר על זה לפני השיעור." } },
+      { key: "slot", label: "מתי נוח", ask: "באילו שעות נוח לכם?", chips: ["בוקר", "צהריים", "ערב", "שישי בבוקר"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0], p = priceOf(d);
+      return `תודה ${first}. רשמתי: ${d.kind}, ${d.level}, ${d.format}, ${d.slot}.${p ? " לפי המחירון: " + p + "." : ""}\nלחצו למטה, ואני חוזרת אליכם לאשר יום ושעה.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו יוגה ופילאטיס)\nסוג: ${d.kind}\nניסיון: ${d.level}\nמה מעניין: ${d.format}\nבריאות: ${d.health === "לא" ? "לא סימנו מגבלה" : "סימנו שיש משהו, לברר בשיחה"}\nמתי נוח: ${d.slot}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. השיעור נקבע רק אחרי אישור של הסטודיו.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  const KIND = () => (isPil() ? "פילאטיס מכשירים" : "יוגה");
+  document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => bot.open({ kind: KIND() })));
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(Object.assign({ kind: KIND() }, JSON.parse(b.dataset.pre)))));
+
+  // The switch: a pair of toggle buttons, kept in the address (?c=pilates).
+  const switches = document.querySelectorAll(".switch button");
+  function setC(c, keep) {
+    if (c === "pilates") root.dataset.c = "pilates"; else delete root.dataset.c;
+    switches.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.c === c)));
+    if (!keep) { const u = new URL(location.href); if (c === "pilates") u.searchParams.set("c", "pilates"); else u.searchParams.delete("c"); history.replaceState(null, "", u); }
+  }
+  switches.forEach((b) => {
+    b.addEventListener("click", () => setC(b.dataset.c));
+    b.addEventListener("keydown", (e) => {
+      if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+      e.preventDefault(); const other = [...b.parentNode.children].find((x) => x !== b); other.focus(); other.click();
+    });
+  });
+  setC(isPil() ? "pilates" : "yoga", true);
+  Guides.load("../shared/guides/yoga.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

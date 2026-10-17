@@ -8,15 +8,27 @@
 <meta name="description" content="הבית של העסקים הקטנים: אתר שמוצאים בגוגל, שעונה ללקוחות בוואטסאפ ושומר כל פנייה. בונים בצ׳אט, ורואים את האתר לפני שמשלמים.">
 <meta property="og:title" content="Easy Landing · אתרים שבונים עסקים">
 <meta property="og:description" content="בונים אתר לעסק. מקבלים פניות לוואטסאפ. סוגרים עבודות.">
-<meta property="og:image" content="https://service-pro-web.netlify.app/shared/video/hero/hero-poster.webp">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Easy Landing","slogan":"אתרים שבונים עסקים","description":"אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.","url":"https://service-pro-web.netlify.app/","telephone":"+972526359513","areaServed":{"@type":"Country","name":"ישראל"},"knowsLanguage":"he"}</script>
+<meta property="og:image" content="https://service-pro-web.netlify.app/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://service-pro-web.netlify.app/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:site_name" content="Easy Landing">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://service-pro-web.netlify.app/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#5428e0">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Easy Landing","slogan":"אתרים שבונים עסקים","description":"אתר לעסק קטן עם מענה אוטומטי בוואטסאפ, התראה על כל פנייה ותזכורת מעקב. כדי שאף פנייה לא תלך לאיבוד.","url":"https://service-pro-web.netlify.app/","telephone":"+972526359513","areaServed":{"@type":"Country","name":"ישראל"},"knowsLanguage":"he","logo":"https://service-pro-web.netlify.app/apple-touch-icon.png","image":"https://service-pro-web.netlify.app/og-image.jpg"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
 /* 1. The object: a concierge's desk card. Quiet paper, one precise ink, and a small fuchsia mark wherever something
       was answered. The phone on the page is the business's front desk.
    2. The detail only this subject has: the enquiry and its clock. Real times ("21:47"), "✓✓", "טיפלתי",
-      the 25 businesses in four groups, in their own colours, and the two real prices.
+      the 30 businesses in four groups, in their own colours, and the two real prices.
    3. The one bold move: very large, tightly set Rubik 800 headlines on near-white, with the fuchsia full stop as the
       only ornament. Everything else is hairlines, lilac fields and whitespace. Motion lives only where it explains
       something: the phone that turns into your trade, the enquiry that gets answered, the numbers that count.
@@ -93,7 +105,7 @@ html.a11y-still .reveal { opacity: 1; transform: none; }
 .hero-text { min-width: 0; display: grid; justify-items: start; gap: 22px; }
 .tagline { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink); font-size: .92rem; font-weight: 500; }
 .tagline i { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--fuchsia); box-shadow: 0 0 0 4px color-mix(in oklab, var(--fuchsia) 18%, transparent); }
-h1 { font: 800 clamp(2.5rem, 4.4vw, 4.2rem)/1.04 var(--display); letter-spacing: -.04em; }
+h1 { font: 800 clamp(2.2rem, 3.6vw, 3.5rem)/1.04 var(--display); letter-spacing: -.04em; }
 h1 > span { display: block; }
 h1 .two { color: var(--violet); }
 .hero-sub { font-size: clamp(1.1rem, 1.55vw, 1.3rem); color: var(--ink-2); max-width: 40ch; text-wrap: pretty; }
@@ -170,6 +182,12 @@ h1 .two { color: var(--violet); }
 .plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .plan { position: relative; min-width: 0; display: grid; align-content: start; gap: 12px; padding: clamp(20px, 2.4vw, 30px); border-radius: 24px; background: #fff; border: 1px solid var(--silver); transition: border-color .35s, box-shadow .35s, transform .45s var(--ease); }
 .plan.top { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet), 0 30px 60px -42px rgb(84 40 224 / .55); transform: translateY(-4px); }
+.plans { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; }
+.plan.top { border-width: 2px; box-shadow: 0 0 0 4px rgb(84 40 224 / .12), 0 0 46px -6px rgb(84 40 224 / .42), 0 34px 70px -40px rgb(84 40 224 / .6); }
+.plan.top .amount b { font-size: clamp(2.6rem, 4.4vw, 3.4rem); }
+.plan.basic { background: var(--paper, #fcfbff); border-color: var(--silver); box-shadow: none; opacity: .92; margin-top: 18px; }
+.plan.basic h3 { font-size: 1.2rem; } .plan.basic h3 small { font: 500 .95rem/1.3 var(--body); color: var(--ink-2); }
+.plan.basic .amount b { font-size: 1.9rem; } .plan.basic .inc { font-size: .92rem; }
 .plan-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
 .rec { flex: none; inline-size: max-content; padding: 4px 12px; border-radius: 999px; background: var(--violet); color: #fff; font-size: .82rem; font-weight: 600; }
 .plan[data-plan="ai"] { border-color: var(--lilac-2); background: linear-gradient(180deg, var(--lilac) 0, #fff 120px); }
@@ -197,6 +215,13 @@ h1 .two { color: var(--violet); }
 .plan .pricelock svg { flex: none; inline-size: 18px; block-size: 18px; margin-top: 2px; }
 .per s { color: var(--silver-ink); font-weight: 400; text-decoration-thickness: 1.5px; }
 .fine { margin-top: 18px; color: var(--ink-2); font-size: .95rem; font-weight: 500; }
+.plan .roi { margin: 8px 0 0; font-weight: 600; color: var(--ink); }
+.plan .zero { margin: 4px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--lilac); color: var(--ink); font-weight: 600; font-size: 1rem; }
+.plan.top[data-plan="ai"] { border-color: var(--violet); }
+.plan .zero b { color: var(--violet); }
+.trust { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; color: var(--ink-2); font-size: .92rem; text-align: center; }
+.trust svg { flex: none; inline-size: 16px; block-size: 16px; color: var(--violet); }
+.end .trust { color: #ddd5fb; justify-content: flex-start; text-align: start; margin-top: 18px; } .end .trust svg { color: #fff; }
 .terms { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--ink-2); font-size: .95rem; }
 .terms b { color: var(--ink); font-weight: 600; }
 
@@ -334,6 +359,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .bar.open .menu-btn i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 .nav-film::before { content: ""; display: inline-block; margin-inline-end: 6px; border-block: 5px solid transparent; border-left: 8px solid var(--fuchsia); vertical-align: 1px; }
 .pick-more { margin-top: 6px; font-size: .95rem; color: var(--ink-2); }
+.pick-other { margin-top: 14px; padding: 12px 16px; border-radius: 14px; background: var(--lilac); color: var(--ink); }
+.pick-other a { font-weight: 700; color: var(--violet); white-space: nowrap; }
 .end .btn.ghost-end { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / .7); }
 .end .btn.ghost-end:hover { background: rgb(255 255 255 / .1); }
 .dock { position: fixed; inset-inline: 0; bottom: 0; z-index: 25; display: none; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(to top, var(--paper) 60%, transparent); }
@@ -450,7 +477,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   :root.dock-on body .ab-panel { bottom: calc(174px + env(safe-area-inset-bottom, 0px)); height: min(540px, calc(100% - 180px)); }
   :root.in-hero .ab-launch { opacity: 0; pointer-events: none; }
   .brand small { display: none; }
-  h1 { font-size: clamp(2.5rem, 11.4vw, 3.4rem); }
+  h1 { font-size: clamp(2.1rem, 9.2vw, 2.8rem); }
   .cats { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); scrollbar-width: none; }
   .cats::-webkit-scrollbar { display: none; }
   .cats button { flex: none; }
@@ -460,6 +487,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .pick-note { margin-top: 8px; }
   .stage { margin-inline: calc(var(--gut) * -.5); border-radius: 22px; }
   .plans { grid-template-columns: minmax(0, 1fr); }
+  .plan.basic { margin-top: 0; }
   .duo { grid-template-columns: minmax(0, 1fr); margin-inline: calc(var(--gut) * -.5); padding: 14px; border-radius: 22px; }
   .wa-phone { block-size: 360px; }
   .lock { block-size: auto; min-block-size: 230px; padding-top: 22px; }
@@ -489,14 +517,14 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     <div class="wrap">
       <div class="hero-text">
         <p class="tagline"><i aria-hidden="true"></i>נחיתה רכה · הבית של העסקים הקטנים</p>
-        <h1 id="t-hero"><span>אתר חכם לעסק&nbsp;שלך&nbsp;–</span><span class="two">שלא מפספס אף&nbsp;לקוח<span class="dot">.</span></span></h1>
-        <p class="hero-sub"><b>בונים אתר לעסק. מקבלים פניות לוואטסאפ. סוגרים עבודות.</b>אתר מודרני מותאם לנייד, שעונה ללקוחות ושומר כל פנייה, גם כשאתה באמצע עבודה. בונים בצ׳אט ב-5 דקות – ומשלמים רק כשהאתר מוכן.</p>
+        <h1 id="t-hero"><span>באמצע עבודה ולא פנוי לענות?</span><span class="two">האתר שלך עונה ללקוחות בוואטסאפ תוך&nbsp;שניות<span class="dot">.</span></span></h1>
+        <p class="hero-sub"><b>בונים אתר לעסק. מקבלים פניות לוואטסאפ. סוגרים עבודות.</b>אתר מודרני מותאם לנייד, עם נציג AI שעונה מהמחירון שלך ושומר כל פנייה – גם כשאתה על הסולם או בנהיגה. 0&nbsp;₪ מקדמה, משלמים רק כשהאתר מוכן.</p>
         <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn line" href="film/">סרטון הסבר</a></div>
         <ul class="ticks"><li>מענה אוטומטי בוואטסאפ</li><li>אתר מודרני מותאם לנייד</li><li>אפס סיכון – משלמים רק כשהאתר מוכן</li></ul>
       </div>
       <figure class="reel" data-cues="[{&quot;at&quot;: 0, &quot;text&quot;: &quot;אתר לכל עסק: מספרה, נהיגה, גינון, חשמל&quot;}, {&quot;at&quot;: 6.8, &quot;text&quot;: &quot;אתר מקצועי לעסק שלכם&quot;}, {&quot;at&quot;: 9.6, &quot;text&quot;: &quot;נציג AI שעונה ללקוחות&quot;}, {&quot;at&quot;: 12.4, &quot;text&quot;: &quot;בוחרים תבנית&quot;}, {&quot;at&quot;: 15.4, &quot;text&quot;: &quot;עונים על כמה שאלות&quot;}, {&quot;at&quot;: 18.2, &quot;text&quot;: &quot;והאתר מתמלא מול העיניים&quot;}, {&quot;at&quot;: 20.8, &quot;text&quot;: &quot;מעלים תמונות&quot;}, {&quot;at&quot;: 23.4, &quot;text&quot;: &quot;משלמים, והאתר עולה לאוויר לבד&quot;}, {&quot;at&quot;: 25.8, &quot;text&quot;: &quot;וכל פנייה מגיעה אליכם בוואטסאפ&quot;}]">
         <div class="reel-frame">
-          <video muted loop playsinline preload="none" poster="shared/video/hero/hero-poster.webp" aria-label="רגעים מהתהליך: האתר והצ׳אט שעונה ללקוחות, בונה האתרים עם התבניות והצבעים, השאלות, התמונות, האישור, ופנייה שמגיעה בוואטסאפ"><source src="shared/video/hero/hero.webm" type="video/webm"><source src="shared/video/hero/hero.mp4" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" poster="shared/video/hero/hero-poster.webp" aria-label="רגעים מהתהליך: האתר והצ׳אט שעונה ללקוחות, בונה האתרים עם התבניות והצבעים, השאלות, התמונות, האישור, ופנייה שמגיעה בוואטסאפ"><source src="shared/video/hero/hero.mp4" type="video/mp4"><source src="shared/video/hero/hero.webm" type="video/webm"></video>
           <p class="cue" aria-hidden="true"><span></span></p>
           <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button>
         </div>
@@ -528,8 +556,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     <div class="wrap">
       <div class="head reveal">
         <p class="kicker">רק באינסטגרם?</p>
-        <h2 id="t-insta">לא כל לקוח מחפש אתכם באינסטגרם<span class="dot">.</span></h2>
-        <p class="sub">מי שצריך חשמלאי עכשיו, או תור לציפורניים מחר, פותח את גוגל. ולקוח מבוגר לא יעשה לכם עוקב כדי לשאול שאלה.</p>
+        <h2 id="t-insta">מסתמכים רק על פוסטים, אינסטגרם או מפה לאוזן<span class="dot">?</span></h2>
+        <p class="sub">לקוח שחבר המליץ לו עליכם, או מישהו שצריך בעל מקצוע עכשיו, מחפש אתכם בגוגל. אם אין אתר שעונה מיד בוואטסאפ, הוא עובר לבא בתור.</p>
       </div>
       <div class="vs">
         <section class="vs-card reveal" aria-labelledby="vs1"><h3 id="vs1">רק באינסטגרם</h3><ul><li>מוצאים אתכם רק מי שכבר עוקבים</li><li>שאלה על מחיר מחכה בהודעות</li><li>לקוח בלי חשבון לא יכול לפנות</li><li>המלצה מחבר עוברת כשם משתמש</li></ul></section>
@@ -661,7 +689,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         </figure>
         </div>
       </div>
-      <a class="film-link reveal" href="film/"><span class="play-ic" aria-hidden="true"></span>כל התהליך בסרטון של שתי דקות וחצי</a>
+      <a class="film-link reveal" href="film/"><span class="play-ic" aria-hidden="true"></span>כל התהליך בסרטון של שלוש וחצי דקות</a>
     </div>
   </section>
 
@@ -688,11 +716,12 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <div class="head reveal">
           <p class="kicker">דוגמאות</p>
           <h2 id="t-trades">בחרו את התחום שלכם<span class="dot">.</span></h2>
-          <p class="sub">25 עסקים לדוגמה. בוחרים סוג ותחום, והטלפון מראה איך האתר שלכם ייראה.</p>
+          <p class="sub">30 עסקים לדוגמה. בוחרים סוג ותחום, והטלפון מראה איך האתר שלכם ייראה.</p>
         </div>
         <div class="cats" id="cats" role="group" aria-label="סוג העסק"><button type="button" data-cat="urgent" aria-pressed="true">תקלות דחופות</button><button type="button" data-cat="home" aria-pressed="false">בית וחצר</button><button type="button" data-cat="care" aria-pressed="false">תורים וטיפולים</button><button type="button" data-cat="learn" aria-pressed="false">שיעורים ואירועים</button></div>
         <ul class="chips" id="chips" aria-label="תחומים"></ul>
         <p class="pick-note">העסקים בדוגמאות הם עסקים בדויים.</p>
+        <p class="pick-other"><b>לא מצאתם את התחום שלכם?</b> בוחרים את הדמו הכי קרוב, ומשנים בבונה לפי העסק שלכם. <a href="build/?t=other">לבנות לתחום אחר</a></p>
         <p class="pick-more"><a href="all/">כל הדוגמאות, עם הסבר</a> · <a href="leads-demo/">מערכת הלידים מבפנים</a> · <a href="ai-agent/">הנציג החכם בפעולה</a></p>
       </div>
       <div class="stage" id="stage">
@@ -713,8 +742,20 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       </div>
       <div class="price-grid">
         <div class="plans">
-          <article class="plan reveal" data-plan="p">
-            <h3>נוכחות</h3>
+          <article class="plan top reveal" data-plan="ai">
+            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
+            <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
+            <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>במחיר השקה</b> – נהנים מהנחה קבועה במחיר החודשי, לתמיד.</span></p>
+            <p class="amount"><b><bdi>2,490 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="per" data-m="290" data-was="390"></p>
+            <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
+            <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
+            <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
+            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>קישור מתויג לכל רשת וקבוצה: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
+            <a class="btn" href="build/">לבנות את האתר שלי</a>
+          </article>
+          <article class="plan basic reveal" data-plan="p">
+            <h3>נוכחות בסיסית <small>(בלי נציג AI)</small></h3>
             <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
             <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
             <p class="per" data-m="150"></p>
@@ -722,19 +763,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>קישורים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
             <a class="btn line" href="build/">לבנות דף נוכחות</a>
           </article>
-          <article class="plan top reveal" data-plan="ai">
-            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
-            <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
-            <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>במחיר השקה</b> – נהנים מהנחה קבועה במחיר החודשי, לתמיד.</span></p>
-            <p class="amount"><b><bdi>2,490 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
-            <p class="per" data-m="290" data-was="390"></p>
-            <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
-            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>קישור מתויג לכל רשת וקבוצה: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
-            <a class="btn" href="build/">לבנות את האתר שלי</a>
-          </article>
         </div>
       </div>
-      <p class="fine reveal">המחירים סופיים (כוללים קבלה מוכרת כהוצאה לעסק) · 0 ₪ מקדמה · משלמים רק כשהאתר מוכן</p>
+      <p class="fine reveal">המחירים סופיים (כוללים קבלה מוכרת כהוצאה לעסק) · 0&nbsp;₪&nbsp;מקדמה · משלמים רק כשהאתר מוכן</p>
+      <p class="trust reveal"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>חיבור רשמי ל-WhatsApp Cloud API של Meta · בלי תוכנות לא רשמיות שמסכנות את המספר העסקי</span></p>
       <div class="terms reveal">
         <p><b>בלי התחייבות:</b> מבטלים מתי שרוצים, והחיוב נעצר.</p>
         <p><b>משנים לבד:</b> כלול בתשלום החודשי.</p>
@@ -770,13 +802,14 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <h2 id="t-start">האתר שלכם מתחיל בשאלה אחת.</h2>
       <p class="sub">איך קוראים לעסק? משם הצ׳אט ממשיך. רואים את האתר לפני שמשלמים.</p>
       <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><button class="btn ghost-end" type="button" data-open-ai>לשאול את הנציג החכם</button></div>
+      <p class="trust on-dark"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span>חיבור רשמי ל-WhatsApp Cloud API של Meta · בלי תוכנות לא רשמיות שמסכנות את המספר העסקי</span></p>
       <p class="human">מעדיפים לדבר עם בן אדם? <a href="https://wa.me/972526359513?text=%D7%94%D7%99%D7%99%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%A9%D7%9C%20Easy%20Landing%20%D7%95%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A9%D7%90%D7%9C%D7%94." target="_blank" rel="noopener">כתבו לנו בוואטסאפ</a></p>
     </div>
   </section>
 
 </main>
-<footer class="wrap foot"><span>Easy Landing · אתרים שבונים עסקים</span><span><a href="all/">כל הדוגמאות</a> · <a href="film/">סרטון הסבר</a> · <a href="privacy/">פרטיות ועוגיות</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
-<div class="dock"><div class="dock-row"><a class="btn" href="build/">לבנות את האתר שלי</a></div><p class="dock-note">0 ₪ מקדמה · משלמים רק כשהאתר מוכן</p></div>
+<footer class="wrap foot"><span>Easy Landing · אתרים שבונים עסקים</span><span><a href="all/">כל הדוגמאות</a> · <a href="film/">סרטון הסבר</a> · <a href="privacy/">פרטיות ועוגיות</a> · <a href="terms/">תנאים וביטולים</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
+<div class="dock"><div class="dock-row"><a class="btn" href="build/">לבנות את האתר שלי</a></div><p class="dock-note">0&nbsp;₪&nbsp;מקדמה · משלמים רק כשהאתר מוכן</p></div>
 
 <script>
 (() => {
@@ -793,30 +826,35 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   // bg / ink: the site's ground and text; acc / on: the button and its text; mark: the trade's thin line
   const T = [
     ['plumber', 'אינסטלטור', 'אורן מים', 'נזילה? סתימה? מגיעים היום.', 'plumber-portrait', '50% 40%', '#eef3fc', '#0e2350', '#123a8c', '#fff', '#123a8c', 'urgent'],
-    ['towing', 'גרר ושירותי דרך', 'עידו מצברים וגרר', 'תקועים בדרך? כתבו, וחוזרים עם זמן הגעה.', 'towing-work', '50% 50%', '#e9ecf0', '#13171e', '#b02815', '#fff', '#1f56a6', 'urgent'],
     ['electrician', 'חשמלאי', 'רז שגב', 'החשמל קפץ ולא חוזר?', 'electrician-portrait', '50% 35%', '#202427', '#f4f5f6', '#ff5a1f', '#202427', '#ff5a1f', 'urgent'],
     ['locksmith', 'מנעולן', 'עידו מפתח', 'ננעלתם בחוץ? כתבו, ועידו חוזר עם זמן הגעה.', 'locksmith-work', '50% 40%', '#e6e9ec', '#6e1b24', '#6e1b24', '#fff', '#9aa3ab', 'urgent'],
+    ['towing', 'גרר ושירותי דרך', 'עידו מצברים וגרר', 'תקועים בדרך? כתבו, וחוזרים עם זמן הגעה.', 'towing-work', '50% 50%', '#e9ecf0', '#13171e', '#b02815', '#fff', '#1f56a6', 'urgent'],
     ['shutters', 'תריסים', 'בני תריסים', 'התריס נתקע? כתבו, ואני חוזר עם זמן הגעה.', 'shutters-work', '50% 45%', '#e9eef1', '#16232c', '#0d6b63', '#fff', '#6c7a85', 'urgent'],
     ['ac', 'טכנאי מזגנים', 'אלון קור', 'המזגן לא מקרר? כותבים, ואנחנו חוזרים.', 'ac-work', '50% 40%', '#e6f1f6', '#0d2235', '#0d2235', '#e6f1f6', '#0d2235', 'urgent'],
     ['appliance', 'מכשירי חשמל', 'רועי שטרן', 'לתקן או להחליף? אגיד לכם בכנות.', 'appliance-work', '50% 40%', '#eef1f8', '#1d3bb3', '#1d3bb3', '#fff', '#1d3bb3', 'urgent'],
+    ['roofing', 'איטום וגגות', 'שחר איטום וגגות', 'דולף מהתקרה? שולחים תמונה, והפרטים אצלנו.', 'roofing-work', '60% 40%', '#eef1f3', '#1f262c', '#8c2f39', '#fff', '#2a6f97', 'urgent'],
     ['pest', 'הדברה', 'שקט', 'מזיקים בבית? מטפלים, ואתם חוזרים לבית שקט.', 'pest-work', '50% 40%', '#e6efe8', '#1d4a35', '#1d4a35', '#fff', '#1d4a35', 'home'],
     ['movers', 'הובלות', 'דרור הובלות', 'עוברים דירה? מחיר סגור לפני שמעמיסים.', 'movers-truck', '45% 50%', '#f6efe6', '#181512', '#c69c6d', '#181512', '#181512', 'home'],
     ['cleaning', 'ניקיון', 'שקד', 'אותה מנקה, כל שבוע, באותה שעה.', 'cleaning-portrait', '60% 40%', '#dceeec', '#0f3b3a', '#0f3b3a', '#fff', '#0f3b3a', 'home'],
     ['upholstery', 'ניקוי ספות ושטיחים', 'ניר ניקוי ספות', 'כמה עולה ספה של 3 מושבים? התשובה כאן.', 'upholstery-work', '40% 60%', '#eef0ef', '#1a2326', '#0b4f6c', '#fff', '#8c1f3c', 'home'],
     ['handyman', 'הנדימן', 'דורון', 'כל הרשימה. ביקור אחד.', 'handyman-work', '50% 40%', '#f3ebe2', '#1f2225', '#b98d63', '#1f2225', '#1f2225', 'home'],
-    ['renovation', 'שיפוצים', 'נתן אדלר', 'שיפוץ עם לוח זמנים שאפשר לסמוך עליו.', 'renovation-drywall', '50% 35%', '#2f5d4e', '#fff', '#fff', '#2f5d4e', '#fff', 'home'],
+    ['renovation', 'שיפוצים וגבס', 'נתן אדלר', 'באמצע עבודת גבס או צבע? הצ׳אט מסנן את היקף השיפוץ.', 'renovation-drywall', '50% 35%', '#2f5d4e', '#fff', '#fff', '#2f5d4e', '#fff', 'home'],
     ['garden', 'גינון', 'עומר גנים', 'הגינה שלכם, בכל עונה של השנה.', 'garden-work', '50% 40%', '#1f4d36', '#f3efe6', '#f3efe6', '#1f4d36', '#f3efe6', 'home'],
+    ['pergolas', 'פרגולות וסוככים', 'אופק פרגולות', 'על הפיגום בהתקנה? הצ׳אט אוסף את המידות והמיקום.', 'pergolas-work', '45% 50%', '#eef2f5', '#20252b', '#7a4b2a', '#fff', '#2b3138', 'home'],
+    ['security', 'אבטחה ותקשורת', 'דקל מערכות', 'מצלמות לבית, מערכות לעסקים. הצ׳אט שואל מה צריך.', 'security-work', '50% 45%', '#eef2f6', '#0f1b2d', '#1d63b8', '#fff', '#0f1b2d', 'home'],
     ['cosmetics', 'קוסמטיקה ויופי', 'מיה קליניקת יופי', 'הידיים בטיפול. הצ׳אט עונה בינתיים.', 'cosmetics-work', '50% 50%', '#f6f0f2', '#2f1f27', '#5b2140', '#fff', '#a8446b', 'care'],
     ['nails', 'בניית ציפורניים', 'ליה נייל סטודיו', 'כמה עולה ג׳ל? התשובה כאן, גם באמצע בנייה.', 'nails-work', '50% 50%', '#f8f4f6', '#25131c', '#a3124d', '#fff', '#6e0b33', 'care'],
     ['barber', 'ספרות', 'המספרה של שי', 'יש תור היום? שאלו כאן, ושי חוזר עם שעה.', 'barber-work', '50% 50%', '#f2f5f7', '#121a26', '#16223a', '#fff', '#b4182d', 'care'],
     ['massage', 'עיסוי ומסאז׳', 'רוני עיסוי טיפולי', 'הגב תפוס? מסמנים איפה, ורוני חוזר.', 'massage-work', '50% 50%', '#f1f4f3', '#16323b', '#1f4c57', '#fff', '#b0303d', 'care'],
     ['trainer', 'מאמנת כושר', 'יעל ברק', 'הפעם זה נשאר.', 'trainer-cover', '50% 30%', '#24352f', '#f1efe8', '#f1efe8', '#24352f', '#f1efe8', 'care'],
+    ['yoga', 'יוגה ופילאטיס', 'סטודיו אלה', 'יוגה או פילאטיס? הצ׳אט אוסף את השעה שנוחה לכם.', 'yoga-work', '45% 60%', '#f1f4ef', '#24182a', '#5b2a5e', '#fff', '#7c9a82', 'care'],
     ['psychologist', 'פסיכולוגית', 'תמר גלעד', 'מקום שקט לדבר על מה שקשה.', 'psychologist-work', '50% 40%', '#e3ebe6', '#1f3d36', '#1f3d36', '#fff', '#b9cbc2', 'care'],
     ['social-worker', 'עובדת סוציאלית', 'יעל שחר', 'משהו בבית לא מסתדר? מתחילים בשיחת היכרות.', 'social-worker-work', '50% 40%', '#f3f5f2', '#134e4a', '#134e4a', '#fff', '#d99a96', 'care'],
     ['photographer', 'צלם אירועים', 'יונתן צילום', 'בודקים תאריך ומקבלים תיק עבודות בוואטסאפ.', 'photographer-work', '40% 50%', '#eef1f4', '#1d1820', '#1d1820', '#fff', '#c0183c', 'learn'],
     ['driving', 'מורה לנהיגה', 'גיל לימודי נהיגה', 'מתחילים ללמוד נהיגה? גיל חוזר עם שעה.', 'driving-work', '50% 60%', '#f5f6f3', '#151a1f', '#c4122f', '#fff', '#1d4f91', 'learn'],
     ['tutor', 'מורה פרטית', 'נועה שגיא', 'מתמטיקה ואנגלית, מכיתה ד׳ ועד הבגרות.', 'tutor-portrait', '50% 35%', '#fbfcff', '#1b2a55', '#1b2a55', '#fff', '#d93a3a', 'learn'],
     ['music', 'מורה לנגינה', 'מאיה לב', 'שיעורי פסנתר, מהשיר שאתם אוהבים.', 'music-work', '50% 35%', '#f3f4f6', '#8e2236', '#8e2236', '#fff', '#15161a', 'learn'],
+    ['dog-trainer', 'אילוף כלבים', 'נועם אילוף כלבים', 'באמצע שיעור במגרש? הצ׳אט עונה לבעלי הכלבים.', 'dog-trainer-work', '50% 55%', '#eef3ee', '#1b2433', '#c2410c', '#fff', '#3f6b3a', 'learn'],
   ].map(([id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat]) => ({ id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat }));
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   /* the plans: each card's ticks come in line by line, once */

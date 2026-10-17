@@ -22,17 +22,17 @@ How to write:
 Facts:
 - Two packages (setup once, then monthly; monthly includes hosting, maintenance and follow-up). The prices are final: no VAT is added (the invoicing business is an עוסק פטור) and every payment gets a receipt the business can claim as an expense. Never say "לפני מע״מ" or "כולל מע״מ":
   נוכחות: 1,500 ₪ הקמה, 150 ₪ לחודש. One designed page, fast and mobile-ready, WhatsApp and call buttons, connected to the client's domain, hosting and maintenance.
-  נציג AI (the page, the lead system and the assistant): 2,490 ₪ הקמה, one payment, then 290 ₪ לחודש: the launch monthly, locked for good for whoever joins now (the regular monthly will be 390 ₪). There are no installments. Everything in נוכחות, plus an automatic WhatsApp reply, an alert on every enquiry, a follow-up reminder, all enquiries in one table, a chat on the site that knows the business and answers questions (like this one), filtering of enquiries, a summary of each conversation in WhatsApp, a monthly report and one change a month.
+  נציג AI (the page, the lead system and the assistant): 2,490 ₪ הקמה, one payment, then 290 ₪ לחודש: the launch monthly, locked for good for whoever joins now (the regular monthly will be 390 ₪). There are no installments. Everything in נוכחות, plus an automatic WhatsApp reply, an alert on every enquiry, a follow-up reminder, all enquiries in one table, a chat on the site that knows the business and answers questions (like this one), filtering of enquiries, a summary of each conversation in WhatsApp and a monthly report.
 - Self edit is included in both packages, as part of the monthly: after the site is live, the owner returns to the same builder chat, changes services, prices, texts and photos, sees the change and publishes it. No add-on, no extra cost.
 - Payment is monthly only, by card. There is no pilot, no discount and no annual prepayment; never offer one.
 - No commitment: monthly renews each month, cancel any time: what was paid runs to the end of its period, then nothing more is charged. Never mention a notice period. The domain is registered in the client's name. We host the site, and its files are theirs: if they leave, we hand them over. Every site is built to the Israeli privacy law and the accessibility standard (privacy policy, accessibility statement and menu, no tracking cookies); never promise protection from fines. If the monthly payment stops, the page and the domain stay theirs; the automatic reply, the assistant, the alerts and the table work only with the monthly payment.
-- Process, all on the site, no call: pick an example from your trade (demos); open the site builder (build/), give a name and a phone, and the draft is private; answer questions by picking ready answers (services, prices, areas, hours) and typing what's missing; upload photos, before-and-after and a short video from the phone; watch the site being built next to the chat and change it until it's right; approve and pick a package; pick the site's address (a free one with us, and their own domain if they have one); pay by card on a secure payment page (the invoice comes at once); the site goes live by itself, and the builder shows the link and the leads panel. Their own domain connects within a few hours, sometimes up to 48. נציג AI also connects the business's WhatsApp number, up to two weeks. Payment comes only after approving the finished draft. No technical knowledge needed.
+- Process, all on the site, no call: pick an example from your trade (demos); open the site builder (build/), give a name and a phone, and the draft is private; answer questions by picking ready answers (services, prices, areas, hours) and typing what's missing; upload photos, before-and-after and a short video from the phone; watch the site being built next to the chat and change it until it's right; approve and pick a package; pick the site's address (a free one with us, and their own domain if they have one); pay by card on a secure payment page (a receipt, קבלה, comes at once; never call it an invoice, חשבונית); the site goes live by itself, and the builder shows the link and the leads panel. Their own domain connects within a few hours, sometimes up to 48. נציג AI also connects the business's WhatsApp number, up to two weeks. Payment comes only after approving the finished draft. No technical knowledge needed.
 - What's on the site: a chat that asks the trade's questions and sums up the enquiry (נציג AI), a "כמה זה יעלה?" price-range calculator, tips and guides from the trade, before-and-after and a short video, "save to contacts". With נציג AI also: an automatic WhatsApp reply within seconds, an alert with a "טיפלתי" button, the customer's photo of the problem, the customer picking when to be called back with a reminder, a leads panel, a tagged link per group with a QR code, an "available now" line the owner sets from WhatsApp, a review request after a job (only with the owner's OK), and a monthly report.
 - WhatsApp messages go out from the business's own number through the official WhatsApp connection.
-- Example pages on this site, one per trade, each with a chat that hands off to WhatsApp and frames for the owner's own photos: אינסטלטור (plumber), הובלות (movers), מאמנת כושר (trainer), טכנאי מזגנים (ac), חשמלאי (electrician), ניקיון (cleaning), שיפוצים (renovation), מנעולן (locksmith), הדברה (pest), טכנאי מכשירי חשמל (appliance), הנדימן (handyman), גינון (garden), מורה פרטית (tutor), פסיכולוגית (psychologist), עובדת סוציאלית (social-worker), מורה לנגינה (music), גרר ושירותי דרך (towing), קוסמטיקה ויופי (cosmetics), צלם אירועים (photographer), ספרות (barber), עיסוי ומסאז׳ (massage), בניית ציפורניים (nails), מורה לנהיגה (driving), ניקוי ספות ושטיחים (upholstery), תריסים (shutters). There is also a lead-system demo (leads-demo) and an AI agent demo (ai-agent).
+- Example pages on this site, one per trade, each with a chat that hands off to WhatsApp and frames for the owner's own photos: אינסטלטור (plumber), הובלות (movers), מאמנת כושר (trainer), טכנאי מזגנים (ac), חשמלאי (electrician), ניקיון (cleaning), שיפוצים וגבס (renovation), מנעולן (locksmith), הדברה (pest), טכנאי מכשירי חשמל (appliance), הנדימן (handyman), גינון (garden), מורה פרטית (tutor), פסיכולוגית (psychologist), עובדת סוציאלית (social-worker), מורה לנגינה (music), גרר ושירותי דרך (towing), קוסמטיקה ויופי (cosmetics), צלם אירועים (photographer), ספרות (barber), עיסוי ומסאז׳ (massage), בניית ציפורניים (nails), מורה לנהיגה (driving), ניקוי ספות ושטיחים (upholstery), תריסים (shutters), מערכות אבטחה ותקשורת, לבית ולעסקים (security), יוגה ופילאטיס (yoga), אילוף כלבים (dog-trainer), פרגולות וסוככים (pergolas), איטום וגגות (roofing). There is also a lead-system demo (leads-demo) and an AI agent demo (ai-agent). A trade with no example of its own (a vet, a carpenter, a bakery): in the builder they pick "תחום אחר", write their trade and pick the closest example; the design comes from it and the builder fills the content for their own business. Offer the closest [[demo:SLUG]] and [[build]].
 
 Buttons: you can add at most two of these markers at the very end of a reply. The site turns them into buttons, so never explain them.
-- [[demo:SLUG]] where SLUG is one of: plumber, movers, trainer, ac, electrician, cleaning, renovation, locksmith, pest, appliance, handyman, garden, tutor, psychologist, social-worker, music, towing, cosmetics, photographer, barber, massage, nails, driving, upholstery, shutters, leads-demo, ai-agent. Use it when the visitor's trade matches, or to show an example.
+- [[demo:SLUG]] where SLUG is one of: plumber, movers, trainer, ac, electrician, cleaning, renovation, locksmith, pest, appliance, handyman, garden, tutor, psychologist, social-worker, music, towing, cosmetics, photographer, barber, massage, nails, driving, upholstery, shutters, security, yoga, dog-trainer, pergolas, roofing, leads-demo, ai-agent. Use it when the visitor's trade matches, or to show an example.
 - [[pricing]] to jump to the price list.
 - [[build]] to open the site builder. Use it whenever the visitor is ready to start, wants to try, or asks how to sign up.
 - [[go:SECTION]] to jump to a part of this page, where SECTION is one of: how (how it works, the whole path), what (what's on the site), demos, plans (prices), faq.
@@ -52,6 +52,14 @@ function limited(ip) {
   return list.length > RATE.max;
 }
 
+// A daily cap per instance (CHAT_DAILY, default 600 answers): past it the page answers from its scripted engine.
+let day = "", answers = 0;
+function overDailyCap() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== day) { day = today; answers = 0; }
+  return ++answers > (Number(process.env.CHAT_DAILY) || 600);
+}
+
 function validMessages(m) {
   if (!Array.isArray(m) || m.length < 1 || m.length > MAX_TURNS) return false;
   return m.every((x, i) =>
@@ -63,9 +71,12 @@ export default async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "not_configured" }, 503);
 
-  // Only this site may call the function.
+  // Only this site may call the function: a browser always sends Origin on a POST, and a script without one
+  // gets nothing (every answer costs money).
   const origin = req.headers.get("origin");
-  if (origin && new URL(origin).host !== new URL(req.url).host) return json({ error: "forbidden" }, 403);
+  let own = false;
+  try { own = !!origin && new URL(origin).host === new URL(req.url).host; } catch {}
+  if (!own) return json({ error: "forbidden" }, 403);
 
   const ip = req.headers.get("x-nf-client-connection-ip") || req.headers.get("x-forwarded-for") || "local";
   if (limited(ip)) return json({ error: "rate_limited" }, 429);
@@ -74,6 +85,7 @@ export default async (req) => {
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
   const messages = body && body.messages;
   if (!validMessages(messages)) return json({ error: "bad_messages" }, 400);
+  if (overDailyCap()) return json({ error: "busy" }, 429);
 
   try {
     const response = await client.beta.messages.create({

@@ -284,7 +284,7 @@
             <div class="wa-card" id="wa-owner"><span class="empty">יישלח כשהשיחה תסתיים</span></div>
           </div>
           <div class="panel">
-            <h3>גיליון הלידים</h3>
+            <h3>לוח הפניות</h3>
             <table class="sheet"><thead><tr><th>שם</th><th>שירות</th><th>ציון</th></tr></thead><tbody id="sheet"></tbody></table>
           </div>
         </div>
@@ -326,9 +326,9 @@
     <div class="cta">
       <div>
         <h2>רוצים נציג כזה לעסק שלכם?</h2>
-        <p>מאמנים אותו על השירותים, המחירים והשאלות שלכם. תוך שבועיים הוא באוויר.</p>
+        <p>מאמנים אותו על השירותים, המחירים והשאלות שלכם. האתר עולה לאוויר תוך דקות, והחיבור לוואטסאפ העסקי לוקח עד שבועיים.</p>
       </div>
-      <a href="../#pricing">לחבילת נציג AI</a>
+      <a href="../#plans">לחבילת נציג AI</a>
     </div>
   </div>
 
@@ -594,7 +594,7 @@
         const hot = score >= 70;
         later(300, () => addAction("🧠", "סיכום שיחה ב-AI", "הנציג סיכם את הצורך, המועד והדחיפות"));
         later(700, () => {
-          addAction("📊", "נרשם בגיליון הלידים", "שורה חדשה עם כל הפרטים וציון " + score);
+          addAction("📊", "נרשם בלוח הפניות", "שורה חדשה עם כל הפרטים וציון " + score);
           const tr = document.createElement("tr"); tr.className = "new";
           [data.name, data.service, score].forEach((v) => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
           $("sheet").prepend(tr);
@@ -612,7 +612,7 @@
             "⭐ ציון " + score + "/100\n" +
             "📝 סיכום: " + summary();
         });
-        later(1900, () => addAction("⏰", "תזכורת מעקב", "אם לא חזרתם ללקוח, תגיע אליכם תזכורת", "אחרי 3 שע׳"));
+        later(1900, () => addAction("⏰", "תזכורת מעקב", "אם לא חזרתם ללקוח, תגיע אליכם תזכורת", "אחרי שעה"));
         later(2200, () => addAction("📈", "נכנס לדוח החודשי", "מקור, שירות וזמן מענה", "סוף חודש"));
         later(2300, () => addLeadToDashboard());
       });

@@ -182,7 +182,7 @@
   .owner li span { color: #b9d0c3; font-size: 15.5px; }
   .owner .ph-cap { color: #b9d0c3; }
 
-  footer { padding-block: 34px 96px; color: var(--graphite-soft); font-size: 14px; }
+  footer { padding-block: 34px 150px; color: var(--graphite-soft); font-size: 14px; }
   footer .row-f { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid #cdd6d1; padding-top: 18px; }
 
   @media (max-width: 960px) {
@@ -507,7 +507,7 @@
       <div class="head"><h2>מה דורון רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח שולח את הרשימה</b><span>מה העבודה, מה עוד צריך, מתי נוח ובאיזה ישוב. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הלקוח שולח את הרשימה</b><span>מה העבודה, מה עוד צריך, מתי נוח ובאיזה יישוב. בלי טופס ארוך.</span></div></li>
           <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מה להעמיס על הרכב עוד לפני שמתקשרים.</span></div></li>
           <li><div><b>קובעים ביקור אחד</b><span>מתאמים יום ושעה, ועושים את הרשימה ברצף. הצ׳אט עונה גם בערב, כשהידיים עסוקות.</span></div></li>
         </ol>
@@ -521,7 +521,7 @@
 עבודה: הרכבת רהיטים
 עוד ברשימה: מדף בסלון וידית במטבח
 מתי: השבוע
-ישוב: חדרה
+יישוב: חדרה
 שם: רותם שמעוני
 טלפון: 052-7654321<time>20:15</time></div>
               </div>
@@ -560,12 +560,12 @@
       { key: "photo", label: "תמונה", ask: "יש תמונה של מה שצריך לתקן? זה עוזר לתת מחיר.", photo: true },
       { key: "details", label: "עוד ברשימה", ask: "מה עוד ברשימה?", input: "text", placeholder: "למשל: מדף במטבח וידית בארון" },
       { key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["השבוע", "בשבועיים הקרובים", "גמיש"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.jobs}, ועוד ${d.details}, ב${d.city}. מחיר לדוגמה: ${PRICES[d.jobs] || HOURLY}.\nאם יש כמה עבודות, עושים אותן בביקור אחד. לחצו למטה, ואחזור אליכם לקבוע.`,
-    summary: (d) => `פנייה מהאתר (דמו הנדימן)\nעבודה: ${d.jobs}\nעוד ברשימה: ${d.details}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו הנדימן)\nעבודה: ${d.jobs}\nעוד ברשימה: ${d.details}\nמתי: ${d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
