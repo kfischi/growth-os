@@ -7,7 +7,7 @@ Two things live here:
 1. **Growth OS** (`src/`, `supabase/`): a multi-tenant Next.js app. One deployment serves many business sites, keyed on domain, with AI-proposed copy that the owner approves. See `README.md`.
 2. **Kfir's side-income channel** (`demos/`, `clients/`, `docs/side-income/`): lead systems for small local businesses. A landing page, an instant WhatsApp reply, follow-up reminders and a monthly report, sold as a setup fee plus a monthly retainer.
 
-Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put Multibrawn branding on its pages, and never mix it with other projects.
+Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put Multibrawn branding on its pages, and never mix it with other projects. The one exception is legal: the receipts are issued by Multi brawn (עוסק פטור), and the terms and the privacy page name it with its number and e-mail, by the owner's choice without the private phone or the address.
 
 ## Skills for the side-income channel
 
