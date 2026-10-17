@@ -5,7 +5,7 @@
   <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>נציג AI · הדגמה חיה</title>
-  <meta name="description" content="הדגמה של נציג AI לעסק: שיחה עם לקוח, סינון, הצעת מחיר, תיאום, ואוטומציות שרצות ברקע.">
+  <meta name="description" content="הדגמה של נציג AI לעסק: שיחה עם לקוח, טווח מחיר מהמחירון של העסק, מענה אוטומטי בוואטסאפ, התראה לבעל העסק ותזכורת.">
   <meta name="robots" content="noindex">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -125,13 +125,6 @@
     .pill { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #1d3448; color: var(--night-soft); }
     .pill.on { background: var(--violet); color: #fff; }
 
-    .score-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
-    .score-num { font-size: 32px; font-weight: 800; }
-    .score-tag { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #1d3448; color: var(--night-soft); }
-    .score-tag.hot { background: #188458; color: #fff; }
-    .meter { height: 8px; border-radius: 999px; background: #1d3448; overflow: hidden; }
-    .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3ddc97, #7c6cf0); transition: width .6s ease; }
-    .why { list-style: none; margin: 10px 0 0; padding: 0; font-size: 13px; color: var(--night-soft); display: grid; gap: 4px; }
 
     .actions { grid-column: 1 / -1; }
     .flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
@@ -181,8 +174,8 @@
     .leads th { color: var(--ink-soft); font-weight: 600; font-size: 13px; }
     .leads tr.new td { background: var(--ok-tint); }
     .tag { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--bg); }
-    .tag.hot { background: var(--ok-tint); color: #146c49; }
-    .tag.warm { background: var(--violet-tint); color: #4334b5; }
+    .tag.fresh { background: var(--violet-tint); color: #4334b5; }
+    .tag.done { background: var(--ok-tint); color: #146c49; }
     .note { color: var(--ink-soft); font-size: 13px; margin: 12px 0 0; }
 
     .cta {
@@ -218,7 +211,7 @@
 <body>
 
   <div class="bar">
-    <strong>הדגמה.</strong> השיחה כאן מתוסרטת כדי להראות את התהליך. אצל לקוח, הנציג מבוסס AI ולומד את המידע של העסק. <a href="../">חזרה לעמוד הראשי</a>
+    <strong>הדגמה.</strong> השיחה כאן מתוסרטת כדי להראות את התהליך. אצל לקוח, הנציג מבוסס AI ועונה רק מהמידע של העסק. <a href="../">חזרה לעמוד הראשי</a>
   </div>
 
   <div class="wrap">
@@ -236,7 +229,7 @@
 
     <div class="tabs" role="tablist">
       <button type="button" role="tab" id="tab-live" aria-selected="true" aria-controls="view-live">שיחה חיה</button>
-      <button type="button" role="tab" id="tab-dash" aria-selected="false" aria-controls="view-dash">הדשבורד של בעל העסק</button>
+      <button type="button" role="tab" id="tab-dash" aria-selected="false" aria-controls="view-dash">הפאנל של בעל העסק</button>
     </div>
 
     <section class="stage" id="view-live" role="tabpanel" aria-labelledby="tab-live">
@@ -268,10 +261,8 @@
         <div class="panel">
           <h3>כוונה מזוהה</h3>
           <div class="intent" id="intent"></div>
-          <h3 style="margin-top:16px">ציון ליד</h3>
-          <div class="score-row"><span class="score-num" id="score">0</span><span class="score-tag" id="score-tag">בבדיקה</span></div>
-          <div class="meter"><i id="meter"></i></div>
-          <ul class="why" id="why"></ul>
+          <h3 style="margin-top:16px">בפאנל של בעל העסק</h3>
+          <dl class="fields" id="panel-rows"></dl>
         </div>
 
         <div class="panel actions">
@@ -286,7 +277,7 @@
           </div>
           <div class="panel">
             <h3>לוח הפניות</h3>
-            <table class="sheet"><thead><tr><th>שם</th><th>שירות</th><th>ציון</th></tr></thead><tbody id="sheet"></tbody></table>
+            <table class="sheet"><thead><tr><th>שם</th><th>שירות</th><th>סטטוס</th></tr></thead><tbody id="sheet"></tbody></table>
           </div>
         </div>
       </div>
@@ -294,10 +285,10 @@
 
     <section class="dash" id="view-dash" role="tabpanel" aria-labelledby="tab-dash">
       <div class="kpis">
-        <div class="kpi"><small>פניות החודש</small><b id="k-leads">47</b><span>12 יותר מהחודש הקודם</span></div>
-        <div class="kpi"><small>זמן מענה ראשון</small><b>4 שנ׳</b><span>24/7, גם בלילה</span></div>
-        <div class="kpi"><small>פניות מחוץ לשעות העבודה</small><b>38%</b><span>נענו מיד</span></div>
-        <div class="kpi"><small>לידים חמים</small><b id="k-hot">19</b><span>עם מועד או תקציב</span></div>
+        <div class="kpi"><small>פניות החודש</small><b id="k-leads">47</b><span>מהאתר ומהצ׳אט</span></div>
+        <div class="kpi"><small>מענה ראשון ללקוח</small><b>תוך שניות</b><span>אוטומטי, גם בלילה</span></div>
+        <div class="kpi"><small>פניות מחוץ לשעות העבודה</small><b>38%</b><span>קיבלו מענה אוטומטי</span></div>
+        <div class="kpi"><small>טופלו</small><b id="k-done">41</b><span>סומנו ״טיפלתי״</span></div>
       </div>
       <div class="dash-grid">
         <div class="card">
@@ -315,12 +306,12 @@
         </div>
       </div>
       <div class="card" style="margin-top:14px">
-        <h3>לידים אחרונים</h3>
+        <h3>פניות אחרונות</h3>
         <table class="leads">
-          <thead><tr><th>שם</th><th>שירות</th><th class="hide-sm">אזור</th><th>מועד</th><th>סטטוס</th></tr></thead>
+          <thead><tr><th>שם</th><th>שירות</th><th class="hide-sm">אזור</th><th>נוח לחזור</th><th>סטטוס</th></tr></thead>
           <tbody id="leads"></tbody>
         </table>
-        <p class="note">נתוני הדגמה. הליד מהשיחה שלכם מסומן בירוק.</p>
+        <p class="note">נתוני הדגמה. הפנייה מהשיחה שלכם מסומנת בירוק.</p>
       </div>
     </section>
 
