@@ -647,6 +647,12 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   if (D.live) Object.assign(D, { content: D.live.content, photos: D.live.photos || {}, video: D.live.video || null }); // nothing unpublished
   Object.assign(D, { status: "published", self_edit: false, paid_at: D.paid_at || new Date().toISOString() }); // a live site, as after publishing
   nl.taken.add("oren-mayim"); // someone on Netlify has the name: the next one is taken
+  // A first try that fails after the site was made: its id is saved at once, and the next try uses that site.
+  nl.failDeploy = 1;
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
+  assert.equal(r.hosting.state, "failed", JSON.stringify(r.hosting));
+  assert.equal(nl.sites.size, 1); assert.equal(D.site_id, [...nl.sites.values()][0].id, "the new site's id is saved before the deploy");
+  D.site_id = null; D.site_netlify = null; // and a run cut off even before that: the site is found by its address
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
   assert.equal(r.status, 200, JSON.stringify(r));
   assert.deepEqual(r.hosting, { state: "live", url: "https://oren-mayim.sites.example.co.il/" });
@@ -686,6 +692,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const before = nl.uploads.length;
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200);
   assert.equal(nl.sites.size, 1, "no second site"); assert.equal(nl.uploads.length, before, "nothing changed, nothing uploaded");
+  // a service or an area page the owner removed leaves the repo at the next publish
+  gh.files.set("clients/oren-mayim/area-0ld1.html", "x"); gh.files.set("clients/oren-mayim/service-0ld1.html", "x");
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200);
+  assert.ok(!gh.files.has("clients/oren-mayim/area-0ld1.html") && !gh.files.has("clients/oren-mayim/service-0ld1.html"), "old pages removed");
+  assert.ok(gh.files.has("clients/oren-mayim/index.html"));
   assert.equal(nl.records.length, 1);
 
   // the client's own domain
@@ -733,4 +744,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   delete process.env.NETLIFY_TOKEN; delete process.env.SITES_DOMAIN;
 }
 
+// "תחום אחר": the address suggestions use the owner's own trade, never the demo's (plumber) as a backup
+{
+  ai.queue.push({ names: ["dana-vet"] });
+  const out = await B.suggestSlugs({ id: "abcd1234-0000-0000-0000-000000000000", template: "plumber", content: { business_name: "דנה", trade: "וטרינרית", custom_trade: true, area: "חדרה" } });
+  assert.equal(JSON.parse(aiCalls.at(-1).messages[0].content).trade, "וטרינרית");
+  assert.deepEqual(out.map((x) => x.slug), ["dana-vet", "site-abcd"], "no plumber names");
+}
 console.log("all site builder tests passed");

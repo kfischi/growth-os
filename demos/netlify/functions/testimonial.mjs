@@ -117,7 +117,12 @@ export default async (req, context) => {
   let t;
   try { [t] = await db("POST", "ls_testimonials", { client_slug: client.slug, lead_id: lead.id, ...chk.row }, "return=representation"); }
   catch (e) { return json({ error: "closed", message: "כבר כתבתם המלצה מהקישור הזה. תודה!" }, 410); }
-  await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&testimonial=eq.sent`, { testimonial: "done" });
+  // Then close the invitation. If it was already closed (a second press that got past the unique check), take it back.
+  const shut = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&testimonial=eq.sent`, { testimonial: "done" }, "return=representation");
+  if (!shut.length) {
+    await db("DELETE", `ls_testimonials?id=eq.${q(t.id)}`).catch(() => {});
+    return json({ error: "closed", message: "כבר כתבתם המלצה מהקישור הזה. תודה!" }, 410);
+  }
   // The owner sees it right away, and can take it off the site with one tap. Buttons work only within 24 hours of the
   // owner's last message to the number; otherwise the owner alert template carries it, and the panel hides it.
   const stars = chk.row.stars ? " " + "★".repeat(chk.row.stars) : "";
