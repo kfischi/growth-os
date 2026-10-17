@@ -37,7 +37,7 @@ alter table public.ls_payments enable row level security;
 
 -- One subscription per paid site: the saved card (a Grow token, not the card itself) and the next charge.
 -- state: active, failed (refused, tried again after 3 days), suspended (4 refusals: the lead system paused),
--- cancelling (30 days' notice running, until end_at), ended.
+-- cancelling (no notice: what was paid runs until end_at), ended.
 create table if not exists public.ls_billing (
   draft_id uuid primary key references public.ls_drafts (id) on delete restrict,
   package text not null check (package in ('presence', 'ai')),

@@ -31,7 +31,7 @@
   const actOf = (a) => {
     if (a.dataset && a.dataset.act) return a.dataset.act;
     const h = a.getAttribute("href") || "";
-    return /^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(h) ? "wa" : /^tel:/.test(h) ? "call" : /\.vcf(\?|$)/.test(h) ? "save" : /(^|\/)build\/?(#.*)?$/.test(h) ? "build" : "";
+    return /^https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(h) ? "wa" : /^tel:/.test(h) ? "call" : /\.vcf(\?|$)/.test(h) ? "save" : /(^|\/)build\/?([?#].*)?$/.test(h) ? "build" : "";
   };
   window.LeadForm = {
     source,
