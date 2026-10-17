@@ -81,7 +81,7 @@ for (const [id, T] of Object.entries(TRADES)) {
   for (const page of [html, P.render(c, { mode: "draft", assets: "/shared/" })["index.html"]])
     for (const [, code] of page.matchAll(/<script>([\s\S]*?)<\/script>/g)) { try { new Function(code); } catch (e) { assert.fail(at("a page script doesn't parse: " + e.message)); } }
   assert.ok(html.includes(`>${T.words.jobs}<`) && html.includes(T.words.how), at("the site uses the trade's words"));
-  assert.ok(!/סתימה|נזילה|הברז הראשי(?! של ההשקיה)/.test(id === "plumber" ? "" : html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "")), at("no plumbing words on another trade's site"));
+  assert.ok(!/סתימה|נזילה|הברז הראשי(?! של ההשקיה)/.test(["plumber", "roofing"].includes(id) ? "" : html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "")), at("no plumbing words on another trade's site"));
   assert.ok(html.includes(JSON.stringify(T.chat.issue.ask)), at("its chat"));
   for (const x of (ch.extra || []).filter((y) => y.only)) assert.ok(html.includes(`show: (d) => ${JSON.stringify(x.only.is)}.includes(d[${JSON.stringify(x.only.key)}])`), at("the chat asks " + x.key + " only when it applies"));
   assert.ok(Object.keys(site).filter((f) => f.startsWith("service-")).length === 4, at("a page per service"));

@@ -162,7 +162,41 @@ async function estimates(b) {
   }
   return bad;
 }
-const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters'];
+// The pages with a switch (security: ?for=business, yoga: ?c=pilates): the address opens that side, the switch
+// buttons say which is on (aria-pressed), and the chat from the corner asks that side's questions to the WhatsApp handoff.
+async function switches(b) {
+  let bad = 0;
+  const CASES = [
+    ['security/index.html?for=business', 'לעסקים ופרויקטים', ['· עסקים', 'חברה: בדיקה כהן', 'היקף:']],
+    ['security/index.html', 'לבית', ['· לבית', 'מה צריך: מצלמות']],
+    ['yoga/index.html?c=pilates', 'פילאטיס', ['סוג: פילאטיס מכשירים', 'בריאות:']],
+  ];
+  for (const [url, pressed, want] of CASES) for (const [w, h] of [[390, 844], [1280, 900]]) {
+    const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = []; p.on('pageerror', (e) => errs.push(e.message));
+    await p.route(/fonts\.|wa\.me/, (r) => r.abort());
+    await p.goto(`http://localhost:8790/${url}`); await p.waitForTimeout(600);
+    const on = (await p.$eval('.switch [aria-pressed="true"]', (x) => x.textContent.trim()).catch(() => ''));
+    await p.click('.lb-launch');
+    let done = false;
+    for (let i = 0; i < 18 && !done; i++) {
+      await p.waitForTimeout(1500);
+      if (await p.$('.lb-panel .lb-wa')) { done = true; break; }
+      const chip = await p.$('.lb-panel .lb-chips button:visible'), input = await p.$('.lb-panel form input:visible');
+      if (chip) await chip.click();
+      else if (input) { const t = await input.getAttribute('type'); await input.fill(t === 'tel' ? '0501234567' : 'בדיקה כהן'); await input.press('Enter'); }
+    }
+    const href = done ? decodeURIComponent(await p.getAttribute('.lb-panel .lb-wa', 'href') || '') : '';
+    // and the switch itself, from the keyboard: an arrow moves to the other side and the address follows
+    await p.click('.lb-panel .lb-x'); await p.focus('.switch [aria-pressed="true"]'); await p.keyboard.press('ArrowLeft'); await p.waitForTimeout(200);
+    const flipped = await p.$eval('.switch [aria-pressed="true"]', (x) => x.textContent.trim());
+    const ok = on === pressed && done && want.every((x) => href.includes(x)) && flipped !== pressed && !errs.length;
+    if (!ok) bad++;
+    console.log(`${ok ? 'OK ' : 'BAD'} switch ${url.padEnd(34)} ${w}px on=${on} done=${done} want=${want.every((x) => href.includes(x))} keyboard=${flipped}${errs.length ? ' ' + errs[0] : ''}`);
+    await p.close();
+  }
+  return bad;
+}
+const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters','security','yoga','dog-trainer','pergolas','roofing'];
 (async () => {
   const b = await chromium.launch(); let bad = 0;
   for (const d of DEMOS) {
@@ -197,6 +231,7 @@ const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renov
     }
   }
   bad += await guidesCheck(b);
+  bad += await switches(b);
   bad += await musicInstruments(b);
   bad += await estimates(b);
   bad += await photoStep(b);

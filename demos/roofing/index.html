@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>שחר איטום וגגות · חיפה והקריות</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="נזילה מהתקרה, איטום גג לפני החורף, רעפים ומרפסות בחיפה והקריות. שולחים בצ׳אט איפה דולף ותמונה, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f262c">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/roofing-work.webp" fetchpriority="high">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the roof cut open. The concrete slab, the primer, the black bitumen membrane and its silver coat, and under it
+     the ceiling with a stain and a drop into a bucket. The first rain of the season.
+     Detail: יריעה ביטומנית, פוליאוריאה, יריעה נוזלית, רעפים, מרזב, גג משותף ונציגות, מ״ר, "מטפטף עכשיו".
+     Bold move: the services are the roof's layers, one band per job, from the coat on top to the slab below. Slate and
+     concrete greys, a tile red for the buttons, rain blue only on the drops. */
+  :root {
+    --sky: #eef1f3;
+    --slate: #1f262c;
+    --concrete: #b9c1c8;
+    --bitumen: #3b3f45;
+    --tile: #8c2f39;           /* the roof tile: buttons and the one strong colour */
+    --tile-deep: #6e222b;
+    --rain: #2a6f97;
+    --ink: #1f262c;
+    --ink-soft: #4f5a63;
+    --line: #d1d8dd;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--slate);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--tile); --bot-accent-fg: #fff; --bot-them: #eef1f3; --bot-me: var(--slate); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 12px; --bot-radius-msg: 12px; --bot-focus: var(--slate);
+    --ps-a: #cdd5db; --ps-b: #4f5a63; --ps-ui: var(--slate); --ps-edit: var(--tile);
+    --guide-alert: var(--tile);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--sky); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--tile); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--tile); color: #fff; box-shadow: 0 16px 32px -14px rgba(140,47,57,.8), 0 2px 6px -2px rgba(140,47,57,.4); }
+  .btn-main:hover { background: var(--tile-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--tile); }
+
+  .demo { background: var(--slate); color: #c6cdd3; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(31,38,44,.96); color: #fff; backdrop-filter: blur(8px); border-bottom: 4px solid var(--bitumen); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: #c6cdd3; font-weight: 700; font-size: .74em; }
+  .logo .k { width: 28px; height: 20px; background: linear-gradient(var(--tile) 0 5px, #111 5px 9px, var(--concrete) 9px); border-radius: 3px; }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+  .top-a .btn-main:focus-visible { outline-color: #fff; }
+  .top-a .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+
+  .season { background: #fff; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .season .wrap { display: flex; gap: 10px; align-items: center; min-height: 44px; flex-wrap: wrap; }
+  .season b { color: var(--rain); }
+  .season i { width: 10px; height: 14px; background: var(--rain); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; flex: none; }
+  .season a { color: var(--tile); font-weight: 700; }
+
+  .hero { position: relative; overflow: hidden; background: var(--sky);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(42,111,151,.18), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(140,47,57,.10), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--tile); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--tile); box-shadow: 0 0 0 3px rgba(140,47,57,.18); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--tile); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--tile); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #dfe5e9;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(31,38,44,.6), 0 12px 24px -16px rgba(140,47,57,.25); }
+  .frame-l .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(31,38,44,.55), 0 4px 12px -6px rgba(140,47,57,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eef1f3; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--tile); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--tile); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The layers: one band per job, from the top coat down to the slab */
+  .layers { border-radius: 18px; overflow: hidden; box-shadow: 0 0 0 1px var(--line), 0 40px 70px -46px rgba(31,38,44,.55); }
+  .ly { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 6px 18px; align-items: center; width: 100%; padding: 18px 22px; background: #fff; border-bottom: 1px solid var(--line); transition: background .15s; }
+  .ly:last-child { border-bottom: 0; }
+  .ly::before { content: ""; align-self: stretch; border-radius: 4px; background: var(--c, var(--concrete)); }
+  .ly:hover { background: #f6f8f9; }
+  .ly:focus-visible { outline: 3px solid var(--tile); outline-offset: -3px; }
+  .ly b { display: block; font-size: 18.5px; line-height: 1.3; }
+  .ly span span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; }
+  .ly .pr { text-align: left; font-weight: 700; font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--tile); }
+  .ly .pr small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+  .shared { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
+  .shared::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 2px; background: var(--tile); transform: translateY(-1px); }
+  .shared a { color: var(--tile); font-weight: 700; }
+
+  .calc { background: var(--slate); color: #fff;
+    --bot-bg: #29323a; --bot-fg: #fff; --bot-line: #48545e; --bot-muted: #c6cdd3; --bot-accent: #fff; --bot-accent-fg: var(--slate); --bot-focus: #fff; }
+  .calc .head p { color: #c6cdd3; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  .guides { background: #e2e7ea; }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 12px; background: var(--slate); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat, photo and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .season { font-size: 14px; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .ly { grid-template-columns: 10px minmax(0, 1fr); padding: 16px; }
+    .ly .pr { grid-column: 2; text-align: right; font-size: 16px; }
+    .ly .pr small { display: inline; margin-inline-start: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .ly { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=roofing">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">שחר</span><span class="n2" data-edit="name2">איטום וגגות</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>איפה דולף?</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על איטום">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+<div class="season"><div class="wrap"><i aria-hidden="true"></i><span><b>החורף מתחיל.</b> נזילה עכשיו? קודם מרחיקים חשמל מהמים. <a href="#g-leak-now">מה עושים עכשיו</a></span></div></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>מקבלים קריאות נזילה</span><span>חיפה · הקריות · טירת כרמל · נשר</span></div>
+    <h1><span data-edit="h1a">דולף מהתקרה?</span> <em data-edit="h1b">שולחים תמונה בצ׳אט, ו<b>חוזרים עם זמן בדיקה.</b></em></h1>
+    <p class="lede">איפה דולף, איזה גג וכמה דחוף. ארבע שאלות ותמונה, והפרטים מגיעים לוואטסאפ, גם כשאנחנו על גג אחר. את המחיר סוגרים אחרי בדיקה.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>איפה דולף?</button>
+      <a class="btn btn-ghost" href="#calc">כמה עולה איטום?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>18 שנה</dt><dd>איטום גגות בחיפה והקריות</dd></div>
+      <div><dt>בדיקה קודם</dt><dd>מחיר רק אחרי שרואים</dd></div>
+      <div><dt>אחריות בכתב</dt><dd>על כל עבודת איטום</dd></div>
+      <div><dt>גם גג משותף</dt><dd>מול הנציגות של הבניין</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l"><figure class="ps" data-slot="hero" data-src="../shared/photos/roofing-work.webp" data-alt="חתך של גג: יריעת איטום נפרסת, ענן גשם, ובחדר מתחת כתם בתקרה וטיפה שנופלת לדלי" data-pos="60 40" data-icon="drop" data-label="תמונה שלכם"></figure></div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">מטפטף מהתקרה בסלון, גג בטון</p><p class="a">שלחו תמונה של הכתם. חוזרים עם זמן בדיקה.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה · למ״ר</span><div><b>יריעות ביטומניות</b><span>90 עד 140 ₪</span></div><div><b>פוליאוריאה</b><span>160 עד 260 ₪</span></div><div><b>יריעה נוזלית</b><span>70 עד 120 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="services">
+    <div class="wrap">
+      <div class="head"><h2>מה צריך?</h2><p>מחירים לדוגמה, מהשכבה העליונה ועד התקרה. לוחצים על שורה, והצ׳אט נפתח איתה.</p></div>
+      <div class="layers">
+        <button class="ly" type="button" style="--c:#2a6f97" data-pre='{"need":"נזילה, צריך לבדוק"}'><span><b>איתור נזילה</b><span>מוצאים מאיפה המים נכנסים, לפני שמחליטים מה לעשות</span></span><span class="pr">400 עד 800 ₪<small>ביקור ובדיקה</small></span></button>
+        <button class="ly" type="button" style="--c:#dfe5e9" data-pre='{"need":"איטום גג"}'><span><b>יריעה נוזלית</b><span>שכבה שמורחים על גג בטון, עם רשת בפינות ובסדקים</span></span><span class="pr">70 עד 120 ₪<small>למ״ר</small></span></button>
+        <button class="ly" type="button" style="--c:#3b3f45" data-pre='{"need":"איטום גג"}'><span><b>יריעות ביטומניות</b><span>יריעות שמלחימים על הגג, עם צבע מגן מלמעלה</span></span><span class="pr">90 עד 140 ₪<small>למ״ר</small></span></button>
+        <button class="ly" type="button" style="--c:#5b6670" data-pre='{"need":"איטום גג"}'><span><b>פוליאוריאה</b><span>ציפוי בהתזה, שכבה אחת רציפה בלי תפרים</span></span><span class="pr">160 עד 260 ₪<small>למ״ר</small></span></button>
+        <button class="ly" type="button" style="--c:#8c2f39" data-pre='{"need":"תיקון רעפים"}'><span><b>תיקון רעפים</b><span>רעפים שבורים או זזו, יריעה מתחת ומרזבים</span></span><span class="pr">800 עד 2,500 ₪<small>לפי הגג</small></span></button>
+        <button class="ly" type="button" style="--c:#b9c1c8" data-pre='{"need":"איטום מרפסת"}'><span><b>איטום מרפסת</b><span>מרפסת שמטפטפת לשכנים מלמטה, כולל פירוק וריצוף אם צריך</span></span><span class="pr">2,500 עד 6,000 ₪<small>למרפסת</small></span></button>
+      </div>
+      <p class="shared">גג משותף? את העבודה מתאמים עם הנציגות ובעלי הדירות. <a href="#g-shared-roof">מה צריך לדעת</a></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים פתרון ושטח, ורואים טווח. את הפתרון הנכון ואת המחיר הסופי קובעים אחרי בדיקה.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשדולף עכשיו, ומה כדאי לדעת לפני החורף.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>איפה דולף, איזה בניין, איזה גג, כמה דחוף, ותמונה. בלי טופס.</span></div></li>
+          <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם זה טפטוף עכשיו או כתם ישן, ואם צריך נציגות.</span></div></li>
+          <li><div><b>חוזרים עם זמן בדיקה</b><span>בגשם הראשון הטלפון לא מפסיק. הצ׳אט אוסף את הפרטים בינתיים.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">י</span><div><b>יוסי מזרחי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו איטום)
+מה צריך: נזילה, צריך לבדוק
+איפה דולף: תקרה
+בניין: דירה מתחת לגג
+גג: בטון
+דחיפות: מטפטף עכשיו
+ישוב: קריית ביאליק
+שם: יוסי מזרחי
+טלפון: 052-7654321<time>06:50</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הקריאה מגיעה לאוטם</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>שחר איטום וגגות · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  PhotoSlots.init({ page: "roofing" });
+  const LEAK = "נזילה, צריך לבדוק";
+  const NOW = "מטפטף עכשיו";
+  const PLANNED = (d) => d.need === "איטום גג";
+  const RANGES = { "נזילה, צריך לבדוק": "איתור נזילה עולה בדרך כלל 400 עד 800 ₪", "איטום גג": "איטום גג הוא בדרך כלל 70 עד 260 ₪ למ״ר, לפי הפתרון",
+    "תיקון רעפים": "תיקון רעפים הוא בדרך כלל 800 עד 2,500 ₪", "איטום מרפסת": "איטום מרפסת הוא בדרך כלל 2,500 עד 6,000 ₪" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "שחר · איטום וגגות", subtitle: "חוזרים עם זמן בדיקה", initial: "ש", launcher: "איפה דולף?", hint: "נציג AI",
+    greet: "היי, כאן שחר איטום וגגות.\nכמה שאלות קצרות, והפרטים מגיעים אלינו בוואטסאפ.",
+    steps: [
+      { key: "need", label: "מה צריך", ask: "מה צריך?", chips: [LEAK, "איטום גג", "תיקון רעפים", "איטום מרפסת"] },
+      { key: "spot", label: "איפה דולף", ask: "איפה רואים את המים?", chips: ["תקרה", "קיר", "סביב חלון", "הגג עצמו"], show: (d) => !PLANNED(d) },
+      { key: "building", label: "בניין", ask: "איזה בניין?", chips: ["בית פרטי", "דירה מתחת לגג", "גג משותף בבניין"] },
+      { key: "roof", label: "גג", ask: "איזה גג?", chips: ["בטון", "רעפים", "פאנלים או איסכורית", "לא יודעים"] },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: [NOW, "אחרי כל גשם", "רק כתם"], show: (d) => !PLANNED(d),
+        tip: { when: (v) => v === NOW, id: "leak-now", text: "בינתיים: מרחיקים מכשירי חשמל מהמים. מים ליד שקעים? מורידים את המפסק של החדר וקוראים לחשמלאי. לא עולים לגג רטוב." } },
+      { key: "urgency", label: "מתי", ask: "מתי תרצו לאטום?", chips: ["לפני הגשם הבא", "בחודש הקרוב", "רק בודקים מחיר"], show: PLANNED },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הכתם, של הנזילה או של הגג? כך מגיעים מוכנים.", photo: true },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חיפה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const shared = d.building === "גג משותף בבניין" ? "\nגג משותף: את העבודה מתאמים עם הנציגות של הבניין." : "";
+      return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.need}${d.spot ? ", " + d.spot : ""}, ${d.building}, גג ${d.roof}, ב${d.city}. ${RANGES[d.need] || ""}, והמחיר הסופי אחרי בדיקה.${shared}\nלחצו למטה, וחוזרים אליכם עם זמן בדיקה.`;
+    },
+    summary: (d) => `קריאה מהאתר (דמו איטום)\nמה צריך: ${d.need}${d.spot ? "\nאיפה דולף: " + d.spot : ""}\nבניין: ${d.building}\nגג: ${d.roof}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+  const ROOF = ["יריעה נוזלית", "יריעות ביטומניות", "פוליאוריאה"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "איזה פתרון?", items: [
+      { label: "יריעה נוזלית", range: [70, 120], prefill: { need: "איטום גג" } },
+      { label: "יריעות ביטומניות", range: [90, 140], prefill: { need: "איטום גג" } },
+      { label: "פוליאוריאה", range: [160, 260], prefill: { need: "איטום גג" } },
+      { label: "תיקון רעפים", range: [800, 2500], prefill: { need: "תיקון רעפים", roof: "רעפים" } },
+      { label: "איטום מרפסת", range: [2500, 6000], prefill: { need: "איטום מרפסת" } },
+    ] },
+    factors: [
+      { ask: "מה השטח, בערך?", for: ROOF, options: [
+        { label: "בערך 25 מ״ר", mul: 25 },
+        { label: "בערך 60 מ״ר", mul: 60 },
+        { label: "בערך 100 מ״ר", mul: 100 },
+        { label: "בערך 150 מ״ר", mul: 150, note: "גג גדול או משותף: את העבודה מתאמים עם הנציגות." },
+      ] },
+      { ask: "יש איטום ישן על הגג?", for: ROOF, options: [
+        { label: "לא, או שאפשר לעבוד מעליו" },
+        { label: "צריך להסיר שכבה ישנה", mul: [1.15, 1.3], note: "הסרה וניקוי של שכבה ישנה מוסיפים זמן עבודה." },
+      ] },
+      { ask: "כמה גדולה המרפסת?", for: ["איטום מרפסת"], options: [
+        { label: "עד 10 מ״ר" },
+        { label: "10 עד 20 מ״ר", mul: [1.4, 1.6] },
+      ] },
+      { ask: "איזה בניין?", options: [
+        { label: "בית פרטי", prefill: { building: "בית פרטי" } },
+        { label: "דירה מתחת לגג", prefill: { building: "דירה מתחת לגג" } },
+        { label: "גג משותף בבניין", prefill: { building: "גג משותף בבניין" }, note: "בגג משותף ההחלטה וחלוקת העלות של בעלי הדירות." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. את הפתרון הנכון ואת המחיר הסופי קובעים אחרי בדיקה בגג.",
+    cta: "לפתוח קריאה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/roofing.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

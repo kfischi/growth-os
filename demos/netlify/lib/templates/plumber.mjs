@@ -265,13 +265,13 @@ function sampleContent(T) {
 }
 
 // The sample at the top of a draft per trade, from the demos' own pictures (shared/photos: photos for the first sixteen
-// trades, flat illustrations for the newer eleven until real photos are made).
+// trades, flat illustrations for the newer fourteen until real photos are made).
 const SAMPLE_HEROES = Object.fromEntries(Object.entries({
   plumber: "plumber-siphon", ac: "ac-work", appliance: "appliance-work", barber: "barber-work", cleaning: "cleaning-portrait",
-  cosmetics: "cosmetics-work", driving: "driving-work", electrician: "electrician-panel", garden: "garden-work",
+  cosmetics: "cosmetics-work", "dog-trainer": "dog-trainer-work", driving: "driving-work", electrician: "electrician-panel", garden: "garden-work",
   handyman: "handyman-work", locksmith: "locksmith-work", massage: "massage-work", movers: "movers-truck", music: "music-work",
-  nails: "nails-work", pest: "pest-work", photographer: "photographer-work", psychologist: "psychologist-work",
-  renovation: "renovation-drywall", security: "security-work", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
+  nails: "nails-work", pergolas: "pergolas-work", pest: "pest-work", photographer: "photographer-work", psychologist: "psychologist-work",
+  renovation: "renovation-drywall", roofing: "roofing-work", security: "security-work", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
   trainer: "trainer-squat", tutor: "tutor-lesson", upholstery: "upholstery-work", yoga: "yoga-work",
 }).map(([k, f]) => [k, `/shared/photos/${f}.webp`]));
 export const sampleHeroOf = (tradeId) => SAMPLE_HEROES[tradeId] || "";

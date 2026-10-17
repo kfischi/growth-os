@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>דקל מערכות · אבטחה ותקשורת</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<script>/* the switch, before paint: ?for=business opens the companies and projects side */
+  if (new URLSearchParams(location.search).get("for") === "business") document.documentElement.dataset.for = "business";</script>
+<meta name="description" content="מצלמות, אזעקה, אינטרקום ורשת לבית, ומערכות לעסקים ולפרויקטים בשרון. מתארים בצ׳אט מה צריך, והפרטים מגיעים בוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0f1b2d">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/security-work.webp" fetchpriority="high">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the security monitor. A grid of camera tiles, each with its label (CAM 01), a timestamp and the red
+     recording dot, on the dark glass of a recorder's screen. Above it, a light entrance with a camera, a keypad and
+     an intercom, or an office with ceiling domes and a communication rack.
+     Detail: CAM numbers, the 4-camera grid, "צפייה מהטלפון", the patch panel, points of network cable, a site survey,
+     a bill of quantities (כתב כמויות), a maintenance contract.
+     Bold move: the switch "לבית" / "לעסקים ופרויקטים" turns the whole page: the drawing, the cards, the monitor's tiles
+     and the chat's questions. Everything else is quiet. */
+  :root {
+    --night: #0f1b2d;          /* the recorder's screen */
+    --night-2: #17283f;
+    --steel: #5b6b7f;
+    --steel-soft: #a9b6c4;
+    --signal: #1d63b8;         /* the lens light: buttons and the one colour */
+    --signal-deep: #164f94;
+    --led: #7cc0f5;            /* the light on the dark screen */
+    --rec: #d23a2a;            /* the recording dot, small only */
+    --wall: #eef2f6;
+    --ink: #0f1b2d;
+    --ink-soft: #46566a;
+    --line: #cdd6e0;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--night);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--signal); --bot-accent-fg: #fff; --bot-them: #edf1f5; --bot-me: var(--night); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px; --bot-focus: var(--night);
+    --ps-a: #c6d2de; --ps-b: #5b6b7f; --ps-ui: var(--night); --ps-edit: var(--signal);
+    --guide-alert: var(--rec);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--wall); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  .mono { font-family: var(--mono); font-weight: 500; letter-spacing: .03em; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+  /* the two sides of the page: one shows, the other waits */
+  html[data-for="business"] .m-home, html:not([data-for="business"]) .m-biz { display: none !important; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--signal); color: #fff; box-shadow: 0 16px 32px -14px rgba(29,99,184,.85), 0 2px 6px -2px rgba(29,99,184,.45); }
+  .btn-main:hover { background: var(--signal-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--signal); }
+
+  .demo { background: var(--night); color: #b9c6d3; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Top bar ---------- */
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(15,27,45,.95); color: #fff; backdrop-filter: blur(8px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--steel-soft); font-weight: 700; font-size: .78em; }
+  .logo .k { position: relative; width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 50% 50%, var(--led) 0 4px, #0b1422 4.5px 8px, #2a3b55 8.5px); box-shadow: 0 0 0 2px #3a4d68; }
+  .logo .k::after { content: ""; position: absolute; top: -1px; inset-inline-end: -2px; width: 7px; height: 7px; border-radius: 50%; background: var(--rec); box-shadow: 0 0 0 2px var(--night); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+  .top-a .btn-main { box-shadow: none; }
+  .top-a .btn-main:focus-visible { outline-color: #fff; }
+
+  /* ---------- The switch: for a home, or for companies and projects ---------- */
+  .switch { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--line), 0 10px 26px -18px rgba(15,27,45,.5); max-width: 100%; }
+  .switch button { all: unset; box-sizing: border-box; cursor: pointer; min-height: 44px; padding: 9px 20px; border-radius: 999px; text-align: center; font-weight: 700; font-size: 16px; color: var(--ink-soft); white-space: nowrap; transition: background .2s, color .2s; }
+  .switch button:hover { color: var(--ink); }
+  .switch button[aria-pressed="true"] { background: var(--night); color: #fff; }
+  .switch button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  .switch-cap { display: block; font-size: 14px; color: var(--ink-soft); margin: 8px 4px 0; }
+
+  /* ---------- Hero (smart luxury) ---------- */
+  .hero { position: relative; overflow: hidden; background: var(--wall); color: var(--ink);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(124,192,245,.38), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(29,99,184,.12), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "sw win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 44px 0 0; }
+  .sw-wrap { grid-area: sw; margin-bottom: 22px; }
+  .kicker { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 14px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--signal); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--rec); box-shadow: 0 0 0 3px rgba(210,58,42,.18); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--signal); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--signal); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #e3e9ef;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(15,27,45,.6), 0 12px 24px -16px rgba(29,99,184,.3); }
+  .frame-l .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .frame-l .rec { position: absolute; z-index: 4; top: 16px; right: 18px; display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 999px;
+    background: rgba(15,27,45,.72); color: #fff; font: 600 12px/1.3 var(--mono); letter-spacing: .06em; direction: ltr; }
+  .frame-l .rec i { width: 7px; height: 7px; border-radius: 50%; background: #ff5a48; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(15,27,45,.55), 0 4px 12px -6px rgba(29,99,184,.2); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #edf1f5; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--signal); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--signal); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Sections ---------- */
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 42ch; font-size: 16px; }
+
+  /* The monitor: the price list and the companies' list are camera tiles on a recorder's screen */
+  .monitor { background: var(--night); color: #dfe8f1; border-radius: 26px; padding: 14px; box-shadow: 0 40px 80px -40px rgba(15,27,45,.7), inset 0 0 0 1px #24364f; }
+  .mon-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 10px 12px; color: var(--steel-soft); font-size: 13px; }
+  .mon-bar .mono { direction: ltr; unicode-bidi: isolate; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .tile { all: unset; box-sizing: border-box; cursor: pointer; position: relative; min-width: 0; display: flex; flex-direction: column; gap: 6px; min-height: 172px; padding: 38px 18px 18px;
+    border-radius: 14px; background: linear-gradient(160deg, #1d3150, var(--night-2) 70%); box-shadow: inset 0 0 0 1px #2a3f5e; transition: box-shadow .15s, background .15s; }
+  .tile:hover { box-shadow: inset 0 0 0 1.5px var(--led); }
+  .tile:focus-visible { outline: 3px solid var(--led); outline-offset: 2px; }
+  .tile .cam { position: absolute; top: 12px; inset-inline: 14px; display: flex; justify-content: space-between; font: 600 11.5px/1 var(--mono); letter-spacing: .08em; color: var(--steel-soft); direction: ltr; }
+  .tile .cam i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff5a48; margin-inline-end: 6px; vertical-align: 1px; }
+  .tile b { font-family: var(--display); font-weight: 800; font-size: 21px; line-height: 1.2; color: #fff; letter-spacing: -.01em; }
+  .tile span { color: #b6c4d3; font-size: 14.5px; line-height: 1.45; }
+  .tile .pr { margin-top: auto; padding-top: 10px; font-weight: 700; font-size: 17px; color: var(--led); font-variant-numeric: tabular-nums; }
+  .tile .pr small { font-weight: 400; font-size: 13px; color: var(--steel-soft); margin-inline-start: 6px; }
+  .tile.hot { background: linear-gradient(160deg, #24508c, #1a3a66 75%); }
+  .privacy-line { display: flex; gap: 10px; align-items: baseline; margin: 18px 4px 0; font-size: 15px; color: var(--ink-soft); }
+  .privacy-line a { color: var(--signal); font-weight: 700; }
+
+  /* The calculator, on the dark screen */
+  .calc { background: var(--night); color: #fff;
+    --bot-bg: #17283f; --bot-fg: #fff; --bot-line: #33496a; --bot-muted: var(--steel-soft); --bot-accent: var(--led); --bot-accent-fg: var(--night); --bot-focus: var(--led); }
+  .calc .head p { color: var(--steel-soft); }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  /* How a project goes */
+  .proj { background: var(--night); color: #fff; }
+  .proj .head p { color: var(--steel-soft); }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; counter-reset: s; }
+  .steps li { position: relative; min-width: 0; padding: 18px 18px 20px; border-radius: 16px; background: var(--night-2); box-shadow: inset 0 0 0 1px #2a3f5e; }
+  .steps li::before { counter-increment: s; content: "0" counter(s); display: block; font: 600 13px/1 var(--mono); color: var(--led); letter-spacing: .08em; margin-bottom: 12px; }
+  .steps b { display: block; font-size: 18px; line-height: 1.3; margin-bottom: 4px; }
+  .steps span { color: #b6c4d3; font-size: 14.5px; line-height: 1.45; }
+  .proj .ctas { margin-top: 28px; }
+  .proj .btn-main { background: var(--led); color: var(--night); box-shadow: 0 16px 32px -16px rgba(124,192,245,.7); }
+  .proj .btn-main:hover { background: #a6d4f8; }
+  .proj .btn-main:focus-visible { outline-color: #fff; }
+  .proj .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); }
+
+  /* Who comes */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 60px; align-items: center; }
+  .frame { position: relative; background: #fff; padding: 12px; border-radius: 24px; box-shadow: 0 0 0 1px var(--line), 0 50px 80px -40px rgba(15,27,45,.5); }
+  .frame .ps { aspect-ratio: 8 / 5; border-radius: 16px; }
+  .frame-cap { margin-top: 20px; }
+  .frame-cap b { display: block; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.15; }
+  .frame-cap span { color: var(--ink-soft); font-size: 15.5px; }
+  .who-copy h2 { font-size: clamp(34px, 4.4vw, 52px); margin-bottom: 14px; }
+  .who-copy > p { color: var(--ink-soft); margin: 0 0 24px; max-width: 46ch; }
+  .day { list-style: none; margin: 0 0 28px; padding: 0; display: grid; border-inline-start: 2px solid var(--signal); }
+  .day li { position: relative; display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 14px; padding: 0 22px 16px; }
+  .day li::before { content: ""; position: absolute; inset-inline-start: -7px; top: 7px; width: 12px; height: 12px; border-radius: 50%; background: var(--wall); border: 2px solid var(--signal); }
+  .day li:last-child::before { background: var(--signal); }
+  .day time { font-family: var(--mono); font-weight: 600; color: var(--signal); font-size: 15px; padding-top: 1px; }
+  .day b { display: block; font-size: 17px; }
+  .day span { color: var(--ink-soft); font-size: 15px; }
+  .shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .shot { margin: 0; min-width: 0; }
+  .shot .ps { aspect-ratio: 4 / 5; border-radius: 12px; }
+  .shot p { margin: 8px 0 0; font-weight: 700; font-size: 15px; line-height: 1.35; }
+  .shot small { display: block; font-weight: 500; font-size: 12px; color: var(--ink-soft); }
+
+  .guides { background: #e2e8ef; }
+
+  /* Owner */
+  .owner { background: var(--night); color: #e3eaf1; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: var(--steel-soft); }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--signal); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--steel-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--steel-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat, photo and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+    .frame { max-width: 520px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sw" "h1" "lede" "cta" "win" "facts"; padding-top: 22px; }
+    .sw-wrap { margin-bottom: 18px; }
+    .switch { display: grid; width: 100%; }
+    .switch button { padding-inline: 10px; font-size: 15.5px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .monitor { padding: 10px; border-radius: 20px; }
+    .tiles { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .tile { min-height: 0; padding: 34px 16px 16px; }
+    .steps { grid-template-columns: minmax(0, 1fr); }
+    .shots { gap: 8px; }
+    .shot p { font-size: 13px; }
+    .day li { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; padding-inline: 18px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .tile, .switch button { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=security">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">דקל מערכות</span><span class="n2" data-edit="name2">אבטחה ותקשורת</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-ask>לתאר מה צריך</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על מערכת אבטחה">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="sw-wrap">
+      <div class="kicker"><span class="now"><i aria-hidden="true"></i>חוזרים עוד היום</span><span>כפר סבא · רעננה · הוד השרון · השרון</span></div>
+      <div class="switch" role="group" aria-label="למי העבודה?">
+        <button type="button" data-for="home" aria-pressed="true">לבית</button>
+        <button type="button" data-for="business" aria-pressed="false">לעסקים ופרויקטים</button>
+      </div>
+    </div>
+    <h1 class="m-home"><span data-edit="h1a">מצלמות, אזעקה ורשת לבית.</span> <em data-edit="h1b">כותבים מה צריך, ו<b>חוזרים עם מחיר סגור.</b></em></h1>
+    <h1 class="m-biz"><span data-edit="h1a-biz">מערכות לעסקים ולפרויקטים.</span> <em data-edit="h1b-biz">שולחים תוכניות, ו<b>קובעים סיור בשטח.</b></em></h1>
+    <p class="lede m-home">ארבע שאלות בצ׳אט ותמונה, והפרטים אצלנו בוואטסאפ. לבית יש טווח מחיר כבר כאן, ואת המחיר הסופי סוגרים לפני העבודה.</p>
+    <p class="lede m-biz">משרדים, מחסנים, בניינים ופרויקטים של קבלנים. מספרים בצ׳אט מה המקום ומה ההיקף, שולחים תוכניות או כתב כמויות, ומקבלים הצעה בכתב אחרי סיור.</p>
+    <div class="ctas m-home">
+      <button class="btn btn-main" type="button" data-ask>לתאר מה צריך</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, אשמח לשמוע על מצלמות לבית">וואטסאפ ישיר</a>
+    </div>
+    <div class="ctas m-biz">
+      <button class="btn btn-main" type="button" data-ask>לפתוח פנייה לפרויקט</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, יש לנו פרויקט ואשמח לשלוח תוכניות">לשלוח תוכניות</a>
+    </div>
+    <dl class="facts m-home">
+      <div><dt>16 שנה</dt><dd>מתקינים מערכות בשרון</dd></div>
+      <div><dt>צפייה בטלפון</dt><dd>בכל מערכת מצלמות</dd></div>
+      <div><dt>מחיר סגור</dt><dd>בטלפון, לפני שמגיעים</dd></div>
+      <div><dt>24 חודשים</dt><dd>אחריות על ההתקנה</dd></div>
+    </dl>
+    <dl class="facts m-biz">
+      <div><dt>סיור בשטח</dt><dd>לפני כל הצעת מחיר</dd></div>
+      <div><dt>הצעה בכתב</dt><dd>לפי תוכניות וכתב כמויות</dd></div>
+      <div><dt>תיק מסירה</dt><dd>שרטוט, סיסמאות והדרכה</dd></div>
+      <div><dt>חוזה שירות</dt><dd>בדיקה תקופתית ותיקון תקלות</dd></div>
+    </dl>
+
+    <div class="win">
+      <div class="frame-l m-home"><figure class="ps" data-slot="hero" data-src="../shared/photos/security-work.webp" data-alt="כניסה לבית עם מצלמה על הקיר, לוח אזעקה, אינטרקום ונתב" data-pos="50 45" data-icon="home" data-label="תמונה שלכם"></figure><span class="rec" aria-hidden="true"><i></i>CAM 01</span></div>
+      <div class="frame-l m-biz"><figure class="ps" data-slot="hero-biz" data-src="../shared/photos/security-office.webp" data-alt="משרד עם מצלמות בתקרה, קורא תגים ליד הדלת, מסך עם ארבע מצלמות וארון תקשורת" data-pos="60 45" data-icon="box" data-label="תמונה שלכם"></figure><span class="rec" aria-hidden="true"><i></i>CAM 04</span></div>
+      <div class="glass g-note m-home" aria-hidden="true"><p class="q">המצלמה בכניסה לא מקליטה מאתמול</p><p class="a">שלחו תמונה של המקליט. חוזרים עם זמן הגעה ומחיר.</p></div>
+      <div class="glass g-note m-biz" aria-hidden="true"><p class="q">בניין של 40 דירות, יש כתב כמויות</p><p class="a">שלחו בוואטסאפ, ונקבע סיור באתר.</p></div>
+      <div class="glass g-jobs m-home" aria-hidden="true"><span class="h">מחירון לדוגמה · לבית</span><div><b>4 מצלמות ומקליט</b><span>2,500 עד 4,000 ₪</span></div><div><b>אזעקה</b><span>1,800 עד 3,500 ₪</span></div><div><b>אינטרקום וידאו</b><span>1,200 עד 2,800 ₪</span></div></div>
+      <div class="glass g-jobs m-biz" aria-hidden="true"><span class="h">לעסקים ולפרויקטים</span><div><b>מצלמות ובקרת כניסה</b><span>אחרי סיור</span></div><div><b>חדר תקשורת וכבילה</b><span>לפי כתב כמויות</span></div><div><b>חוזה שירות</b><span>לפי היקף</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="services">
+    <div class="wrap">
+      <div class="head m-home"><h2>מה צריך בבית?</h2><p>מחירים לדוגמה. לוחצים על המצלמה המתאימה, והצ׳אט נפתח עם התשובה.</p></div>
+      <div class="head m-biz"><h2>לעסקים ולפרויקטים</h2><p>בלי מחירון: כל מקום שונה. מתחילים בסיור, ומקבלים הצעה בכתב.</p></div>
+      <div class="monitor">
+        <div class="mon-bar"><span class="m-home">מחירון לדוגמה · לבית</span><span class="m-biz">מה עושים לעסקים</span><span class="mono" aria-hidden="true">REC ● <span data-now>08:00</span></span></div>
+        <div class="tiles m-home">
+          <button class="tile hot" type="button" data-pre='{"issue":"מצלמות","count":"2 עד 4"}'><span class="cam"><span><i></i>CAM 01</span><span>4CH</span></span><b>4 מצלמות עם מקליט</b><span>מצלמות, מקליט וצפייה מהטלפון</span><span class="pr">2,500 עד 4,000 ₪<small>כולל התקנה</small></span></button>
+          <button class="tile" type="button" data-pre='{"issue":"מצלמות","count":"מצלמה אחת"}'><span class="cam"><span><i></i>CAM 02</span><span>+1</span></span><b>מצלמה נוספת</b><span>למערכת קיימת, כולל כבל וכיוון</span><span class="pr">450 עד 800 ₪<small>למצלמה</small></span></button>
+          <button class="tile" type="button" data-pre='{"issue":"אזעקה"}'><span class="cam"><span><i></i>CAM 03</span><span>ALARM</span></span><b>מערכת אזעקה</b><span>גלאים, סירנה והפעלה מהטלפון</span><span class="pr">1,800 עד 3,500 ₪<small>לפי הבית</small></span></button>
+          <button class="tile" type="button" data-pre='{"issue":"אינטרקום או קודן"}'><span class="cam"><span><i></i>CAM 04</span><span>DOOR</span></span><b>אינטרקום וידאו או קודן</b><span>עמדה בכניסה, מסך בבית ופתיחה מהטלפון</span><span class="pr">900 עד 2,800 ₪<small>לפי הדגם</small></span></button>
+          <button class="tile" type="button" data-pre='{"issue":"Wi-Fi לכל הבית"}'><span class="cam"><span><i></i>CAM 05</span><span>NET</span></span><b>Wi-Fi לכל הבית</b><span>רשת Mesh או נקודות גישה, ונקודות רשת בכבל</span><span class="pr">900 עד 1,900 ₪<small>לבית</small></span></button>
+          <button class="tile" type="button" data-pre='{"issue":"תקלה במערכת קיימת"}'><span class="cam"><span><i></i>CAM 06</span><span>FIX</span></span><b>תקלה במערכת קיימת</b><span>מצלמה שלא מקליטה, אזעקה שמצפצפת</span><span class="pr">250 עד 450 ₪<small>ביקור ותיקון</small></span></button>
+        </div>
+        <div class="tiles m-biz">
+          <button class="tile hot" type="button" data-pre='{"site":"משרדים"}'><span class="cam"><span><i></i>SITE 01</span><span>OFFICE</span></span><b>משרדים ומרפאות</b><span>מצלמות, קודן או תגים בכניסה, ורשת ו-Wi-Fi לעובדים</span></button>
+          <button class="tile" type="button" data-pre='{"site":"מחסן או מפעל"}'><span class="cam"><span><i></i>SITE 02</span><span>YARD</span></span><b>מחסנים ומפעלים</b><span>מצלמות לחצר ולרציף, ראיית לילה ושמירת הקלטות</span></button>
+          <button class="tile" type="button" data-pre='{"site":"בניין מגורים"}'><span class="cam"><span><i></i>SITE 03</span><span>LOBBY</span></span><b>בניינים ובתים משותפים</b><span>אינטרקום לכל הדירות, בקרת כניסה למבואה ולחניון</span></button>
+          <button class="tile" type="button" data-pre='{"need":"חדר תקשורת וכבילה"}'><span class="cam"><span><i></i>SITE 04</span><span>RACK</span></span><b>חדר תקשורת וכבילה</b><span>ארון, פאץ׳ פאנל ונקודות רשת, עם בדיקה ותיעוד</span></button>
+          <button class="tile" type="button" data-pre='{"site":"פרויקט בבנייה"}'><span class="cam"><span><i></i>SITE 05</span><span>BUILD</span></span><b>קבלנים ומכרזים</b><span>לפי תוכניות וכתב כמויות, בלוח הזמנים של הפרויקט</span></button>
+          <button class="tile" type="button" data-pre='{"need":"חוזה שירות"}'><span class="cam"><span><i></i>SITE 06</span><span>CARE</span></span><b>חוזה שירות</b><span>בדיקה תקופתית, תיקון תקלות וגיבוי הגדרות</span></button>
+        </div>
+      </div>
+      <p class="privacy-line">מכוונים את המצלמות לשטח שלכם, לא לשכנים ולא לרחוב יותר ממה שצריך. <a href="#g-privacy">מה כדאי לדעת</a></p>
+    </div>
+  </section>
+
+  <section class="calc m-home" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה צריך, איזה בית ואם יש כבלים בקירות, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="proj m-biz" id="project">
+    <div class="wrap">
+      <div class="head"><h2>ככה מתנהל פרויקט</h2><p>מחיר לעסק נותנים רק אחרי שראינו את המקום. זה חוסך הפתעות לשני הצדדים.</p></div>
+      <ol class="steps">
+        <li><b>פנייה בצ׳אט</b><span>שם החברה, סוג המקום, ההיקף ומתי צריך.</span></li>
+        <li><b>תוכניות בוואטסאפ</b><span>שרטוט, כתב כמויות או מסמכי מכרז, אם יש.</span></li>
+        <li><b>סיור בשטח</b><span>בודקים כניסות, מסלולי כבלים ומקום לארון.</span></li>
+        <li><b>הצעה בכתב</b><span>ציוד, עבודה ולוח זמנים, סעיף אחרי סעיף.</span></li>
+        <li><b>התקנה ומסירה</b><span>בדיקה, תיק מסירה והדרכה לצוות שלכם.</span></li>
+      </ol>
+      <div class="ctas">
+        <button class="btn btn-main" type="button" data-ask>לפתוח פנייה לפרויקט</button>
+        <a class="btn btn-ghost" href="#" data-wa="היי, יש לנו פרויקט ואשמח לשלוח תוכניות">לשלוח תוכניות בוואטסאפ</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap who-grid">
+      <div>
+        <div class="frame">
+          <figure class="ps" data-slot="work" data-src="../shared/photos/security-office.webp" data-alt="ארון תקשורת מסודר, מצלמות בתקרה ומסך עם ארבע מצלמות" data-pos="70 50" data-icon="box" data-label="תמונה שלכם"></figure>
+        </div>
+        <div class="frame-cap"><b data-edit="tech-name">עמית דקל וצוות</b><span data-edit="tech-role">מתקינים מערכות אבטחה ותקשורת · 16 שנה · כפר סבא והשרון</span></div>
+      </div>
+      <div class="who-copy">
+        <h2>מי מגיע?</h2>
+        <p>טכנאים שלנו, עם הציוד. ככה נראה בוקר עם פנייה, לדוגמה:</p>
+        <ol class="day">
+          <li><time class="ltr">08:05</time><div><b>כותבים בצ׳אט: המצלמות כבויות</b><span>מה המערכת, כמה מצלמות, ותמונה של המקליט.</span></div></li>
+          <li><time class="ltr">08:20</time><div><b>חוזרים אליכם</b><span>אומרים מתי מגיעים וכמה זה יעלה, לפני שיוצאים.</span></div></li>
+          <li><time class="ltr">12:40</time><div><b>המערכת מקליטה</b><span>ובודקים יחד את הצפייה מהטלפון.</span></div></li>
+        </ol>
+        <div class="shots">
+          <figure class="shot"><div class="ps" data-slot="tag1" data-icon="camera" data-label="תמונה מעבודה"></div><p data-edit="tag1">4 מצלמות לבית פרטי</p><small data-edit="tag1b">רעננה</small></figure>
+          <figure class="shot"><div class="ps" data-slot="tag2" data-icon="box" data-label="תמונה מעבודה"></div><p data-edit="tag2">ארון תקשורת למשרד</p><small data-edit="tag2b">הוד השרון</small></figure>
+          <figure class="shot"><div class="ps" data-slot="tag3" data-icon="home" data-label="תמונה מעבודה"></div><p data-edit="tag3">אינטרקום לבניין</p><small data-edit="tag3b">כפר סבא</small></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשהמערכת לא עובדת, ומה כדאי לדעת על מצלמות ופרטיות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>בית או עסק, מה צריך, היקף ומתי. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>מבית: עם תמונה ומחיר לדוגמה. מעסק: עם שם החברה, ההיקף והתוכניות.</span></div></li>
+          <li><div><b>חוזרים עם מחיר, או קובעים סיור</b><span>הצ׳אט עונה גם כשאתם על סולם עם כבל ביד.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av" id="ph-av">ר</span><div><b id="ph-who">רונית כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו אבטחה) · לבית
+מה צריך: מצלמות
+כמה מצלמות: 2 עד 4
+איזה בית: בית פרטי
+מתי: השבוע
+ישוב: רעננה
+שם: רונית כהן
+טלפון: 052-7654321<time>08:05</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לבעל העסק</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>דקל מערכות · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  PhotoSlots.init({ page: "security" });
+  const root = document.documentElement;
+  const HOME = "לבית", BIZ = "לעסק או לפרויקט";
+  const isBiz = () => root.dataset.for === "business";
+  const RANGES = { "מצלמות": "2,500 עד 4,000 ₪ ל־4 מצלמות עם מקליט, 450 עד 800 ₪ למצלמה נוספת", "אזעקה": "1,800 עד 3,500 ₪", "אינטרקום או קודן": "900 עד 2,800 ₪",
+    "Wi-Fi לכל הבית": "900 עד 1,900 ₪", "תקלה במערכת קיימת": "250 עד 450 ₪ לביקור ותיקון" };
+  const FAULT = (d) => d.issue === "תקלה במערכת קיימת";
+  const H = (d) => d.for === HOME, B = (d) => d.for === BIZ;
+  const TODAY = "צריך היום";
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "דקל · אבטחה ותקשורת", subtitle: "חוזרים עם מחיר, או קובעים סיור", initial: "ד", launcher: "מה צריך?", hint: "נציג AI",
+    greet: "היי, כאן דקל מערכות.\nכמה שאלות קצרות, והפרטים אצלנו בוואטסאפ.",
+    steps: [
+      // the page's switch answers this one when the chat opens from a button; from the corner it asks, the current side first
+      { key: "for", label: "עבור", ask: "זה לבית או לעסק?", get chips() { return isBiz() ? [BIZ, HOME] : [HOME, BIZ]; } },
+      // a home
+      { key: "issue", label: "מה צריך", ask: "מה צריך?", chips: ["מצלמות", "אזעקה", "אינטרקום או קודן", "Wi-Fi לכל הבית", "תקלה במערכת קיימת"], show: H,
+        tip: { when: (v) => v === "תקלה במערכת קיימת", id: "fault", text: "בינתיים: לא פותחים את המקליט ואת ספק הכוח. מצלמה כבויה? בודקים שהמפסק בלוח לא קפץ." } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של המערכת הקיימת או של המקום? כך מגיעים מוכנים.", photo: true, show: H },
+      { key: "count", label: "כמה מצלמות", ask: "כמה מצלמות, בערך?", chips: ["מצלמה אחת", "2 עד 4", "5 עד 8", "יותר מ־8"], show: (d) => H(d) && d.issue === "מצלמות" },
+      { key: "place", label: "איזה בית", ask: "איזה בית?", chips: ["דירה", "בית פרטי", "דירת גן או פנטהאוז"], show: H },
+      { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: [TODAY, "מחר או מחרתיים", "השבוע"], show: (d) => H(d) && FAULT(d) },
+      { key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["השבוע", "בחודש הקרוב", "רק בודקים מחיר"], show: (d) => H(d) && !FAULT(d) },
+      // a company or a project
+      { key: "company", label: "חברה", ask: "איך קוראים לחברה או לפרויקט?", input: "text", placeholder: "למשל: מגדלי השרון", show: B },
+      { key: "site", label: "סוג המקום", ask: "איזה מקום?", chips: ["משרדים", "מחסן או מפעל", "בניין מגורים", "חנות או מסעדה", "פרויקט בבנייה"], show: B },
+      { key: "need", label: "מה צריך", ask: "מה צריך?", chips: ["מצלמות", "בקרת כניסה או אינטרקום", "חדר תקשורת וכבילה", "חוזה שירות", "כמה מערכות יחד"], show: B },
+      { key: "scope", label: "היקף", ask: "מה ההיקף, בערך?", chips: ["עד 8 מצלמות או נקודות", "8 עד 32", "יותר מ־32", "כמה אתרים"], show: B },
+      { key: "timeline", label: "מתי", ask: "מתי צריך שזה יעבוד?", chips: ["החודש", "בעוד חודש עד שלושה", "לפי לוח הזמנים של הפרויקט", "מכרז, עוד לא נסגר"], show: B },
+      { key: "plans", label: "תוכניות", ask: "יש תוכניות, כתב כמויות או מסמכי מכרז? שולחים אותם בוואטסאפ, אחרי הסיכום.", chips: ["כן, אשלח בוואטסאפ", "אין עדיין, צריך סיור"], show: B },
+      { key: "city", label: "ישוב", ask: (d) => B(d) ? "איפה המקום?" : "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "name", label: "שם", ask: (d) => B(d) ? "ושם איש הקשר?" : "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      if (B(d)) return `תודה ${first}. רשמתי: ${d.company}, ${d.site}, ${d.need}, ${d.scope}.${d.plans === "כן, אשלח בוואטסאפ" ? "\nאחרי השליחה, צרפו בוואטסאפ את התוכניות." : ""}\nלחצו למטה, וחוזרים אליכם לקבוע סיור.`;
+      const price = RANGES[d.issue] ? `בדרך כלל ${RANGES[d.issue]}, ומחיר סגור לפני העבודה.` : "";
+      return `תודה ${first}. רשמתי: ${d.issue}, ${d.place}, ב${d.city}. ${price}\nלחצו למטה, וחוזרים אליכם עם מחיר ומועד.`;
+    },
+    summary: (d) => B(d)
+      ? `פנייה מהאתר (דמו אבטחה) · עסקים\nחברה: ${d.company}\nמקום: ${d.site}\nמה צריך: ${d.need}\nהיקף: ${d.scope}\nמתי: ${d.timeline}\nתוכניות: ${d.plans}\nאיפה: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.plans === "כן, אשלח בוואטסאפ" ? "\nאשלח את התוכניות כאן." : ""}`
+      : `פנייה מהאתר (דמו אבטחה) · לבית\nמה צריך: ${d.issue}${d.count ? "\nכמה מצלמות: " + d.count : ""}\nאיזה בית: ${d.place}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: (d, text, photo) => { done = true; LeadPhone("#ph-msg")(d, text, photo); },
+  });
+  let done = false;
+  const ask = (pre) => bot.open(Object.assign({ for: isBiz() ? BIZ : HOME }, pre));
+  document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => ask()));
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => ask(JSON.parse(b.dataset.pre))));
+
+  // The switch: a pair of toggle buttons, kept in the address (?for=business) so a shared link opens the same side.
+  const SAMPLE = {
+    home: ["רונית כהן", document.getElementById("ph-msg").firstChild.textContent],
+    business: ["אבי לוי", "פנייה מהאתר (דמו אבטחה) · עסקים\nחברה: מגדלי השרון\nמקום: בניין מגורים\nמה צריך: בקרת כניסה או אינטרקום\nהיקף: 8 עד 32\nמתי: לפי לוח הזמנים של הפרויקט\nתוכניות: כן, אשלח בוואטסאפ\nאיפה: כפר סבא\nשם: אבי לוי\nטלפון: 052-7654321"],
+  };
+  const switches = document.querySelectorAll(".switch button");
+  function setFor(side, keep) {
+    if (side === "business") root.dataset.for = "business"; else delete root.dataset.for;
+    switches.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.for === side)));
+    if (!keep) { const u = new URL(location.href); if (side === "business") u.searchParams.set("for", "business"); else u.searchParams.delete("for"); history.replaceState(null, "", u); }
+    if (!done) { // the phone shows a sample of this side until the visitor's own enquiry arrives
+      const msg = document.getElementById("ph-msg"), t = msg.querySelector("time");
+      msg.firstChild.textContent = SAMPLE[side][1]; msg.append(t);
+      document.getElementById("ph-who").textContent = SAMPLE[side][0]; document.getElementById("ph-av").textContent = SAMPLE[side][0].charAt(0);
+    }
+  }
+  switches.forEach((b) => {
+    b.addEventListener("click", () => setFor(b.dataset.for));
+    b.addEventListener("keydown", (e) => { // arrows move between the two, like a segmented control
+      if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
+      e.preventDefault(); const other = [...b.parentNode.children].find((x) => x !== b); other.focus(); other.click();
+    });
+  });
+  setFor(isBiz() ? "business" : "home", true);
+  const now = new Date(); document.querySelectorAll("[data-now]").forEach((el) => (el.textContent = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0")));
+
+  const NOT_FIX = ["4 מצלמות עם מקליט", "מצלמה נוספת", "מערכת אזעקה", "אינטרקום וידאו או קודן", "Wi-Fi לכל הבית"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "4 מצלמות עם מקליט", range: [2500, 4000], prefill: { issue: "מצלמות", count: "2 עד 4" } },
+      { label: "מצלמה נוספת", range: [450, 800], prefill: { issue: "מצלמות", count: "מצלמה אחת" } },
+      { label: "מערכת אזעקה", range: [1800, 3500], prefill: { issue: "אזעקה" } },
+      { label: "אינטרקום וידאו או קודן", range: [900, 2800], prefill: { issue: "אינטרקום או קודן" } },
+      { label: "Wi-Fi לכל הבית", range: [900, 1900], prefill: { issue: "Wi-Fi לכל הבית" } },
+      { label: "תקלה במערכת קיימת", range: [250, 450], prefill: { issue: "תקלה במערכת קיימת" } },
+    ] },
+    factors: [
+      { ask: "כמה מצלמות?", for: ["4 מצלמות עם מקליט"], options: [
+        { label: "4 מצלמות" },
+        { label: "6 מצלמות", mul: [1.3, 1.35], prefill: { count: "5 עד 8" } },
+        { label: "8 מצלמות", mul: [1.6, 1.7], prefill: { count: "5 עד 8" }, note: "מעל 8 מצלמות כדאי מקליט גדול יותר. נגיד לכם בטלפון." },
+      ] },
+      { ask: "איזה בית?", for: NOT_FIX, options: [
+        { label: "דירה", prefill: { place: "דירה" } },
+        { label: "בית פרטי", add: [200, 600], prefill: { place: "בית פרטי" }, note: "בבית פרטי הכבלים ארוכים יותר, ויש יותר קירות חוץ." },
+        { label: "דירת גן או פנטהאוז", add: [100, 400], prefill: { place: "דירת גן או פנטהאוז" } },
+      ] },
+      { ask: "יש כבלים בקירות?", for: NOT_FIX, options: [
+        { label: "יש תשתית מוכנה" },
+        { label: "צריך להעביר כבלים", add: [300, 900], note: "העברת כבלים בתעלה או בצנרת מוסיפה זמן עבודה." },
+        { label: "לא יודעים", add: [0, 900], note: "בתמונה של הקיר ושל הלוח רואים את זה מהר." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. את המחיר הסופי אומרים בטלפון, לפני שמגיעים.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(Object.assign({ for: HOME }, prefill)),
+  });
+  Guides.load("../shared/guides/security.json", document.querySelector("[data-guides]"), { onAsk: () => ask() });
+</script>
+</body>
+</html>

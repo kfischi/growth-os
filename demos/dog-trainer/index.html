@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>נועם אילוף כלבים · גבעתיים ורמת גן</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="אילוף גורים, משמעת ובעיות התנהגות בגבעתיים, רמת גן ותל אביב. מספרים בצ׳אט על הכלב, והפרטים מגיעים למאלף בוואטסאפ.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1b2433">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../shared/photos/dog-trainer-work.webp" fetchpriority="high">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the training field and its log. Cones, a low hurdle, a long lead and the treat pouch; and the dog's own
+     card: age, size, what it does and where.
+     Detail: גור, משיכה ברצועה, נשיכות משחק, צרכים בבית, פגישת אבחון, ביקור בית או מגרש, קבוצת גורים.
+     Bold move: the problem board right under the top: six cards in the dog's world, each opening the chat with that
+     problem. The lead's orange is the one colour; everything else is field green and ink. */
+  :root {
+    --field: #eef3ee;          /* the paper: a breath of grass */
+    --grass: #3f6b3a;
+    --grass-soft: #9fbf92;
+    --lead: #c2410c;           /* the lead: buttons and the one colour */
+    --lead-deep: #9a3412;
+    --ink: #1b2433;
+    --ink-soft: #4b5563;
+    --line: #d3ddd2;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Fredoka", "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--lead); --bot-accent-fg: #fff; --bot-them: #eef3ee; --bot-me: var(--ink); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 18px; --bot-radius-msg: 14px; --bot-focus: var(--ink);
+    --ps-a: #cfe0c8; --ps-b: #6f8f68; --ps-ui: var(--ink); --ps-edit: var(--lead);
+    --guide-alert: var(--lead);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--field); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--lead); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 600; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 17px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--lead); color: #fff; box-shadow: 0 16px 32px -14px rgba(194,65,12,.8), 0 2px 6px -2px rgba(194,65,12,.4); }
+  .btn-main:hover { background: var(--lead-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--lead); }
+
+  .demo { background: var(--ink); color: #cfd6df; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(238,243,238,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--grass); font-weight: 700; font-size: .74em; }
+  .logo .k { width: 26px; height: 30px; border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%; background: radial-gradient(circle at 50% 30%, #fff 0 3px, transparent 3.5px), var(--lead); box-shadow: inset 0 -4px 0 var(--lead-deep); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+
+  .hero { position: relative; overflow: hidden; background: var(--field);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(159,191,146,.42), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(194,65,12,.10), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--grass); font-weight: 600; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--grass); box-shadow: 0 0 0 3px rgba(63,107,58,.2); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--lead); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--lead); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14.5px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #e3ebe2;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(27,36,51,.55), 0 12px 24px -16px rgba(194,65,12,.25); }
+  .frame-l .ps { position: absolute; inset: 0; height: 100%; border-radius: 0; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 22px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(27,36,51,.5), 0 4px 12px -6px rgba(194,65,12,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 14px; line-height: 1.4; }
+  .g-note .q { background: #eef3ee; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--lead); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 15px; }
+  .g-jobs div b { font-weight: 600; } .g-jobs div span { font-weight: 600; color: var(--lead-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16.5px; }
+
+  /* The problem board: dog tags on the field */
+  .tags { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .tag { all: unset; box-sizing: border-box; cursor: pointer; position: relative; min-width: 0; display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 14px; align-items: start;
+    padding: 20px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 24px 40px -34px rgba(27,36,51,.5); transition: box-shadow .15s, transform .15s; }
+  .tag:hover { box-shadow: 0 0 0 2px var(--lead), 0 24px 40px -34px rgba(27,36,51,.5); }
+  .tag:focus-visible { outline: 3px solid var(--lead); outline-offset: 3px; }
+  .tag .disc { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: var(--field); box-shadow: inset 0 0 0 3px var(--grass-soft); }
+  .tag .disc svg { width: 28px; height: 28px; stroke: var(--grass); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tag b { display: block; font-family: var(--display); font-size: 20px; line-height: 1.25; }
+  .tag span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; margin-top: 4px; }
+  .tag i { display: block; font-style: normal; color: var(--lead-deep); font-weight: 600; font-size: 14.5px; margin-top: 8px; }
+  .caution { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
+  .caution::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--lead); transform: translateY(-1px); }
+  .caution a { color: var(--lead-deep); font-weight: 600; }
+
+  /* Prices: the training log */
+  .prices { background: var(--ink); color: #fff; }
+  .prices .head p { color: #b9c2cd; }
+  .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .pl { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 22px 20px; border-radius: 22px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); transition: background .15s; }
+  .pl:hover { background: rgba(255,255,255,.12); }
+  .pl:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .pl small { font-size: 14px; color: #b9c2cd; }
+  .pl b { font-family: var(--display); font-size: 21px; line-height: 1.2; }
+  .pl .pr { margin-top: auto; padding-top: 12px; font-weight: 600; font-size: 21px; font-variant-numeric: tabular-nums; }
+  .pl.hot { background: #fff; color: var(--ink); }
+  .pl.hot small { color: var(--ink-soft); }
+  .pl.hot .pr { color: var(--lead-deep); }
+  .pl.hot:focus-visible { outline-color: var(--lead); }
+  .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+  .ways div { padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+  .ways b { display: block; font-size: 17px; } .ways span { color: #b9c2cd; font-size: 15px; }
+
+  .guides { background: #e2eae1; }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--grass); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat, photo and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .tags, .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .tags, .plans, .ways { grid-template-columns: minmax(0, 1fr); }
+    .tag { padding: 16px; grid-template-columns: 46px minmax(0, 1fr); }
+    .tag .disc { width: 46px; height: 46px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .tag, .pl { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=dog-trainer">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">נועם</span><span class="n2" data-edit="name2">אילוף כלבים</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>לספר על הכלב</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על אילוף">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>ביקור בית או מגרש</span><span>גבעתיים · רמת גן · תל אביב</span></div>
+    <h1><span data-edit="h1a">הכלב מושך, נושך או נובח?</span> <em data-edit="h1b">ספרו בצ׳אט, ו<b>נועם חוזר לקבוע פגישת אבחון.</b></em></h1>
+    <p class="lede">גיל, גודל, מה הוא עושה ואיפה. ארבע שאלות, והפרטים מגיעים לנועם בוואטסאפ, גם כשהוא באמצע שיעור במגרש.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לספר על הכלב</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, אשמח לשמוע על אילוף">וואטסאפ ישיר</a>
+    </div>
+    <dl class="facts">
+      <div><dt>11 שנה</dt><dd>מאלף כלבים בגוש דן</dd></div>
+      <div><dt>מגיל 8 שבועות</dt><dd>אילוף גורים ראשון</dd></div>
+      <div><dt>בבית או במגרש</dt><dd>איפה שהבעיה קורית</dd></div>
+      <div><dt>פרטי או קבוצה</dt><dd>קבוצות גורים קטנות</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l"><figure class="ps" data-slot="hero" data-src="../shared/photos/dog-trainer-work.webp" data-alt="כלב יושב במגרש אילוף עם רצועה, קונוסים ומשוכה נמוכה" data-pos="50 55" data-icon="person" data-label="תמונה שלכם"></figure></div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">כמה עולה אילוף לגור בן 4 חודשים שנושך?</p><p class="a">מתחילים בפגישת אבחון, 200 עד 300 ₪. איפה הוא נושך?</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה</span><div><b>פגישת אבחון</b><span>200 עד 300 ₪</span></div><div><b>מפגש אילוף</b><span>250 עד 350 ₪</span></div><div><b>חבילה של 6 מפגשים</b><span>1,300 עד 1,800 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="problems">
+    <div class="wrap">
+      <div class="head"><h2>מה הכלב עושה?</h2><p>לוחצים על מה שמתאים, והצ׳אט נפתח עם התשובה. אחר כך הוא שואל על הגיל, הגודל ואיפה זה קורה.</p></div>
+      <div class="tags">
+        <button class="tag" type="button" data-problem="נשיכות"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9c2-4 14-4 16 0M6 9l1 3 2-2 2 3 2-3 2 2 1-3 2 3"/></svg></span><span><b>נשיכות</b><span>גור שנושך ידיים ובגדים, או כלב שנושך כשנוגעים בו.</span><i>מתחילים בפגישת אבחון</i></span></button>
+        <button class="tag" type="button" data-problem="משיכה ברצועה"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19c4-2 6-6 7-10s4-5 7-5"/><circle cx="5" cy="19" r="2"/></svg></span><span><b>משיכה ברצועה</b><span>טיול שנגמר בכתף כואבת. הליכה רגועה ליד הרגל.</span><i>בטיולים, בשכונה שלכם</i></span></button>
+        <button class="tag" type="button" data-problem="נביחות"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h3l4-4v8l-4-4M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg></span><span><b>נביחות</b><span>על הדלת, על כלבים אחרים, או כשנשאר לבד.</span><i>בבית ובטיולים</i></span></button>
+        <button class="tag" type="button" data-problem="צרכים בבית"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7M6 9v11h12V9M10 20v-5h4v5"/></svg></span><span><b>צרכים בבית</b><span>גור חדש, או כלב בוגר שהתחיל פתאום.</span><i>הרגלים, שעות ושגרה</i></span></button>
+        <button class="tag" type="button" data-problem="תוקפנות לכלבים או לאנשים"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l9 16H3zM12 10v4M12 17v.5"/></svg></span><span><b>תוקפנות לכלבים או לאנשים</b><span>נהימות, הסתערות או נשיכה. קודם בודקים אצל וטרינר.</span><i>שיעור פרטי בלבד</i></span></button>
+        <button class="tag" type="button" data-problem="אילוף בסיסי לגור"><span class="disc" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="2"/><circle cx="16" cy="8" r="2"/><circle cx="5" cy="13" r="2"/><circle cx="19" cy="13" r="2"/><path d="M8 18c0-3 2-5 4-5s4 2 4 5-8 3-8 0z"/></svg></span><span><b>גור חדש בבית</b><span>שב, ארצה, בוא. שמות, רצועה והרגלים מהיום הראשון.</span><i>פרטי או קבוצת גורים</i></span></button>
+      </div>
+      <p class="caution">כלב שנשך אדם, או תוקפנות שהתחילה פתאום? קודם וטרינר, כי כאב גורם לזה לא פעם. <a href="#g-bite">מה עושים אחרי נשיכה</a></p>
+    </div>
+  </section>
+
+  <section class="prices" id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מחירים לדוגמה</h2><p>טווחים, לפי הכלב והמרחק. את התוכנית קובעים אחרי פגישת האבחון.</p></div>
+      <div class="plans">
+        <button class="pl hot" type="button" data-plan="פגישת אבחון"><small>מתחילים כאן</small><b>פגישת אבחון</b><span class="pr">200 עד 300 ₪</span></button>
+        <button class="pl" type="button" data-plan="מפגש בודד"><small>בבית שלכם או במגרש</small><b>מפגש אילוף</b><span class="pr">250 עד 350 ₪</span></button>
+        <button class="pl" type="button" data-plan="חבילת מפגשים"><small>תוכנית ומעקב בוואטסאפ</small><b>חבילה של 6 מפגשים</b><span class="pr">1,300 עד 1,800 ₪</span></button>
+        <button class="pl" type="button" data-plan="קבוצת גורים"><small>6 מפגשים, עד 6 גורים</small><b>קבוצת גורים</b><span class="pr">600 עד 850 ₪</span></button>
+      </div>
+      <div class="ways">
+        <div><b>ביקור בית</b><span>לבעיות שקורות בבית: צרכים, נביחות על הדלת, נשיכות.</span></div>
+        <div><b>מגרש אילוף</b><span>לרצועה, להליכה ליד הרגל ולפגישה עם כלבים אחרים.</span></div>
+        <div><b>פרטי או בקבוצה</b><span>קבוצות לגורים ולמשמעת בסיסית. תוקפנות רק בפרטי.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים עם גור שנושך, עם משיכה ברצועה, ומתי פונים קודם לווטרינר.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>בעלי הכלב עונים על כמה שאלות</b><span>גיל, גזע או גודל, מה הבעיה, איפה וישוב. בלי טופס.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>גם כשאתם באמצע שיעור. יודעים מראש אם לבוא הביתה או למגרש.</span></div></li>
+          <li><div><b>חוזרים וקובעים פגישת אבחון</b><span>בלי לנחש מה רוצים, ובלי שיחה ארוכה בטלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שני רז</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו אילוף כלבים)
+גיל: גור עד 6 חודשים
+גזע או גודל: מעורב, בינוני
+מה הבעיה: נשיכות
+איפה: גם וגם
+ישוב: גבעתיים
+שם: שני רז
+טלפון: 052-7654321<time>17:20</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למאלף</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>נועם אילוף כלבים · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/photoslots.js"></script>
+<script>
+  PhotoSlots.init({ page: "dog-trainer" });
+  const AGGR = "תוקפנות לכלבים או לאנשים";
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "נועם · אילוף כלבים", subtitle: "הפרטים מגיעים לנועם בוואטסאפ", initial: "נ", launcher: "לספר על הכלב", hint: "נציג AI",
+    greet: "היי, כאן נועם אילוף כלבים.\nכמה שאלות על הכלב, והפרטים מגיעים לנועם בוואטסאפ.",
+    steps: [
+      { key: "problem", label: "מה הבעיה", ask: "מה הכלב עושה?", chips: ["נשיכות", "משיכה ברצועה", "נביחות", "צרכים בבית", AGGR, "אילוף בסיסי לגור"],
+        tip: { when: (v) => v === AGGR, id: "bite", link: "מה עושים אחרי נשיכה", text: "נשיכה של אדם או תוקפנות חדשה: קודם בדיקה אצל וטרינר. בינתיים שומרים מרחק ולא מענישים.\nאפשר להמשיך." } },
+      { key: "age", label: "גיל", ask: "בן כמה הכלב?", chips: ["גור עד 6 חודשים", "חצי שנה עד שנתיים", "מעל שנתיים"] },
+      { key: "breed", label: "גזע או גודל", ask: "מה הגזע או הגודל?", input: "text", placeholder: "למשל: מעורב, בינוני" },
+      { key: "where", label: "איפה", ask: "איפה זה קורה?", chips: ["בבית", "בטיולים", "גם וגם"] },
+      { key: "city", label: "ישוב", ask: "מאיזה ישוב?", input: "text", placeholder: "למשל: גבעתיים" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.problem}, ${d.age}, ${d.breed}, ${d.where}, ב${d.city}.\nלחצו למטה, והפרטים יגיעו לנועם. הוא חוזר אליכם לקבוע פגישת אבחון, שעולה בדרך כלל 200 עד 300 ₪.`,
+    summary: (d) => `פנייה מהאתר (דמו אילוף כלבים)\nגיל: ${d.age}\nגזע או גודל: ${d.breed}\nמה הבעיה: ${d.problem}\nאיפה: ${d.where}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-problem]").forEach((b) => b.addEventListener("click", () => bot.open({ problem: b.dataset.problem })));
+  document.querySelectorAll("[data-plan]").forEach((b) => b.addEventListener("click", () => bot.open(b.dataset.plan === "קבוצת גורים" ? { problem: "אילוף בסיסי לגור", age: "גור עד 6 חודשים" } : {})));
+  Guides.load("../shared/guides/dog-trainer.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>
