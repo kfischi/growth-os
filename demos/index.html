@@ -182,6 +182,12 @@ h1 .two { color: var(--violet); }
 .plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .plan { position: relative; min-width: 0; display: grid; align-content: start; gap: 12px; padding: clamp(20px, 2.4vw, 30px); border-radius: 24px; background: #fff; border: 1px solid var(--silver); transition: border-color .35s, box-shadow .35s, transform .45s var(--ease); }
 .plan.top { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet), 0 30px 60px -42px rgb(84 40 224 / .55); transform: translateY(-4px); }
+.plans { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; }
+.plan.top { border-width: 2px; box-shadow: 0 0 0 4px rgb(84 40 224 / .12), 0 0 46px -6px rgb(84 40 224 / .42), 0 34px 70px -40px rgb(84 40 224 / .6); }
+.plan.top .amount b { font-size: clamp(2.6rem, 4.4vw, 3.4rem); }
+.plan.basic { background: var(--paper, #fcfbff); border-color: var(--silver); box-shadow: none; opacity: .92; margin-top: 18px; }
+.plan.basic h3 { font-size: 1.2rem; } .plan.basic h3 small { font: 500 .95rem/1.3 var(--body); color: var(--ink-2); }
+.plan.basic .amount b { font-size: 1.9rem; } .plan.basic .inc { font-size: .92rem; }
 .plan-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
 .rec { flex: none; inline-size: max-content; padding: 4px 12px; border-radius: 999px; background: var(--violet); color: #fff; font-size: .82rem; font-weight: 600; }
 .plan[data-plan="ai"] { border-color: var(--lilac-2); background: linear-gradient(180deg, var(--lilac) 0, #fff 120px); }
@@ -210,7 +216,8 @@ h1 .two { color: var(--violet); }
 .per s { color: var(--silver-ink); font-weight: 400; text-decoration-thickness: 1.5px; }
 .fine { margin-top: 18px; color: var(--ink-2); font-size: .95rem; font-weight: 500; }
 .plan .roi { margin: 8px 0 0; font-weight: 600; color: var(--ink); }
-.plan .zero { margin: 6px 0 0; color: var(--ink-2); font-size: .95rem; }
+.plan .zero { margin: 4px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--lilac); color: var(--ink); font-weight: 600; font-size: 1rem; }
+.plan.top[data-plan="ai"] { border-color: var(--violet); }
 .plan .zero b { color: var(--violet); }
 .trust { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; color: var(--ink-2); font-size: .92rem; text-align: center; }
 .trust svg { flex: none; inline-size: 16px; block-size: 16px; color: var(--violet); }
@@ -480,6 +487,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .pick-note { margin-top: 8px; }
   .stage { margin-inline: calc(var(--gut) * -.5); border-radius: 22px; }
   .plans { grid-template-columns: minmax(0, 1fr); }
+  .plan.basic { margin-top: 0; }
   .duo { grid-template-columns: minmax(0, 1fr); margin-inline: calc(var(--gut) * -.5); padding: 14px; border-radius: 22px; }
   .wa-phone { block-size: 360px; }
   .lock { block-size: auto; min-block-size: 230px; padding-top: 22px; }
@@ -734,15 +742,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       </div>
       <div class="price-grid">
         <div class="plans">
-          <article class="plan reveal" data-plan="p">
-            <h3>נוכחות</h3>
-            <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
-            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
-            <p class="per" data-m="150"></p>
-            <p class="inc-n"><b>9</b> דברים כלולים</p>
-            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>קישורים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
-            <a class="btn line" href="build/">לבנות דף נוכחות</a>
-          </article>
           <article class="plan top reveal" data-plan="ai">
             <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
@@ -754,6 +753,15 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
             <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>קישור מתויג לכל רשת וקבוצה: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
             <a class="btn" href="build/">לבנות את האתר שלי</a>
+          </article>
+          <article class="plan basic reveal" data-plan="p">
+            <h3>נוכחות בסיסית <small>(בלי נציג AI)</small></h3>
+            <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
+            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="per" data-m="150"></p>
+            <p class="inc-n"><b>9</b> דברים כלולים</p>
+            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>קישורים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
+            <a class="btn line" href="build/">לבנות דף נוכחות</a>
           </article>
         </div>
       </div>
