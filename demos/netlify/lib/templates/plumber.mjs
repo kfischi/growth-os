@@ -265,14 +265,14 @@ function sampleContent(T) {
 }
 
 // The sample at the top of a draft per trade, from the demos' own pictures (shared/photos: photos for the first sixteen
-// trades, flat illustrations for the newer nine until real photos are made).
+// trades, flat illustrations for the newer eleven until real photos are made).
 const SAMPLE_HEROES = Object.fromEntries(Object.entries({
   plumber: "plumber-siphon", ac: "ac-work", appliance: "appliance-work", barber: "barber-work", cleaning: "cleaning-portrait",
   cosmetics: "cosmetics-work", driving: "driving-work", electrician: "electrician-panel", garden: "garden-work",
   handyman: "handyman-work", locksmith: "locksmith-work", massage: "massage-work", movers: "movers-truck", music: "music-work",
   nails: "nails-work", pest: "pest-work", photographer: "photographer-work", psychologist: "psychologist-work",
-  renovation: "renovation-drywall", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
-  trainer: "trainer-squat", tutor: "tutor-lesson", upholstery: "upholstery-work",
+  renovation: "renovation-drywall", security: "security-work", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
+  trainer: "trainer-squat", tutor: "tutor-lesson", upholstery: "upholstery-work", yoga: "yoga-work",
 }).map(([k, f]) => [k, `/shared/photos/${f}.webp`]));
 export const sampleHeroOf = (tradeId) => SAMPLE_HEROES[tradeId] || "";
 // Sample work photos and a portrait for a draft's empty frames, where the demos have real photos of that trade.
@@ -566,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const STEPS = [
     { key: "issue", label: ${js(T.chat.issue.label)}, ask: ${js(T.chat.issue.ask)}, chips: ${js(chips)} },${T.chat.photo ? `
     { key: "photo", label: "תמונה", ask: ${js(T.chat.photo)}, photo: true },` : ""}${(T.chat.extra || []).map((x) => `
-    { key: ${js(x.key)}, label: ${js(x.label)}, ask: ${js(x.ask)}, chips: ${js(x.chips)} },`).join("")}${T.chat.urgency ? `
+    { key: ${js(x.key)}, label: ${js(x.label)}, ask: ${js(x.ask)}, chips: ${js(x.chips)}${x.only ? `, show: (d) => ${js(x.only.is)}.includes(d[${js(x.only.key)}])` : ""} },`).join("")}${T.chat.urgency ? `
     { key: "urgency", label: ${js(T.chat.urgency.label)}, ask: ${js(T.chat.urgency.ask)}, chips: ${js(T.chat.urgency.chips)}${T.chat.urgency.tip && GUIDES.items.some((it) => it.id === T.chat.urgency.tip.id) ? `,
       tip: { when: (v) => v === URG, id: ${js(T.chat.urgency.tip.id)}, text: ${js(T.chat.urgency.tip.text)} }` : ""} },` : ""}${T.chat.noCity ? "" : `
     { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "ישוב")} },`}

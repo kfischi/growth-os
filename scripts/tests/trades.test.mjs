@@ -35,6 +35,10 @@ for (const [id, T] of Object.entries(TRADES)) {
     assert.ok(/^[a-z]+$/.test(x.key) && !RESERVED.includes(x.key), at("extra key " + x.key));
     len(x.label, 16, at("extra label")); len(x.ask, 60, at("extra ask"));
     assert.ok(x.chips.length >= 2 && x.chips.length <= 6, at("extra chips")); x.chips.forEach((c) => len(c, 30, at("extra chip")));
+    if (x.only) { // asked only after an earlier extra's answer is one of x.only.is
+      const before = ch.extra.slice(0, ch.extra.indexOf(x)).find((y) => y.key === x.only.key);
+      assert.ok(before && x.only.is.length && x.only.is.every((v) => before.chips.includes(v)), at("extra only " + x.key));
+    }
   }
   if (ch.urgency) {
     len(ch.urgency.label, 16, at("urgency label")); len(ch.urgency.ask, 60, at("urgency ask"));
@@ -79,6 +83,7 @@ for (const [id, T] of Object.entries(TRADES)) {
   assert.ok(html.includes(`>${T.words.jobs}<`) && html.includes(T.words.how), at("the site uses the trade's words"));
   assert.ok(!/סתימה|נזילה|הברז הראשי(?! של ההשקיה)/.test(id === "plumber" ? "" : html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, "")), at("no plumbing words on another trade's site"));
   assert.ok(html.includes(JSON.stringify(T.chat.issue.ask)), at("its chat"));
+  for (const x of (ch.extra || []).filter((y) => y.only)) assert.ok(html.includes(`show: (d) => ${JSON.stringify(x.only.is)}.includes(d[${JSON.stringify(x.only.key)}])`), at("the chat asks " + x.key + " only when it applies"));
   assert.ok(Object.keys(site).filter((f) => f.startsWith("service-")).length === 4, at("a page per service"));
   if (T.crisis) assert.ok(html.includes(T.crisis), at("the crisis line shows"));
   const guide = P.guideFor(T);
