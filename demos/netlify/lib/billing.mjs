@@ -9,7 +9,7 @@
 // that needs him, and never for one that went well by itself, except a new paid site.
 import { db, q, clip, israeliPhone } from "./leads.mjs";
 import { growOn, createPayment, processInfo, chargeToken } from "./grow.mjs";
-import { getDraft, saveDraft, alertKfir, publishDraft, PublishError, slugFree, hostFor } from "./builder.mjs";
+import { getDraft, saveDraft, alertKfir, publishDraft, PublishError, Conflict, slugFree, hostFor } from "./builder.mjs";
 import { hostingOn, cleanDomain, addDomain, dnsSteps } from "./hosting.mjs";
 import { launchKit } from "./launch.mjs";
 
@@ -30,16 +30,30 @@ export const withVat = (n) => Math.round(n * (1 + vatRate()) * 100) / 100;
 const netPeriod = (pkg, cycle) => PRICES[pkg].month * (cycle === "year" ? YEAR_MONTHS : 1);
 export const periodSum = (pkg, cycle) => withVat(netPeriod(pkg, cycle));
 export const checkoutSum = (pkg, cycle) => withVat(PRICES[pkg].setup + (cycle === "year" ? netPeriod(pkg, "year") : 0));
-export function addPeriod(date, cycle) {
+// anchor: the subscription's own billing day (the day it started). A date cut short at a month's end (Jan 31 ->
+// Feb 28) goes back to it the month after (Mar 31), instead of staying on the 28th for good.
+export function addPeriod(date, cycle, anchor) {
   const d = new Date(date);
-  const day = d.getUTCDate();
+  let day = d.getUTCDate();
+  const lastHere = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  if (anchor > day && day === lastHere) day = anchor;
   d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() + (cycle === "year" ? 12 : 1));
   const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
   d.setUTCDate(Math.min(day, last)); // Jan 31 + a month = Feb 28
   return d;
 }
 const iso = (d) => new Date(d).toISOString();
-const DAY = 86_400_000;
+const DAY = 86_400_000, HOUR = 3_600_000;
+const anchorOf = (b) => (b && b.created_at ? new Date(b.created_at).getUTCDate() : undefined);
+// Midnight in Israel on the day of t, so a retry "in 3 days" is due when that morning's run (03:10 UTC) comes.
+export function israelDayStart(t) {
+  const [y, m, d] = new Date(t).toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" }).split("-").map(Number);
+  const utc = Date.UTC(y, m - 1, d);
+  const off = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Jerusalem", timeZoneName: "longOffset" }).formatToParts(new Date(utc)).find((x) => x.type === "timeZoneName").value; // "GMT+03:00"
+  const [, sign, hh, mm] = /GMT([+-])(\d\d):?(\d\d)?/.exec(off) || [, "+", "00", "00"];
+  return new Date(utc - (sign === "-" ? -1 : 1) * (Number(hh) * 60 + Number(mm || 0)) * 60_000);
+}
+const retryAt = (now) => israelDayStart(new Date(now).getTime() + RETRY_DAYS * DAY);
 // Grow wants a plain Israeli mobile: 0521234567.
 const localPhone = (d) => { const p = israeliPhone(d.content.whatsapp) || (d.owner_phone && { intl: d.owner_phone }); return p ? "0" + p.intl.slice(3) : undefined; };
 const site = () => process.env.BUILDER_SITE_URL || "https://service-pro-web.netlify.app";
@@ -109,12 +123,16 @@ export async function checkout(d, { cycle, origin }) {
 export async function settle(pay, info, now = new Date()) {
   if (pay.status === "paid") return { already: true };
   if (!info.paid) return { paid: false };
-  if (info.sum && info.sum + 0.01 < Number(pay.sum)) {
-    await alertKfirById(pay.draft_id, `תשלום בסכום חסר: ${info.sum} ₪ במקום ${pay.sum} ₪. אסמכתא ${info.asmachta}`);
+  // A missing or unreadable sum counts as short, like a short one: only Grow's own sum, in full, settles it.
+  const got = Number(info.sum);
+  if (!(Number.isFinite(got) && got + 0.01 >= Number(pay.sum))) {
+    // One alert per payment, however many times Grow calls or the 15-minute run asks.
+    const first = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending&error=is.null`, { error: clip(`short: ${info.sum}`, 300) }, "return=representation");
+    if (first.length) await alertKfirById(pay.draft_id, `תשלום בסכום חסר: ${Number.isFinite(got) ? got : "לא ידוע"} ₪ במקום ${pay.sum} ₪. אסמכתא ${info.asmachta}`);
     return { paid: false, short: true };
   }
   // Only the first to flip it from pending goes on: two callbacks at once settle it once.
-  const hit = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending`, { status: "paid", paid_at: iso(now), transaction_id: info.transactionId || null, asmachta: info.asmachta || null }, "return=representation");
+  const hit = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending`, { status: "paid", paid_at: iso(now), transaction_id: info.transactionId || null, asmachta: info.asmachta || null, error: null }, "return=representation");
   if (!hit.length) return { already: true };
   const d = await getDraft(pay.draft_id);
   if (!d) return { paid: true };
@@ -123,20 +141,57 @@ export async function settle(pay, info, now = new Date()) {
   if (pay.kind === "card") {
     const b = await billingOf(d.id);
     const wasOff = b.state === "suspended";
-    await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { ...token, state: "active", fails: 0, due_since: null, next_charge_at: iso(addPeriod(b.due_since || b.next_charge_at, b.cycle)), updated_at: iso(now) });
+    // The owner pays the period that was due. If it is long over (the lead system was paused for months), the
+    // new period starts today: never a run of charges for the paused months on the next days.
+    const owed = addPeriod(b.due_since || b.next_charge_at, b.cycle, anchorOf(b));
+    const next = owed.getTime() > now.getTime() ? owed : addPeriod(now, b.cycle);
+    await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { ...token, state: "active", fails: 0, due_since: null, next_charge_at: iso(next), updated_at: iso(now) });
     if (wasOff && d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: true });
     await alertKfir(d, wasOff ? "הכרטיס עודכן והתשלום עבר. מערכת הלידים חזרה לפעול" : "הכרטיס עודכן והתשלום החודשי עבר");
     return { paid: true };
   }
 
-  // The setup: the subscription starts now, the first monthly (or the next year) one period from today.
-  await db("POST", "ls_billing", {
-    draft_id: d.id, package: pay.package, cycle: pay.cycle, amount: periodSum(pay.package, pay.cycle), ...token,
-    state: "active", fails: 0, next_charge_at: iso(addPeriod(now, pay.cycle)),
-  }, "resolution=merge-duplicates");
-  if (!info.cardToken) await alertKfir(d, "התשלום עבר, אבל Grow לא החזירו אסימון כרטיס: החיוב החודשי לא יוכל לרוץ לבד");
-  const paid = await saveDraft(d, { status: "paid", paid_at: iso(now), plan: "full" });
-  return { paid: true, draft: paid };
+  return finishSetup({ ...pay, paid_at: iso(now), asmachta: info.asmachta || pay.asmachta }, d, token);
+}
+
+// Why a paid setup must not publish the draft as it is now, or null when it may.
+function heldWhy(d, pay) {
+  if (d.paid_at || ["paid", "published"].includes(d.status)) return "כבר שולם (תשלום כפול?)";
+  if (d.status !== "client_approved") return "חזרה לעריכה מאז שנפתח דף התשלום";
+  if (d.package !== pay.package) return "החבילה שונתה מאז שנפתח דף התשלום";
+  return null;
+}
+
+/**
+ * The setup is paid: the subscription starts, the draft turns paid. Only for the draft the owner paid for: still
+ * approved, the same package, not paid before. Otherwise the payment stays recorded and כפיר gets it to sort out.
+ * Also run by runPending for a paid setup whose draft never turned paid (a save that clashed, a run cut short).
+ */
+async function finishSetup(pay, d, token = {}) {
+  let why = heldWhy(d, pay);
+  for (let i = 0; !why; i++) {
+    // The subscription starts with the payment, the first monthly (or the next year) one period after it.
+    if (!(await billingOf(d.id))) {
+      await db("POST", "ls_billing", {
+        draft_id: d.id, package: pay.package, cycle: pay.cycle, amount: periodSum(pay.package, pay.cycle), ...token,
+        state: "active", fails: 0, next_charge_at: iso(addPeriod(pay.paid_at, pay.cycle)),
+      }, "resolution=merge-duplicates");
+      if (!token.card_token) await alertKfir(d, "התשלום עבר, אבל Grow לא החזירו אסימון כרטיס: החיוב החודשי לא יוכל לרוץ לבד");
+    }
+    try { return { paid: true, draft: await saveDraft(d, { status: "paid", paid_at: pay.paid_at, plan: "full" }) }; }
+    catch (e) {
+      if (!(e instanceof Conflict) || i >= 2) throw e; // runPending finishes it
+      d = await getDraft(d.id); why = heldWhy(d, pay);
+    }
+  }
+  await db("PATCH", `ls_payments?id=eq.${q(pay.id)}`, { error: clip("held: " + why, 300) });
+  await alertKfir(d, `התקבל תשלום הקמה (${pay.sum} ₪, אסמכתא ${pay.asmachta || "?"}), אבל הטיוטה ${why}. האתר לא פורסם. לבדוק בניהול`);
+  return { paid: true, held: true };
+}
+
+/** Pending setup checkouts of a draft that went back to editing: a stale Grow page is no longer ours to settle. */
+export async function expireCheckouts(draftId) {
+  await db("PATCH", `ls_payments?draft_id=eq.${q(draftId)}&kind=eq.setup&status=eq.pending`, { status: "expired" });
 }
 
 async function alertKfirById(id, what) { const d = await getDraft(id); if (d) await alertKfir(d, what); }
@@ -159,6 +214,10 @@ export async function confirmPayment(pay, now = new Date()) {
 export async function autoPublish(d) {
   if (d.status !== "paid" || !d.slug_wish || (d.publish_tries || 0) >= 3) return { state: "skipped" };
   let slug = d.published_slug || d.slug_wish;
+  // Counted before the publish, so a run killed in the middle still uses up a try. A clash: another run has it.
+  const tries = (d.publish_tries || 0) + 1;
+  try { d = await saveDraft(d, { publish_tries: tries }); }
+  catch (e) { if (e instanceof Conflict) return { state: "skipped" }; throw e; }
   try {
     let out;
     try { out = await publishDraft(d, slug); }
@@ -183,8 +242,7 @@ export async function autoPublish(d) {
     const code = e instanceof PublishError ? e.code : "server";
     console.error("auto publish", d.id, code, e.message);
     const fresh = await getDraft(d.id);
-    const tries = (fresh.publish_tries || 0) + 1;
-    await saveDraft(fresh, { publish_error: clip(code === "server" ? e.message : code, 200), publish_tries: tries });
+    await saveDraft(fresh, { publish_error: clip(code === "server" ? e.message : code, 200) }).catch((x) => console.error("publish error save", x.message));
     if (tries === 1 || tries >= 3) await alertKfir(fresh, `שולם, אבל הפרסום האוטומטי נכשל (${code})${tries >= 3 ? ". לפרסם מהניהול" : ". ננסה שוב בעוד רבע שעה"}`);
     return { state: "failed", code };
   }
