@@ -326,90 +326,93 @@
 
   <script>
     // Scripted demo. Each scenario is a list of steps; a step is a bot message
-    // plus quick replies, or a free-text slot. In a client deployment the
-    // conversation is driven by an LLM through n8n; the panels stay the same.
+    // plus quick replies, or a free-text slot. On a client site the chat is the
+    // lead system (Netlify Functions, Supabase and the official WhatsApp Cloud
+    // API) with Claude answering from the business's own facts; the panels stay
+    // the same. The chat never books a slot: it notes when suits the customer,
+    // and the owner confirms every time himself.
     const SCENARIOS = {
       ac: {
         biz: "אוויר נקי", initial: "א", owner: "יוסי",
-        fields: { service: "שירות", area: "אזור", urgency: "דחיפות", estimate: "הערכת מחיר", slot: "מועד", name: "שם", phone: "טלפון" },
-        intents: ["תקלה", "התקנה", "שאלת מחיר", "תיאום"],
+        fields: { service: "שירות", area: "אזור", urgency: "דחיפות", estimate: "הערכת מחיר", slot: "נוח לחזור", name: "שם", phone: "טלפון" },
+        intents: ["תקלה", "התקנה", "שאלת מחיר", "חזרה ללקוח"],
         steps: [
-          { bot: "היי! אני הנציג הדיגיטלי של אוויר נקי 👋\nבמה אפשר לעזור?",
+          { bot: "היי, כאן הנציג הדיגיטלי של אוויר נקי.\nבמה אפשר לעזור?",
             chips: [
-              { label: "המזגן לא מקרר", set: { service: "תיקון תקלה" }, intent: "תקלה", score: 20, why: "תקלה פעילה" },
-              { label: "רוצה להתקין מזגן", set: { service: "התקנת מזגן" }, intent: "התקנה", score: 15, why: "עבודה חדשה" },
-              { label: "כמה עולה ניקוי?", faq: "ניקוי וחיטוי מזגן עילי עולה בין 250 ל-350 ₪, לפי גודל.\nלקבוע לכם תור?", intent: "שאלת מחיר", set: { service: "ניקוי וחיטוי" }, score: 10, why: "שאלת מחיר" },
+              { label: "המזגן לא מקרר", set: { service: "תיקון תקלה" }, intent: "תקלה" },
+              { label: "רוצה להתקין מזגן", set: { service: "התקנת מזגן" }, intent: "התקנה" },
+              { label: "כמה עולה ניקוי?", faq: "ניקוי וחיטוי מזגן עילי עולה בין 250 ל-350 ₪, לפי גודל.\nלבקש שיוסי יחזור אליכם?", intent: "שאלת מחיר", set: { service: "ניקוי וחיטוי" } },
             ] },
-          { bot: "כדי לשלוח את הטכנאי הנכון, באיזה ישוב אתם?",
-            chips: [{ label: "חדרה" }, { label: "עמק חפר" }, { label: "נתניה" }], slot: "area", score: 10, why: "בתוך אזור השירות" },
+          { bot: "באיזה ישוב אתם?",
+            chips: [{ label: "חדרה" }, { label: "עמק חפר" }, { label: "נתניה" }], slot: "area" },
           { bot: "ועד כמה זה דחוף?",
             chips: [
-              { label: "היום אם אפשר", set: { urgency: "גבוהה" }, score: 25, why: "דחיפות גבוהה" },
-              { label: "השבוע", set: { urgency: "בינונית" }, score: 15, why: "דחיפות בינונית" },
-              { label: "רק בודק", set: { urgency: "נמוכה" }, score: 0 },
+              { label: "היום אם אפשר", set: { urgency: "גבוהה" } },
+              { label: "השבוע", set: { urgency: "בינונית" } },
+              { label: "רק בודק", set: { urgency: "נמוכה" } },
             ] },
-          { botFn: (f) => `לפי מה שתיארתם, ${f.service} עולה בדרך כלל ${estimate(f.service)}.\nהמחיר הסופי נקבע אחרי אבחון במקום, ואתם מאשרים לפני שמתחילים.\n\nיש לי חלון פנוי:`,
+          { botFn: (f) => `לפי המחירון של אוויר נקי, ${f.service} עולה ${estimate(f.service)}.\nזו הערכה ראשונית בלבד. המחיר הסופי אחרי אבחון במקום.\n\nמתי נוח שיוסי יחזור אליכם?`,
             setFn: (f) => ({ estimate: estimate(f.service) }),
-            chips: [{ label: "היום, 16:00 עד 18:00" }, { label: "מחר, 8:00 עד 10:00" }, { label: "מחר, 12:00 עד 14:00" }],
-            slot: "slot", intent: "תיאום", score: 15, why: "קבע מועד" },
-          { bot: "מעולה, שמרתי לכם את החלון. איך קוראים לכם?", input: "name" },
-          { botFn: (f) => `נעים מאוד ${first(f.name)}! לאיזה מספר הטכנאי יתקשר לפני שהוא מגיע?`, input: "phone", score: 15, why: "טלפון תקין" },
+            chips: [{ label: "עכשיו" }, { label: "היום אחרי 16:00" }, { label: "מחר בבוקר" }],
+            slot: "slot", intent: "חזרה ללקוח" },
+          { botFn: (f) => `רשמתי שנוח לכם ${f.slot}. יוסי חוזר אליכם לתאם מועד.\nאיך קוראים לכם?`, input: "name" },
+          { botFn: (f) => `נעים מאוד ${first(f.name)}. לאיזה מספר יוסי יחזור?`, input: "phone" },
         ],
-        done: (f) => `סגור.\n${f.service}, ${f.slot}, ב${f.area}.\nשלחנו לכם אישור בוואטסאפ, והטכנאי יתקשר כחצי שעה לפני שהוא מגיע.`,
+        done: (f) => `תודה ${first(f.name)}, הפנייה אצל יוסי.\n${f.service}, ב${f.area}. נוח לכם ${f.slot}.\nשלחנו לכם הודעה בוואטסאפ, ויוסי חוזר לתאם מועד.`,
       },
       clinic: {
         biz: "קליניקת מגע", initial: "מ", owner: "נועה",
-        fields: { service: "טיפול", area: "סניף", urgency: "רקע", estimate: "מחיר", slot: "מועד", name: "שם", phone: "טלפון" },
-        intents: ["כאב", "טיפול ראשון", "שאלת מחיר", "תיאום"],
+        fields: { service: "טיפול", area: "סניף", urgency: "רקע", estimate: "מחיר", slot: "זמן נוח", name: "שם", phone: "טלפון" },
+        intents: ["כאב", "טיפול ראשון", "שאלת מחיר", "בקשת תור"],
         steps: [
-          { bot: "שלום! אני העוזר הדיגיטלי של קליניקת מגע 🌿\nמה מביא אתכם אלינו?",
+          { bot: "שלום, כאן הנציג הדיגיטלי של קליניקת מגע.\nמה מביא אתכם אלינו?",
             chips: [
-              { label: "כאבי גב", set: { service: "טיפול לכאבי גב" }, intent: "כאב", score: 20, why: "בעיה ממוקדת" },
-              { label: "עיסוי רפואי", set: { service: "עיסוי רפואי" }, intent: "טיפול ראשון", score: 15, why: "טיפול מבוקש" },
-              { label: "כמה עולה טיפול?", faq: "טיפול של 60 דקות עולה 280 ₪. יש גם כרטיסייה של 5 טיפולים ב-1,250 ₪.\nלקבוע טיפול ראשון?", intent: "שאלת מחיר", set: { service: "טיפול 60 דקות" }, score: 10, why: "שאלת מחיר" },
+              { label: "כאבי גב", set: { service: "טיפול לכאבי גב" }, intent: "כאב" },
+              { label: "עיסוי רפואי", set: { service: "עיסוי רפואי" }, intent: "טיפול ראשון" },
+              { label: "כמה עולה טיפול?", faq: "טיפול של 60 דקות עולה 280 ₪. יש גם כרטיסייה של 5 טיפולים ב-1,250 ₪.\nלבקש שנועה תחזור אליכם?", intent: "שאלת מחיר", set: { service: "טיפול 60 דקות" } },
             ] },
           { bot: "לאיזה סניף נוח לכם להגיע?",
-            chips: [{ label: "חדרה" }, { label: "כפר יונה" }], slot: "area", score: 10, why: "סניף קרוב" },
+            chips: [{ label: "חדרה" }, { label: "כפר יונה" }], slot: "area" },
           { bot: "היה לכם בעבר טיפול דומה?",
             chips: [
-              { label: "זו הפעם הראשונה", set: { urgency: "טיפול ראשון" }, score: 10, why: "לקוח חדש" },
-              { label: "כן, כבר הייתי בטיפולים", set: { urgency: "מטופל חוזר" }, score: 20, why: "מכיר את התחום" },
+              { label: "זו הפעם הראשונה", set: { urgency: "טיפול ראשון" } },
+              { label: "כן, כבר הייתי בטיפולים", set: { urgency: "מטופל חוזר" } },
             ] },
-          { botFn: (f) => `מצוין. ${f.service} נמשך כשעה ועולה ${estimate(f.service)}.\nבטיפול ראשון מתחילים באבחון קצר.\n\nהמועדים הפנויים השבוע:`,
+          { botFn: (f) => `${f.service} נמשך כשעה ועולה ${estimate(f.service)}, לפי המחירון של הקליניקה.\nבטיפול ראשון מתחילים באבחון קצר.\n\nמתי בדרך כלל נוח לכם?`,
             setFn: (f) => ({ estimate: estimate(f.service) }),
-            chips: [{ label: "ראשון 18:00" }, { label: "שלישי 10:00" }, { label: "חמישי 19:30" }],
-            slot: "slot", intent: "תיאום", score: 20, why: "קבע מועד" },
-          { bot: "שמרתי לכם את המועד. איך קוראים לכם?", input: "name" },
-          { botFn: (f) => `תודה ${first(f.name)}! לאיזה מספר לשלוח את האישור והתזכורת?`, input: "phone", score: 15, why: "טלפון תקין" },
+            chips: [{ label: "בבקרים" }, { label: "אחרי 16:00" }, { label: "בערבים" }],
+            slot: "slot", intent: "בקשת תור" },
+          { botFn: (f) => `רשמתי שנוח לכם ${f.slot}. נועה מאשרת כל תור בעצמה.\nאיך קוראים לכם?`, input: "name" },
+          { botFn: (f) => `תודה ${first(f.name)}. לאיזה מספר נועה תחזור?`, input: "phone" },
         ],
-        done: (f) => `נקבע.\n${f.service}, ${f.slot}, סניף ${f.area}.\nאישור נשלח בוואטסאפ, ותזכורת תגיע יום לפני הטיפול.`,
+        done: (f) => `תודה ${first(f.name)}, הפנייה אצל נועה.\n${f.service}, סניף ${f.area}. נוח לכם ${f.slot}.\nשלחנו לכם הודעה בוואטסאפ, ונועה חוזרת אליכם לאשר תור.`,
       },
       cabin: {
         biz: "צימר בין הכרמים", initial: "צ", owner: "רונית",
         fields: { service: "חופשה", area: "הרכב", urgency: "גמישות", estimate: "מחיר", slot: "תאריכים", name: "שם", phone: "טלפון" },
-        intents: ["זוגי", "משפחה", "שאלת מחיר", "הזמנה"],
+        intents: ["זוגי", "משפחה", "שאלת מחיר", "בקשת תאריכים"],
         steps: [
-          { bot: "היי! כאן הנציג של צימר בין הכרמים 🍇\nאיזו חופשה אתם מתכננים?",
+          { bot: "היי, כאן הנציג הדיגיטלי של צימר בין הכרמים.\nאיזו חופשה אתם מתכננים?",
             chips: [
-              { label: "סופ״ש זוגי", set: { service: "סופ״ש זוגי" }, intent: "זוגי", score: 20, why: "חופשה מוגדרת" },
-              { label: "אמצע שבוע", set: { service: "לילה באמצע שבוע" }, intent: "זוגי", score: 15, why: "חופשה מוגדרת" },
-              { label: "כמה עולה לילה?", faq: "לילה באמצע שבוע מ-950 ₪, וסופ״ש (שני לילות) מ-2,400 ₪. כולל ארוחת בוקר וג׳קוזי.\nלבדוק לכם תאריכים?", intent: "שאלת מחיר", set: { service: "לילה באמצע שבוע" }, score: 10, why: "שאלת מחיר" },
+              { label: "סופ״ש זוגי", set: { service: "סופ״ש זוגי" }, intent: "זוגי" },
+              { label: "אמצע שבוע", set: { service: "לילה באמצע שבוע" }, intent: "זוגי" },
+              { label: "כמה עולה לילה?", faq: "לילה באמצע שבוע מ-950 ₪, וסופ״ש (שני לילות) מ-2,400 ₪. כולל ארוחת בוקר וג׳קוזי.\nלבקש שרונית תבדוק לכם תאריכים?", intent: "שאלת מחיר", set: { service: "לילה באמצע שבוע" } },
             ] },
           { bot: "כמה תהיו?",
-            chips: [{ label: "זוג" }, { label: "זוג ותינוק" }], slot: "area", score: 10, why: "מתאים לקיבולת" },
+            chips: [{ label: "זוג" }, { label: "זוג ותינוק", intent: "משפחה" }], slot: "area" },
           { bot: "התאריכים גמישים?",
             chips: [
-              { label: "יש לנו תאריך מסוים", set: { urgency: "תאריך קבוע" }, score: 20, why: "כוונה ברורה" },
-              { label: "גמישים בחודש הקרוב", set: { urgency: "גמישים" }, score: 10, why: "פתוחים להצעה" },
+              { label: "יש לנו תאריך מסוים", set: { urgency: "תאריך קבוע" } },
+              { label: "גמישים בחודש הקרוב", set: { urgency: "גמישים" } },
             ] },
-          { botFn: (f) => `${f.service} עולה ${estimate(f.service)}, כולל ארוחת בוקר וג׳קוזי פרטי.\n\nמה שפנוי כרגע:`,
+          { botFn: (f) => `${f.service} עולה ${estimate(f.service)}, כולל ארוחת בוקר וג׳קוזי פרטי.\n\nאילו תאריכים מעניינים אתכם?`,
             setFn: (f) => ({ estimate: estimate(f.service) }),
             chips: [{ label: "חמישי–שבת הקרוב" }, { label: "שני–שלישי" }, { label: "סופ״ש בעוד שבועיים" }],
-            slot: "slot", intent: "הזמנה", score: 20, why: "קבע תאריכים" },
-          { bot: "אני שומר לכם את התאריכים ל-24 שעות. על שם מי ההזמנה?", input: "name" },
-          { botFn: (f) => `תודה ${first(f.name)}! לאיזה מספר לשלוח את פרטי ההזמנה?`, input: "phone", score: 15, why: "טלפון תקין" },
+            slot: "slot", intent: "בקשת תאריכים" },
+          { botFn: (f) => `רשמתי: ${f.slot}. רונית בודקת אם פנוי וחוזרת אליכם.\nעל שם מי הפנייה?`, input: "name" },
+          { botFn: (f) => `תודה ${first(f.name)}. לאיזה מספר רונית תחזור?`, input: "phone" },
         ],
-        done: (f) => `התאריכים שמורים.\n${f.service}, ${f.slot}.\nקישור לתשלום מקדמה ופרטי הגעה נשלחו בוואטסאפ. ההזמנה שמורה ל-24 שעות.`,
+        done: (f) => `תודה ${first(f.name)}, הפנייה אצל רונית.\n${f.service}, ${f.slot}.\nשלחנו לכם הודעה בוואטסאפ, ורונית חוזרת לאשר אם התאריכים פנויים.`,
       },
     };
 
@@ -423,7 +426,7 @@
 
     const $ = (id) => document.getElementById(id);
     const msgs = $("msgs"), typing = $("typing"), chipsEl = $("chips"), input = $("input");
-    let sc, stepIdx, data, score, timers = [], startedAt, busy = false, leadDone = false;
+    let sc, stepIdx, data, timers = [], startedAt, busy = false, leadDone = false;
 
     function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
     function clock(offsetSec) {
@@ -452,26 +455,36 @@
       });
     }
 
-    function renderFields() {
-      const dl = $("fields");
+    function renderRows(dlId, labels, values) {
+      const dl = $(dlId);
       dl.innerHTML = "";
-      Object.entries(sc.fields).forEach(([key, label]) => {
+      Object.entries(labels).forEach(([key, label]) => {
         const row = document.createElement("div");
         row.dataset.key = key;
         const dt = document.createElement("dt"); dt.textContent = label;
-        const dd = document.createElement("dd"); dd.textContent = data[key] || "";
+        const dd = document.createElement("dd"); dd.textContent = values[key] || "";
         row.append(dt, dd);
         dl.appendChild(row);
       });
     }
-    function setField(key, value) {
-      data[key] = value;
-      const row = document.querySelector(`#fields [data-key="${key}"]`);
+    function flashRow(dlId, key, value) {
+      const row = document.querySelector(`#${dlId} [data-key="${key}"]`);
       if (!row) return;
       row.querySelector("dd").textContent = value;
       row.classList.add("flash");
       later(900, () => row.classList.remove("flash"));
     }
+    function renderFields() { renderRows("fields", sc.fields, data); }
+    function setField(key, value) {
+      data[key] = value;
+      flashRow("fields", key, value);
+      if (key === "slot") setPanel("callback", value);
+    }
+
+    // What the owner's panel shows for this enquiry: status, source, when to call back.
+    const PANEL = { status: "סטטוס", source: "מקור", callback: "לחזור" };
+    function renderPanel() { renderRows("panel-rows", PANEL, {}); }
+    function setPanel(key, value) { flashRow("panel-rows", key, value); }
 
     function renderIntents(active) {
       $("intent").innerHTML = "";
@@ -484,21 +497,6 @@
     }
     let activeIntents = new Set();
     function addIntent(i) { if (!i) return; activeIntents.add(i); renderIntents(activeIntents); }
-
-    function addScore(n, why) {
-      if (!n) return;
-      score = Math.min(100, score + n);
-      $("score").textContent = score;
-      $("meter").style.width = score + "%";
-      const tag = $("score-tag");
-      tag.textContent = score >= 70 ? "ליד חם" : score >= 40 ? "פושר" : "בבדיקה";
-      tag.classList.toggle("hot", score >= 70);
-      if (why) {
-        const li = document.createElement("li");
-        li.textContent = why + " · \u200E+" + n;
-        $("why").appendChild(li);
-      }
-    }
 
     function addAction(ico, title, desc, wait) {
       const flow = $("flow");
@@ -544,12 +542,12 @@
       const step = sc.steps[stepIdx];
       chipsEl.innerHTML = "";
       addMsg(chip.label, "me");
+      if (stepIdx === 0) setPanel("source", "צ׳אט באתר");
       if (chip.set) Object.entries(chip.set).forEach(([k, v]) => setField(k, v));
       if (step.slot) setField(step.slot, chip.label);
       addIntent(chip.intent || step.intent);
-      addScore(chip.score ?? step.score, chip.why || step.why);
       if (chip.faq) {
-        addAction("📚", "תשובה ממאגר הידע של העסק", "שאלת מחיר נענתה לפי המחירון העדכני");
+        addAction("📚", "תשובה מהמחירון של העסק", "המחיר נלקח מהמחירון, לא הומצא");
         botSay(chip.faq, () => { stepIdx = 1; showStep(); });
         return;
       }
@@ -571,10 +569,9 @@
       } else {
         // Free text outside a text slot: acknowledge and steer back to the options.
         addIntent(sc.intents[0]);
-        return botSay("הבנתי, תודה! כדי שאוכל לעזור הכי מהר, בחרו אחת מהאפשרויות למטה 👇", () => renderChips((step && step.chips) || []));
+        return botSay("הבנתי, תודה. כדי שנתקדם מהר, בחרו אחת מהאפשרויות למטה.", () => renderChips((step && step.chips) || []));
       }
       chipsEl.innerHTML = "";
-      addScore(step.score, step.why);
       stepIdx++;
       showStep();
     }
@@ -583,29 +580,29 @@
       leadDone = true;
       chipsEl.innerHTML = "";
       botSay(sc.done(data), () => {
-        const hot = score >= 70;
-        later(300, () => addAction("🧠", "סיכום שיחה ב-AI", "הנציג סיכם את הצורך, המועד והדחיפות"));
+        later(300, () => addAction("🧠", "סיכום הפנייה", "מה, איפה, כמה דחוף ומתי נוח ללקוח"));
         later(700, () => {
-          addAction("📊", "נרשם בלוח הפניות", "שורה חדשה עם כל הפרטים וציון " + score);
+          addAction("📊", "נשמר בפאנל של בעל העסק", "פנייה חדשה עם כל הפרטים, מקור: צ׳אט באתר");
+          setPanel("status", "חדש");
           const tr = document.createElement("tr"); tr.className = "new";
-          [data.name, data.service, score].forEach((v) => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
+          [data.name, data.service, "חדש"].forEach((v) => { const td = document.createElement("td"); td.textContent = v; tr.appendChild(td); });
           $("sheet").prepend(tr);
         });
-        later(1100, () => addAction("📅", "נשמר ביומן", data.slot + " · " + data.service));
+        later(1100, () => addAction("💬", "וואטסאפ אוטומטי ללקוח", "מהמספר של העסק: קיבלנו, " + sc.owner + " חוזר אליכם"));
         later(1500, () => {
-          addAction("💬", "וואטסאפ ללקוח", "אישור, פרטי המועד ותזכורת מתוזמנת");
-          addAction("🔔", "וואטסאפ לבעל העסק", hot ? "ליד חם, סומן בעדיפות" : "ליד חדש");
+          addAction("🔔", "התראה לבעל העסק בוואטסאפ", "כל הפרטים וכפתור ״טיפלתי״");
           $("wa-owner").textContent =
-            (hot ? "ליד חם" : "ליד חדש") + " מהצ׳אט באתר\n" +
+            "פנייה חדשה מהצ׳אט באתר\n" +
             "👤 " + data.name + " · " + data.phone + "\n" +
             "🔧 " + data.service + "\n" +
-            "📍 " + data.area + " · " + data.slot + "\n" +
-            "💰 " + (data.estimate || "") + "\n" +
-            "⭐ ציון " + score + "/100\n" +
-            "📝 סיכום: " + summary();
+            "📍 " + data.area + "\n" +
+            "🕓 נוח לחזור: " + data.slot + "\n" +
+            "💰 " + (data.estimate || "") + " (הערכה ראשונית)\n" +
+            "📝 " + summary() + "\n\n" +
+            "[ טיפלתי ]";
         });
-        later(1900, () => addAction("⏰", "תזכורת מעקב", "אם לא חזרתם ללקוח, תגיע אליכם תזכורת", "אחרי שעה"));
-        later(2200, () => addAction("📈", "נכנס לדוח החודשי", "מקור, שירות וזמן מענה", "סוף חודש"));
+        later(1900, () => addAction("⏰", "תזכורת לבעל העסק אם לא חזר", "אם הפנייה לא סומנה ״טיפלתי״, תגיע תזכורת", "אם לא טופל"));
+        later(2200, () => addAction("📈", "נכנס לדוח החודשי", "פניות, מקור, ומה טופל", "סוף חודש"));
         later(2300, () => addLeadToDashboard());
       });
     }
@@ -613,15 +610,14 @@
     function summary() {
       const parts = ["פנייה של " + first(data.name) + " בנושא " + data.service];
       if (data.urgency) parts.push(sc.fields.urgency + ": " + data.urgency);
-      parts.push("מועד: " + data.slot);
       return parts.join(". ") + ".";
     }
 
     // ---------- Dashboard ----------
     const SAMPLE = {
-      ac: [["מיכל ל.", "תיקון תקלה", "חדרה", "היום 12:00", "hot"], ["אבי ש.", "ניקוי וחיטוי", "נתניה", "מחר 09:00", "warm"], ["דנה ר.", "התקנת מזגן", "עמק חפר", "ראשון", "warm"]],
-      clinic: [["שירה מ.", "עיסוי רפואי", "חדרה", "שלישי 10:00", "hot"], ["רון ב.", "טיפול לכאבי גב", "כפר יונה", "חמישי 19:30", "warm"], ["הילה ק.", "טיפול 60 דקות", "חדרה", "ראשון 18:00", "warm"]],
-      cabin: [["עדי ונמרוד", "סופ״ש זוגי", "זוג", "חמישי–שבת", "hot"], ["גל פ.", "לילה באמצע שבוע", "זוג", "שני–שלישי", "warm"], ["יעל ת.", "סופ״ש זוגי", "זוג ותינוק", "בעוד שבועיים", "warm"]],
+      ac: [["מיכל ל.", "תיקון תקלה", "חדרה", "עכשיו", "fresh"], ["אבי ש.", "ניקוי וחיטוי", "נתניה", "מחר בבוקר", "done"], ["דנה ר.", "התקנת מזגן", "עמק חפר", "היום אחרי 16:00", "done"]],
+      clinic: [["שירה מ.", "עיסוי רפואי", "חדרה", "בבקרים", "fresh"], ["רון ב.", "טיפול לכאבי גב", "כפר יונה", "בערבים", "done"], ["הילה ק.", "טיפול 60 דקות", "חדרה", "אחרי 16:00", "done"]],
+      cabin: [["עדי ונמרוד", "סופ״ש זוגי", "זוג", "חמישי–שבת", "fresh"], ["גל פ.", "לילה באמצע שבוע", "זוג", "שני–שלישי", "done"], ["יעל ת.", "סופ״ש זוגי", "זוג ותינוק", "בעוד שבועיים", "done"]],
     };
     function renderDashboard() {
       const days = [["א׳", 9], ["ב׳", 7], ["ג׳", 6], ["ד׳", 8], ["ה׳", 10], ["ו׳", 4], ["ש׳", 3]];
@@ -638,9 +634,9 @@
       $("leads").innerHTML = "";
       SAMPLE[currentKey].forEach((row) => $("leads").appendChild(leadRow(row, false)));
       $("k-leads").textContent = "47";
-      $("k-hot").textContent = "19";
+      $("k-done").textContent = "41";
     }
-    function leadRow([name, service, area, slot, temp], isNew) {
+    function leadRow([name, service, area, slot, status], isNew) {
       const tr = document.createElement("tr");
       if (isNew) tr.className = "new";
       [name, service, area, slot].forEach((v, i) => {
@@ -650,15 +646,14 @@
       });
       const td = document.createElement("td");
       const tag = document.createElement("span");
-      tag.className = "tag " + temp;
-      tag.textContent = temp === "hot" ? "חם" : "פושר";
+      tag.className = "tag " + status;
+      tag.textContent = status === "done" ? "טופל" : "חדש";
       td.appendChild(tag); tr.appendChild(td);
       return tr;
     }
     function addLeadToDashboard() {
-      $("leads").prepend(leadRow([data.name, data.service, data.area, data.slot, score >= 70 ? "hot" : "warm"], true));
+      $("leads").prepend(leadRow([data.name, data.service, data.area, data.slot, "fresh"], true));
       $("k-leads").textContent = "48";
-      if (score >= 70) $("k-hot").textContent = "20";
     }
 
     // ---------- Wiring ----------
@@ -667,7 +662,7 @@
       timers.forEach(clearTimeout); timers = [];
       currentKey = key;
       sc = SCENARIOS[key];
-      stepIdx = 0; data = {}; score = 0; busy = false; leadDone = false;
+      stepIdx = 0; data = {}; busy = false; leadDone = false;
       startedAt = Date.now();
       activeIntents = new Set();
       msgs.querySelectorAll(".msg").forEach((m) => m.remove());
@@ -675,9 +670,7 @@
       chipsEl.innerHTML = "";
       $("biz-name").textContent = sc.biz;
       $("biz-initial").textContent = sc.initial;
-      renderFields(); renderIntents(activeIntents);
-      $("score").textContent = "0"; $("meter").style.width = "0"; $("why").innerHTML = "";
-      $("score-tag").textContent = "בבדיקה"; $("score-tag").classList.remove("hot");
+      renderFields(); renderPanel(); renderIntents(activeIntents);
       $("flow").innerHTML = '<li class="empty" style="display:block;border:0;background:none;padding:0">עוד לא רצה אוטומציה. התחילו לדבר עם הנציג.</li>';
       $("wa-owner").innerHTML = '<span class="empty">יישלח כשהשיחה תסתיים</span>';
       $("sheet").innerHTML = "";

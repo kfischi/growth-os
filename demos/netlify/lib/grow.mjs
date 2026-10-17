@@ -13,15 +13,17 @@ const base = () => (process.env.GROW_SANDBOX === "1" ? "https://sandbox.meshulam
 // Grow refuses some characters in its fields: keep letters (Hebrew too), digits, spaces and simple punctuation.
 const plain = (s, n) => String(s ?? "").replace(/[^\p{L}\p{N} .,\-()]/gu, " ").replace(/\s+/g, " ").trim().slice(0, n);
 
-async function call(name, fields) {
+// A refusal is Grow's own answer (status 0: the card was declined, or the call refused): nothing was charged.
+// Anything else that throws (a timeout, the network, an answer that isn't Grow's) leaves it unknown: e.refused is unset.
+async function call(name, fields, ms = 20000) {
   const form = new FormData();
   for (const [k, v] of Object.entries({ userId: process.env.GROW_USER_ID, pageCode: process.env.GROW_PAGE_CODE, ...(process.env.GROW_API_KEY ? { apiKey: process.env.GROW_API_KEY } : {}), ...fields })) {
     if (v !== undefined && v !== null && v !== "") form.append(k, String(v));
   }
-  const res = await fetch(base() + name, { method: "POST", body: form, signal: AbortSignal.timeout(20000) });
+  const res = await fetch(base() + name, { method: "POST", body: form, signal: AbortSignal.timeout(ms) });
   const text = await res.text();
   let data; try { data = JSON.parse(text); } catch { throw new Error(`grow ${name}: ${res.status} not json`); }
-  if (Number(data.status) !== 1) { const e = new Error(`grow ${name}: ${(data.err && (data.err.message || data.err.id)) || "failed"}`); e.grow = data.err || null; throw e; }
+  if (Number(data.status) !== 1) { const e = new Error(`grow ${name}: ${(data.err && (data.err.message || data.err.id)) || "failed"}`); e.grow = data.err || null; e.refused = true; throw e; }
   return data.data || {};
 }
 
@@ -45,6 +47,9 @@ export async function createPayment(p) {
   return { url: data.url, processId: String(data.processId || ""), processToken: String(data.processToken || "") };
 }
 
+// Grow may send a sum as a number or as text ("2,490.00"). Missing or unreadable is NaN, never 0 (lib/billing.mjs treats it as short).
+export const parseSum = (v) => (v === undefined || v === null || String(v).trim() === "" ? NaN : Number(String(v).replace(/[,\s₪]/g, "")));
+
 /**
  * What Grow itself says about a checkout, never what a callback claims: { paid, sum, transactionId, asmachta, cardToken, cardSuffix }.
  * paid means a transaction with an approval number (asmachta).
@@ -53,7 +58,7 @@ export async function processInfo(processId, processToken) {
   const data = await call("getPaymentProcessInfo", { processId, processToken });
   const tx = (Array.isArray(data.transactions) ? data.transactions : []).find((t) => t && t.asmachta) || null;
   return {
-    paid: Boolean(tx), sum: tx ? Number(tx.sum ?? tx.paymentSum ?? data.sum) : 0,
+    paid: Boolean(tx), sum: tx ? parseSum(tx.sum ?? tx.paymentSum ?? data.sum) : 0,
     transactionId: tx ? String(tx.transactionId || tx.id || "") : "", asmachta: tx ? String(tx.asmachta) : "",
     cardToken: tx ? String(tx.cardToken || tx.token || data.cardToken || "") : "", cardSuffix: tx ? String(tx.cardSuffix || tx.cardSuffixNumber || "").slice(-4) : "",
   };
@@ -69,9 +74,13 @@ export const approve = (cb) => call("approveTransaction", {
   cardExp: cb.cardExp, processId: cb.processId, processToken: cb.processToken,
 });
 
-/** A monthly (or yearly) charge on the saved card. Returns { transactionId, asmachta }; throws when the card is refused. */
+/**
+ * A monthly (or yearly) charge on the saved card. Returns { transactionId, asmachta }; throws with e.refused when the
+ * card is refused, and without it when the answer never came (it may have been charged). A shorter timeout than the
+ * other calls, so the daily run ends inside the function's time limit.
+ */
 export async function chargeToken({ token, sum, description, ref }) {
-  const data = await call("createTransactionWithToken", { cardToken: token, sum: Number(sum).toFixed(2), description: plain(description, 100), paymentType: 2, paymentNum: 1, cField1: ref });
+  const data = await call("createTransactionWithToken", { cardToken: token, sum: Number(sum).toFixed(2), description: plain(description, 100), paymentType: 2, paymentNum: 1, cField1: ref }, 15000);
   return { transactionId: String(data.transactionId || ""), asmachta: String(data.asmachta || "") };
 }
 
