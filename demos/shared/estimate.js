@@ -30,7 +30,7 @@
   .est-opts label{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:9px 14px;border:1.5px solid var(--bot-line,#d0d0d0);border-radius:var(--bot-radius-pill,999px);background:var(--bot-bg,#fff);font-size:15px;line-height:1.3;cursor:pointer;transition:border-color .15s,background .15s}
   .est-opts input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
   .est-opts label:hover{border-color:var(--bot-accent,#333)}
-  .est-opts label:has(input:checked){background:var(--bot-accent,#333);border-color:var(--bot-accent,#333);color:var(--bot-accent-fg,#fff);font-weight:700}
+  .est-opts label.on,.est-opts label:has(input:checked){background:var(--bot-accent,#333);border-color:var(--bot-accent,#333);color:var(--bot-accent-fg,#fff);font-weight:700}
   .est-opts label:has(input:focus-visible){outline:3px solid var(--bot-focus,var(--bot-accent,#333));outline-offset:2px}
   .est-out{border:1.5px solid var(--bot-line,#d0d0d0);border-radius:var(--bot-radius,12px);background:var(--bot-bg,#fff);padding:20px;display:grid;gap:10px;min-width:0}
   .est-k{font-size:14px;color:var(--bot-muted,#666)}
@@ -58,6 +58,9 @@
     options.forEach((o, i) => {
       const l = el("label"); const r = el("input"); r.type = "radio"; r.name = name; r.value = String(i); r.checked = i === 0;
       r.addEventListener("change", onChange);
+      // The picked answer is marked with a class too, for browsers without :has (Firefox ESR 115, Safari before 15.4).
+      r.addEventListener("change", () => { for (const o of box.querySelectorAll("input")) o.parentNode.classList.toggle("on", o.checked); });
+      if (i === 0) l.className = "on";
       l.append(r, document.createTextNode(o.label)); box.append(l);
     });
     fs.append(box);

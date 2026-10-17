@@ -510,7 +510,9 @@ export async function processLead(client, input, channel = "form", { dedupe = tr
 
   // The same person sending twice within 10 minutes is one enquiry (not the builder's alerts to כפיר: each one counts).
   const since = new Date(Date.now() - 10 * 60_000).toISOString();
-  const dup = await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${phone.intl}&created_at=gte.${q(since)}&select=id&limit=1`);
+  // Only an enquiry whose owner alert went out (or is off) counts: after a failed alert the page fell back to WhatsApp,
+  // and a second try must alert the owner again, never show "received" for nothing.
+  const dup = await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${phone.intl}&created_at=gte.${q(since)}&owner_alert=in.(sent,off)&select=id&limit=1`);
   if (dedupe && dup.length) return { ok: true, id: dup[0].id, duplicate: true };
   // (A double tap within the same second can still make two rows. Rare, and two alerts beat none.)
 
@@ -566,15 +568,16 @@ export async function runReminders(now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&reminders=eq.true&select=*");
   let sent = 0, failed = 0;
   for (const client of clients) {
-    if (!inWorkingHours(client, now)) continue;
+    const working = inWorkingHours(client, now);
     try { // one client's error must not stop the others
       const before = new Date(now - client.remind_after_min * 60_000).toISOString();
       const notOlder = new Date(now - 7 * 86_400_000).toISOString(); // a week-old lead is the panel's job
       const open = await db("GET",
         `ls_leads?client_slug=eq.${q(client.slug)}&status=eq.new&reminded_at=is.null&created_at=gte.${q(notOlder)}&select=*&order=created_at.asc&limit=50`);
-      // A lead that asked for a call at a time is reminded 5 minutes before it, not earlier. The rest after remind_after_min.
-      const soon = new Date(now.getTime() + 5 * 60_000);
-      const leads = open.filter((l) => (l.callback_at ? new Date(l.callback_at) <= soon : new Date(l.created_at) <= new Date(before))).slice(0, 20);
+      // A lead that asked for a call at a time is reminded in the last run before it (the run is every 15 minutes), even
+      // outside the working hours: the customer picked that time. The rest after remind_after_min, in working hours only.
+      const soon = new Date(now.getTime() + 15 * 60_000);
+      const leads = open.filter((l) => (l.callback_at ? new Date(l.callback_at) <= soon : working && new Date(l.created_at) <= new Date(before))).slice(0, 20);
       for (const lead of leads) {
         // Mark first, so a slow send can't make two runs remind twice.
         const claimed = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&reminded_at=is.null`, { reminded_at: now.toISOString() }, "return=representation");
@@ -583,7 +586,12 @@ export async function runReminders(now = new Date()) {
           [lead.name, lead.phone, ago(lead.created_at, now), [lead.service || "-", lead.callback_at ? "ביקשו שתחזרו " + callbackText(new Date(lead.callback_at), now) : ""].filter(Boolean).join(" · ")],
           { kind: "reminder", leadId: lead.id, buttonPayload: "done:" + lead.id });
         if (r === "sent") sent++;
-        else { failed++; await db("PATCH", `ls_leads?id=eq.${q(lead.id)}`, { reminded_at: null }); } // try again next run
+        else {
+          // Try again next run, three times at most: a template that was never approved must not retry for a week.
+          failed++;
+          const tries = await db("GET", `ls_messages?lead_id=eq.${q(lead.id)}&kind=eq.reminder&status=in.(failed,skipped)&select=id&limit=3`);
+          if (tries.length < 3) await db("PATCH", `ls_leads?id=eq.${q(lead.id)}`, { reminded_at: null });
+        }
       }
     } catch (e) { failed++; console.error("reminders", client.slug, e.message); }
   }

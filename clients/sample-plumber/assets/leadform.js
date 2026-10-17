@@ -48,7 +48,9 @@
       }, data);
       try {
         const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), timeoutMs || 8000);
-        const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), keepalive: true, signal: ctrl.signal });
+        // keepalive lets a lead finish if the page closes, but browsers cap its body at 64 KB: a lead with a photo goes without it.
+        const json = JSON.stringify(body);
+        const r = await fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body: json, keepalive: json.length < 60000, signal: ctrl.signal });
         clearTimeout(t);
         const out = await r.json().catch(() => ({}));
         return r.ok && out.ok ? out : { ok: false, error: out.error || String(r.status) };
