@@ -80,6 +80,7 @@
   footer { border-top: 1px solid var(--line); padding-block: 18px 32px; color: var(--slate); font-size: .92rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 6px 18px; }
   @media (prefers-reduced-motion: reduce) { .film-play span { transition: none; } }
+#film::cue { font-family: Rubik, system-ui, sans-serif; font-size: 1.05em; line-height: 1.35; color: #fff; background: rgba(23, 17, 46, .78); }
 </style>
 </head>
 <body>
@@ -97,7 +98,7 @@
 
   <section class="wrap" aria-label="הסרטון">
     <div class="film-frame">
-      <video id="film" playsinline preload="metadata" poster="../shared/video/process/process-poster.webp" aria-label="כל התהליך בסרטון, שלב אחרי שלב"><source src="../shared/video/process/process.mp4" type="video/mp4"><track kind="captions" srclang="he" label="עברית" src="../shared/video/process/process.vtt"></video>
+      <video id="film" playsinline preload="metadata" poster="../shared/video/process/process-poster.webp" aria-label="כל התהליך בסרטון, שלב אחרי שלב"><source src="../shared/video/process/process.mp4" type="video/mp4"><track kind="captions" srclang="he" label="עברית" src="../shared/video/process/process.vtt" default></video>
       <button class="film-play" type="button" aria-label="לצפות בסרטון"><span aria-hidden="true"></span><b aria-hidden="true">לצפות · 3:30</b></button>
     </div>
   </section>
