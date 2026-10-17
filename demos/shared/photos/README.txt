@@ -11,6 +11,6 @@ ac, pest, appliance, handyman, psychologist, social-worker (-work card, -portrai
 
 music-work, music-portrait, music-studio, music-lesson: generated with Figma AI; the piano brand name on the fallboard removed.
 
-towing-work, yoga-work, dog-trainer-work, driving-work, upholstery-work, roofing-work, cosmetics-work, shutters-work: AI-generated photos Kfir sent (1280x720 WebP); no lettering, no yellow.
+towing-work, yoga-work, dog-trainer-work, driving-work, upholstery-work, roofing-work, cosmetics-work, shutters-work, barber-work, massage-work, pergolas-work, nails-work, photographer-work: AI-generated photos Kfir sent (1280x720 WebP); no lettering. The warm lights in photographer-work and the sunset in pergolas-work had their yellow desaturated.
 
-photographer-work, barber-work, massage-work, nails-work, security-work, security-office, yoga-reformer, pergolas-work: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these demos.
+security-work, security-office, yoga-reformer: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these demos.
