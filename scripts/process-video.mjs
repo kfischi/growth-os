@@ -298,7 +298,7 @@ const STEPS = [
   ["מעלים תמונות.", "שלכם, ושל העבודה."],
   ["עוברים על האתר.", "בדיוק כמו שהוא יעלה."],
   ["מאשרים ובוחרים חבילה.", "נוכחות, או נציג AI."],
-  ["משלמים, והאתר באוויר.", "כתובת, כרטיס, והוא עולה לבד."],
+  ["משלמים, והאתר עולה.", "בוחרים כתובת ומשלמים בכרטיס."],
 ];
 async function step(n) {
   const [title, text] = STEPS[n - 1];
@@ -370,7 +370,7 @@ try {
   await zoomTo(A("#demos"), { max: 1.25 });
   await st("slides", shots);
   await st("slide", 0);
-  const HOOK = ["לקוח מחפש אתכם עכשיו.", "הוא מוצא אתר שעונה לו.", "ואתם בונים אותו בצ׳אט."];
+  const HOOK = ["לקוח מחפש אתכם עכשיו.", "לא עניתם? הוא עובר לבא בתור.", "אתר שעונה לו, בונים בצ׳אט."];
   await p.evaluate((lines) => window.stage.lines(`<div class="stack">${lines.map((t) => `<div class="l huge">${window.stage.dotted(t)}</div>`).join("")}</div>`), HOOK);
   await st("full", true, true);
   await raw(300);
@@ -583,7 +583,7 @@ try {
     await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 });
   });
   mark("h-live");
-  await now("האתר עלה לאוויר לבד, תוך דקה", 1100);
+  await now("האתר עלה לאוויר", 1100);
   await app().evaluate(() => { const b = document.querySelector("#approveBox"); const h = [...b.querySelectorAll("h3")].find((x) => /הלקוחות הראשונים/.test(x.textContent)); if (h) b.scrollTop = h.offsetTop - 10; });
   await now("ואיך מביאים את הלקוחות הראשונים", 1000);
   await st("allDone");
