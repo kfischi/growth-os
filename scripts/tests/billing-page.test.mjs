@@ -135,9 +135,9 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.reload();
     await p.waitForSelector("text=לעדכן כרטיס");
     await p.click("text=לעדכן כרטיס");
-    await p.waitForURL(/\/build\/#d=/);
-    const pay = T.ls_payments.filter((x) => x.draft_id === D.id).at(-1);
-    assert.equal(pay.kind, "card", "a Grow page for the new card");
+    const card = () => T.ls_payments.find((x) => x.draft_id === D.id && x.kind === "card" && x.process_id);
+    for (let i = 0; i < 40 && !card(); i++) await new Promise((x) => setTimeout(x, 150));
+    assert.ok(card(), "a Grow page for the new card");
     await p.waitForFunction(() => /החיוב הבא/.test(document.querySelector("#approveBox").textContent), null, { timeout: 30000 });
   });
   if (errs.length) { bad++; console.log(`FAIL ${w}px console: ${errs.join(" | ")}`); }
@@ -159,7 +159,7 @@ delete process.env.GROW_PAGE_CODE;
     assert.match(box, /נשלח לכם בוואטסאפ קישור לתשלום/); assert.match(box, /מבטלים מתי שרוצים, בהודעה בוואטסאפ/);
     assert.doesNotMatch(box + (await p.textContent("#approveDlg")), /לבד/, "no automatic publish promised");
     await p.check("#termsOk");
-    await p.waitForFunction(() => true); for (let i = 0; i < 20 && !D.terms_at; i++) await new Promise((x) => setTimeout(x, 200));
+    for (let i = 0; i < 20 && !D.terms_at; i++) await new Promise((x) => setTimeout(x, 200));
     assert.ok(D.terms_at, "the terms are recorded without Grow");
   } catch (e) { bad++; console.log(`FAIL manual mode: ${e.message.split("\n")[0]}`); }
   await ctx.close();

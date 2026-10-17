@@ -820,7 +820,7 @@
   async function pay(b) {
     const c = document.querySelector('input[name=cycle]:checked');
     b.disabled = true; const label = b.textContent; b.textContent = 'פותחים את דף התשלום…';
-    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: !!($('#termsOk') || {}).checked } });
+    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: Boolean(($('#termsOk') || {}).checked) } });
     if (r.ok && /^https:\/\//.test(r.data.url)) { location.href = r.data.url; return; }
     b.disabled = false; b.textContent = label;
     const f = bubble('fail', say(r.data.error)); f.append(' ', waLink('לוואטסאפ', 'היי, נתקעתי בתשלום על האתר שלי.'));
