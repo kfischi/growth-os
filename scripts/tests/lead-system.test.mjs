@@ -169,7 +169,7 @@ r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "י�
 out = await r.json(); assert.equal(r.status, 200, JSON.stringify(out)); assert.ok(out.lead); assert.ok(!out.reply.includes("[["));
 const C = T.ls_leads.at(-1); assert.equal(C.channel, "chat"); assert.equal(C.phone, "0543333333"); assert.match(C.message, /סלון/);
 aiReply = "תודה. [[lead:רונית|12|נזילה|x]]";
-r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "רונית 12" }] }), ctx("oren")); out = await r.json(); assert.match(out.reply, /לא נראה תקין/);
+r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "רונית 12" }] }, { origin: "https://oren.co.il" }), ctx("oren")); out = await r.json(); assert.match(out.reply, /לא נראה תקין/);
 r = await chat(post("/api/chat/off", { messages: [{ role: "user", content: "היי" }] }), ctx("off")); assert.equal(r.status, 503);
 
 // --- the owner alert fails: lead stored, but the page is told to fall back to WhatsApp
@@ -186,7 +186,7 @@ rem = await lib.runReminders(tue10); assert.equal(rem.reminders, 1); assert.ok(Y
 // the chat: alert failed -> WhatsApp button
 graphDown = true;
 aiReply = "תודה. [[lead:מיכל|0548888888|נזילה|נזילה בחדר רחצה]]";
-r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "מיכל 0548888888" }] }), ctx("oren")); out = await r.json();
+r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "מיכל 0548888888" }] }, { origin: "https://oren.co.il" }), ctx("oren")); out = await r.json();
 assert.equal(out.lead, false); assert.match(out.reply, /\[\[whatsapp:/);
 graphDown = false;
 

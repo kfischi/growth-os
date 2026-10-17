@@ -3,11 +3,14 @@
 // Needs ANTHROPIC_API_KEY in Netlify (Site configuration > Environment variables). Without it the
 // function answers 503 and the page falls back to its scripted answers.
 import Anthropic from "@anthropic-ai/sdk";
+import { rateLimiter, clientIp } from "../lib/leads.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 20;          // messages per conversation
 const MAX_CHARS = 600;         // per visitor message
-const RATE = { windowMs: 10 * 60 * 1000, max: 30 }; // requests per IP per window, per function instance
+// 30 requests per IP per 10 minutes, per function instance (rateLimiter prunes its map). A shared counter in
+// Supabase would hold across instances, but needs a migration.
+const limited = rateLimiter(30, 10 * 60 * 1000);
 
 const SYSTEM = `You are the website assistant of Easy Landing ("אתרים שבונים עסקים"), a studio that builds landing pages, WhatsApp automation and AI chat for small local businesses in Israel (חדרה, עמק חפר and השרון). You are an AI, and you say so if asked. Visitors are business owners. Your job is to guide them through the site and into building their own: understand a free-text question, answer briefly and precisely, show the right part of the site or the right example, and send them to the site builder when they're ready. There is no introductory call: everything happens on the site. WhatsApp to the team is only for someone who prefers a person or asks something you can't answer.
 The brand is Easy Landing. Speak about the business as "אנחנו" and never name a person, even if asked who is behind it.
@@ -38,19 +41,11 @@ Buttons: you can add at most two of these markers at the very end of a reply. Th
 - [[go:SECTION]] to jump to a part of this page, where SECTION is one of: how (how it works, the whole path), what (what's on the site), demos, plans (prices), faq.
 - [[whatsapp:TEXT]] to open WhatsApp to Easy Landing with TEXT prefilled. Only when the visitor asks for a person, or asks something you can't answer. TEXT is a short first-person Hebrew message from the visitor that summarises what they want, for example: "היי, אני דנה, יש לי עסק לניקיון בחדרה. יש לי שאלה על חבילת נציג AI."`;
 
-const client = new Anthropic(); // reads ANTHROPIC_API_KEY (and ANTHROPIC_BASE_URL, used by the local test)
-const hits = new Map();
+// reads ANTHROPIC_API_KEY (and ANTHROPIC_BASE_URL, used by the local test); under the page's own 30 s abort
+const client = new Anthropic({ timeout: 20000, maxRetries: 0 });
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-
-function limited(ip) {
-  const now = Date.now();
-  const list = (hits.get(ip) || []).filter((t) => now - t < RATE.windowMs);
-  list.push(now);
-  hits.set(ip, list);
-  return list.length > RATE.max;
-}
 
 // A daily cap per instance (CHAT_DAILY, default 600 answers): past it the page answers from its scripted engine.
 let day = "", answers = 0;
@@ -78,8 +73,7 @@ export default async (req) => {
   try { own = !!origin && new URL(origin).host === new URL(req.url).host; } catch {}
   if (!own) return json({ error: "forbidden" }, 403);
 
-  const ip = req.headers.get("x-nf-client-connection-ip") || req.headers.get("x-forwarded-for") || "local";
-  if (limited(ip)) return json({ error: "rate_limited" }, 429);
+  if (limited(clientIp(req))) return json({ error: "rate_limited" }, 429);
 
   let body;
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
@@ -92,9 +86,9 @@ export default async (req) => {
       model: MODEL,
       max_tokens: 2000,
       output_config: { effort: "low" },
-      // If the model declines on a safety classifier, the API retries on a fallback model inside the same call.
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
+      // If the model declines on a safety classifier, the API retries on a fallback model inside the same call
+      // (Opus only).
+      ...(MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
       system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
       messages: messages.map((x) => ({ role: x.role, content: x.content })),
     });

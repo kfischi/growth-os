@@ -9,6 +9,7 @@ export default {
   guides: ["dog-trainer"],
   schema: "LocalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the first session, not the call back
   words: {
     jobs: "האילופים והמחירים",
     col: "מה צריך",

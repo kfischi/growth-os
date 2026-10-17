@@ -7,6 +7,7 @@ export default {
   guides: ["psychologist"],
   schema: "MedicalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the first session, not the call back: no response time on it
   words: {
     jobs: "סוגי הפגישות",
     col: "סוג פגישה",

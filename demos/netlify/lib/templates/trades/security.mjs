@@ -11,6 +11,9 @@ export default {
   guides: ["security"],
   schema: "HomeAndConstructionBusiness",
   urgent: true,
+  callbackStep: false,  // step 3 is the price or the site survey
+  plural: true,  // the business speaks as "אנחנו"
+  greet: "היי, כאן {name} 👋\nאנחנו כנראה באמצע התקנה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ונחזור אליכם.",
   words: {
     jobs: "העבודות הנפוצות",
     col: "מה צריך",

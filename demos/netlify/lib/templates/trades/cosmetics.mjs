@@ -8,6 +8,7 @@ export default {
   guides: ["cosmetics"],
   schema: "BeautySalon",
   urgent: false,
+  greet: "היי, כאן {name} 👋\nאני כנראה באמצע טיפול, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ואני חוזרת אליכם.",
   words: {
     jobs: "הטיפולים",
     col: "טיפול",

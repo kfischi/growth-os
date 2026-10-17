@@ -38,6 +38,18 @@ assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(r.range, "250 עד 
 assert.doesNotMatch(aiCalls.at(-1).system[0].text, /10 ₪/);
 r = await call({ slug: "oren-mayim", image: IMG }, { origin: "https://evil.example", ip: "9.9.9.6" }); assert.equal(r.status, 403);
 
+// the preflight from a client's own domain is answered (the POST above does the real check), or the browser
+// would block the JSON POST and the first look would never work on a client's site
+let pre = await fn(new Request(SITE + "/api/estimate", { method: "OPTIONS", headers: { origin: "https://oren.co.il", "access-control-request-method": "POST", "access-control-request-headers": "content-type" } }), {});
+assert.equal(pre.status, 204); assert.equal(pre.headers.get("access-control-allow-origin"), "https://oren.co.il");
+assert.match(pre.headers.get("access-control-allow-methods"), /POST/); assert.match(pre.headers.get("access-control-allow-headers"), /content-type/);
+
+// a later line that names the service without a price doesn't hide the line with the range
+T.ls_clients.push({ ...DEF.ls_clients(), slug: "oren-2", name: "אורן מים", chat_facts: "- סתימה בכיור: 250 עד 450 ₪\nהערה: סתימה בכיור מגיעים עם מצלמה", allowed_origins: ["https://oren.co.il"] });
+ai.queue.push({ seen: "כיור סתום.", service: "סתימה בכיור", urgent: false, advice: "" });
+r = await call({ slug: "oren-2", image: IMG }, { origin: "https://oren.co.il", ip: "9.9.9.8" });
+assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(r.range, "250 עד 450 ₪");
+
 // too many from one IP
 for (let i = 0; i < 8; i++) { ai.queue.push({ seen: "x", service: null, urgent: false, advice: "" }); await call({ prices: PRICES, image: IMG }, { ip: "9.9.9.7" }); }
 r = await call({ prices: PRICES, image: IMG }, { ip: "9.9.9.7" }); assert.equal(r.status, 429);

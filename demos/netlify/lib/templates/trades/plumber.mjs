@@ -11,6 +11,8 @@
 //   - Optional: greet (the chat's first line, with {name}, 160), crisis (a crisis line shown on top and in the
 //     chat, for trades that may meet people in distress), words.descEnd (the meta description's last sentence),
 //     guide.townsAsk / servicesAsk / photosAsk, chat.noCity (no "which town" question), chat.urgentNote.
+//   - Optional: callbackStep: false when step 3 isn't the call back (a first session, a visit, a slot): the site then
+//     puts no response time on it. plural: true when the business speaks as "אנחנו" (the chat says "אלינו", "אצלנו").
 //   - An extra question may have only: { key, is: [...] }: asked only when an earlier extra's answer is one of those
 //     (security: the company's site and scope only after "לעסק או לפרויקט").
 //   - Check: node scripts/tests/trades.test.mjs <id>

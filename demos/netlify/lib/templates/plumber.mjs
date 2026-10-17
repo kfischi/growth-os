@@ -11,8 +11,12 @@ import { tradeOf } from "./trades/index.mjs";
 // The trades' guides (shared with the demos): general know-how, no prices or promises of the owner.
 import { GUIDE_FILES } from "./trades/guides.mjs";
 import FONTS from "../../../shared/fonts/fonts.json" with { type: "json" };
-import { guideFor } from "./plumber-guide.mjs";
+import { guideFor, whenText } from "./plumber-guide.mjs";
 export { guideFor };
+// "ב" + an area: "בחדרה", but "בשרון", not "בהשרון". Only for region names that take the article; a town keeps its
+// ה (הרצליה, הוד השרון). Every "ב" + area on a site goes through here.
+const REGION_ARTICLE = /^ה(?=(שרון|שפלה|עמקים|עמק|גליל|נגב|כרמל|קריות|מרכז|גולן|ערבה|שומרון|בקעה|צפון|דרום)(?=$|[\s,.\u05be-]))/;
+export const inArea = (x) => { const a = String(x ?? "").trim(); return a ? "ב" + a.replace(REGION_ARTICLE, "") : ""; };
 export const GUIDE = guideFor(tradeOf("plumber"));
 //
 // Two modes:
@@ -116,7 +120,8 @@ export function guidesOf(T, services = []) {
 // design and the sample picture, and names their own trade (content.trade, content.custom_trade). The site then speaks
 // plainly: its own steps, a neutral chat, no trade guides (they would be another trade's know-how), schema LocalBusiness.
 const CUSTOM = {
-  guides: [], schema: "LocalBusiness", urgent: false, guide: null,
+  guides: [], schema: "LocalBusiness", urgent: false, guide: null, crisis: null, plural: true, callbackStep: true,
+  greet: "היי, כאן {name} 👋\nכמה שאלות קצרות בצ׳אט, ונחזור אליכם.",
   steps: [
     ["שלב 1 · דקה", "כותבים מה צריך", "כמה שאלות קצרות בצ׳אט. אפשר לצרף תמונה."],
     ["שלב 2 · מיד", "הפרטים אצלנו", "הפנייה מגיעה אלינו לוואטסאפ, עם כל מה שכתבתם."],
@@ -126,13 +131,14 @@ const CUSTOM = {
     issue: { label: "מה צריך", ask: "במה אפשר לעזור?" },
     photo: "יש תמונה שתעזור לנו להבין? אפשר גם לדלג.",
     extra: [{ key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["היום", "השבוע", "גמיש"] }],
-    urgency: null,
+    urgency: null, noCity: false, urgentNote: "",
     priceNote: "המחיר הסופי נקבע אחרי שמבינים מה צריך.",
   },
   privacyWhat: "שם, טלפון, מה ביקשתם, מתי נוח לכם, ותמונה אם בחרתם לצרף",
 };
 const CUSTOM_WORDS = { jobs: "השירותים שלנו", col: "שירות", time: "משך", open: "לשלוח פנייה", how: "מה קורה כששולחים פנייה",
-  subtitle: "נחזור אליכם בהקדם", waHello: "היי, הגעתי מהאתר. אפשר לחזור אליי?", lead: "פנייה" };
+  subtitle: "נחזור אליכם בהקדם", waHello: "היי, הגעתי מהאתר. אפשר לחזור אליי?", lead: "פנייה",
+  status: "מקבלים פניות", descEnd: "שולחים פנייה בצ׳אט.", field: "", areaNote: "" };
 export function tradeFor(c) {
   const T = tradeOf(c && c.trade_id);
   if (!(c && c.custom_trade)) return T;
@@ -193,7 +199,7 @@ export function vcard(c) {
   if (c.trade) lines.push(`TITLE:${vEsc(String(c.trade).trim())}`);
   if (call) lines.push(`TEL;TYPE=WORK,VOICE:+${call.intl}`);
   if (wa) lines.push(`TEL;TYPE=CELL${call ? "" : ",VOICE"}:+${wa.intl}`);
-  const note = [String(c.trade || "").trim() + (c.area ? " ב" + String(c.area).trim() : ""), owner, wa ? "וואטסאפ: " + wa.local : ""].filter(Boolean).join(". ");
+  const note = [String(c.trade || "").trim() + (c.area ? " " + inArea(c.area) : ""), owner, wa ? "וואטסאפ: " + wa.local : ""].filter(Boolean).join(". ");
   if (note) lines.push(`NOTE:${vEsc(note)}`);
   lines.push("END:VCARD");
   return lines.join("\r\n") + "\r\n";
@@ -258,7 +264,7 @@ const GUIDE_JS = `(function(){function o(){var m=/^#g-([\\w-]+)$/.exec(location.
 // and its first four services with their sample ranges. Shown only in a draft, marked "לדוגמה"; never published.
 function sampleContent(T) {
   const g = T.guide || {}, r = (g.response || [])[1] || (g.response || [])[0] || "";
-  const when = !r ? "מהר" : /^(באותו|עוד|מחר)/.test(r) ? r : "תוך " + r;
+  const when = whenText(r);
   const fill = (x) => String(x || "").replace(/\{when\}/g, when).trim();
   const hl = (g.headlines || [])[0] || {}, it = (g.intros || [])[0] || {};
   return { headline_1: fill(hl.headline_1), headline_2: fill(hl.headline_2), intro: fill(it.intro), response_time: r, services: (g.services || []).slice(0, 4) };
@@ -329,7 +335,8 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const egServices = draft && !services.length ? EG.services || [] : [];
   const listed = services.length ? services : egServices;
   const showTime = listed.some((s) => s.time), showPrice = listed.some((s) => s.price);
-  const ranges = Object.fromEntries(services.filter((s) => s.price).map((s) => [s.name, s.price]));
+  // Only a real range goes into the chat's price line ("X עולה בדרך כלל 300–450 ₪"), never "לפי הצעת מחיר".
+  const ranges = Object.fromEntries(services.filter((s) => /\d/.test(String(s.price || ""))).map((s) => [s.name, String(s.price).trim()]));
   const robots = draft ? '<meta name="robots" content="noindex, nofollow">\n' : "";
   const dims = (slot) => { const z = sizes[slot]; return Array.isArray(z) && z[0] > 0 && z[1] > 0 ? ` width="${Math.round(z[0])}" height="${Math.round(z[1])}"` : ""; };
   // An empty frame in a draft: the trade's sample photo where the demos have one (labelled), else a soft box.
@@ -354,7 +361,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     ? `${font.preload ? `<link rel="preload" href="${h(fontDir + font.preload)}" as="font" type="font/woff2" crossorigin>\n` : ""}<style>${String(font.faces || "").replace(/url\(([\w.-]+\.woff2)\)/g, (m, f) => `url(${fontDir}${f})`).replace(/<\//g, "")}</style>`
     : `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?${L.look.fonts}&display=swap" rel="stylesheet">`;
   const ogImage = site && ogPhoto && !/^https?:/.test(ogPhoto) ? site + ogPhoto : "";
-  const desc = `${trade} ב${area}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. ${W.descEnd || "פותחים קריאה בצ׳אט."}`;
+  const desc = `${trade} ${inArea(area)}: ${services.map((s) => s.name).slice(0, 3).join(", ")}. ${W.descEnd || "פותחים קריאה בצ׳אט."}`;
 
   const facts = [
     has("response_time") || draft ? `<div><b>${v("response_time")}</b><span>זמן חזרה</span></div>` : "",
@@ -403,7 +410,9 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const portrait = photos.portrait ? photo("portrait", owner || name, ' style="object-position:50% 35%"')
     : draft ? photo("portrait", "") : `<div class="ps mono-letter" aria-hidden="true">${h(ownerFirst.slice(0, 1))}</div>`;
 
-  const steps = T.steps.map(([t, h3, p], i) => [i === 2 ? `${t} · תוך ${String(c.response_time || "").trim() || (draft && EG.response_time) || "…"}` : t, h3, p]).map(([t, h3, p]) => `<div class="step"><span class="mono">${h(t)}</span><h3>${h(h3)}</h3><p>${h(p)}</p></div>`).join("\n      ");
+  // The response time goes on step 3 only where step 3 is the call back (T.callbackStep), never on a first session or a visit.
+  const resp3 = String(c.response_time || "").trim() || (draft && EG.response_time) || "";
+  const steps = T.steps.map(([t, h3, p], i) => [i === 2 && T.callbackStep !== false ? `${t} · ${resp3 ? whenText(resp3) : "…"}` : t, h3, p]).map(([t, h3, p]) => `<div class="step"><span class="mono">${h(t)}</span><h3>${h(h3)}</h3><p>${h(p)}</p></div>`).join("\n      ");
 
   // The line at the bottom of every page: who built the site, with a link home (the brand's name as the link, nothing more).
   const creditLine = credit && credit.name ? `<p class="credit">האתר נבנה ב-<a href="${draft || !credit.url ? "#" : h(credit.url)}" rel="noopener">${h(credit.name)}</a> · אתרים שבונים עסקים</p>` : "";
@@ -412,6 +421,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     whatsapp: waIntl || "972500000000",
     name: `${ownerFirst} · ${trade}`, subtitle: W.subtitle, initial: ownerFirst.slice(0, 1), launcher: W.open,
     greet: T.greet ? T.greet.replace("{name}", ownerFirst) + (T.crisis ? "\n" + T.crisis : "") : `היי, כאן ${ownerFirst} 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ואני חוזר אליכם.`,
+    to: T.plural ? "אלינו" : "אליי", at: T.plural ? "אצלנו" : "אצלי",
   };
 
   const index = `<!doctype html>
@@ -419,14 +429,14 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${h(trade)}${area ? " ב" + h(area) : ""} · ${h(name)}${draft ? " · טיוטה" : ""}</title>
+<title>${h(trade)}${area ? " " + h(inArea(area)) : ""} · ${h(name)}${draft ? " · טיוטה" : ""}</title>
 <meta name="description" content="${h(desc)}">
 ${robots}${site ? `<link rel="canonical" href="${h(site)}">
 <meta property="og:url" content="${h(site)}">
 ` : ""}${ogImage ? `<meta property="og:image" content="${h(ogImage)}">
 <meta name="twitter:card" content="summary_large_image">
 ` : ""}<meta property="og:type" content="website">
-<meta property="og:title" content="${h(name)} · ${h(trade)} ב${h(c.area || "")}">
+<meta property="og:title" content="${h(name)} · ${h(trade)}${area ? " " + h(inArea(area)) : ""}">
 <meta property="og:description" content="${h(desc)}">
 <meta property="og:locale" content="he_IL">${draft ? "" : `
 <script type="application/ld+json">${js(localBusiness({ ...c, services, towns }, { phone: call ? "+" + call.intl : "", description: desc, url: site, image: ogImage, type: T.schema }))}</script>`}
@@ -483,7 +493,7 @@ ${T.crisis ? `<p class="crisis" role="note"><b>במצוקה עכשיו?</b> ${h(
 
 <section class="field">
   <div class="wrap">
-    <div class="head"><h2>${h(W.field || (T.urgent ? "מהשטח" : "קצת עליי"))}</h2>${works.length ? '<span class="mono">עבודות אחרונות</span>' : ""}</div>
+    <div class="head"><h2>${h(W.field || (T.urgent ? "מהשטח" : T.plural ? "קצת עלינו" : "קצת עליי"))}</h2>${works.length ? '<span class="mono">עבודות אחרונות</span>' : ""}</div>
     <div class="field-grid${works.length ? "" : " solo"}">
       <div class="lanyard">
         <span class="clip"></span>
@@ -535,10 +545,11 @@ ${GUIDES.items.length ? `<section class="guides-sec" id="guides">
     <div>
       <div class="head"><h2>אזורי שירות</h2>${has("radius_note") ? `<span class="mono">${h(c.radius_note)}</span>` : ""}</div>
       <div class="towns">${towns.length ? towns.map((t) => `<span>${h(t)}</span>`).join("") : `<span class="todo">${h(TOWNS.label)}</span>`}</div>
-      ${areas.length ? `<p class="area-links">${areas.map((r) => `<a href="${draft ? "#" : areaPage(r.name)}">${h(trade)} ב${h(r.name)}</a>`).join("")}</p>` : ""}
+      ${areas.length ? `<p class="area-links">${areas.map((r) => `<a href="${draft ? "#" : areaPage(r.name)}">${h(trade)} ${h(inArea(r.name))}</a>`).join("")}</p>` : ""}
     </div>
     <div>
-      <p>${h(W.areaNote || (T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
+      <p>${h(W.areaNote || (T.plural ? (T.urgent ? "לא בטוחים אם אנחנו מגיעים אליכם? כתבו את הישוב בצ׳אט, ונחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ונחזור אליכם עם תשובה.")
+        : T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
       <button class="btn btn-signal" type="button" data-open-bot>לכתוב בצ׳אט</button>
       <a class="save-contact" href="${draft ? "#" : "contact.vcf"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את ${h(name)} באנשי הקשר</a>
       ${social.length ? `<div class="social"><p>עקבו אחרינו</p><div class="social-links">${socialLinks(social)}</div></div>` : ""}
@@ -579,12 +590,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // נציג AI: a first look at the customer's photo, matched to this business's own price list (/api/estimate).
     estimate: SITE.leads ? { endpoint: SITE.leads.split("/api/lead/")[0] + "/api/estimate", slug: SITE.leads.split("/").pop() } : undefined,
     steps: STEPS,
-    closing: (d) => ["תודה " + d.name.split(" ")[0] + "!", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ". " + CHAT.priceNote : "", URG && d.urgency === URG && CHAT.urgentNote ? CHAT.urgentNote : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\\n"),
+    closing: (d) => ["תודה " + d.name.split(" ")[0] + "!", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ". " + CHAT.priceNote : "", URG && d.urgency === URG && CHAT.urgentNote ? CHAT.urgentNote : "", "לחצו למטה, והפרטים יגיעו " + BOT.to + " בוואטסאפ."].filter(Boolean).join("\\n"),
     summary: (d) => CHAT.lead + " חדשה מהאתר\\n" + STEPS.filter((x) => !["photo", "name", "phone", "callback"].includes(x.key) && d[x.key]).map((x) => x.label + ": " + d[x.key]).join("\\n") + "\\nשם: " + d.name + "\\nטלפון: " + d.phone + (d.callback ? "\\nמתי לחזור: " + d.callback : ""),
     capture: SITE.leads ? {
       endpoint: SITE.leads,
       lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, callback: d.callback, message: STEPS.filter((x) => !["issue", "photo", "name", "phone", "callback"].includes(x.key) && d[x.key]).map((x) => x.label + ": " + d[x.key] + ".").join(" ") }),
-      saved: (d) => ["תודה " + d.name.split(" ")[0] + "! ה" + CHAT.lead + " אצלי, ואישור בדרך אליכם בוואטסאפ.", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ". " + CHAT.priceNote : "", URG && d.urgency === URG && CHAT.urgentNote ? CHAT.urgentNote : ""].filter(Boolean).join("\\n"),
+      saved: (d) => ["תודה " + d.name.split(" ")[0] + "! ה" + CHAT.lead + " " + BOT.at + ", ואישור בדרך אליכם בוואטסאפ.", RANGES[d.issue] ? d.issue + " עולה בדרך כלל " + RANGES[d.issue] + ". " + CHAT.priceNote : "", URG && d.urgency === URG && CHAT.urgentNote ? CHAT.urgentNote : ""].filter(Boolean).join("\\n"),
     } : undefined,
   });
   document.querySelectorAll(".ba").forEach((b) => { const r = b.querySelector(".ba-range"); if (r) r.addEventListener("input", () => b.style.setProperty("--pos", r.value + "%")); });
@@ -685,7 +696,7 @@ ${GUIDES.items.map(guideItem).join("\n")}
     const related = guidesFor(sname, GUIDES.items);
     const others = services.filter((o) => o !== x && String(o.name || "").trim());
     const wa = waIntl ? `https://wa.me/${waIntl}?text=${encodeURIComponent(`היי ${ownerFirst}, אשמח לפרטים על ${sname}.`)}` : "";
-    const sdesc = `${sname}${area ? " ב" + area : ""}${x.price ? ": " + String(x.price).trim() : ""}. ${x.detail ? String(x.detail).trim() + ". " : ""}${name}, ${trade}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
+    const sdesc = `${sname}${area ? " " + inArea(area) : ""}${x.price ? ": " + String(x.price).trim() : ""}. ${x.detail ? String(x.detail).trim() + ". " : ""}${name}, ${trade}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
     const rows = [
       x.price ? `<tr><th>טווח מחיר</th><td>${h(x.price)}</td></tr>` : "",
       x.time ? `<tr><th>זמן טיפול</th><td>${h(x.time)}</td></tr>` : "",
@@ -706,16 +717,16 @@ ${GUIDES.items.map(guideItem).join("\n")}
       ],
     };
     const body = `
-<p class="lead-in">${h(x.detail || `${sname}, ${trade}${area ? " ב" + area : ""}.`)}</p>
+<p class="lead-in">${h(x.detail || `${sname}, ${trade}${area ? " " + inArea(area) : ""}.`)}</p>
 ${rows ? `<table class="svc-facts">${rows}</table>` : ""}
 <p class="svc-ctas"><a class="gd-cta" href="./?q=${encodeURIComponent(sname)}">${h(W.open)} בצ׳אט</a>${wa ? ` <a class="svc-alt" href="${h(wa)}">וואטסאפ</a>` : ""}${callLocal ? ` <a class="svc-alt" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}</p>
 ${x.price ? `<p class="svc-note">המחיר הוא טווח לפי מה שבדרך כלל קורה. המחיר הסופי נקבע אחרי שרואים את העבודה, ומסכמים אותו לפני שמתחילים.</p>` : ""}
 <h2>איך זה עובד</h2>
-<ol class="svc-steps"><li>מתארים בצ׳אט מה צריך ואיפה, ואפשר לצרף תמונה.</li><li>הפרטים מגיעים ל${h(ownerFirst === "אנחנו" ? name : ownerFirst)} בוואטסאפ${has("response_time") ? `, וחוזרים אליכם תוך ${h(c.response_time)}` : ""}.</li><li>קובעים שעה ומסכמים את המחיר לפני העבודה.</li></ol>
+<ol class="svc-steps"><li>מתארים בצ׳אט מה צריך ואיפה, ואפשר לצרף תמונה.</li><li>הפרטים מגיעים ל${h(ownerFirst === "אנחנו" ? name : ownerFirst)} בוואטסאפ${has("response_time") ? `, וחוזרים אליכם ${h(whenText(c.response_time))}` : ""}.</li><li>קובעים שעה ומסכמים את המחיר לפני העבודה.</li></ol>
 ${towns.length ? `<h2>איפה עובדים</h2>\n<p>${towns.map(h).join(" · ")}</p>` : ""}
 ${related.length ? `<h2>טיפים ושאלות</h2>\n<div class="gd">\n${related.map(guideItem).join("\n")}\n</div>\n<p><a href="guides.html">לכל הטיפים</a></p>` : ""}
 ${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}${socialBlock}`;
-    const page = legal(`${sname}${area ? " ב" + area : ""}`, body, `
+    const page = legal(`${sname}${area ? " " + inArea(area) : ""}`, body, `
 <meta name="description" content="${h(sdesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
 <meta property="og:title" content="${h(sname)} · ${h(name)}">
 <meta property="og:description" content="${h(sdesc)}">
@@ -729,8 +740,8 @@ ${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others
   const areaPages = draft ? {} : Object.fromEntries(areas.map((r) => {
     const file = areaPage(r.name), rname = String(r.name).trim(), rtowns = r.towns.slice(0, REGIONS.townsMax);
     const resp = String(r.response || "").trim() || (has("response_time") ? String(c.response_time).trim() : "");
-    const title = `${trade} ב${rname}`;
-    const adesc = `${title}: ${rtowns.slice(0, 4).join(", ")}${rtowns.length > 4 ? " ועוד" : ""}. ${name}${resp ? `, חוזרים תוך ${resp}` : ""}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
+    const title = `${trade} ${inArea(rname)}`;
+    const adesc = `${title}: ${rtowns.slice(0, 4).join(", ")}${rtowns.length > 4 ? " ועוד" : ""}. ${name}${resp ? `, חוזרים ${whenText(resp)}` : ""}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
     const wa = waIntl ? `https://wa.me/${waIntl}?text=${encodeURIComponent(`היי ${ownerFirst}, אני מ${rtowns[0] || rname}, אשמח לפרטים.`)}` : "";
     const rows = [
       `<tr><th>ישובים</th><td>${rtowns.map(h).join(" · ")}</td></tr>`,
@@ -753,8 +764,8 @@ ${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others
 ${String(r.note).trim().split(/\n+/).map((l) => `<p class="lead-in">${h(l)}</p>`).join("\n")}
 <table class="svc-facts">${rows}</table>
 <p class="svc-ctas"><a class="gd-cta" href="./">${h(W.open)} בצ׳אט</a>${wa ? ` <a class="svc-alt" href="${h(wa)}">וואטסאפ</a>` : ""}${callLocal ? ` <a class="svc-alt" href="tel:${h(callLocal)}" dir="ltr">${h(prettyPhone(callLocal))}</a>` : ""}</p>
-${services.length ? `<h2>מה עושים ב${h(rname)}</h2>\n<ul class="svc-more">${services.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}
-${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${areaPage(o.name)}">${h(trade)} ב${h(o.name)}</a></li>`).join("")}</ul>` : ""}${socialBlock}`;
+${services.length ? `<h2>מה עושים ${h(inArea(rname))}</h2>\n<ul class="svc-more">${services.map((o) => `<li><a href="${servicePage(o.name)}">${h(o.name)}</a>${o.price ? ` <span>${h(o.price)}</span>` : ""}</li>`).join("")}</ul>` : ""}
+${others.length ? `<h2>אזורים נוספים</h2>\n<ul class="svc-more">${others.map((o) => `<li><a href="${areaPage(o.name)}">${h(trade)} ${h(inArea(o.name))}</a></li>`).join("")}</ul>` : ""}${socialBlock}`;
     const page = legal(title, body, `
 <meta name="description" content="${h(adesc)}">${site ? `\n<meta property="og:url" content="${h(site + file)}">` : ""}
 <meta property="og:title" content="${h(title)} · ${h(name)}">
@@ -780,10 +791,37 @@ export const HEADERS = `# Netlify headers for this site. Applied however the sit
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
-/assets/*
-  Cache-Control: public, max-age=604800
+# Photos, videos and scripts keep fixed names, and a self edit replaces them in place: a short cache that asks again,
+# so a visitor sees the new photo minutes after a publish. Only the fonts never change under their names.
+# (No two rules match the same file, so Netlify never joins two Cache-Control values.)
+/assets/photos/*
+  Cache-Control: public, max-age=300, must-revalidate
 
-/assets/fonts/*.woff2
+/assets/videos/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/hero.mp4
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/hero-poster.webp
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/hero-poster.jpg
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/leadbot.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/leadform.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/a11y.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/favicon.svg
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
 /contact.vcf
@@ -799,7 +837,7 @@ export function chatFacts(c) {
     c.years && `${yearsHe(c.years)} בתחום.`,
     c.warranty && `אחריות: ${c.warranty}.`,
     `ישובים: ${(c.towns || []).join(", ")}.${c.radius_note ? " " + c.radius_note + "." : ""}`,
-    ...regionsReady(c).map((r) => `אזור ${r.name}: ${r.towns.join(", ")}${r.response ? `, חוזרים תוך ${r.response}` : ""}. ${String(r.note).replace(/\s+/g, " ").trim()}`),
+    ...regionsReady(c).map((r) => `אזור ${r.name}: ${r.towns.join(", ")}${r.response ? `, חוזרים ${whenText(r.response)}` : ""}. ${String(r.note).replace(/\s+/g, " ").trim()}`),
     "שירותים:",
     ...(c.services || []).map((s) => `- ${s.name}${s.detail ? ` (${s.detail})` : ""}${s.price ? `: ${s.price}` : ""}${s.time ? `, ${s.time}` : ""}`),
     c.price_note && `${c.price_note}.`,

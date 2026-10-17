@@ -56,26 +56,42 @@ async function ensureSubRecord(sub, netlifyHost) {
 /**
  * The site for a slug: created on the first call, found by its id afterwards.
  * Returns { siteId, netlifyHost, sub, host } where host is the address the site answers on now.
+ * onMade({ site_id, site_netlify }) runs the moment a new site exists, before anything else can fail, so the caller
+ * saves its id: a later failure (or a run cut off by its time limit) must never leave a site the next try can't find.
  */
-export async function ensureSite(slug, known = {}) {
+export async function ensureSite(slug, known = {}, onMade = null) {
+  const sub = sitesDomain() ? `${slug}.${sitesDomain()}` : null;
+  const attachSub = async (site) => { // the CNAME and the certificate for <slug>.<SITES_DOMAIN>
+    await ensureSubRecord(sub, hostOf(site));
+    await nf("POST", `/sites/${site.id}/ssl`).catch(() => null); // Netlify DNS issues it by itself too; this only hurries it
+  };
   if (known.site_id) {
     const r = await nf("GET", `/sites/${known.site_id}`);
-    if (r.ok) return { siteId: r.data.id, netlifyHost: hostOf(r.data), sub: known.site_sub || null, host: r.data.custom_domain || hostOf(r.data) };
+    if (r.ok) {
+      // A site made by a try that stopped before its address was saved: finish the address now.
+      const attached = sub && (r.data.custom_domain === sub || (r.data.domain_aliases || []).includes(sub));
+      if (attached && !known.site_sub) await attachSub(r.data);
+      return { siteId: r.data.id, netlifyHost: hostOf(r.data), sub: known.site_sub || (attached ? sub : null), host: r.data.custom_domain || hostOf(r.data) };
+    }
     if (r.status !== 404) must(r, "site");
   }
-  const sub = sitesDomain() ? `${slug}.${sitesDomain()}` : null;
   let made = null;
-  for (const name of [slug, `${slug}-site`, `${slug}-${createHash("sha1").update(slug + Date.now()).digest("hex").slice(0, 5)}`]) {
+  // A site an earlier try made but never saved (cut off right after creating it) already holds our address:
+  // find it by that address (the API takes a domain in place of the id) instead of failing on the taken name.
+  if (sub) {
+    const r = await nf("GET", `/sites/${encodeURIComponent(sub)}`);
+    if (r.ok && r.data && r.data.custom_domain === sub) made = r.data;
+    else if (!r.ok && r.status !== 404) must(r, "site by address");
+  }
+  for (const name of made ? [] : [slug, `${slug}-site`, `${slug}-${createHash("sha1").update(slug + Date.now()).digest("hex").slice(0, 5)}`]) {
     const r = await nf("POST", "/sites", { name, ...(sub ? { custom_domain: sub } : {}) });
     if (r.ok) { made = r.data; break; }
     if (r.status !== 422) must(r, "create site"); // 422: the name is taken on Netlify, try the next one
   }
   if (!made) throw new Error("netlify: no free site name for " + slug);
   const netlifyHost = hostOf(made);
-  if (sub) {
-    await ensureSubRecord(sub, netlifyHost);
-    await nf("POST", `/sites/${made.id}/ssl`).catch(() => null); // Netlify DNS issues it by itself too; this only hurries it
-  }
+  if (onMade) await onMade({ site_id: made.id, site_netlify: netlifyHost });
+  if (sub) await attachSub(made);
   return { siteId: made.id, netlifyHost, sub, host: sub || netlifyHost };
 }
 const hostOf = (s) => (s.default_domain || `${s.name}.netlify.app`).toLowerCase();
@@ -105,12 +121,12 @@ export async function addDomain(siteId, domain) {
   return { netlifyHost: hostOf(site) };
 }
 
-// Does the domain point at this site yet? The root to Netlify's address, or www to the site's own host.
-export async function pointsHere(domain, netlifyHost) {
+// Does the domain point at this site yet? Only its root's A record counts: the root becomes the main address, and
+// a root still pointing elsewhere would take the site down with it. A www that is ready alone keeps it waiting
+// (it works meanwhile as an alias). netlifyHost stays in the signature for the callers and the tests.
+export async function pointsHere(domain, _netlifyHost) {
   const a = await dns.resolve4(domain).catch(() => []);
-  if (a.includes(NETLIFY_IP)) return true;
-  const c = await dns.resolveCname("www." + domain).catch(() => []);
-  return c.some((x) => x.toLowerCase().replace(/\.$/, "") === netlifyHost);
+  return a.includes(NETLIFY_IP);
 }
 
 // The swap: the client's domain becomes the main address; ours and www stay as aliases that redirect to it.
