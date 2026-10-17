@@ -45,7 +45,7 @@
 
   window.Guides = {
     load(url, root, opts) {
-      return fetch(url).then((r) => (r.ok ? r.json() : null)).then((d) => this.init(root, d, opts)).catch(() => { if (root) root.closest("section").hidden = true; });
+      return fetch(url).then((r) => (r.ok ? r.json() : null)).then((d) => this.init(root, d, opts)).catch(() => { const sec = root && root.closest("section"); if (sec) sec.hidden = true; });
     },
     init(root, data, opts = {}) {
       if (!root || !data || !data.items) return;

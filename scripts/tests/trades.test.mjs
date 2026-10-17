@@ -86,6 +86,20 @@ for (const [id, T] of Object.entries(TRADES)) {
   for (const x of (ch.extra || []).filter((y) => y.only)) assert.ok(html.includes(`show: (d) => ${JSON.stringify(x.only.is)}.includes(d[${JSON.stringify(x.only.key)}])`), at("the chat asks " + x.key + " only when it applies"));
   assert.ok(Object.keys(site).filter((f) => f.startsWith("service-")).length === 4, at("a page per service"));
   if (T.crisis) assert.ok(html.includes(T.crisis), at("the crisis line shows"));
+  // The review's fixes: "תוך" built once, "ב" + a region without its ה, only real ranges in the chat's price line,
+  // and the response time on step 3 only where step 3 is the call back.
+  {
+    const c2 = { ...c, area: "השרון", response_time: "באותו יום", services: [...g.services.slice(0, 2), { name: "בלי מחיר", price: "לפי הצעת מחיר" }],
+      regions: [{ name: "השפלה", towns: ["רחובות"], note: "עובדים בשפלה כבר כמה שנים, ומכירים את הבניינים ואת הגישה בכל שכונה.", response: "באותו יום" }] };
+    const s2 = P.render(c2, { mode: "site", url: "https://test.example.co.il/", leads: "https://service-pro-web.netlify.app/api/lead/x" });
+    for (const [f, page] of Object.entries(s2)) {
+      assert.ok(!/תוך באותו/.test(page), at(f + ': no "תוך באותו יום"'));
+      assert.ok(!/בהשרון|בהשפלה/.test(page), at(f + ': "בשרון", not "בהשרון"'));
+    }
+    assert.ok(!JSON.parse(s2["index.html"].match(/const RANGES = (.*);/)[1])["בלי מחיר"], at("no price, no price line in the chat"));
+    const step3 = s2["index.html"].match(/<div class="step"><span class="mono">(שלב 3[^<]*)</)[1];
+    assert.equal(step3.includes("באותו יום"), T.callbackStep !== false, at("response time on step 3 only when it is the call back: " + step3));
+  }
   const guide = P.guideFor(T);
   assert.ok(guide.steps.some((s) => s.id === "headline") && guide.services === g.services, at("the questionnaire"));
 }

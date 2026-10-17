@@ -32,7 +32,7 @@ const res = (data, status = 200) => new Response(JSON.stringify(data), { status,
 export const imageCalls = [];
 export const indexNow = []; // the pings to IndexNow after a deploy (lib/search.mjs)
 // Netlify (lib/hosting.mjs): sites, deploys by digest, uploads, the DNS zone of SITES_DOMAIN.
-export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0, bodies: new Map() };
+export const nl = { sites: new Map(), taken: new Set(), deploys: new Map(), have: new Set(), uploads: [], zones: [{ id: "z1", name: "sites.example.co.il" }], records: [], ssl: 0, bodies: new Map(), failDeploy: 0 };
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
   if (u.host === "api.anthropic.com") {
@@ -57,14 +57,16 @@ globalThis.fetch = async (url, opt = {}) => {
       const site = { id: "site-" + (nl.sites.size + 1), name: body.name, default_domain: body.name + ".netlify.app", custom_domain: body.custom_domain || null, domain_aliases: [] };
       nl.sites.set(site.id, site); return res(site, 201);
     }
-    if ((m = /^\/sites\/([\w-]+)$/.exec(p))) {
-      const site = nl.sites.get(m[1]); if (!site) return res({ message: "Not Found" }, 404);
+    if ((m = /^\/sites\/([\w.%-]+)$/.exec(p))) { // the API takes the site's id or one of its domains
+      const key = decodeURIComponent(m[1]);
+      const site = nl.sites.get(key) || [...nl.sites.values()].find((x) => x.custom_domain === key || x.default_domain === key); if (!site) return res({ message: "Not Found" }, 404);
       if (method === "GET") return res(site);
       if (method === "PATCH") { Object.assign(site, body); return res(site); }
     }
     if (method === "POST" && /^\/sites\/[\w-]+\/ssl$/.test(p)) { nl.ssl++; return res({}); }
     if (method === "POST" && (m = /^\/sites\/([\w-]+)\/deploys$/.exec(p))) {
       assert.ok(nl.sites.has(m[1]));
+      if (nl.failDeploy > 0) { nl.failDeploy--; return res({ message: "Internal" }, 500); } // a deploy that fails (or a run cut off)
       const id = "dep-" + (nl.deploys.size + 1); nl.deploys.set(id, { site: m[1], files: body.files });
       return res({ id, required: [...new Set(Object.values(body.files))].filter((h) => !nl.have.has(h)) });
     }
@@ -75,7 +77,7 @@ globalThis.fetch = async (url, opt = {}) => {
       nl.have.add(h); nl.uploads.push(path); nl.bodies.set(path, Buffer.from(opt.body).toString("utf8")); return res({});
     }
     if (method === "GET" && p === "/dns_zones") return res(nl.zones);
-    if ((m = /^\/dns_zones\/(\w+)\/dns_records$/.exec(p))) {
+    if ((m = /^\/dns_zones\/([\w-]+)\/dns_records$/.exec(p))) {
       if (method === "GET") return res(nl.records.filter((r) => r.zone === m[1]));
       if (method === "POST") { nl.records.push({ zone: m[1], ...body }); return res(body, 201); }
     }

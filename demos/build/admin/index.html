@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script src="../../shared/a11y.js" data-statement="../../accessibility/"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>אתרים בבנייה · ניהול</title>
 <meta name="robots" content="noindex, nofollow">
@@ -70,13 +71,13 @@
 (function () {
   'use strict';
   const $ = (s) => document.querySelector(s);
-  const API = '/api/builder-admin', KEY = 'ls-panel'; // the same login as the leads panel
+  const API = '/api/builder-admin', KEY = 'ls-admin'; // its own login, kept for the tab only: an owner's panel link never replaces it
   const STATUS = { draft: 'בשיחה', returned: 'הוחזר ללקוח', client_approved: 'הלקוח אישר', paid: 'שולם', published: 'פורסם' };
-  const PKG = { presence: 'נוכחות', ai: 'נציג AI' }, PLAN = { full: 'תשלום אחד', three: '3 תשלומים' };
+  const PKG = { presence: 'נוכחות', ai: 'נציג AI' }, PLAN = { full: 'תשלום אחד', month: 'חודשי', year: 'שנה מראש' };
   let auth = null, drafts = [], filter = 'todo';
   const store = {
-    get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
-    set(v) { try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch (e) { /* private mode */ } },
+    get() { try { return sessionStorage.getItem(KEY); } catch (e) { return null; } },
+    set(v) { try { v ? sessionStorage.setItem(KEY, v) : sessionStorage.removeItem(KEY); } catch (e) { /* private mode */ } },
   };
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const when = (iso) => iso ? new Date(iso).toLocaleString('he-IL', { timeZone: 'Asia/Jerusalem', day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
@@ -115,7 +116,7 @@
       const info = el('div');
       const h = el('h2', '', d.business || '(בלי שם עדיין)'); info.append(h);
       const tag = el('span', 'tag ' + d.status, STATUS[d.status] || d.status);
-      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.trade, d.owner, d.phone, d.package ? PKG[d.package] + (d.plan ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
+      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.trade, d.owner, d.phone, d.package ? PKG[d.package] + (PLAN[d.plan] ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
       const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
@@ -176,7 +177,12 @@
     try {
       const r = await call('GET');
       drafts = r.drafts; $('#login').hidden = true; $('#board').hidden = false; $('#logout').hidden = false; paint();
-    } catch (e) { if (auth) $('#err').textContent = 'לא הצליח לטעון: ' + e.message; }
+    } catch (e) {
+      if (!auth) return;
+      // Before the board ever showed, the error goes on the login form (the board and its #err are hidden).
+      if ($('#board').hidden) { $('#login').hidden = false; $('#loginErr').textContent = 'לא הצליח לטעון: ' + e.message; }
+      else $('#err').textContent = 'לא הצליח לטעון: ' + e.message;
+    }
   }
 
   const saved = store.get();

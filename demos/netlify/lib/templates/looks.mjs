@@ -1,3 +1,4 @@
+import { whenText } from "./plumber-guide.mjs";
 // The looks of the plumber template: nine layouts on the same content (each trade sees the ones that suit it, looksFor), each with eight colour palettes.
 // The owner picks one in the builder ("עיצוב") and sees the draft change next to the chat.
 // A look is fonts, a few CSS overrides and the picture at the top of the page. A palette is only colours.
@@ -79,7 +80,7 @@ function jobTicket({ h, v, has, c, draft }) {
       <div class="tk-head mono"><span>כרטיס עבודה</span><span class="tk-open">פתוח</span></div>
       <b class="tk-name">${v("business_name")}</b>
       ${lines ? `<ul class="tk-list">${lines}</ul>` : ""}
-      <div class="tk-foot mono">${has("response_time") ? `חוזרים תוך ${h(c.response_time)}` : v("trade")}<span>${v("area")}</span></div>
+      <div class="tk-foot mono">${has("response_time") ? `חוזרים ${h(whenText(c.response_time))}` : v("trade")}<span>${v("area")}</span></div>
     </div>`;
 }
 
@@ -136,7 +137,7 @@ function appointmentCard({ h, v, has, c }) {
       <b class="ap-name">${v("business_name")}</b>
       <div class="ap-times" aria-hidden="true"><span>בוקר</span><span>צהריים</span><span>ערב</span></div>
       ${has("hours") ? row("שעות", h(c.hours)) : ""}
-      ${has("response_time") ? row("חוזרים", `תוך ${h(c.response_time)}`) : ""}
+      ${has("response_time") ? row("חוזרים", h(whenText(c.response_time))) : ""}
       <p class="ap-foot">בוחרים זמן שנוח לכם, ואנחנו מאשרים.</p>
     </div>`;
 }

@@ -7,6 +7,7 @@ export default {
   guides: ["renovation"],
   schema: "GeneralContractor",
   urgent: false,
+  callbackStep: false,  // step 3 is the visit and the quote, not the call back
   words: {
     jobs: "העבודות הנפוצות",
     col: "עבודה",

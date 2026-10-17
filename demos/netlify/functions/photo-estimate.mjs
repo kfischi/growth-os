@@ -10,7 +10,8 @@ import { json, configured, getClient, corsHeaders, rateLimiter, clientIp, factsO
 const MODEL = process.env.ESTIMATE_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_IMAGE = 1_400_000; // a data URL of the chat's shrunk JPEG (under 900 KB) fits well under this
 const limited = rateLimiter(8, 10 * 60 * 1000);
-const client = new Anthropic();
+// under the page's own 25 s abort (leadbot.js): one try, no retries
+const client = new Anthropic({ timeout: 20000, maxRetries: 0 });
 
 const SCHEMA = {
   type: "object", additionalProperties: false,
@@ -43,15 +44,21 @@ function rangeOf(c, prices, service) {
   if (!service) return null;
   if (!c) return Object.hasOwn(prices || {}, service) ? String(prices[service] || "") || null : null;
   // the newest line that names the service: what the owner taught on WhatsApp wins over the site's list
-  const line = factsOf(c).split("\n").reverse().find((l) => l.includes(service));
-  const m = line && /(\d[\d,]*\s*(?:עד|-|–)\s*\d[\d,]*\s*₪)/.exec(line);
+  // (only lines that carry a range: a later note naming the service without a price must not hide it)
+  const RANGE = /(\d[\d,]*\s*(?:עד|-|–)\s*\d[\d,]*\s*₪)/;
+  const line = factsOf(c).split("\n").reverse().find((l) => l.includes(service) && RANGE.test(l));
+  const m = line && RANGE.exec(line);
   return m ? m[1] : null;
 }
 
 export default async (req, context) => {
   // Our own pages, or a client's site (its domain is in allowed_origins): checked again once the client is known.
+  // The preflight can't know the client (no body yet), so it echoes the Origin; the POST below does the real check
+  // (a slug: the client's allowed_origins; the demos: our own origin). Without this a client's domain never
+  // gets past the preflight, since leadbot posts application/json.
+  const origin = req.headers.get("origin");
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: origin ? { "access-control-allow-origin": origin, "access-control-allow-methods": "POST, OPTIONS", "access-control-allow-headers": "content-type", "access-control-max-age": "86400", vary: "origin" } : {} });
   let c = null, cors = corsHeaders(req, null) || {};
-  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405, cors);
   if (!process.env.ANTHROPIC_API_KEY) return json({ error: "not_configured" }, 503, cors);
   if (limited(clientIp(req))) return json({ error: "rate_limited" }, 429, cors);

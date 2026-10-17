@@ -187,6 +187,10 @@
   .socials { display: grid; gap: 8px; margin-bottom: 10px; }
   .socials label { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 8px; align-items: center; font-size: 14px; font-weight: 600; }
   .socials input[type=text] { min-height: 44px; }
+  .socials .net { display: flex; align-items: center; gap: 7px; }
+  .socials .net svg { flex: none; inline-size: 22px; block-size: 22px; color: #8a8f99; transition: color .2s; }
+  .socials label.on .net svg { color: var(--mint); }
+  @media (prefers-reduced-motion: reduce) { .socials .net svg { transition: none; } }
   .approve .total { color: var(--ink); font-weight: 700; font-size: 15px; }
   .approve ul { margin: 0 0 8px; padding-inline-start: 18px; font-size: 14px; }
   .linkish { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; font: inherit; font-size: 14px; cursor: pointer; }
@@ -246,7 +250,7 @@
     <ol class="sheet">
       <li><span class="tick" aria-hidden="true">1</span><div><b>שיחה של כמה דקות</b><span>שם העסק, אזור, שירותים ומחירים. שאלה אחת בכל פעם.</span></div></li>
       <li><span class="tick" aria-hidden="true">2</span><div><b>האתר שלכם מתמלא מולכם</b><span>בקישור פרטי, עם התמונות שלכם. מבקשים שינוי, והוא מתעדכן.</span></div></li>
-      <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, והאתר עולה לאוויר</b><span>אחרי האישור והתשלום האתר עולה לבד, תוך דקות.</span></div></li>
+      <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, והאתר עולה לאוויר</b><span>אחרי התשלום האתר עולה לאוויר, ואנחנו מעדכנים אתכם.</span></div></li>
     </ol>
     <p class="note">התחום שלכם לא ברשימה? בוחרים ״תחום אחר״ ואת הדמו הכי קרוב אליכם, ומשנים בבונה לפי העסק שלכם.</p>
   </section>
@@ -361,7 +365,7 @@
 <dialog id="approveDlg" aria-labelledby="t-approve">
   <form method="dialog" id="approveForm">
     <h2 id="t-approve">מאשרים את האתר</h2>
-    <p>בוחרים חבילה. אחר כך בוחרים כתובת לאתר ומשלמים, והאתר עולה לאוויר לבד. עד התשלום אפשר עוד לשנות.</p>
+    <p>בוחרים חבילה ומשלמים, ואחרי התשלום האתר עולה לאוויר. עד התשלום אפשר עוד לשנות.</p>
     <div class="pkgs">
       <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,490 ₪ הקמה, ו-290 ₪ לחודש (מחיר השקה, נעול לתמיד).</span></div></label>
       <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
@@ -632,24 +636,31 @@
         const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = (pr.vat ? 'לתשלום היום, כולל מע״מ: ' : 'לתשלום היום: ') + nis(pr.today[c ? c.value : 'month']); };
         pk.addEventListener('change', showTotal); showTotal();
       }
-      // The terms first (demos/terms/): paying means accepting them, and the server records when.
-      const terms = document.createElement('label'); terms.className = 'terms-ok';
-      const tick = document.createElement('input'); tick.type = 'checkbox'; tick.id = 'termsOk';
-      const tl = document.createElement('a'); tl.href = '../terms/'; tl.target = '_blank'; tl.rel = 'noopener'; tl.textContent = 'תנאי השימוש והביטולים';
-      terms.append(tick, document.createTextNode(' מאשרים את '), tl);
-      box.append(terms);
+      const tick = termsTick(box);
       const go = btn('לתשלום מאובטח', pay); go.disabled = !a || !tick.checked; box.append(go);
       tick.addEventListener('change', () => { go.disabled = !a || !tick.checked; });
       p('התשלום בכרטיס אשראי בדף המאובטח של Grow. הקבלה נשלחת אליכם מיד. בלי התחייבות: מבטלים מתי שרוצים.').className = 'note';
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved') {
+      // Without Grow: a payment link, or one sent on WhatsApp, and כפיר puts the site live once the payment is in.
       p('אישרתם את האתר. השלב הבא: תשלום ההקמה.');
+      const tick = termsTick(box), links = [];
       if (s.pay.length) {
         for (const l of s.pay) {
           const a = document.createElement('a'); a.className = 'btn'; a.href = l.url; a.target = '_blank'; a.rel = 'noopener';
-          a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a);
+          a.textContent = 'לתשלום'; a.style.marginBottom = '8px'; box.append(a); links.push(a);
         }
-      } else p('נשלח לכם בוואטסאפ את פרטי התשלום, בדרך כלל באותו יום. הקבלה מגיעה אחרי התשלום.');
+        p('האתר עולה לאוויר אחרי שהתשלום מתקבל, ונעדכן אתכם בוואטסאפ.');
+      } else p('אחרי שתאשרו את התנאים נשלח לכם בוואטסאפ קישור לתשלום. האתר עולה לאוויר אחרי שהתשלום מתקבל. הקבלה מגיעה אחרי התשלום.');
+      const gate = () => { for (const a of links) { if (tick.checked) a.removeAttribute('aria-disabled'); else a.setAttribute('aria-disabled', 'true'); a.style.pointerEvents = tick.checked ? '' : 'none'; a.style.opacity = tick.checked ? '' : '.5'; } };
+      gate();
+      tick.addEventListener('change', async () => {
+        gate();
+        if (!tick.checked || (billing && billing.terms)) return;
+        const r = await call('pay', { body: { terms: true } }); // records when the terms were accepted
+        if (r.ok && r.data.billing) billing = r.data.billing;
+      });
+      p('בלי התחייבות: מבטלים מתי שרוצים, בהודעה בוואטסאפ.').className = 'note';
       box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'paid') {
       if (billing && billing.publishing === 'working' && billing.address) { p('התשלום התקבל, תודה! האתר עולה לאוויר עכשיו. זה לוקח בדרך כלל פחות מדקה.'); watchPublish(); }
@@ -696,6 +707,15 @@
     l.querySelector('b').textContent = title; l.querySelector('span').textContent = text;
     return l;
   }
+  // The terms tick (demos/terms/): paying means accepting them, and the server records when (in both payment modes).
+  function termsTick(box) {
+    const terms = document.createElement('label'); terms.className = 'terms-ok';
+    const tick = document.createElement('input'); tick.type = 'checkbox'; tick.id = 'termsOk'; tick.checked = Boolean(billing && billing.terms);
+    const tl = document.createElement('a'); tl.href = '../terms/'; tl.target = '_blank'; tl.rel = 'noopener'; tl.textContent = 'תנאי השימוש והביטולים';
+    terms.append(tick, document.createTextNode(' מאשרים את '), tl);
+    box.append(terms);
+    return tick;
+  }
   function setBilling(d) { if (d.state) state = d.state; if (d.billing) billing = d.billing; paint(); }
 
   // The owner's site after payment: their own domain while it connects, the panel link once, the subscription, invoices.
@@ -728,7 +748,7 @@
         box.append(btn('לעדכן כרטיס', pay));
       } else if (sub.state === 'cancelling') { p('ביטלתם את המנוי. הוא פעיל עד ' + dateHe(sub.end) + '.'); box.append(btn('להמשיך את המנוי', resumeSub, 'btn quiet')); }
       else if (sub.state === 'ended') p('המנוי הסתיים. האתר והדומיין שלכם נשארים.');
-    }
+    } else if (!b.on) { const c = p('רוצים לבטל את המנוי? '); c.className = 'note'; c.append(waLink('כתבו לנו בוואטסאפ', 'היי, אני רוצה לבטל את המנוי של האתר שלי.')); }
     if (b.invoices && b.invoices.length) {
       box.append(h3('קבלות'));
       const ul = document.createElement('ul');
@@ -804,7 +824,7 @@
   async function pay(b) {
     const c = document.querySelector('input[name=cycle]:checked');
     b.disabled = true; const label = b.textContent; b.textContent = 'פותחים את דף התשלום…';
-    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: !!($('#termsOk') || {}).checked } });
+    const r = await call('pay', { body: { cycle: c ? c.value : 'month', terms: Boolean(($('#termsOk') || {}).checked) } });
     if (r.ok && /^https:\/\//.test(r.data.url)) { location.href = r.data.url; return; }
     b.disabled = false; b.textContent = label;
     const f = bubble('fail', say(r.data.error)); f.append(' ', waLink('לוואטסאפ', 'היי, נתקעתי בתשלום על האתר שלי.'));
@@ -1112,12 +1132,22 @@
       // One field per network: a link or a handle. The server cleans it into the profile's address, or says why not.
       // What they typed stays while they fix one the server refused (the guide is drawn again after every answer).
       const typed = socialTyped || (socialTyped = { ...(c.social || {}) }), box = el('div', 'socials'), inputs = {};
+      // The same single-colour icons the site shows; a network lights up once it is filled.
+      const ICONS = {
+        instagram: '<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.4" cy="6.6" r="1.3" fill="currentColor"/>',
+        facebook: '<path d="M13.6 21v-7.6h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.6-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.1H8v3h2.6V21z" fill="currentColor"/>',
+        tiktok: '<path d="M16.4 3c.3 2.2 1.7 3.7 4 3.9V10c-1.5 0-2.8-.4-4-1.2v6.4a5.6 5.6 0 1 1-5.6-5.6l.9.1v3.2a2.5 2.5 0 1 0 1.6 2.3V3z" fill="currentColor"/>',
+        youtube: '<rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9v6l5-3z" fill="currentColor"/>',
+      };
       for (const n of st.networks) {
         const row = el('label'); const i = el('input'); i.type = 'text'; i.dir = 'ltr'; i.inputMode = 'url';
         i.autocomplete = 'off'; i.spellcheck = false; i.setAttribute('autocapitalize', 'off'); i.maxLength = 300;
         i.placeholder = n.placeholder; i.value = typed[n.key] || ''; i.dataset.net = n.key;
-        i.addEventListener('input', () => { typed[n.key] = i.value; });
-        row.append(el('span', null, n.label), i); box.append(row); inputs[n.key] = i;
+        const net = el('span', 'net'); net.innerHTML = ICONS[n.key] ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + ICONS[n.key] + '</svg>' : '';
+        net.append(n.label);
+        const lit = () => row.classList.toggle('on', Boolean(i.value.trim()));
+        i.addEventListener('input', () => { typed[n.key] = i.value; lit(); });
+        row.append(net, i); box.append(row); inputs[n.key] = i; lit();
       }
       const save = el('button', 'btn', 'שמירה'); save.type = 'button';
       save.addEventListener('click', async () => {

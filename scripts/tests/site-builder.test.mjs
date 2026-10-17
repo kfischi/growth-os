@@ -498,7 +498,9 @@ r = await J(await req("start", { body: { name: "בודק", phone: "0501234567", 
 // an untouched draft with a photo is deleted after 30 days; a published one stays
 const old = T.ls_drafts[1]; old.updated_at = "2026-08-01T00:00:00Z"; old.photos = { portrait: { path: "drafts/old/portrait-1.webp", ext: "webp" } }; storage.set("drafts/old/portrait-1.webp", webp);
 D.updated_at = "2026-08-01T00:00:00Z";
+T.ls_payments.push({ ...DEF.ls_payments(), draft_id: old.id }); // a checkout opened and never paid holds the draft (on delete restrict)
 const del = await B.deleteStaleDrafts(new Date("2026-10-10T03:00:00Z"));
+assert.ok(!T.ls_payments.some((p) => p.draft_id === old.id), "its unpaid checkout goes first");
 assert.equal(del.draftsDeleted, 1); assert.ok(!T.ls_drafts.includes(old)); assert.ok(T.ls_drafts.includes(D)); assert.ok(!storage.has("drafts/old/portrait-1.webp"));
 // the message cap: a draft that already holds 80 messages gets no more AI turns
 const E = T.ls_drafts[1], eKey = "e".repeat(32); E.key_hash = createHash("sha256").update(eKey).digest("hex");
@@ -506,6 +508,14 @@ E.messages = Array.from({ length: 80 }, (_, i) => ({ role: i % 2 ? "assistant" :
 const calls = aiCalls.length;
 r = await J(await req("chat", { body: { message: "עוד", rev: E.rev }, ip: "5.5.5.5" })); assert.equal(r.error, "limit"); assert.equal(aiCalls.length, calls);
 cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status, 404, "a malformed key");
+// self edit: the monthly allowance is the limit, not the history's length; the history keeps the latest turns
+{
+  const live = { status: "published", self_edit: true, published_slug: "x", messages: E.messages };
+  assert.equal(B.historyFull(E), true); assert.equal(B.historyFull(live), false, "a live site's chat never locks on its length");
+  const m = B.withTurn(live, "שאלה", "תשובה");
+  assert.equal(m.length, 60); assert.equal(m[0].role, "user"); assert.deepEqual(m.at(-1), { role: "assistant", content: "תשובה" });
+  assert.equal(B.withTurn(E, "a", "b").length, 82, "a draft's history is not cut (it stops at the cap)");
+}
 
 // --- before and after: a slider on the site only with both photos; the draft shows the frame with one
 {
@@ -637,6 +647,12 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   if (D.live) Object.assign(D, { content: D.live.content, photos: D.live.photos || {}, video: D.live.video || null }); // nothing unpublished
   Object.assign(D, { status: "published", self_edit: false, paid_at: D.paid_at || new Date().toISOString() }); // a live site, as after publishing
   nl.taken.add("oren-mayim"); // someone on Netlify has the name: the next one is taken
+  // A first try that fails after the site was made: its id is saved at once, and the next try uses that site.
+  nl.failDeploy = 1;
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
+  assert.equal(r.hosting.state, "failed", JSON.stringify(r.hosting));
+  assert.equal(nl.sites.size, 1); assert.equal(D.site_id, [...nl.sites.values()][0].id, "the new site's id is saved before the deploy");
+  D.site_id = null; D.site_netlify = null; // and a run cut off even before that: the site is found by its address
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" }));
   assert.equal(r.status, 200, JSON.stringify(r));
   assert.deepEqual(r.hosting, { state: "live", url: "https://oren-mayim.sites.example.co.il/" });
@@ -676,6 +692,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const before = nl.uploads.length;
   r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200);
   assert.equal(nl.sites.size, 1, "no second site"); assert.equal(nl.uploads.length, before, "nothing changed, nothing uploaded");
+  // a service or an area page the owner removed leaves the repo at the next publish
+  gh.files.set("clients/oren-mayim/area-0ld1.html", "x"); gh.files.set("clients/oren-mayim/service-0ld1.html", "x");
+  r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200);
+  assert.ok(!gh.files.has("clients/oren-mayim/area-0ld1.html") && !gh.files.has("clients/oren-mayim/service-0ld1.html"), "old pages removed");
+  assert.ok(gh.files.has("clients/oren-mayim/index.html"));
   assert.equal(nl.records.length, 1);
 
   // the client's own domain
@@ -723,4 +744,11 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   delete process.env.NETLIFY_TOKEN; delete process.env.SITES_DOMAIN;
 }
 
+// "תחום אחר": the address suggestions use the owner's own trade, never the demo's (plumber) as a backup
+{
+  ai.queue.push({ names: ["dana-vet"] });
+  const out = await B.suggestSlugs({ id: "abcd1234-0000-0000-0000-000000000000", template: "plumber", content: { business_name: "דנה", trade: "וטרינרית", custom_trade: true, area: "חדרה" } });
+  assert.equal(JSON.parse(aiCalls.at(-1).messages[0].content).trade, "וטרינרית");
+  assert.deepEqual(out.map((x) => x.slug), ["dana-vet", "site-abcd"], "no plumber names");
+}
 console.log("all site builder tests passed");

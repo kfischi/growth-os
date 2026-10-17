@@ -7,6 +7,7 @@ export default {
   guides: ["tutor"],
   schema: "LocalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the first lesson, not the call back
   words: {
     jobs: "השיעורים",
     col: "שיעור",

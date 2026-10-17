@@ -5,6 +5,7 @@
 import { getClient, addLink, linkUrl, db, q } from "./leads.mjs";
 import { templateOf } from "./builder.mjs";
 import { SOCIAL_KEYS, NETWORKS } from "./social.mjs";
+import { whenText } from "./templates/plumber-guide.mjs";
 
 const LINKS = { gbp: "פרופיל בגוגל", status: "סטטוס בוואטסאפ", groups: "קבוצות ופוסטים" };
 // The site's address for each network's bio, with its own tagged link, so the panel shows what each network brought.
@@ -45,7 +46,7 @@ export async function launchKit(d) {
   const url = (k) => (links && links[k]) || site;
   const trade = String(c.trade || t.label || "").trim(), area = String(c.area || "").trim(), owner = first(c.owner_name);
   const prices = (c.services || []).some((s) => s.price);
-  const back = c.response_time ? `, ואני חוזר תוך ${String(c.response_time).trim()}` : "";
+  const back = c.response_time ? `, ואני חוזר ${whenText(c.response_time)}` : "";
   const years = yearsHe(c.years);
   return {
     site,

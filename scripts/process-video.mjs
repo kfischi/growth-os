@@ -298,7 +298,7 @@ const STEPS = [
   ["מעלים תמונות.", "שלכם, ושל העבודה."],
   ["עוברים על האתר.", "בדיוק כמו שהוא יעלה."],
   ["מאשרים ובוחרים חבילה.", "נוכחות, או נציג AI."],
-  ["משלמים, והאתר באוויר.", "כתובת, כרטיס, והוא עולה לבד."],
+  ["משלמים, והאתר עולה.", "בוחרים כתובת ומשלמים."],
 ];
 async function step(n) {
   const [title, text] = STEPS[n - 1];
@@ -370,7 +370,7 @@ try {
   await zoomTo(A("#demos"), { max: 1.25 });
   await st("slides", shots);
   await st("slide", 0);
-  const HOOK = ["לקוח מחפש אתכם עכשיו.", "הוא מוצא אתר שעונה לו.", "ואתם בונים אותו בצ׳אט."];
+  const HOOK = ["לקוח מחפש אתכם עכשיו.", "לא עניתם? הוא עובר לבא בתור.", "אתר שעונה לו, בונים בצ׳אט."];
   await p.evaluate((lines) => window.stage.lines(`<div class="stack">${lines.map((t) => `<div class="l huge">${window.stage.dotted(t)}</div>`).join("")}</div>`), HOOK);
   await st("full", true, true);
   await raw(300);
@@ -583,7 +583,7 @@ try {
     await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 });
   });
   mark("h-live");
-  await now("האתר עלה לאוויר לבד, תוך דקה", 1100);
+  await now("האתר עלה לאוויר", 1100);
   await app().evaluate(() => { const b = document.querySelector("#approveBox"); const h = [...b.querySelectorAll("h3")].find((x) => /הלקוחות הראשונים/.test(x.textContent)); if (h) b.scrollTop = h.offsetTop - 10; });
   await now("ואיך מביאים את הלקוחות הראשונים", 1000);
   await st("allDone");
@@ -608,6 +608,7 @@ try {
   await A(".lb-panel .lb-est").waitFor({ timeout: 10000 });
   await raw(150);
   await point(A(".lb-panel .lb-est"), null, 0);
+  mark("h-photo");
   await hold(1500);
   await st("unpoint");
   // The rest of the chat (how urgent, the town, the name, the phone) goes by in a cut, to the enquiry received.
@@ -630,6 +631,7 @@ try {
   await st("phone", true, "אורן מים", "א", "העסק");
   await raw(250);
   await msg(`היי דנה, כאן אורן מים. קיבלנו את הפנייה שלכם בנושא ${svc.name}, ונחזור אליכם עד שעתיים בשעות העבודה. אם יש עוד פרטים או תמונה, אפשר לשלוח כאן.`);
+  mark("h-reply");
   await hold(1100);
   await now("זה מה שהלקוח מקבל, מהמספר שלכם");
   await hold(1500);
@@ -642,6 +644,7 @@ try {
   await now("וזה מה שאתם מקבלים");
   await hold(1500);
   await msg(`תזכורת: הפנייה של דנה כהן (054-1234567) מחכה כבר 30 דקות ועוד לא סומנה כטופלה.`, { btns: ["טיפלתי"], at: 30 });
+  mark("h-remind");
   await now("עוד לא חזרתם? תזכורת");
   await hold(1100);
   await hitBtn("טיפלתי"); await raw(250);
@@ -666,6 +669,7 @@ try {
   await feature(7);
   await tap(A("#live-ai .asks button"), "כמה עולה לפתוח סתימה במטבח?", { zoom: false, hold: 400 });
   await cut(async () => { await app().waitForFunction(() => /250 עד 450/.test((document.querySelector(".ab-panel .ab-body") || {}).textContent || ""), null, { timeout: 10000 }); await raw(200); await zoomTo(A(".ab-panel"), { max: 1.45, pad: 30 }); });
+  mark("h-price");
   await hold(1200);
   await now("מהמחירון שלכם בלבד");
   await hold(1200);
@@ -675,6 +679,7 @@ try {
   await hold(500);
   await zoomTo(A("#list .lead"), { max: 1.5, pad: 40 });
   await point(A("#list .lead .pic"), "הפנייה, עם התמונה", 0);
+  mark("h-panel");
   await hold(1600);
   await st("unpoint");
 
@@ -694,6 +699,7 @@ try {
   await feature(11);
   await st("phone", true, "אורן מים · פניות מהאתר", "א", "ההתראות שלכם");
   await raw(150);
+  mark("h-report");
   await msg("הסיכום של ספטמבר: 486 כניסות לאתר ו-31 פניות. 9 מהן הגיעו מחוץ לשעות העבודה, ונשמרו בלוח. 28 סומנו כטופלו. רוב הפניות הגיעו דרך: גוגל. כל הפרטים בלוח הפניות שלכם.");
   await hold(1200);
   await now("ב־1 לכל חודש");

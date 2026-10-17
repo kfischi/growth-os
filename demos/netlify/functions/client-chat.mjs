@@ -9,7 +9,20 @@ import { json, configured, getClient, processLead, corsHeaders, rateLimiter, cli
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 20, MAX_CHARS = 600;
 const limited = rateLimiter(30, 10 * 60 * 1000);
-const client = new Anthropic();
+const client = new Anthropic({ timeout: 20000, maxRetries: 0 }); // under the page's own 30 s abort (aibot.js)
+const OPUS_FALLBACK = MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {};
+
+// A daily cap per business per instance (CLIENT_CHAT_DAILY, default 300 answers): past it the page shows its
+// offline line with the WhatsApp button (aibot.js), so a runaway script can't run up the bill.
+let day = "";
+const answers = new Map();
+function overDailyCap(slug) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== day) { day = today; answers.clear(); }
+  const n = (answers.get(slug) || 0) + 1;
+  answers.set(slug, n);
+  return n > (Number(process.env.CLIENT_CHAT_DAILY) || 300);
+}
 
 const system = (c) => `You are the website assistant of "${c.name}", a small local business in Israel. You are an AI, and you say so if asked.
 Your job: answer visitors' questions briefly from the facts below, and when they want to be contacted, take their name and phone so the business calls them back.
@@ -47,11 +60,14 @@ export default async (req, context) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405, cors);
   if (!c || !c.active || c.package !== "ai") return json({ error: "not_configured" }, 503, cors);
+  // A browser always sends Origin on this cross-site POST; a script without one gets nothing (every answer costs).
+  if (!req.headers.get("origin")) return json({ error: "forbidden" }, 403);
   if (limited(clientIp(req))) return json({ error: "rate_limited" }, 429, cors);
 
   let body;
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400, cors); }
   if (!validMessages(body && body.messages)) return json({ error: "bad_messages" }, 400, cors);
+  if (overDailyCap(c.slug)) return json({ error: "busy" }, 429, cors);
   // Earlier replies came back from the browser; a marker in them is never acted on twice.
   const messages = body.messages.map((x) => ({ role: x.role, content: x.content.replace(/\[\[lead:[^\]]*\]\]/g, "") || "…" }));
 
@@ -59,7 +75,7 @@ export default async (req, context) => {
   try {
     const response = await client.beta.messages.create({
       model: MODEL, max_tokens: 2000, output_config: { effort: "low" },
-      betas: ["server-side-fallback-2026-07-01"], fallbacks: "default",
+      ...OPUS_FALLBACK, // the server-side fallback exists only for Opus
       system: [{ type: "text", text: system(c), cache_control: { type: "ephemeral" } }],
       messages,
     });

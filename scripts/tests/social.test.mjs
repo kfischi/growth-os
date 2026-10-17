@@ -125,6 +125,10 @@ assert.deepEqual(k.social.map((x) => [x.id, x.link]), [["instagram", url]], "onl
 assert.match(k.social[0].how, /בביו/);
 k = await kit({ ...SAMPLE });
 assert.deepEqual(k.social.map((x) => x.name), ["אינסטגרם", "פייסבוק", "טיקטוק", "יוטיוב"], "none given: all four");
+for (const [rt, want] of [["שעה", "ואני חוזר תוך שעה."], ["תוך שעה", "ואני חוזר תוך שעה."], ["באותו יום", "ואני חוזר באותו יום."]]) {
+  k = await kit({ ...SAMPLE, response_time: rt });
+  assert.ok(k.status.text.includes(want), `the status reads right for "${rt}": ${k.status.text}`);
+}
 console.log("all social link tests passed");
 
 // The chat never clears a profile by sending an empty string; the questionnaire can.

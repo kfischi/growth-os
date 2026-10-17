@@ -13,6 +13,7 @@ export default {
   ],
   schema: "LocalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the trial lesson, not the call back
   words: {
     jobs: "מה לומדים",
     col: "שיעור",

@@ -7,6 +7,7 @@ export default {
   guides: ["social-worker"],
   schema: "LocalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the first meeting, not the call back
   words: {
     jobs: "סוגי הפגישות",
     col: "סוג פגישה",

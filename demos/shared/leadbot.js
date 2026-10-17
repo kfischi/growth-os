@@ -35,7 +35,8 @@
   doesn't confirm, the chat falls back to the WhatsApp button, so the enquiry still arrives.
 */
 (function () {
-  const PHONE_RE = /^05\d{8}$/;
+  // The same numbers the lead system takes: a mobile, a landline or 07x (a landline gets no WhatsApp reply, only the owner's call).
+  const PHONE_RE = /^0(5\d{8}|[234689]\d{7}|7\d{8})$/;
 
   function el(tag, cls, text) {
     const n = document.createElement(tag);
@@ -85,7 +86,7 @@
   .lb-wa{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border-radius:var(--bot-radius-input,10px);padding:13px;background:#1f9d55;color:#fff;font:700 16px var(--bot-font)}
   .lb-restart{border:0;background:none;color:var(--bot-muted);font:13px var(--bot-font);text-decoration:underline;cursor:pointer;justify-self:start;padding:0}
   .lb-note{font-size:11.5px;color:var(--bot-muted);padding:0 14px 10px}
-  .lb-hint{position:absolute;bottom:calc(100% + 10px);left:50%;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;animation:lbBob 1.6s ease-in-out infinite}
+  .lb-hint{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;animation:lbBob 1.6s ease-in-out infinite}
   .lb-hint b{white-space:nowrap;background:var(--bot-accent);color:var(--bot-accent-fg);font:700 13px/1 var(--bot-font);padding:6px 11px;border:2px solid var(--bot-accent-fg);border-radius:var(--bot-radius-pill,999px);box-shadow:0 0 0 1.5px var(--bot-accent),0 8px 18px -8px rgba(0,0,0,.45)}
   .lb-hint svg{width:22px;height:22px;overflow:visible}.lb-hint svg .h{stroke:var(--bot-accent-fg);stroke-width:6}.lb-hint svg .a{stroke:var(--bot-accent);stroke-width:3}
   @keyframes lbBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-7px)}}
@@ -138,7 +139,7 @@
       if (cfg.note) panel.appendChild(el("div", "lb-note", cfg.note));
       document.body.append(launch, panel);
 
-      let step = 0, data = {}, pre = {}, busy = false, started = false, timers = [], photo = null, estimateNote = "";
+      let step = 0, data = {}, pre = {}, busy = false, started = false, finished = false, timers = [], photo = null, estimateNote = "";
       const later = (ms, fn) => timers.push(setTimeout(fn, ms));
 
       function say(text, who) {
@@ -180,6 +181,9 @@
             input.placeholder = s.placeholder || "";
             input.value = "";
             input.focus();
+          } else if (chips.firstChild && (document.activeElement === document.body || panel.contains(document.activeElement))) {
+            // The chip that had focus is gone: keep the keyboard in the chat, on the first new answer.
+            chips.firstChild.focus({ preventScroll: true });
           }
         });
       }
@@ -273,14 +277,15 @@
         let v = input.value.trim();
         if (!v) return;
         if (s.input === "tel") {
-          const d = v.replace(/\D/g, "").replace(/^972/, "0");
-          if (!PHONE_RE.test(d)) { say(v, "me"); botSay("נראה שחסרה ספרה. אפשר מספר נייד מלא, למשל 050-1234567?"); input.value = ""; return; }
+          const d = v.replace(/\D/g, "").replace(/^00972/, "972").replace(/^972/, "0");
+          if (!PHONE_RE.test(d)) { say(v, "me"); botSay("המספר לא נראה שלם. אפשר לכתוב אותו שוב, למשל 050-1234567?"); input.value = ""; return; }
           v = d.slice(0, 3) + "-" + d.slice(3);
         } else if (v.length < 2) return;
         answer(v, v);
       });
 
       async function finish() {
+        finished = true;
         clearFoot();
         if (cfg.capture && window.LeadForm) {
           typing.classList.add("on"); body.scrollTop = body.scrollHeight;
@@ -326,16 +331,17 @@
         body.querySelectorAll(".lb-msg,.lb-card").forEach((n) => n.remove());
         if (photo) { URL.revokeObjectURL(photo.url); photo = null; }
         foot.querySelectorAll(".lb-wa,.lb-restart").forEach((n) => n.remove());
-        typing.classList.remove("on"); busy = false; step = 0; data = {}; pre = {}; estimateNote = "";
+        typing.classList.remove("on"); busy = false; finished = false; step = 0; data = {}; pre = {}; estimateNote = "";
         clearFoot(); start();
       }
       function start() { started = true; botSay(cfg.greet, ask); }
 
-      // prefill: answers keyed by step key, used only when the chat has not started yet
+      // prefill: answers keyed by step key (the calculator's). A chat that has started over again with them, unless it already sent its enquiry.
       function open(prefill) {
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
         if (hint) { hint.remove(); hint = null; }
         if (!started) { pre = Object.assign({}, prefill); start(); }
+        else if (prefill && !finished) { restart(); pre = Object.assign({}, prefill); }
         if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat"); // counted once per visit, for the owner's statistics
         x.focus();
       }

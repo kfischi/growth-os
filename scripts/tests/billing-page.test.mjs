@@ -129,7 +129,39 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.click("text=להמשיך את המנוי");
     await p.waitForFunction(() => /החיוב הבא/.test(document.querySelector("#approveBox").textContent));
   });
+  await check("update the card", async () => {
+    // a refused charge: the owner updates the card on a live site, with no terms tick on the page
+    T.ls_billing.find((x) => x.draft_id === D.id).state = "failed";
+    await p.reload();
+    await p.waitForSelector("text=לעדכן כרטיס");
+    await p.click("text=לעדכן כרטיס");
+    const card = () => T.ls_payments.find((x) => x.draft_id === D.id && x.kind === "card" && x.process_id);
+    for (let i = 0; i < 40 && !card(); i++) await new Promise((x) => setTimeout(x, 150));
+    assert.ok(card(), "a Grow page for the new card");
+    await p.waitForFunction(() => /החיוב הבא/.test(document.querySelector("#approveBox").textContent), null, { timeout: 30000 });
+  });
   if (errs.length) { bad++; console.log(`FAIL ${w}px console: ${errs.join(" | ")}`); }
+  await ctx.close();
+}
+// Without Grow: a payment link or one on WhatsApp. The terms tick is shown and recorded too, and nothing promises
+// the site goes live by itself.
+delete process.env.GROW_PAGE_CODE;
+{
+  const KEY = "m".repeat(32);
+  const D = { ...DEF.ls_drafts(), content: { ...SAMPLE, trade_id: "plumber" }, key_hash: createHash("sha256").update(KEY).digest("hex"), owner_name: "אורן לוי", owner_phone: "972526359513", status: "client_approved", package: "ai", plan: "full", approved_at: new Date().toISOString() };
+  T.ls_drafts.push(D);
+  const ctx = await b.newContext({ viewport: { width: 390, height: 844 } }); const p = await ctx.newPage();
+  await p.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+  try {
+    await p.goto(`${BASE}/build/#d=${D.id}:${KEY}`);
+    await p.waitForFunction(() => /תשלום ההקמה/.test(document.querySelector("#approveBox").textContent));
+    const box = await p.textContent("#approveBox");
+    assert.match(box, /נשלח לכם בוואטסאפ קישור לתשלום/); assert.match(box, /מבטלים מתי שרוצים, בהודעה בוואטסאפ/);
+    assert.doesNotMatch(box + (await p.textContent("#approveDlg")), /לבד/, "no automatic publish promised");
+    await p.check("#termsOk");
+    for (let i = 0; i < 20 && !D.terms_at; i++) await new Promise((x) => setTimeout(x, 200));
+    assert.ok(D.terms_at, "the terms are recorded without Grow");
+  } catch (e) { bad++; console.log(`FAIL manual mode: ${e.message.split("\n")[0]}`); }
   await ctx.close();
 }
 await b.close(); server.close();

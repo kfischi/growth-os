@@ -9,7 +9,7 @@
 // that needs him, and never for one that went well by itself, except a new paid site.
 import { db, q, clip, israeliPhone } from "./leads.mjs";
 import { growOn, createPayment, processInfo, chargeToken } from "./grow.mjs";
-import { getDraft, saveDraft, alertKfir, publishDraft, PublishError, slugFree, hostFor } from "./builder.mjs";
+import { getDraft, saveDraft, alertKfir, publishDraft, PublishError, Conflict, slugFree, hostFor } from "./builder.mjs";
 import { hostingOn, cleanDomain, addDomain, dnsSteps } from "./hosting.mjs";
 import { launchKit } from "./launch.mjs";
 
@@ -30,16 +30,30 @@ export const withVat = (n) => Math.round(n * (1 + vatRate()) * 100) / 100;
 const netPeriod = (pkg, cycle) => PRICES[pkg].month * (cycle === "year" ? YEAR_MONTHS : 1);
 export const periodSum = (pkg, cycle) => withVat(netPeriod(pkg, cycle));
 export const checkoutSum = (pkg, cycle) => withVat(PRICES[pkg].setup + (cycle === "year" ? netPeriod(pkg, "year") : 0));
-export function addPeriod(date, cycle) {
+// anchor: the subscription's own billing day (the day it started). A date cut short at a month's end (Jan 31 ->
+// Feb 28) goes back to it the month after (Mar 31), instead of staying on the 28th for good.
+export function addPeriod(date, cycle, anchor) {
   const d = new Date(date);
-  const day = d.getUTCDate();
+  let day = d.getUTCDate();
+  const lastHere = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  if (anchor > day && day === lastHere) day = anchor;
   d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() + (cycle === "year" ? 12 : 1));
   const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
   d.setUTCDate(Math.min(day, last)); // Jan 31 + a month = Feb 28
   return d;
 }
 const iso = (d) => new Date(d).toISOString();
-const DAY = 86_400_000;
+const DAY = 86_400_000, HOUR = 3_600_000;
+const anchorOf = (b) => (b && b.created_at ? new Date(b.created_at).getUTCDate() : undefined);
+// Midnight in Israel on the day of t, so a retry "in 3 days" is due when that morning's run (03:10 UTC) comes.
+export function israelDayStart(t) {
+  const [y, m, d] = new Date(t).toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" }).split("-").map(Number);
+  const utc = Date.UTC(y, m - 1, d);
+  const off = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Jerusalem", timeZoneName: "longOffset" }).formatToParts(new Date(utc)).find((x) => x.type === "timeZoneName").value; // "GMT+03:00"
+  const [, sign, hh, mm] = /GMT([+-])(\d\d):?(\d\d)?/.exec(off) || [, "+", "00", "00"];
+  return new Date(utc - (sign === "-" ? -1 : 1) * (Number(hh) * 60 + Number(mm || 0)) * 60_000);
+}
+const retryAt = (now) => israelDayStart(new Date(now).getTime() + RETRY_DAYS * DAY);
 // Grow wants a plain Israeli mobile: 0521234567.
 const localPhone = (d) => { const p = israeliPhone(d.content.whatsapp) || (d.owner_phone && { intl: d.owner_phone }); return p ? "0" + p.intl.slice(3) : undefined; };
 const site = () => process.env.BUILDER_SITE_URL || "https://service-pro-web.netlify.app";
@@ -109,12 +123,16 @@ export async function checkout(d, { cycle, origin }) {
 export async function settle(pay, info, now = new Date()) {
   if (pay.status === "paid") return { already: true };
   if (!info.paid) return { paid: false };
-  if (info.sum && info.sum + 0.01 < Number(pay.sum)) {
-    await alertKfirById(pay.draft_id, `תשלום בסכום חסר: ${info.sum} ₪ במקום ${pay.sum} ₪. אסמכתא ${info.asmachta}`);
+  // A missing or unreadable sum counts as short, like a short one: only Grow's own sum, in full, settles it.
+  const got = Number(info.sum);
+  if (!(Number.isFinite(got) && got + 0.01 >= Number(pay.sum))) {
+    // One alert per payment, however many times Grow calls or the 15-minute run asks.
+    const first = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending&error=is.null`, { error: clip(`short: ${info.sum}`, 300) }, "return=representation");
+    if (first.length) await alertKfirById(pay.draft_id, `תשלום בסכום חסר: ${Number.isFinite(got) ? got : "לא ידוע"} ₪ במקום ${pay.sum} ₪. אסמכתא ${info.asmachta}`);
     return { paid: false, short: true };
   }
   // Only the first to flip it from pending goes on: two callbacks at once settle it once.
-  const hit = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending`, { status: "paid", paid_at: iso(now), transaction_id: info.transactionId || null, asmachta: info.asmachta || null }, "return=representation");
+  const hit = await db("PATCH", `ls_payments?id=eq.${q(pay.id)}&status=eq.pending`, { status: "paid", paid_at: iso(now), transaction_id: info.transactionId || null, asmachta: info.asmachta || null, error: null }, "return=representation");
   if (!hit.length) return { already: true };
   const d = await getDraft(pay.draft_id);
   if (!d) return { paid: true };
@@ -123,20 +141,58 @@ export async function settle(pay, info, now = new Date()) {
   if (pay.kind === "card") {
     const b = await billingOf(d.id);
     const wasOff = b.state === "suspended";
-    await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { ...token, state: "active", fails: 0, due_since: null, next_charge_at: iso(addPeriod(b.due_since || b.next_charge_at, b.cycle)), updated_at: iso(now) });
+    // The owner pays the period that was due. If it is long over (the lead system was paused for months), the
+    // new period starts today: never a run of charges for the paused months on the next days.
+    const owed = addPeriod(b.due_since || b.next_charge_at, b.cycle, anchorOf(b));
+    const next = owed.getTime() > now.getTime() ? owed : addPeriod(now, b.cycle);
+    await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { ...token, state: "active", fails: 0, due_since: null, next_charge_at: iso(next), updated_at: iso(now) });
     if (wasOff && d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: true });
+    if (wasOff) await db("PATCH", `ls_drafts?id=eq.${q(d.id)}`, { self_edit: true });
     await alertKfir(d, wasOff ? "הכרטיס עודכן והתשלום עבר. מערכת הלידים חזרה לפעול" : "הכרטיס עודכן והתשלום החודשי עבר");
     return { paid: true };
   }
 
-  // The setup: the subscription starts now, the first monthly (or the next year) one period from today.
-  await db("POST", "ls_billing", {
-    draft_id: d.id, package: pay.package, cycle: pay.cycle, amount: periodSum(pay.package, pay.cycle), ...token,
-    state: "active", fails: 0, next_charge_at: iso(addPeriod(now, pay.cycle)),
-  }, "resolution=merge-duplicates");
-  if (!info.cardToken) await alertKfir(d, "התשלום עבר, אבל Grow לא החזירו אסימון כרטיס: החיוב החודשי לא יוכל לרוץ לבד");
-  const paid = await saveDraft(d, { status: "paid", paid_at: iso(now), plan: "full" });
-  return { paid: true, draft: paid };
+  return finishSetup({ ...pay, paid_at: iso(now), asmachta: info.asmachta || pay.asmachta }, d, token);
+}
+
+// Why a paid setup must not publish the draft as it is now, or null when it may.
+function heldWhy(d, pay) {
+  if (d.paid_at || ["paid", "published"].includes(d.status)) return "כבר שולם (תשלום כפול?)";
+  if (d.status !== "client_approved") return "חזרה לעריכה מאז שנפתח דף התשלום";
+  if (d.package !== pay.package) return "החבילה שונתה מאז שנפתח דף התשלום";
+  return null;
+}
+
+/**
+ * The setup is paid: the subscription starts, the draft turns paid. Only for the draft the owner paid for: still
+ * approved, the same package, not paid before. Otherwise the payment stays recorded and כפיר gets it to sort out.
+ * Also run by runPending for a paid setup whose draft never turned paid (a save that clashed, a run cut short).
+ */
+async function finishSetup(pay, d, token = {}) {
+  let why = heldWhy(d, pay);
+  for (let i = 0; !why; i++) {
+    // The subscription starts with the payment, the first monthly (or the next year) one period after it.
+    if (!(await billingOf(d.id))) {
+      await db("POST", "ls_billing", {
+        draft_id: d.id, package: pay.package, cycle: pay.cycle, amount: periodSum(pay.package, pay.cycle), ...token,
+        state: "active", fails: 0, next_charge_at: iso(addPeriod(pay.paid_at, pay.cycle)),
+      }, "resolution=merge-duplicates");
+      if (!token.card_token) await alertKfir(d, "התשלום עבר, אבל Grow לא החזירו אסימון כרטיס: החיוב החודשי לא יוכל לרוץ לבד");
+    }
+    try { return { paid: true, draft: await saveDraft(d, { status: "paid", paid_at: pay.paid_at, plan: "full" }) }; }
+    catch (e) {
+      if (!(e instanceof Conflict) || i >= 2) throw e; // runPending finishes it
+      d = await getDraft(d.id); why = heldWhy(d, pay);
+    }
+  }
+  await db("PATCH", `ls_payments?id=eq.${q(pay.id)}`, { error: clip("held: " + why, 300) });
+  await alertKfir(d, `התקבל תשלום הקמה (${pay.sum} ₪, אסמכתא ${pay.asmachta || "?"}), אבל הטיוטה ${why}. האתר לא פורסם. לבדוק בניהול`);
+  return { paid: true, held: true };
+}
+
+/** Pending setup checkouts of a draft that went back to editing: a stale Grow page is no longer ours to settle. */
+export async function expireCheckouts(draftId) {
+  await db("PATCH", `ls_payments?draft_id=eq.${q(draftId)}&kind=eq.setup&status=eq.pending`, { status: "expired" });
 }
 
 async function alertKfirById(id, what) { const d = await getDraft(id); if (d) await alertKfir(d, what); }
@@ -159,6 +215,10 @@ export async function confirmPayment(pay, now = new Date()) {
 export async function autoPublish(d) {
   if (d.status !== "paid" || !d.slug_wish || (d.publish_tries || 0) >= 3) return { state: "skipped" };
   let slug = d.published_slug || d.slug_wish;
+  // Counted before the publish, so a run killed in the middle still uses up a try. A clash: another run has it.
+  const tries = (d.publish_tries || 0) + 1;
+  try { d = await saveDraft(d, { publish_tries: tries }); }
+  catch (e) { if (e instanceof Conflict) return { state: "skipped" }; throw e; }
   try {
     let out;
     try { out = await publishDraft(d, slug); }
@@ -183,8 +243,7 @@ export async function autoPublish(d) {
     const code = e instanceof PublishError ? e.code : "server";
     console.error("auto publish", d.id, code, e.message);
     const fresh = await getDraft(d.id);
-    const tries = (fresh.publish_tries || 0) + 1;
-    await saveDraft(fresh, { publish_error: clip(code === "server" ? e.message : code, 200), publish_tries: tries });
+    await saveDraft(fresh, { publish_error: clip(code === "server" ? e.message : code, 200) }).catch((x) => console.error("publish error save", x.message));
     if (tries === 1 || tries >= 3) await alertKfir(fresh, `שולם, אבל הפרסום האוטומטי נכשל (${code})${tries >= 3 ? ". לפרסם מהניהול" : ". ננסה שוב בעוד רבע שעה"}`);
     return { state: "failed", code };
   }
@@ -203,6 +262,8 @@ export async function billingView(d) {
     prices: d.package ? { setup: PRICES[d.package].setup, month: PRICES[d.package].month, year: netPeriod(d.package, "year"), vat: vatRate(), today: { month: checkoutSum(d.package, "month"), year: checkoutSum(d.package, "year") } } : null,
     sub: b ? { state: b.state, cycle: b.cycle, amount: b.amount, next: b.next_charge_at, end: b.end_at || null, card: b.card_suffix || null } : null,
     invoices: payments.filter((p) => p.invoice_url).map((p) => ({ url: p.invoice_url, number: p.invoice_number, sum: Number(p.sum), date: p.paid_at })),
+    // The terms were accepted (the tick, recorded by /api/builder/pay), in both modes.
+    terms: Boolean(d.terms_at),
     publishing: d.status === "paid" ? (d.publish_error && (d.publish_tries || 0) >= 3 ? "stuck" : "working") : null,
     // The owner's own domain after publishing: the two records for their registrar while it waits.
     domain: d.domain ? { name: d.domain, state: d.domain_state || "none", dns: d.domain_state === "waiting" && d.site_netlify ? dnsSteps(d.domain, { netlifyHost: d.site_netlify }) : null } : null,
@@ -235,48 +296,81 @@ export async function resume(d, now = new Date()) {
 
 /* ---------------- the daily run (functions/billing.mjs) and the 15-minute one ---------------- */
 
-async function pauseLeads(d) { if (d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: false }); }
+// The monthly stops: the lead system pauses and self edit (part of the monthly) turns off. The page stays the owner's.
+async function pauseLeads(d) {
+  if (d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: false });
+  await db("PATCH", `ls_drafts?id=eq.${q(d.id)}`, { self_edit: false });
+}
 
-/** Every subscription due today: one charge on the saved card. Also ends the cancelled ones whose notice is over. */
-export async function runBilling(now = new Date(), charge = chargeToken) {
-  const out = { charged: 0, failed: 0, ended: 0, suspended: 0 };
+/**
+ * Every subscription due today: one charge on the saved card. Also ends the cancelled ones whose paid period is over.
+ * Each subscription is claimed before Grow is called (its next date moves on first), so a second run, or this one
+ * cut off after charging, never charges the same period twice. A charge with no answer (a timeout) is neither paid
+ * nor refused: כפיר checks it in Grow, and it is never charged again blindly. The run stops starting new charges
+ * after budgetMs, inside the function's time limit; the rest are still due tomorrow.
+ */
+export async function runBilling(now = new Date(), charge = chargeToken, { budgetMs = 12_000 } = {}) {
+  const out = { charged: 0, failed: 0, ended: 0, suspended: 0, unknown: 0, left: 0 };
   if (!growOn()) return out;
+  const started = Date.now();
   for (const b of await db("GET", `ls_billing?state=eq.cancelling&end_at=lte.${q(iso(now))}&select=*&limit=200`)) {
     await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "ended", updated_at: iso(now) });
     const d = await getDraft(b.draft_id);
     if (d) { await pauseLeads(d); await alertKfir(d, "המנוי הסתיים בסוף התקופה ששולמה. האתר נשאר, המערכת כבויה"); }
     out.ended++;
   }
+  // A charge an earlier run started and never finished (killed in the middle): only Grow knows if it went through.
+  for (const p of await db("GET", `ls_payments?kind=in.(month,year)&status=eq.pending&error=is.null&created_at=lte.${q(iso(now.getTime() - HOUR))}&select=*&limit=50`)) {
+    const hit = await db("PATCH", `ls_payments?id=eq.${q(p.id)}&status=eq.pending&error=is.null`, { error: "unknown: the run stopped during the charge" }, "return=representation");
+    if (hit.length) { await alertKfirById(p.draft_id, `חיוב של ${p.sum} ₪ נקטע באמצע. לבדוק ב-Grow אם עבר (תשלום ${p.id.slice(0, 8)}). לא ננסה אותו שוב לבד`); out.unknown++; }
+  }
   const due = await db("GET", `ls_billing?state=in.(active,failed,cancelling)&next_charge_at=lte.${q(iso(now))}&select=*&order=next_charge_at.asc&limit=200`);
   for (const b of due) {
+    if (Date.now() - started > budgetMs) { out.left++; continue; }
     if (b.state === "cancelling" && new Date(b.next_charge_at) >= new Date(b.end_at)) continue;
     const d = await getDraft(b.draft_id);
     if (!d) continue;
-    if (!b.card_token) { await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "failed", next_charge_at: iso(now.getTime() + RETRY_DAYS * DAY), updated_at: iso(now) }); continue; }
-    const [row] = await db("POST", "ls_payments", { draft_id: d.id, kind: b.cycle, cycle: b.cycle, package: b.package, sum: b.amount, status: "pending" }, "return=representation");
+    // The period that is due keeps its start, so a late payment doesn't move the billing day.
+    const dueSince = b.due_since || b.next_charge_at;
+    const label = `Easy Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`;
+    const row = b.card_token ? (await db("POST", "ls_payments", { draft_id: d.id, kind: b.cycle, cycle: b.cycle, package: b.package, sum: b.amount, status: "pending" }, "return=representation"))[0] : null;
+    const claimed = await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}&state=eq.${q(b.state)}&next_charge_at=eq.${q(b.next_charge_at)}`,
+      { next_charge_at: iso(addPeriod(dueSince, b.cycle, anchorOf(b))), updated_at: iso(now) }, "return=representation");
+    if (!claimed.length) { if (row) await db("PATCH", `ls_payments?id=eq.${q(row.id)}`, { status: "failed", error: "claimed by another run" }); continue; }
+    if (!row) { await refused(b, d, dueSince, now, out, "אין אסימון כרטיס"); continue; } // nothing to charge: a refusal like any other
     try {
-      const r = await charge({ token: b.card_token, sum: b.amount, description: `Easy Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`, ref: row.id });
+      const r = await charge({ token: b.card_token, sum: b.amount, description: label, ref: row.id });
       await db("PATCH", `ls_payments?id=eq.${q(row.id)}`, { status: "paid", paid_at: iso(now), transaction_id: r.transactionId || null, asmachta: r.asmachta || null });
-      await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: b.state === "cancelling" ? "cancelling" : "active", fails: 0, due_since: null, next_charge_at: iso(addPeriod(b.due_since || b.next_charge_at, b.cycle)), updated_at: iso(now) });
+      await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: b.state === "cancelling" ? "cancelling" : "active", fails: 0, due_since: null, updated_at: iso(now) });
       out.charged++;
     } catch (e) {
-      const fails = (b.fails || 0) + 1;
-      // The period that is due keeps its start, so a late payment doesn't move the billing day.
-      const dueSince = b.due_since || b.next_charge_at;
-      await db("PATCH", `ls_payments?id=eq.${q(row.id)}`, { status: "failed", error: clip(e.message, 300) });
-      if (fails >= MAX_FAILS) {
-        await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "suspended", fails, due_since: dueSince, updated_at: iso(now) });
-        await pauseLeads(d);
-        await alertKfir(d, `החיוב החודשי נכשל ${fails} פעמים. מערכת הלידים הושהתה, האתר נשאר. בעל העסק רואה "לעדכן כרטיס" בבונה`);
-        out.suspended++;
-      } else {
-        await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "failed", fails, due_since: dueSince, next_charge_at: iso(now.getTime() + RETRY_DAYS * DAY), updated_at: iso(now) });
-        if (fails === 1) await alertKfir(d, `החיוב החודשי (${b.amount} ₪) לא עבר. ננסה שוב בעוד ${RETRY_DAYS} ימים, ובעל העסק רואה "לעדכן כרטיס" בבונה`);
-        out.failed++;
+      if (!e.refused) {
+        // No answer: maybe charged, maybe not. The subscription stays claimed (no second charge); כפיר checks Grow.
+        await db("PATCH", `ls_payments?id=eq.${q(row.id)}`, { error: clip("unknown: " + e.message, 300) });
+        await alertKfir(d, `החיוב (${b.amount} ₪) לא קיבל תשובה מ-Grow. לבדוק ב-Grow אם עבר (תשלום ${row.id.slice(0, 8)}). לא ננסה אותו שוב לבד`);
+        out.unknown++;
+        continue;
       }
+      await db("PATCH", `ls_payments?id=eq.${q(row.id)}`, { status: "failed", error: clip(e.message, 300) });
+      await refused(b, d, dueSince, now, out);
     }
   }
   return out;
+}
+
+// A refused charge (or none possible: no card token). Tried again in 3 days; after MAX_FAILS the lead system pauses.
+async function refused(b, d, dueSince, now, out, why = "") {
+  const fails = (b.fails || 0) + 1;
+  if (fails >= MAX_FAILS) {
+    await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "suspended", fails, due_since: dueSince, next_charge_at: dueSince, updated_at: iso(now) });
+    await pauseLeads(d);
+    await alertKfir(d, `החיוב החודשי נכשל ${fails} פעמים${why ? ` (${why})` : ""}. מערכת הלידים הושהתה, האתר נשאר. בעל העסק רואה "לעדכן כרטיס" בבונה`);
+    out.suspended++;
+  } else {
+    await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}`, { state: "failed", fails, due_since: dueSince, next_charge_at: iso(retryAt(now)), updated_at: iso(now) });
+    if (fails === 1) await alertKfir(d, `החיוב החודשי (${b.amount} ₪) לא עבר${why ? ` (${why})` : ""}. ננסה שוב בעוד ${RETRY_DAYS} ימים, ובעל העסק רואה "לעדכן כרטיס" בבונה`);
+    out.failed++;
+  }
 }
 
 /**
@@ -296,10 +390,22 @@ export async function runPending(now = new Date()) {
       else if (!r.paid && new Date(p.created_at) < new Date(since)) { await db("PATCH", `ls_payments?id=eq.${q(p.id)}&status=eq.pending`, { status: "expired" }); out.expired++; }
     } catch (e) { console.error("pending payment", p.id, e.message); }
   }
+  const tried = new Set();
+  // A setup Grow paid whose draft never turned paid (the save clashed, or the run was cut off right after the payment).
+  for (const p of await db("GET", `ls_payments?kind=eq.setup&status=eq.paid&error=is.null&paid_at=gte.${q(iso(now.getTime() - 2 * DAY))}&paid_at=lte.${q(iso(now.getTime() - 5 * 60 * 1000))}&select=*&limit=50`)) {
+    try {
+      const d = await getDraft(p.draft_id);
+      if (!d || d.paid_at) continue;
+      let token = {};
+      if (p.process_id) { const info = await processInfo(p.process_id, p.process_token).catch(() => null); if (info && info.cardToken) token = { card_token: info.cardToken, card_suffix: info.cardSuffix || null }; }
+      const r = await finishSetup(p, d, token);
+      if (r.draft) { out.settled++; tried.add(d.id); if ((await autoPublish(r.draft)).state === "live") out.published++; }
+    } catch (e) { console.error("paid setup", p.id, e.message); }
+  }
   // Paid more than 5 minutes ago and still not live: the publish right after the payment failed or never ran
   // (also a payment כפיר marked by hand, for a bank transfer).
   for (const d of await db("GET", `ls_drafts?status=eq.paid&paid_at=lte.${q(iso(now.getTime() - 5 * 60 * 1000))}&select=*&limit=20`)) {
-    if (!d.slug_wish || (d.publish_tries || 0) >= 3) continue;
+    if (!d.slug_wish || (d.publish_tries || 0) >= 3 || tried.has(d.id)) continue;
     const r = await autoPublish(d);
     if (r.state === "live") out.published++;
   }
