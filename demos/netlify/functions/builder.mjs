@@ -38,7 +38,7 @@ import {
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient, hostSite, suggestSlugs, connectDomain,
 } from "../lib/builder.mjs";
-import { billingView, billingOf, chooseAddress, checkout, confirmPayment, cancel, resume } from "../lib/billing.mjs";
+import { billingView, billingOf, chooseAddress, checkout, confirmPayment, cancel, resume, expireCheckouts } from "../lib/billing.mjs";
 import { growOn } from "../lib/grow.mjs";
 import dns from "node:dns/promises";
 import { randomBytes } from "node:crypto";
@@ -402,6 +402,7 @@ export default async (req, context) => {
       if (d.status !== "client_approved") return json({ error: "locked", state: stateOf(d) }, 409);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
       const saved = await saveDraft(d, { status: "draft", approved_at: null });
+      await expireCheckouts(d.id).catch((e) => console.error("expire checkouts", e.message)); // a Grow page opened before stays unpaid
       return json({ state: stateOf(saved) });
     }
 

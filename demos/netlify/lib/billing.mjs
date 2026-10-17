@@ -147,6 +147,7 @@ export async function settle(pay, info, now = new Date()) {
     const next = owed.getTime() > now.getTime() ? owed : addPeriod(now, b.cycle);
     await db("PATCH", `ls_billing?draft_id=eq.${q(d.id)}`, { ...token, state: "active", fails: 0, due_since: null, next_charge_at: iso(next), updated_at: iso(now) });
     if (wasOff && d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: true });
+    if (wasOff) await db("PATCH", `ls_drafts?id=eq.${q(d.id)}`, { self_edit: true });
     await alertKfir(d, wasOff ? "הכרטיס עודכן והתשלום עבר. מערכת הלידים חזרה לפעול" : "הכרטיס עודכן והתשלום החודשי עבר");
     return { paid: true };
   }
@@ -295,7 +296,11 @@ export async function resume(d, now = new Date()) {
 
 /* ---------------- the daily run (functions/billing.mjs) and the 15-minute one ---------------- */
 
-async function pauseLeads(d) { if (d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: false }); }
+// The monthly stops: the lead system pauses and self edit (part of the monthly) turns off. The page stays the owner's.
+async function pauseLeads(d) {
+  if (d.package === "ai" && d.published_slug) await db("PATCH", `ls_clients?slug=eq.${q(d.published_slug)}`, { active: false });
+  await db("PATCH", `ls_drafts?id=eq.${q(d.id)}`, { self_edit: false });
+}
 
 /**
  * Every subscription due today: one charge on the saved card. Also ends the cancelled ones whose paid period is over.
