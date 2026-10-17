@@ -632,8 +632,6 @@
         const showTotal = () => { const c = box.querySelector('input[name=cycle]:checked'); total.textContent = (pr.vat ? 'לתשלום היום, כולל מע״מ: ' : 'לתשלום היום: ') + nis(pr.today[c ? c.value : 'month']); };
         pk.addEventListener('change', showTotal); showTotal();
       }
-      // The terms first (demos/terms/): paying means accepting them, and the server records when.
-      const terms = document.createElement('label'); terms.className = 'terms-ok';
       const tick = termsTick(box);
       const go = btn('לתשלום מאובטח', pay); go.disabled = !a || !tick.checked; box.append(go);
       tick.addEventListener('change', () => { go.disabled = !a || !tick.checked; });
