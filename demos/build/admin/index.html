@@ -43,6 +43,7 @@
   .tag.client_approved { background: #dcefe9; color: #0b5a4f; }
   .tag.paid { background: var(--mint); color: #fff; }
   .tag.published { background: var(--ink); color: #fff; }
+  .tag.pilot { background: #ece6ff; color: #3a17b0; }
   .tag.returned { background: #f8e4e2; color: #6e1f1a; }
   .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
   .result { grid-column: 1 / -1; background: var(--mist); border-radius: 8px; padding: 10px; font-size: 14px; overflow-wrap: anywhere; }
@@ -116,7 +117,9 @@
       const info = el('div');
       const h = el('h2', '', d.business || '(בלי שם עדיין)'); info.append(h);
       const tag = el('span', 'tag ' + d.status, STATUS[d.status] || d.status);
-      const m1 = el('div', 'meta'); m1.append(tag, ' ', [d.trade, d.owner, d.phone, d.package ? PKG[d.package] + (PLAN[d.plan] ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
+      const m1 = el('div', 'meta'); m1.append(tag, ' ');
+      if (d.pilot) { const pt = el('span', 'tag pilot', 'פיילוט · ' + d.pilot); m1.append(pt, ' '); }
+      m1.append( [d.trade, d.owner, d.phone, d.package ? PKG[d.package] + (PLAN[d.plan] ? ' · ' + PLAN[d.plan] : '') : ''].filter(Boolean).join(' · '));
       const m2 = el('div', 'meta', 'נפתח ' + when(d.created) + ' · ' + d.photos + ' תמונות' + (d.missing.length ? ' · חסר: ' + d.missing.join(', ') : '') + (d.slug ? ' · clients/' + d.slug : ''));
       info.append(m1, m2);
       if (d.returnNote && d.status === 'returned') info.append(el('div', 'meta', 'ההערה שלך: ' + d.returnNote));
@@ -137,9 +140,9 @@
       const result = el('div', 'result'); result.hidden = true;
       const act = (label, cls, fn) => { const b = el('button', 'btn ' + (cls || ''), label); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; try { await fn(result); } catch (e) { result.hidden = false; result.textContent = 'לא הצליח: ' + e.message; } b.disabled = false; }); acts.append(b); };
       act('תצוגה', '', async () => { const w = window.open('', '_blank'); const r = await call('GET', null, '?id=' + d.id); if (w) w.location = r.preview; else location.href = r.preview; });
-      if (d.status === 'client_approved') act('התשלום התקבל', 'go', async () => { if (!confirm('לסמן ש' + (d.business || 'הלקוח') + ' שילם?')) return; await call('POST', { action: 'paid', id: d.id }); load(); });
+      if (d.status === 'client_approved' && !d.pilot) act('התשלום התקבל', 'go', async () => { if (!confirm('לסמן ש' + (d.business || 'הלקוח') + ' שילם?')) return; await call('POST', { action: 'paid', id: d.id }); load(); });
       if (d.status === 'client_approved' || d.status === 'paid') act('להחזיר ללקוח', '', async () => { const note = prompt('מה לתקן? הלקוח יראה את זה מעל הצ׳אט.'); if (!note) return; await call('POST', { action: 'return', id: d.id, note }); load(); });
-      if (d.status === 'paid' || d.status === 'published') act(d.status === 'published' ? 'לפרסם שוב' : 'לפרסם', 'go', async (res) => {
+      if (d.status === 'paid' || d.status === 'published' || (d.pilot && d.status === 'client_approved')) act(d.status === 'published' ? 'לפרסם שוב' : 'לפרסם', 'go', async (res) => {
         const slug = d.slug || prompt('שם התיקייה באנגלית (clients/<slug>), למשל oren-mayim:');
         if (!slug) return;
         if (!confirm('לכתוב את clients/' + slug + '/ לריפו?')) return;

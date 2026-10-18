@@ -87,6 +87,7 @@ export async function chooseAddress(d, { slug, domain }) {
  */
 export async function checkout(d, { cycle, origin }) {
   if (!growOn()) return { error: "not_configured" };
+  if (d.content && d.content.pilot) return { error: "pilot" };
   const b = await billingOf(d.id);
   let kind, sum, description;
   if (b && ["failed", "suspended"].includes(b.state)) {
@@ -255,7 +256,7 @@ export async function billingView(d) {
   const b = await billingOf(d.id);
   const payments = d.paid_at || b ? await paymentsOf(d.id) : [];
   return {
-    on: growOn(),
+    on: growOn() && !(d.content && d.content.pilot), // a pilot draft has no payment step
     address: d.slug_wish ? { slug: d.slug_wish, host: hostFor(d.slug_wish), domain: d.domain_wish || null } : null,
     // Before VAT, as the site shows them, and what is charged today with VAT for each plan.
     annual: cycles().includes("year"),

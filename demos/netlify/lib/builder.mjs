@@ -394,6 +394,9 @@ function checklist(t, d) {
 }
 
 // The owner's view of a draft: never the key hash, the IP or internal fields.
+// A pilot draft (an invite code at the start): free, no payment step; כפיר publishes it from client_approved.
+export const isPilot = (d) => Boolean(d && d.content && d.content.pilot);
+
 export function publicState(d) {
   const t = templateOf(d);
   return {
@@ -405,7 +408,8 @@ export function publicState(d) {
     hero: d.content && (d.content.hero_media === "photo" || d.content.hero_media === "video") ? d.content.hero_media : d.video ? "video" : "photo",
     photoRights: Boolean(d.photo_rights_at), package: d.package, plan: d.plan, returnNote: d.status === "returned" ? d.return_note : null,
     messages: (d.messages || []).map((m) => ({ role: m.role, content: m.content })),
-    pay: d.status === "client_approved" && d.package && !d.paid_at && !process.env.GROW_PAGE_CODE ? payLinks(d.package) : [],
+    pay: d.status === "client_approved" && d.package && !d.paid_at && !process.env.GROW_PAGE_CODE && !isPilot(d) ? payLinks(d.package) : [],
+    pilot: isPilot(d),
     edit: editing(d) ? editState(d) : null,
     // The questionnaire (answers to pick from) while the site is being built, not while editing a live one.
     guide: !editing(d) && t.GUIDE ? (d.content && d.content.custom_trade ? ownTradeGuide(t.GUIDE) : t.GUIDE) : null,
@@ -902,7 +906,8 @@ export class PublishError extends Error { constructor(code, status = 409, extra 
  */
 export async function publishDraft(d, slug) {
   if (!SLUG.test(slug) || RESERVED.has(slug)) throw new PublishError("bad_slug", 422);
-  if (!["paid", "published"].includes(d.status) || (d.published_slug && d.published_slug !== slug)) throw new PublishError("wrong_status", 409, { draftStatus: d.status });
+  const ready = ["paid", "published"].includes(d.status) || (isPilot(d) && d.status === "client_approved");
+  if (!ready || (d.published_slug && d.published_slug !== slug)) throw new PublishError("wrong_status", 409, { draftStatus: d.status });
   const missing = templateOf(d).missing(d.content);
   if (missing.length) throw new PublishError("missing", 422, { missing });
   // The owner is in the middle of changes they haven't published: never put them live for them.

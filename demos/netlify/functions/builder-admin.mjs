@@ -14,7 +14,7 @@ import { getDraft, saveDraft, templateOf, photoUrl, adminPreviewToken, deletePho
 function view(d) {
   const t = templateOf(d);
   return {
-    id: d.id, status: d.status, template: d.template, trade: t.label, package: d.package, plan: d.plan,
+    id: d.id, status: d.status, template: d.template, trade: t.label, package: d.package, plan: d.plan, pilot: (d.content && d.content.pilot) || null,
     business: d.content.business_name || "", owner: d.owner_name, phone: d.owner_phone ? "0" + d.owner_phone.slice(3) : "",
     missing: t.missing(d.content), photos: Object.keys(d.photos || {}).length, video: Boolean(d.video), rights: Boolean(d.photo_rights_at),
     returnNote: d.return_note, slug: d.published_slug || d.slug_wish || null, slugWish: d.slug_wish || null, domainWish: d.domain_wish || null,

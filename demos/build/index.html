@@ -252,6 +252,7 @@
       <li><span class="tick" aria-hidden="true">2</span><div><b>האתר שלכם מתמלא מולכם</b><span>בקישור פרטי, עם התמונות שלכם. מבקשים שינוי, והוא מתעדכן.</span></div></li>
       <li><span class="tick" aria-hidden="true">3</span><div><b>מאשרים, והאתר עולה לאוויר</b><span>אחרי התשלום האתר עולה לאוויר, ואנחנו מעדכנים אתכם.</span></div></li>
     </ol>
+    <p class="note pilot-note" id="pilotNote" hidden><b>קישור אישי לפיילוט:</b> בונים את האתר בלי תשלום. אחרי שתאשרו, נעבור עליו ונעלה אותו לאוויר.</p>
     <p class="note">התחום שלכם לא ברשימה? בוחרים ״תחום אחר״ ואת הדמו הכי קרוב אליכם, ומשנים בבונה לפי העסק שלכם.</p>
   </section>
   <form id="startForm" class="card" novalidate>
@@ -467,6 +468,9 @@
 
   /* ---------- start ---------- */
   // ?t=<trade> from a demo's "build" button: the trade is already picked.
+  // A pilot invite: build/?p=<code>. The server checks the code; the note only says what the link is for.
+  const PILOT = (new URLSearchParams(location.search).get('p') || '').trim().slice(0, 24);
+  if (PILOT) $('#pilotNote').hidden = false;
   (() => { const t = new URLSearchParams(location.search).get('t'); if (t && $('#fTrade option[value="' + CSS.escape(t) + '"]')) $('#fTrade').value = t; })();
   // "תחום אחר": the owner names their business and picks the closest demo, whose design the draft starts from.
   $('#fNear').innerHTML = $('#fTrade').innerHTML; $('#fNear option[value="other"]').remove();
@@ -482,7 +486,7 @@
     if (other && own.length < 2) { err.textContent = 'כתבו מה העסק שלכם, למשל: וטרינר.'; $('#fOwn').focus(); return; }
     btn.disabled = true; btn.textContent = 'פותחים…';
     const r = await call('start', { body: { name: $('#fName').value, phone: $('#fPhone').value, consent: true, company: $('#fCompany').value,
-      template: other ? $('#fNear').value : $('#fTrade').value, ...(other ? { own_trade: own } : {}) } });
+      template: other ? $('#fNear').value : $('#fTrade').value, ...(other ? { own_trade: own } : {}), ...(PILOT ? { pilot: PILOT } : {}) } });
     btn.disabled = false; btn.textContent = 'לבנות את האתר';
     if (!r.ok) {
       err.textContent = say(r.data.error);
@@ -615,8 +619,12 @@
       if (s.missing.length) p('לפני אישור חסרים: ' + s.missing.join(', ') + '.');
       else p('הכול מוכן. עברו על האתר, ואם הוא נראה טוב, אשרו.');
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'מאשרים את האתר';
-      b.disabled = s.missing.length > 0; b.addEventListener('click', () => { $('#approveErr').textContent = ''; $('#approveDlg').showModal(); });
+      b.disabled = s.missing.length > 0; b.addEventListener('click', () => { $('#approveErr').textContent = ''; pilotDialog(); $('#approveDlg').showModal(); });
       box.append(b);
+    } else if (s.status === 'client_approved' && s.pilot) {
+      // The pilot: no payment. כפיר goes over the site and puts it live.
+      p('אישרתם את האתר, תודה! זה פיילוט, אז אין תשלום. אנחנו עוברים על האתר ומעלים אותו לאוויר, ונעדכן אתכם בוואטסאפ.');
+      box.append(btn('רוצים לשנות משהו? חזרה לעריכה', reopen, 'btn quiet'));
     } else if (s.status === 'client_approved' && billing && billing.on) {
       const a = billing.address;
       box.append(h3('1. כתובת לאתר'));
@@ -1482,9 +1490,19 @@
     state = r.data.state;
     const st = await call('state', { method: 'GET' }); if (st.ok) billing = st.data.billing;
     paint();
-    bubble('sys', billing && billing.on ? 'האתר אושר. עכשיו בוחרים כתובת ומשלמים, והוא עולה לאוויר.' : 'האתר אושר. תודה!');
+    bubble('sys', state.pilot ? 'האתר אושר. נעבור עליו ונעלה אותו לאוויר, ונעדכן אתכם בוואטסאפ.' : billing && billing.on ? 'האתר אושר. עכשיו בוחרים כתובת ומשלמים, והוא עולה לאוויר.' : 'האתר אושר. תודה!');
     if (billing && billing.on && !billing.address) openAddress();
   });
+
+  // In the pilot the approval dialog speaks of no payment: the package is what the site gets, not a price.
+  function pilotDialog() {
+    if (!state.pilot) return;
+    $('#approveDlg p').textContent = 'זה פיילוט, אז אין תשלום. בוחרים מה יהיה באתר, ואחרי האישור נעבור עליו ונעלה אותו לאוויר.';
+    const [ai, pr] = document.querySelectorAll('#approveDlg .pkg span');
+    if (ai) ai.textContent = 'האתר, הצ׳אט החכם ומערכת הפניות.';
+    if (pr) pr.textContent = 'האתר, עם כפתורי וואטסאפ ושיחה.';
+    const note = $('#approveDlg .note'); if (note) note.textContent = 'בפיילוט אין תשלום ואין התחייבות. הקבצים של האתר שלכם.';
+  }
 
   async function reopen() {
     const r = await call('reopen', { body: { rev: state.rev } });

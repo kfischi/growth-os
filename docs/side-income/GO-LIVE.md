@@ -23,6 +23,8 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 - [ ] `SITES_DOMAIN`. Optional, but needed for `<slug>.<our domain>` addresses; without it sites get `*.netlify.app`. Its DNS must be on Netlify DNS in the same account as `NETLIFY_TOKEN`.
 - [ ] Function timeout: the builder chat waits up to `BUILDER_AI_TIMEOUT_MS` (25000 ms by default). If the plan stops functions at 10 s, set `BUILDER_AI_TIMEOUT_MS=9000` so owners get a clean "נסו שוב".
 
+**Pilot**: `PILOT_CODES` (comma separated invite codes for `build/?p=<code>`, free, no payment step). See `PILOT.md`.
+
 **Payments**: see section 3. `GROW_USER_ID`, `GROW_PAGE_CODE` (secret) and optional `GROW_API_KEY` (secret). Never set `GROW_SANDBOX` in production.
 
 **Optional, defaults are fine**
