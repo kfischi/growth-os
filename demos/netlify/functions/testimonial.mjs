@@ -3,7 +3,7 @@
 //   POST /api/testimonial        { token, name, text, stars? }  -> { ok, site }
 // Only a link the system sent works, and only once per enquiry. What is written shows on the site at once
 // (/api/testimonials/<slug>); the owner gets it on WhatsApp with "להסתיר", and can hide it in the panel too.
-import { json, configured, db, q, getClient, rateLimiter, clientIp, testimonialOn, testimonialToken, checkTestimonial, sendButtons, firstName, siteUrl, clip } from "../lib/leads.mjs";
+import { json, configured, db, q, getClient, rateLimiter, clientIp, testimonialOn, testimonialToken, checkTestimonial, sendButtons, sendTemplate, firstName, siteUrl, clip } from "../lib/leads.mjs";
 
 const limited = rateLimiter(20, 10 * 60 * 1000);
 const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
@@ -113,14 +113,26 @@ export default async (req, context) => {
   const chk = checkTestimonial(body);
   if (chk.error) return json({ error: chk.error, message: ERR[chk.error] }, 422);
   const { lead, client } = inv;
-  // Close the invitation first: one testimonial per enquiry, even if the button is pressed twice.
-  const open = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&testimonial=eq.sent`, { testimonial: "done" }, "return=representation");
-  if (!open.length) return json({ error: "closed", message: "כבר כתבתם המלצה מהקישור הזה. תודה!" }, 410);
-  const [t] = await db("POST", "ls_testimonials", { client_slug: client.slug, lead_id: lead.id, ...chk.row }, "return=representation");
-  // The owner sees it right away, and can take it off the site with one tap.
+  // Store it first, so a failure never closes the link with the text lost. lead_id is unique: a second press is refused.
+  let t;
+  try { [t] = await db("POST", "ls_testimonials", { client_slug: client.slug, lead_id: lead.id, ...chk.row }, "return=representation"); }
+  catch (e) { return json({ error: "closed", message: "כבר כתבתם המלצה מהקישור הזה. תודה!" }, 410); }
+  // Then close the invitation. If it was already closed (a second press that got past the unique check), take it back.
+  const shut = await db("PATCH", `ls_leads?id=eq.${q(lead.id)}&testimonial=eq.sent`, { testimonial: "done" }, "return=representation");
+  if (!shut.length) {
+    await db("DELETE", `ls_testimonials?id=eq.${q(t.id)}`).catch(() => {});
+    return json({ error: "closed", message: "כבר כתבתם המלצה מהקישור הזה. תודה!" }, 410);
+  }
+  // The owner sees it right away, and can take it off the site with one tap. Buttons work only within 24 hours of the
+  // owner's last message to the number; otherwise the owner alert template carries it, and the panel hides it.
   const stars = chk.row.stars ? " " + "★".repeat(chk.row.stars) : "";
-  await sendButtons(client, client.owner_phone, `המלצה חדשה עלתה לאתר${stars}:\n"${clip(chk.row.body, 400)}"\n${chk.row.name}`,
-    [{ id: "hidetst:" + t.id, title: "להסתיר" }], { kind: "owner_reply", leadId: lead.id }).catch(() => {});
+  const r = await sendButtons(client, client.owner_phone, `המלצה חדשה עלתה לאתר${stars}:\n"${clip(chk.row.body, 400)}"\n${chk.row.name}`,
+    [{ id: "hidetst:" + t.id, title: "להסתיר" }], { kind: "owner_reply", leadId: lead.id }).catch(() => "failed");
+  if (r !== "sent" && client.owner_alerts) {
+    await sendTemplate(client, client.owner_phone, client.tpl_owner_alert,
+      [chk.row.name || "-", "-", "המלצה לאתר", { text: `המלצה חדשה עלתה לאתר${stars}: "${clip(chk.row.body, 300)}". להסתרה: בלוח הפניות.`, max: 480 }, "אתר"],
+      { kind: "owner_alert", leadId: lead.id }).catch(() => {});
+  }
   return json({ ok: true, site: siteUrl(client) });
 };
 

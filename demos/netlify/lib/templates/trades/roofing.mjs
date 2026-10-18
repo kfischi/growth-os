@@ -9,6 +9,9 @@ export default {
   guides: ["roofing"],
   schema: "RoofingContractor",
   urgent: true,
+  callbackStep: false,  // step 3 is the inspection and the price: a time next to it would read as the inspection
+  plural: true,  // the business speaks as "אנחנו"
+  greet: "היי, כאן {name} 👋\nאנחנו כנראה על גג, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ונחזור אליכם.",
   words: {
     jobs: "העבודות הנפוצות",
     col: "מה צריך",

@@ -9,6 +9,9 @@ export default {
   guides: ["pergolas"],
   schema: "HomeAndConstructionBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the estimate and the measuring visit
+  plural: true,  // the business speaks as "אנחנו": the chat says "אלינו", "אצלנו"
+  greet: "היי, כאן {name} 👋\nאנחנו כנראה באמצע התקנה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ונחזור אליכם.",
   words: {
     jobs: "הסוגים והמחירים",
     col: "סוג",

@@ -56,5 +56,9 @@ export function guideFor(T) {
 }
 
 
-// "תוך 15 דק׳", but "באותו יום" as it is.
-export const whenText = (response) => (!response ? "מהר" : /^באותו/.test(response) ? response : "תוך " + response);
+// "תוך 15 דק׳", but "באותו יום" as it is (and what the owner typed with its own "תוך", "עד", "עוד היום", "מחר"...).
+// Every "תוך X" on a site goes through here, so no page says "תוך באותו יום".
+export const whenText = (response) => {
+  const r = String(response ?? "").trim();
+  return !r ? "מהר" : /^(באותו|עוד|מחר|תוך|עד|מיד|היום|בתוך|בו ביום)/.test(r) ? r : "תוך " + r;
+};

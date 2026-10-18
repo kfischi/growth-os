@@ -9,6 +9,7 @@ export default {
   guides: ["driving"],
   schema: "DrivingSchool",
   urgent: false,
+  callbackStep: false,  // step 3 is the slot: a time next to it would read as a free slot
   words: {
     jobs: "המחירון",
     col: "שיעור",

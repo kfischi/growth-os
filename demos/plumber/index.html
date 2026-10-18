@@ -498,7 +498,7 @@
   });
   PhotoSlots.init({ page: "plumber" });
   // The live נציג AI (functions/demo-chat.mjs): opened from the #live-ai buttons, never from the corner.
-  const live = AiBot.init({
+  const live = AiBot.init({ maxLength: 300,
     endpoint: "/api/demo-chat/plumber", whatsapp: "972526359513",
     name: "אורן מים · נציג AI", subtitle: "חי: עונה מתוך המידע של העסק",
     greet: "היי, אני הנציג של אורן מים. אפשר לשאול על מחירים, אזורים, זמינות, או מה עושים עד שאורן מגיע.",

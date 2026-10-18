@@ -111,12 +111,18 @@ grow.processes.get("1").paid = true; grow.processes.get("1").paidSum = 100;
 const leadsBefore = T.ls_leads.length;
 r = await J(await hook(callback(pay))); assert.equal(r.paid, false); assert.equal(pay.status, "pending");
 assert.match(T.ls_leads.at(-1).service, /תשלום בסכום חסר/); assert.ok(T.ls_leads.length > leadsBefore);
+const leadsShort = T.ls_leads.length;
+r = await J(await hook(callback(pay))); assert.equal(r.paid, false); assert.equal(T.ls_leads.length, leadsShort, "one alert per short payment, not one per callback");
+// a sum Grow doesn't give, or gives as text, is never taken as paid in full
+grow.processes.get("1").paidSum = "";
+r = await J(await hook(callback(pay))); assert.equal(r.paid, false, "no sum is a short sum"); assert.equal(pay.status, "pending");
+{ const { parseSum } = await import("../../demos/netlify/lib/grow.mjs"); assert.equal(parseSum("2,490.00"), 2490); assert.equal(parseSum(5390), 5390); assert.ok(Number.isNaN(parseSum("")) && Number.isNaN(parseSum(undefined)) && Number.isNaN(parseSum("abc"))); }
 delete grow.processes.get("1").paidSum;
 
 /* ---------------- paid: published by itself ---------------- */
 r = await J(await hook(callback(pay)));
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(r.paid, true);
-assert.equal(pay.status, "paid"); assert.equal(pay.asmachta, "A1"); assert.equal(pay.transaction_id, "tx1");
+assert.equal(pay.status, "paid"); assert.equal(pay.asmachta, "A1"); assert.equal(pay.transaction_id, "tx1"); assert.equal(pay.error, null, "the short note is cleared once paid");
 assert.ok(grow.calls.some(([n, x]) => n === "approveTransaction" && x.transactionId === "tx1"), "Grow is told we have it");
 assert.equal(D.status, "published", "published without כפיר"); assert.equal(D.published_slug, "oren-mayim");
 assert.ok(gh.files.has("clients/oren-mayim/index.html"), "the site is in the repo");
@@ -187,7 +193,9 @@ grow.refuse = true; now = new Date("2027-02-28T09:00:00Z");
 const alerts0 = T.ls_leads.length;
 out = await L.runBilling(now); assert.equal(out.failed, 1); assert.equal(B.state, "failed"); assert.equal(B.fails, 1);
 assert.match(T.ls_leads.at(-1).service, /החיוב החודשי \(290 ₪\) לא עבר/); assert.equal(T.ls_leads.length, alerts0 + 1);
-assert.equal(new Date(B.next_charge_at).toISOString().slice(0, 10), "2027-03-03");
+const ilDate = (t) => new Date(t).toLocaleDateString("en-CA", { timeZone: "Asia/Jerusalem" });
+assert.equal(ilDate(B.next_charge_at), "2027-03-03"); assert.equal(B.next_charge_at, "2027-03-02T22:00:00.000Z", "the start of the day in Israel");
+assert.ok(new Date(B.next_charge_at) <= new Date("2027-03-03T03:10:00Z"), "due at that morning's run, not a day late");
 for (const day of ["2027-03-03", "2027-03-06"]) { out = await L.runBilling(new Date(day + "T09:00:00Z")); assert.equal(out.failed, 1); }
 assert.equal(B.fails, 3); assert.equal(T.ls_leads.length, alerts0 + 1, "one alert for the first refusal, not every retry");
 out = await L.runBilling(new Date("2027-03-09T09:00:00Z")); assert.equal(out.suspended, 1); assert.equal(B.state, "suspended");
@@ -195,7 +203,7 @@ assert.equal(T.ls_clients.find((c) => c.slug === "oren-mayim").active, false, "t
 r = await J(await req(D, "state", { method: "GET" })); assert.equal(r.billing.sub.state, "suspended");
 // the owner updates the card: the amount due, then everything is back
 grow.refuse = false;
-r = await J(await req(D, "pay", { body: { terms: true } })); assert.equal(r.status, 200, JSON.stringify(r));
+r = await J(await req(D, "pay", { body: {} })); assert.equal(r.status, 200, "a new card needs no terms tick: " + JSON.stringify(r));
 [name, f] = grow.calls.at(-1); assert.equal(f.sum, "290.00"); assert.equal(f.saveCardToken, "1");
 pay = T.ls_payments.at(-1); assert.equal(pay.kind, "card");
 grow.processes.get(pay.process_id).paid = true;
@@ -236,11 +244,78 @@ E.paid_at = new Date(Date.now() - 10 * 60 * 1000).toISOString();
 out = await L.runPending(); assert.equal(out.published, 1); assert.equal(E.status, "published"); assert.equal(E.publish_error, null);
 B = T.ls_billing.find((b) => b.draft_id === E.id); assert.equal(B.cycle, "month"); assert.equal(B.amount, 290);
 
+/* ---------------- no answer from Grow, two runs at once, no card ---------------- */
+T.ls_billing.find((b) => b.draft_id === E.id).state = "ended"; // out of the way
+const H = draft({ status: "published", published_slug: "h-site", paid_at: "2026-05-31T08:00:00.000Z" });
+T.ls_billing.push({ ...DEF.ls_billing(), draft_id: H.id, package: "ai", cycle: "month", amount: 290, card_token: "card-h", next_charge_at: "2026-09-30T08:00:00.000Z", created_at: "2026-05-31T08:00:00.000Z" });
+const BH = T.ls_billing.at(-1);
+const timeout = async () => { throw Object.assign(new Error("The operation was aborted due to timeout"), { name: "TimeoutError" }); };
+out = await L.runBilling(new Date("2026-10-01T03:10:00Z"), timeout);
+assert.equal(out.unknown, 1); assert.equal(out.failed, 0, "a timeout is not a refusal"); assert.equal(BH.fails, 0); assert.equal(BH.state, "active");
+assert.equal(BH.next_charge_at, "2026-10-31T08:00:00.000Z", "claimed before the charge, and back on its own day (31) after Sep 30");
+assert.match(T.ls_leads.at(-1).service, /לא קיבל תשובה מ-Grow/);
+assert.equal(T.ls_payments.at(-1).status, "pending"); assert.match(T.ls_payments.at(-1).error, /^unknown/);
+out = await L.runBilling(new Date("2026-10-01T05:00:00Z"), timeout); assert.equal(out.unknown + out.charged + out.failed, 0, "never charged again blindly");
+// a run killed during a charge left a pending one behind: כפיר checks it, once
+T.ls_payments.push({ ...DEF.ls_payments(), draft_id: H.id, kind: "month", cycle: "month", package: "ai", sum: 290, created_at: "2026-09-01T03:10:00.000Z" });
+let leadsN = T.ls_leads.length;
+out = await L.runBilling(new Date("2026-10-02T03:10:00Z")); assert.equal(out.unknown, 1); assert.match(T.ls_leads.at(-1).service, /נקטע באמצע/); assert.equal(T.ls_leads.length, leadsN + 1);
+out = await L.runBilling(new Date("2026-10-03T03:10:00Z")); assert.equal(out.unknown, 0);
+// two runs at once charge once
+let charges = 0;
+const slow = async () => { charges++; await new Promise((x) => setTimeout(x, 20)); return { transactionId: "t" + charges, asmachta: "a" }; };
+await Promise.all([L.runBilling(new Date("2026-11-01T03:10:00Z"), slow), L.runBilling(new Date("2026-11-01T03:10:00Z"), slow)]);
+assert.equal(charges, 1, "the subscription is claimed before Grow is called"); assert.equal(BH.next_charge_at, "2026-11-30T08:00:00.000Z");
+// the time budget: nothing new starts once it is used up
+out = await L.runBilling(new Date("2026-11-30T09:00:00Z"), slow, { budgetMs: -1 }); assert.equal(out.left, 1); assert.equal(charges, 1);
+// no card token: a refusal like any other, so it pauses in the end
+BH.card_token = null;
+for (let i = 1; i <= 4; i++) { out = await L.runBilling(new Date(new Date(BH.next_charge_at).getTime() + 3600_000), slow); if (i < 4) assert.equal(BH.fails, i); }
+assert.equal(out.suspended, 1); assert.equal(BH.state, "suspended"); assert.equal(charges, 1);
+// a new card months later: paid from today, not a charge a day for every paused month
+T.ls_payments.push({ ...DEF.ls_payments(), draft_id: H.id, kind: "card", cycle: "month", package: "ai", sum: 290 });
+r = await L.settle(T.ls_payments.at(-1), { paid: true, sum: 290, asmachta: "N1", transactionId: "n1", cardToken: "card-new", cardSuffix: "1111" }, new Date("2027-03-15T10:00:00Z"));
+assert.equal(r.paid, true); assert.equal(BH.state, "active"); assert.equal(BH.next_charge_at, "2027-04-15T10:00:00.000Z");
+
+/* ---------------- a setup payment for a draft that changed since ---------------- */
+const held = async (d, pkg, why) => {
+  T.ls_payments.push({ ...DEF.ls_payments(), draft_id: d.id, kind: "setup", cycle: "month", package: pkg, sum: 2490 });
+  const p = T.ls_payments.at(-1);
+  const x = await L.settle(p, { paid: true, sum: 2490, asmachta: "S1", transactionId: "s1", cardToken: "card-s" });
+  assert.equal(x.held, true, why); assert.equal(p.status, "paid", "the payment stays recorded"); assert.match(p.error, /^held/);
+  assert.ok(!x.draft, "nothing to publish"); assert.match(T.ls_leads.at(-1).service, /התקבל תשלום הקמה/);
+  return p;
+};
+const K = draft({ package: "presence" }); await held(K, "ai", "the package changed");
+assert.equal(K.status, "client_approved"); assert.ok(!T.ls_billing.some((b) => b.draft_id === K.id), "no subscription for it");
+const K2 = draft({ status: "draft" }); await held(K2, "ai", "back to editing"); assert.equal(K2.status, "draft");
+const pubCommits = gh.calls.length; await held(H, "ai", "a second setup on a published site"); assert.equal(gh.calls.length, pubCommits, "never published again");
+// a stale Grow page of a draft back in editing is closed
+const K3 = draft(); T.ls_payments.push({ ...DEF.ls_payments(), draft_id: K3.id, kind: "setup", cycle: "month", package: "ai", sum: 2490 });
+await L.expireCheckouts(K3.id); assert.equal(T.ls_payments.at(-1).status, "expired");
+
+/* ---------------- paid, but the draft never turned paid: the 15-minute run finishes it ---------------- */
+const M = draft({ slug_wish: "m-site" });
+T.ls_payments.push({ ...DEF.ls_payments(), draft_id: M.id, kind: "setup", cycle: "month", package: "ai", sum: 2490, status: "paid", paid_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(), error: null });
+out = await L.runPending();
+assert.equal(out.settled, 1); assert.equal(M.status, "published"); assert.ok(T.ls_billing.some((b) => b.draft_id === M.id && b.amount === 290));
+out = await L.runPending(); assert.equal(out.settled, 0, "once");
+
+/* ---------------- the publish try is counted before the publish ---------------- */
+const P = draft({ status: "paid", paid_at: new Date().toISOString(), slug_wish: "p-site" });
+let seenTries; const f0 = globalThis.fetch;
+globalThis.fetch = async (u, o) => { if (new URL(u).host === "api.github.com" && seenTries === undefined) seenTries = P.publish_tries; return f0(u, o); };
+await L.autoPublish(P); globalThis.fetch = f0;
+assert.equal(seenTries, 1, "a run killed during the publish still used up a try"); assert.equal(P.status, "published");
+
 /* ---------------- without Grow ---------------- */
 delete process.env.GROW_PAGE_CODE;
 r = await J(await hook(callback(pay))); assert.equal(r.status, 503);
 const G = draft();
 r = await J(await req(G, "state", { method: "GET" })); assert.equal(r.billing.on, false, "the page falls back to payment on WhatsApp");
+assert.equal(r.billing.terms, false);
+r = await J(await req(G, "pay", { body: {} })); assert.equal(r.error, "terms");
+r = await J(await req(G, "pay", { body: { terms: true } })); assert.equal(r.status, 200, JSON.stringify(r)); assert.ok(G.terms_at, "the terms tick is recorded without Grow too"); assert.equal(r.billing.terms, true);
 process.env.GROW_PAGE_CODE = "pc-test";
 
 assert.ok(sentWa.length > 0);

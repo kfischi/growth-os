@@ -8,6 +8,7 @@
      endpoint: "https://service-pro-web.netlify.app/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
      placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"), offlineWa (false: no WhatsApp button then).
    A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>".
+   maxLength: the longest question the visitor can type (default 600; the demo chat takes 300).
    hint: true puts an arrow bobbing above the button and a soft pulse around it, until the chat is first opened
    (none with reduced motion or html.a11y-still). */
 (function () {
@@ -107,8 +108,10 @@
       return "בשמחה. לחצו כאן, וההודעה תגיע אלינו בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
     return "אני יכול להסביר איך זה עובד, לספר על המחירים, להראות דוגמה מהתחום שלכם, או לפתוח לכם את בונה האתרים. מה מעניין אתכם? [[go:how]] [[build]]";
   }
+  // Visitor text inside a [[whatsapp:...]] marker: a "[" or "]" would break the marker.
+  const clean = (t) => String(t || "").replace(/[[\]]/g, "");
   function summary(history) {
-    const said = history.filter((m) => m.role === "user").map((m) => m.content).slice(-3).join(" · ");
+    const said = history.filter((m) => m.role === "user").map((m) => clean(m.content)).slice(-3).join(" · ");
     return ("היי, הגעתי מהאתר. " + said).slice(0, 400);
   }
 
@@ -136,7 +139,7 @@
       const typing = el("div", "ab-typing"); typing.append(el("i"), el("i"), el("i")); body.appendChild(typing);
       const chips = el("div", "ab-chips");
       const form = el("form", "ab-form");
-      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); input.maxLength = 600; input.autocomplete = "off";
+      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); const maxLen = Number(cfg.maxLength) || 600; input.maxLength = maxLen; input.autocomplete = "off";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
       const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, ועל כל השאר עונים בוואטסאפ.");
@@ -168,7 +171,7 @@
       function goOffline() { offline = true; mode.textContent = "מצב הדגמה"; }
 
       async function ask(text) {
-        text = String(text || "").trim().slice(0, 600);
+        text = String(text || "").trim().slice(0, maxLen);
         if (!text || busy) return;
         busy = true; send.disabled = true; input.value = "";
         bubble(text, "me"); history.push({ role: "user", content: text });
@@ -183,9 +186,9 @@
             else if (r.status === 404 || r.status === 503 || r.status === 405) goOffline();
           } catch (e) { goOffline(); }
         }
-        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + (cfg.offlineWa === false ? "" : " [[whatsapp:" + text + "]]")
+        if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + (cfg.offlineWa === false ? "" : " [[whatsapp:" + clean(text) + "]]")
           // A business's own chat (endpoint set) must never fall back to the sales script above.
-          : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + text + "]]"
+          : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + clean(text) + "]]"
           : scripted(text, history); }
         typing.classList.remove("on");
         history.push({ role: "assistant", content: reply });
@@ -193,7 +196,12 @@
         busy = false; send.disabled = false; input.focus();
       }
 
+      // Focus goes back to whatever opened the chat (a page may hide the corner button and open it from its own).
+      let opener = null;
+      function refocus() { const t = opener && opener.isConnected && opener.getClientRects().length ? opener : launch; t.focus(); }
       function open() {
+        const a = document.activeElement;
+        if (a && a !== document.body && !panel.contains(a)) opener = a;
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
         if (hint) { hint.remove(); hint = null; launch.classList.remove("ab-call"); }
         if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat");
@@ -202,9 +210,9 @@
       }
       function close() { panel.classList.remove("open"); launch.setAttribute("aria-expanded", "false"); }
       launch.addEventListener("click", () => (panel.classList.contains("open") ? close() : open()));
-      x.addEventListener("click", () => { close(); launch.focus(); });
+      x.addEventListener("click", () => { close(); refocus(); });
       form.addEventListener("submit", (e) => { e.preventDefault(); ask(input.value); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && panel.classList.contains("open")) { close(); launch.focus(); } });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape" && panel.classList.contains("open")) { close(); refocus(); } });
       document.querySelectorAll("[data-open-ai]").forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); open(); }));
       return { open, close, ask };
     },

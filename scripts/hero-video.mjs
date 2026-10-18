@@ -1,6 +1,7 @@
 // The loop at the top of the home page: real moments cut from the explainer film, recorded with the camera kept wide
-// (WIDE=1 node scripts/process-video.mjs): the site, the AI chat, the builder's templates and colours, the questions,
-// the draft filling up, photos, the site live after the payment, and an enquiry arriving on WhatsApp. Only the browser
+// (WIDE=1 node scripts/process-video.mjs): a tour of trades, then what the נציג AI package does (the chat, the photo's
+// first look, the customer's WhatsApp reply, the owner's alert and reminder, the price answer, the panel, the monthly
+// report), then the build in the chat and the site live. Only the browser
 // window is kept, so it reads big. Each clip starts at a moment the recorder names (its "marks", in the .json next to
 // the recording), so the loop follows the film when it is recorded again. The captions are not burned in: the page
 // shows them from the cues (written to hero-cues.json, and to data-cues on the home page's hero figure), synced to the
@@ -21,15 +22,18 @@ const CROP = "1240:820:48:150";
 const FADE = 0.4;
 // [the recorder's mark, seconds after it, length (s), caption]
 const CLIPS = [
-  ["h-trades", 0.4, 7.0, "אתר לכל עסק: מספרה, נהיגה, גינון, חשמל"],
-  ["h-site", 0.2, 3.2, "אתר מקצועי לעסק שלכם"],
-  ["h-chat", 0.0, 3.2, "נציג AI שעונה ללקוחות"],
-  ["h-look", -0.6, 3.4, "בוחרים תבנית"],
-  ["h-q", 0.0, 3.2, "עונים על כמה שאלות"],
-  ["h-fill", 0.0, 3.0, "והאתר מתמלא מול העיניים"],
-  ["h-photos", 0.0, 3.0, "מעלים תמונות"],
-  ["h-live", -0.2, 2.8, "משלמים, והאתר עולה לאוויר לבד"],
-  ["h-wa", -1.4, 4.2, "וכל פנייה מגיעה אליכם בוואטסאפ"],
+  ["h-trades", 0.4, 5.0, "אתר לכל עסק קטן: ספר, מורה לנהיגה, גנן, חשמלאי"],
+  // What the נציג AI package does, one thing a clip, in the hero's own voice (singular, like its headline).
+  ["h-chat", 0.0, 3.2, "נציג AI עונה ללקוחות, גם כשאתה באמצע עבודה"],
+  ["h-photo", -0.4, 3.2, "לקוח שולח תמונה ומקבל הערכת מחיר"],
+  ["h-reply", -0.8, 3.4, "ומקבל מיד אישור בוואטסאפ, מהמספר שלך"],
+  ["h-wa", -1.4, 3.8, "ואתה מקבל התראה עם כל הפרטים"],
+  ["h-remind", -0.2, 3.0, "לא חזרת אליו? מגיעה תזכורת"],
+  ["h-price", -0.6, 3.2, "שאלה על מחיר? עונה מהמחירון שלך"],
+  ["h-panel", -0.2, 3.0, "כל הפניות בלוח אחד"],
+  ["h-report", 0.0, 3.0, "ובכל חודש, סיכום בוואטסאפ"],
+  ["h-look", -0.6, 3.0, "ואת האתר בונים בצ׳אט, בלי מעצב"],
+  ["h-live", -0.2, 2.8, "משלמים רק כשהאתר מוכן"],
 ].map(([m, d, len, text]) => { if (marks[m] == null) throw new Error("no mark " + m + " in the recording"); return [+(marks[m] + d).toFixed(2), len, text]; });
 
 fs.mkdirSync(OUT, { recursive: true });

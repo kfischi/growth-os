@@ -42,6 +42,12 @@ async function logInbound(row) {
   return rows.length > 0;
 }
 
+// The work after logInbound: if it throws, the mark is taken back, so Meta's retry does it again instead of skipping it.
+async function retryable(waId, work) {
+  try { return await work(); }
+  catch (e) { await db("DELETE", `ls_messages?wa_id=eq.${q(waId)}&direction=eq.in`).catch(() => {}); throw e; }
+}
+
 async function onMessage(client, m) {
   const from = m.from;
   const text = m.type === "text" ? m.text.body : m.type === "button" ? m.button.text
@@ -60,8 +66,8 @@ async function onMessage(client, m) {
     // The owner just wrote, so a free text reply (or buttons) is allowed.
     const done = rows[0];
     const mobile = done && /^9725\d{8}$/.test(done.phone_intl);
-    const canReview = mobile && reviewOn(client) && !(await reviewBlocked(client, done.phone_intl));
-    const canTst = mobile && testimonialOn(client) && !(await testimonialBlocked(client, done.phone_intl));
+    const canReview = mobile && client.active !== false && reviewOn(client) && !(await reviewBlocked(client, done.phone_intl));
+    const canTst = mobile && client.active !== false && testimonialOn(client) && !(await testimonialBlocked(client, done.phone_intl));
     if (canReview || canTst) {
       if (canReview) await db("PATCH", `ls_leads?id=eq.${q(id)}&review=is.null`, { review: "asked" });
       if (canTst) await db("PATCH", `ls_leads?id=eq.${q(id)}&testimonial=is.null`, { testimonial: "asked" });
@@ -122,21 +128,21 @@ async function onMessage(client, m) {
   if (cmd) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 100) } });
     if (!fresh) return;
-    const now = cmd.status ? availability(client) : await setAvailability(client, cmd);
+    const now = cmd.status ? availability(client) : await retryable(m.id, () => setAvailability(client, cmd));
     const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
     await sendText(client, from, `באתר כתוב עכשיו: ${now.text} ${tip}`, { kind: "owner_reply" });
     return;
   }
 
   // The owner teaches the business or changes a price. A price change publishes the site, so it runs after the answer to Meta.
-  const own = from === client.owner_phone && m.type === "text" ? ownerCommand(text) : null;
+  const own = from === client.owner_phone && m.type === "text" && client.active !== false ? ownerCommand(text) : null;
   if (own) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 300) } });
     if (!fresh) return;
     const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
-    if (own.learn) { const notes = await addNote(client, own.learn); await reply(`למדנו (${notes.length}): ${own.learn}\nהצ׳אט באתר ובוואטסאפ יודע מעכשיו. "מה למדת" מראה את הכול.`); }
+    if (own.learn) { const notes = await retryable(m.id, () => addNote(client, own.learn)); await reply(`למדנו (${notes.length}): ${own.learn}\nהצ׳אט באתר ובוואטסאפ יודע מעכשיו. "מה למדת" מראה את הכול.`); }
     else if (own.notes) await reply(notesText(client));
-    else if (own.forget) { const gone = await forgetNote(client, own.forget); await reply(gone ? `נמחק: ${gone.text}` : "אין מספר כזה. \"מה למדת\" מראה את הרשימה."); }
+    else if (own.forget) { const gone = await retryable(m.id, () => forgetNote(client, own.forget)); await reply(gone ? `נמחק: ${gone.text}` : "אין מספר כזה. \"מה למדת\" מראה את הרשימה."); }
     else if (own.prices) await reply(await pricesText(client));
     else if (own.price) later.push(ownerPrice(client, own.price, { addNote }).then(reply).catch(async (e) => { console.error("owner price", e.message); await reply("לא הצלחנו לעדכן את המחיר עכשיו. נסו שוב בעוד כמה דקות, או כתבו לנו."); }));
     return;
@@ -144,7 +150,7 @@ async function onMessage(client, m) {
 
   const lead = (await db("GET", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}&select=id,name,phone,phone_intl,service,review&order=created_at.desc&limit=1`))[0];
   const fresh = await logInbound({ client_slug: client.slug, lead_id: lead ? lead.id : null, kind: from === client.owner_phone ? "owner_reply" : "inbound", from_phone: from, wa_id: m.id, body: { type: m.type, text: clip(text, 1000) } });
-  if (fresh && lead) await updateLead(lead.id, { last_inbound_at: new Date().toISOString() });
+  if (fresh && lead) await retryable(m.id, () => updateLead(lead.id, { last_inbound_at: new Date().toISOString() }));
   // "הסר": no more review requests to this number from this business, ever.
   if (fresh && lead && from !== client.owner_phone && m.type === "text" && OPT_OUT.test(String(text).trim())) {
     await db("PATCH", `ls_leads?client_slug=eq.${q(client.slug)}&phone_intl=eq.${q(from)}`, { review: "optout" });

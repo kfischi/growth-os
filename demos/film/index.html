@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>סרטון הסבר: איך זה עובד · Easy Landing</title>
-<meta name="description" content="כל התהליך בסרטון קצר, 3:27 דקות: בוחרים תחום, נכנסים לבונה, בוחרים תבנית וצבעים, עונים על שאלות, מעלים תמונות, משלמים, והאתר באוויר. ואחר כך, כל מה שהאתר עושה בשבילכם.">
+<meta name="description" content="כל התהליך בסרטון קצר, 3:30 דקות: בוחרים תחום, נכנסים לבונה, בוחרים תבנית וצבעים, עונים על שאלות, מעלים תמונות, משלמים, והאתר באוויר. ואחר כך, כל מה שהאתר עושה בשבילכם.">
 <meta property="og:title" content="סרטון הסבר: איך זה עובד · Easy Landing">
 <meta property="og:description" content="כל התהליך בסרטון קצר, מההתחלה ועד שהאתר באוויר, ומה הוא עושה בשבילכם.">
 <meta property="og:image" content="https://service-pro-web.netlify.app/shared/video/process/process-poster.webp">
@@ -80,6 +80,7 @@
   footer { border-top: 1px solid var(--line); padding-block: 18px 32px; color: var(--slate); font-size: .92rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 6px 18px; }
   @media (prefers-reduced-motion: reduce) { .film-play span { transition: none; } }
+#film::cue { font-family: Rubik, system-ui, sans-serif; font-size: 1.05em; line-height: 1.35; color: #fff; background: rgba(23, 17, 46, .78); }
 </style>
 </head>
 <body>
@@ -90,15 +91,15 @@
 
 <main>
   <section class="head wrap">
-    <p class="kicker">סרטון הסבר · 3:27 דקות</p>
+    <p class="kicker">סרטון הסבר · 3:30 דקות</p>
     <h1>ככה בונים אתר, מההתחלה ועד שהוא באוויר.</h1>
     <p class="lead">בלי ידע טכני ובלי פגישות. כל שלב בבונה, ומה האתר עושה בשבילכם מהרגע שהוא באוויר. אפשר לצפות גם בלי קול.</p>
   </section>
 
   <section class="wrap" aria-label="הסרטון">
     <div class="film-frame">
-      <video id="film" playsinline preload="metadata" poster="../shared/video/process/process-poster.webp" aria-label="כל התהליך בסרטון, שלב אחרי שלב"><source src="../shared/video/process/process.mp4" type="video/mp4"><track kind="captions" srclang="he" label="עברית" src="../shared/video/process/process.vtt"></video>
-      <button class="film-play" type="button" aria-label="לצפות בסרטון"><span aria-hidden="true"></span><b aria-hidden="true">לצפות · 3:27</b></button>
+      <video id="film" playsinline preload="metadata" poster="../shared/video/process/process-poster.webp" aria-label="כל התהליך בסרטון, שלב אחרי שלב"><source src="../shared/video/process/process.mp4" type="video/mp4"><track kind="captions" srclang="he" label="עברית" src="../shared/video/process/process.vtt" default></video>
+      <button class="film-play" type="button" aria-label="לצפות בסרטון"><span aria-hidden="true"></span><b aria-hidden="true">לצפות · 3:30</b></button>
     </div>
   </section>
 
@@ -110,14 +111,14 @@
       <li><button type="button" data-t="6"><b>בוחרים תחום</b><time>0:06</time><small>לכל תחום אתר לדוגמה משלו.</small></button></li>
       <li><button type="button" data-t="20"><b>רואים את האתר לדוגמה</b><time>0:20</time><small>וואטסאפ, מחירים, והנציג שעונה בכל שעה.</small></button></li>
       <li><button type="button" data-t="33"><b>נכנסים לבונה</b><time>0:33</time><small>שם וטלפון, וזהו. הטיוטה פרטית.</small></button></li>
-      <li><button type="button" data-t="40"><b>בוחרים תבנית</b><time>0:40</time><small>כמה תבניות לכל תחום. האתר מתחלף מיד.</small></button></li>
-      <li><button type="button" data-t="48"><b>בוחרים צבעים</b><time>0:48</time><small>שמונה ערכות לכל תבנית.</small></button></li>
-      <li><button type="button" data-t="54"><b>עונים על שאלות</b><time>0:54</time><small>אזורים, שירותים, מחירים, שעות והרשתות שלכם.</small></button></li>
-      <li><button type="button" data-t="72"><b>מעלים תמונות</b><time>1:12</time><small>שלכם ושל העבודה, ישר מהטלפון.</small></button></li>
-      <li><button type="button" data-t="81"><b>עוברים על האתר</b><time>1:21</time><small>משהו לא יושב? כותבים בצ׳אט.</small></button></li>
-      <li><button type="button" data-t="89"><b>מאשרים ובוחרים חבילה</b><time>1:29</time><small>נוכחות, או נציג AI.</small></button></li>
-      <li><button type="button" data-t="98"><b>משלמים, והאתר באוויר</b><time>1:38</time><small>כתובת, כרטיס, והאתר עולה לבד.</small></button></li>
-      <li><button type="button" data-t="111"><b>מה מקבלים</b><time>1:51</time><small>הצ׳אט, הוואטסאפ, ההתראות, הלוח, הדוח החודשי ועוד.</small></button></li>
+      <li><button type="button" data-t="41"><b>בוחרים תבנית</b><time>0:41</time><small>כמה תבניות לכל תחום. האתר מתחלף מיד.</small></button></li>
+      <li><button type="button" data-t="49"><b>בוחרים צבעים</b><time>0:49</time><small>שמונה ערכות לכל תבנית.</small></button></li>
+      <li><button type="button" data-t="55"><b>עונים על שאלות</b><time>0:55</time><small>אזורים, שירותים, מחירים, שעות והרשתות שלכם.</small></button></li>
+      <li><button type="button" data-t="75"><b>מעלים תמונות</b><time>1:15</time><small>שלכם ושל העבודה, ישר מהטלפון.</small></button></li>
+      <li><button type="button" data-t="84"><b>עוברים על האתר</b><time>1:24</time><small>משהו לא יושב? כותבים בצ׳אט.</small></button></li>
+      <li><button type="button" data-t="92"><b>מאשרים ובוחרים חבילה</b><time>1:32</time><small>נוכחות, או נציג AI.</small></button></li>
+      <li><button type="button" data-t="100"><b>משלמים, והאתר עולה</b><time>1:40</time><small>בוחרים כתובת ומשלמים.</small></button></li>
+      <li><button type="button" data-t="114"><b>מה מקבלים</b><time>1:54</time><small>הצ׳אט, הוואטסאפ, ההתראות, הלוח, הדוח החודשי ועוד.</small></button></li>
     </ol>
   </section>
 

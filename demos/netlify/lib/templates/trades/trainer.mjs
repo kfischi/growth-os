@@ -7,6 +7,7 @@ export default {
   guides: ["trainer"],
   schema: "LocalBusiness",
   urgent: false,
+  callbackStep: false,  // step 3 is the first session, not the call back
   words: {
     jobs: "האימונים",
     col: "אימון",

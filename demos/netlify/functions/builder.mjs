@@ -32,13 +32,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, rateLimiter, clientIp, sha256, clip, israeliPhone, db } from "../lib/leads.mjs";
 import {
-  TEMPLATES, MAX_MESSAGES, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
+  TEMPLATES, historyFull, withTurn, MAX_CHARS, MAX_PHOTO_BYTES, Conflict, newKey, loadDraft, saveDraft, templateOf, publicState,
   chatTurn, learnTurn, greeting, applyUpdate, photoType, uploadPhoto, deletePhotos, alertKfir, savePhotos, saveMedia, getDraft,
   isMp4, MAX_VIDEO_BYTES, MAX_POSTER_BYTES, imageSize, versionPatch,
   editing, renderDraft, heroAI, heroImage, isEditable, isDirty, snapshot, editUsage, EDIT_MESSAGES, EDIT_PUBLISHES, editGreeting, releaseMedia, mediaPaths,
   publishToRepo, ensureLeadClient, hostSite, suggestSlugs, connectDomain,
 } from "../lib/builder.mjs";
-import { billingView, chooseAddress, checkout, confirmPayment, cancel, resume } from "../lib/billing.mjs";
+import { billingView, billingOf, chooseAddress, checkout, confirmPayment, cancel, resume, expireCheckouts } from "../lib/billing.mjs";
+import { growOn } from "../lib/grow.mjs";
 import dns from "node:dns/promises";
 import { randomBytes } from "node:crypto";
 
@@ -113,11 +114,11 @@ export default async (req, context) => {
       if (!message) return json({ error: "empty" }, 400);
       if (message.length > MAX_CHARS) return json({ error: "too_long" }, 400);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
-      if ((d.messages || []).length >= MAX_MESSAGES) return json({ error: "limit", state: stateOf(d) }, 429);
+      if (historyFull(d)) return json({ error: "limit", state: stateOf(d) }, 429); // a live site: the monthly allowance below
       const use = editing(d) ? editUsage(d) : null;
       if (use && use.messages >= EDIT_MESSAGES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
       const turn = await chatTurn(d, message);
-      const messages = [...(d.messages || []), { role: "user", content: message }, { role: "assistant", content: turn.reply }];
+      const messages = withTurn(d, message, turn.reply);
       const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
       const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
       return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved), ...((turn.changed || []).length ? { draft: renderDraft(saved) } : {}) });
@@ -138,13 +139,13 @@ export default async (req, context) => {
         images.push({ media: m[1], data: m[2] });
       }
       if (!text && !images.length) return json({ error: "empty" }, 400);
-      if ((d.messages || []).length >= MAX_MESSAGES) return json({ error: "limit", state: stateOf(d) }, 429);
+      if (historyFull(d)) return json({ error: "limit", state: stateOf(d) }, 429); // a live site: the monthly allowance below
       const use = editing(d) ? editUsage(d) : null;
       if (use && use.messages >= EDIT_MESSAGES()) return json({ error: "edit_limit", state: stateOf(d) }, 429);
       const turn = await learnTurn(d, { text, images });
       // The history keeps text only: what was shared, in a line, and the reply.
       const shared = ["שיתפנו חומר על העסק", images.length ? `${images.length} תמונות` : "", text ? `טקסט: ${clip(text, 300)}` : ""].filter(Boolean).join(" · ");
-      const messages = [...(d.messages || []), { role: "user", content: shared }, { role: "assistant", content: turn.reply }];
+      const messages = withTurn(d, shared, turn.reply);
       const count = use ? { edit_month: use.month, edit_messages: use.messages + 1, edit_publishes: use.publishes } : {};
       const saved = await saveDraft(d, turn.refused ? { messages, ...count } : { content: turn.content, messages, ...count });
       return json({ reply: turn.reply, changed: turn.changed || [], state: stateOf(saved), ...((turn.changed || []).length ? { draft: renderDraft(saved) } : {}) });
@@ -348,8 +349,13 @@ export default async (req, context) => {
     if (action === "pay" && req.method === "POST") {
       const body = await req.json().catch(() => ({}));
       if (payLimited(ip)) return json({ error: "rate_limited" }, 429);
-      if (body.terms !== true) return json({ error: "terms" }, 409); // demos/terms/ accepted before paying
-      if (!d.terms_at) d = await saveDraft(d, { terms_at: new Date().toISOString() });
+      // demos/terms/ accepted before the first payment. A new card after a refused charge is the same subscription.
+      const sub = await billingOf(d.id);
+      const cardUpdate = Boolean(sub && ["failed", "suspended"].includes(sub.state));
+      if (!cardUpdate && body.terms !== true) return json({ error: "terms" }, 409);
+      if (body.terms === true && !d.terms_at) d = await saveDraft(d, { terms_at: new Date().toISOString() });
+      // Without Grow (payment by link or on WhatsApp) the tick is only recorded.
+      if (!growOn()) return d.status === "client_approved" ? json({ terms: true, state: stateOf(d), billing: await billingView(d) }) : json({ error: "locked" }, 409);
       const r = await checkout(d, { cycle: body.cycle, origin: new URL(req.url).origin });
       if (r.error) return json({ error: r.error }, r.error === "not_configured" ? 503 : r.error === "pay_failed" ? 502 : 409);
       return json({ url: r.url });
@@ -396,6 +402,7 @@ export default async (req, context) => {
       if (d.status !== "client_approved") return json({ error: "locked", state: stateOf(d) }, 409);
       if (body.rev !== d.rev) return json({ error: "conflict", state: stateOf(d) }, 409);
       const saved = await saveDraft(d, { status: "draft", approved_at: null });
+      await expireCheckouts(d.id).catch((e) => console.error("expire checkouts", e.message)); // a Grow page opened before stays unpaid
       return json({ state: stateOf(saved) });
     }
 

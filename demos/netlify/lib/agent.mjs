@@ -10,7 +10,8 @@ const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude
 const DAILY = 8; // replies to one customer in 24 hours; after that the owner takes it from there
 let client;
 
-export const agentOn = (c) => c.package === "ai" && c.wa_agent === true && Boolean(String(c.chat_facts || "").trim());
+// Only while the monthly payment runs (active), like the rest of the lead system.
+export const agentOn = (c) => c.active !== false && c.package === "ai" && c.wa_agent === true && Boolean(String(c.chat_facts || "").trim());
 
 const SCHEMA = {
   type: "object", additionalProperties: false, required: ["reply", "notify_owner", "owner_note"],
@@ -54,12 +55,13 @@ async function history(c, lead) {
 }
 
 export async function agentReply(c, lead) {
+  const started = new Date().toISOString();
   const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
   const sent = await db("GET", `ls_messages?client_slug=eq.${q(c.slug)}&lead_id=eq.${q(lead.id)}&kind=eq.agent&created_at=gte.${q(since)}&select=id`);
   if (sent.length >= DAILY) return "limit";
   const messages = await history(c, lead);
   if (!messages.length || messages.at(-1).role !== "user") return "nothing";
-  client = client || new Anthropic();
+  client = client || new Anthropic({ timeout: 12000, maxRetries: 1 }); // two tries, about 25 s at most
   const model = MODEL();
   const res = await client.beta.messages.create({
     model, max_tokens: 1000,
@@ -72,6 +74,9 @@ export async function agentReply(c, lead) {
   const out = JSON.parse(res.content.filter((b) => b.type === "text").map((b) => b.text).join(""));
   const reply = clip(String(out.reply || "").trim(), 700);
   if (!reply) return "empty";
+  // Two or three short messages in a row each start a run: the first answer to go out wins, the others stay quiet.
+  const raced = await db("GET", `ls_messages?client_slug=eq.${q(c.slug)}&lead_id=eq.${q(lead.id)}&kind=eq.agent&created_at=gte.${q(started)}&select=id&limit=1`);
+  if (raced.length) return "raced";
   const r = await sendText(c, lead.phone_intl, reply, { kind: "agent", leadId: lead.id });
   if (out.notify_owner && String(out.owner_note || "").trim() && c.owner_alerts) {
     await sendTemplate(c, c.owner_phone, c.tpl_owner_alert,

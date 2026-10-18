@@ -8,9 +8,9 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, rateLimiter, clientIp } from "../lib/leads.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
-const MAX_TURNS = 12, MAX_CHARS = 300;
+const MAX_TURNS = 11, MAX_CHARS = 300; // the model sees the last 11 messages; older ones are dropped
 const limited = rateLimiter(15, 10 * 60 * 1000);
-const client = new Anthropic();
+const client = new Anthropic({ timeout: 20000, maxRetries: 0 }); // under the page's own 30 s abort (aibot.js)
 
 // What the fictional business "knows". Keep it in step with the demo page's own facts and prices.
 const DEMOS = {
@@ -53,10 +53,16 @@ Taking a lead:
 Facts about the business:
 ${d.facts}`;
 
-function validMessages(m) {
-  if (!Array.isArray(m) || m.length < 1 || m.length > MAX_TURNS) return false;
-  return m.every((x, i) => x && typeof x.content === "string" && x.content.trim() &&
-    x.content.length <= (x.role === "user" ? MAX_CHARS : 1500) && x.role === (i % 2 === 0 ? "user" : "assistant")) && m[m.length - 1].role === "user";
+// The page sends up to 19 messages, and an earlier one may be longer than allowed (it failed then and stays in
+// the page's history). So: keep the last MAX_TURNS, clip the older ones, and reject only a new question that is
+// too long. Returns the messages to send, or null.
+function trimMessages(m) {
+  if (!Array.isArray(m) || m.length < 1 || m.length > 40) return null;
+  const last = m.slice(-MAX_TURNS);
+  if (last[0] && last[0].role === "assistant") last.shift();
+  const ok = last.length && last.every((x, i) => x && typeof x.content === "string" && x.content.trim() &&
+    x.role === (i % 2 === 0 ? "user" : "assistant")) && last[last.length - 1].role === "user" && last[last.length - 1].content.length <= MAX_CHARS;
+  return ok ? last.map((x) => ({ role: x.role, content: x.content.slice(0, x.role === "user" ? MAX_CHARS : 1500) })) : null;
 }
 
 // Only from a page on this same site: a browser always sends Origin on a cross-site POST, and a script without
@@ -85,15 +91,16 @@ export default async (req, context) => {
 
   let body;
   try { body = await req.json(); } catch { return json({ error: "bad_json" }, 400); }
-  if (!validMessages(body && body.messages)) return json({ error: "bad_messages" }, 400);
+  const kept = trimMessages(body && body.messages);
+  if (!kept) return json({ error: "bad_messages" }, 400);
   if (overDailyCap()) return json({ error: "busy" }, 429);
-  const messages = body.messages.map((x) => ({ role: x.role, content: x.content.replace(/\[\[lead:[^\]]*\]\]/g, "") || "…" }));
+  const messages = kept.map((x) => ({ role: x.role, content: x.content.replace(/\[\[lead:[^\]]*\]\]/g, "") || "…" }));
 
   let reply;
   try {
     const response = await client.beta.messages.create({
       model: MODEL, max_tokens: 1000, output_config: { effort: "low" },
-      betas: ["server-side-fallback-2026-07-01"], fallbacks: "default",
+      ...(MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
       system: [{ type: "text", text: system(d), cache_control: { type: "ephemeral" } }],
       messages,
     });
