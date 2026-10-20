@@ -11,7 +11,7 @@
 5. **Meta / וואטסאפ:** אימות העסק, האפליקציה במצב Live, ה-webhook מחובר, ושבע התבניות בעברית מאושרות. ארבע מהן חובה: `lead_ack`, `owner_new_lead`, `owner_reminder`, `monthly_report`.
 6. **מפתחות ב-Netlify** (רק שם, אף פעם לא בצ׳אט או בקוד): Supabase, Anthropic, וואטסאפ, GitHub, Netlify, `LEADS_ADMIN_KEY`, `HEALTH_KEY`, Grow.
 7. **הענף שממנו Netlify מפרסם:** לוודא ש-`GITHUB_BRANCH` הוא הענף שהאתר באמת עולה ממנו, כי אתרי הלקוחות נשמרים אליו.
-8. **Supabase:** להריץ את כל 19 ההגירות לפי הסדר.
+8. **Supabase:** להריץ את כל 20 ההגירות לפי הסדר.
 
 ## לפני קידום רחב
 
