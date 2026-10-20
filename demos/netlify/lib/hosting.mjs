@@ -71,6 +71,13 @@ export async function ensureSite(slug, known = {}, onMade = null) {
       // A site made by a try that stopped before its address was saved: finish the address now.
       const attached = sub && (r.data.custom_domain === sub || (r.data.domain_aliases || []).includes(sub));
       if (attached && !known.site_sub) await attachSub(r.data);
+      // Published before SITES_DOMAIN was set (a pilot on *.netlify.app): it moves to <slug>.<SITES_DOMAIN> at its next
+      // publish. The netlify.app address keeps working and Netlify redirects it there. A client's own domain stays put.
+      if (sub && !attached && !r.data.custom_domain) {
+        const moved = must(await nf("PATCH", `/sites/${r.data.id}`, { custom_domain: sub }), "move to our domain");
+        await attachSub(moved);
+        return { siteId: moved.id, netlifyHost: hostOf(moved), sub, host: sub };
+      }
       return { siteId: r.data.id, netlifyHost: hostOf(r.data), sub: known.site_sub || (attached ? sub : null), host: r.data.custom_domain || hostOf(r.data) };
     }
     if (r.status !== 404) must(r, "site");
