@@ -1,5 +1,5 @@
 {
-  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 208.43 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0.01, s1 5.85, s2 19.86, s3 32.99, s4 40.92, s5 48.73, s6 55.02, s7 73.2, s8 81.83, s9 89.84, s10 98.56, m1 112.02, m2 116.43, m3 122.09, m4 128.54, m5 134.61, m6 141.13, m7 146.91, m8 153.05, m9 158.7, m10 164.11, m11 170.08, m12 176.05, m13 185.35, m14 189.53, end 195.5, cta 202.13 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). maya.mp3 is Maya's recording of these lines (Eleven v3, 2026-10-17); her pauses are too even to find, so it is cut with --cuts=4.41,11.89,21.49,28.70,32.25,35.89,57.03,63.92,69.16,74.77,82.21,84.77,88.95,91.88,94.46,97.51,100.28,103.37,106.14,108.71,111.57,113.93,118.77,120.87,123.95,127.48.",
+  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 208.43 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0.01, s1 5.85, s2 19.86, s3 32.99, s4 40.92, s5 48.73, s6 55.02, s7 73.2, s8 81.83, s9 89.84, s10 98.56, m1 112.02, m2 116.43, m3 122.09, m4 128.54, m5 134.61, m6 141.13, m7 146.91, m8 153.05, m9 158.7, m10 164.11, m11 170.08, m12 176.05, m13 185.35, m14 189.53, end 195.5, cta 202.13 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). maya.mp3 is Maya's recording of these lines (Eleven v3, 2026-10-17); her pauses are too even to find, so it is cut with --cuts=4.41,11.89,21.49,28.70,32.25,35.89,57.03,63.92,69.16,73.68,81.12,83.68,87.86,90.79,93.37,96.42,99.19,102.28,105.05,107.62,110.48,112.84,117.68,119.78,122.86,125.46.",
   "lines": [
     {
       "beat": "hook",
@@ -50,8 +50,8 @@
     {
       "beat": "s9",
       "at": 90.04,
-      "text": "מאשרים ובוחרים חבילה: נציג AI, עם הצ׳אט והפניות, או נוכחות.",
-      "say": "מאשרים ובוחרים חבילה: נציג A.I, עם הצ׳אט והפניות, או נוכחות."
+      "text": "מאשרים ובוחרים חבילה: נציג AI, עם הצ׳אט והפניות.",
+      "say": "מאשרים ובוחרים חבילה: נציג A.I, עם הצ׳אט והפניות."
     },
     {
       "beat": "s10",
@@ -133,7 +133,7 @@
     {
       "beat": "end",
       "at": 195.7,
-      "text": "שתי חבילות, בלי התחייבות. מחירים סופיים."
+      "text": "בלי התחייבות. מחירים סופיים."
     },
     {
       "beat": "cta",

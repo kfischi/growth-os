@@ -297,7 +297,7 @@ const STEPS = [
   ["עונים על כמה שאלות.", "האתר מתמלא תוך כדי."],
   ["מעלים תמונות.", "שלכם, ושל העבודה."],
   ["עוברים על האתר.", "בדיוק כמו שהוא יעלה."],
-  ["מאשרים ובוחרים חבילה.", "נוכחות, או נציג AI."],
+  ["מאשרים את האתר.", "נציג AI: הצ׳אט והפניות."],
   ["משלמים, והאתר עולה.", "בוחרים כתובת ומשלמים."],
 ];
 async function step(n) {
@@ -555,9 +555,8 @@ try {
   await tap(A("#approveBox .btn"), "מאשרים את האתר", { max: 1.6, hold: 350 });
   await raw(250);
   await zoomTo(A("#approveDlg"), { max: 1.6, pad: 30 });
-  await now("בוחרים חבילה");
-  await point(A("#approveDlg .pkg"), "נציג AI: האתר, הפניות והצ׳אט", 0); await hold(1000);
-  await point(app().locator("#approveDlg .pkg").nth(1), "נוכחות: האתר, וואטסאפ וחיוג", 0); await hold(900);
+  await now("נציג AI, הכול כלול");
+  await point(A("#approveDlg .pkg"), "האתר, הפניות והצ׳אט", 0); await hold(1400);
   await st("unpoint");
   ai.queue.push({ names: ["oren-mayim", "oren-plumber", "instalator-hadera"] }); // the address suggestions (lib/builder.mjs suggestSlugs)
   await tap(A("#approveGo"), "מאשרים", { zoom: false, hold: 300 });
@@ -736,17 +735,16 @@ try {
   await hold(1200);
 
   /* ---------- the end: the packages, and where to start ---------- */
-  beat("end", "שתי חבילות. בלי התחייבות.", "big");
+  beat("end", "נציג AI. בלי התחייבות.", "big");
   await st("slides", []);
-  await p.evaluate(() => window.stage.lines(`<div class="l mid">שתי חבילות. בלי התחייבות<span class="dot">.</span></div>
-<div class="plans">
-  <div class="l plan"><h3>נוכחות</h3><div class="p">1,500 ₪ <small>הקמה</small></div><div class="m">+ 150 ₪ לחודש</div><div class="w">האתר, וואטסאפ וחיוג, דף לכל שירות</div></div>
-  <div class="l plan rec"><span class="tag">המומלץ שלנו</span><h3>נציג AI</h3><div class="p">2,490 ₪ <small>הקמה</small></div><div class="m">+ 290 ₪ לחודש, מחיר השקה נעול</div><div class="w">הכול בנוכחות, ועוד הצ׳אט, המענה בוואטסאפ, הלוח והדוח</div></div>
+  await p.evaluate(() => window.stage.lines(`<div class="l mid">חבילה אחת. בלי התחייבות<span class="dot">.</span></div>
+<div class="plans one">
+  <div class="l plan rec"><h3>נציג AI</h3><div class="p">1,590 ₪ <small>הקמה</small></div><div class="m">+ 290 ₪ לחודש, מחיר השקה נעול</div><div class="w">האתר, הצ׳אט, המענה בוואטסאפ, הלוח והדוח</div></div>
 </div>
 <div class="l fine">המחירים סופיים · מבטלים מתי שרוצים</div>`, true));
   await st("full", true);
-  await raw(80); await st("showN", ".l", 0); await raw(250); await st("showN", ".l", 1); await raw(250); await st("showN", ".l", 2); await raw(250); await st("showN", ".l", 3);
-  cue("שתי חבילות. בלי התחייבות. נוכחות: 1,500 ₪ הקמה, ועוד 150 ₪ לחודש. נציג AI: 2,490 ₪ הקמה, ועוד 290 ₪ לחודש, מחיר השקה נעול. המחירים סופיים. מבטלים מתי שרוצים.");
+  await raw(80); await st("showN", ".l", 0); await raw(250); await st("showN", ".l", 1); await raw(250); await st("showN", ".l", 2);
+  cue("חבילה אחת, בלי התחייבות. נציג AI: 1,590 ₪ הקמה, ועוד 290 ₪ לחודש, מחיר השקה נעול. המחירים סופיים. מבטלים מתי שרוצים.");
   await hold(3200);
   beat("cta", "לבנות את האתר שלי", "big");
   await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div><div class="l tagline">Easy Landing · אתרים שבונים עסקים</div>`, true));

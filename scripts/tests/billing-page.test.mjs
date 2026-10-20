@@ -70,8 +70,8 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
   await check("the next steps", async () => {
     await p.waitForFunction(() => /1\. כתובת לאתר/.test(document.querySelector("#approveBox").textContent));
     assert.equal(await p.isDisabled("text=לתשלום מאובטח"), true, "an address first");
-    assert.match(await p.textContent("#approveBox"), /2,490 ₪ הקמה, ואחר כך 290 ₪ בחודש\./); assert.doesNotMatch(await p.textContent("#approveBox"), /מע״מ/, "final prices, no VAT");
-    assert.match(await p.textContent("#approveBox"), /לתשלום היום: 2,490 ₪/);
+    assert.match(await p.textContent("#approveBox"), /1,590 ₪ הקמה, ואחר כך 290 ₪ בחודש\./); assert.doesNotMatch(await p.textContent("#approveBox"), /מע״מ/, "final prices, no VAT");
+    assert.match(await p.textContent("#approveBox"), /לתשלום היום: 1,590 ₪/);
     assert.match(await p.textContent("#approveBox"), /5,390 ₪: ההקמה ו-12 חודשים במחיר 10/);
   });
   await check("address", async () => {

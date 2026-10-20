@@ -311,6 +311,7 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 r = await J(await adm("POST", { action: "return", id: D.id, note: "" })); assert.equal(r.error, "note_required");
 r = await J(await adm("POST", { action: "return", id: D.id, note: "תחליפו את התמונה הראשית" })); assert.equal(D.status, "returned");
 r = await J(await req("state", { method: "GET" })); assert.equal(r.state.returnNote, "תחליפו את התמונה הראשית");
+r = await J(await req("approve", { body: { package: "presence", plan: "full", rev: D.rev } })); assert.equal(r.status, 422, "only נציג AI is on sale"); assert.equal(r.error, "bad_package");
 r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(D.status, "client_approved"); assert.equal(D.return_note, null);
 r = await J(await adm("POST", { action: "paid", id: D.id })); assert.equal(D.status, "paid");
 // sent back after payment: the owner fixes, approves again, and it goes straight back to paid

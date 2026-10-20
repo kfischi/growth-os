@@ -218,6 +218,7 @@
   .pkg { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; margin: 0; font-weight: 400; }
   .pkg:has(input:checked) { border-color: var(--mint); background: color-mix(in oklab, var(--mint) 7%, #fff); }
   .pkg input { margin-top: 4px; accent-color: var(--mint); width: 18px; height: 18px; }
+  .pkg.one { grid-template-columns: minmax(0, 1fr); cursor: default; border-color: var(--mint); background: color-mix(in oklab, var(--mint) 7%, #fff); }
   .pkg b { display: block; font-size: 17px; }
   .pkg span { color: var(--slate); font-size: 14px; }
   .row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
@@ -366,10 +367,9 @@
 <dialog id="approveDlg" aria-labelledby="t-approve">
   <form method="dialog" id="approveForm">
     <h2 id="t-approve">מאשרים את האתר</h2>
-    <p>בוחרים חבילה ומשלמים, ואחרי התשלום האתר עולה לאוויר. עד התשלום אפשר עוד לשנות.</p>
+    <p>מאשרים ומשלמים, ואחרי התשלום האתר עולה לאוויר. עד התשלום אפשר עוד לשנות.</p>
     <div class="pkgs">
-      <label class="pkg"><input type="radio" name="pkg" value="ai" checked><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 2,490 ₪ הקמה, ו-290 ₪ לחודש (מחיר השקה, נעול לתמיד).</span></div></label>
-      <label class="pkg"><input type="radio" name="pkg" value="presence"><div><b>נוכחות</b><span>האתר, עם כפתורי וואטסאפ ושיחה. 1,500 ₪ הקמה, ו-150 ₪ לחודש.</span></div></label>
+      <div class="pkg one"><div><b>נציג AI</b><span>האתר, מערכת הלידים והצ׳אט החכם. 1,590 ₪ הקמה, ו-290 ₪ לחודש (מחיר השקה, נעול לתמיד).</span></div></div>
     </div>
     <p class="note">המחירים סופיים, וכל תשלום מקבל קבלה. בלי התחייבות: מבטלים מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם.</p>
     <p class="err" id="approveErr" role="alert"></p>
@@ -1481,7 +1481,7 @@
   $('#approveForm').addEventListener('submit', async (e) => {
     if (e.submitter && e.submitter.value === 'cancel') return;
     e.preventDefault();
-    const pkg = $('input[name=pkg]:checked').value, plan = 'full';
+    const pkg = 'ai', plan = 'full';
     $('#approveGo').disabled = true;
     const r = await call('approve', { body: { package: pkg, plan, rev: state.rev } });
     $('#approveGo').disabled = false;
@@ -1497,10 +1497,9 @@
   // In the pilot the approval dialog speaks of no payment: the package is what the site gets, not a price.
   function pilotDialog() {
     if (!state.pilot) return;
-    $('#approveDlg p').textContent = 'זה פיילוט, אז אין תשלום. בוחרים מה יהיה באתר, ואחרי האישור נעבור עליו ונעלה אותו לאוויר.';
-    const [ai, pr] = document.querySelectorAll('#approveDlg .pkg span');
+    $('#approveDlg p').textContent = 'זה פיילוט, אז אין תשלום. אחרי האישור נעבור על האתר ונעלה אותו לאוויר.';
+    const ai = $('#approveDlg .pkg span');
     if (ai) ai.textContent = 'האתר, הצ׳אט החכם ומערכת הפניות.';
-    if (pr) pr.textContent = 'האתר, עם כפתורי וואטסאפ ושיחה.';
     const note = $('#approveDlg .note'); if (note) note.textContent = 'בפיילוט אין תשלום ואין התחייבות. הקבצים של האתר שלכם.';
   }
 

@@ -14,7 +14,8 @@ import { hostingOn, cleanDomain, addDomain, dnsSteps } from "./hosting.mjs";
 import { launchKit } from "./launch.mjs";
 
 // Keep in step with #plans in demos/index.html, the approval dialog in demos/build/index.html and the chats' prompts.
-export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 2490, month: 290 } };
+// One package on sale, נציג AI. נוכחות stays here only for drafts approved before it was dropped; the builder no longer offers it.
+export const PRICES = { presence: { setup: 1500, month: 150 }, ai: { setup: 1590, month: 290 } };
 // The launch monthly of נציג AI (290) is kept for good by whoever subscribes now: the amount is fixed on the
 // subscription (ls_billing.amount) at the first payment, so a later price never reaches them.
 // Monthly only: no prepayment, so no refunds of unused months. BILLING_YEAR=1 turns the year ahead back on.
