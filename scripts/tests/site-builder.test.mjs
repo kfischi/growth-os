@@ -742,6 +742,17 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   // a domain that never points: given up after 30 days, the site stays where it is
   D.domain = "slow.co.il"; D.domain_state = "waiting"; D.domain_since = "2026-01-01T00:00:00Z";
   out = await lib.checkDomains(new Date("2026-03-01T00:00:00Z"), async () => false); assert.equal(D.domain_state, null);
+  // A site published before we had a domain (on *.netlify.app) moves to <slug>.<SITES_DOMAIN> at its next publish
+  delete process.env.SITES_DOMAIN;
+  const early = await H.ensureSite("early-bird");
+  assert.equal(early.host, "early-bird.netlify.app"); assert.equal(early.sub, null);
+  process.env.SITES_DOMAIN = "sites.example.co.il";
+  const later = await H.ensureSite("early-bird", { site_id: early.siteId, site_netlify: early.netlifyHost });
+  assert.deepEqual([later.siteId, later.host, later.sub], [early.siteId, "early-bird.sites.example.co.il", "early-bird.sites.example.co.il"]);
+  assert.equal(nl.sites.get(early.siteId).custom_domain, "early-bird.sites.example.co.il");
+  assert.ok(nl.records.some((x) => x.hostname === "early-bird.sites.example.co.il"), "its DNS record is made");
+  const again = await H.ensureSite("early-bird", { site_id: early.siteId, site_sub: later.sub });
+  assert.equal(again.host, "early-bird.sites.example.co.il", "and it stays there");
   delete process.env.NETLIFY_TOKEN; delete process.env.SITES_DOMAIN;
 }
 
