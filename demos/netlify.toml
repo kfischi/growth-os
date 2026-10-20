@@ -15,6 +15,16 @@
 
 # The sales page used to live at /start/. It is now the home page.
 [[redirects]]
+  from = "/presence"
+  to = "/plumber/"
+  status = 301
+
+[[redirects]]
+  from = "/presence/*"
+  to = "/plumber/"
+  status = 301
+
+[[redirects]]
   from = "/start"
   to = "/"
   status = 301

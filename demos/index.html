@@ -103,6 +103,9 @@ html.a11y-still .reveal { opacity: 1; transform: none; }
 .hero { padding-block: clamp(36px, 7svh, 84px) clamp(64px, 10svh, 112px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px clamp(32px, 5vw, 80px); align-items: center; }
 .hero-text { min-width: 0; display: grid; justify-items: start; gap: 22px; }
+.hero-id { grid-column: 1 / -1; min-width: 0; display: grid; justify-items: start; gap: 12px; padding-bottom: clamp(4px, 1.4vw, 14px); border-bottom: 1px solid var(--silver); }
+.hero-what { font: 700 clamp(1.15rem, 1.9vw, 1.55rem)/1.35 var(--display); letter-spacing: -.01em; color: var(--ink); max-width: 46ch; text-wrap: pretty; }
+.hero-what b { color: var(--violet); }
 .tagline { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 12px; border-radius: 999px; background: var(--lilac); color: var(--ink); font-size: .92rem; font-weight: 500; }
 .tagline i { inline-size: 8px; block-size: 8px; border-radius: 50%; background: var(--fuchsia); box-shadow: 0 0 0 4px color-mix(in oklab, var(--fuchsia) 18%, transparent); }
 h1 { font: 800 clamp(2.2rem, 3.6vw, 3.5rem)/1.04 var(--display); letter-spacing: -.04em; }
@@ -182,14 +185,11 @@ h1 .two { color: var(--violet); }
 .plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .plan { position: relative; min-width: 0; display: grid; align-content: start; gap: 12px; padding: clamp(20px, 2.4vw, 30px); border-radius: 24px; background: #fff; border: 1px solid var(--silver); transition: border-color .35s, box-shadow .35s, transform .45s var(--ease); }
 .plan.top { border-color: var(--violet); box-shadow: 0 0 0 1px var(--violet), 0 30px 60px -42px rgb(84 40 224 / .55); transform: translateY(-4px); }
-.plans { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; }
+.plans { grid-template-columns: minmax(0, 1fr); max-inline-size: 860px; margin-inline: auto; inline-size: 100%; }
+@media (min-width: 760px) { .plan.top .inc { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; } }
 .plan.top { border-width: 2px; box-shadow: 0 0 0 4px rgb(84 40 224 / .12), 0 0 46px -6px rgb(84 40 224 / .42), 0 34px 70px -40px rgb(84 40 224 / .6); }
 .plan.top .amount b { font-size: clamp(2.6rem, 4.4vw, 3.4rem); }
-.plan.basic { background: var(--paper, #fcfbff); border-color: var(--silver); box-shadow: none; opacity: .92; margin-top: 18px; }
-.plan.basic h3 { font-size: 1.2rem; } .plan.basic h3 small { font: 500 .95rem/1.3 var(--body); color: var(--ink-2); }
-.plan.basic .amount b { font-size: 1.9rem; } .plan.basic .inc { font-size: .92rem; }
 .plan-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; }
-.rec { flex: none; inline-size: max-content; padding: 4px 12px; border-radius: 999px; background: var(--violet); color: #fff; font-size: .82rem; font-weight: 600; }
 .plan[data-plan="ai"] { border-color: var(--lilac-2); background: linear-gradient(180deg, var(--lilac) 0, #fff 120px); }
 .plan h3 { font: 800 1.6rem/1.1 var(--display); letter-spacing: -.02em; }
 .plan-for { color: var(--ink-2); font-size: .97rem; }
@@ -326,7 +326,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .vs-note { margin-top: 22px; font-weight: 700; font-size: 1.15rem; }
 .why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .why .group p { color: var(--ink-2); font-size: .98rem; }
-.groups-note { margin-top: 20px; color: var(--ink-2); font-size: .97rem; }
 .faq-grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: 24px clamp(32px, 6vw, 96px); }
 .faq-grid > * { min-width: 0; }
 .faq details { border-top: 1px solid var(--silver); }
@@ -454,7 +453,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .clip { flex: 0 0 min(74vw, 300px); scroll-snap-align: center; }
   .bar .btn { margin-inline-start: auto; }
   .hero .wrap, .pick, .price-grid, .try-grid, .loss-grid, .faq-grid { grid-template-columns: minmax(0, 1fr); }
-  .hero .reel { order: -1; } /* on phones and tablets the film comes first, above the headline */
+  .hero-id { order: -2; } /* who we are comes first, everywhere */
+  .hero .reel { order: -1; } /* then, on phones and tablets, the film, above the headline */
   .steps { grid-template-columns: minmax(0, 1fr); border-top: 0; }
   .steps li { grid-template-columns: 40px minmax(0, 1fr); padding: 16px 0; border-inline-start: 0; border-top: 1px solid var(--silver); gap: 2px 12px; }
   .steps li .n { grid-row: span 2; padding-top: 4px; }
@@ -487,7 +487,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .pick-note { margin-top: 8px; }
   .stage { margin-inline: calc(var(--gut) * -.5); border-radius: 22px; }
   .plans { grid-template-columns: minmax(0, 1fr); }
-  .plan.basic { margin-top: 0; }
   .duo { grid-template-columns: minmax(0, 1fr); margin-inline: calc(var(--gut) * -.5); padding: 14px; border-radius: 22px; }
   .wa-phone { block-size: 360px; }
   .lock { block-size: auto; min-block-size: 230px; padding-top: 22px; }
@@ -515,8 +514,11 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   <!-- 1 · hero -->
   <section class="hero" id="hero" aria-labelledby="t-hero">
     <div class="wrap">
+      <div class="hero-id">
+        <p class="tagline"><i aria-hidden="true"></i>נחיתה רכה · אתרים שבונים עסקים</p>
+        <p class="hero-what"><b>Easy Landing</b> בונה אתרים לעסקים קטנים, עם נציג AI שעונה ללקוחות ומעביר כל פנייה לוואטסאפ<span class="dot">.</span></p>
+      </div>
       <div class="hero-text">
-        <p class="tagline"><i aria-hidden="true"></i>נחיתה רכה · הבית של העסקים הקטנים</p>
         <h1 id="t-hero"><span>באמצע עבודה ולא פנוי לענות?</span><span class="two">האתר שלך עונה ללקוחות בוואטסאפ תוך&nbsp;שניות<span class="dot">.</span></span></h1>
         <p class="hero-sub"><b>בונים אתר לעסק. מקבלים פניות לוואטסאפ. סוגרים עבודות.</b>אתר מודרני מותאם לנייד, עם נציג AI שעונה מהמחירון שלך ושומר כל פנייה – גם כשאתה על הסולם או בנהיגה. 0&nbsp;₪ מקדמה, משלמים רק כשהאתר מוכן.</p>
         <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn line" href="film/">סרטון הסבר</a></div>
@@ -603,7 +605,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             </div>
           </div>
         </div>
-        <p class="sim-note">המענה והתזכורות פועלים בחבילת נציג AI. את נוסח ההודעה אתם מאשרים.</p>
+        <p class="sim-note">המענה והתזכורות כלולים בחבילה. את נוסח ההודעה אתם מאשרים.</p>
       </div>
     </div>
   </section>
@@ -646,11 +648,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       </div>
       <div class="why">
         <section class="group reveal"><h3>רואים לפני שמשלמים</h3><p>בונים בצ׳אט ורואים את האתר המלא, עם הטקסטים והתמונות שלכם. לא אהבתם? לא משלמים.</p></section>
-        <section class="group reveal"><h3>עונה גם כשאתם על הסולם <em class="ai">נציג AI</em></h3><p>כל פנייה מקבלת מענה בוואטסאפ מהמספר שלכם תוך שניות, ואליכם מגיעה התראה.</p></section>
+        <section class="group reveal"><h3>עונה גם כשאתם עסוקים</h3><p>כל פנייה מקבלת מענה בוואטסאפ מהמספר שלכם תוך שניות, ואליכם מגיעה התראה.</p></section>
         <section class="group reveal"><h3>לא ממציא מחירים</h3><p>הצ׳אט עונה רק ממה שכתבתם: שירותים, טווחים ואזורים. מה שהוא לא יודע, עובר אליכם.</p></section>
         <section class="group reveal"><h3>בלי לחכות למעצב</h3><p>מחיר השתנה? כותבים בצ׳אט, והאתר מתעדכן. כלול בתשלום החודשי.</p></section>
-        <section class="group reveal"><h3>הכול על שמכם</h3><p>הדומיין על שמכם, הקבצים שלכם. מבטלים מתי שרוצים.</p></section>
-        <section class="group reveal"><h3>המספר שלכם מוגן <em class="ai">נציג AI</em></h3><p>רק החיבור הרשמי של WhatsApp. בלי תוכנות עקיפות שגורמות לחסימת מספרים.</p></section>
+        <section class="group reveal"><h3>המספר שלכם מוגן</h3><p>רק החיבור הרשמי של WhatsApp. בלי תוכנות עקיפות שגורמות לחסימת מספרים.</p></section>
       </div>
     </div>
   </section>
@@ -701,11 +702,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <h2 id="t-what">מהשאלה הראשונה ועד הביקורת בגוגל<span class="dot">.</span></h2>
       </div>
       <div class="groups">
-        <section class="group reveal" aria-labelledby="g1"><h3 id="g1">מה הלקוח רואה</h3><ul><li>צ׳אט שמסכם כל פנייה <em class="ai">נציג AI</em></li><li>מחשבון ״כמה זה יעלה?״</li><li>מדריכים מהתחום, גם בשביל גוגל</li><li>לפני ואחרי, וסרטון קצר</li><li>אייקונים לרשתות החברתיות שלכם</li></ul></section>
-        <section class="group reveal" aria-labelledby="g2"><h3 id="g2">כשמישהו פונה <em class="ai">נציג AI</em></h3><ul><li>מענה בוואטסאפ, מהמספר שלכם</li><li>התראה עם כפתור ״טיפלתי״</li><li>הלקוח מצרף תמונה ובוחר מתי לחזור</li><li>כל הפניות בלוח אחד</li></ul></section>
-        <section class="group reveal" aria-labelledby="g3"><h3 id="g3">להמשך <em class="ai">נציג AI</em></h3><ul><li>קישור וקוד QR לכל קבוצה</li><li>כותבים ״עסוק״, והאתר מתעדכן</li><li>בקשה לביקורת בגוגל, באישורכם</li><li>דוח חודשי וסטטיסטיקות</li></ul></section>
+        <section class="group reveal" aria-labelledby="g1"><h3 id="g1">מה הלקוח רואה</h3><ul><li>צ׳אט שמסכם כל פנייה</li><li>מחשבון ״כמה זה יעלה?״</li><li>מדריכים מהתחום, גם בשביל גוגל</li><li>לפני ואחרי, וסרטון קצר</li><li>אייקונים לרשתות החברתיות שלכם</li></ul></section>
+        <section class="group reveal" aria-labelledby="g2"><h3 id="g2">כשמישהו פונה</h3><ul><li>מענה בוואטסאפ, מהמספר שלכם</li><li>התראה עם כפתור ״טיפלתי״</li><li>הלקוח מצרף תמונה ובוחר מתי לחזור</li><li>כל הפניות בלוח אחד</li></ul></section>
+        <section class="group reveal" aria-labelledby="g3"><h3 id="g3">להמשך</h3><ul><li>קישור וקוד QR לכל קבוצה</li><li>כותבים ״עסוק״, והאתר מתעדכן</li><li>בקשה לביקורת בגוגל, באישורכם</li><li>דוח חודשי וסטטיסטיקות</li></ul></section>
       </div>
-      <p class="groups-note reveal">בנוכחות: הדף, המחשבון, המדריכים, לפני ואחרי וכפתורי וואטסאפ וחיוג. בנציג AI: הכול.</p>
     </div>
   </section>
 
@@ -737,31 +737,22 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     <div class="wrap">
       <div class="head reveal">
         <p class="kicker">מחירים</p>
-        <h2 id="t-plans">שתי חבילות. בלי התחייבות<span class="dot">.</span></h2>
+        <h2 id="t-plans">חבילה אחת. בלי התחייבות<span class="dot">.</span></h2>
         <p class="sub">הקמה פעם אחת, ותשלום חודשי שכולל אחסון, תחזוקה ומעקב.</p>
       </div>
       <div class="price-grid">
         <div class="plans">
           <article class="plan top reveal" data-plan="ai">
-            <div class="plan-head"><h3>נציג AI</h3><span class="rec">המומלץ שלנו</span></div>
+            <div class="plan-head"><h3>נציג AI</h3></div>
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
             <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>במחיר השקה</b> – נהנים מהנחה קבועה במחיר החודשי, לתמיד.</span></p>
-            <p class="amount"><b><bdi>2,490 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
+            <p class="amount"><b><bdi>1,590 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
             <p class="per" data-m="290" data-was="390"></p>
             <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
             <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
-            <p class="inc-n"><b>17</b> דברים כלולים: כל מה שבנוכחות, ועוד</p>
-            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, וקישור מתויג לכל רשת: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
+            <p class="inc-n"><b>17</b> דברים כלולים</p>
+            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, וקישור מתויג לכל רשת: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
             <a class="btn" href="build/">לבנות את האתר שלי</a>
-          </article>
-          <article class="plan basic reveal" data-plan="p">
-            <h3>נוכחות בסיסית <small>(בלי נציג AI)</small></h3>
-            <p class="plan-for">לעסק שצריך מקום אחד לשלוח אליו לקוחות.</p>
-            <p class="amount"><b><bdi>1,500 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
-            <p class="per" data-m="150"></p>
-            <p class="inc-n"><b>9</b> דברים כלולים</p>
-            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, מחוברים לפרופילים שלכם</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li></ul>
-            <a class="btn line" href="build/">לבנות דף נוכחות</a>
           </article>
         </div>
       </div>
@@ -786,7 +777,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים.</p></details>
         <details><summary>יש לי וואטסאפ ופייסבוק. למה צריך אתר?</summary><p>מי שלא מכיר אתכם מחפש בגוגל. אתר אפשר למצוא שם, קבוצה בפייסבוק לא. והאתר עונה גם כשאתם לא זמינים.</p></details>
         <details><summary>משלמים לפני שרואים?</summary><p>לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים.</p></details>
-        <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. בנציג AI מחברים גם את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ.</p></details>
+        <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. אחר כך מחברים את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ.</p></details>
         <details><summary>יש התחייבות?</summary><p>לא. מבטלים מתי שרוצים, מהבונה, בלחיצה. מה ששולם פעיל עד סוף התקופה, ואחר כך לא מחייבים יותר.</p></details>
         <details><summary>על שם מי הדומיין?</summary><p>על שמכם. האתר מאוחסן אצלנו, וכל הקבצים שלו שלכם: אם תעזבו, נעביר אותם אליכם.</p></details>
         <details><summary>החיבור לוואטסאפ בטוח למספר של העסק?</summary><p>כן. באתר בתשלום החיבור נעשה דרך הממשק הרשמי של Meta ‏(WhatsApp Cloud API), לא דרך תוכנה לא רשמית שעלולה לגרום לחסימת המספר. אנחנו לא מקבלים גישה לשיחות הפרטיות שלכם.</p></details>

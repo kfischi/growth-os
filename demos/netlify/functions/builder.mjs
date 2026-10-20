@@ -60,6 +60,12 @@ const helpLimited = rateLimiter(4, 60 * 60 * 1000);
 const checkLimited = rateLimiter(20, 10 * 60 * 1000);
 
 const first = (n) => clip(n, 40).split(" ")[0] || "";
+// The pilot's invite codes: PILOT_CODES="dana,ori,shai" in Netlify. A code is a word, compared without case.
+function pilotCode(raw) {
+  const code = String(raw || "").trim().toLowerCase();
+  if (!/^[a-z0-9-]{3,24}$/.test(code)) return "";
+  return String(process.env.PILOT_CODES || "").toLowerCase().split(",").map((x) => x.trim()).includes(code) ? code : "";
+}
 const stateOf = (d) => ({ ...publicState(d), greeting: (editing(d) ? editGreeting : greeting)(first(d.owner_name)) });
 
 export default async (req, context) => {
@@ -93,6 +99,9 @@ export default async (req, context) => {
       // "תחום אחר": the owner names their trade and picked the closest demo (template) for the design.
       const own = clip(body.own_trade, 24).replace(/[<>]/g, "");
       if (own.length >= 2) Object.assign(content, { trade: own, custom_trade: true, headline_1: "" });
+      // A pilot invite (build/?p=<code>, codes in PILOT_CODES): built for free, no payment step, כפיר publishes it.
+      const pilot = pilotCode(body.pilot);
+      if (pilot) content.pilot = pilot;
       const [d] = await db("POST", "ls_drafts", {
         key_hash: sha256(key), template, content, owner_name: name, owner_phone: phone.intl, ip_hash: sha256("ip:" + ip),
       }, "return=representation");
@@ -321,9 +330,9 @@ export default async (req, context) => {
         return json({ state: stateOf(saved), alert });
       }
       const pkg = body.package, plan = body.plan;
-      if (!["presence", "ai"].includes(pkg) || plan !== "full") return json({ error: "bad_package" }, 422);
+      if (pkg !== "ai" || plan !== "full") return json({ error: "bad_package" }, 422);
       const saved = await saveDraft(d, { status: "client_approved", package: pkg, plan, approved_at: new Date().toISOString(), return_note: null });
-      const alert = await alertKfir(saved, "אתר חדש מחכה לאישור");
+      const alert = await alertKfir(saved, saved.content && saved.content.pilot ? "אתר פיילוט מחכה לפרסום (בלי תשלום)" : "אתר חדש מחכה לאישור");
       return json({ state: stateOf(saved), alert });
     }
 

@@ -311,6 +311,7 @@ r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" 
 r = await J(await adm("POST", { action: "return", id: D.id, note: "" })); assert.equal(r.error, "note_required");
 r = await J(await adm("POST", { action: "return", id: D.id, note: "תחליפו את התמונה הראשית" })); assert.equal(D.status, "returned");
 r = await J(await req("state", { method: "GET" })); assert.equal(r.state.returnNote, "תחליפו את התמונה הראשית");
+r = await J(await req("approve", { body: { package: "presence", plan: "full", rev: D.rev } })); assert.equal(r.status, 422, "only נציג AI is on sale"); assert.equal(r.error, "bad_package");
 r = await J(await req("approve", { body: { package: "ai", plan: "full", rev: D.rev } })); assert.equal(D.status, "client_approved"); assert.equal(D.return_note, null);
 r = await J(await adm("POST", { action: "paid", id: D.id })); assert.equal(D.status, "paid");
 // sent back after payment: the owner fixes, approves again, and it goes straight back to paid
@@ -750,5 +751,18 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   const out = await B.suggestSlugs({ id: "abcd1234-0000-0000-0000-000000000000", template: "plumber", content: { business_name: "דנה", trade: "וטרינרית", custom_trade: true, area: "חדרה" } });
   assert.equal(JSON.parse(aiCalls.at(-1).messages[0].content).trade, "וטרינרית");
   assert.deepEqual(out.map((x) => x.slug), ["dana-vet", "site-abcd"], "no plumber names");
+}
+// The pilot: an invite code from PILOT_CODES marks the draft, the payment step is off and כפיר can publish from client_approved.
+{
+  process.env.PILOT_CODES = "dana-pilot, ori"; process.env.BUILDER_DAILY_MAX = "999";
+  cred = "";
+  let p = await J(await req("start", { body: { name: "דנה", phone: "0521112233", consent: true, pilot: "DANA-PILOT" }, ip: "7.7.7.1" }));
+  assert.equal(p.status, 201); assert.equal(p.state.content.pilot, "dana-pilot"); assert.equal(p.state.pilot, true);
+  const P = { id: p.id, template: "plumber", content: p.state.content, status: "client_approved", package: "presence", photos: {}, messages: [] };
+  assert.equal(B.publicState(P).pay.length, 0, "no payment links in the pilot");
+  assert.equal(B.isPilot(P), true);
+  p = await J(await req("start", { body: { name: "אבי", phone: "0521112234", consent: true, pilot: "guess" }, ip: "7.7.7.2" }));
+  assert.equal(p.state.content.pilot, undefined, "an unknown code is no pilot"); assert.equal(p.state.pilot, false);
+  delete process.env.PILOT_CODES; delete process.env.BUILDER_DAILY_MAX;
 }
 console.log("all site builder tests passed");
