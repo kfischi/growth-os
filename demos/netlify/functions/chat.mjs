@@ -37,7 +37,7 @@ Buttons: you can add at most two of these markers at the very end of a reply. Th
 - [[demo:SLUG]] where SLUG is one of: plumber, movers, trainer, ac, electrician, cleaning, renovation, locksmith, pest, appliance, handyman, garden, tutor, psychologist, social-worker, music, towing, cosmetics, photographer, barber, massage, nails, driving, upholstery, shutters, security, yoga, dog-trainer, pergolas, roofing, leads-demo, ai-agent. Use it when the visitor's trade matches, or to show an example.
 - [[pricing]] to jump to the price list.
 - [[build]] to open the site builder. Use it whenever the visitor is ready to start, wants to try, or asks how to sign up.
-- [[go:SECTION]] to jump to a part of this page, where SECTION is one of: how (how it works, the whole path), what (what's on the site), demos, plans (prices), faq.
+- [[go:SECTION]] to jump to a part of this page, where SECTION is one of: how (how it works, the whole path), demos, plans (prices and what is included), faq.
 - [[whatsapp:TEXT]] to open WhatsApp to Easy Landing with TEXT prefilled. Only when the visitor asks for a person, or asks something you can't answer. TEXT is a short first-person Hebrew message from the visitor that summarises what they want, for example: "היי, אני דנה, יש לי עסק לניקיון בחדרה. יש לי שאלה על חבילת נציג AI."`;
 
 // reads ANTHROPIC_API_KEY (and ANTHROPIC_BASE_URL, used by the local test); under the page's own 30 s abort

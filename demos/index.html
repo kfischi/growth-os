@@ -503,7 +503,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <b>Easy Landing</b><small>אתרים שבונים עסקים</small>
     </a>
     <nav class="nav" id="nav" aria-label="ניווט">
-      <a href="#try">איך זה נראה</a><a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
+      <a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
     <a class="btn sm" href="build/">לבנות את האתר</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="תפריט"><i></i><i></i><i></i></button>
@@ -553,109 +553,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
-  <!-- 1c · only on Instagram? the gap the site closes -->
-  <section class="sec" id="insta" aria-labelledby="t-insta">
-    <div class="wrap">
-      <div class="head reveal">
-        <p class="kicker">רק באינסטגרם?</p>
-        <h2 id="t-insta">מסתמכים רק על פוסטים, אינסטגרם או מפה לאוזן<span class="dot">?</span></h2>
-        <p class="sub">לקוח שחבר המליץ לו עליכם, או מישהו שצריך בעל מקצוע עכשיו, מחפש אתכם בגוגל. אם אין אתר שעונה מיד בוואטסאפ, הוא עובר לבא בתור.</p>
-      </div>
-      <div class="vs">
-        <section class="vs-card reveal" aria-labelledby="vs1"><h3 id="vs1">רק באינסטגרם</h3><ul><li>מוצאים אתכם רק מי שכבר עוקבים</li><li>שאלה על מחיר מחכה בהודעות</li><li>לקוח בלי חשבון לא יכול לפנות</li><li>המלצה מחבר עוברת כשם משתמש</li></ul></section>
-        <section class="vs-card yes reveal" aria-labelledby="vs2"><h3 id="vs2">עם אתר שעונה</h3><ul><li>אפשר למצוא אתכם בגוגל, גם בלי חשבון</li><li>טווח מחיר מיד, בצ׳אט</li><li>לחיצה אחת, והלקוח אצלכם בוואטסאפ</li><li>המלצה מחבר היא קישור אחד</li></ul></section>
-      </div>
-      <p class="vs-note reveal">האינסטגרם נשאר. האתר הוא הכתובת שלכם.</p>
-    </div>
-  </section>
-
-  <!-- 2 · an enquiry, from both sides -->
-  <section class="sec field" id="try" aria-labelledby="t-try">
-    <div class="wrap try-grid">
-      <div class="reveal">
-        <p class="kicker">נסו: שלחו פנייה</p>
-        <h2 id="t-try">ככה נראית פנייה, משני הצדדים<span class="dot">.</span></h2>
-        <p class="sub">כתבו שאלה כמו לקוח. רואים מה הלקוח מקבל, ומה מגיע אליכם.</p>
-        <form class="ask" id="ask">
-          <div class="ask-chips" role="group" aria-label="שאלות לדוגמה"><button type="button">כמה זה עולה?</button><button type="button">אפשר להגיע היום?</button><button type="button">אתם עובדים באזור שלי?</button></div>
-          <div class="ask-row"><label for="askText">השאלה שלכם</label><input id="askText" maxlength="70" autocomplete="off" placeholder="או כתבו שאלה משלכם"><button class="btn" type="submit">לשלוח</button></div>
-        </form>
-        <ol class="trail" id="trail">
-          <li>הלקוח שולח שאלה מהאתר</li>
-          <li>מענה בוואטסאפ, מהמספר של העסק</li>
-          <li>התראה אליכם, עם כפתור ״טיפלתי״</li>
-          <li>לא סימנתם? מגיעה תזכורת</li>
-        </ol>
-      </div>
-      <div class="reveal">
-        <span class="demo-tag">המחשה. לא נשלחת הודעה אמיתית</span>
-        <div class="duo">
-          <div class="dev-cust">
-            <p class="dev-label"><i aria-hidden="true"></i>הטלפון של הלקוח</p>
-            <div class="wa-phone" role="log" aria-label="וואטסאפ של הלקוח">
-              <div class="wa-top"><span class="av" id="waAv" aria-hidden="true"></span><span><b id="waName">אורן מים</b><small>חשבון עסקי</small></span></div>
-              <div class="wa-feed" id="feed"></div>
-            </div>
-          </div>
-          <div class="dev-owner">
-            <p class="dev-label"><i aria-hidden="true"></i>הטלפון שלכם</p>
-            <div class="lock" id="lock" role="log" aria-label="התראות בטלפון של בעל העסק">
-              <p class="clock" data-now>21:47</p>
-              <p class="lock-day">התראות</p>
-            </div>
-          </div>
-        </div>
-        <p class="sim-note">המענה והתזכורות כלולים בחבילה. את נוסח ההודעה אתם מאשרים.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3 · lost enquiries -->
-  <section class="sec" id="loss" aria-labelledby="t-loss">
-    <div class="wrap loss-grid">
-      <div class="reveal">
-        <p class="kicker">המספרים שלכם</p>
-        <h2 id="t-loss">כמה פניות הולכות לכם לאיבוד?</h2>
-        <p class="sub">הזיזו את הסמנים לפי העסק שלכם. החישוב לא נשמר.</p>
-        <form class="sliders" id="lossForm" onsubmit="return false">
-          <label for="lMissed">שיחות והודעות שלא עניתם להן ביום <output for="lMissed" id="oMissed">2</output></label>
-          <input type="range" id="lMissed" min="0" max="10" step="1" value="2">
-          <label for="lDays">ימי עבודה בחודש <output for="lDays" id="oDays">22</output></label>
-          <input type="range" id="lDays" min="10" max="30" step="1" value="22">
-          <label for="lRate">כמה מהן היו הופכות לעבודה <output for="lRate" id="oRate">30%</output></label>
-          <input type="range" id="lRate" min="5" max="80" step="5" value="30">
-          <label for="lValue">כמה שווה עבודה ממוצעת <output for="lValue" id="oValue">450 ₪</output></label>
-          <input type="range" id="lValue" min="100" max="5000" step="50" value="450">
-        </form>
-      </div>
-      <div class="result reveal" aria-live="polite">
-        <p class="lbl">בחודש, לפי המספרים שלכם</p>
-        <p class="big" id="rLeads">44</p>
-        <p class="big-cap">פניות בלי מענה</p>
-        <div class="split"><p>עבודות, בערך<b id="rJobs">13</b></p><p>שוות בערך<b id="rMoney">5,940 ₪</b></p></div>
-        <p class="note">אלה לקוחות שכבר פנו אליכם. אתר שעונה דואג שלא ילכו לאיבוד.</p>
-        <a class="btn" href="build/">לבנות אתר שעונה</a>
-      </div>
-    </div>
-  </section>
-
-    <!-- 4b · why here: each card answers a fear -->
-  <section class="sec" id="why" aria-labelledby="t-why">
-    <div class="wrap">
-      <div class="head reveal">
-        <p class="kicker">למה כאן</p>
-        <h2 id="t-why">אתר שעונה, לא רק אתר שנראה טוב<span class="dot">.</span></h2>
-      </div>
-      <div class="why">
-        <section class="group reveal"><h3>רואים לפני שמשלמים</h3><p>בונים בצ׳אט ורואים את האתר המלא, עם הטקסטים והתמונות שלכם. לא אהבתם? לא משלמים.</p></section>
-        <section class="group reveal"><h3>עונה גם כשאתם עסוקים</h3><p>כל פנייה מקבלת מענה בוואטסאפ מהמספר שלכם תוך שניות, ואליכם מגיעה התראה.</p></section>
-        <section class="group reveal"><h3>לא ממציא מחירים</h3><p>הצ׳אט עונה רק ממה שכתבתם: שירותים, טווחים ואזורים. מה שהוא לא יודע, עובר אליכם.</p></section>
-        <section class="group reveal"><h3>בלי לחכות למעצב</h3><p>מחיר השתנה? כותבים בצ׳אט, והאתר מתעדכן. כלול בתשלום החודשי.</p></section>
-        <section class="group reveal"><h3>המספר שלכם מוגן</h3><p>רק החיבור הרשמי של WhatsApp. בלי תוכנות עקיפות שגורמות לחסימת מספרים.</p></section>
-      </div>
-    </div>
-  </section>
-
 <!-- 4 · how it works -->
   <section class="sec field" id="how" aria-labelledby="t-how">
     <div class="wrap">
@@ -694,23 +591,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     </div>
   </section>
 
-  <!-- 5 · what is on the site -->
-  <section class="sec" id="what" aria-labelledby="t-what">
-    <div class="wrap">
-      <div class="head reveal">
-        <p class="kicker">מה יש באתר</p>
-        <h2 id="t-what">מהשאלה הראשונה ועד הביקורת בגוגל<span class="dot">.</span></h2>
-      </div>
-      <div class="groups">
-        <section class="group reveal" aria-labelledby="g1"><h3 id="g1">מה הלקוח רואה</h3><ul><li>צ׳אט שמסכם כל פנייה</li><li>מחשבון ״כמה זה יעלה?״</li><li>מדריכים מהתחום, גם בשביל גוגל</li><li>לפני ואחרי, וסרטון קצר</li><li>אייקונים לרשתות החברתיות שלכם</li></ul></section>
-        <section class="group reveal" aria-labelledby="g2"><h3 id="g2">כשמישהו פונה</h3><ul><li>מענה בוואטסאפ, מהמספר שלכם</li><li>התראה עם כפתור ״טיפלתי״</li><li>הלקוח מצרף תמונה ובוחר מתי לחזור</li><li>כל הפניות בלוח אחד</li></ul></section>
-        <section class="group reveal" aria-labelledby="g3"><h3 id="g3">להמשך</h3><ul><li>קישור וקוד QR לכל קבוצה</li><li>כותבים ״עסוק״, והאתר מתעדכן</li><li>בקשה לביקורת בגוגל, באישורכם</li><li>דוח חודשי וסטטיסטיקות</li></ul></section>
-      </div>
-    </div>
-  </section>
-
   <!-- 6 · examples: pick your trade -->
-  <section class="sec field" id="demos" aria-labelledby="t-trades">
+  <section class="sec" id="demos" aria-labelledby="t-trades">
     <div class="wrap pick">
       <div>
         <div class="head reveal">
@@ -733,7 +615,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   </section>
 
   <!-- 7 · prices -->
-  <section class="sec" id="plans" aria-labelledby="t-plans">
+  <section class="sec field" id="plans" aria-labelledby="t-plans">
     <div class="wrap">
       <div class="head reveal">
         <p class="kicker">מחירים</p>
@@ -767,7 +649,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   </section>
 
   <!-- 8 · questions -->
-  <section class="sec field" id="faq" aria-labelledby="t-faq">
+  <section class="sec" id="faq" aria-labelledby="t-faq">
     <div class="wrap faq-grid">
       <div class="reveal">
         <p class="kicker">שאלות</p>
@@ -775,7 +657,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       </div>
       <div class="faq reveal">
         <details><summary>צריך להבין בטכנולוגיה?</summary><p>לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים.</p></details>
-        <details><summary>יש לי וואטסאפ ופייסבוק. למה צריך אתר?</summary><p>מי שלא מכיר אתכם מחפש בגוגל. אתר אפשר למצוא שם, קבוצה בפייסבוק לא. והאתר עונה גם כשאתם לא זמינים.</p></details>
+        <details><summary>יש לי אינסטגרם ופייסבוק. למה צריך אתר?</summary><p>מי שלא מכיר אתכם מחפש בגוגל. אתר אפשר למצוא שם, קבוצה בפייסבוק לא. והאתר עונה גם כשאתם לא זמינים.</p></details>
+        <details><summary>הנציג ימציא מחירים?</summary><p>לא. הוא עונה רק ממה שכתבתם: שירותים, טווחי מחירים ואזורים. מה שהוא לא יודע, הוא מעביר אליכם.</p></details>
         <details><summary>משלמים לפני שרואים?</summary><p>לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים.</p></details>
         <details><summary>כמה זמן לוקח?</summary><p>את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. אחר כך מחברים את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ.</p></details>
         <details><summary>יש התחייבות?</summary><p>לא. מבטלים מתי שרוצים, מהבונה, בלחיצה. מה ששולם פעיל עד סוף התקופה, ואחר כך לא מחייבים יותר.</p></details>
@@ -880,69 +763,19 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     stage.style.backgroundColor = tint(t);
     $('#nowName').textContent = `${t.name} · ${t.trade}`;
     $('#toDemo').href = `${t.id}/`; $('#toBuild').href = `build/?t=${t.id}`;
-    $('#waName').textContent = t.name; $('#waAv').style.backgroundImage = `url(${P}${t.photo}.webp)`;
   };
   chips.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (b) pick(+b.dataset.i); });
   cats.addEventListener('click', (e) => { const b = e.target.closest('button[data-cat]'); if (!b || b.getAttribute('aria-pressed') === 'true') return;
     $$('button', cats).forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     const i = T.findIndex((t) => t.cat === b.dataset.cat); cur = null; chipsOf(b.dataset.cat); pick(i); });
   screen.appendChild(siteFor(cur)); stage.style.backgroundColor = tint(cur);
-  $('#nowName').textContent = `${cur.name} · ${cur.trade}`; $('#waAv').style.backgroundImage = `url(${P}${cur.photo}.webp)`;
+  $('#nowName').textContent = `${cur.name} · ${cur.trade}`;
 
   /* ---- 3 · the prices: the monthly line, with the launch price over the struck-through regular one ---- */
   (() => {
     const nis = (n) => `<bdi>${n.toLocaleString('he-IL')} ₪</bdi>`;
     $$('.plan .per').forEach((el) => { const m = +el.dataset.m, was = +el.dataset.was;
       el.innerHTML = (was ? `<s>${nis(was)}</s> ` : '') + `${nis(m)} לחודש<small>${was ? 'מחיר השקה, נעול לתמיד. ' : ''}מבטלים מתי שרוצים</small>`; });
-  })();
-
-  /* ---- 4 · an enquiry, from both sides: scripted, nothing is sent ---- */
-  (() => {
-    const form = $('#ask'), input = $('#askText'), feed = $('#feed'), lock = $('#lock'), steps = $$('#trail li');
-    let timers = [];
-    const later = (ms, fn) => timers.push(setTimeout(fn, still() ? 0 : ms));
-    const stepOn = (n) => steps.forEach((li, i) => li.classList.toggle('on', i < n));
-    const add = (box, el) => { box.appendChild(el); if (still()) el.classList.add('in'); else requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in'))); return el; };
-    const msg = (cls, html) => { const m = document.createElement('div'); m.className = 'msg ' + cls; m.innerHTML = html; return m; };
-    const run = (q) => {
-      q = q.trim().slice(0, 70); if (!q) { input.focus(); return; }
-      timers.forEach(clearTimeout); timers = []; feed.replaceChildren(); $$('.alert', lock).forEach((a) => a.remove()); stepOn(0);
-      const t = hhmm(), me = add(feed, msg('me', `${esc(q)}<span class="meta"><span class="mono">${t}</span><span class="ticks">✓</span></span>`));
-      stepOn(1);
-      const typing = document.createElement('div'); typing.className = 'typing'; typing.innerHTML = '<i></i><i></i><i></i>';
-      later(700, () => { $('.ticks', me).textContent = '✓✓'; feed.appendChild(typing); typing.classList.add('in'); });
-      later(2300, () => { typing.remove(); $('.ticks', me).classList.add('read');
-        add(feed, msg('them', `היי, כאן ${esc(cur.name)}. קיבלנו את הפנייה, ונחזור אליכם בהקדם. אם יש תמונה, שלחו אותה כאן.<span class="meta"><span class="mono">${t}</span></span>`)); stepOn(2); });
-      later(3200, () => { const a = document.createElement('div'); a.className = 'alert';
-        a.innerHTML = `<span class="a-head"><span>וואטסאפ · ${esc(cur.name)}</span><span class="mono">${t}</span></span><b>פנייה חדשה מהאתר</b><q>${esc(q)}</q><button class="done-btn" type="button">טיפלתי</button>`;
-        add(lock, a); stepOn(3);
-        const btn = $('.done-btn', a); later(600, () => btn.classList.add('ready'));
-        btn.addEventListener('click', () => { btn.disabled = true; btn.classList.remove('ready'); btn.textContent = 'סומן כטופל ✓'; timers.forEach(clearTimeout); timers = []; stepOn(4); steps[3].classList.remove('on'); });
-        later(6500, () => { if (btn.disabled) return; const r = document.createElement('div'); r.className = 'alert remind';
-          r.innerHTML = `<span class="a-head"><span>תזכורת</span><span class="mono">${t}</span></span><b>עוד לא חזרתם ללקוח</b>`; add(lock, r); stepOn(4); });
-      });
-    };
-    form.addEventListener('submit', (e) => { e.preventDefault(); run(input.value); });
-    $$('.ask-chips button', form).forEach((b) => b.addEventListener('click', () => { input.value = b.textContent; run(b.textContent); }));
-    // the first time the section is seen, it plays one question by itself
-    if ('IntersectionObserver' in window) { const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); if (!feed.children.length) run('כמה זה עולה?'); } }, { threshold: .4 }); io.observe($('.duo')); }
-  })();
-
-  /* ---- 5 · lost enquiries: the logic and wording of #loss on the home page, numbers that count ---- */
-  (() => {
-    const f = $('#lossForm'), fmt = (n) => Math.round(n).toLocaleString('he-IL'), nis = (n) => fmt(n) + ' ₪';
-    const shown = { rLeads: 44, rJobs: 13, rMoney: 5940 }, raf = {};
-    const tween = (id, to, money) => { const el = $('#' + id), from = shown[id]; cancelAnimationFrame(raf[id]);
-      if (still() || from === to) { shown[id] = to; el.textContent = money ? nis(to) : fmt(to); return; }
-      const t0 = performance.now(), D = 520;
-      const step = (now) => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3), v = from + (to - from) * e; shown[id] = v;
-        el.textContent = money ? nis(v) : fmt(v); if (k < 1) raf[id] = requestAnimationFrame(step); else shown[id] = to; };
-      raf[id] = requestAnimationFrame(step); };
-    const calc = () => { const m = +$('#lMissed').value, d = +$('#lDays').value, r = +$('#lRate').value, v = +$('#lValue').value;
-      $('#oMissed').textContent = m; $('#oDays').textContent = d; $('#oRate').textContent = r + '%'; $('#oValue').textContent = nis(v);
-      const leads = m * d, jobs = Math.round(leads * r / 100);
-      tween('rLeads', leads); tween('rJobs', jobs); tween('rMoney', jobs * v, true); };
-    f.addEventListener('input', calc); calc();
   })();
 
   /* ---- the hero loop's captions, from its cues ---- */

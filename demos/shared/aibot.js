@@ -1,6 +1,6 @@
 /* AiBot: the smart chat on the demo hub.
    Sends the conversation to /api/chat (Netlify Function -> Claude). The reply may end with markers that become buttons:
-     [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]  [[build]] (start the site builder)  [[go:SECTION]] (how, what, demos, plans, faq)
+     [[demo:SLUG]]  [[pricing]]  [[whatsapp:TEXT]]  [[build]] (start the site builder)  [[go:SECTION]] (how, demos, plans, faq)
    If the function is missing, not configured or fails, it answers from a small scripted engine instead, so the page never breaks.
    Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat", pricingHref: "#plans", base: "" })
    pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down.
