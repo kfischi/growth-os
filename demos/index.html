@@ -100,7 +100,7 @@ h2 { font: 800 clamp(2.1rem, 4.6vw, 3.9rem)/1.04 var(--display); letter-spacing:
 html.a11y-still .reveal { opacity: 1; transform: none; }
 
 /* 1 · hero */
-.hero { padding-block: clamp(36px, 7svh, 84px) clamp(64px, 10svh, 112px); }
+.hero { padding-block: clamp(24px, 5svh, 72px) clamp(40px, 7svh, 88px); }
 .hero .wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 40px clamp(32px, 5vw, 80px); align-items: center; }
 .hero-text { min-width: 0; display: grid; justify-items: start; gap: 22px; }
 .hero-id { grid-column: 1 / -1; min-width: 0; display: grid; justify-items: start; gap: 12px; padding-bottom: clamp(4px, 1.4vw, 14px); border-bottom: 1px solid var(--silver); }
@@ -224,6 +224,11 @@ html.a11y-still .s-toast { animation: none; transform: none; opacity: 1; }
 .inc li::before { content: ""; inline-size: 20px; block-size: 20px; border-radius: 50%; transform: translateY(4px);
   background: var(--violet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.8 10.3l2.7 2.7 5.6-5.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat; }
 .inc-n { font-weight: 600; color: var(--ink); }
+.inc-more summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-block-size: 44px; font-weight: 700; color: var(--violet); }
+.inc-more summary::-webkit-details-marker { display: none; }
+.inc-more summary::after { content: "+"; display: grid; place-items: center; inline-size: 24px; block-size: 24px; border-radius: 50%; background: var(--lilac); font-size: 1.05rem; }
+.inc-more[open] summary::after { content: "−"; }
+.inc-more .inc { border-top: 0; padding-top: 4px; }
 .inc-n b { font: 800 1.35rem/1 var(--display); color: var(--violet); }
 /* the ticks come in one after another the first time the card is seen (none with reduced motion) */
 .inc.ticking li { opacity: 0; transform: translateX(8px); }
@@ -630,8 +635,9 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="per" data-m="290" data-was="390"></p>
             <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
             <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
-            <p class="inc-n"><b>17</b> דברים כלולים</p>
-            <ul class="inc"><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>משנים לבד בצ׳אט, כלול בחודשי</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, וקישור מתויג לכל רשת: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul>
+            <p class="inc-n"><b>16</b> דברים כלולים</p>
+            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>משנים לבד בצ׳אט, כלול בחודשי</li></ul>
+            <details class="inc-more"><summary>ועוד 10 דברים כלולים</summary><ul class="inc"><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, וקישור מתויג לכל רשת: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul></details>
             <a class="btn" href="build/">לבנות את האתר שלי</a>
           </article>
         </div>
