@@ -157,9 +157,11 @@ const voice = lines.map((_, i) => { const ms = Math.round(segs[i + 1].voiceAt * 
   + ";" + lines.map((_, i) => `[a${i}]`).join("") + `amix=inputs=${lines.length}:normalize=0,apad`;
 const m = files.length + 1;
 // The voice is levelled alone, so the pauses stay quiet; the music sits under it and ducks while she speaks.
+// The whole mix then comes down 5 dB (the owner: "too loud"; whoever wants more turns it up).
+const GAIN = "volume=-5dB";
 const audio = music
-  ? `${voice},loudnorm=I=-16:TP=-1.5:LRA=11,asplit[vo][key];[${m}:a]aresample=48000,apad,volume=0.22[bed];[bed][key]sidechaincompress=threshold=0.02:ratio=4:attack=40:release=600[duck];[vo][duck]amix=inputs=2:normalize=0,alimiter=limit=0.9[a]`
-  : `${voice},loudnorm=I=-16:TP=-1.5:LRA=11[a]`;
+  ? `${voice},loudnorm=I=-16:TP=-1.5:LRA=11,asplit[vo][key];[${m}:a]aresample=48000,apad,volume=0.22[bed];[bed][key]sidechaincompress=threshold=0.02:ratio=4:attack=40:release=600[duck];[vo][duck]amix=inputs=2:normalize=0,alimiter=limit=0.9,${GAIN}[a]`
+  : `${voice},loudnorm=I=-16:TP=-1.5:LRA=11,${GAIN}[a]`;
 
 fs.mkdirSync(outDir, { recursive: true });
 const out = path.join(outDir, "process.mp4");
