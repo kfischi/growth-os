@@ -1,5 +1,5 @@
 {
-  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 212.53 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0, s1 5.95, s2 22.17, s3 35.4, s4 43.45, s5 51.34, s6 57.97, s7 76.89, s8 85.84, s9 94.02, s10 102.35, m1 116.04, m2 120.48, m3 126.27, m4 132.76, m5 138.81, m6 145.35, m7 151.13, m8 157.35, m9 163, m10 168.4, m11 174.36, m12 180.29, m13 189.67, m14 193.85, end 199.88, cta 206.24 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). maya.mp3 is Maya's recording of these lines (Eleven v3, 2026-10-17); her pauses are too even to find, so it is cut with --cuts=4.41,11.89,21.49,28.70,32.25,35.89,57.03,63.92,69.16,73.68,81.12,83.68,87.86,90.79,93.37,96.42,99.19,102.28,105.05,107.62,110.48,112.84,117.68,119.78,122.86,125.46.",
+  "note": "The narration of the explainer film, one short line per beat, for Maya (ElevenLabs, Eleven v3, about 10 letters a second): each line fills about 90% of its beat. The silent master is scripts/process-voice/film.mp4 (recorded by process-video.mjs, 209.67 s); its beats are in film.json and each line starts 0.2 s after its beat (the hook after 0.3 s). The beats: hook 0, s1 6.18, s2 18.73, s3 32.14, s4 40.64, s5 49.06, s6 55.82, s7 76.17, s8 84.73, s9 92.73, s10 100.46, m1 113.75, m2 118.23, m3 123.72, m4 130.17, m5 136.22, m6 142.73, m7 148.48, m8 154.59, m9 160.18, m10 165.6, m11 171.48, m12 177.43, m13 186.84, m14 191.02, end 197, cta 203.36 (hook, the ten steps s1 to s10, the features of \"what you get\" m1 to m14, the packages and the call to action). A beat the voice runs past is slowed down to fit. text is the caption (one cue per sentence), say what the voice reads when it differs (\"נציג A.I\"). Until the voice is recorded the film plays with music only: node scripts/process-voice.mjs --no-voice. To voice it: record the whole script in one go (a blank line between lines), save it as scripts/process-voice/maya.mp3, then node scripts/process-voice.mjs --music=auto scripts/process-voice/maya.mp3 (add --cuts=t1,...,t26 if the pauses between lines are too even to find). maya.mp3 is Maya's recording of these lines (Eleven v3, 2026-10-17); her pauses are too even to find, so it is cut with --cuts=4.41,11.89,21.49,28.70,32.25,35.89,57.03,63.92,69.16,73.68,81.12,83.68,87.86,90.79,93.37,96.42,99.19,102.28,105.05,107.62,110.48,112.84,117.68,119.78,122.86,125.46.",
   "lines": [
     {
       "beat": "hook",
@@ -8,136 +8,136 @@
     },
     {
       "beat": "s1",
-      "at": 6.15,
+      "at": 6.38,
       "text": "אז בונים אתר שעונה לו, בצ׳אט. בוחרים תחום, ולכל תחום יש אתר לדוגמה שרואים מיד בטלפון."
     },
     {
       "beat": "s2",
-      "at": 22.37,
+      "at": 18.93,
       "text": "ככה האתר ייראה ללקוחות: שירותים ומחירים, וואטסאפ וחיוג. ובפינה, נציג AI ששואל מה צריך, והלקוח עונה בלחיצה.",
       "say": "ככה האתר ייראה ללקוחות: שירותים ומחירים, וואטסאפ וחיוג. ובפינה, נציג A.I ששואל מה צריך, והלקוח עונה בלחיצה."
     },
     {
       "beat": "s3",
-      "at": 35.6,
+      "at": 32.34,
       "text": "לוחצים ״לבנות את האתר שלי״. שם וטלפון, וזהו. משמאל האתר, מימין השאלות."
     },
     {
       "beat": "s4",
-      "at": 43.65,
+      "at": 40.84,
       "text": "בוחרים תבנית, והאתר שלכם מתחלף מול העיניים."
     },
     {
       "beat": "s5",
-      "at": 51.54,
+      "at": 49.26,
       "text": "ערכת צבעים, בלחיצה. אפשר להחליף גם אחר כך."
     },
     {
       "beat": "s6",
-      "at": 58.17,
+      "at": 56.02,
       "text": "עכשיו כמה שאלות, אחת בכל פעם. שם העסק, האזור והישובים, השירותים, ומחירים לדוגמה שמשאירים או משנים. זמן חזרה, שעות, שנים בתחום ואחריות. כותרת מוכנה, והאינסטגרם והפייסבוק שלכם. כל תשובה נכנסת לאתר מיד, ורואים בדיוק מה הלקוחות יראו."
     },
     {
       "beat": "s7",
-      "at": 77.09,
+      "at": 76.37,
       "text": "מעלים תמונה שלכם ותמונות מהעבודה, ישר מהטלפון. הכול מתכווץ לבד, והן כבר באתר."
     },
     {
       "beat": "s8",
-      "at": 86.04,
+      "at": 84.93,
       "text": "עוברים על כל האתר, בדיוק כמו שיעלה. משהו לא יושב? כותבים בצ׳אט."
     },
     {
       "beat": "s9",
-      "at": 94.22,
+      "at": 92.93,
       "text": "מאשרים ובוחרים חבילה: נציג AI, עם הצ׳אט והפניות.",
       "say": "מאשרים ובוחרים חבילה: נציג A.I, עם הצ׳אט והפניות."
     },
     {
       "beat": "s10",
-      "at": 102.55,
+      "at": 100.66,
       "text": "בוחרים כתובת ומשלמים, בדף מאובטח. האתר עולה לאוויר, עם ערכה להבאת הלקוחות הראשונים."
     },
     {
       "beat": "m1",
-      "at": 116.24,
+      "at": 113.95,
       "text": "האתר באוויר, בכתובת שלכם."
     },
     {
       "beat": "m2",
-      "at": 120.68,
+      "at": 118.43,
       "text": "לקוח נכנס באמצע הלילה? הצ׳אט עונה לו, ושואל מה צריך."
     },
     {
       "beat": "m3",
-      "at": 126.47,
+      "at": 123.92,
       "text": "מצרף תמונה, ומקבל הערכה ראשונית."
     },
     {
       "beat": "m4",
-      "at": 132.96,
+      "at": 130.37,
       "text": "ואישור בוואטסאפ, מהמספר שלכם."
     },
     {
       "beat": "m5",
-      "at": 139.01,
+      "at": 136.42,
       "text": "התראה אליכם, ותזכורת אם עוד לא חזרתם."
     },
     {
       "beat": "m6",
-      "at": 145.55,
+      "at": 142.93,
       "text": "ביקורת בגוגל, רק באישור שלכם."
     },
     {
       "beat": "m7",
-      "at": 151.33,
+      "at": 148.68,
       "text": "צ׳אט AI עונה מהמחירון, ולא ממציא.",
       "say": "צ׳אט A.I עונה מהמחירון, ולא ממציא."
     },
     {
       "beat": "m8",
-      "at": 157.55,
+      "at": 154.79,
       "text": "כל הפניות בלוח אחד, מסודרות."
     },
     {
       "beat": "m9",
-      "at": 163.2,
+      "at": 160.38,
       "text": "כניסות, פניות והופעות בגוגל."
     },
     {
       "beat": "m10",
-      "at": 168.6,
+      "at": 165.8,
       "text": "קישור לכל רשת, ו־QR להדפסה.",
       "say": "קישור לכל רשת, וקיו־אר להדפסה."
     },
     {
       "beat": "m11",
-      "at": 174.56,
+      "at": 171.68,
       "text": "ובכל חודש, סיכום בוואטסאפ."
     },
     {
       "beat": "m12",
-      "at": 180.49,
+      "at": 177.63,
       "text": "כותבים ״חירום״ בוואטסאפ, והאתר מתעדכן. גם ״עסוק״ ו״פנוי״."
     },
     {
       "beat": "m13",
-      "at": 189.87,
+      "at": 187.04,
       "text": "והרשתות שלכם, באתר."
     },
     {
       "beat": "m14",
-      "at": 194.05,
+      "at": 191.22,
       "text": "דף לכל שירות, כדי שימצאו אתכם בגוגל."
     },
     {
       "beat": "end",
-      "at": 200.08,
+      "at": 197.2,
       "text": "בלי התחייבות. מחירים סופיים."
     },
     {
       "beat": "cta",
-      "at": 206.44,
+      "at": 203.56,
       "text": "אף פנייה לא הולכת לאיבוד. הקישור על המסך."
     }
   ]

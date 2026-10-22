@@ -129,4 +129,4 @@ globalThis.fetch = async (url, opt = {}) => {
   throw new Error("unexpected " + method);
 };
 
-T.ls_clients.push({ ...DEF.ls_clients(), slug: "kfir", name: "Easy Landing", owner_phone: "972526359513", wa_phone_number_id: "PNID" });
+T.ls_clients.push({ ...DEF.ls_clients(), slug: "kfir", name: "Multi Landing", owner_phone: "972526359513", wa_phone_number_id: "PNID" });

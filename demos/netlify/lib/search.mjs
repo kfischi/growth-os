@@ -3,7 +3,7 @@
 //     Nothing to set up. Google doesn't read IndexNow.
 //   Google Search Console, optional:
 //     GSC_SERVICE_ACCOUNT  the JSON key of a Google Cloud service account (Search Console API turned on)
-//     GSC_PROPERTY         the property it is a full user of, e.g. "sc-domain:easylanding.co.il": a Domain property
+//     GSC_PROPERTY         the property it is a full user of, e.g. "sc-domain:multilanding.co.il": a Domain property
 //                          for SITES_DOMAIN covers every <slug>.<SITES_DOMAIN> site at once, verified once by DNS.
 //     Then every publish submits the site's sitemap, and the owner's panel shows how many times the site appeared in
 //     Google and how many clicks it got (searchImpressions), a few days behind, as Google reports it.

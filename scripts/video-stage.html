@@ -144,7 +144,7 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><b>Easy Landing</b><small>אתרים שבונים עסקים</small></div>
+  <div class="brand"><b>Multi Landing</b><small>אתרים שבונים עסקים</small></div>
   <ol class="rail" id="rail"></ol>
   <div class="gets" aria-hidden="true"><i>אחרי שהאתר באוויר</i>מה האתר עושה בשבילכם</div>
 </header>
@@ -167,7 +167,7 @@
 <div class="card" id="card"><div><div class="n" id="cardN"></div><h2 id="cardT"></h2><p id="cardS"></p></div></div>
 
 <div class="phone" id="phone"><div class="scr">
-  <div class="bar"><span class="av" id="phAv">E</span><div><b id="phName">Easy Landing</b><small id="phSub">וואטסאפ</small></div></div>
+  <div class="bar"><span class="av" id="phAv">E</span><div><b id="phName">Multi Landing</b><small id="phSub">וואטסאפ</small></div></div>
   <div class="msgs" id="msgs"></div>
 </div></div>
 
@@ -188,7 +188,7 @@
 
   // The address bar shows the real address of the page in the window.
   const SHOW = (u) => {
-    if (u.pathname.startsWith("/__live")) return "<b>oren-mayim.easylanding.co.il</b>" + u.pathname.replace(/^\/__live\/?/, "/").replace(/^\/$/, "");
+    if (u.pathname.startsWith("/__live")) return "<b>oren-mayim.multilanding.co.il</b>" + u.pathname.replace(/^\/__live\/?/, "/").replace(/^\/$/, "");
     return "service-pro-web.netlify.app<b>" + u.pathname.replace(/index\.html$/, "") + "</b>";
   };
   setInterval(() => { try { const u = new URL($("app").contentWindow.location.href); if (u.protocol.startsWith("http")) $("url").innerHTML = SHOW(u); } catch (e) {} }, 100);

@@ -16,7 +16,7 @@ try {
     console.log(JSON.stringify({ ...info, cardToken: info.cardToken ? "(returned)" : "(missing)" }, null, 2));
   } else {
     const p = await createPayment({
-      sum: 1, description: "Easy Landing - בדיקה", name: "בדיקה ראשונה", phone: "0500000000", ref: "00000000-0000-4000-8000-000000000000", saveToken: true,
+      sum: 1, description: "Multi Landing - בדיקה", name: "בדיקה ראשונה", phone: "0500000000", ref: "00000000-0000-4000-8000-000000000000", saveToken: true,
       notifyUrl: "https://example.com/grow-check", successUrl: "https://example.com/ok", cancelUrl: "https://example.com/cancel",
     });
     console.log("Pay here (the link works for about 10 minutes):\n" + p.url + "\nThen run:\nnode scripts/grow-check.mjs " + p.processId + " " + p.processToken);

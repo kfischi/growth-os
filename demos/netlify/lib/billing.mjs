@@ -92,13 +92,13 @@ export async function checkout(d, { cycle, origin }) {
   const b = await billingOf(d.id);
   let kind, sum, description;
   if (b && ["failed", "suspended"].includes(b.state)) {
-    kind = "card"; sum = b.amount; description = `Easy Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`;
+    kind = "card"; sum = b.amount; description = `Multi Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`;
   } else {
     if (d.status !== "client_approved" || d.paid_at) return { error: "locked" };
     if (!d.slug_wish) return { error: "no_address" };
     if (!cycles().includes(cycle)) return { error: "bad_cycle" };
     kind = "setup"; sum = checkoutSum(d.package, cycle);
-    description = `Easy Landing - ${PKG_HE[d.package]} - הקמה${cycle === "year" ? " ושנה מראש" : ""}`;
+    description = `Multi Landing - ${PKG_HE[d.package]} - הקמה${cycle === "year" ? " ושנה מראש" : ""}`;
   }
   const [row] = await db("POST", "ls_payments", { draft_id: d.id, kind, cycle: kind === "card" ? b.cycle : cycle, package: kind === "card" ? b.package : d.package, sum, status: "pending" }, "return=representation");
   const back = `${origin || site()}/build/`;
@@ -334,7 +334,7 @@ export async function runBilling(now = new Date(), charge = chargeToken, { budge
     if (!d) continue;
     // The period that is due keeps its start, so a late payment doesn't move the billing day.
     const dueSince = b.due_since || b.next_charge_at;
-    const label = `Easy Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`;
+    const label = `Multi Landing - ${PKG_HE[b.package]} - ${b.cycle === "year" ? "שנה" : "חודש"}`;
     const row = b.card_token ? (await db("POST", "ls_payments", { draft_id: d.id, kind: b.cycle, cycle: b.cycle, package: b.package, sum: b.amount, status: "pending" }, "return=representation"))[0] : null;
     const claimed = await db("PATCH", `ls_billing?draft_id=eq.${q(b.draft_id)}&state=eq.${q(b.state)}&next_charge_at=eq.${q(b.next_charge_at)}`,
       { next_charge_at: iso(addPeriod(dueSince, b.cycle, anchorOf(b))), updated_at: iso(now) }, "return=representation");

@@ -6,7 +6,7 @@
 //   SUPABASE_URL, SUPABASE_SERVICE_KEY   the lead system's project (tables from 0001 and 0002_site_builder.sql)
 //   ANTHROPIC_API_KEY                    the chat
 //   GITHUB_TOKEN                         fine-grained token, this repo only, Contents: read and write (publishing)
-//   BRAND_NAME, BRAND_URL                 the credit line at the bottom of client sites (default "Easy Landing", this site)
+//   BRAND_NAME, BRAND_URL                 the credit line at the bottom of client sites (default "Multi Landing", this site)
 //   NETLIFY_TOKEN, SITES_DOMAIN           hosting: the site is created and deployed through the Netlify API (lib/hosting.mjs)
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
 //   BUILDER_SITE_URL                     this site's public address, for Grow's callback and return links (default service-pro-web.netlify.app)
@@ -485,7 +485,7 @@ const EDIT_ORDER = `The site is already live. The owner came back to change it.
 `;
 
 function systemPrompt(t, mode) {
-  return `You are the site builder of Easy Landing ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
+  return `You are the site builder of Multi Landing ("אתרים שבונים עסקים"), a studio that builds websites with a lead system for small local businesses in Israel. You are an AI, and you say so if asked.
 You talk with the owner of a ${t.label} business (or, when the draft state has own_trade, of that business, on the ${t.label} design: then every service, headline and intro is for own_trade, never for ${t.label}). Together you fill in the content of their one-page site. The page next to the chat shows the draft and updates after every answer. You never write HTML: you only set the fields below.
 
 Speak as the studio: "אנחנו", never a person's name, even if asked who is behind it.
@@ -680,7 +680,7 @@ const ghOk = (r, what) => { if (!r.ok) throw new Error(`github ${what} ${r.statu
 // The line at the bottom of every client site, with a link home tagged with the site's name (BRAND_NAME, BRAND_URL).
 export const credit = (slug) => {
   const base = (process.env.BRAND_URL || SITE_ORIGIN).replace(/\/$/, "");
-  return { name: process.env.BRAND_NAME || "Easy Landing", url: `${base}/?utm_source=client&utm_campaign=${encodeURIComponent(slug)}` };
+  return { name: process.env.BRAND_NAME || "Multi Landing", url: `${base}/?utm_source=client&utm_campaign=${encodeURIComponent(slug)}` };
 };
 
 // url: the site's address once it has one (hosting), for the canonical links and the sitemap.
@@ -858,7 +858,7 @@ export async function ensureLeadClient(d, slug) {
 /* ---------------- the address and publishing (by כפיר, or by itself once paid) ---------------- */
 
 export const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])$/;
-const RESERVED = new Set(["sample-plumber", "kfir", "admin", "www", "api", "mail", "build", "panel", "app", "easy", "easylanding", "demo", "test"]);
+const RESERVED = new Set(["sample-plumber", "kfir", "admin", "www", "api", "mail", "build", "panel", "app", "easy", "multilanding", "demo", "test"]);
 
 // Free for this draft: a valid name no other draft holds or wished for, and no business in the lead system has.
 export async function slugFree(slug, draftId) {
