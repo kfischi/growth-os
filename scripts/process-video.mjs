@@ -365,9 +365,9 @@ const PH = path.join(ROOT, "shared/photos");
 try {
   // Before the first frame: the home page at its examples, the camera on them, the hook over everything.
   await goApp("/");
-  const demosY = await app().evaluate(() => document.querySelector("#demos").getBoundingClientRect().top + scrollY - 20);
+  const demosY = await app().evaluate(() => document.querySelector("#stage").getBoundingClientRect().top + scrollY - 20);
   await app().evaluate((y) => scrollTo(0, y), demosY);
-  await zoomTo(A("#demos"), { max: 1.25 });
+  await zoomTo(A("#stage"), { max: 1.25 });
   await st("slides", shots);
   await st("slide", 0);
   const HOOK = ["לקוח מחפש אתכם עכשיו.", "לא עניתם? הוא עובר לבא בתור.", "אתר שעונה לו, בונים בצ׳אט."];
@@ -398,17 +398,16 @@ try {
   await now("ארבעה סוגי עסקים");
   // A tour of the trades, each tap turning the phone into another business: the variety the home page's loop shows.
   mark("h-trades");
-  const chip = (id, say) => tap(A(`#chips .chip[data-id="${id}"]`), say, { zoom: false, hold: 250 });
-  await tap(A('#cats button[data-cat="care"]'), "תורים וטיפולים", { zoom: false, hold: 300 }); await raw(500);
+  // The trades sit in one scrolling row at the top of the home page: bring each chip into the row's view, then tap it.
+  const chip = async (id, say, hold = 250) => { const c = A(`#chips .chip[data-id="${id}"]`);
+    await c.evaluate((el) => { const row = el.closest(".chips"); row.scrollLeft += el.getBoundingClientRect().left - row.getBoundingClientRect().left - (row.clientWidth - el.offsetWidth) / 2; });
+    await raw(200); await tap(c, say, { zoom: false, hold }); };
   await chip("barber", "מספרה"); await raw(500);
-  await tap(A('#cats button[data-cat="learn"]'), "שיעורים ואירועים", { zoom: false, hold: 250 }); await raw(500);
   await chip("driving", "מורה לנהיגה"); await raw(500);
-  await tap(A('#cats button[data-cat="home"]'), "בית וחצר", { zoom: false, hold: 250 }); await raw(500);
   await chip("garden", "גינון"); await raw(500);
-  await tap(A('#cats button[data-cat="urgent"]'), "תקלות דחופות", { zoom: false, hold: 250 }); await raw(400);
   await chip("electrician", "חשמלאי"); await raw(450);
   await now("בוחרים תחום, והטלפון מתחלף");
-  await tap(A('#chips .chip[data-id="plumber"]'), "אינסטלטור", { zoom: false, hold: 300 }); await raw(650);
+  await chip("plumber", "אינסטלטור", 300); await raw(650);
   await tap(A("#toDemo"), "לדמו המלא", { max: 1.6, hold: 300 });
   await cut(async () => { await waitPath(/^\/plumber\/$/); await wide(); });
 
