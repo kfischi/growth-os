@@ -165,7 +165,7 @@
   1. ב-Search Console: Add property > Domain, הדומיין של `SITES_DOMAIN`, אימות ברשומת TXT (ב-Netlify DNS).
   2. ב-Google Cloud: פרויקט, להפעיל Search Console API, ליצור Service account ומפתח JSON.
   3. ב-Search Console: Settings > Users and permissions, להוסיף את האימייל של חשבון השירות כ-Full user (או Owner, כדי לשלוח מפות אתר).
-  4. ב-Netlify: `GSC_SERVICE_ACCOUNT` (כל ה-JSON) ו-`GSC_PROPERTY` (למשל `sc-domain:easylanding.co.il`).
+  4. ב-Netlify: `GSC_SERVICE_ACCOUNT` (כל ה-JSON) ו-`GSC_PROPERTY` (למשל `sc-domain:multilanding.co.il`).
   מאז הפאנל של בעל העסק מראה הופעות וכניסות מגוגל ב-28 הימים האחרונים. גוגל מדווח באיחור של כמה ימים, ואתר חדש מתחיל מאפס.
 - **ערכת השקה.** כשהאתר באוויר, הבונה מראה לבעל העסק מה מביא את הכניסות הראשונות: פרופיל עסק בגוגל (צעד אחר צעד, מהפרטים שלו), סטטוס בוואטסאפ, פוסט לקבוצות וקישור לביו בכל רשת, עם כפתור העתקה, ובנציג AI עם קישור מתויג לכל ערוץ. בלי הבטחות.
 - **מהירות.** Lighthouse על אתר לדוגמה (נייד): ביצועים 98, נגישות 100, SEO 100.

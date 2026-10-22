@@ -1,4 +1,4 @@
-# Easy Landing: backend go-live checklist
+# Multi Landing: backend go-live checklist
 
 The site is `demos/` on Netlify (https://service-pro-web.netlify.app). The functions are in `demos/netlify/functions/`, bundled with esbuild. Their routes and schedules are set in each file's `export const config`, not in `netlify.toml`.
 Secrets go into Netlify > Site configuration > Environment variables only. After changing any of them, trigger a deploy.

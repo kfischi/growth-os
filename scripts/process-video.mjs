@@ -20,8 +20,8 @@ import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 import { T, storage, ai, nl } from "./tests/builder-fakes.mjs";
 // Payment and hosting as on the real site: a fake Grow behind lib/grow.mjs, the fake Netlify with our domain's zone.
-Object.assign(process.env, { GROW_USER_ID: "u-film", GROW_PAGE_CODE: "pc-film", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "easylanding.co.il" });
-nl.zones.push({ id: "z-film", name: "easylanding.co.il" });
+Object.assign(process.env, { GROW_USER_ID: "u-film", GROW_PAGE_CODE: "pc-film", GROW_SANDBOX: "1", NETLIFY_TOKEN: "nf-test", SITES_DOMAIN: "multilanding.co.il" });
+nl.zones.push({ id: "z-film", name: "multilanding.co.il" });
 const grow = { processes: new Map(), n: 0 };
 const fakeFetch = globalThis.fetch;
 globalThis.fetch = async (url, opt = {}) => {
@@ -52,13 +52,13 @@ const WIDE = process.env.WIDE === "1";
 const CAP = 2, HOLD_CAP = 3.5;
 
 /* ---------- the live site at the end: the approved draft, rendered as the real site is ---------- */
-const SLUG = "oren-mayim", SITE_URL = `https://${SLUG}.easylanding.co.il/`;
+const SLUG = "oren-mayim", SITE_URL = `https://${SLUG}.multilanding.co.il/`;
 let liveFiles = null;
 function live() {
   if (liveFiles) return liveFiles;
   const d = T.ls_drafts.at(-1);
   const photos = Object.fromEntries(Object.entries(d.photos || {}).map(([slot, p]) => [slot, "/__live/p/" + p.path]));
-  liveFiles = plumber.render(d.content, { mode: "site", assets: "/shared/", photos, leads: "/api/lead/" + SLUG, url: SITE_URL, credit: { name: "Easy Landing", url: "/" } });
+  liveFiles = plumber.render(d.content, { mode: "site", assets: "/shared/", photos, leads: "/api/lead/" + SLUG, url: SITE_URL, credit: { name: "Multi Landing", url: "/" } });
   return liveFiles;
 }
 // What the site's "available now" line says (GET /api/status/<slug>): the owner changes it from WhatsApp in the montage.
@@ -165,7 +165,7 @@ h1{font-size:20px;margin:0 0 4px}.s{color:#5b5f72;margin:0 0 18px;font-size:15px
 label{display:block;font-size:14px;color:#5b5f72;margin:10px 0 4px}.f{border:1px solid #d5d8e2;border-radius:10px;padding:10px 12px;direction:ltr;text-align:left;font-family:monospace}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}a.pay{display:block;margin-top:20px;text-align:center;background:#1b1d29;color:#fff;border-radius:12px;padding:14px;text-decoration:none;font-weight:700}
 .lock{margin-top:12px;font-size:13px;color:#5b5f72;text-align:center}</style>
-<div class="c"><h1>תשלום מאובטח</h1><p class="s">Easy Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪</p>
+<div class="c"><h1>תשלום מאובטח</h1><p class="s">Multi Landing · הקמת אתר</p><p class="sum">${g.sum.toLocaleString("he-IL")} ₪</p>
 <label>מספר כרטיס</label><div class="f">4580 •••• •••• 1234</div><div class="row"><div><label>תוקף</label><div class="f">12/28</div></div><div><label>CVV</label><div class="f">•••</div></div></div>
 <a class="pay" href="?go=1">לשלם</a><p class="lock">הקבלה נשלחת אליכם מיד אחרי התשלום</p></div></html>` });
 });
@@ -386,9 +386,9 @@ try {
     for (let k = 0; k < 3; k++) { await st("slide", slide++ % shots.length); if (k) hits.push({ t: clock(), k: "tick" }); await raw(460); }
   }
   await st("slides", []);
-  await p.evaluate(() => window.stage.lines(`<div class="l big">Easy Landing</div><div class="l small">אתר לעסק, שלא מפספס אף לקוח<span class="dot">.</span></div>`));
+  await p.evaluate(() => window.stage.lines(`<div class="l big">Multi Landing</div><div class="l small">אתר לעסק, שלא מפספס אף לקוח<span class="dot">.</span></div>`));
   hits.push({ t: clock(), k: "big" });
-  await raw(60); await st("show", ".l"); cue("Easy Landing. אתר לעסק, שלא מפספס אף לקוח.");
+  await raw(60); await st("show", ".l"); cue("Multi Landing. אתר לעסק, שלא מפספס אף לקוח.");
   await raw(1300);
   await st("full", false);
   await raw(250);
@@ -566,7 +566,7 @@ try {
   await step(10);
   await zoomTo(A("#addrDlg"), { max: 1.5, pad: 30 });
   await now("בוחרים כתובת לאתר");
-  await point(A("#addrList .pkg"), "oren-mayim.easylanding.co.il", 0); await hold(1000);
+  await point(A("#addrList .pkg"), "oren-mayim.multilanding.co.il", 0); await hold(1000);
   await st("unpoint");
   await tap(A("#addrGo"), "לשמור את הכתובת", { zoom: false, hold: 300 });
   await cut(async () => { await app().waitForFunction(() => /הכתובת: oren-mayim/.test(document.querySelector("#approveBox").textContent), null, { timeout: 10000 }); await zoomTo(A("#approveBox"), { max: 1.5, pad: 30 }); });
@@ -747,7 +747,7 @@ try {
   cue("חבילה אחת, בלי התחייבות. נציג AI: 1,590 ₪ הקמה, ועוד 290 ₪ לחודש, מחיר השקה נעול. המחירים סופיים. מבטלים מתי שרוצים.");
   await hold(3200);
   beat("cta", "לבנות את האתר שלי", "big");
-  await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div><div class="l tagline">Easy Landing · אתרים שבונים עסקים</div>`, true));
+  await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div><div class="l tagline">Multi Landing · אתרים שבונים עסקים</div>`, true));
   for (let i = 0; i < 4; i++) { await st("showN", ".l", i); await raw(250); }
   cue("אף פנייה לא הולכת לאיבוד. לבנות את האתר שלי: service-pro-web.netlify.app/build");
   await hold(2600);

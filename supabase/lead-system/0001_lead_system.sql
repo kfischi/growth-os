@@ -1,5 +1,5 @@
 -- =============================================================================
--- Lead system for the side-income channel (Easy Landing). Not part of Growth OS.
+-- Lead system for the side-income channel (Multi Landing). Not part of Growth OS.
 -- Run it in its own Supabase project: SQL Editor > paste > Run.
 -- =============================================================================
 -- ls_clients  : one row per paying business (and one for כפיר's own site)

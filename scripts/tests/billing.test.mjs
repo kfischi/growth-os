@@ -96,7 +96,7 @@ assert.equal(f.sum, "4490.00", "the setup and 10 months for the year"); assert.e
 assert.equal(f["pageField[fullName]"], "אורן לוי"); assert.equal(f["pageField[phone]"], "0526359513");
 assert.equal(f.notifyUrl, ORIGIN + "/api/grow-webhook"); assert.equal(f.invoiceNotifyUrl, ORIGIN + "/api/grow-webhook?type=invoice");
 assert.equal(f.successUrl, ORIGIN + "/build/?pay=ok"); assert.ok(!JSON.stringify(f).includes(KEY), "the draft's key never goes to Grow");
-assert.match(f.description, /^Easy Landing - נציג AI - הקמה ושנה מראש$/);
+assert.match(f.description, /^Multi Landing - נציג AI - הקמה ושנה מראש$/);
 let pay = T.ls_payments.at(-1);
 assert.equal(f.cField1, pay.id); assert.equal(pay.status, "pending"); assert.equal(pay.sum, 4490); assert.equal(pay.cycle, "year"); assert.equal(pay.process_id, "1");
 

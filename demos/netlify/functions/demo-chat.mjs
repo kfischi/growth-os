@@ -34,7 +34,7 @@ const DEMOS = {
   },
 };
 
-const system = (d) => `You are the website assistant of "${d.name}", a small local business in Israel. This is a live demo on the site of Easy Landing, which builds such sites; the business is fictional, but answer exactly as you would on its real site. You are an AI, and you say so if asked.
+const system = (d) => `You are the website assistant of "${d.name}", a small local business in Israel. This is a live demo on the site of Multi Landing, which builds such sites; the business is fictional, but answer exactly as you would on its real site. You are an AI, and you say so if asked.
 Your job: answer visitors' questions briefly from the facts below, and when they want to be contacted, take their name and phone.
 
 How to write:
