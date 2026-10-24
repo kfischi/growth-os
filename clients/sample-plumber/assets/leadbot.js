@@ -29,6 +29,10 @@
     capture?: { endpoint: "https://…/api/lead/<slug>", lead: (data) => ({ name, phone, service, message }),
                 saved: (data) => "last bot message when the lead was stored" },
   }
+  i18n?: { ru: { "<Hebrew line>": "<its translation>" }, ar: {…}, en: {…} }
+    The customer's language: a row of languages under the header. The page's own lines (greet, asks, chips, labels,
+    placeholders, tips) go through the dictionary, the chat's fixed lines through UI below. Every answer keeps its
+    Hebrew value, so the summary, the lead and the owner's alert stay Hebrew, with the language noted.
   A photo goes with the lead to the lead system (capture). Without capture it shows in the summary card,
   goes to onDone(data, text, photoUrl) for the phone mockup, and the WhatsApp text says it will follow there.
   With capture, a stored lead ends the chat with saved(data) and no WhatsApp button. If the system
@@ -45,7 +49,31 @@
     return n;
   }
 
+  // The chat's own fixed lines in the customer's language (the page's lines come from cfg.i18n).
+  const UI = {
+    he: { send: "שליחה", answer: "תשובה", photo: "📷 לצרף תמונה", photoAria: "לצרף תמונה", noPhoto: "בלי תמונה", close: "סגירה", yourPhoto: "התמונה שצירפתם",
+      badPhoto: "לא הצלחנו לפתוח את התמונה. נסו תמונה אחרת, או המשיכו בלי.", badPhone: "המספר לא נראה שלם. אפשר לכתוב אותו שוב, למשל 050-1234567?",
+      wa: "לשלוח את הפנייה בוואטסאפ", again: "להתחיל מחדש", another: "פנייה נוספת", guide: "המדריך המלא, צעד אחרי צעד", langs: "שפה" },
+    ru: { send: "Отправить", answer: "Ответ", photo: "📷 Прикрепить фото", photoAria: "Прикрепить фото", noPhoto: "Без фото", close: "Закрыть", yourPhoto: "Ваше фото",
+      badPhoto: "Не удалось открыть фото. Попробуйте другое или продолжите без него.", badPhone: "Номер выглядит неполным. Напишите его ещё раз, например 050-1234567.",
+      wa: "Отправить заявку в WhatsApp", again: "Начать заново", another: "Новая заявка", guide: "Подробная инструкция", langs: "Язык",
+      thanks: "Спасибо, {name}! Вот итог вашей заявки.", saved: "Спасибо, {name}! Заявка получена, подтверждение придёт в WhatsApp.", photoIn: "Фото получено." },
+    ar: { send: "إرسال", answer: "الإجابة", photo: "📷 إرفاق صورة", photoAria: "إرفاق صورة", noPhoto: "بدون صورة", close: "إغلاق", yourPhoto: "الصورة التي أرفقتموها",
+      badPhoto: "لم نتمكن من فتح الصورة. جرّبوا صورة أخرى، أو تابعوا بدونها.", badPhone: "يبدو أن الرقم غير كامل. اكتبوه مرة أخرى، مثلًا 050-1234567.",
+      wa: "إرسال الطلب عبر واتساب", again: "البدء من جديد", another: "طلب آخر", guide: "الدليل الكامل خطوة بخطوة", langs: "اللغة",
+      thanks: "شكرًا {name}! هذا ملخص طلبكم.", saved: "شكرًا {name}! وصل الطلب، وسيصلكم تأكيد عبر واتساب.", photoIn: "وصلت الصورة." },
+    en: { send: "Send", answer: "Answer", photo: "📷 Attach a photo", photoAria: "Attach a photo", noPhoto: "No photo", close: "Close", yourPhoto: "Your photo",
+      badPhoto: "We couldn't open that photo. Try another one, or go on without it.", badPhone: "That number looks incomplete. Please write it again, for example 050-1234567.",
+      wa: "Send the request on WhatsApp", again: "Start over", another: "Another request", guide: "The full guide, step by step", langs: "Language",
+      thanks: "Thank you, {name}! Here is the summary of your request.", saved: "Thank you, {name}! We got your request, and a confirmation is on its way on WhatsApp.", photoIn: "Photo received." },
+  };
+  const LANG_NAMES = { he: "עברית", ru: "Русский", ar: "العربية", en: "English" };
+  const LANG_HE = { ru: "ברוסית", ar: "בערבית", en: "באנגלית" }; // for the owner: "(הפנייה ברוסית)"
+
   const CSS = `
+  .lb-langs{flex:none;display:flex;gap:4px;flex-wrap:wrap;padding:6px 12px;border-bottom:1px solid var(--bot-line);background:var(--bot-bg)}
+  .lb-langs button{border:1px solid var(--bot-line);background:transparent;color:var(--bot-fg);border-radius:var(--bot-radius-pill,999px);padding:3px 10px;font:600 12.5px/1.4 var(--bot-font);cursor:pointer}
+  .lb-langs button[aria-pressed="true"]{background:var(--bot-accent);border-color:var(--bot-accent);color:var(--bot-accent-fg)}
   .lb-launch{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;z-index:60;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;
     background:var(--bot-accent);color:var(--bot-accent-fg);font:600 15px/1 var(--bot-font);padding:12px 18px 12px 12px;border-radius:var(--bot-radius-pill,999px);box-shadow:0 14px 30px -12px rgba(0,0,0,.45)}
   .lb-launch.lb-urgent{box-shadow:0 0 0 3px #fff,0 0 0 6px #c62f22,0 10px 28px rgba(0,0,0,.25)}
@@ -135,11 +163,34 @@
       const file = el("input"); file.type = "file"; file.accept = "image/*"; file.setAttribute("aria-label", "לצרף תמונה");
       photoBtn.append(file);
       foot.append(photoBtn, chips, form);
-      panel.append(head, body, foot);
+      // The customer's language: Hebrew, or one the page has translations for.
+      const dict = cfg.i18n || {};
+      const avail = ["ru", "ar", "en"].filter((l) => dict[l] && Object.keys(dict[l]).length);
+      let lang = "he";
+      const tr = (t) => (lang === "he" || t == null ? t : dict[lang][t] || t);
+      const ui = (k) => (UI[lang] && UI[lang][k]) || UI.he[k];
+      const langRow = el("div", "lb-langs"); langRow.setAttribute("role", "group");
+      function setLang(l) {
+        lang = l; panel.dir = l === "ru" || l === "en" ? "ltr" : "rtl"; panel.lang = l;
+        langRow.setAttribute("aria-label", ui("langs"));
+        langRow.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === l)));
+        meta.lastChild.textContent = tr(cfg.subtitle || "");
+        send.textContent = ui("send"); input.setAttribute("aria-label", ui("answer")); x.setAttribute("aria-label", ui("close"));
+        photoBtn.firstChild.textContent = ui("photo"); file.setAttribute("aria-label", ui("photoAria"));
+      }
+      if (avail.length) {
+        ["he", ...avail].forEach((l) => {
+          const b = el("button", null, LANG_NAMES[l]); b.type = "button"; b.dataset.lang = l; b.lang = l;
+          b.addEventListener("click", () => { if (l !== lang) { setLang(l); if (started) restart(); } });
+          langRow.appendChild(b);
+        });
+        setLang("he");
+      }
+      panel.append(head, ...(avail.length ? [langRow] : []), body, foot);
       if (cfg.note) panel.appendChild(el("div", "lb-note", cfg.note));
       document.body.append(launch, panel);
 
-      let step = 0, data = {}, pre = {}, busy = false, started = false, finished = false, timers = [], photo = null, estimateNote = "";
+      let seen = {}, step = 0, data = {}, pre = {}, busy = false, started = false, finished = false, timers = [], photo = null, estimateNote = "";
       const later = (ms, fn) => timers.push(setTimeout(fn, ms));
 
       function say(text, who) {
@@ -156,29 +207,30 @@
         const s = cfg.steps[step];
         if (!s) return finish();
         if (s.show && !s.show(data)) { step++; return ask(); }
-        const q = typeof s.ask === "function" ? s.ask(data) : s.ask;
-        if (pre[s.key] != null) { const v = pre[s.key]; delete pre[s.key]; return botSay(q, () => answer(v, v)); }
+        const q = tr(typeof s.ask === "function" ? s.ask(data) : s.ask);
+        if (pre[s.key] != null) { const v = pre[s.key]; delete pre[s.key]; return botSay(q, () => answer(v, tr(v))); }
         botSay(q, () => {
           clearFoot();
           (s.chips || []).forEach((c) => {
             const label = typeof c === "string" ? c : c.label;
             const value = typeof c === "string" ? c : c.value;
-            const b = el("button", null, label); b.type = "button";
-            b.addEventListener("click", () => answer(value, label));
+            const b = el("button", null, tr(label)); b.type = "button";
+            b.addEventListener("click", () => answer(value, tr(label)));
             chips.appendChild(b);
           });
           if (s.photo) {
             photoBtn.classList.add("on");
-            const skip = el("button", null, s.skip || "בלי תמונה"); skip.type = "button";
-            skip.addEventListener("click", () => answer(null, s.skip || "בלי תמונה"));
+            const skipLabel = s.skip ? tr(s.skip) : ui("noPhoto");
+            const skip = el("button", null, skipLabel); skip.type = "button";
+            skip.addEventListener("click", () => answer(null, skipLabel));
             chips.appendChild(skip);
           }
           if (s.input) {
             form.classList.add("on");
             input.type = s.input === "tel" ? "tel" : "text";
             input.inputMode = s.input === "tel" ? "tel" : "text";
-            input.dir = s.input === "tel" ? "ltr" : "rtl";
-            input.placeholder = s.placeholder || "";
+            input.dir = s.input === "tel" ? "ltr" : "auto";
+            input.placeholder = tr(s.placeholder || "");
             input.value = "";
             input.focus();
           } else if (chips.firstChild && (document.activeElement === document.body || panel.contains(document.activeElement))) {
@@ -192,16 +244,16 @@
         if (busy) return;
         const s = cfg.steps[step];
         say(label, "me");
-        data[s.key] = value;
+        data[s.key] = value; seen[s.key] = label;
         clearFoot();
         step++;
-        if (s.tip && s.tip.when(value)) return botSay(s.tip.text, () => { tipLink(s.tip); ask(); });
+        if (s.tip && s.tip.when(value)) return botSay(tr(s.tip.text), () => { tipLink(s.tip); ask(); });
         ask();
       }
       // A link to the full guide on the page; the chat closes so the guide is in view, and keeps its place.
       function tipLink(t) {
         if (!t.id || !document.getElementById("g-" + t.id)) return;
-        const m = el("div", "lb-msg"); const a = el("a", "lb-tip", t.link || "המדריך המלא, צעד אחרי צעד");
+        const m = el("div", "lb-msg"); const a = el("a", "lb-tip", t.link ? tr(t.link) : ui("guide"));
         a.href = "#g-" + t.id; a.addEventListener("click", () => close());
         m.append(a); body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
       }
@@ -228,11 +280,11 @@
         if (!f || busy || !s || !s.photo) return;
         busy = true;
         try { const blob = await shrink(f); photo = { blob, url: URL.createObjectURL(blob) }; }
-        catch (e) { busy = false; botSay("לא הצלחנו לפתוח את התמונה. נסו תמונה אחרת, או המשיכו בלי."); return; }
+        catch (e) { busy = false; botSay(ui("badPhoto")); return; }
         busy = false;
-        const m = el("div", "lb-msg me pic"); const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; m.append(img);
+        const m = el("div", "lb-msg me pic"); const img = el("img"); img.src = photo.url; img.alt = ui("yourPhoto"); m.append(img);
         body.insertBefore(m, typing); body.scrollTop = body.scrollHeight;
-        data[s.key] = "צורפה תמונה"; clearFoot(); step++;
+        data[s.key] = "צורפה תמונה"; seen[s.key] = ui("photoIn") || "צורפה תמונה"; clearFoot(); step++;
         if (!cfg.estimate) return ask();
         // A first look at the photo (/api/estimate): what it shows, the matching service and its range from the
         // business's own list. Never a promised price; on any failure the chat simply goes on.
@@ -240,7 +292,7 @@
         const est = await look(photo.blob);
         typing.classList.remove("on"); busy = false;
         if (est) {
-          estimateCard(est);
+          if (lang === "he") estimateCard(est);
           // For the owner: what the photo shows and the matching service, so they come prepared (added to the lead below).
           const rng = est.range ? " (" + est.range + (/₪/.test(est.range) ? "" : " ₪") + ")" : "";
           estimateNote = [est.urgent ? "⚠️ נראה דחוף." : "", est.seen, est.service ? "נראה כמו: " + est.service + rng + "." : ""].filter(Boolean).join(" ");
@@ -278,7 +330,7 @@
         if (!v) return;
         if (s.input === "tel") {
           const d = v.replace(/\D/g, "").replace(/^00972/, "972").replace(/^972/, "0");
-          if (!PHONE_RE.test(d)) { say(v, "me"); botSay("המספר לא נראה שלם. אפשר לכתוב אותו שוב, למשל 050-1234567?"); input.value = ""; return; }
+          if (!PHONE_RE.test(d)) { say(v, "me"); botSay(ui("badPhone")); input.value = ""; return; }
           v = d.slice(0, 3) + "-" + d.slice(3);
         } else if (v.length < 2) return;
         answer(v, v);
@@ -291,12 +343,13 @@
           typing.classList.add("on"); body.scrollTop = body.scrollHeight;
           const lead = cfg.capture.lead(data);
           if (estimateNote) lead.message = [lead.message, "מהתמונה: " + estimateNote].filter(Boolean).join("\n");
+          if (lang !== "he") lead.message = [lead.message, "(הפנייה " + LANG_HE[lang] + ")"].filter(Boolean).join("\n");
           if (photo) lead.photo = await toDataUrl(photo.blob);
           const r = await LeadForm.send(cfg.capture.endpoint, lead, photo ? 20000 : 8000);
           typing.classList.remove("on");
           if (r.ok) {
-            botSay(cfg.capture.saved(data), () => {
-              const again = el("button", "lb-restart", "פנייה נוספת"); again.type = "button";
+            botSay(lang === "he" ? cfg.capture.saved(data) : named(ui("saved")), () => {
+              const again = el("button", "lb-restart", ui("another")); again.type = "button";
               again.addEventListener("click", restart);
               foot.append(again);
               if (cfg.onDone) cfg.onDone(data, cfg.summary(data), photo && photo.url);
@@ -304,7 +357,7 @@
             return;
           }
         }
-        const closing = cfg.closing ? cfg.closing(data) : "תודה! הנה סיכום הפנייה.";
+        const closing = lang !== "he" ? named(ui("thanks")) : cfg.closing ? cfg.closing(data) : "תודה! הנה סיכום הפנייה.";
         botSay(closing, () => {
           const card = el("div", "lb-card"); const dl = el("dl");
           // One row per key, from a step that was actually asked.
@@ -313,17 +366,17 @@
             if (!s.label || data[s.key] == null || shown.has(s.key)) return;
             if (s.show && !s.show(data)) return;
             shown.add(s.key);
-            const row = el("div"); row.append(el("dt", null, s.label), el("dd", null, data[s.key])); dl.appendChild(row);
+            const row = el("div"); row.append(el("dt", null, tr(s.label)), el("dd", null, lang === "he" ? data[s.key] : seen[s.key] || data[s.key])); dl.appendChild(row);
           });
           card.appendChild(dl);
-          if (photo) { const img = el("img"); img.src = photo.url; img.alt = "התמונה שצירפתם"; card.appendChild(img); }
+          if (photo) { const img = el("img"); img.src = photo.url; img.alt = ui("yourPhoto"); card.appendChild(img); }
           body.insertBefore(card, typing); body.scrollTop = body.scrollHeight;
           // A WhatsApp link can't carry a photo: the text says it follows in the same chat.
-          const text = cfg.summary(data) + (estimateNote ? "\nמהתמונה: " + estimateNote : "") + (photo ? "\nיש לי תמונה של זה, אשלח אותה כאן." : "");
-          const wa = el("a", "lb-wa", "לשלוח את הפנייה בוואטסאפ");
+          const text = cfg.summary(data) + (estimateNote ? "\nמהתמונה: " + estimateNote : "") + (photo ? "\nיש לי תמונה של זה, אשלח אותה כאן." : "") + (lang !== "he" ? "\n(הפנייה " + LANG_HE[lang] + ")" : "");
+          const wa = el("a", "lb-wa", ui("wa"));
           wa.href = "https://wa.me/" + cfg.whatsapp + "?text=" + encodeURIComponent(text);
           wa.target = "_blank"; wa.rel = "noopener";
-          const again = el("button", "lb-restart", "להתחיל מחדש"); again.type = "button";
+          const again = el("button", "lb-restart", ui("again")); again.type = "button";
           again.addEventListener("click", restart);
           foot.append(wa, again);
           if (cfg.onDone) cfg.onDone(data, text, photo && photo.url);
@@ -335,10 +388,12 @@
         body.querySelectorAll(".lb-msg,.lb-card").forEach((n) => n.remove());
         if (photo) { URL.revokeObjectURL(photo.url); photo = null; }
         foot.querySelectorAll(".lb-wa,.lb-restart").forEach((n) => n.remove());
-        typing.classList.remove("on"); busy = false; finished = false; step = 0; data = {}; pre = {}; estimateNote = "";
+        typing.classList.remove("on"); busy = false; finished = false; step = 0; data = {}; seen = {}; pre = {}; estimateNote = "";
         clearFoot(); start();
       }
-      function start() { started = true; botSay(cfg.greet, ask); }
+      // A fixed line with the customer's first name in it.
+      const named = (t) => t.replace("{name}", String(data.name || "").trim().split(/\s+/)[0] || "");
+      function start() { started = true; botSay(tr(cfg.greet), ask); }
 
       // prefill: answers keyed by step key (the calculator's). A chat that has started over again with them, unless it already sent its enquiry.
       function open(prefill) {

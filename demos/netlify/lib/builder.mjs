@@ -34,6 +34,7 @@ const tradeTemplate = (T) => ({ ...plumber,
   id: T.id, label: T.label, FIELDS: plumber.fieldsFor(T.id), GUIDE: plumber.guideFor(T),
   emptyContent: () => plumber.emptyContent(T.id),
   render: (c, o) => plumber.render({ ...c, trade_id: T.id }, o),
+  chatLines: (c) => plumber.chatLines({ ...c, trade_id: T.id }),
 });
 export const TEMPLATES = Object.fromEntries(Object.values(TRADES).map((T) => [T.id, T.id === "plumber" ? plumber : tradeTemplate(T)]));
 export const SITE_ORIGIN = "https://service-pro-web.netlify.app";
@@ -634,6 +635,52 @@ The owner shared their own material about the business${images.length ? ` (${ima
   return { ...applied, reply };
 }
 
+/* ---------------- the chat in the customer's language ---------------- */
+
+// The site's scripted chat (leadbot.js) shows a row of languages: every line it says (the template's chatLines: the
+// trade's questions, the owner's services as buttons, the greeting) translated once at publish into Russian, Arabic
+// and English. The answers keep their Hebrew values, so the owner gets everything in Hebrew. One call per new set of
+// lines (cached in the instance: the repo commit and the deploy render the same site); on any failure the site is
+// published in Hebrew only, never held back. נציג AI sites only. CHAT_LANGS=off turns it off.
+const langCache = new Map();
+const LANGS_SCHEMA = (n) => ({
+  type: "object", additionalProperties: false, required: ["ru", "ar", "en"],
+  properties: Object.fromEntries(["ru", "ar", "en"].map((l) => [l, { type: "array", items: { type: "string" }, description: `Exactly ${n} translations, in the order given` }])),
+});
+export async function chatLangs(d) {
+  if (process.env.CHAT_LANGS === "off" || !process.env.ANTHROPIC_API_KEY || d.package !== "ai") return null;
+  const t = templateOf(d);
+  const lines = t.chatLines ? t.chatLines(d.content || {}) : [];
+  if (!lines.length) return null;
+  const key = sha256(JSON.stringify(lines));
+  if (langCache.has(key)) return langCache.get(key);
+  try {
+    const response = await ai().beta.messages.create({
+      model: MODEL(), max_tokens: 8000,
+      output_config: { effort: "low", format: { type: "json_schema", schema: LANGS_SCHEMA(lines.length) } },
+      ...modelOptions(MODEL()),
+      system: [{ type: "text", text: `You translate the lines of a small Israeli business's website chat from Hebrew into Russian (ru), Arabic (ar) and English (en), for customers in Israel who read those languages better.
+- One translation per line, in the same order, the same count. Short, plain and polite, as a good local business writes on WhatsApp: Russian with "вы", Arabic in clear Modern Standard Arabic as used in Israel, English plain.
+- Keep numbers, prices, ₪, times, phone numbers, emoji and line breaks as they are. Transliterate people's and businesses' names and Israeli town names (Hadera, Kfar Saba); never translate a name's meaning.
+- A line is a question, a button or a label: keep it that kind and about that length. Never add, drop or soften a fact, a safety instruction or an emergency number.` }],
+      messages: [{ role: "user", content: `<lines>\n${JSON.stringify(lines)}\n</lines>` }],
+    });
+    if (response.stop_reason !== "end_turn") throw new Error(response.stop_reason || "no_answer");
+    const out = JSON.parse(response.content.filter((b) => b.type === "text").map((b) => b.text).join(""));
+    const langs = {};
+    for (const l of ["ru", "ar", "en"]) {
+      const tr = out && Array.isArray(out[l]) && out[l].length === lines.length ? out[l] : null;
+      if (tr) langs[l] = Object.fromEntries(lines.map((he, i) => [he, clip(String(tr[i] || "").trim(), 400)]).filter(([, x]) => x));
+    }
+    const result = Object.keys(langs).length ? langs : null;
+    langCache.set(key, result);
+    return result;
+  } catch (e) {
+    console.error("builder chat languages", e.message);
+    return null;
+  }
+}
+
 /* ---------------- approval and the alert to כפיר ---------------- */
 
 const PACKAGE_HE = { presence: "נוכחות", ai: "נציג AI" };
@@ -694,7 +741,7 @@ export function siteMedia(d) {
   return media;
 }
 
-export function siteFiles(d, slug, url = "") {
+export function siteFiles(d, slug, url = "", langs = null) {
   const t = templateOf(d);
   const photos = {};
   const hero = heroOf(t, d);
@@ -702,7 +749,7 @@ export function siteFiles(d, slug, url = "") {
   const leads = d.package === "ai" ? `${SITE_ORIGIN}/api/lead/${slug}` : null;
   const video = d.video && hero === "video" ? { src: "assets/hero.mp4", poster: `assets/hero-poster.${d.video.poster.ext}` } : null;
   const clips = clipList(d).map((x) => ({ src: `assets/videos/${x.id}.mp4`, poster: `assets/videos/${x.id}-poster.${x.poster.ext}`, title: x.title || "", w: x.w || 0, h: x.h || 0 }));
-  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video, clips, sizes: photoSizes(d), url, credit: credit(slug) });
+  const pages = t.render(d.content, { mode: "site", assets: "assets/", photos, leads, video, clips, sizes: photoSizes(d), url, credit: credit(slug), langs });
   const card = `# ${d.content.business_name}
 
 נבנה בבונה האתרים (${t.label}), טיוטה \`${d.id}\`. פורסם: ${new Date().toISOString().slice(0, 10)}.
@@ -726,7 +773,7 @@ export function siteFiles(d, slug, url = "") {
  */
 export async function publishToRepo(d, slug, message = `Publish clients/${slug} from the site builder\n\nDraft ${d.id}, approved by the owner and by כפיר.`) {
   if (!process.env.GITHUB_TOKEN) throw new Error("not_configured: GITHUB_TOKEN");
-  const files = siteFiles(d, slug);
+  const files = siteFiles(d, slug, "", await chatLangs(d));
   const dir = `clients/${slug}`;
 
   // A folder that is already there must be this draft's own (its CLIENT.md names the draft): never another site's.
@@ -785,7 +832,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
 
 // Every file of the live site, as bytes: the pages, the shared scripts (the same files the home site serves) and the media.
 export async function siteBundle(d, slug, url = "") {
-  const { "CLIENT.md": _card, ...files } = siteFiles(d, slug, url); // the repo's card for כפיר, not a page of the site
+  const { "CLIENT.md": _card, ...files } = siteFiles(d, slug, url, await chatLangs(d)); // the repo's card for כפיר, not a page of the site
   await Promise.all(["leadbot.js", "leadform.js", "a11y.js", "aibot.js"].map(async (name) => {
     const r = await fetch(`${SITE_ORIGIN}/shared/${name}`, { signal: AbortSignal.timeout(15000) });
     if (!r.ok) throw new Error(`shared ${name} ${r.status}`);
