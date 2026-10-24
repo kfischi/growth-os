@@ -122,9 +122,8 @@
   .tile.green { background: linear-gradient(135deg, #22746f, var(--zellige-deep)); color: #fff; }
   .tile.green span span, .tile.green .pr small { color: #d5e6e4; } .tile.green .pr { color: #fff; }
   .tile.green:focus-visible { outline-color: #fff; }
-  .tile.crack::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(118deg, transparent 49.4%, rgba(42,50,53,.28) 49.6%, rgba(42,50,53,.28) 50%, transparent 50.2%) 0 0 / 100% 100% no-repeat;
-    -webkit-mask: linear-gradient(transparent 0 8%, #000 8% 46%, transparent 46%); mask: linear-gradient(transparent 0 8%, #000 8% 46%, transparent 46%); }
+  .tile.crack::after { content: ""; position: absolute; top: 0; left: 18px; width: 64px; height: 92px; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 92' fill='none' stroke='%237d8583' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 0 L22 26 L16 40 L38 62 L34 74 L50 92'/%3E%3Cpath d='M16 40 L4 52'/%3E%3C/svg%3E") no-repeat; }
   .buy { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
   .buy::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--spacer); clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); transform: translateY(-1px); }
   .buy a { color: var(--zellige); font-weight: 700; }
@@ -273,7 +272,7 @@
         <button class="tile" type="button" data-pre='{"need":"מדרגות"}'><span><b>מדרגות</b><span>שלח ורום לכל מדרגה, עם פס נגד החלקה אם צריך</span></span><span class="pr">250 עד 450 ₪<small>למדרגה</small></span></button>
         <button class="tile" type="button" data-pre='{"need":"מרפסת"}'><span><b>ריצוף מרפסת</b><span>אריח לחוץ, עם שיפוע לניקוז. איטום עושה איש איטום</span></span><span class="pr">160 עד 250 ₪<small>למ״ר</small></span></button>
       </div>
-      <p class="buy">קונים אריחים? קחו בערך 10% יותר, ושמרו קופסה אחת מאותה סדרה לתיקונים. <a href="#g-extra">למה זה חשוב</a></p>
+      <p class="buy"><span>קונים אריחים? קחו בערך 10% יותר, ושמרו קופסה אחת מאותה סדרה לתיקונים. <a href="#g-extra">למה זה חשוב</a></span></p>
     </div>
   </section>
 
@@ -368,7 +367,6 @@
     onDone: LeadPhone("#ph-msg"),
   });
   document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
-  const M2 = ["ריצוף", "ריצוף מרפסת"];
   Estimate.init(document.querySelector("[data-estimate]"), {
     pick: { ask: "איזו עבודה?", items: [
       { label: "ריצוף", range: [130, 200], prefill: { need: "ריצוף" } },
@@ -379,7 +377,12 @@
       { label: "חידוש רובה", range: [600, 1400], prefill: { need: "חידוש רובה" } },
     ] },
     factors: [
-      { ask: "כמה מ״ר, בערך?", for: M2, options: [
+      { ask: "כמה מ״ר במרפסת, בערך?", for: ["ריצוף מרפסת"], options: [
+        { label: "בערך 8 מ״ר", mul: 8, prefill: { size: "עד 20 מ״ר" } },
+        { label: "בערך 15 מ״ר", mul: 15, prefill: { size: "עד 20 מ״ר" } },
+        { label: "בערך 25 מ״ר", mul: 25, prefill: { size: "20 עד 50 מ״ר" } },
+      ] },
+      { ask: "כמה מ״ר, בערך?", for: ["ריצוף"], options: [
         { label: "בערך 12 מ״ר", mul: 12, prefill: { size: "עד 20 מ״ר" } },
         { label: "בערך 30 מ״ר", mul: 30, prefill: { size: "20 עד 50 מ״ר" } },
         { label: "בערך 60 מ״ר", mul: 60, prefill: { size: "יותר מ-50 מ״ר" } },

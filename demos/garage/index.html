@@ -97,7 +97,6 @@
   .cluster .lcd-k { font: 500 12px var(--body); fill: #7f8d97; text-anchor: middle; }
   .cluster .lamp { color: #39434b; }
   .cluster .lamp.red { animation: lampRed 2.6s .4s both; }
-  .cluster .lamp.blue { animation: lampBlue 2.6s .4s both; }
   .cluster .lamp.on { color: var(--lamp-orange); filter: drop-shadow(0 0 6px rgba(240,116,62,.75)); animation: lampOn 2.6s .4s both; }
   .cluster .needle { transform-box: view-box; }
   .cluster .n-tach { transform-origin: 150px 270px; transform: rotate(-108deg); animation: tach 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
@@ -105,7 +104,6 @@
   @keyframes tach { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-108deg); } }
   @keyframes speed { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-135deg); } }
   @keyframes lampRed { 0%, 8% { color: #39434b; } 12%, 60% { color: var(--lamp-red); } 70%, 100% { color: #39434b; } }
-  @keyframes lampBlue { 0%, 8% { color: #39434b; } 12%, 60% { color: var(--lamp-blue); } 70%, 100% { color: #39434b; } }
   @keyframes lampOn { 0%, 8% { color: #39434b; filter: none; } 12%, 100% { color: var(--lamp-orange); } }
 
   .glass { position: absolute; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
@@ -341,7 +339,7 @@
             <use class="lamp red" href="#i-batt" x="354" y="40" width="34" height="34"/>
             <use class="lamp red" href="#i-brake" x="396" y="40" width="34" height="34"/>
             <use class="lamp on" href="#i-engine" x="438" y="40" width="34" height="34"/>
-            <use class="lamp blue" href="#i-tyre" x="480" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-tyre" x="480" y="40" width="34" height="34"/>
           </g>
                   </svg>
       </div>
@@ -382,7 +380,7 @@
       <div class="head"><h2>מה הרכב צריך?</h2><p>מחירים לדוגמה. לוחצים על השורה, והצ׳אט נפתח עם התשובה.</p></div>
       <div class="price-grid">
         <div class="book">
-          <div class="book-h"><b>פנקס טיפולים</b><span>מחירון לדוגמה · המחירים סופיים לפני עבודה</span></div>
+          <div class="book-h"><b>פנקס טיפולים</b><span>מחירון לדוגמה</span></div>
           <button class="row hot" data-issue="נורה דולקת"><span><b>נורה דולקת בלוח</b><span>בדיקת מחשב ואבחון, ומחיר לתיקון לפני שמתחילים</span></span><span class="pr">150 עד 250 ₪<small>אבחון</small></span></button>
           <button class="row" data-issue="טיפול תקופתי"><span><b>טיפול תקופתי</b><span>שמן, מסננים ובדיקה כללית, לפי ספר הרכב</span></span><span class="pr">450 עד 1,200 ₪<small>לפי הרכב והטיפול</small></span></button>
           <button class="row" data-issue="בלמים"><span><b>בלמים</b><span>רפידות, דיסקים ונוזל בלמים</span></span><span class="pr">350 עד 1,200 ₪<small>לסרן</small></span></button>
