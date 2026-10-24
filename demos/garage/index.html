@@ -85,7 +85,7 @@
   .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding-top: 22px; border-top: 1px solid var(--steel-line); }
   .facts div { border-inline-start: 1px solid var(--steel-line); padding: 2px 16px 0; min-width: 0; }
   .facts div:first-child { border-inline-start: 0; padding-inline-start: 0; }
-  .facts dt { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: 23px; line-height: 1.1; color: var(--brake); }
+  .facts dt { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: 21px; line-height: 1.1; color: var(--brake); }
   .facts dd { margin: 4px 0 0; color: var(--asphalt-soft); font-size: 14px; line-height: 1.4; }
 
   .win { grid-area: win; position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 540px; justify-self: center; min-width: 0; }
@@ -100,8 +100,8 @@
   .cluster .lamp.blue { animation: lampBlue 2.6s .4s both; }
   .cluster .lamp.on { color: var(--lamp-orange); filter: drop-shadow(0 0 6px rgba(240,116,62,.75)); animation: lampOn 2.6s .4s both; }
   .cluster .needle { transform-box: view-box; }
-  .cluster .n-tach { transform-origin: 150px 250px; transform: rotate(-108deg); animation: tach 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
-  .cluster .n-speed { transform-origin: 420px 250px; transform: rotate(-135deg); animation: speed 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
+  .cluster .n-tach { transform-origin: 150px 270px; transform: rotate(-108deg); animation: tach 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
+  .cluster .n-speed { transform-origin: 420px 270px; transform: rotate(-135deg); animation: speed 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
   @keyframes tach { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-108deg); } }
   @keyframes speed { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-135deg); } }
   @keyframes lampRed { 0%, 8% { color: #39434b; } 12%, 60% { color: var(--lamp-red); } 70%, 100% { color: #39434b; } }
@@ -321,30 +321,29 @@
             <radialGradient id="dialbg" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#1c2329"/><stop offset="1" stop-color="#12171b"/></radialGradient>
           </defs>
           <rect width="570" height="480" fill="url(#dash)"/>
-          <circle cx="150" cy="250" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
-          <circle cx="420" cy="250" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
-          <path d="M66.6 333.4L77.9 322.1M34.3 273.0L50.0 269.9M41.0 204.8L55.8 211.0M84.4 151.9L93.3 165.2M150.0 132.0L150.0 148.0M215.6 151.9L206.7 165.2M259.0 204.8L244.2 211.0" stroke="#e8ecef" stroke-width="3"/><path d="M55.2 320.3L61.6 315.5M45.9 305.6L53.0 301.9M38.9 289.8L46.4 287.1M32.1 255.8L40.1 255.4M32.6 238.4L40.5 239.2M35.5 221.3L43.3 223.3M48.8 189.3L55.6 193.4M58.8 175.1L65.0 180.2M70.8 162.6L76.1 168.5M99.5 143.3L103.0 150.6M115.7 137.1L118.1 144.7M132.7 133.3L133.9 141.2M167.3 133.3L166.1 141.2M184.3 137.1L181.9 144.7M200.5 143.3L197.0 150.6M229.2 162.6L223.9 168.5M241.2 175.1L235.0 180.2M251.2 189.3L244.4 193.4M264.5 221.3L256.7 223.3" stroke="#7d8a94" stroke-width="2"/><path d="M267.4 238.4L259.5 239.2M267.9 255.8L259.9 255.4M265.7 273.0L250.0 269.9M261.1 289.8L253.6 287.1M254.1 305.6L247.0 301.9M244.8 320.3L238.4 315.5M233.4 333.4L222.1 322.1" stroke="#e5484d" stroke-width="3"/><g class="num"><text x="90.6" y="314.4">0</text><text x="67.6" y="271.4">1</text><text x="72.4" y="222.9">2</text><text x="103.3" y="185.2">3</text><text x="150.0" y="171.0">4</text><text x="196.7" y="185.2">5</text><text x="227.6" y="222.9">6</text><text x="232.4" y="271.4">7</text><text x="209.4" y="314.4">8</text></g>
-<path d="M336.6 333.4L347.9 322.1M309.4 291.2L324.4 285.6M302.3 241.6L318.3 242.7M316.4 193.4L330.5 201.1M349.3 155.5L358.9 168.3M394.9 134.7L398.3 150.3M445.1 134.7L441.7 150.3M490.7 155.5L481.1 168.3M523.6 193.4L509.5 201.1M537.7 241.6L521.7 242.7M530.6 291.2L515.6 285.6M503.4 333.4L492.1 322.1" stroke="#e8ecef" stroke-width="3"/><path d="M320.7 313.8L327.5 309.5M303.2 266.8L311.1 265.7M306.8 216.8L314.5 219.0M330.8 172.7L336.9 178.0M371.0 142.7L374.3 149.9M420.0 132.0L420.0 140.0M469.0 142.7L465.7 149.9M509.2 172.7L503.1 178.0M533.2 216.8L525.5 219.0M536.8 266.8L528.9 265.7M519.3 313.8L512.5 309.5" stroke="#7d8a94" stroke-width="2"/><g class="num"><text x="360.6" y="314.4">0</text><text x="341.3" y="284.4">20</text><text x="336.2" y="249.0">40</text><text x="346.3" y="214.7">60</text><text x="369.7" y="187.8">80</text><text x="402.1" y="172.9">100</text><text x="437.9" y="172.9">120</text><text x="470.3" y="187.8">140</text><text x="493.7" y="214.7">160</text><text x="503.8" y="249.0">180</text><text x="498.7" y="284.4">200</text><text x="479.4" y="314.4">220</text></g>
-          <text class="lcd-k" x="150" y="345">סל״ד × 1000</text>
-          <rect x="360" y="322" width="120" height="34" rx="7" fill="#0a0e11" stroke="#2f3a42"/>
-          <text class="lcd" x="420" y="345">128,450</text>
-          <text class="lcd-k" x="420" y="374">ק״מ</text>
-          <g class="needle n-tach"><path d="M150 250 L150 152" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
-          <g class="needle n-speed"><path d="M420 250 L420 152" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
-          <circle cx="150" cy="250" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
-          <circle cx="420" cy="250" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
-          <!-- the warning lights, above and between the dials -->
+          <circle cx="150" cy="270" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
+          <circle cx="420" cy="270" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
+          <path d="M66.6 353.4L77.9 342.1M34.3 293.0L50.0 289.9M41.0 224.8L55.8 231.0M84.4 171.9L93.3 185.2M150.0 152.0L150.0 168.0M215.6 171.9L206.7 185.2M259.0 224.8L244.2 231.0" stroke="#e8ecef" stroke-width="3"/><path d="M55.2 340.3L61.6 335.5M45.9 325.6L53.0 321.9M38.9 309.8L46.4 307.1M32.1 275.8L40.1 275.4M32.6 258.4L40.5 259.2M35.5 241.3L43.3 243.3M48.8 209.3L55.6 213.4M58.8 195.1L65.0 200.2M70.8 182.6L76.1 188.5M99.5 163.3L103.0 170.6M115.7 157.1L118.1 164.7M132.7 153.3L133.9 161.2M167.3 153.3L166.1 161.2M184.3 157.1L181.9 164.7M200.5 163.3L197.0 170.6M229.2 182.6L223.9 188.5M241.2 195.1L235.0 200.2M251.2 209.3L244.4 213.4M264.5 241.3L256.7 243.3" stroke="#7d8a94" stroke-width="2"/><path d="M267.4 258.4L259.5 259.2M267.9 275.8L259.9 275.4M265.7 293.0L250.0 289.9M261.1 309.8L253.6 307.1M254.1 325.6L247.0 321.9M244.8 340.3L238.4 335.5M233.4 353.4L222.1 342.1" stroke="#e5484d" stroke-width="3"/><g class="num"><text x="90.6" y="334.4">0</text><text x="67.6" y="291.4">1</text><text x="72.4" y="242.9">2</text><text x="103.3" y="205.2">3</text><text x="150.0" y="191.0">4</text><text x="196.7" y="205.2">5</text><text x="227.6" y="242.9">6</text><text x="232.4" y="291.4">7</text><text x="209.4" y="334.4">8</text></g>
+<path d="M336.6 353.4L347.9 342.1M309.4 311.2L324.4 305.6M302.3 261.6L318.3 262.7M316.4 213.4L330.5 221.1M349.3 175.5L358.9 188.3M394.9 154.7L398.3 170.3M445.1 154.7L441.7 170.3M490.7 175.5L481.1 188.3M523.6 213.4L509.5 221.1M537.7 261.6L521.7 262.7M530.6 311.2L515.6 305.6M503.4 353.4L492.1 342.1" stroke="#e8ecef" stroke-width="3"/><path d="M320.7 333.8L327.5 329.5M303.2 286.8L311.1 285.7M306.8 236.8L314.5 239.0M330.8 192.7L336.9 198.0M371.0 162.7L374.3 169.9M420.0 152.0L420.0 160.0M469.0 162.7L465.7 169.9M509.2 192.7L503.1 198.0M533.2 236.8L525.5 239.0M536.8 286.8L528.9 285.7M519.3 333.8L512.5 329.5" stroke="#7d8a94" stroke-width="2"/><g class="num"><text x="360.6" y="334.4">0</text><text x="341.3" y="304.4">20</text><text x="336.2" y="269.0">40</text><text x="346.3" y="234.7">60</text><text x="369.7" y="207.8">80</text><text x="402.1" y="192.9">100</text><text x="437.9" y="192.9">120</text><text x="470.3" y="207.8">140</text><text x="493.7" y="234.7">160</text><text x="503.8" y="269.0">180</text><text x="498.7" y="304.4">200</text><text x="479.4" y="334.4">220</text></g>
+          <text class="lcd-k" x="150" y="330">סל״ד × 1000</text>
+          <text class="lcd-k" x="420" y="330">קמ״ש</text>
+          <rect x="86" y="342" width="128" height="32" rx="7" fill="#0a0e11" stroke="#2f3a42"/>
+          <text class="lcd" x="150" y="364">128,450</text>
+          <g class="needle n-tach"><path d="M150 270 L150 172" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
+          <g class="needle n-speed"><path d="M420 270 L420 172" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
+          <circle cx="150" cy="270" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
+          <circle cx="420" cy="270" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
+          <!-- the warning lights, in a row above the dials -->
+          <rect x="258" y="30" width="276" height="54" rx="12" fill="#0a0e11" stroke="#252e35"/>
           <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <use class="lamp red" href="#i-oil" x="214" y="40" width="34" height="34"/>
-            <use class="lamp red" href="#i-temp" x="258" y="40" width="34" height="34"/>
-            <use class="lamp red" href="#i-batt" x="302" y="40" width="34" height="34"/>
-            <use class="lamp red" href="#i-brake" x="346" y="40" width="34" height="34"/>
-            <use class="lamp on" href="#i-engine" x="258" y="84" width="34" height="34"/>
-            <use class="lamp blue" href="#i-tyre" x="302" y="84" width="34" height="34"/>
+            <use class="lamp red" href="#i-oil" x="270" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-temp" x="312" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-batt" x="354" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-brake" x="396" y="40" width="34" height="34"/>
+            <use class="lamp on" href="#i-engine" x="438" y="40" width="34" height="34"/>
+            <use class="lamp blue" href="#i-tyre" x="480" y="40" width="34" height="34"/>
           </g>
-          <path d="M40 430 H530" stroke="#2a333a" stroke-width="2"/>
-          <text class="lcd-k" x="285" y="458">בדיקת נורות בהנעה</text>
-        </svg>
+                  </svg>
       </div>
       <div class="glass note" aria-hidden="true"><p class="q">נדלקה נורה כתומה של המנוע. אפשר לנסוע?</p><p class="a">אם הרכב נוסע רגיל, כן, עד המוסך. שלחו תמונה של הלוח, ואני קובע לכם בדיקת מחשב.</p></div>
       <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירון לדוגמה</span><div><b>בדיקת מחשב</b><span>150 עד 250 ₪</span></div><div><b>הכנה לטסט</b><span>250 עד 450 ₪</span></div><div><b>החלפת מצבר</b><span>400 עד 800 ₪</span></div></div>

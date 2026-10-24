@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מיכל אורן · פיזיותרפיה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="פיזיותרפיה במודיעין: גב ועורף, אחרי פציעה או ניתוח, פציעות ספורט, ובביקור בית. מספרים מה כואב ומאז מתי, ומיכל חוזרת לתאם.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the home exercise sheet the physiotherapist hands over, printed on grid paper: pictograms of a body,
+             an arc with degrees, and a strip of kinesio tape stuck across the shoulder.
+     Detail: range of motion in degrees (0° to 150°), 45 and 60 minutes, a first assessment, red flags that mean a
+             doctor first, a referral or a discharge letter after surgery, a קופת חולים or an insurer that may refund.
+     Bold move: one raised arm drawn on the sheet with its arc and its degree, and the coral tape over the shoulder.
+     Motion: the glass cards rise once in the top. Nothing else moves; never with reduced motion or html.a11y-still. */
+  :root {
+    --sheet: #f3f6fa;          /* the page: the printed exercise sheet, cool white */
+    --paper: #ffffff;
+    --navy: #173a7a;           /* the treatment bed's vinyl: brand and buttons */
+    --navy-deep: #0f2350;      /* ink and the one dark band */
+    --tape: #c2384f;           /* the coral kinesio tape: accent and warnings */
+    --tape-wash: #f8e1e5;
+    --grid: rgba(23,58,122,.07);
+    --ink: #121c33;
+    --ink-soft: #4a5672;
+    --line: #d2dae8;
+    --display: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --body: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--navy-deep);
+    --bot-bg: var(--paper); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--navy); --bot-accent-fg: #fff; --bot-them: #e8edf6; --bot-me: var(--navy-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 12px; --guide-alert: var(--tape);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--sheet); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--tape); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { margin: 0; line-height: 1.1; font-family: var(--display); }
+  h2 { font-weight: 800; font-size: clamp(32px, 4.2vw, 50px); letter-spacing: -.025em; }
+  h3 { font-weight: 700; }
+  .mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 54ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .2s; }
+  .btn-navy { background: var(--navy); color: #fff; }
+  .btn-navy:hover { background: var(--navy-deep); }
+  .btn-line { background: #fff; color: var(--navy-deep); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--navy); }
+
+  .demo { background: var(--navy-deep); color: #d4ddef; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- The top ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; border-bottom: 1px solid rgba(23,58,122,.14); }
+  .logo { font: 800 28px/1 var(--display); letter-spacing: -.02em; }
+  .logo small { display: block; font: 500 14px/1.3 var(--body); letter-spacing: 0; color: var(--ink-soft); margin-top: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--tape); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 30px 0 88px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--ink-soft); font-weight: 500; font-size: 16px; }
+  .lead { font-size: 19px; max-width: 38ch; margin: 0 0 28px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 36px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 800 23px/1.2 var(--body); letter-spacing: -.02em; color: var(--navy-deep); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+
+  /* the exercise sheet drawing */
+  .scene { width: 100%; height: 100%; display: block; }
+  .scene .paper { fill: #fbfcfe; }
+  .scene .gridl { stroke: rgba(23,58,122,.09); stroke-width: 1; }
+  .scene .body { fill: none; stroke: var(--navy-deep); stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; }
+  .scene .head { fill: var(--navy-deep); }
+  .scene .arm-ghost { fill: none; stroke: #b9c6de; stroke-width: 18; stroke-linecap: round; stroke-dasharray: 2 30; }
+  .scene .arc { fill: none; stroke: var(--navy); stroke-width: 2.5; stroke-dasharray: 6 6; }
+  .scene .arrow { fill: var(--navy); }
+  .scene .deg { font: 600 20px var(--mono); fill: var(--navy); }
+  .scene .tape { fill: var(--tape); }
+  .scene .tape-cut { fill: none; stroke: rgba(255,255,255,.5); stroke-width: 1.5; stroke-dasharray: 3 5; }
+  .scene .band { fill: none; stroke: #4f7bd0; stroke-width: 7; stroke-linecap: round; }
+  .scene .mat { fill: #dfe6f3; }
+  .scene .label { font: 600 13px var(--mono); fill: var(--ink-soft); }
+
+  /* ---------- Where and what: the joint map and the red flags ---------- */
+  .tool-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 22px; align-items: stretch; }
+  .tool-grid > .head { grid-column: 1 / -1; margin-bottom: 8px; }
+  .chart { min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 20px; box-shadow: 0 30px 60px -44px rgba(15,35,80,.45);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 22px 22px;
+    display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 20px; align-items: start; }
+  .figure { width: 100%; height: auto; display: block; }
+  .figure .body { fill: none; stroke: #b9c6de; stroke-width: 20; stroke-linecap: round; stroke-linejoin: round; }
+  .figure .head { fill: #b9c6de; }
+  .figure .jt { cursor: pointer; }
+  .figure .jt circle { fill: var(--paper); stroke: var(--navy); stroke-width: 2.5; }
+  .figure .jt.on circle { fill: var(--tape); stroke: var(--tape); }
+  .figure .jt:hover circle { stroke: var(--tape); }
+  .joints { list-style: none; margin: 0 0 14px; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .joints button { width: 100%; min-height: 46px; padding: 8px 12px; text-align: start; background: var(--paper); border: 1.5px solid var(--line); border-radius: 12px; font: 500 16px/1.25 var(--body); color: var(--ink); cursor: pointer; }
+  .joints button:hover { border-color: var(--navy); }
+  .joints button[aria-pressed="true"] { border-color: var(--tape); background: var(--tape-wash); font-weight: 700; }
+  .pick { border-top: 1px dashed var(--line); padding-top: 14px; min-height: 120px; }
+  .pick p { margin: 0 0 4px; font-size: 16px; }
+  .pick .hint { color: var(--ink-soft); }
+  .pick h3 { font-size: 24px; margin-bottom: 4px; }
+  .pick .fit { color: var(--ink-soft); font-size: 15px; }
+  .pick .btn { margin-top: 10px; min-height: 46px; font-size: 16px; }
+  .flags { min-width: 0; background: var(--paper); border: 1px solid var(--line); border-top: 6px solid var(--tape); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .flags h3 { font-size: 22px; }
+  .flags > p { margin: 0; font-size: 15.5px; color: var(--ink-soft); }
+  .flags label { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 16px; line-height: 1.4; cursor: pointer; padding: 6px 0; }
+  .flags input { width: 22px; height: 22px; margin: 0; accent-color: var(--tape); }
+  .stop { margin: 4px 0 0; padding: 12px 14px; border-radius: 12px; font-size: 15.5px; line-height: 1.5; background: #e8edf6; }
+  .stop.on { background: var(--tape); color: #fff; font-weight: 500; }
+  .stop a { font-weight: 700; color: inherit; }
+
+  /* ---------- One treatment, seen from the phone ---------- */
+  .hour { background: var(--navy-deep); color: #fff; }
+  .hour .head p { color: #cfdaf0; }
+  .clock { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .clock::before { content: ""; position: absolute; top: 15px; inset-inline: 0; height: 2px; background: rgba(255,255,255,.35); }
+  .clock li { position: relative; min-width: 0; padding: 40px 16px 0 0; }
+  .clock li::before { content: ""; position: absolute; top: 9px; inset-inline-start: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--navy-deep); border: 2px solid #cfdaf0; }
+  .clock li.miss::before { border-color: #ff9fae; background: #ff9fae; }
+  .clock li.ok::before { border-color: #fff; background: #fff; }
+  .clock time { display: block; font: 600 22px/1.2 var(--mono); }
+  .clock span { display: block; color: #cfdaf0; font-size: 16px; margin-top: 4px; }
+  .clock .ok span { color: #fff; font-weight: 500; }
+
+  /* ---------- Prices ---------- */
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .plan { min-width: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; }
+  .plan .min { font: 600 14px var(--mono); color: var(--tape); }
+  .plan h3 { font-size: 22px; margin: 6px 0 4px; }
+  .plan .p { font: 800 26px/1.3 var(--body); letter-spacing: -.01em; color: var(--navy-deep); font-variant-numeric: tabular-nums; }
+  .plan ul { margin: 10px 0 0; padding: 0 18px 0 0; color: var(--ink-soft); font-size: 15.5px; }
+  .plan .ask { margin-top: auto; padding-top: 14px; border: 0; background: none; font: 700 15.5px var(--body); color: var(--navy); cursor: pointer; text-align: start; text-decoration: underline; text-underline-offset: 4px; }
+  .cover { margin: 22px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; border: 1.5px dashed var(--navy); padding: 14px 18px; background: var(--paper); border-radius: 14px; }
+  .cover b { font-size: 18px; }
+  .fine { margin: 18px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Owner ---------- */
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--tape); color: var(--tape); font: 600 17px/1 var(--mono); background: var(--paper); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--ink-soft); font-size: 16px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+
+  @media (max-width: 1020px) {
+    .hero-grid, .tool-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .tool-grid { gap: 18px; }
+    .hero-grid { padding-top: 22px; }
+    .plans { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    section { padding-block: 60px; }
+    body { font-size: 17px; }
+    .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 18px; }
+    .facts li { font-size: 13px; }
+    .chart { grid-template-columns: minmax(0, 1fr); padding: 16px 14px; }
+    .figure { max-width: 190px; margin-inline: auto; }
+    .joints button { font-size: 15px; }
+    .clock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
+    .clock li { padding: 0 34px 0 0; }
+    .clock li::before { top: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } html { scroll-behavior: auto; } }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     A breath of navy and coral on the sheet, big tight Rubik, the exercise sheet drawing large in a rounded frame
+     with glass cards over it (where Michal treats, three prices, the chat), the main button glowing in navy. */
+  .hero { background: var(--sheet);
+    background-image: radial-gradient(50% 60% at 10% 24%, rgba(208,220,240,.9), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(194,56,79,.07), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin-bottom: 20px; color: var(--ink); }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--navy); margin-top: 12px; }
+  .hero .btn-navy { box-shadow: 0 16px 32px -14px rgba(15,35,80,.78), 0 2px 6px -2px rgba(15,35,80,.35); }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
+  .hframe { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #fbfcfe;
+    box-shadow: 0 0 0 1px rgba(15,35,80,.08), 0 50px 90px -46px rgba(15,35,80,.6), 0 18px 34px -26px rgba(15,35,80,.35); }
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(15,35,80,.6), 0 4px 12px -6px rgba(15,35,80,.18);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; top: 2%; inset-inline-end: 0; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--navy); box-shadow: 0 0 0 4px rgba(23,58,122,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { display: grid; gap: 5px; bottom: 2%; inset-inline-start: 0; width: min(310px, 70%); animation-delay: .15s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--navy-deep); white-space: nowrap; }
+  .g-chat { display: grid; gap: 6px; padding: 11px; top: 36%; inset-inline-end: -1%; width: min(50%, 230px); animation-delay: .26s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e8edf6; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--navy-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .toolsec { padding-top: 24px; }
+  @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .g-chat { display: none; }
+    .hframe { inset: 10% 0 16% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 84%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">מיכל אורן</span><small>פיזיותרפיה · מודיעין</small></div>
+      <a href="#" data-wa="היי מיכל, הגעתי מהאתר ואשמח לקבוע טיפול">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">גב ועורף, אחרי פציעה או ניתוח, פציעות ספורט, ביקור בית</p>
+        <h1><span data-edit="h1a">כואב לזוז?</span> <em data-edit="h1b">ספרו לי מה קרה, ואני חוזרת לתאם.</em></h1>
+        <p class="lead">בזמן טיפול אני עם המטופל, לא עם הטלפון. כאן מספרים מה כואב ומאז מתי, רואים טווח מחיר ומשאירים מתי נוח לכם. בין טיפול לטיפול אני חוזרת.</p>
+        <div class="ctas">
+          <button class="btn btn-navy" type="button" data-open-bot>לבקש טיפול</button>
+          <a class="btn btn-line" href="#" data-wa="היי מיכל, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">12 שנה</b>פיזיותרפיסטית מוסמכת</li>
+          <li><b>60 דקות</b>טיפול ראשון עם הערכה</li>
+          <li><b>ביקור בית</b>במודיעין והסביבה</li>
+        </ul>
+      </div>
+
+      <div class="visual">
+        <div class="hframe">
+          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור מדף תרגילים: דמות מרימה יד, קשת עם מעלות, ומדבקת קינזיו על הכתף">
+            <rect class="paper" width="400" height="470"/>
+            <g class="gridl">
+              <path d="M0 40H400M0 80H400M0 120H400M0 160H400M0 200H400M0 240H400M0 280H400M0 320H400M0 360H400M0 400H400M0 440H400"/>
+              <path d="M40 0V470M80 0V470M120 0V470M160 0V470M200 0V470M240 0V470M280 0V470M320 0V470M360 0V470"/>
+            </g>
+            <rect class="mat" x="60" y="420" width="290" height="16" rx="8"/>
+            <!-- the arc of the movement, 0° down to 150° up, around the shoulder at (210 180) -->
+            <path class="arc" d="M210 300 A120 120 0 1 1 150 76"/>
+            <path class="arrow" d="M150 76 l18 -4 l-8 16 z"/>
+            <text class="deg" x="236" y="318">0°</text>
+            <text class="deg" x="104" y="70">150°</text>
+            <!-- the arm down, where it started -->
+            <path class="arm-ghost" d="M210 186 L214 296"/>
+            <!-- the body: a pictogram from the sheet -->
+            <circle class="head" cx="226" cy="122" r="26"/>
+            <path class="body" d="M218 168 L226 300 M226 300 L206 412 M226 300 L252 412"/>
+            <path class="body" d="M212 182 L176 120 L156 84"/>
+            <path class="body" d="M224 190 L262 248"/>
+            <!-- the resistance band from the raised hand to the foot -->
+            <path class="band" d="M156 84 C120 200 150 330 206 412"/>
+            <!-- the kinesio tape over the shoulder -->
+            <g transform="rotate(-28 214 182)">
+              <rect class="tape" x="176" y="172" width="86" height="20" rx="9"/>
+              <path class="tape-cut" d="M184 182 H254"/>
+            </g>
+            <text class="label" x="300" y="40">תרגיל 3</text>
+          </svg>
+        </div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה מטפלת</span><b>בקליניקה במודיעין</b><small>או ביקור בית, עם ציוד</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">נקעתי קרסול בכדורגל. מתי אפשר להגיע?</p><p class="a">ספרו מתי זה קרה. אם אי אפשר לדרוך בכלל, קודם לרופא.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <p><b>טיפול ראשון והערכה</b><em>300 עד 380 ₪</em></p>
+          <p><b>טיפול המשך</b><em>250 עד 320 ₪</em></p>
+          <p><b>ביקור בית</b><em>350 עד 450 ₪</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="toolsec" id="map">
+    <div class="wrap tool-grid">
+      <div class="head"><h2>איפה כואב, ומה קרה</h2><p>לוחצים על מקום בגוף, ורואים מה בודקים בטיפול הראשון. לפני שקובעים, בודקים את הרשימה שליד.</p></div>
+      <div class="chart">
+        <svg class="figure" viewBox="0 0 200 420" aria-hidden="true" focusable="false">
+          <circle class="head" cx="100" cy="40" r="26"/>
+          <path class="body" d="M100 78 V230 M100 230 L76 400 M100 230 L124 400 M100 96 L58 130 L46 230 M100 96 L142 130 L154 230"/>
+          <g class="jt" data-jt="neck"><circle cx="100" cy="76" r="11"/></g>
+          <g class="jt" data-jt="shoulder"><circle cx="140" cy="128" r="11"/></g>
+          <g class="jt" data-jt="wrist"><circle cx="152" cy="216" r="11"/></g>
+          <g class="jt" data-jt="back"><circle cx="100" cy="196" r="11"/></g>
+          <g class="jt" data-jt="hip"><circle cx="86" cy="236" r="11"/></g>
+          <g class="jt" data-jt="knee"><circle cx="113" cy="318" r="11"/></g>
+          <g class="jt" data-jt="ankle"><circle cx="79" cy="390" r="11"/></g>
+        </svg>
+        <div>
+          <ul class="joints" aria-label="איפה כואב">
+            <li><button type="button" data-pick="neck" aria-pressed="false" aria-controls="pick">עורף</button></li>
+            <li><button type="button" data-pick="shoulder" aria-pressed="false" aria-controls="pick">כתף</button></li>
+            <li><button type="button" data-pick="back" aria-pressed="false" aria-controls="pick">גב תחתון</button></li>
+            <li><button type="button" data-pick="wrist" aria-pressed="false" aria-controls="pick">מרפק ושורש כף היד</button></li>
+            <li><button type="button" data-pick="hip" aria-pressed="false" aria-controls="pick">ירך ואגן</button></li>
+            <li><button type="button" data-pick="knee" aria-pressed="false" aria-controls="pick">ברך</button></li>
+            <li><button type="button" data-pick="ankle" aria-pressed="false" aria-controls="pick">קרסול</button></li>
+          </ul>
+          <div class="pick" id="pick" aria-live="polite"><p class="hint">לוחצים על מקום בגוף או ברשימה.</p></div>
+        </div>
+      </div>
+      <div class="flags" id="flags">
+        <h3>לפני שקובעים</h3>
+        <p>יש אחד מאלה? מסמנים, ורואים מה עושים קודם.</p>
+        <label><input type="checkbox">נימול או חולשה ביד או ברגל, שמחמירים</label>
+        <label><input type="checkbox">קושי לשלוט בשתן או ביציאות, או נימול באזור המפשעה</label>
+        <label><input type="checkbox">כאב או לחץ בחזה, או קוצר נשימה</label>
+        <label><input type="checkbox">אחרי נפילה או מכה, עם כאב חזק או בלי יכולת לדרוך</label>
+        <label><input type="checkbox">חום עם כאב גב, או ירידה במשקל בלי סיבה</label>
+        <p class="stop" id="stop" aria-live="polite">לא סימנתם כלום? אפשר לקבוע טיפול.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hour" id="hour">
+    <div class="wrap">
+      <div class="head"><h2>45 דקות עם מטופל, הטלפון בתיק.</h2><p>מי שמתקשר באמצע טיפול שומע צלצול, ולפעמים מחפש מישהו אחר. לכן יש כאן צ׳אט: הוא שואל מה קרה, נותן טווח מחיר, והפרטים מחכים לי בסוף הטיפול.</p></div>
+      <ol class="clock" aria-label="טיפול אחד">
+        <li><time class="mono">16:00</time><span>מתחילה טיפול אחרי ניתוח ברך.</span></li>
+        <li class="miss"><time class="mono">16:12</time><span>שיחה שלא נענתה. גב תפוס מאתמול.</span></li>
+        <li class="miss"><time class="mono">16:30</time><span>עוד שיחה. רצה עם כאב בברך לפני מרוץ.</span></li>
+        <li class="ok"><time class="mono">16:45</time><span>הטיפול נגמר. שתי פניות מסודרות בוואטסאפ.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>הטיפולים והמחירים</h2><p>מחירים לדוגמה, לטיפול פרטי. בטיפול הראשון בודקים, מסבירים מה מצאנו ובונים יחד תוכנית.</p></div>
+      <div class="plans">
+        <div class="plan">
+          <span class="min">60 דקות</span>
+          <h3>טיפול ראשון והערכה</h3>
+          <span class="p">300 עד 380 ₪</span>
+          <ul><li>שאלות על מה קרה ומאז מתי</li><li>בדיקת תנועה וכוח</li><li>תרגילים לבית, על דף</li></ul>
+          <button class="ask" type="button" data-kind="כאב גב או עורף">לקבוע טיפול ראשון</button>
+        </div>
+        <div class="plan">
+          <span class="min">45 דקות</span>
+          <h3>טיפול המשך</h3>
+          <span class="p">250 עד 320 ₪</span>
+          <ul><li>טיפול ידני ותרגול</li><li>בודקים מה השתנה מהפעם הקודמת</li><li>גם לשיקום אחרי ניתוח ולפציעות ספורט</li></ul>
+          <button class="ask" type="button" data-kind="אחרי ניתוח">לשאול על שיקום</button>
+        </div>
+        <div class="plan">
+          <span class="min">45 דקות</span>
+          <h3>ביקור בית</h3>
+          <span class="p">350 עד 450 ₪</span>
+          <ul><li>אחרי ניתוח, או כשקשה לצאת מהבית</li><li>במודיעין, מכבים רעות, שוהם ולפיד</li><li>מגיעה עם ציוד לתרגול</li></ul>
+          <button class="ask" type="button" data-place="ביקור בית">לבקש ביקור בית</button>
+        </div>
+      </div>
+      <p class="cover"><b>קופת חולים או ביטוח</b><span>יש קופות וביטוחים משלימים שמחזירים חלק מטיפול פרטי. בדקו מולם לפני שמתחילים. אני נותנת קבלה על כל טיפול.</span></p>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים בימים הראשונים אחרי פציעה, ומתי קודם לרופא. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה מיכל רואה</h2><p>מי שהגב נתפס לו בבוקר לא מחפש באינסטגרם. הוא מחפש בגוגל או מקבל קישור מחבר, ומגיע לכאן. נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>המטופל מספר מה קרה</b><span>איפה כואב, מאז מתי, ואם היה ניתוח, בלי לחכות שאסיים טיפול.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>עם התשובה לשאלת הבריאות, המקום ומתי נוח.</span></div></li>
+          <li><div><b>בין טיפול לטיפול מתאמים</b><span>הודעה אחת, במקום שתי שיחות שלא נענו.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ד</span><div><b>דני שמש</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לפיזיותרפיה מהאתר (דמו)
+מה מביא: כאב גב או עורף
+מאז: כמה ימים
+בריאות: לא סימנו סימן אזהרה
+מקום: בקליניקה
+ימים: א׳ עד ה׳
+שעות: ערב
+שם: דני שמש
+טלפון: 052-7654321<time>16:47</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לפיזיותרפיסטית</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>מיכל אורן פיזיותרפיה · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script>
+  const SURGERY = "אחרי ניתוח", HOME = "ביקור בית";
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "מיכל · פיזיותרפיה", subtitle: "מבקשים טיפול, גם כשאני עם מטופל", initial: "מ", launcher: "לבקש טיפול", hint: "נציג AI",
+    greet: "היי, כאן מיכל.\nכמה שאלות קצרות, ואחזור אליכם בין טיפול לטיפול.",
+    steps: [
+      { key: "kind", label: "מה מביא", ask: "מה מביא אתכם?", chips: ["כאב גב או עורף", "אחרי פציעה", SURGERY, "פציעת ספורט", "כאב בכתף או בברך", "משהו אחר"] },
+      { key: "since", label: "מאז", ask: "ומאז מתי זה?", chips: ["כמה ימים", "כמה שבועות", "יותר משלושה חודשים"] },
+      { key: "health", label: "בריאות", ask: "שאלה אחת לפני: יש נימול או חולשה שמחמירים, קושי לשלוט בשתן, כאב בחזה, או כאב חזק אחרי נפילה?", chips: ["לא", "כן, משהו מזה"],
+        tip: { when: (v) => v !== "לא", text: "במקרה כזה קודם לרופא. כאב בחזה, או נפילה עם כאב חזק: מד״א 101, מיד.\nאפשר להשאיר פרטים, ונקבע אחרי הבדיקה.", id: "red-flags", link: "מתי קודם לרופא" } },
+      { key: "letter", label: "מכתב", ask: "יש מכתב שחרור או הפניה מהמנתח?", chips: ["כן, יש", "עוד לא"], show: (d) => d.kind === SURGERY,
+        tip: { when: (v) => v === "עוד לא", text: "בטיפול הראשון אצטרך לדעת מה המנתח הרשה. אפשר לבקש ממנו מכתב, ולהשאיר פרטים כבר עכשיו.", id: "after-surgery", link: "מה להביא אחרי ניתוח" } },
+      { key: "pay", label: "תשלום", ask: "פרטי, או שתבדקו החזר מהקופה או מהביטוח?", chips: ["פרטי", "אבדוק החזר", "עוד לא יודעים"],
+        tip: { when: (v) => v !== "פרטי", text: "שווה לבדוק מול הקופה או הביטוח לפני הטיפול. אני נותנת קבלה על כל טיפול.", id: "coverage", link: "קופה וביטוח: מה לשאול" } },
+      { key: "place", label: "מקום", ask: "בקליניקה במודיעין, או ביקור בית?", chips: ["בקליניקה", HOME],
+        tip: { when: (v) => v === HOME, text: "ביקור בית: 350 עד 450 ₪, לפי המרחק. אני מגיעה עם ציוד לתרגול." } },
+      { key: "town", label: "יישוב", ask: "באיזה יישוב?", chips: ["מודיעין", "מכבים רעות", "שוהם", "לפיד", "יישוב אחר"], show: (d) => d.place === HOME },
+      { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "ערב"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה, ובין טיפול לטיפול אחזור לתאם.`,
+    summary: (d) => `פנייה לפיזיותרפיה מהאתר (דמו)\nמה מביא: ${d.kind}\nמאז: ${d.since}`
+      + `\nבריאות: ${d.health === "לא" ? "לא סימנו סימן אזהרה" : "סימנו סימן אזהרה, קודם רופא"}`
+      + (d.letter ? `\nמכתב מהמנתח: ${d.letter}` : "") + `\nתשלום: ${d.pay}`
+      + `\nמקום: ${d.place}${d.town ? ", " + d.town : ""}\nימים: ${d.days}\nשעות: ${d.slot}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+
+  // The joint map: tap a place (or its line in the list) to see what a first treatment checks, then open the chat.
+  const JOINTS = {
+    neck: { n: "עורף", why: "נפוץ אצל מי שעובד מול מסך או נוהג הרבה. כאב שיורד ליד עם נימול: קודם לרופא.", fit: "בטיפול הראשון: תנועת הצוואר, היציבה ותרגילים לעבודה מול מסך.", kind: "כאב גב או עורף" },
+    shoulder: { n: "כתף", why: "קשה להרים יד, לישון על הצד או להגיע למדף.", fit: "בטיפול הראשון: כמה מעלות היד עולה, כוח, ומה מכאיב.", kind: "כאב בכתף או בברך" },
+    back: { n: "גב תחתון", why: "אחרי הרמה, ישיבה ארוכה או בלי סיבה ברורה.", fit: "בטיפול הראשון: איך זזים, מה מקל ומה מחמיר, ותרגילים לימים הקרובים.", kind: "כאב גב או עורף" },
+    wrist: { n: "מרפק ושורש כף היד", why: "מעבודה עם עכבר, כלי עבודה או אחרי נפילה על היד.", fit: "בטיפול הראשון: אחיזה, כוח ותנועה. אחרי נפילה עם נפיחות: קודם צילום אצל רופא.", kind: "אחרי פציעה" },
+    hip: { n: "ירך ואגן", why: "בהליכה, בעלייה במדרגות או אחרי ניתוח להחלפת מפרק.", fit: "בטיפול הראשון: הליכה, שיווי משקל וכוח.", kind: "כאב בכתף או בברך" },
+    knee: { n: "ברך", why: "בריצה, בכדורגל, במדרגות או אחרי ניתוח.", fit: "בטיפול הראשון: יישור וכיפוף במעלות, כוח, ואיך חוזרים לאימון.", kind: "פציעת ספורט" },
+    ankle: { n: "קרסול", why: "נקע במגרש, במדרגה או בהליכה.", fit: "בטיפול הראשון: נפיחות, תנועה ושיווי משקל. אי אפשר לדרוך בכלל: קודם לרופא.", kind: "אחרי פציעה" },
+  };
+  const pickEl = document.getElementById("pick");
+  let now = null;
+  function pick(id) {
+    const j = JOINTS[id]; if (!j) return; now = id;
+    document.querySelectorAll(".figure .jt").forEach((g) => g.classList.toggle("on", g.dataset.jt === id));
+    document.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.pick === id)));
+    pickEl.replaceChildren();
+    const h = document.createElement("h3"); h.textContent = j.n;
+    const p = document.createElement("p"); p.textContent = j.why;
+    const f = document.createElement("p"); f.className = "fit"; f.textContent = j.fit;
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-navy"; b.textContent = "לספר למיכל בצ׳אט";
+    b.addEventListener("click", () => bot.open({ kind: JOINTS[now].kind }));
+    pickEl.append(h, p, f, b);
+  }
+  document.querySelectorAll("[data-pick]").forEach((b) => b.addEventListener("click", () => pick(b.dataset.pick)));
+  document.querySelectorAll(".figure .jt").forEach((g) => g.addEventListener("click", () => pick(g.dataset.jt)));
+
+  // The red flags: any one ticked means a doctor first, and 101 for chest pain or a hard fall.
+  const stop = document.getElementById("stop"), boxes = [...document.querySelectorAll("#flags input")];
+  boxes.forEach((c) => c.addEventListener("change", () => {
+    const any = boxes.some((x) => x.checked);
+    stop.classList.toggle("on", any);
+    stop.innerHTML = any
+      ? 'עוצרים כאן: קודם לרופא, עוד היום. כאב בחזה, קוצר נשימה או נפילה קשה: מד״א <a href="tel:101">101</a>. <a href="#g-red-flags">למה</a>'
+      : "לא סימנתם כלום? אפשר לקבוע טיפול.";
+  }));
+  document.querySelectorAll("[data-kind]").forEach((b) => b.addEventListener("click", () => bot.open({ kind: b.dataset.kind })));
+  document.querySelectorAll("[data-place]").forEach((b) => b.addEventListener("click", () => bot.open({ place: b.dataset.place })));
+  Guides.load("../shared/guides/physio.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

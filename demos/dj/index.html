@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DJ עומר לוי · DJ לאירועים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="DJ לחתונות, בר ובת מצווה, ימי הולדת ואירועי חברה בחיפה, בקריות ובצפון. כותבים בצ׳אט תאריך, אזור וסגנון, ומקבלים פלייליסט לדוגמה בוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#18191f">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the controller seen from above. Two platters, the mixer between them, the pads, the waveform on the screen,
+     and the night's set written as BPM: a slow reception, the song for the chuppah, then the floor.
+     Detail: BPM, קבלת פנים, חופה, שבירת הכוס, סלואו, רחבה, הגברה, תאורת רחבה, מיקרופון אלחוטי, רשימת "לא להשמיע".
+     Bold move: a playable deck right under the top: four styles, each a synthesised beat at its own BPM, with a record
+     that turns only while it plays. Vinyl black and one cue red on a light stage; the green LED only as a dot. */
+  :root {
+    --stage: #f6f3f6;
+    --vinyl: #18191f;
+    --groove: #2a2c35;
+    --cue: #c2264b;            /* buttons and the one hot colour */
+    --cue-deep: #9b1c3b;
+    --led: #1f8a63;
+    --ink: #1c1d24;
+    --ink-soft: #4f505c;
+    --line: #dcd6dd;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--vinyl);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--cue); --bot-accent-fg: #fff; --bot-them: #f1edf1; --bot-me: var(--vinyl); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --bot-focus: var(--vinyl);
+    --guide-alert: var(--cue);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--stage); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--cue); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .num { font-family: var(--mono); font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; white-space: nowrap; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--cue); color: #fff; box-shadow: 0 16px 32px -14px rgba(194,38,75,.85), 0 2px 6px -2px rgba(194,38,75,.4); }
+  .btn-main:hover { background: var(--cue-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--cue); }
+
+  .demo { background: var(--vinyl); color: #d6d3dc; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(246,243,246,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--ink-soft); font-weight: 500; font-size: .72em; }
+  .logo .k { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle, var(--cue) 0 22%, var(--vinyl) 23% 100%); box-shadow: inset 0 0 0 3px var(--groove), inset 0 0 0 6px var(--vinyl), inset 0 0 0 7px #3a3d48; }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; box-shadow: none; }
+
+  .hero { position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--cue); font-weight: 700; }
+  .kicker .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--led); box-shadow: 0 0 0 4px rgba(31,138,99,.15); }
+  .hero h1 { grid-area: h1; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .5em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 14px; }
+  .hero h1 em b { color: var(--cue); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-weight: 800; font-size: 21px; line-height: 1.15; letter-spacing: -.02em; color: var(--cue); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; width: 100%; max-width: 520px; justify-self: center; aspect-ratio: 1 / 1.06; }
+  .frame { position: absolute; inset: 7% 0 14% 9%; border-radius: 34px; overflow: hidden; background: #ece6ec; }
+  .frame svg { display: block; width: 100%; height: 100%; }
+  .glass { position: absolute; z-index: 5; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 46ch; font-size: 16px; }
+
+  /* The deck: four styles, a record that turns while it plays, sixteen step lights */
+  .deck-sec { background: var(--vinyl); color: #ecebf0; }
+  .deck-sec .head p { color: #c9c7d2; }
+  .deck { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 36px; align-items: center; }
+  .rec { position: relative; aspect-ratio: 1; width: 100%; max-width: 300px; justify-self: center; border-radius: 50%;
+    background: radial-gradient(circle, var(--cue) 0 17%, #e9e4ea 17.5% 18.5%, transparent 19%), repeating-radial-gradient(circle, #1d1e25 0 2px, #26272f 2px 4px);
+    box-shadow: 0 0 0 10px var(--groove), 0 0 0 11px #3a3d48, 0 40px 70px -30px rgba(0,0,0,.8); }
+  .rec::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 20deg, transparent 0 40deg, rgba(255,255,255,.10) 55deg, transparent 75deg 220deg, rgba(255,255,255,.07) 235deg, transparent 255deg); }
+  .rec .lbl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-size: 13px; font-weight: 700; color: #fff; line-height: 1.2; }
+  .rec .lbl b { display: block; font-size: 22px; }
+  .deck.playing .rec { animation: turn 1.8s linear infinite; }
+  @keyframes turn { to { transform: rotate(360deg); } }
+  .pads { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .pad { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: grid; gap: 4px; padding: 16px 14px; border-radius: 16px; background: var(--groove);
+    box-shadow: inset 0 0 0 1.5px #3a3d48; color: #fff; transition: background .15s, box-shadow .15s; }
+  .pad:hover { box-shadow: inset 0 0 0 1.5px #8e8a99; }
+  .pad:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .pad[aria-pressed="true"] { background: var(--cue); box-shadow: 0 16px 34px -14px rgba(194,38,75,.9); }
+  .pad b { font-size: 17px; line-height: 1.25; }
+  .pad span { font-size: 13.5px; color: #d6d3dc; }
+  .pad[aria-pressed="true"] span { color: #fff; }
+  .steps16 { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 5px; margin: 18px 0 14px; direction: ltr; }
+  .steps16 i { height: 10px; border-radius: 3px; background: #33353f; }
+  .steps16 i:nth-child(4n+1) { background: #44475393; box-shadow: inset 0 0 0 1px #555867; }
+  .steps16 i.on { background: var(--led); box-shadow: 0 0 12px rgba(31,138,99,.8); }
+  .deck-row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+  .deck-row .btn-stop { background: #fff; color: var(--vinyl); }
+  .deck-row .btn-stop[disabled] { opacity: .5; cursor: default; transform: none; }
+  .deck-row .btn-take { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px #6b6878; }
+  .deck-row .btn-take:hover { box-shadow: inset 0 0 0 1.5px #fff; }
+  .deck-st { flex-basis: 100%; margin: 4px 0 0; font-size: 14px; color: #c9c7d2; }
+
+  /* The packages: a set list */
+  .set { background: #fff; border-radius: 28px; padding: 10px clamp(14px, 3vw, 34px); box-shadow: 0 0 0 1px var(--line), 0 40px 70px -50px rgba(28,29,36,.5); }
+  .pk { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 130px minmax(0, 190px); gap: 4px 24px; align-items: center; padding: 20px 8px; border-bottom: 1px solid var(--line); border-radius: 10px; }
+  .pk:last-of-type { border-bottom: 0; }
+  .pk:hover { background: #faf7fa; }
+  .pk:focus-visible { outline: 3px solid var(--cue); outline-offset: 2px; }
+  .pk b { display: block; font-size: 20px; line-height: 1.3; }
+  .pk .d { display: block; color: var(--ink-soft); font-size: 15px; }
+  .pk .h { color: var(--ink-soft); font-size: 15px; }
+  .pk .p { font-weight: 800; font-size: 19px; color: var(--cue); white-space: nowrap; text-align: end; font-variant-numeric: tabular-nums; }
+  .set-foot { display: flex; flex-wrap: wrap; gap: 8px 28px; padding: 16px 8px 14px; border-top: 2px solid var(--ink); font-size: 15px; color: var(--ink-soft); }
+  .set-foot b { color: var(--ink); }
+
+  /* The night by BPM */
+  .night { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .night li { display: grid; grid-template-columns: 64px 150px minmax(0, 1fr); gap: 16px; align-items: center; min-width: 0; }
+  .night .t { font-size: 15px; color: var(--ink-soft); }
+  .night b { font-size: 17px; }
+  .night .bar { position: relative; height: 34px; border-radius: 10px; background: #ece6ec; overflow: hidden; }
+  .night .bar span { position: absolute; inset-block: 0; inset-inline-start: 0; width: var(--w); background: linear-gradient(90deg, var(--vinyl), var(--groove)); border-radius: 10px; display: flex; align-items: center; justify-content: flex-end; padding-inline: 12px; color: #fff; font-size: 13.5px; }
+  .night .bar span.hot { background: linear-gradient(90deg, var(--cue-deep), var(--cue)); }
+  .night-note { margin: 18px 0 0; color: var(--ink-soft); font-size: 15.5px; }
+
+  .guides { background: #ede7ed; }
+  .owner { background: var(--vinyl); color: #e5e3ea; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #c9c7d2; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--cue); display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: #c9c7d2; font-size: 15.5px; }
+  .owner .ph-cap { color: #c9c7d2; }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 380px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .deck { grid-template-columns: minmax(0, 1fr); }
+    .rec { max-width: 240px; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 19px; }
+    .logo .n2 { display: none; }
+    .top-a .btn { padding: 8px 13px; font-size: 14.5px; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 em { font-size: 21px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 26px; max-width: 400px; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 18px; }
+    main > section { padding-block: 64px; }
+    .rec { max-width: 200px; }
+    .pads { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps16 { gap: 3px; }
+    .deck-row .btn { flex: 1 1 auto; }
+    .pk { grid-template-columns: minmax(0, 1fr) auto; padding: 16px 4px; }
+    .pk .h { grid-row: 2; font-size: 14px; }
+    .pk .p { grid-row: 2; font-size: 16.5px; }
+    .pk b { font-size: 18px; }
+    .pk .d { font-size: 14px; }
+    .night li { grid-template-columns: 52px minmax(0, 1fr); gap: 4px 12px; }
+    .night .bar { grid-column: 1 / -1; height: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn, .pad { transition: none; } .deck.playing .rec { animation: none; } }
+  html.a11y-still .deck.playing .rec { animation: none; }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top is light: the stage with a breath of cue red, big tight Rubik, the controller drawn from above in a large
+     rounded frame, glass cards built from the page's own facts (the area, the chat, the night's set), a glowing button. */
+  .hero { background: var(--stage);
+    background-image: radial-gradient(55% 65% at 6% 12%, rgba(194,38,75,.10), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(31,138,99,.07), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; }
+  .frame { box-shadow: 0 0 0 1px rgba(28,29,36,.08), 0 50px 90px -46px rgba(28,29,36,.65), 0 12px 24px -16px rgba(194,38,75,.3); }
+  .glass { background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(28,29,36,.55), 0 4px 12px -6px rgba(194,38,75,.2); padding: 14px 16px; color: var(--ink);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-area { top: 0; inset-inline-start: 0; display: grid; gap: 2px; animation-delay: .45s; }
+  .g-area span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+  .g-area span i { width: 8px; height: 8px; border-radius: 50%; background: var(--led); }
+  .g-area b { font-size: 17px; line-height: 1.25; }
+  .g-chat { top: 3%; inset-inline-end: 0; width: min(52%, 240px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #f1edf1; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--cue); color: #fff; border-end-start-radius: 4px; }
+  .g-set { bottom: 0; inset-inline-start: 4%; width: min(300px, 66%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-set .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-set div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-set div b { font-weight: 700; } .g-set div span { font-weight: 700; color: var(--cue); white-space: nowrap; }
+  @media (max-width: 640px) { .g-area { display: none; } .frame { inset: 14% 0 20% 0; border-radius: 28px; } .g-set { inset-inline-start: 3%; width: 84%; } .g-chat { width: 70%; top: 0; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span>DJ עומר לוי</span><span class="n2">DJ לאירועים</span></div>
+    <div class="top-a">
+      <a class="btn btn-ghost" href="#" data-wa="היי עומר, הגעתי מהאתר ויש לי שאלה על DJ לאירוע">וואטסאפ</a>
+      <button class="btn btn-main" type="button" data-open-bot>לבדוק תאריך</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>פגישת תיאום לפני כל אירוע</span><span>חתונות · בר ובת מצווה · ימי הולדת · אירועי חברה</span></div>
+    <h1>מה רוקדים אצלכם? <em><b>ספרו לי,</b> ואשלח פלייליסט לדוגמה.</em></h1>
+    <p class="lede">כתבו בצ׳אט תאריך, אזור וסגנון. אבדוק ביומן ואחזור אליכם בוואטסאפ, גם כשאני באמצע אירוע.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לבדוק תאריך</button>
+      <a class="btn btn-ghost" href="#beat">לשמוע את הקצב</a>
+    </div>
+    <dl class="facts">
+      <div><dt>9 שנים</dt><dd>על עמדת DJ באירועים</dd></div>
+      <div><dt>הגברה ותאורה</dt><dd>כלולות בכל חבילה</dd></div>
+      <div><dt>פגישת תיאום</dt><dd>שירים, לוח זמנים ומה לא להשמיע</dd></div>
+      <div><dt>חיפה עד חדרה</dt><dd>הקריות והצפון</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame">
+        <svg viewBox="0 0 400 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="עמדת DJ מלמעלה: שני פטיפונים, מיקסר באמצע, פדים צבעוניים ומסך עם גל הקול">
+          <defs>
+            <radialGradient id="vin" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2b2d36"/><stop offset="1" stop-color="#15161b"/></radialGradient>
+            <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2c35"/><stop offset="1" stop-color="#1b1c22"/></linearGradient>
+          </defs>
+          <rect width="400" height="440" fill="#ece6ec"/>
+          <path d="M0 330 Q200 300 400 336 V440 H0z" fill="#e3dbe3"/>
+          <!-- laptop screen with the waveform -->
+          <rect x="96" y="18" width="208" height="70" rx="10" fill="#1b1c22"/>
+          <rect x="104" y="26" width="192" height="54" rx="5" fill="#24262e"/>
+          <g fill="#c2264b"><rect x="110" y="46" width="3" height="14"/><rect x="116" y="40" width="3" height="26"/><rect x="122" y="44" width="3" height="18"/><rect x="128" y="36" width="3" height="34"/><rect x="134" y="42" width="3" height="22"/><rect x="140" y="38" width="3" height="30"/><rect x="146" y="45" width="3" height="16"/><rect x="152" y="34" width="3" height="38"/><rect x="158" y="40" width="3" height="26"/><rect x="164" y="46" width="3" height="14"/><rect x="170" y="38" width="3" height="30"/><rect x="176" y="42" width="3" height="22"/><rect x="182" y="36" width="3" height="34"/><rect x="188" y="44" width="3" height="18"/><rect x="194" y="40" width="3" height="26"/></g>
+          <g fill="#6b6878"><rect x="200" y="44" width="3" height="18"/><rect x="206" y="38" width="3" height="30"/><rect x="212" y="42" width="3" height="22"/><rect x="218" y="36" width="3" height="34"/><rect x="224" y="46" width="3" height="14"/><rect x="230" y="40" width="3" height="26"/><rect x="236" y="38" width="3" height="30"/><rect x="242" y="44" width="3" height="18"/><rect x="248" y="34" width="3" height="38"/><rect x="254" y="42" width="3" height="22"/><rect x="260" y="40" width="3" height="26"/><rect x="266" y="45" width="3" height="16"/><rect x="272" y="38" width="3" height="30"/><rect x="278" y="42" width="3" height="22"/><rect x="284" y="46" width="3" height="14"/></g>
+          <rect x="197" y="28" width="2" height="50" fill="#fff"/>
+          <rect x="150" y="88" width="100" height="10" rx="3" fill="#2a2c35"/>
+          <!-- the controller -->
+          <rect x="18" y="112" width="364" height="232" rx="22" fill="url(#body)"/>
+          <rect x="18" y="112" width="364" height="232" rx="22" fill="none" stroke="#3a3d48" stroke-width="2"/>
+          <!-- platters -->
+          <g><circle cx="98" cy="196" r="64" fill="#101115"/><circle cx="98" cy="196" r="58" fill="url(#vin)"/>
+            <g fill="none" stroke="#33353f" stroke-width="1"><circle cx="98" cy="196" r="50"/><circle cx="98" cy="196" r="44"/><circle cx="98" cy="196" r="38"/><circle cx="98" cy="196" r="32"/></g>
+            <path d="M98 140a56 56 0 0 1 48 28" stroke="rgba(255,255,255,.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="98" cy="196" r="18" fill="#c2264b"/><circle cx="98" cy="196" r="3" fill="#ece6ec"/></g>
+          <g><circle cx="302" cy="196" r="64" fill="#101115"/><circle cx="302" cy="196" r="58" fill="url(#vin)"/>
+            <g fill="none" stroke="#33353f" stroke-width="1"><circle cx="302" cy="196" r="50"/><circle cx="302" cy="196" r="44"/><circle cx="302" cy="196" r="38"/><circle cx="302" cy="196" r="32"/></g>
+            <path d="M302 140a56 56 0 0 1 48 28" stroke="rgba(255,255,255,.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="302" cy="196" r="18" fill="#e9e4ea"/><circle cx="302" cy="196" r="3" fill="#18191f"/></g>
+          <!-- mixer -->
+          <rect x="172" y="128" width="56" height="200" rx="10" fill="#15161b" stroke="#33353f" stroke-width="1.5"/>
+          <g fill="#3a3d48"><circle cx="187" cy="146" r="6"/><circle cx="213" cy="146" r="6"/><circle cx="187" cy="166" r="6"/><circle cx="213" cy="166" r="6"/><circle cx="187" cy="186" r="6"/><circle cx="213" cy="186" r="6"/></g>
+          <g stroke="#e9e4ea" stroke-width="2" stroke-linecap="round"><path d="M187 146v-5M213 146l4-3M187 166l-4-3M213 166v-5M187 186l4-3M213 186v-5"/></g>
+          <g><rect x="185" y="202" width="4" height="70" rx="2" fill="#2a2c35"/><rect x="211" y="202" width="4" height="70" rx="2" fill="#2a2c35"/><rect x="179" y="226" width="16" height="10" rx="2" fill="#e9e4ea"/><rect x="205" y="214" width="16" height="10" rx="2" fill="#e9e4ea"/></g>
+          <g fill="#1f8a63"><rect x="196" y="250" width="8" height="4" rx="1"/><rect x="196" y="244" width="8" height="4" rx="1"/><rect x="196" y="238" width="8" height="4" rx="1"/><rect x="196" y="232" width="8" height="4" rx="1" fill="#c2264b"/></g>
+          <rect x="182" y="296" width="36" height="4" rx="2" fill="#2a2c35"/><rect x="196" y="290" width="10" height="16" rx="2" fill="#e9e4ea"/>
+          <!-- pads -->
+          <g><rect x="40" y="276" width="26" height="22" rx="5" fill="#c2264b"/><rect x="72" y="276" width="26" height="22" rx="5" fill="#c2264b"/><rect x="104" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="136" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/>
+             <rect x="40" y="304" width="26" height="22" rx="5" fill="#1f8a63"/><rect x="72" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="104" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="136" y="304" width="26" height="22" rx="5" fill="#e9e4ea"/></g>
+          <g><rect x="238" y="276" width="26" height="22" rx="5" fill="#e9e4ea"/><rect x="270" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="302" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="334" y="276" width="26" height="22" rx="5" fill="#c2264b"/>
+             <rect x="238" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="270" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="302" y="304" width="26" height="22" rx="5" fill="#1f8a63"/><rect x="334" y="304" width="26" height="22" rx="5" fill="#c2264b"/></g>
+          <!-- headphones -->
+          <g transform="translate(250 368) rotate(-12)"><path d="M0 40 A44 44 0 0 1 88 40" fill="none" stroke="#18191f" stroke-width="9" stroke-linecap="round"/><rect x="-10" y="30" width="24" height="36" rx="10" fill="#18191f"/><rect x="74" y="30" width="24" height="36" rx="10" fill="#18191f"/><rect x="-4" y="38" width="12" height="20" rx="5" fill="#c2264b"/><rect x="80" y="38" width="12" height="20" rx="5" fill="#c2264b"/></g>
+          <!-- a set list card -->
+          <g transform="rotate(5 90 392)"><rect x="34" y="360" width="128" height="70" rx="6" fill="#fff" stroke="#dcd6dd"/><g fill="#4f505c"><rect x="46" y="374" width="70" height="5" rx="2.5"/><rect x="46" y="388" width="96" height="5" rx="2.5"/><rect x="46" y="402" width="58" height="5" rx="2.5"/><rect x="46" y="416" width="82" height="5" rx="2.5"/></g><circle cx="146" cy="376" r="5" fill="#c2264b"/></g>
+        </svg>
+      </div>
+      <div class="glass g-area" aria-hidden="true"><span><i></i>DJ עומר לוי</span><b>חיפה, הקריות והצפון</b></div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">היי, אתה פנוי ב-14.8? חתונה, 300 איש</p><p class="a">אבדוק ביומן ואשלח לכם פלייליסט לדוגמה בוואטסאפ.</p></div>
+      <div class="glass g-set" aria-hidden="true"><span class="h">ערב לדוגמה · לפי הקצב</span><div><b>קבלת פנים</b><span>90 עד 105 BPM</span></div><div><b>חופה</b><span>השיר שבחרתם</span></div><div><b>רחבה</b><span>120 עד 128 BPM</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="deck-sec" id="beat">
+    <div class="wrap">
+      <div class="head"><h2>שמעו את הקצב</h2><p>בוחרים סגנון, והקצב מתנגן. לוחצים שוב או על "עצירה", והוא נעצר. הצלילים נוצרים בדפדפן, זו לא הקלטה מאירוע.</p></div>
+      <div class="deck" id="deck">
+        <div class="rec" aria-hidden="true"><div class="lbl"><div><b class="num" id="deck-bpm">--</b>BPM</div></div></div>
+        <div>
+          <div class="pads" role="group" aria-label="סגנונות">
+            <button class="pad" type="button" aria-pressed="false" data-beat="mizrahi"><b>מזרחית</b><span>מקצב מקסום · <span class="num">96</span> BPM</span></button>
+            <button class="pad" type="button" aria-pressed="false" data-beat="hits"><b>להיטים ישראלים</b><span>פופ לרחבה · <span class="num">118</span> BPM</span></button>
+            <button class="pad" type="button" aria-pressed="false" data-beat="intl"><b>לועזי</b><span>היפ הופ ו-R&amp;B · <span class="num">96</span> BPM</span></button>
+            <button class="pad" type="button" aria-pressed="false" data-beat="house"><b>האוס</b><span>ארבע על הרצפה · <span class="num">124</span> BPM</span></button>
+          </div>
+          <div class="steps16" id="steps16" aria-hidden="true"></div>
+          <div class="deck-row">
+            <button class="btn btn-stop" type="button" id="deck-stop" disabled>עצירה</button>
+            <button class="btn btn-take" type="button" id="deck-take">זה הסגנון שלנו</button>
+            <p class="deck-st" id="deck-st" role="status" aria-live="polite">שום דבר לא מתנגן עד שלוחצים.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="packages">
+    <div class="wrap">
+      <div class="head"><h2>החבילות</h2><p>מחירים לדוגמה, כולל הגברה ותאורת רחבה. לוחצים על אירוע, והצ׳אט נפתח איתו.</p></div>
+      <div class="set">
+        <button class="pk" type="button" data-event="חתונה"><span><b>חתונה</b><span class="d">קבלת פנים, חופה ורחבה. מיקרופון אלחוטי לנאומים.</span></span><span class="h">5 עד 6 שעות</span><span class="p">4,500 עד 7,500 ₪</span></button>
+        <button class="pk" type="button" data-event="בר / בת מצווה"><span><b>בר או בת מצווה</b><span class="d">רחבה לילדים ולמבוגרים, והדלקת נרות או מצגת.</span></span><span class="h">4 שעות</span><span class="p">3,500 עד 5,500 ₪</span></button>
+        <button class="pk" type="button" data-event="יום הולדת"><span><b>יום הולדת</b><span class="d">בבית, בגינה או במקום קטן.</span></span><span class="h">3 שעות</span><span class="p">1,800 עד 3,200 ₪</span></button>
+        <button class="pk" type="button" data-event="אירוע חברה"><span><b>אירוע חברה</b><span class="d">ערב צוות, כנס או מסיבת סוף שנה.</span></span><span class="h">2 עד 4 שעות</span><span class="p">2,500 עד 4,500 ₪</span></button>
+        <div class="set-foot"><span><b>שעה נוספת:</b> 400 עד 600 ₪</span><span><b>מערכת נפרדת לחופה או לטקס:</b> 500 עד 900 ₪</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="night" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>חתונה אחת, לפי הקצב</h2><p>ערב לדוגמה. את השירים ולוח הזמנים סוגרים יחד בפגישת התיאום.</p></div>
+      <ol class="night">
+        <li><span class="t num">19:00</span><b>קבלת פנים</b><div class="bar"><span style="--w:52%">90 עד 105 BPM</span></div></li>
+        <li><span class="t num">20:15</span><b>חופה</b><div class="bar"><span style="--w:40%">השיר שבחרתם</span></div></li>
+        <li><span class="t num">20:45</span><b>כניסה לרחבה</b><div class="bar"><span class="hot" style="--w:92%">120 עד 128 BPM</span></div></li>
+        <li><span class="t num">22:00</span><b>סלואו</b><div class="bar"><span style="--w:44%">70 עד 80 BPM</span></div></li>
+        <li><span class="t num">22:15</span><b>רחבה שנייה</b><div class="bar"><span class="hot" style="--w:100%">מזרחית, להיטים, מה שהרחבה מבקשת</span></div></li>
+      </ol>
+      <p class="night-note">יש שירים שלא בא לכם לשמוע? רשימת "לא להשמיע" חשובה כמו רשימת המשאלות. <a href="#g-no-play">איך כותבים אותה</a></p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לשלוח לפני האירוע, מה לשאול לפני שחותמים, הגברה ורעש.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>אירוע, תאריך, אורחים, אזור וסגנון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>יודעים מה לשלוח</b><span>הפנייה אומרת איזה סגנון הם אוהבים, ואם ביקשו פלייליסט לדוגמה.</span></div></li>
+          <li><div><b>בודקים ביומן וחוזרים</b><span>גם באמצע אירוע, הלקוח לא נשאר בלי תשובה.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">נ</span><div><b>נועה כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו DJ)
+אירוע: חתונה
+תאריך: 14.8
+אורחים: 200 עד 400
+מקום: חיפה והקריות
+סגנון: מזרחית וים תיכוני
+פלייליסט לדוגמה: לשלוח בוואטסאפ
+שם: נועה כהן
+טלפון: 052-7654321<time>21:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה ל-DJ</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>DJ עומר לוי · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script>
+  // Sample ranges, the same as the packages above.
+  const RANGES = { "חתונה": "4,500 עד 7,500 ₪", "בר / בת מצווה": "3,500 עד 5,500 ₪", "יום הולדת": "1,800 עד 3,200 ₪", "אירוע חברה": "2,500 עד 4,500 ₪" };
+  const FOR = { "חתונה": "לחתונה", "בר / בת מצווה": "לבר או בת מצווה", "יום הולדת": "ליום הולדת", "אירוע חברה": "לאירוע חברה" };
+  const when = (d) => d.dateval || (d.date === "עוד לא סגרנו" ? "" : d.date);
+  const wantsList = (d) => (d.playlist || "").startsWith("שלחו");
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "עומר · DJ לאירועים", subtitle: "עונה מיד, גם כשאני מאחורי העמדה", initial: "ע", launcher: "לבדוק תאריך", hint: "נציג AI",
+    greet: "היי, כאן עומר.\nכמה שאלות קצרות על האירוע, ואני בודק ביומן וחוזר אליכם.",
+    steps: [
+      { key: "event", label: "אירוע", ask: "איזה אירוע?", chips: ["חתונה", "בר / בת מצווה", "יום הולדת", "אירוע חברה", "אחר"] },
+      { key: "date", label: "תאריך", ask: "יש כבר תאריך? אפשר גם לכתוב אותו כאן.", chips: ["יש תאריך", "עוד לא סגרנו"], input: "text", placeholder: "למשל: 14.8",
+        tip: { when: (v) => v === "עוד לא סגרנו", id: "book-early", text: "אין בעיה. כשיהיו לכם שניים או שלושה תאריכים, אבדוק את כולם.", link: "כמה זמן מראש לסגור DJ" } },
+      { key: "dateval", label: "תאריך", ask: "מה התאריך?", input: "text", placeholder: "למשל: 14.8.2027", show: (d) => d.date === "יש תאריך" },
+      { key: "guests", label: "אורחים", ask: "בערך כמה אורחים?", chips: ["עד 80", "80 עד 200", "200 עד 400", "מעל 400"] },
+      { key: "place", label: "מקום", ask: "איפה האירוע? אולם, גן או יישוב.", chips: ["חיפה והקריות", "הצפון", "חדרה והסביבה"], input: "text", placeholder: "למשל: גן אירועים בזכרון" },
+      { key: "style", label: "סגנון", ask: "מה רוקדים אצלכם?", chips: ["מזרחית וים תיכוני", "להיטים ישראלים", "לועזי ומיינסטרים", "האוס ודאנס", "מכל הסגנונות"] },
+      { key: "playlist", label: "פלייליסט", ask: "לשלוח לכם פלייליסט לדוגמה בסגנון הזה בוואטסאפ?", chips: ["שלחו לי פלייליסט", "לא צריך, תודה"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => {
+      const w = when(d), first = d.name.split(" ")[0];
+      const check = w ? `אני בודק ביומן את ${w} וחוזר אליכם עם תשובה` : "כשיהיו לכם תאריכים, אבדוק את כולם";
+      const list = wantsList(d) ? `, ושולח פלייליסט לדוגמה של ${d.style}` : "";
+      const price = RANGES[d.event] ? `\nמחיר לדוגמה ${FOR[d.event]}: ${RANGES[d.event]}, לפי שעות וציוד.` : "";
+      return `תודה ${first}. ${check}${list}.${price}\nלחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`;
+    },
+    summary: (d) => [
+      "פנייה מהאתר (דמו DJ)",
+      "אירוע: " + d.event,
+      "תאריך: " + (when(d) || "עוד לא סגרו"),
+      "אורחים: " + d.guests,
+      "מקום: " + d.place,
+      "סגנון: " + d.style,
+      "פלייליסט לדוגמה: " + (wantsList(d) ? "לשלוח בוואטסאפ" : "לא ביקשו"),
+      "שם: " + d.name,
+      "טלפון: " + d.phone,
+      d.callback ? "מתי לחזור: " + d.callback : "",
+    ].filter(Boolean).join("\n"),
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים לחבילות שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-event]").forEach((b) => b.addEventListener("click", () => bot.open({ event: b.dataset.event })));
+  Guides.load("../shared/guides/dj.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+
+  // The deck: a synthesised beat per style (Web Audio, nothing is downloaded). Never plays by itself; it stops on
+  // "עצירה", on a second tap, when the tab is hidden, and after 40 seconds. The record and the lights move only while it
+  // plays, and not at all for reduced motion or html.a11y-still (the sound still plays).
+  (function () {
+    const deck = document.getElementById("deck"), lights = document.getElementById("steps16");
+    const st = document.getElementById("deck-st"), bpmEl = document.getElementById("deck-bpm"), stopBtn = document.getElementById("deck-stop");
+    for (let i = 0; i < 16; i++) lights.appendChild(document.createElement("i"));
+    const L = lights.children;
+    const still = () => matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.classList.contains("a11y-still");
+    // 16 steps a bar. k kick, s snare/clap, h hat, o open hat, d doum, t tek, b bass (note in Hz)
+    const BEATS = {
+      mizrahi: { name: "מזרחית", style: "מזרחית וים תיכוני", bpm: 96, d: [0, 8], t: [4, 6, 12], ka: [2, 10, 14, 15], h: [] },
+      hits: { name: "להיטים ישראלים", style: "להיטים ישראלים", bpm: 118, k: [0, 6, 8], s: [4, 12], h: [0, 2, 4, 6, 8, 10, 12, 14], b: { 0: 73.4, 6: 73.4, 8: 98, 14: 87.3 } },
+      intl: { name: "לועזי", style: "לועזי ומיינסטרים", bpm: 96, k: [0, 3, 8, 11], s: [4, 12], h: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], b: { 0: 55, 3: 55, 8: 65.4, 11: 61.7 } },
+      house: { name: "האוס", style: "האוס ודאנס", bpm: 124, k: [0, 4, 8, 12], s: [4, 12], o: [2, 6, 10, 14], b: { 2: 55, 6: 55, 10: 65.4, 14: 61.7 } },
+    };
+    let ctx = null, out = null, noise = null, cur = null, step = 0, next = 0, timer = 0, raf = 0, endAt = 0;
+    const queue = [];
+    function audio() {
+      if (ctx) return ctx;
+      try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+      const comp = ctx.createDynamicsCompressor(); out = ctx.createGain(); out.gain.value = 0.5; out.connect(comp); comp.connect(ctx.destination);
+      noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate); const ch = noise.getChannelData(0); for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+      return ctx;
+    }
+    function tone(t, f0, f1, len, vol, type) {
+      const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type || "sine";
+      o.frequency.setValueAtTime(f0, t); if (f1) o.frequency.exponentialRampToValueAtTime(f1, t + len);
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + len); o.connect(g); g.connect(out); o.start(t); o.stop(t + len + 0.05);
+    }
+    function hiss(t, len, vol, type, hz, q) {
+      const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain(); s.buffer = noise;
+      f.type = type; f.frequency.value = hz; if (q) f.Q.value = q;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + len); s.connect(f); f.connect(g); g.connect(out); s.start(t); s.stop(t + len + 0.05);
+    }
+    function bass(t, f, len) {
+      const o = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain(); o.type = "sawtooth"; o.frequency.value = f;
+      lp.type = "lowpass"; lp.frequency.value = 420; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.28, t + 0.01); g.gain.exponentialRampToValueAtTime(0.001, t + len);
+      o.connect(lp); lp.connect(g); g.connect(out); o.start(t); o.stop(t + len + 0.05);
+    }
+    function play(b, i, t) {
+      const has = (k) => b[k] && b[k].includes(i);
+      if (has("k")) tone(t, 150, 45, 0.32, 0.9);
+      if (has("s")) { hiss(t, 0.16, 0.45, "highpass", 1400); tone(t, 220, 160, 0.08, 0.18, "triangle"); }
+      if (has("h")) hiss(t, 0.045, b === BEATS.intl ? 0.12 : 0.2, "highpass", 7500);
+      if (has("o")) hiss(t, 0.22, 0.18, "highpass", 7000);
+      if (has("d")) tone(t, 120, 70, 0.34, 0.85);
+      if (has("t")) { hiss(t, 0.06, 0.5, "bandpass", 3200, 2.5); tone(t, 880, 700, 0.05, 0.14, "triangle"); }
+      if (has("ka")) hiss(t, 0.04, 0.22, "bandpass", 2600, 3);
+      if (b.b && b.b[i]) bass(t, b.b[i], 60 / b.bpm * 0.45);
+    }
+    function tick() {
+      while (next < ctx.currentTime + 0.12) {
+        play(cur, step, next); queue.push([step, next]);
+        next += 60 / cur.bpm / 4; step = (step + 1) % 16;
+      }
+      if (ctx.currentTime > endAt) stop("נעצר אחרי 40 שניות. לוחצים שוב כדי לשמוע.");
+    }
+    function draw() {
+      while (queue.length && queue[0][1] <= ctx.currentTime) {
+        const [i] = queue.shift();
+        if (!still()) for (let j = 0; j < 16; j++) L[j].classList.toggle("on", j === i);
+      }
+      raf = requestAnimationFrame(draw);
+    }
+    function start(id) {
+      if (!audio()) { st.textContent = "הדפדפן הזה לא מנגן צלילים."; return; }
+      if (ctx.state === "suspended") ctx.resume();
+      stop();
+      cur = BEATS[id]; step = 0; next = ctx.currentTime + 0.06; endAt = ctx.currentTime + 40; queue.length = 0;
+      timer = setInterval(tick, 25); tick(); raf = requestAnimationFrame(draw);
+      document.querySelectorAll("[data-beat]").forEach((p) => p.setAttribute("aria-pressed", String(p.dataset.beat === id)));
+      deck.classList.add("playing"); stopBtn.disabled = false; bpmEl.textContent = cur.bpm;
+      st.textContent = `מתנגן: ${cur.name}, ${cur.bpm} BPM.`;
+      deck.dataset.style = cur.style;
+    }
+    function stop(msg) {
+      if (timer) { clearInterval(timer); timer = 0; }
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      queue.length = 0; for (const l of L) l.classList.remove("on");
+      document.querySelectorAll("[data-beat]").forEach((p) => p.setAttribute("aria-pressed", "false"));
+      const was = deck.classList.contains("playing");
+      deck.classList.remove("playing"); stopBtn.disabled = true;
+      if (was) st.textContent = msg || "נעצר.";
+    }
+    document.querySelectorAll("[data-beat]").forEach((p) => p.addEventListener("click", () => (p.getAttribute("aria-pressed") === "true" ? stop() : start(p.dataset.beat))));
+    stopBtn.addEventListener("click", () => stop());
+    document.getElementById("deck-take").addEventListener("click", () => { const s = deck.dataset.style; stop(); bot.open(s ? { style: s } : undefined); });
+    document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); });
+  })();
+</script>
+</body>
+</html>
