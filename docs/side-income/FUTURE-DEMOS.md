@@ -23,6 +23,8 @@ To launch one:
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
 | קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
 | DJ לאירועים | `demos/dj/` | DJ עומר לוי (חיפה והצפון) |
+| מאפרת | `demos/makeup/` | נוי אלמוג · איפור כלות ואירועים (רחובות) |
+| סטודיו לשמלות כלה | `demos/bridal/` | אטלייה נוגה · שמלות כלה, השכרה ועיצוב אישי (רמת גן) |
 | ריסים וגבות | `demos/lashes-brows/` | עדי שגיא · ריסים וגבות (רמת גן) |
 | הסרת שיער (לייזר ושעווה) | `demos/hair-removal/` | קליניקת אלמה · הסרת שיער (חולון) |
 | עוגות מעוצבות (קונדיטורית ביתית) | `demos/cakes/` | המתוקים של נוי · עוגות מעוצבות (הוד השרון) |
@@ -95,3 +97,13 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: Realistic photo of a calm, bright hair removal clinic room in Israel: a treatment bed with teal vinyl and a fresh paper sheet, a rolled white towel, a modern laser device on a cart with its handpiece on a hook and a blank dark screen, a pair of protective goggles on the bed, a small green plant on a shelf, cool daylight, teal and white palette, no people, no text, no logos, no yellow.
 2. Work: Close-up realistic photo of a therapist's gloved hands holding a laser handpiece over a lower leg (shin only) resting on a teal treatment bed, a white towel covering the leg above the knee, the rest of the body out of frame, soft cool light, no faces, no text, no logos, no yellow.
 3. Work: Realistic photo of a wax station in a clean Israeli clinic: a wax warmer, wooden spatulas in a glass jar, a roll of paper strips, a bottle of soothing lotion without a label and folded white towels on a steel trolley, soft daylight, teal and white tones, no people, no text, no logos, no yellow.
+
+### Makeup artist
+1. Hero, 4:5: Realistic photo of a makeup artist's table by a window in a bright Israeli apartment, an open round compact with a mirror and six pans in nude, rose and plum, brushes standing in a cup, a berry lipstick and a small lash case, a bride in a white robe seen only from behind and cropped at the shoulders, soft morning daylight, blush and plum tones, no face, no text, no logos, no yellow or gold tones.
+2. Work, 4:5: Close-up realistic photo of a makeup artist's hand blending blush with a soft brush on a cheek, cropped tightly so only the cheek, jawline and the brush show, no eyes and no full face, a palette held in the other hand, natural window light, rose and mauve tones, no text, no logos, no yellow.
+3. Work, 4:3: Realistic photo of a home makeup station set up for a bride and her family in an Israeli living room, a folding chair facing a window, a ring light switched off, open cases of foundations and lipsticks arranged in rows, two robes hanging on a door, no people, no text, no logos, no yellow or gold tones.
+
+### Bridal dress studio
+1. Hero, 4:5: Realistic photo inside a small bridal atelier in Ramat Gan, an ivory A-line wedding dress with a lace bodice on a dress form, a pink tape measure around the form's neck, a deep wine velvet curtain to one side, a rail of white dresses in garment bags behind, soft daylight, blush and ivory palette, no people, no text, no logos, no yellow, gold or champagne tones.
+2. Work, 4:5: Close-up realistic photo of a seamstress's hands pinning the hem of a white tulle skirt on a bride standing on a low round platform, cropped below the waist so no face shows, a pin cushion on the wrist, a wine-coloured carpet, cool daylight, no text, no logos, no yellow or gold.
+3. Work, 4:3: Realistic photo of a dressmaker's table in an Israeli studio, ivory crepe and lace fabric swatches, a pencil sketch of a dress silhouette without any writing, tailor's chalk, scissors and a tape measure, a blush wall behind, soft natural light, no people, no text or letters, no logos, no yellow.
