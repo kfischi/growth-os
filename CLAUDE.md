@@ -24,6 +24,8 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | `weekly-review` | Weekly. Update `docs/side-income/TRACKER.md` and pick the week's focus |
 | `seo-geo` | Weekly, by a scheduled run, or when asked about Google or AI assistants: audit, make 1 to 3 changes, open a draft PR. White hat only; the demos stay `noindex` |
 
+The **Hebrew editor** (`.claude/agents/hebrew-editor.md`, a subagent) proofreads any Hebrew before it ships: clarity first, then grammar and agreement, full spelling (יישוב, הכול, תוכנית), Hebrew punctuation (״ ׳), one voice per page or chat, an Israeli 2026 register and right-to-left mixing. It fixes plain language mistakes, never prices, facts, legal lines or the owner's locked lines, and reports the rest. Run it after any agent writes Hebrew.
+
 ## House rules for anything a client or prospect sees
 
 - **Hebrew:** correct, short and plain. No spelling mistakes. Address the reader in plural (`אתם`) unless you know who it is.
@@ -145,6 +147,6 @@ A paying client gets a real site in `clients/<slug>/`, copied from the trade dem
 ## Checks
 
 - **Everything at once, before every PR:** `bash scripts/check-all.sh`. It runs qa-page on every demo and client page, the Hebrew lint, every demo chat to its WhatsApp handoff on phone and desktop (`scripts/tests/demo-chats.cjs`), the lead system end to end against fakes (`scripts/tests/lead-system.test.mjs`), the function bundles and lint.
-- Hebrew copy: `node scripts/hebrew-copy-lint.cjs <file-or-dir>` flags AI-sounding and bureaucratic Hebrew.
+- Hebrew copy: `node scripts/hebrew-copy-lint.cjs <file-or-dir>` flags AI-sounding and bureaucratic Hebrew, short spelling (ישוב, הכל, תכנית) and common agreement mistakes, in pages, docs and the Hebrew lines of `.js`, `.mjs` and `.json` (chat lines and guides).
 - Static pages: `node scripts/qa-page.cjs <dir> [page-path]`. Needs Playwright: `npm i -D playwright && npx playwright install chromium`.
 - Next app: `npm run lint` and `npm run typecheck`. ESLint ignores `demos/**` and `clients/**`.
