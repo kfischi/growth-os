@@ -1,6 +1,6 @@
 # Future demos
 
-Ten demo pages for trades not yet in the builder. Each is `noindex, nofollow`, is not linked from the home page, `/all/`, the sitemap or the builder, and sends "לבנות אתר כזה" to `build/?t=other`. Each one shows a drawing until real sample photos exist.
+Demo pages for trades not yet in the builder (15 so far, listed in the table below). Each is `noindex, nofollow`, is not linked from the home page, `/all/`, the sitemap or the builder, and sends "לבנות אתר כזה" to `build/?t=other`. Each one shows a drawing until real sample photos exist.
 
 To launch one:
 
