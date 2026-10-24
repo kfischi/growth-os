@@ -152,12 +152,26 @@ async function estimates(b) {
     const badSum = sums.find((t) => !t.trim() || /NaN|undefined|Infinity/.test(t) || !(/\d.*₪/.test(t) || /הצעת מחיר/.test(t)));
     await p.click('[data-estimate] .est-go');
     await p.waitForTimeout(3500);
-    const first = await p.$eval('.lb-panel', (x) => { const m = x.querySelector('.lb-msg.me'); return m ? m.textContent : ''; }).catch(() => '');
+    let first = await p.$eval('.lb-panel', (x) => { const m = x.querySelector('.lb-msg.me'); return m ? m.textContent : ''; }).catch(() => '');
     // A chat that opens with a typed question (movers: "from where?") uses the prefilled answers later on.
     const typing = await p.$('.lb-panel.open form.on input:visible');
+    // A chat that opens with a question the calculator doesn't answer (catering and cakes: "which event?") must
+    // still skip the prefilled ones: driven to the handoff, it asks fewer questions than a chat opened from the corner.
+    let asked = '';
+    if (first.length <= 1 && !typing) {
+      const drive = async () => { for (let i = 0; i < 18; i++) { if (await p.$('.lb-panel .lb-wa')) break; await p.waitForTimeout(1500);
+        const chip = await p.$('.lb-panel .lb-chips button:visible'), input = await p.$('.lb-panel form input:visible');
+        if (chip) await chip.click(); else if (input) { const t = await input.getAttribute('type'); await input.fill(t === 'tel' ? '0501234567' : 'בדיקה כהן'); await input.press('Enter'); } }
+        return (await p.$('.lb-panel .lb-wa')) ? p.$$eval('.lb-panel .lb-msg:not(.me)', (x) => x.length) : -1; };
+      const withPrefill = await drive();
+      await p.goto(`http://localhost:8790/${d}/index.html`); await p.waitForTimeout(600); await p.click('.lb-launch');
+      const plain = await drive();
+      asked = ` asked=${withPrefill}/${plain}`;
+      if (withPrefill > 0 && plain > withPrefill) first = '(skipped)';
+    }
     const ok = !badSum && (first.length > 1 || !!typing) && !errs.length;
     if (!ok) bad++;
-    console.log(`${ok ? 'OK ' : 'BAD'} estimate ${d.padEnd(12)} sums=${sums.length} prefilled="${first}"${badSum ? ' bad sum: ' + badSum : ''}${errs.length ? ' ' + errs[0] : ''}`);
+    console.log(`${ok ? 'OK ' : 'BAD'} estimate ${d.padEnd(12)} sums=${sums.length} prefilled="${first}"${asked}${badSum ? ' bad sum: ' + badSum : ''}${errs.length ? ' ' + errs[0] : ''}`);
     await p.close();
   }
   return bad;
