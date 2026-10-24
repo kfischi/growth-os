@@ -176,7 +176,7 @@
   .ticket::after { /* the tear-off stub */ content: ""; position: absolute; inset-inline: 18px; bottom: 58px; border-top: 2px dashed var(--line); }
   .ticket-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 12px; }
   .ticket-h b { font-family: var(--display); font-size: 21px; }
-  .ticket-h span { font: 500 12.5px var(--mono); color: var(--ink-soft); }
+  .ticket-h span { font: 500 13px var(--body); color: var(--ink-soft); }
   .ticket dl { margin: 0; display: grid; gap: 8px; }
   .ticket dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 15px; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
   .ticket dt { color: var(--ink-soft); }
@@ -185,7 +185,8 @@
   .ticket ul { list-style: none; margin: 14px 0 34px; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px; font-size: 15px; }
   .ticket li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: baseline; }
   .ticket li::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--esd); transform: translateY(2px); box-shadow: inset 0 0 0 3px #fff, 0 0 0 1.5px var(--esd); }
-  .ticket .stub { display: flex; justify-content: space-between; font: 500 12.5px var(--mono); color: var(--ink-soft); }
+  .ticket .stub { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-soft); }
+  .ticket .stub .ltr { font: 500 12.5px var(--mono); }
   .ticket-cap { margin-top: 26px; }
   .ticket-cap b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -.02em; }
   .ticket-cap span { color: var(--ink-soft); font-size: 15.5px; }
