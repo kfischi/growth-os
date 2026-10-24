@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>רז אלומיניום · אשדוד והסביבה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="חלונות ודלתות הזזה, רשתות, מקלחונים, והחלפת גלגלות וידיות באשדוד והסביבה. שולחים בצ׳אט מה צריך ותמונה, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#16232a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the window itself. A sliding window in a plastered wall: the anodised frame, two sashes on the track,
+     the glass with its cold reflection, a roll-up net half drawn, and the order sheet beside it, width by height in mm.
+     Detail: כנף, מסילה, גלגלות, רשת נגללת, ויטרינה, זכוכית מחוסמת, בידודית, נטוי־פתוח, חורי ניקוז, מ״ר.
+     Bold move: the price list is one big window. A thick aluminium frame with mullions, and each job is a pane of
+     glass. Anodised silver and deep ink, a sea-glass teal for the buttons, the glass tint only on the panes. */
+  :root {
+    --plaster: #eef1f2;
+    --anodize: #c5cdd2;
+    --profile: #7d8a92;
+    --ink: #16232a;
+    --ink-soft: #4b5a62;
+    --teal: #0d5c63;           /* the buttons and the one strong colour */
+    --teal-deep: #0a474d;
+    --pane: #e3eff0;           /* the glass tint */
+    --line: #d2dade;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--ink);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--teal); --bot-accent-fg: #fff; --bot-them: #eaf0f1; --bot-me: var(--ink); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 8px; --bot-radius-msg: 12px; --bot-focus: var(--ink);
+    --guide-alert: var(--teal);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--plaster); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--teal); color: #fff; box-shadow: 0 16px 32px -14px rgba(13,92,99,.85), 0 2px 6px -2px rgba(13,92,99,.4); }
+  .btn-main:hover { background: var(--teal-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--teal); }
+
+  .demo { background: var(--ink); color: #cdd6da; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(238,241,242,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--ink-soft); font-weight: 700; font-size: .74em; }
+  /* the logo mark: a two-pane window */
+  .logo .k { width: 26px; height: 22px; border-radius: 3px; border: 3px solid var(--profile); background: linear-gradient(90deg, var(--pane) 0 46%, var(--profile) 46% 54%, var(--pane) 54%); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+
+  /* ---------- Smart luxury (the owner's direction): a light plaster top, big tight type, the window drawing large in a
+     rounded frame with glass cards built from the page's own facts, the main button glowing, one entrance motion. */
+  .hero { position: relative; overflow: hidden; background: var(--plaster);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(13,92,99,.14), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(125,138,146,.18), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--teal); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 0 3px rgba(13,92,99,.18); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--teal); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--teal); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #e6eaec;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(22,35,42,.6), 0 12px 24px -16px rgba(13,92,99,.25); }
+  .frame-l svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(22,35,42,.55), 0 4px 12px -6px rgba(13,92,99,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eaf0f1; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--teal); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--teal); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .g-step { top: 40%; inset-inline-start: 0; display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; animation-delay: .45s; }
+  .g-step i { width: 30px; height: 30px; border-radius: 50%; flex: none; border: 3px solid var(--teal); position: relative; }
+  .g-step i::before { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: var(--teal); }
+  .g-step b { display: block; font-size: 14.5px; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The vitrine: one aluminium frame, the mullions are the gaps, each job is a pane */
+  .vit { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; border-radius: 14px;
+    background: linear-gradient(180deg, #dfe5e8, #a9b4ba 50%, #c9d1d5); box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 40px 70px -46px rgba(22,35,42,.6); }
+  .pn { all: unset; box-sizing: border-box; cursor: pointer; position: relative; overflow: hidden; display: grid; align-content: space-between; gap: 18px; min-height: 190px; padding: 20px;
+    background: linear-gradient(135deg, #f4f9f9 0%, var(--pane) 55%, #d4e5e7 100%); border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(22,35,42,.12); transition: box-shadow .15s; }
+  .pn::after { content: ""; position: absolute; inset: -40% auto auto -20%; width: 40%; height: 180%; transform: rotate(28deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); pointer-events: none; }
+  .pn:hover { box-shadow: inset 0 0 0 2px var(--teal); }
+  .pn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .pn b { display: block; font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -.01em; }
+  .pn > span:first-child > span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; margin-top: 6px; }
+  .pn .pr { font-weight: 700; font-size: 17px; color: var(--teal); font-variant-numeric: tabular-nums; position: relative; z-index: 1; }
+  .pn .pr small { display: block; font-family: var(--mono); font-weight: 500; font-size: 12.5px; color: var(--ink-soft); }
+  .pn.hot .pr::before { content: "תיקון"; display: inline-block; margin-inline-end: 8px; padding: 1px 8px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 700; vertical-align: 2px; }
+  .sheet { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 22px 4px 0; font-size: 15.5px; color: var(--ink-soft); }
+  .sheet span { display: inline-flex; align-items: center; gap: 8px; }
+  .sheet span::before { content: ""; width: 10px; height: 10px; border: 2px solid var(--teal); border-radius: 2px; }
+
+  .calc { background: var(--ink); color: #fff;
+    --bot-bg: #20323b; --bot-fg: #fff; --bot-line: #3e535d; --bot-muted: #cdd6da; --bot-accent: #fff; --bot-accent-fg: var(--ink); --bot-focus: #fff; }
+  .calc .head p { color: #cdd6da; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+
+  .guides { background: #e1e7ea; }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 8px; background: var(--ink); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .g-step { display: none; }
+    .vit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.08; }
+    .frame-l { inset: 0 0 26% 0; border-radius: 28px; }
+    .g-note { top: auto; bottom: 0; inset-inline-end: 0; width: 46%; }
+    .g-note p { font-size: 12.5px; }
+    .g-note .q { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 0; width: 56%; padding: 12px; }
+    .g-jobs div { font-size: 13px; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .vit { grid-template-columns: minmax(0, 1fr); padding: 10px; gap: 6px; }
+    .pn { min-height: 0; padding: 16px; gap: 12px; }
+    .pn b { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .pn { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">רז</span><span class="n2" data-edit="name2">אלומיניום</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>מה צריך?</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על חלון">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>מתקן ומתקין גם לפני החורף</span><span>אשדוד · אשקלון · יבנה · גן יבנה</span></div>
+    <h1><span data-edit="h1a">החלון לא זז? הרשת קרועה?</span> <em data-edit="h1b">שולחים תמונה, ו<b>אני חוזר עם זמן הגעה.</b></em></h1>
+    <p class="lede">כמה שאלות ותמונה של החלון או של המסילה. הפרטים מגיעים אליי גם כשאני על סולם, ואת המחיר אני סוגר אחרי מדידה.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לתאר מה צריך</button>
+      <a class="btn btn-ghost" href="#calc">כמה עולה חלון?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>16 שנה</dt><dd>אלומיניום באשדוד והסביבה</dd></div>
+      <div><dt>חלקים ברכב</dt><dd>גלגלות, ידיות ורשתות נפוצות</dd></div>
+      <div><dt>מדידה בבית</dt><dd>מחיר בכתב לפני ייצור</dd></div>
+      <div><dt>גם מקלחונים</dt><dd>זכוכית מחוסמת לפי מידה</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l">
+        <svg viewBox="0 0 400 400" role="img" aria-label="שרטוט של חלון הזזה עם שתי כנפיים ורשת נגללת, וקווי מידה">
+          <defs>
+            <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2f8f8"/><stop offset=".55" stop-color="#d6e8ea"/><stop offset="1" stop-color="#bcd7da"/></linearGradient>
+            <linearGradient id="al" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e8eb"/><stop offset=".5" stop-color="#a7b2b8"/><stop offset="1" stop-color="#c8d0d4"/></linearGradient>
+            <pattern id="mesh" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 0 H5 M0 0 V5" stroke="#4b5a62" stroke-width=".6" opacity=".55"/></pattern>
+          </defs>
+          <rect x="-200" y="-200" width="800" height="800" fill="#e6eaec"/>
+          <!-- the wall opening and the sill -->
+          <rect x="62" y="80" width="276" height="236" fill="#d5dcdf"/>
+          <rect x="48" y="316" width="304" height="14" rx="2" fill="#c3ccd1"/>
+          <!-- the outer frame -->
+          <rect x="70" y="88" width="260" height="222" rx="3" fill="url(#al)" stroke="#7d8a92" stroke-width="1.5"/>
+          <rect x="82" y="100" width="236" height="198" fill="#9aa6ad"/>
+          <!-- the back sash (left) and the front sash (right), overlapping in the middle -->
+          <rect x="84" y="102" width="126" height="194" fill="url(#al)" stroke="#7d8a92"/>
+          <rect x="94" y="112" width="106" height="174" fill="url(#gl)"/>
+          <rect x="190" y="102" width="126" height="194" fill="url(#al)" stroke="#7d8a92"/>
+          <rect x="200" y="112" width="106" height="174" fill="url(#gl)"/>
+          <!-- reflections -->
+          <g fill="#fff" opacity=".55"><path d="M108 112 h22 l-36 70 v-28z"/><path d="M226 112 h34 l-60 118 v-48z"/><path d="M280 112 h10 l-58 174 h-10z" opacity=".5"/></g>
+          <!-- the net, half drawn over the back sash -->
+          <rect x="94" y="112" width="64" height="174" fill="url(#mesh)"/>
+          <rect x="155" y="108" width="6" height="182" rx="2" fill="#16232a"/>
+          <!-- handles -->
+          <rect x="300" y="182" width="6" height="34" rx="3" fill="#16232a"/>
+          <rect x="196" y="186" width="5" height="26" rx="2.5" fill="#16232a"/>
+          <!-- the track and a roller, magnified -->
+          <path d="M82 298 H318" stroke="#4b5a62" stroke-width="3"/>
+          <circle cx="250" cy="296" r="9" fill="none" stroke="#0d5c63" stroke-width="1.6"/>
+          <path d="M256 303 L286 352" stroke="#0d5c63" stroke-width="1.2"/>
+          <!-- dimension lines, in mm -->
+          <g stroke="#0d5c63" stroke-width="1.4" fill="none">
+            <path d="M70 60 H330"/><path d="M70 54 v12"/><path d="M330 54 v12"/>
+            <path d="M362 88 V310"/><path d="M356 88 h12"/><path d="M356 310 h12"/>
+          </g>
+          <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#0d5c63" text-anchor="middle">
+            <rect x="174" y="51" width="52" height="18" fill="#e6eaec"/><text x="200" y="64">1500</text>
+            <rect x="346" y="188" width="32" height="20" fill="#e6eaec"/><text x="362" y="203" font-size="12">1200</text>
+          </g>
+        </svg>
+      </div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">חלון הזזה בסלון, ממש קשה להזיז</p><p class="a">שלחו תמונה של המסילה. אני חוזר עם זמן הגעה.</p></div>
+      <div class="glass g-step" aria-hidden="true"><i></i><span><b>גלגלות ברכב</b>מחליפים באותו ביקור</span></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה</span><div><b>גלגלות, לכנף</b><span>180 עד 350 ₪</span></div><div><b>רשת נגללת</b><span>350 עד 650 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מה צריך?</h2><p>מחירים לדוגמה. לוחצים על חלונית, והצ׳אט נפתח איתה. חלון חדש מקבל מחיר בכתב אחרי מדידה.</p></div>
+      <div class="vit">
+        <button class="pn hot" type="button" data-pre='{"job":"חלון תקוע או כבד"}'><span><b>החלפת גלגלות</b><span>חלון או דלת הזזה שכבדים, תקועים או קופצים מהמסילה</span></span><span class="pr">180 עד 350 ₪<small>לכנף</small></span></button>
+        <button class="pn hot" type="button" data-pre='{"job":"ידית או נעילה"}'><span><b>ידית ונעילה</b><span>ידית שבורה, חלון שלא ננעל, נעילה של דלת למרפסת</span></span><span class="pr">150 עד 350 ₪<small>לפתח</small></span></button>
+        <button class="pn" type="button" data-pre='{"job":"רשת לחלון"}'><span><b>רשת נגללת</b><span>רשת נגד יתושים, לפי המידה של החלון הקיים</span></span><span class="pr">350 עד 650 ₪<small>ליחידה</small></span></button>
+        <button class="pn" type="button" data-pre='{"job":"מקלחון"}'><span><b>מקלחון</b><span>זכוכית מחוסמת, חזית ישרה או פינתי, לפי מידה</span></span><span class="pr">1,400 עד 2,800 ₪<small>למקלחון</small></span></button>
+        <button class="pn" type="button" data-pre='{"job":"חלון חדש"}'><span><b>חלון הזזה חדש</b><span>פרופיל, זכוכית ורשת, כולל פירוק של הישן</span></span><span class="pr">1,300 עד 2,200 ₪<small>למ״ר</small></span></button>
+        <button class="pn" type="button" data-pre='{"job":"דלת הזזה למרפסת"}'><span><b>דלת הזזה למרפסת</b><span>ויטרינה גדולה, על מסילה כפולה או משולשת</span></span><span class="pr">1,500 עד 2,600 ₪<small>למ״ר</small></span></button>
+      </div>
+      <p class="sheet"><span>מדידה בבית</span><span>מחיר בכתב לפני ייצור</span><span>פירוק הישן ופינוי</span><span>איטום סביב החלון</span></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים עבודה, גודל או כמות, ורואים טווח. את המחיר הסופי סוגרים אחרי מדידה.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשחלון נתקע או לא ננעל, ומה כדאי לדעת לפני החורף.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, איזה חלון, כמה פתחים, באיזו קומה, ותמונה. בלי טופס.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם צריך גלגלות או חלון חדש, ומגיעים עם החלק הנכון.</span></div></li>
+          <li><div><b>חוזרים עם זמן הגעה</b><span>על סולם אי אפשר לענות לטלפון. הצ׳אט אוסף את הפרטים בינתיים.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אזולאי</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו אלומיניום)
+מה צריך: חלון תקוע או כבד
+איזה חלון: דלת הזזה למרפסת
+קומה: 1 עד 4
+דחיפות: השבוע
+ישוב: אשדוד
+שם: מיכל אזולאי
+טלפון: 052-7654321<time>19:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לאיש האלומיניום</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>רז אלומיניום · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const REPAIR = ["חלון תקוע או כבד", "ידית או נעילה"];
+  const FIX = (d) => REPAIR.includes(d.job);
+  const COUNTED = (d) => ["רשת לחלון", "חלון חדש", "דלת הזזה למרפסת"].includes(d.job);
+  const NOLOCK = "החלון לא נסגר או לא ננעל";
+  const RANGES = { "חלון תקוע או כבד": "החלפת גלגלות עולה בדרך כלל 180 עד 350 ₪ לכנף", "ידית או נעילה": "ידית או נעילה עולות בדרך כלל 150 עד 350 ₪",
+    "רשת לחלון": "רשת נגללת עולה בדרך כלל 350 עד 650 ₪ ליחידה", "מקלחון": "מקלחון עולה בדרך כלל 1,400 עד 2,800 ₪",
+    "חלון חדש": "חלון הזזה חדש עולה בדרך כלל 1,300 עד 2,200 ₪ למ״ר", "דלת הזזה למרפסת": "דלת הזזה למרפסת עולה בדרך כלל 1,500 עד 2,600 ₪ למ״ר" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "רז · אלומיניום", subtitle: "חוזר אליכם עם זמן הגעה", initial: "ר", launcher: "מה צריך?", hint: "נציג AI",
+    greet: "היי, כאן רז אלומיניום.\nכמה שאלות קצרות, והפרטים מגיעים אליי בוואטסאפ.",
+    steps: [
+      { key: "job", label: "מה צריך", ask: "מה צריך?", chips: [...REPAIR, "רשת לחלון", "מקלחון", "חלון חדש", "דלת הזזה למרפסת"] },
+      { key: "kind", label: "איזה חלון", ask: "איזה חלון?", chips: ["חלון הזזה", "דלת הזזה למרפסת", "חלון ציר או נטוי", "לא בטוחים"], show: FIX },
+      { key: "count", label: "כמה פתחים", ask: "כמה פתחים?", chips: ["אחד", "2 עד 3", "4 ומעלה"], show: COUNTED },
+      { key: "shape", label: "מקלחון", ask: "איזה מקלחון?", chips: ["חזית ישרה", "פינתי", "עוד לא יודעים"], show: (d) => d.job === "מקלחון" },
+      { key: "floor", label: "קומה", ask: "באיזו קומה?", chips: ["קרקע", "1 עד 4", "5 ומעלה"], show: (d) => d.job !== "מקלחון" },
+      { key: "urgent", label: "דחיפות", ask: "כמה זה דחוף?", chips: [NOLOCK, "השבוע", "לא דחוף"], show: FIX,
+        tip: { when: (v) => v === NOLOCK, id: "wont-lock", text: "בינתיים: סוגרים את התריס, ואם יש בו נעילה, נועלים. לא מרימים כנף כבדה לבד ולא נשענים החוצה מהחלון." } },
+      { key: "when", label: "מתי", ask: "מתי תרצו?", chips: ["בחודש הקרוב", "לפני החורף", "רק בודקים מחיר"], show: (d) => !FIX(d) },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של החלון, של המסילה או של המקום? כך אני מגיע עם החלק הנכון.", photo: true },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: אשדוד" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const high = d.floor === "5 ומעלה" ? "\nקומה גבוהה: נבדוק מראש אם אפשר לעבוד מבפנים, או שצריך ציוד לגובה." : "";
+      return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.job}${d.kind ? ", " + d.kind : ""}${d.count ? ", " + d.count + " פתחים" : ""}${d.shape ? ", " + d.shape : ""}, ב${d.city}. ${RANGES[d.job] || ""}, והמחיר הסופי אחרי מדידה.${high}\nלחצו למטה, ואחזור אליכם עם זמן הגעה.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו אלומיניום)\nמה צריך: ${d.job}${d.kind ? "\nאיזה חלון: " + d.kind : ""}${d.count ? "\nכמה פתחים: " + d.count : ""}${d.shape ? "\nמקלחון: " + d.shape : ""}${d.floor ? "\nקומה: " + d.floor : ""}\n${d.urgent ? "דחיפות: " + d.urgent : "מתי: " + d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "החלפת גלגלות", range: [180, 350], prefill: { job: "חלון תקוע או כבד" } },
+      { label: "ידית או נעילה", range: [150, 350], prefill: { job: "ידית או נעילה" } },
+      { label: "רשת נגללת", range: [350, 650], prefill: { job: "רשת לחלון" } },
+      { label: "מקלחון, חזית ישרה", range: [1400, 2000], prefill: { job: "מקלחון", shape: "חזית ישרה" } },
+      { label: "מקלחון פינתי", range: [2000, 2800], prefill: { job: "מקלחון", shape: "פינתי" } },
+      { label: "חלון הזזה חדש", range: [1300, 2200], prefill: { job: "חלון חדש" } },
+      { label: "דלת הזזה למרפסת", range: [1500, 2600], prefill: { job: "דלת הזזה למרפסת" } },
+    ] },
+    factors: [
+      { ask: "כמה כנפיים?", for: ["החלפת גלגלות"], options: [
+        { label: "כנף אחת" },
+        { label: "שתי כנפיים", mul: 2 },
+        { label: "ארבע כנפיים", mul: [3.4, 4], note: "כמה כנפיים באותו ביקור יוצאות זולות יותר לכל אחת." },
+      ] },
+      { ask: "כמה רשתות?", for: ["רשת נגללת"], options: [
+        { label: "אחת", prefill: { count: "אחד" } },
+        { label: "שתיים", mul: 2, prefill: { count: "2 עד 3" } },
+        { label: "ארבע", mul: [3.6, 4], prefill: { count: "4 ומעלה" } },
+      ] },
+      { ask: "מה גודל החלון?", for: ["חלון הזזה חדש"], options: [
+        { label: "קטן, בערך 1 מ״ר" },
+        { label: "רגיל, בערך 1.5 מ״ר", mul: 1.5 },
+        { label: "גדול, בערך 2 מ״ר", mul: 2 },
+      ] },
+      { ask: "מה גודל הפתח?", for: ["דלת הזזה למרפסת"], options: [
+        { label: "בערך 4 מ״ר", mul: 4 },
+        { label: "בערך 6 מ״ר", mul: 6 },
+        { label: "בערך 8 מ״ר", mul: 8 },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. סוג הזכוכית והפרופיל קובעים איפה בטווח. המחיר הסופי אחרי מדידה.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/aluminum.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

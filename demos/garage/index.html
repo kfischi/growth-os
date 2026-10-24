@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מוסך דודי · טיפולים ותיקונים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="טיפול, בלמים, נורה בלוח, הכנה לטסט, מצבר ומזגן ברכב בראשון לציון. מתארים בצ׳אט מה קרה, והפרטים מגיעים למוסך בוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1b2127">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the instrument cluster behind the steering wheel: two dials, the odometer, and the row of warning lights that
+     all come on for a second when you turn the key. The price list is the car's service book (פנקס טיפולים).
+     Detail: the light colours mean something (red: stop now, orange: check soon), kilometres on the odometer, the job card
+     with the price the owner approved on the phone before anyone touched the car, "הכנה לטסט" before מכון הרישוי.
+     Bold move: one big drawn cluster in the hero does the ignition check once: the needles sweep, every light flashes,
+     and only the orange engine light stays on. Everything else is quiet graphite and one brake-light red. */
+  :root {
+    --asphalt: #1b2127;        /* the dashboard and the ink */
+    --asphalt-deep: #11161a;
+    --asphalt-soft: #48525b;   /* secondary text */
+    --steel: #dfe4e8;          /* a lift arm, the lines */
+    --steel-line: #c3cbd1;
+    --paper: #f3f5f6;          /* the workshop's white wall */
+    --brake: #b3261e;          /* the brake light: the one colour */
+    --brake-deep: #8f1d17;
+    --lamp-red: #e5484d;       /* a red warning light, on the dark dashboard only */
+    --lamp-orange: #f0743e;    /* the engine light, on the dark dashboard only */
+    --lamp-blue: #4ea1e8;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--asphalt-deep);
+    --bot-bg: #fff; --bot-fg: var(--asphalt); --bot-line: #cdd4d9; --bot-muted: var(--asphalt-soft);
+    --bot-accent: var(--brake); --bot-accent-fg: #fff; --bot-them: #eef1f3; --bot-me: var(--asphalt); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 12px; --bot-radius-msg: 14px; --bot-focus: var(--asphalt);
+    --guide-alert: var(--brake);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--paper); color: var(--asphalt); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--brake); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.04; letter-spacing: -.025em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-go { background: var(--brake); color: #fff; box-shadow: 0 16px 32px -14px rgba(179,38,30,.85), 0 2px 6px -2px rgba(179,38,30,.45); }
+  .btn-go:hover { background: var(--brake-deep); }
+  .btn-go:focus-visible { outline-color: var(--asphalt); }
+  .btn-line { background: #fff; color: var(--asphalt); box-shadow: inset 0 0 0 1.5px var(--steel-line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--brake); }
+
+  .demo { background: var(--asphalt-deep); color: #b9c3ca; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Top bar ---------- */
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(27,33,39,.96); color: #fff; backdrop-filter: blur(8px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .logo .n2 { color: #aeb9c1; font-weight: 500; }
+  .logo .k { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #aeb9c1; position: relative; flex: none; }
+  .logo .k::after { content: ""; position: absolute; left: 50%; bottom: 50%; width: 3px; height: 10px; margin-left: -1.5px; background: var(--lamp-red); border-radius: 2px; transform-origin: 50% 100%; transform: rotate(38deg); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; box-shadow: none; }
+  .top-a .btn-ghost { color: #fff; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+  .top-a .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px #fff; }
+  .top-a .btn:focus-visible { outline-color: #fff; }
+
+  /* ---------- Hero (smart luxury): light wall, big tight type, the cluster large in a rounded frame ---------- */
+  .hero { background: var(--paper); background-image: radial-gradient(50% 60% at 6% 10%, rgba(179,38,30,.10), transparent 70%), radial-gradient(45% 55% at 98% 0%, rgba(78,161,232,.14), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 540px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 50px 0 56px; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--asphalt-soft); font-size: 15px; margin-bottom: 18px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--brake); font-weight: 700; }
+  .kicker .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--brake); box-shadow: 0 0 0 4px rgba(179,38,30,.15); }
+  .hero h1 { grid-area: h1; font-size: clamp(44px, 5.4vw, 74px); margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.2; color: var(--asphalt-soft); margin-top: 14px; }
+  .hero h1 em b { color: var(--brake); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 19px; max-width: 42ch; margin: 0 0 26px; color: var(--asphalt-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding-top: 22px; border-top: 1px solid var(--steel-line); }
+  .facts div { border-inline-start: 1px solid var(--steel-line); padding: 2px 16px 0; min-width: 0; }
+  .facts div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: 23px; line-height: 1.1; color: var(--brake); }
+  .facts dd { margin: 4px 0 0; color: var(--asphalt-soft); font-size: 14px; line-height: 1.4; }
+
+  .win { grid-area: win; position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 540px; justify-self: center; min-width: 0; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: var(--asphalt-deep);
+    box-shadow: 0 0 0 1px #c3cbd1, 0 50px 90px -46px rgba(17,22,26,.75), 0 12px 24px -16px rgba(179,38,30,.3); }
+  .frame-l svg { display: block; width: 100%; height: 100%; }
+  .cluster .num { font: 600 15px var(--mono); fill: #aab5bd; text-anchor: middle; }
+  .cluster .lcd { font: 600 17px var(--mono); fill: #d7e6f2; text-anchor: middle; letter-spacing: .04em; }
+  .cluster .lcd-k { font: 500 12px var(--body); fill: #7f8d97; text-anchor: middle; }
+  .cluster .lamp { color: #39434b; }
+  .cluster .lamp.red { animation: lampRed 2.6s .4s both; }
+  .cluster .lamp.blue { animation: lampBlue 2.6s .4s both; }
+  .cluster .lamp.on { color: var(--lamp-orange); filter: drop-shadow(0 0 6px rgba(240,116,62,.75)); animation: lampOn 2.6s .4s both; }
+  .cluster .needle { transform-box: view-box; }
+  .cluster .n-tach { transform-origin: 150px 250px; transform: rotate(-108deg); animation: tach 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
+  .cluster .n-speed { transform-origin: 420px 250px; transform: rotate(-135deg); animation: speed 2.6s .4s cubic-bezier(.45,.05,.3,1) both; }
+  @keyframes tach { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-108deg); } }
+  @keyframes speed { 0% { transform: rotate(-135deg); } 42% { transform: rotate(135deg); } 100% { transform: rotate(-135deg); } }
+  @keyframes lampRed { 0%, 8% { color: #39434b; } 12%, 60% { color: var(--lamp-red); } 70%, 100% { color: #39434b; } }
+  @keyframes lampBlue { 0%, 8% { color: #39434b; } 12%, 60% { color: var(--lamp-blue); } 70%, 100% { color: #39434b; } }
+  @keyframes lampOn { 0%, 8% { color: #39434b; filter: none; } 12%, 100% { color: var(--lamp-orange); } }
+
+  .glass { position: absolute; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(17,22,26,.6), 0 4px 12px -6px rgba(179,38,30,.2); padding: 14px 16px; color: var(--asphalt);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .note { top: 0; inset-inline-end: 0; width: min(50%, 240px); display: grid; gap: 6px; animation-delay: 2.4s; }
+  .note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .note .q { background: #eef1f3; justify-self: end; border-end-end-radius: 4px; }
+  .note .a { background: var(--asphalt); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 4%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--asphalt-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--steel-line); font-size: 14.5px; }
+  .g-jobs b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--brake); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ---------- The light board: what each light means ---------- */
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 32px; }
+  .head h2 { font-size: clamp(36px, 4.8vw, 58px); }
+  .head p { margin: 0; color: var(--asphalt-soft); max-width: 42ch; font-size: 16px; }
+  .board { background: var(--asphalt); color: #dfe6eb; padding-block: 72px; }
+  .board .head h2 { color: #fff; }
+  .board .head p { color: #a9b5bd; }
+  .board-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 32px; align-items: start; }
+  .lamps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .lp { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: grid; justify-items: center; gap: 8px; padding: 20px 10px 16px; border-radius: 16px; background: var(--asphalt-deep); box-shadow: inset 0 0 0 1px #2c353d; text-align: center; transition: box-shadow .15s, background .15s; }
+  .lp svg { width: 46px; height: 46px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; color: #5d6872; transition: color .15s, filter .15s; }
+  .lp span { font-weight: 700; font-size: 15.5px; line-height: 1.3; }
+  .lp small { display: block; font-weight: 500; font-size: 12.5px; color: #98a5ae; }
+  .lp:hover { box-shadow: inset 0 0 0 1.5px #5d6872; }
+  .lp:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .lp[data-c="red"] svg { color: var(--lamp-red); }
+  .lp[data-c="orange"] svg { color: var(--lamp-orange); }
+  .lp[aria-pressed="true"] { background: #0b0f12; box-shadow: inset 0 0 0 2px #fff; }
+  .lp[aria-pressed="true"][data-c="red"] svg { filter: drop-shadow(0 0 7px rgba(229,72,77,.8)); }
+  .lp[aria-pressed="true"][data-c="orange"] svg { filter: drop-shadow(0 0 7px rgba(240,116,62,.8)); }
+  .lamp-out { background: #fff; color: var(--asphalt); border-radius: 20px; padding: 24px; min-height: 100%; display: grid; align-content: start; gap: 12px; }
+  .lamp-out .tag { justify-self: start; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #eef1f3; }
+  .lamp-out .tag.red { background: var(--brake); color: #fff; }
+  .lamp-out .tag.orange { background: #fbe3d6; color: #7a2e0c; }
+  .lamp-out h3 { font-size: 28px; }
+  .lamp-out p { margin: 0; font-size: 16px; }
+  .lamp-out .btn { justify-self: start; margin-top: 4px; }
+  .lamp-key { display: flex; gap: 8px 18px; flex-wrap: wrap; margin-top: 18px; font-size: 14px; color: #a9b5bd; }
+  .lamp-key span { display: inline-flex; gap: 8px; align-items: center; }
+  .lamp-key i { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* ---------- The price list: the service book ---------- */
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 36px; align-items: start; }
+  .book { background: #fff; border-radius: 22px; box-shadow: 0 0 0 1px var(--steel-line), 0 40px 70px -46px rgba(17,22,26,.5); overflow: hidden; min-width: 0; }
+  .book-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 22px; background: var(--asphalt); color: #c9d2d8; font-size: 14px; }
+  .book-h b { color: #fff; font-family: var(--display); font-size: 18px; font-weight: 700; }
+  .book-h .mono { font-family: var(--mono); font-size: 12.5px; }
+  .row { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; padding: 16px 22px; border-top: 1px solid #e6eaed; transition: background .15s; }
+  .row:first-of-type { border-top: 0; }
+  .row:hover { background: #f6f7f8; }
+  .row:focus-visible { outline: 3px solid var(--brake); outline-offset: -3px; }
+  .row > span { min-width: 0; }
+  .row b { display: block; font-size: 18px; line-height: 1.3; }
+  .row > span > span { display: block; color: var(--asphalt-soft); font-size: 14.5px; line-height: 1.4; }
+  .row .pr { font-weight: 700; font-size: 16.5px; white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums; }
+  .row .pr small { display: block; font-weight: 400; font-size: 12.5px; color: var(--asphalt-soft); }
+  .row.hot { background: var(--brake); color: #fff; }
+  .row.hot:hover { background: var(--brake-deep); }
+  .row.hot > span > span, .row.hot .pr small { color: #fbe1de; }
+  .row.hot:focus-visible { outline-color: var(--asphalt); }
+  .check { background: #fff; border-radius: 22px; padding: 24px; box-shadow: 0 0 0 1px var(--steel-line); position: sticky; top: 84px; }
+  .check h3 { font-size: 26px; margin-bottom: 6px; }
+  .check p { margin: 0 0 14px; color: var(--asphalt-soft); font-size: 15px; }
+  .check ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 15.5px; }
+  .check li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .check li::before { content: ""; width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--brake); transform: translateY(2px); }
+
+  /* ---------- Calculator ---------- */
+  .calc { background: #e7ebee; }
+
+  /* ---------- Who comes: the job card ---------- */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .card { background: #fff; border-radius: 22px; padding: 22px 24px; box-shadow: 0 0 0 1px var(--steel-line), 0 50px 80px -46px rgba(17,22,26,.55); transform: rotate(-1.2deg); }
+  .card-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 2px solid var(--asphalt); padding-bottom: 10px; margin-bottom: 12px; }
+  .card-h b { font-family: var(--display); font-size: 21px; }
+  .card-h span { font-size: 13px; color: var(--asphalt-soft); }
+  .card dl { margin: 0; display: grid; gap: 8px; }
+  .card dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 15px; border-bottom: 1px dashed var(--steel-line); padding-bottom: 8px; }
+  .card dt { color: var(--asphalt-soft); }
+  .card dd { margin: 0; font-weight: 600; min-width: 0; }
+  .card .mono { font-family: var(--mono); font-size: 14px; }
+  .card .ok { display: inline-block; margin-top: 2px; padding: 2px 10px; border-radius: 999px; background: var(--brake); color: #fff; font-size: 13.5px; }
+  .card ul { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 7px; font-size: 15px; }
+  .card li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .card li::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--asphalt); transform: translateY(2px); box-shadow: inset 0 0 0 3px #fff, 0 0 0 1.5px var(--asphalt); }
+  .card-cap { margin-top: 26px; }
+  .card-cap b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -.02em; }
+  .card-cap span { color: var(--asphalt-soft); font-size: 15.5px; }
+  .who-copy h2 { font-size: clamp(36px, 4.8vw, 58px); margin-bottom: 14px; }
+  .who-copy > p { color: var(--asphalt-soft); margin: 0 0 26px; max-width: 46ch; }
+  .day { list-style: none; margin: 0; padding: 0; display: grid; border-inline-start: 2px solid var(--brake); }
+  .day li { position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 0 22px 18px; }
+  .day li::before { content: ""; position: absolute; inset-inline-start: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper); border: 2px solid var(--brake); }
+  .day li:last-child { padding-bottom: 0; }
+  .day li:last-child::before { background: var(--brake); }
+  .day time { font-family: var(--mono); font-weight: 600; color: var(--brake); font-size: 15px; padding-top: 1px; }
+  .day b { display: block; font-size: 17.5px; }
+  .day span { color: var(--asphalt-soft); font-size: 15px; }
+
+  .guides { background: #e7ebee; }
+
+  .owner { background: var(--asphalt); color: #e1e7eb; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #a9b5bd; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--brake); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 21px; color: #fff; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #a9b5bd; font-size: 15.5px; }
+  .owner .ph-cap { color: #a9b5bd; }
+
+  footer { padding-block: 34px 160px; color: var(--asphalt-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .row-f { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--steel-line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 380px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; }
+    .facts div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .note { width: min(62%, 220px); }
+    .board-grid, .price-grid, .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .check { position: static; }
+    .owner .phone { margin-inline: auto; }
+    .card { max-width: 480px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 21px; }
+    .top-a .btn-go { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding: 28px 0 40px; }
+    .kicker { font-size: 13.5px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(40px, 11vw, 52px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 21px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 400px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .note { display: none; }
+    .g-jobs { inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 30px; }
+    .facts dt { font-size: 20px; }
+    main > section { padding-block: 64px; }
+    .board { padding-block: 56px; }
+    .lamps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .lp { padding: 16px 8px 12px; }
+    .lp svg { width: 40px; height: 40px; }
+    .row { grid-template-columns: minmax(0, 1fr); padding: 14px 16px; }
+    .row .pr { text-align: right; font-size: 15.5px; }
+    .row .pr small { display: inline; margin-inline-start: 6px; }
+    .row b { font-size: 17px; }
+    .book-h { padding: 14px 16px; }
+    .card { padding: 18px; transform: none; }
+    .card dl div { grid-template-columns: 78px minmax(0, 1fr); }
+    .day li { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; padding-inline: 18px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glass, .cluster .lamp, .cluster .needle { animation: none !important; }
+    .btn, .row, .lp, .lp svg { transition: none; }
+  }
+  html.a11y-still .glass, html.a11y-still .cluster .lamp, html.a11y-still .cluster .needle { animation: none !important; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M2.5 12.5h3.2l1.6-2.2h4.6l1.1 2.2h2.4l5.6-2.6v1.4l-6 5.7H5.7z"/><path d="M7.3 10.3V8.2h3.6M9.1 8.2V6.6"/><path d="M21.2 15.6c0 .9-.6 1.5-1.3 1.5s-1.3-.6-1.3-1.5c0-.8 1.3-2.3 1.3-2.3s1.3 1.5 1.3 2.3z"/></symbol>
+  <symbol id="i-temp" viewBox="0 0 24 24"><path d="M10.6 13.4V4.6a1.4 1.4 0 0 1 2.8 0v8.8a3 3 0 1 1-2.8 0z"/><path d="M13.4 6.6h2.4M13.4 9.4h2.4"/><path d="M3.5 20.2c1.4-1 2.8-1 4.2 0s2.8 1 4.3 0 2.8-1 4.2 0 2.9 1 4.3 0"/></symbol>
+  <symbol id="i-batt" viewBox="0 0 24 24"><rect x="3" y="7.5" width="18" height="11.5" rx="1.6"/><path d="M6.5 7.5V5.6h3v1.9M14.5 7.5V5.6h3v1.9"/><path d="M6.5 13.2h3.2M8.1 11.6v3.2M14.4 13.2h3.2"/></symbol>
+  <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.2"/><path d="M12 8.8v3.8M12 15.1v.2"/><path d="M4.4 6.4a9.4 9.4 0 0 0 0 11.2M19.6 6.4a9.4 9.4 0 0 1 0 11.2"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M3.5 10.2v6.2M3.5 13.3h2.6"/><path d="M6.1 9.4h3.2V7.6h4.9v1.8h2.2l2 2.2h2.1v5.7h-2.1l-2 2.1H8.3l-2.2-2.1z"/><path d="M10.4 7.6V5.8h2.7"/></symbol>
+  <symbol id="i-tyre" viewBox="0 0 24 24"><path d="M6.4 18.2a8.2 8.2 0 1 1 11.2 0"/><path d="M4.8 18.2h14.4M6.8 20.4v-2.2M10 20.4v-2.2M14 20.4v-2.2M17.2 20.4v-2.2"/><path d="M12 8.4v4.6M12 15.2v.2"/></symbol>
+</svg>
+
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span>מוסך</span><span class="n2">דודי</span></div>
+    <div class="top-a">
+      <button class="btn btn-go" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על הרכב">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>עונה גם באמצע עבודה</span><span>ראשון לציון · נס ציונה · רחובות</span></div>
+    <h1>נדלקה נורה בלוח? <em><b>כתבו מה רואים, ואני חוזר עם תור.</b></em></h1>
+    <p class="lede">טיפול, בלמים, מצבר או הכנה לטסט. שלוש שאלות ותמונה של הלוח בצ׳אט. את המחיר אומרים לפני שנוגעים ברכב.</p>
+    <div class="ctas">
+      <button class="btn btn-go" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-line" href="#lights">מה הנורה אומרת?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>22 שנה</dt><dd>מכונאי רכב בראשון לציון</dd></div>
+      <div><dt>מחיר לפני</dt><dd>מתקנים רק אחרי אישור בטלפון</dd></div>
+      <div><dt>בדיקת מחשב</dt><dd>לכל נורה שנדלקת בלוח</dd></div>
+      <div><dt>הכנה לטסט</dt><dd>עוברים על הרכב לפני מכון הרישוי</dd></div>
+    </dl>
+
+    <div class="win">
+      <div class="frame-l">
+        <svg class="cluster" viewBox="0 0 570 480" preserveAspectRatio="xMidYMid slice" fill="none" role="img" aria-label="ציור של לוח שעונים ברכב: מד סיבובים, מד מהירות, מד קילומטרים ושורת נורות אזהרה">
+          <defs>
+            <radialGradient id="dash" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#232b32"/><stop offset="1" stop-color="#0d1114"/></radialGradient>
+            <radialGradient id="dialbg" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#1c2329"/><stop offset="1" stop-color="#12171b"/></radialGradient>
+          </defs>
+          <rect width="570" height="480" fill="url(#dash)"/>
+          <circle cx="150" cy="250" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
+          <circle cx="420" cy="250" r="126" fill="url(#dialbg)" stroke="#3a454e" stroke-width="3"/>
+          <path d="M66.6 333.4L77.9 322.1M34.3 273.0L50.0 269.9M41.0 204.8L55.8 211.0M84.4 151.9L93.3 165.2M150.0 132.0L150.0 148.0M215.6 151.9L206.7 165.2M259.0 204.8L244.2 211.0" stroke="#e8ecef" stroke-width="3"/><path d="M55.2 320.3L61.6 315.5M45.9 305.6L53.0 301.9M38.9 289.8L46.4 287.1M32.1 255.8L40.1 255.4M32.6 238.4L40.5 239.2M35.5 221.3L43.3 223.3M48.8 189.3L55.6 193.4M58.8 175.1L65.0 180.2M70.8 162.6L76.1 168.5M99.5 143.3L103.0 150.6M115.7 137.1L118.1 144.7M132.7 133.3L133.9 141.2M167.3 133.3L166.1 141.2M184.3 137.1L181.9 144.7M200.5 143.3L197.0 150.6M229.2 162.6L223.9 168.5M241.2 175.1L235.0 180.2M251.2 189.3L244.4 193.4M264.5 221.3L256.7 223.3" stroke="#7d8a94" stroke-width="2"/><path d="M267.4 238.4L259.5 239.2M267.9 255.8L259.9 255.4M265.7 273.0L250.0 269.9M261.1 289.8L253.6 287.1M254.1 305.6L247.0 301.9M244.8 320.3L238.4 315.5M233.4 333.4L222.1 322.1" stroke="#e5484d" stroke-width="3"/><g class="num"><text x="90.6" y="314.4">0</text><text x="67.6" y="271.4">1</text><text x="72.4" y="222.9">2</text><text x="103.3" y="185.2">3</text><text x="150.0" y="171.0">4</text><text x="196.7" y="185.2">5</text><text x="227.6" y="222.9">6</text><text x="232.4" y="271.4">7</text><text x="209.4" y="314.4">8</text></g>
+<path d="M336.6 333.4L347.9 322.1M309.4 291.2L324.4 285.6M302.3 241.6L318.3 242.7M316.4 193.4L330.5 201.1M349.3 155.5L358.9 168.3M394.9 134.7L398.3 150.3M445.1 134.7L441.7 150.3M490.7 155.5L481.1 168.3M523.6 193.4L509.5 201.1M537.7 241.6L521.7 242.7M530.6 291.2L515.6 285.6M503.4 333.4L492.1 322.1" stroke="#e8ecef" stroke-width="3"/><path d="M320.7 313.8L327.5 309.5M303.2 266.8L311.1 265.7M306.8 216.8L314.5 219.0M330.8 172.7L336.9 178.0M371.0 142.7L374.3 149.9M420.0 132.0L420.0 140.0M469.0 142.7L465.7 149.9M509.2 172.7L503.1 178.0M533.2 216.8L525.5 219.0M536.8 266.8L528.9 265.7M519.3 313.8L512.5 309.5" stroke="#7d8a94" stroke-width="2"/><g class="num"><text x="360.6" y="314.4">0</text><text x="341.3" y="284.4">20</text><text x="336.2" y="249.0">40</text><text x="346.3" y="214.7">60</text><text x="369.7" y="187.8">80</text><text x="402.1" y="172.9">100</text><text x="437.9" y="172.9">120</text><text x="470.3" y="187.8">140</text><text x="493.7" y="214.7">160</text><text x="503.8" y="249.0">180</text><text x="498.7" y="284.4">200</text><text x="479.4" y="314.4">220</text></g>
+          <text class="lcd-k" x="150" y="345">סל״ד × 1000</text>
+          <rect x="360" y="322" width="120" height="34" rx="7" fill="#0a0e11" stroke="#2f3a42"/>
+          <text class="lcd" x="420" y="345">128,450</text>
+          <text class="lcd-k" x="420" y="374">ק״מ</text>
+          <g class="needle n-tach"><path d="M150 250 L150 152" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
+          <g class="needle n-speed"><path d="M420 250 L420 152" stroke="#e5484d" stroke-width="5" stroke-linecap="round"/></g>
+          <circle cx="150" cy="250" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
+          <circle cx="420" cy="250" r="12" fill="#2f3a42" stroke="#59656e" stroke-width="2"/>
+          <!-- the warning lights, above and between the dials -->
+          <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <use class="lamp red" href="#i-oil" x="214" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-temp" x="258" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-batt" x="302" y="40" width="34" height="34"/>
+            <use class="lamp red" href="#i-brake" x="346" y="40" width="34" height="34"/>
+            <use class="lamp on" href="#i-engine" x="258" y="84" width="34" height="34"/>
+            <use class="lamp blue" href="#i-tyre" x="302" y="84" width="34" height="34"/>
+          </g>
+          <path d="M40 430 H530" stroke="#2a333a" stroke-width="2"/>
+          <text class="lcd-k" x="285" y="458">בדיקת נורות בהנעה</text>
+        </svg>
+      </div>
+      <div class="glass note" aria-hidden="true"><p class="q">נדלקה נורה כתומה של המנוע. אפשר לנסוע?</p><p class="a">אם הרכב נוסע רגיל, כן, עד המוסך. שלחו תמונה של הלוח, ואני קובע לכם בדיקת מחשב.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירון לדוגמה</span><div><b>בדיקת מחשב</b><span>150 עד 250 ₪</span></div><div><b>הכנה לטסט</b><span>250 עד 450 ₪</span></div><div><b>החלפת מצבר</b><span>400 עד 800 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="board" id="lights">
+    <div class="wrap">
+      <div class="head"><h2>מה הנורה אומרת?</h2><p>לוחצים על הנורה שדולקת לכם, ורואים מה עושים עכשיו. בכל רכב הסמל קצת שונה: ספר הרכב קובע.</p></div>
+      <div class="board-grid">
+        <div>
+          <div class="lamps" role="group" aria-label="נורות אזהרה">
+            <button class="lp" data-lamp="oil" data-c="red" aria-pressed="false"><svg aria-hidden="true"><use href="#i-oil"/></svg><span>שמן<small>אדומה</small></span></button>
+            <button class="lp" data-lamp="temp" data-c="red" aria-pressed="false"><svg aria-hidden="true"><use href="#i-temp"/></svg><span>טמפרטורה<small>אדומה</small></span></button>
+            <button class="lp" data-lamp="batt" data-c="red" aria-pressed="false"><svg aria-hidden="true"><use href="#i-batt"/></svg><span>מצבר וטעינה<small>אדומה</small></span></button>
+            <button class="lp" data-lamp="brake" data-c="red" aria-pressed="false"><svg aria-hidden="true"><use href="#i-brake"/></svg><span>בלמים<small>אדומה</small></span></button>
+            <button class="lp" data-lamp="engine" data-c="orange" aria-pressed="true"><svg aria-hidden="true"><use href="#i-engine"/></svg><span>מנוע<small>כתומה</small></span></button>
+            <button class="lp" data-lamp="tyre" data-c="orange" aria-pressed="false"><svg aria-hidden="true"><use href="#i-tyre"/></svg><span>לחץ אוויר<small>כתומה</small></span></button>
+          </div>
+          <div class="lamp-key"><span><i style="background:var(--lamp-red)"></i>אדומה: עוצרים</span><span><i style="background:var(--lamp-orange)"></i>כתומה: בודקים בקרוב</span><span><i style="background:#3fae6a"></i>ירוקה או כחולה: מידע בלבד</span></div>
+        </div>
+        <div class="lamp-out" aria-live="polite">
+          <span class="tag" data-lamp-tag></span>
+          <h3 data-lamp-title></h3>
+          <p data-lamp-text></p>
+          <button class="btn btn-go" data-lamp-ask>לשלוח למוסך</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מה הרכב צריך?</h2><p>מחירים לדוגמה. לוחצים על השורה, והצ׳אט נפתח עם התשובה.</p></div>
+      <div class="price-grid">
+        <div class="book">
+          <div class="book-h"><b>פנקס טיפולים</b><span>מחירון לדוגמה · המחירים סופיים לפני עבודה</span></div>
+          <button class="row hot" data-issue="נורה דולקת"><span><b>נורה דולקת בלוח</b><span>בדיקת מחשב ואבחון, ומחיר לתיקון לפני שמתחילים</span></span><span class="pr">150 עד 250 ₪<small>אבחון</small></span></button>
+          <button class="row" data-issue="טיפול תקופתי"><span><b>טיפול תקופתי</b><span>שמן, מסננים ובדיקה כללית, לפי ספר הרכב</span></span><span class="pr">450 עד 1,200 ₪<small>לפי הרכב והטיפול</small></span></button>
+          <button class="row" data-issue="בלמים"><span><b>בלמים</b><span>רפידות, דיסקים ונוזל בלמים</span></span><span class="pr">350 עד 1,200 ₪<small>לסרן</small></span></button>
+          <button class="row" data-issue="הכנה לטסט"><span><b>הכנה לטסט</b><span>עוברים על מה שנבדק במכון, ומתקנים מראש</span></span><span class="pr">250 עד 450 ₪<small>בלי חלקים</small></span></button>
+          <button class="row" data-issue="מצבר"><span><b>מצבר</b><span>בדיקת מצבר וטעינה, והחלפה אם צריך</span></span><span class="pr">400 עד 800 ₪<small>כולל מצבר</small></span></button>
+          <button class="row" data-issue="מזגן ברכב"><span><b>מזגן ברכב</b><span>בדיקת דליפה ומילוי גז</span></span><span class="pr">250 עד 700 ₪<small>לפי התקלה</small></span></button>
+        </div>
+        <aside class="check" aria-label="מה בודקים בכל טיפול">
+          <h3>מה בודקים בכל טיפול?</h3>
+          <p>גם כשבאים רק לשמן, עוברים על הדברים שמונעים תקלה בדרך.</p>
+          <ul>
+            <li><span>רפידות, דיסקים ונוזל בלמים</span></li>
+            <li><span>צמיגים: לחץ אוויר, שחיקה וחתכים</span></li>
+            <li><span>נוזל קירור, צינורות ורצועות</span></li>
+            <li><span>מצבר: מתח וחיבורים</span></li>
+            <li><span>אורות, מגבים ונוזל לשמשה</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה צריך ואיזה רכב, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap who-grid">
+      <div>
+        <div class="card" role="img" aria-label="כרטיס עבודה לדוגמה: חריקה בבלימה, רפידות קדמיות הוחלפו אחרי אישור בטלפון">
+          <div class="card-h"><b>כרטיס עבודה</b><span>לדוגמה</span></div>
+          <dl>
+            <div><dt>רכב</dt><dd><span class="mono ltr">2017 · 1.6</span> בנזין</dd></div>
+            <div><dt>ק״מ</dt><dd class="mono">142,300</dd></div>
+            <div><dt>תלונה</dt><dd>חריקה בבלימה</dd></div>
+            <div><dt>נמצא</dt><dd>רפידות קדמיות שחוקות</dd></div>
+            <div><dt>מחיר</dt><dd>520 ₪ <span class="ok">אושר בטלפון</span></dd></div>
+          </dl>
+          <ul>
+            <li><span>רפידות קדמיות הוחלפו</span></li>
+            <li><span>נוזל בלמים נבדק</span></li>
+            <li><span>נסיעת מבחן</span></li>
+          </ul>
+        </div>
+        <div class="card-cap"><b>דודי מזרחי</b><span>מכונאי רכב · 22 שנה · ראשון לציון</span></div>
+      </div>
+      <div class="who-copy">
+        <h2>מי מטפל ברכב?</h2>
+        <p>אני, במוסך שלי. ככה נראה יום עם תקלה, לדוגמה:</p>
+        <ol class="day">
+          <li><time class="ltr">08:05</time><div><b>כותבים בצ׳אט: חריקה בבלמים</b><span>איזה רכב, ותמונה אם יש.</span></div></li>
+          <li><time class="ltr">08:20</time><div><b>אני חוזר אליכם</b><span>קובעים שעה להביא את הרכב, ואומר בערך כמה זה יעלה.</span></div></li>
+          <li><time class="ltr">11:40</time><div><b>מתקשר לפני שמתחיל</b><span>אומר מה מצאתי ומה המחיר. בלי אישור שלכם לא נוגעים.</span></div></li>
+          <li><time class="ltr">14:30</time><div><b>הרכב מוכן</b><span>עם הסבר מה הוחלף, והחלקים הישנים אם תרצו.</span></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשנדלקת נורה או יוצא עשן, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, איזה רכב, כמה דחוף, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>עם תמונה של הלוח, אם צירפו. יודעים מראש מה להכין.</span></div></li>
+          <li><div><b>חוזרים ללקוח עם תור</b><span>הצ׳אט עונה גם כשאתם מתחת לרכב ולא יכולים להרים טלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רונית כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מוסך)
+מה צריך: בלמים
+רכב: 2017, 1.6 בנזין
+מתי: היום או מחר
+ישוב: ראשון לציון
+שם: רונית כהן
+טלפון: 052-7654321<time>08:05</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למוסך</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row-f">
+    <span>מוסך דודי · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const ISSUES = ["נורה דולקת", "טיפול תקופתי", "בלמים", "הכנה לטסט", "מצבר", "מזגן ברכב", "משהו אחר"];
+  const RANGES = { "נורה דולקת": "150 עד 250", "טיפול תקופתי": "450 עד 1,200", "בלמים": "350 עד 1,200", "הכנה לטסט": "250 עד 450", "מצבר": "400 עד 800", "מזגן ברכב": "250 עד 700" };
+  const LIGHTS = ["אדומה: שמן", "אדומה: טמפרטורה", "אדומה: מצבר", "אדומה: בלמים", "כתומה: מנוע", "כתומה: לחץ אוויר", "לא בטוח"];
+  const PLANNED = (d) => d.issue === "טיפול תקופתי" || d.issue === "הכנה לטסט";
+  const RED = (d) => /^אדומה/.test(d.light || "");
+  const URGENT = "הרכב לא נוסע, או לא בטוח";
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "דודי · מוסך", subtitle: "חוזר אליכם עם תור", initial: "ד", launcher: "נדלקה נורה?", hint: "נציג AI",
+    greet: "היי, כאן דודי.\nכמה שאלות קצרות, והפרטים אצלי בוואטסאפ.",
+    steps: [
+      { key: "issue", label: "מה צריך", ask: "מה הרכב צריך?", chips: ISSUES,
+        tip: { when: (v) => v === "בלמים", id: "brakes", text: "דוושה רכה, רעד חזק או בלימה חלשה: לא נוסעים. עוצרים במקום בטוח ומזמינים גרר." } },
+      { key: "light", label: "איזו נורה", ask: "איזו נורה דולקת?", chips: LIGHTS, show: (d) => d.issue === "נורה דולקת",
+        tip: { when: (v) => /^אדומה/.test(v), id: "red-light", text: "נורה אדומה: עוצרים בצד במקום בטוח ומכבים את המנוע. לא ממשיכים לנסוע. אם צריך, מזמינים שירותי דרך." } },
+      { key: "car", label: "רכב", ask: "איזה רכב? שנה, נפח מנוע, ואם יש, הדגם.", input: "text", placeholder: "למשל: 2018, 1.6 בנזין" },
+      { key: "km", label: "ק״מ", ask: "כמה קילומטרים בערך?", chips: ["עד 60 אלף", "60 עד 150 אלף", "מעל 150 אלף", "לא יודע"], show: PLANNED },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של לוח השעונים, או של מה שקרה? כך אני יודע מה להכין.", photo: true, show: (d) => !PLANNED(d) },
+      { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: [URGENT, "היום או מחר", "השבוע", "רק בודק מחיר"], show: (d) => !PLANNED(d) && !RED(d),
+        tip: { when: (v) => v === URGENT, id: "stop-driving", text: "לא נוסעים ברכב לא בטוח. אורות חירום, אפוד, ויוצאים מהרכב אל מאחורי המעקה. אחר כך מזמינים שירותי דרך." } },
+      { key: "when", label: "מתי", ask: "איפה הרכב עכשיו?", chips: ["עצרתי בצד", "בבית או בחניה", "עדיין נוסע"], show: RED },
+      { key: "when", label: "מתי", ask: "מתי נוח לכם להביא את הרכב?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב אתם?", input: "text", placeholder: "למשל: ראשון לציון" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const price = RANGES[d.issue] ? `בדרך כלל ${RANGES[d.issue]} ₪, ואת המחיר הסופי אני אומר לפני שמתחילים.` : "את המחיר אני אומר אחרי בדיקה, לפני שמתחילים.";
+      const what = d.light ? `${d.issue} (${d.light})` : d.issue;
+      const safe = RED(d) ? "\nעד שנדבר: לא נוסעים עם נורה אדומה. אם צריך, מזמינים שירותי דרך."
+        : d.when === URGENT ? "\nרכב לא בטוח לא נוסע. עדיף גרר עד המוסך." : "";
+      const test = d.issue === "הכנה לטסט" ? "\nאת הטסט עצמו מחליט מכון הרישוי. אני בודק ומתקן מראש את מה שאפשר." : "";
+      return `תודה ${first}. רשמתי: ${what}, ${d.car}, ב${d.city}. ${price}${safe}${test}\nלחצו למטה, ואני חוזר אליכם עם תור.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו מוסך)\nמה צריך: ${d.issue}${d.light ? `\nנורה: ${d.light}` : ""}\nרכב: ${d.car}${d.km ? `\nק״מ: ${d.km}` : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open({ issue: b.dataset.issue })));
+
+  // The light board: what each warning light means, and the chat with that light already picked
+  const LAMPS = {
+    oil: { c: "red", tag: "אדומה: עוצרים", t: "לחץ שמן נמוך", x: "עוצרים בצד במקום בטוח ומכבים את המנוע. לא ממשיכים לנסוע, גם לא קצת: מנוע בלי שמן נהרס מהר. אחר כך מזמינים שירותי דרך.", light: "אדומה: שמן" },
+    temp: { c: "red", tag: "אדומה: עוצרים", t: "המנוע מתחמם", x: "עוצרים ומכבים. לא פותחים את מכסה הרדיאטור כשהמנוע חם: הנוזל רותח ובלחץ. יוצא אדים? מתרחקים מהרכב.", light: "אדומה: טמפרטורה" },
+    batt: { c: "red", tag: "אדומה: בודקים היום", t: "הרכב לא נטען", x: "מכבים מזגן ורדיו, ונוסעים רק עד מקום בטוח או עד המוסך. אם גם הטמפרטורה עולה, עוצרים מיד.", light: "אדומה: מצבר" },
+    brake: { c: "red", tag: "אדומה: עוצרים", t: "בעיה בבלמים", x: "קודם בודקים שבלם היד משוחרר. אם הנורה עדיין דולקת, או שהדוושה רכה, לא נוסעים ומזמינים גרר.", light: "אדומה: בלמים" },
+    engine: { c: "orange", tag: "כתומה: בודקים בקרוב", t: "המחשב זיהה תקלה במנוע", x: "אם הרכב נוסע רגיל, קובעים בדיקת מחשב בימים הקרובים. אם הנורה מהבהבת, או שהרכב רועד ומאבד כוח, עוצרים.", light: "כתומה: מנוע" },
+    tyre: { c: "orange", tag: "כתומה: בודקים היום", t: "לחץ אוויר נמוך בצמיג", x: "נוסעים לאט לתחנת דלק, בודקים ומנפחים לפי המדבקה בדלת הנהג. אם הצמיג מתרוקן שוב, יש תקר.", light: "כתומה: לחץ אוויר" },
+  };
+  const out = { tag: document.querySelector("[data-lamp-tag]"), title: document.querySelector("[data-lamp-title]"), text: document.querySelector("[data-lamp-text]") };
+  let lamp = "engine";
+  const showLamp = (id) => {
+    lamp = id; const L = LAMPS[id];
+    document.querySelectorAll("[data-lamp]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lamp === id)));
+    out.tag.textContent = L.tag; out.tag.className = "tag " + L.c; out.title.textContent = L.t; out.text.textContent = L.x;
+  };
+  document.querySelectorAll("[data-lamp]").forEach((b) => b.addEventListener("click", () => showLamp(b.dataset.lamp)));
+  document.querySelector("[data-lamp-ask]").addEventListener("click", () => bot.open({ issue: "נורה דולקת", light: LAMPS[lamp].light }));
+  showLamp(lamp);
+
+  const CAR = ["טיפול תקופתי", "בלמים", "מצבר"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "בדיקת מחשב לנורה", range: [150, 250], prefill: { issue: "נורה דולקת" } },
+      { label: "טיפול תקופתי", range: [450, 650], prefill: { issue: "טיפול תקופתי" } },
+      { label: "בלמים", range: [350, 600], prefill: { issue: "בלמים" } },
+      { label: "הכנה לטסט", range: [250, 450], prefill: { issue: "הכנה לטסט" }, note: "בלי החלקים שצריך להחליף, אם צריך. את הטסט עצמו מחליט מכון הרישוי." },
+      { label: "מצבר", range: [400, 640], prefill: { issue: "מצבר" } },
+      { label: "מזגן ברכב", range: [250, 450], prefill: { issue: "מזגן ברכב" } },
+    ] },
+    factors: [
+      { ask: "איזה רכב?", for: CAR, options: [
+        { label: "קטן או משפחתי" },
+        { label: "ג׳יפ או מסחרי", mul: [1.2, 1.25], note: "ברכב גדול יותר יש יותר שמן, רפידות גדולות ומצבר חזק יותר." },
+      ] },
+      { ask: "איזה טיפול?", for: ["טיפול תקופתי"], options: [
+        { label: "טיפול קטן: שמן ומסננים" },
+        { label: "טיפול גדול לפי הספר", add: [250, 400], note: "בטיפול גדול מחליפים גם חלקים לפי הקילומטרים: מצתים, מסנן אוויר, לפעמים רצועה." },
+      ] },
+      { ask: "מה צריך בבלמים?", for: ["בלמים"], options: [
+        { label: "רפידות" },
+        { label: "רפידות ודיסקים", add: [300, 450], note: "דיסק שחוק או מעוקם מחליפים יחד עם הרפידות, בשני הצדדים." },
+      ] },
+      { ask: "מה קורה במזגן?", for: ["מזגן ברכב"], options: [
+        { label: "מקרר חלש" },
+        { label: "לא מקרר בכלל", add: [0, 250], note: "אם יש דליפה, קודם מוצאים ומתקנים אותה, ורק אז ממלאים גז." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. את המחיר הסופי אומרים אחרי בדיקה, ולפני שמתחילים לעבוד.",
+    cta: "לשלוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/garage.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

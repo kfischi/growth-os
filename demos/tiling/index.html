@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>יניב ריצוף וחיפוי · מודיעין והסביבה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="ריצוף, חיפוי קירות באמבטיה, החלפת אריחים סדוקים, חידוש רובה, מדרגות ומרפסות במודיעין והסביבה. מתארים בצ׳אט, שולחים תמונה, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2a3235">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: a floor halfway laid. Big porcelain tiles with grey grout lines, the last row still bare glue with the
+     notched trowel's ridges, a spirit level across the tiles and the small plastic spacers in the joints.
+     Detail: מ״ר, אריח 60 על 60, רובה ורובה אפוקסית, פלסים, דבק, פירוק ריצוף ישן, מדרגה, שיפוע במרפסת, קופסה מאותה סדרה.
+     Bold move: the price list is a wall of tiles set with real grout joints, one tile per job, and one tile cracked.
+     Porcelain white and grout grey, a deep tiled-bathroom green for the buttons, a raspberry spacer as the only spark. */
+  :root {
+    --porcelain: #f2f3f1;
+    --grout: #2a3235;          /* the ink */
+    --grout-soft: #4e5a5e;
+    --joint: #a3aaa8;          /* the grout lines */
+    --zellige: #1b6460;        /* the buttons */
+    --zellige-deep: #134b48;
+    --stone: #e3e5e1;
+    --spacer: #b3284a;
+    --line: #d3d8d5;
+    --ink: var(--grout);
+    --ink-soft: var(--grout-soft);
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --phone-frame: var(--grout);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--zellige); --bot-accent-fg: #fff; --bot-them: #eef0ee; --bot-me: var(--grout); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 6px; --bot-radius-msg: 10px; --bot-focus: var(--grout);
+    --guide-alert: var(--spacer);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--porcelain); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--zellige); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--zellige); color: #fff; box-shadow: 0 16px 32px -14px rgba(27,100,96,.85), 0 2px 6px -2px rgba(27,100,96,.4); }
+  .btn-main:hover { background: var(--zellige-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--zellige); }
+
+  .demo { background: var(--grout); color: #c9d0ce; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(42,50,53,.96); color: #fff; backdrop-filter: blur(8px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: #c9d0ce; font-weight: 700; font-size: .74em; }
+  .logo .k { width: 24px; height: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .logo .k i { background: #e9ebe8; border-radius: 1px; } .logo .k i:nth-child(2) { background: var(--zellige); filter: brightness(1.5); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+  .top-a .btn-main:focus-visible { outline-color: #fff; }
+  .top-a .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+  /* a grout joint under the bar */
+  .joint { height: 6px; background: repeating-linear-gradient(90deg, var(--stone) 0 92px, var(--joint) 92px 96px); border-bottom: 1px solid var(--line); }
+
+  .hero { position: relative; overflow: hidden; background: var(--porcelain);
+    background-image: radial-gradient(50% 60% at 4% 8%, rgba(27,100,96,.13), transparent 70%), radial-gradient(40% 50% at 98% 0%, rgba(179,40,74,.07), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--zellige); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; background: var(--spacer); clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--zellige); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--zellige); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: var(--joint);
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(42,50,53,.6), 0 12px 24px -16px rgba(27,100,96,.3); }
+  .frame-l svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(42,50,53,.55), 0 4px 12px -6px rgba(27,100,96,.2); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eef0ee; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--zellige); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 62%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--zellige); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The tile wall: real joints between the tiles, one tile per job, one tile cracked */
+  .wall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; padding: 6px; background: var(--joint); border-radius: 10px;
+    box-shadow: 0 40px 70px -46px rgba(42,50,53,.6); }
+  .tile { all: unset; box-sizing: border-box; cursor: pointer; position: relative; display: grid; align-content: space-between; gap: 18px; min-height: 196px; padding: 22px 22px 20px; border-radius: 3px;
+    background: linear-gradient(135deg, #fbfbfa, #ecedea); box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(42,50,53,.06); transition: background .15s, transform .15s; min-width: 0; }
+  .tile:hover { background: #fff; }
+  .tile:focus-visible { outline: 3px solid var(--zellige); outline-offset: -3px; }
+  .tile b { display: block; font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.01em; }
+  .tile span span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; margin-top: 6px; }
+  .tile .pr { font-weight: 700; font-size: 17px; color: var(--zellige); font-variant-numeric: tabular-nums; }
+  .tile .pr small { font-weight: 400; font-size: 13.5px; color: var(--ink-soft); margin-inline-start: 6px; }
+  .tile.green { background: linear-gradient(135deg, #22746f, var(--zellige-deep)); color: #fff; }
+  .tile.green span span, .tile.green .pr small { color: #d5e6e4; } .tile.green .pr { color: #fff; }
+  .tile.green:focus-visible { outline-color: #fff; }
+  .tile.crack::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(118deg, transparent 49.4%, rgba(42,50,53,.28) 49.6%, rgba(42,50,53,.28) 50%, transparent 50.2%) 0 0 / 100% 100% no-repeat;
+    -webkit-mask: linear-gradient(transparent 0 8%, #000 8% 46%, transparent 46%); mask: linear-gradient(transparent 0 8%, #000 8% 46%, transparent 46%); }
+  .buy { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
+  .buy::before { content: ""; flex: none; width: 10px; height: 10px; background: var(--spacer); clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); transform: translateY(-1px); }
+  .buy a { color: var(--zellige); font-weight: 700; }
+
+  .calc { background: var(--grout); color: #fff;
+    --bot-bg: #343e41; --bot-fg: #fff; --bot-line: #566266; --bot-muted: #c9d0ce; --bot-accent: #fff; --bot-accent-fg: var(--grout); --bot-focus: #fff; }
+  .calc .head p { color: #c9d0ce; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  .guides { background: var(--stone); }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 4px; background: var(--grout); box-shadow: 0 0 0 3px var(--joint); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .frow { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .wall { grid-template-columns: minmax(0, 1fr); gap: 5px; padding: 5px; }
+    .tile { min-height: 0; gap: 10px; padding: 18px; }
+    .tile b { font-size: 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .tile { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>יניב</span><span class="n2">ריצוף וחיפוי</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>לקבל מחיר</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על ריצוף">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+<div class="joint" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>מקבלים עבודות לחודש הבא</span><span>מודיעין · שוהם · לוד · רמלה</span></div>
+    <h1>ריצוף חדש או אריח שנסדק? <em>שולחים תמונה, ו<b>חוזרים עם מחיר למדידה.</b></em></h1>
+    <p class="lede">סלון, אמבטיה, מרפסת או אריח אחד שקם. כמה שאלות ותמונה בצ׳אט, והפרטים מגיעים אלינו גם כשאנחנו על הברכיים עם פלס.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לקבל מחיר</button>
+      <a class="btn btn-ghost" href="#calc">כמה עולה מ״ר?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>16 שנה</dt><dd>ריצוף וחיפוי במודיעין והסביבה</dd></div>
+      <div><dt>מחיר סגור</dt><dd>אחרי מדידה בבית, לפני שמתחילים</dd></div>
+      <div><dt>מפנים פסולת</dt><dd>בסוף כל יום עבודה</dd></div>
+      <div><dt>אחריות בכתב</dt><dd>על העבודה, 24 חודשים</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l">
+        <svg viewBox="0 0 480 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="רצפה באמצע עבודה: אריחים גדולים עם רובה, שורה אחרונה של דבק עם פסים של מסרק, פלס על האריחים ופלסים בין האריחים">
+          <defs>
+            <linearGradient id="t1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f6f4"/><stop offset="1" stop-color="#e6e6e2"/></linearGradient>
+            <linearGradient id="t2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f1ee"/><stop offset="1" stop-color="#dfe0dc"/></linearGradient>
+            <pattern id="glue" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)"><rect width="12" height="12" fill="#b4b9b5"/><rect width="12" height="5" fill="#c6cac6"/></pattern>
+            <linearGradient id="lvl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a8a84"/><stop offset="1" stop-color="#174f4c"/></linearGradient>
+          </defs>
+          <rect width="480" height="400" fill="#a3aaa8"/>
+          <path d="M0 196 H100 V292 H196 V388 H292 V400 H0Z" fill="url(#glue)"/>
+          <g id="tiles">
+            <rect x="388" y="4" width="92" height="92" fill="url(#t1)"/><rect x="292" y="4" width="92" height="92" fill="url(#t2)"/><rect x="196" y="4" width="92" height="92" fill="url(#t1)"/><rect x="100" y="4" width="92" height="92" fill="url(#t2)"/><rect x="4" y="4" width="92" height="92" fill="url(#t1)"/>
+            <rect x="388" y="100" width="92" height="92" fill="url(#t2)"/><rect x="292" y="100" width="92" height="92" fill="url(#t1)"/><rect x="196" y="100" width="92" height="92" fill="url(#t2)"/><rect x="100" y="100" width="92" height="92" fill="url(#t1)"/><rect x="4" y="100" width="92" height="92" fill="url(#t2)"/>
+            <rect x="388" y="196" width="92" height="92" fill="url(#t1)"/><rect x="292" y="196" width="92" height="92" fill="url(#t2)"/><rect x="196" y="196" width="92" height="92" fill="url(#t1)"/><rect x="100" y="196" width="92" height="92" fill="url(#t2)"/>
+            <rect x="388" y="292" width="92" height="92" fill="url(#t2)"/><rect x="292" y="292" width="92" height="92" fill="url(#t1)"/><rect x="196" y="292" width="92" height="92" fill="url(#t2)"/>
+            <rect x="388" y="388" width="92" height="12" fill="url(#t1)"/><rect x="292" y="388" width="92" height="12" fill="url(#t2)"/>
+          </g>
+          <g fill="none" stroke="#cfcfca" stroke-width="1.2" stroke-linecap="round">
+            <path d="M300 30 C330 40 350 70 380 76"/><path d="M110 120 C140 150 150 170 186 180"/><path d="M400 210 C420 240 450 250 476 270"/><path d="M206 300 C236 320 250 350 282 370"/>
+          </g>
+          <path d="M398 16 L424 44 L418 58 L446 88" fill="none" stroke="#7d8583" stroke-width="1.6" stroke-linejoin="round"/>
+          <g fill="#b3284a">
+            <path d="M94 194 h8 v-6 h4 v6 h-2 v4 h-4 v-4 h-6z" transform="translate(0 0)"/>
+            <rect x="190" y="290" width="12" height="4"/><rect x="194" y="286" width="4" height="12"/>
+            <rect x="94" y="192" width="12" height="4"/><rect x="98" y="188" width="4" height="12"/>
+            <rect x="286" y="386" width="12" height="4"/><rect x="290" y="382" width="4" height="12"/>
+            <rect x="190" y="194" width="12" height="4" opacity=".8"/><rect x="194" y="190" width="4" height="12" opacity=".8"/>
+          </g>
+          <g transform="rotate(-8 250 150)">
+            <rect x="120" y="130" width="300" height="40" rx="8" fill="url(#lvl)"/>
+            <rect x="120" y="130" width="300" height="6" rx="3" fill="#fff" opacity=".2"/>
+            <rect x="244" y="138" width="52" height="24" rx="12" fill="#dff1ee"/>
+            <path d="M262 138 V162 M278 138 V162" stroke="#174f4c" stroke-width="1.5"/>
+            <ellipse cx="270" cy="150" rx="7" ry="6" fill="#fff"/>
+            <rect x="150" y="144" width="16" height="12" rx="6" fill="#dff1ee"/><rect x="374" y="144" width="16" height="12" rx="6" fill="#dff1ee"/>
+          </g>
+          <g transform="rotate(18 90 320)">
+            <path d="M30 300 H150 V330 L144 336 L138 330 L132 336 L126 330 L120 336 L114 330 L108 336 L102 330 L96 336 L90 330 L84 336 L78 330 L72 336 L66 330 L60 336 L54 330 L48 336 L42 330 L36 336 L30 330Z" fill="#c9ced2" stroke="#8b9399" stroke-width="2"/>
+            <path d="M80 300 V286 H100 V300" fill="none" stroke="#8b9399" stroke-width="5"/>
+            <rect x="60" y="266" width="60" height="22" rx="11" fill="#2a3235"/>
+          </g>
+        </svg>
+      </div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">אריח קם בסלון ונסדק</p><p class="a">שלחו תמונה. נשארו אריחים מהקופסה? צלמו גם אותה.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה · עבודה</span><div><b>ריצוף</b><span>130 עד 200 ₪ למ״ר</span></div><div><b>חיפוי באמבטיה</b><span>150 עד 230 ₪ למ״ר</span></div><div><b>חידוש רובה</b><span>600 עד 1,400 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="services">
+    <div class="wrap">
+      <div class="head"><h2>מה צריך?</h2><p>מחירי עבודה לדוגמה, בלי האריחים עצמם. לוחצים על אריח, והצ׳אט נפתח איתו.</p></div>
+      <div class="wall">
+        <button class="tile green" type="button" data-pre='{"need":"ריצוף"}'><span><b>ריצוף</b><span>סלון, חדרים או כל הבית. כולל דבק, פלסים ורובה</span></span><span class="pr">130 עד 200 ₪<small>למ״ר</small></span></button>
+        <button class="tile" type="button" data-pre='{"need":"חיפוי באמבטיה"}'><span><b>חיפוי באמבטיה</b><span>קירות במקלחת, בשירותים ובמטבח, עם פינות וחיתוכים</span></span><span class="pr">150 עד 230 ₪<small>למ״ר</small></span></button>
+        <button class="tile crack" type="button" data-pre='{"need":"אריחים שנסדקו או קמו"}'><span><b>אריחים שנסדקו או קמו</b><span>מוציאים את האריח השבור ומניחים חדש, בלי לפרק את כל החדר</span></span><span class="pr">350 עד 800 ₪<small>עד 4 אריחים</small></span></button>
+        <button class="tile" type="button" data-pre='{"need":"חידוש רובה"}'><span><b>חידוש רובה</b><span>מוציאים רובה שחורה או סדוקה, ומרבים מחדש. גם רובה אפוקסית</span></span><span class="pr">600 עד 1,400 ₪<small>לחדר רחצה</small></span></button>
+        <button class="tile" type="button" data-pre='{"need":"מדרגות"}'><span><b>מדרגות</b><span>שלח ורום לכל מדרגה, עם פס נגד החלקה אם צריך</span></span><span class="pr">250 עד 450 ₪<small>למדרגה</small></span></button>
+        <button class="tile" type="button" data-pre='{"need":"מרפסת"}'><span><b>ריצוף מרפסת</b><span>אריח לחוץ, עם שיפוע לניקוז. איטום עושה איש איטום</span></span><span class="pr">160 עד 250 ₪<small>למ״ר</small></span></button>
+      </div>
+      <p class="buy">קונים אריחים? קחו בערך 10% יותר, ושמרו קופסה אחת מאותה סדרה לתיקונים. <a href="#g-extra">למה זה חשוב</a></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים עבודה ושטח, ורואים טווח של מחיר עבודה. את המחיר הסופי סוגרים אחרי מדידה.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשאריח קם, ומה כדאי לדעת לפני שקונים אריחים.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, כמה מ״ר, אם יש ריצוף ישן ואם האריחים כבר נקנו, ותמונה. בלי טופס.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם זו עבודה של יום או של שבועיים, ומה להביא למדידה.</span></div></li>
+          <li><div><b>חוזרים עם זמן למדידה</b><span>כשהידיים בדבק אי אפשר לענות לטלפון. הצ׳אט אוסף את הפרטים בינתיים.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רועי שושן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו ריצוף)
+מה צריך: ריצוף
+שטח: 20 עד 50 מ״ר
+ריצוף ישן: כן, צריך לפרק
+אריחים: כבר קנינו
+מתי: בחודש הקרוב
+ישוב: מודיעין
+שם: רועי שושן
+טלפון: 052-7654321<time>19:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לרצף</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>יניב ריצוף וחיפוי · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const FIX = "אריחים שנסדקו או קמו";
+  const AREA = (d) => ["ריצוף", "חיפוי באמבטיה", "מרפסת"].includes(d.need);
+  const RANGES = { "ריצוף": "ריצוף עולה בדרך כלל 130 עד 200 ₪ למ״ר, עבודה", "חיפוי באמבטיה": "חיפוי עולה בדרך כלל 150 עד 230 ₪ למ״ר, עבודה",
+    "אריחים שנסדקו או קמו": "החלפה של עד 4 אריחים עולה בדרך כלל 350 עד 800 ₪", "חידוש רובה": "חידוש רובה עולה בדרך כלל 600 עד 1,400 ₪ לחדר רחצה",
+    "מדרגות": "מדרגה עולה בדרך כלל 250 עד 450 ₪", "מרפסת": "ריצוף מרפסת עולה בדרך כלל 160 עד 250 ₪ למ״ר, עבודה" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "יניב · ריצוף וחיפוי", subtitle: "חוזרים עם זמן למדידה", initial: "י", launcher: "לקבל מחיר", hint: "נציג AI",
+    greet: "היי, כאן יניב ריצוף וחיפוי.\nכמה שאלות קצרות, והפרטים מגיעים אלינו בוואטסאפ.",
+    steps: [
+      { key: "need", label: "מה צריך", ask: "מה צריך?", chips: ["ריצוף", "חיפוי באמבטיה", FIX, "חידוש רובה", "מדרגות", "מרפסת"] },
+      { key: "state", label: "מה קרה", ask: "מה קורה עם האריחים?", chips: ["קמו פתאום או נשמע פיצוץ", "רטוב סביב האריחים", "סדק ישן"], show: (d) => d.need === FIX,
+        tip: { when: (v) => v !== "סדק ישן", id: "lifted", text: "בינתיים: לא דורכים על האריחים שקמו ולא דופקים אותם חזרה. רטוב סביבם? אולי זו נזילה מתחת לרצפה: סוגרים את ברז המים הראשי וקוראים לאינסטלטור." } },
+      { key: "spare", label: "אריחים זהים", ask: "נשארו אריחים זהים מהעבודה הקודמת?", chips: ["כן, יש בבית", "לא, צריך למצוא דומים", "לא יודעים"], show: (d) => d.need === FIX },
+      { key: "size", label: "שטח", ask: "כמה מ״ר, בערך?", chips: ["עד 20 מ״ר", "20 עד 50 מ״ר", "יותר מ-50 מ״ר", "לא יודעים"], show: AREA },
+      { key: "old", label: "ריצוף ישן", ask: "יש ריצוף או חיפוי ישן לפרק?", chips: ["כן, צריך לפרק", "לא, זה על מצע חדש", "לא יודעים"], show: AREA },
+      { key: "tiles", label: "אריחים", ask: "האריחים כבר אצלכם?", chips: ["כבר קנינו", "עוד בוחרים", "רוצים עזרה בבחירה"], show: (d) => d.need !== FIX && d.need !== "חידוש רובה" },
+      { key: "when", label: "מתי", ask: "מתי תרצו להתחיל?", chips: ["בהקדם", "בחודש הקרוב", "בעוד כמה חודשים", "רק בודקים מחיר"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של החדר או של האריחים? כך מגיעים למדידה מוכנים.", photo: true },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: מודיעין" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const spare = d.spare && d.spare !== "כן, יש בבית" ? "\nבלי אריחים זהים נחפש דומים, ונגיד לכם לפני אם ההבדל ייראה." : "";
+      return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.need}${d.size ? ", " + d.size : ""}, ב${d.city}. ${RANGES[d.need] || ""}, והמחיר הסופי אחרי מדידה.${spare}\nלחצו למטה, ונחזור אליכם עם זמן למדידה.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו ריצוף)\nמה צריך: ${d.need}${d.state ? "\nמה קרה: " + d.state : ""}${d.spare ? "\nאריחים זהים: " + d.spare : ""}${d.size ? "\nשטח: " + d.size : ""}${d.old ? "\nריצוף ישן: " + d.old : ""}${d.tiles ? "\nאריחים: " + d.tiles : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+  const M2 = ["ריצוף", "ריצוף מרפסת"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "איזו עבודה?", items: [
+      { label: "ריצוף", range: [130, 200], prefill: { need: "ריצוף" } },
+      { label: "חיפוי באמבטיה", range: [150, 230], prefill: { need: "חיפוי באמבטיה" } },
+      { label: "ריצוף מרפסת", range: [160, 250], prefill: { need: "מרפסת" } },
+      { label: "מדרגות", range: [250, 450], prefill: { need: "מדרגות" } },
+      { label: "החלפת אריחים", range: [350, 800], prefill: { need: FIX } },
+      { label: "חידוש רובה", range: [600, 1400], prefill: { need: "חידוש רובה" } },
+    ] },
+    factors: [
+      { ask: "כמה מ״ר, בערך?", for: M2, options: [
+        { label: "בערך 12 מ״ר", mul: 12, prefill: { size: "עד 20 מ״ר" } },
+        { label: "בערך 30 מ״ר", mul: 30, prefill: { size: "20 עד 50 מ״ר" } },
+        { label: "בערך 60 מ״ר", mul: 60, prefill: { size: "יותר מ-50 מ״ר" } },
+        { label: "בערך 100 מ״ר", mul: 100, prefill: { size: "יותר מ-50 מ״ר" } },
+      ] },
+      { ask: "כמה מ״ר קירות, בערך?", for: ["חיפוי באמבטיה"], options: [
+        { label: "שירותים, בערך 12 מ״ר", mul: 12, prefill: { size: "עד 20 מ״ר" } },
+        { label: "חדר רחצה, בערך 25 מ״ר", mul: 25, prefill: { size: "20 עד 50 מ״ר" } },
+        { label: "חדר רחצה גדול, בערך 35 מ״ר", mul: 35, prefill: { size: "20 עד 50 מ״ר" } },
+      ] },
+      { ask: "יש ריצוף או חיפוי ישן?", for: ["ריצוף", "חיפוי באמבטיה", "ריצוף מרפסת"], options: [
+        { label: "לא, משטח חדש", prefill: { old: "לא, זה על מצע חדש" } },
+        { label: "צריך לפרק את הישן", mul: [1.25, 1.35], prefill: { old: "כן, צריך לפרק" }, note: "פירוק ופינוי של ריצוף ישן מוסיפים עבודה ופסולת." },
+      ] },
+      { ask: "איזה אריח?", for: ["ריצוף", "חיפוי באמבטיה", "ריצוף מרפסת"], options: [
+        { label: "רגיל, עד 60 על 60" },
+        { label: "גדול, 120 על 60 ומעלה", mul: [1.15, 1.3], note: "אריח גדול צריך משטח ישר מאוד, ולפעמים עוד איש להרים אותו." },
+      ] },
+      { ask: "כמה מדרגות?", for: ["מדרגות"], options: [
+        { label: "3 מדרגות", mul: 3 },
+        { label: "8 מדרגות", mul: 8 },
+        { label: "15 מדרגות", mul: 15 },
+      ] },
+      { ask: "כמה חדרי רחצה?", for: ["חידוש רובה"], options: [
+        { label: "חדר אחד" },
+        { label: "שניים", mul: 2 },
+      ] },
+    ],
+    note: "מחיר עבודה לדוגמה, בלי האריחים עצמם. את המחיר הסופי סוגרים אחרי מדידה בבית.",
+    cta: "לקבל מחיר עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/tiling.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>
