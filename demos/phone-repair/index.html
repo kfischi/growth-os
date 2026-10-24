@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מעבדת נועם · תיקון סלולר ומחשבים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="מסך סדוק, סוללה, שקע טעינה, נזקי מים, מחשב איטי ושחזור מידע בבאר שבע. מתארים בצ׳אט מה קרה, והפרטים מגיעים למעבדה בוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f1a33">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the repair bench: a blue anti-static mat with its printed grid and numbered screw cells, a phone opened on it,
+     the cracked glass lifted off the body on its flex cable, the battery inside, the tiny screws laid out in order.
+     Detail: screw lengths in millimetres (1.2, 1.5), the battery's 3.85V, the charging port, "גיבוי לפני שפותחים",
+     the repair ticket with the price approved before the device is opened, the checks after (touch, camera, charging).
+     Bold move: one big drawn opened phone in the hero: the cracked screen lifts off the body once and settles beside it.
+     Everything else is quiet bench white and the mat's blue; a swollen battery gets the one warm warning colour. */
+  :root {
+    --mat: #16307a;            /* the anti-static mat */
+    --mat-deep: #0f1a33;
+    --esd: #1d4ed8;            /* the mat's printed blue: buttons and the one colour */
+    --esd-deep: #173ea8;
+    --bench: #eef2f8;          /* the bench under the lamp */
+    --ink: #111a2e;
+    --ink-soft: #47536b;
+    --line: #cdd6e5;
+    --swell: #c2410c;          /* a swollen battery: the warning, used only for danger */
+    --glass: #9cc3ff;          /* the glass of a screen */
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--mat-deep);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: #cdd6e5; --bot-muted: var(--ink-soft);
+    --bot-accent: var(--esd); --bot-accent-fg: #fff; --bot-them: #edf1f8; --bot-me: var(--mat-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 14px; --bot-radius-msg: 16px; --bot-focus: var(--mat-deep);
+    --guide-alert: var(--swell);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--bench); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--esd); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.04; letter-spacing: -.025em; margin: 0; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-go { background: var(--esd); color: #fff; box-shadow: 0 16px 32px -14px rgba(29,78,216,.85), 0 2px 6px -2px rgba(29,78,216,.45); }
+  .btn-go:hover { background: var(--esd-deep); }
+  .btn-go:focus-visible { outline-color: var(--ink); }
+  .btn-line { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--esd); }
+
+  .demo { background: var(--mat-deep); color: #b8c3da; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- Top bar ---------- */
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(15,26,51,.96); color: #fff; backdrop-filter: blur(8px); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .logo .n2 { color: #a9b9da; font-weight: 500; }
+  .logo .k { width: 17px; height: 28px; border-radius: 5px; border: 2.5px solid #a9b9da; position: relative; flex: none; }
+  .logo .k::after { content: ""; position: absolute; inset: 4px 3px 6px; border-radius: 2px; background: linear-gradient(135deg, transparent 45%, var(--glass) 46% 54%, transparent 55%); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; box-shadow: none; }
+  .top-a .btn-ghost { color: #fff; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+  .top-a .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px #fff; }
+  .top-a .btn:focus-visible { outline-color: #fff; }
+
+  /* ---------- Hero (smart luxury): the bench, big tight type, the opened phone large in a rounded frame ---------- */
+  .hero { background: var(--bench); background-image: radial-gradient(50% 60% at 6% 10%, rgba(29,78,216,.13), transparent 70%), radial-gradient(45% 55% at 98% 0%, rgba(156,195,255,.35), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 540px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 50px 0 56px; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 18px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--esd); font-weight: 700; }
+  .kicker .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--esd); box-shadow: 0 0 0 4px rgba(29,78,216,.15); }
+  .hero h1 { grid-area: h1; font-size: clamp(44px, 5.4vw, 74px); margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.2; color: var(--ink-soft); margin-top: 14px; }
+  .hero h1 em b { color: var(--esd); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 19px; max-width: 42ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding-top: 22px; border-top: 1px solid var(--line); }
+  .facts div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: 21px; line-height: 1.1; color: var(--esd); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+
+  .win { grid-area: win; position: relative; aspect-ratio: 1 / 1; width: 100%; max-width: 540px; justify-self: center; min-width: 0; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: var(--mat);
+    box-shadow: 0 0 0 1px #c4cee0, 0 50px 90px -46px rgba(15,26,51,.75), 0 12px 24px -16px rgba(29,78,216,.35); }
+  .frame-l svg { display: block; width: 100%; height: 100%; }
+  .bench .mm { font: 500 11px var(--mono); fill: #8fa6dc; }
+  .bench .lab { font: 600 12px var(--mono); fill: #c8d5f2; text-anchor: middle; }
+  .bench .lid { transform-box: view-box; animation: lid 1.6s .5s cubic-bezier(.3,.6,.25,1) both; }
+  @keyframes lid { 0% { transform: translate(214px, 22px) rotate(3deg); } 25% { transform: translate(214px, 6px) rotate(3deg); } 100% { transform: none; } }
+
+  .glass { position: absolute; background: rgba(255,255,255,.85); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(15,26,51,.6), 0 4px 12px -6px rgba(29,78,216,.25); padding: 14px 16px; color: var(--ink);
+    animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .note { top: 0; inset-inline-end: 0; width: min(50%, 240px); display: grid; gap: 6px; animation-delay: 1.9s; }
+  .note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .note .q { background: #edf1f8; justify-self: end; border-end-end-radius: 4px; }
+  .note .a { background: var(--esd); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 4%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--esd); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  /* ---------- The device map: tap where it hurts ---------- */
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 10px 24px; flex-wrap: wrap; margin-bottom: 32px; }
+  .head h2 { font-size: clamp(36px, 4.8vw, 58px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 42ch; font-size: 16px; }
+  .map { background: var(--mat); color: #dfe7f7; padding-block: 72px;
+    background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 28px 28px; }
+  .map .head h2 { color: #fff; }
+  .map .head p { color: #b7c6e8; }
+  .map-grid { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr) minmax(0, 400px); gap: 32px; align-items: center; }
+  .dev { width: 100%; max-width: 220px; justify-self: center; }
+  .dev svg { display: block; width: 100%; height: auto; }
+  .dev .pt { transition: stroke .15s, fill .15s; }
+  .dev [data-p].hl .pt { stroke: #fff; stroke-width: 3; }
+  .dev [data-p="battery"].hl .pt { stroke: #ffb48f; fill: rgba(194,65,12,.35); }
+  .dev [data-p="water"].hl .pt { stroke: var(--glass); fill: rgba(156,195,255,.22); }
+  .parts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .pb { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: grid; gap: 2px; padding: 14px 16px; border-radius: 16px; background: rgba(15,26,51,.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); transition: box-shadow .15s, background .15s; }
+  .pb b { font-size: 16.5px; line-height: 1.3; }
+  .pb small { font-size: 13px; color: #b7c6e8; line-height: 1.35; }
+  .pb:hover { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); }
+  .pb:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .pb[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: none; }
+  .pb[aria-pressed="true"] small { color: var(--ink-soft); }
+  .part-out { background: #fff; color: var(--ink); border-radius: 22px; padding: 24px; display: grid; align-content: start; gap: 12px; min-height: 100%; }
+  .part-out .tag { justify-self: start; font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: #e4ebfa; color: var(--mat); }
+  .part-out .tag.hot { background: var(--swell); color: #fff; }
+  .part-out h3 { font-size: 28px; }
+  .part-out p { margin: 0; font-size: 16px; }
+  .part-out .btn { justify-self: start; margin-top: 4px; }
+
+  /* ---------- The price list: the parts drawers ---------- */
+  .price-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 36px; align-items: start; }
+  .drawers { display: grid; gap: 10px; min-width: 0; }
+  .dr { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; padding: 16px 20px 16px 22px; border-radius: 16px; background: #fff;
+    box-shadow: 0 0 0 1px var(--line), 0 18px 30px -26px rgba(15,26,51,.5); position: relative; transition: box-shadow .15s; }
+  .dr::before { /* the drawer's pull */ content: ""; position: absolute; inset-inline-start: 0; top: 50%; width: 5px; height: 34px; margin-top: -17px; border-radius: 0 4px 4px 0; background: var(--line); }
+  .dr:hover { box-shadow: 0 0 0 1.5px var(--esd), 0 18px 30px -26px rgba(15,26,51,.5); }
+  .dr:focus-visible { outline: 3px solid var(--esd); outline-offset: 2px; }
+  .dr > span { min-width: 0; }
+  .dr b { display: block; font-size: 18px; line-height: 1.3; }
+  .dr > span > span { display: block; color: var(--ink-soft); font-size: 14.5px; line-height: 1.4; }
+  .dr .t { display: inline-block; margin-top: 6px; font: 500 12px var(--mono); color: var(--mat); background: #e4ebfa; border-radius: 6px; padding: 1px 7px; }
+  .dr .pr { font-weight: 700; font-size: 16.5px; white-space: nowrap; text-align: left; font-variant-numeric: tabular-nums; }
+  .dr .pr small { display: block; font-weight: 400; font-size: 12.5px; color: var(--ink-soft); }
+  .dr.hot { background: var(--esd); color: #fff; box-shadow: 0 18px 34px -20px rgba(29,78,216,.8); }
+  .dr.hot::before { background: rgba(255,255,255,.6); }
+  .dr.hot > span > span, .dr.hot .pr small { color: #dbe5ff; }
+  .dr.hot .t { background: rgba(255,255,255,.16); color: #fff; }
+  .dr.hot:focus-visible { outline-color: var(--ink); }
+  .before { background: #fff; border-radius: 22px; padding: 24px; box-shadow: 0 0 0 1px var(--line); position: sticky; top: 84px; }
+  .before h3 { font-size: 26px; margin-bottom: 6px; }
+  .before p { margin: 0 0 14px; color: var(--ink-soft); font-size: 15px; }
+  .before ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 15.5px; }
+  .before li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .before li::before { content: ""; width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--esd); transform: translateY(2px); }
+  .before .priv { margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+
+  .calc { background: #e3e9f4; }
+
+  /* ---------- Who fixes it: the repair ticket ---------- */
+  .who-grid { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: 64px; align-items: center; }
+  .ticket { background: #fff; border-radius: 22px; padding: 22px 24px 20px; box-shadow: 0 0 0 1px var(--line), 0 50px 80px -46px rgba(15,26,51,.55); position: relative; transform: rotate(1.2deg); }
+  .ticket::after { /* the tear-off stub */ content: ""; position: absolute; inset-inline: 18px; bottom: 58px; border-top: 2px dashed var(--line); }
+  .ticket-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 12px; }
+  .ticket-h b { font-family: var(--display); font-size: 21px; }
+  .ticket-h span { font: 500 12.5px var(--mono); color: var(--ink-soft); }
+  .ticket dl { margin: 0; display: grid; gap: 8px; }
+  .ticket dl div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 15px; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+  .ticket dt { color: var(--ink-soft); }
+  .ticket dd { margin: 0; font-weight: 600; min-width: 0; }
+  .ticket .ok { display: inline-block; margin-top: 2px; padding: 2px 10px; border-radius: 999px; background: var(--esd); color: #fff; font-size: 13.5px; }
+  .ticket ul { list-style: none; margin: 14px 0 34px; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px; font-size: 15px; }
+  .ticket li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: baseline; }
+  .ticket li::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--esd); transform: translateY(2px); box-shadow: inset 0 0 0 3px #fff, 0 0 0 1.5px var(--esd); }
+  .ticket .stub { display: flex; justify-content: space-between; font: 500 12.5px var(--mono); color: var(--ink-soft); }
+  .ticket-cap { margin-top: 26px; }
+  .ticket-cap b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1.1; letter-spacing: -.02em; }
+  .ticket-cap span { color: var(--ink-soft); font-size: 15.5px; }
+  .who-copy h2 { font-size: clamp(36px, 4.8vw, 58px); margin-bottom: 14px; }
+  .who-copy > p { color: var(--ink-soft); margin: 0 0 26px; max-width: 46ch; }
+  .day { list-style: none; margin: 0; padding: 0; display: grid; border-inline-start: 2px solid var(--esd); }
+  .day li { position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 14px; padding: 0 22px 18px; }
+  .day li::before { content: ""; position: absolute; inset-inline-start: -7px; top: 6px; width: 12px; height: 12px; border-radius: 3px; background: var(--bench); border: 2px solid var(--esd); }
+  .day li:last-child { padding-bottom: 0; }
+  .day li:last-child::before { background: var(--esd); }
+  .day time { font-family: var(--mono); font-weight: 600; color: var(--esd); font-size: 15px; padding-top: 1px; }
+  .day b { display: block; font-size: 17.5px; }
+  .day span { color: var(--ink-soft); font-size: 15px; }
+
+  .guides { background: #e3e9f4; }
+
+  .owner { background: var(--mat-deep); color: #dfe7f7; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #b7c6e8; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 14px; background: var(--esd); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 21px; color: #fff; }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: #b7c6e8; font-size: 15.5px; }
+  .owner .ph-cap { color: #b7c6e8; }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .row-f { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 1080px) {
+    .map-grid { grid-template-columns: minmax(0, 180px) minmax(0, 1fr); }
+    .part-out { grid-column: 1 / -1; }
+  }
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 380px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; }
+    .facts div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .note { width: min(62%, 220px); }
+    .price-grid, .owner-grid, .who-grid { grid-template-columns: minmax(0, 1fr); }
+    .before { position: static; }
+    .owner .phone { margin-inline: auto; }
+    .ticket { max-width: 480px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 21px; }
+    .top-a .btn-go { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding: 28px 0 40px; }
+    .kicker { font-size: 13.5px; margin-bottom: 12px; }
+    .hero h1 { font-size: clamp(40px, 11vw, 52px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 21px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 400px; aspect-ratio: 1 / 1.2; }
+    .frame-l { inset: 0 0 36% 0; border-radius: 28px; }
+    .note { display: none; }
+    .g-jobs { inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 30px; }
+    .facts dt { font-size: 20px; }
+    main > section { padding-block: 64px; }
+    .map { padding-block: 56px; }
+    .map-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .dev { max-width: 150px; }
+    .parts { gap: 8px; }
+    .pb { padding: 12px; }
+    .dr { grid-template-columns: minmax(0, 1fr); padding: 14px 16px 14px 18px; }
+    .dr .pr { text-align: right; font-size: 15.5px; }
+    .dr .pr small { display: inline; margin-inline-start: 6px; }
+    .dr b { font-size: 17px; }
+    .ticket { padding: 18px; transform: none; }
+    .ticket dl div { grid-template-columns: 78px minmax(0, 1fr); }
+    .day li { grid-template-columns: 56px minmax(0, 1fr); gap: 10px; padding-inline: 18px 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .glass, .bench .lid { animation: none !important; }
+    .btn, .dr, .pb, .dev .pt { transition: none; }
+  }
+  html.a11y-still .glass, html.a11y-still .bench .lid { animation: none !important; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span>מעבדת</span><span class="n2">נועם</span></div>
+    <div class="top-a">
+      <button class="btn btn-go" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על תיקון">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>עונה גם באמצע תיקון</span><span>באר שבע · עומר · מיתר</span></div>
+    <h1>המסך נסדק? <em><b>שלחו תמונה, ואני אומר כמה ומתי.</b></em></h1>
+    <p class="lede">מסך, סוללה, שקע טעינה, נזקי מים או מחשב איטי. תמונה ושלוש שאלות בצ׳אט, ואת המחיר אתם יודעים לפני שאני פותח את המכשיר.</p>
+    <div class="ctas">
+      <button class="btn btn-go" data-open-bot>לתאר מה קרה</button>
+      <a class="btn btn-line" href="#map">איפה התקלה?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>14 שנה</dt><dd>מתקן טלפונים ומחשבים בבאר שבע</dd></div>
+      <div><dt>מחיר לפני</dt><dd>אומר כמה, לפני שפותחים</dd></div>
+      <div><dt>אחריות</dt><dd>6 חודשים על החלק וההתקנה</dd></div>
+      <div><dt>המידע שלכם</dt><dd>לא נכנסים לתמונות ולהודעות</dd></div>
+    </dl>
+
+    <div class="win">
+      <div class="frame-l">
+        <svg class="bench" viewBox="0 0 570 480" preserveAspectRatio="xMidYMid slice" fill="none" role="img" aria-label="ציור של טלפון פתוח על משטח עבודה: המסך הסדוק מורם הצידה, הסוללה בפנים, והברגים מסודרים בתאים">
+          <defs>
+            <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" stroke="rgba(255,255,255,.09)" stroke-width="1"/></pattern>
+            <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#23345e"/><stop offset=".55" stop-color="#121c36"/><stop offset="1" stop-color="#0b1226"/></linearGradient>
+            <linearGradient id="bat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34446b"/><stop offset="1" stop-color="#26345a"/></linearGradient>
+          </defs>
+          <rect width="570" height="480" fill="#16307a"/>
+          <rect width="570" height="480" fill="url(#grid)"/>
+          <!-- the ruler printed along the mat's edge -->
+          <path d="M30 22H540" stroke="#5f7cc4" stroke-width="1.5"/>
+          <path d="M30 22v10M60 22v6M90 22v10M120 22v6M150 22v10M180 22v6M210 22v10M240 22v6M270 22v10M300 22v6M330 22v10M360 22v6M390 22v10M420 22v6M450 22v10M480 22v6M510 22v10M540 22v6" stroke="#5f7cc4" stroke-width="1.5"/>
+          <text class="mm" x="30" y="46">0</text><text class="mm" x="146" y="46">40</text><text class="mm" x="266" y="46">80</text><text class="mm" x="382" y="46">120</text><text class="mm" x="502" y="46">160</text>
+
+          <!-- the phone's body, open: the board on top, the battery, the charging port -->
+          <g>
+            <rect x="314" y="74" width="176" height="340" rx="28" fill="#1a2440" stroke="#4a5d8c" stroke-width="3"/>
+            <rect x="334" y="94" width="136" height="44" rx="8" fill="#22305a" stroke="#4a5d8c" stroke-width="1.5"/>
+            <circle cx="354" cy="116" r="11" fill="#0d1428" stroke="#6d84bf" stroke-width="2"/><circle cx="354" cy="116" r="4" fill="#2c3f73"/>
+            <circle cx="380" cy="116" r="7" fill="#0d1428" stroke="#6d84bf" stroke-width="2"/>
+            <rect x="410" y="104" width="44" height="22" rx="3" fill="#2c3f73"/>
+            <rect x="336" y="150" width="132" height="200" rx="12" fill="url(#bat)" stroke="#6d84bf" stroke-width="2"/>
+            <text class="lab" x="402" y="244">3.85V</text>
+            <text class="lab" x="402" y="264" style="font-size:10px;fill:#8fa6dc">Li-ion</text>
+            <rect x="336" y="362" width="132" height="30" rx="6" fill="#22305a" stroke="#4a5d8c" stroke-width="1.5"/>
+            <rect x="380" y="406" width="44" height="10" rx="5" fill="#0d1428" stroke="#6d84bf" stroke-width="1.5"/>
+            <g fill="#8fa6dc"><circle cx="330" cy="90" r="3"/><circle cx="474" cy="90" r="3"/><circle cx="330" cy="398" r="3"/><circle cx="474" cy="398" r="3"/></g>
+          </g>
+          <!-- the flex cable from the screen to the board -->
+          <path d="M272 150 C 296 150, 300 112, 334 112" stroke="#b85c2b" stroke-width="12" stroke-linecap="round"/>
+          <path d="M272 150 C 296 150, 300 112, 334 112" stroke="#d98a5f" stroke-width="2" stroke-dasharray="3 5"/>
+          <!-- the cracked screen, lifted off and laid beside the body -->
+          <g class="lid">
+            <g transform="rotate(-3 186 244)">
+              <rect x="100" y="74" width="176" height="340" rx="28" fill="url(#scr)" stroke="#9cc3ff" stroke-width="3"/>
+              <rect x="112" y="86" width="152" height="316" rx="20" fill="none" stroke="rgba(156,195,255,.22)" stroke-width="1.5"/>
+              <path d="M128 96 L 230 96" stroke="rgba(255,255,255,.18)" stroke-width="10" stroke-linecap="round"/>
+              <g stroke="#dce8ff" stroke-width="1.6" stroke-linecap="round" opacity=".9">
+                <path d="M168 300 L 112 262 M168 300 L 120 340 M168 300 L 150 398 M168 300 L 214 392 M168 300 L 262 318 M168 300 L 252 236 M168 300 L 196 200 M168 300 L 132 210"/>
+                <path d="M140 282 L 128 300 L 140 322 M 192 270 L 214 286 L 206 312 M 154 330 L 178 336 L 196 322"/>
+              </g>
+              <circle cx="168" cy="300" r="4" fill="#dce8ff"/>
+            </g>
+          </g>
+          <!-- the screw tray: every screw in its own cell, with its length -->
+          <g>
+            <rect x="36" y="428" width="246" height="38" rx="8" fill="#12265f" stroke="#3c58a3" stroke-width="1.5"/>
+            <path d="M97.5 428v38M159 428v38M220.5 428v38" stroke="#3c58a3" stroke-width="1.5"/>
+            <g fill="#c8d5f2"><circle cx="58" cy="447" r="5"/><circle cx="76" cy="447" r="5"/><circle cx="128" cy="447" r="5"/><circle cx="190" cy="447" r="5"/><circle cx="251" cy="447" r="4"/></g>
+            <g stroke="#16307a" stroke-width="1.6"><path d="M55 447h6M58 444v6M73 447h6M76 444v6M125 447h6M128 444v6M187 447h6M190 444v6M248.5 447h5M251 444.5v5"/></g>
+          </g>
+          <text class="mm" x="300" y="452">1.2 · 1.2 · 1.5 · 1.5 · 2.0 mm</text>
+        </svg>
+      </div>
+      <div class="glass note" aria-hidden="true"><p class="q">המסך נסדק, והמגע עובד רק בחלק. כמה זה?</p><p class="a">שלחו את הדגם ותמונה. אני אומר מחיר לפני שפותחים.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירון לדוגמה</span><div><b>החלפת סוללה</b><span>200 עד 550 ₪</span></div><div><b>שקע טעינה</b><span>180 עד 380 ₪</span></div><div><b>מסך לטלפון</b><span>350 עד 1,250 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="map" id="map">
+    <div class="wrap">
+      <div class="head"><h2>איפה התקלה?</h2><p>לוחצים על מה שקרה למכשיר, ורואים מה עושים עד שמגיעים.</p></div>
+      <div class="map-grid">
+        <div class="dev" aria-hidden="true">
+          <svg viewBox="0 0 200 400" fill="none">
+            <g data-p="water"><rect class="pt" x="12" y="6" width="176" height="388" rx="32" fill="#0f1a33" stroke="#6d84bf" stroke-width="3"/></g>
+            <g data-p="screen"><rect class="pt" x="24" y="20" width="152" height="358" rx="22" fill="#16254d" stroke="#3c58a3" stroke-width="2"/></g>
+            <g data-p="battery"><rect class="pt" x="46" y="110" width="108" height="170" rx="12" fill="none" stroke="#5f7cc4" stroke-width="2" stroke-dasharray="6 5"/></g>
+            <g data-p="camera"><circle class="pt" cx="100" cy="40" r="9" fill="#0b1226" stroke="#6d84bf" stroke-width="2"/></g>
+            <g data-p="speaker"><rect class="pt" x="76" y="58" width="48" height="7" rx="3.5" fill="#0b1226" stroke="#6d84bf" stroke-width="1.5"/><rect class="pt" x="66" y="372" width="18" height="6" rx="3" fill="#0b1226" stroke="#6d84bf" stroke-width="1.5"/></g>
+            <g data-p="port"><rect class="pt" x="88" y="384" width="24" height="8" rx="4" fill="#0b1226" stroke="#6d84bf" stroke-width="2"/></g>
+          </svg>
+        </div>
+        <div class="parts" role="group" aria-label="מה קרה למכשיר">
+          <button class="pb" data-part="screen" aria-pressed="true"><b>מסך סדוק</b><small>או מגע שלא עובד</small></button>
+          <button class="pb" data-part="battery" aria-pressed="false"><b>סוללה</b><small>נגמרת מהר, או נפוחה</small></button>
+          <button class="pb" data-part="port" aria-pressed="false"><b>לא נטען</b><small>או רק בזווית מסוימת</small></button>
+          <button class="pb" data-part="water" aria-pressed="false"><b>נפל למים</b><small>או שנשפך עליו משהו</small></button>
+          <button class="pb" data-part="camera" aria-pressed="false"><b>מצלמה</b><small>מטושטשת או שחורה</small></button>
+          <button class="pb" data-part="speaker" aria-pressed="false"><b>רמקול ומיקרופון</b><small>לא שומעים או לא שומעים אתכם</small></button>
+        </div>
+        <div class="part-out" aria-live="polite">
+          <span class="tag" data-part-tag></span>
+          <h3 data-part-title></h3>
+          <p data-part-text></p>
+          <button class="btn btn-go" data-part-ask>לשלוח למעבדה</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מה צריך לתקן?</h2><p>מחירים לדוגמה. לוחצים על המגירה, והצ׳אט נפתח עם התשובה.</p></div>
+      <div class="price-grid">
+        <div class="drawers">
+          <button class="dr hot" data-dev="טלפון" data-issue="מסך סדוק"><span><b>מסך לטלפון</b><span>זכוכית ותצוגה, עם בדיקת מגע אחרי</span><span class="t">כשעה עד שעתיים, כשהחלק במלאי</span></span><span class="pr">350 עד 1,250 ₪<small>לפי הדגם</small></span></button>
+          <button class="dr" data-dev="טלפון" data-issue="סוללה"><span><b>החלפת סוללה</b><span>סוללה חלשה, או נפוחה שמרימה את המסך</span><span class="t">כשעה</span></span><span class="pr">200 עד 550 ₪<small>לפי הדגם</small></span></button>
+          <button class="dr" data-dev="טלפון" data-issue="שקע טעינה"><span><b>שקע טעינה</b><span>ניקוי השקע, והחלפה אם צריך</span><span class="t">שעה עד שלוש שעות</span></span><span class="pr">180 עד 380 ₪<small>כולל ניקוי</small></span></button>
+          <button class="dr" data-dev="טלפון" data-issue="נפל למים"><span><b>נזקי מים</b><span>פתיחה, ניקוי הלוח ובדיקה של כל חלק</span><span class="t">אבחון ביום אחד</span></span><span class="pr">100 עד 200 ₪<small>אבחון</small></span></button>
+          <button class="dr" data-dev="מחשב נייד" data-issue="איטי או נתקע"><span><b>מחשב איטי</b><span>ניקוי, עדכונים, התקנה או כונן SSD</span><span class="t">יום עד יומיים</span></span><span class="pr">250 עד 700 ₪<small>לפי העבודה</small></span></button>
+          <button class="dr" data-issue="שחזור מידע"><span><b>שחזור מידע</b><span>מכשיר שלא נדלק, כונן שנפגע, קבצים שנמחקו</span><span class="t">לפי הבדיקה</span></span><span class="pr">אבחון 150 עד 300 ₪<small>בלי הבטחה שהמידע יחזור</small></span></button>
+        </div>
+        <aside class="before" aria-label="לפני שמביאים את המכשיר">
+          <h3>לפני שמביאים</h3>
+          <p>חמש דקות בבית חוסכות הרבה עוגמת נפש.</p>
+          <ul>
+            <li><span>מגבים תמונות, אנשי קשר והודעות, אם המכשיר עוד עובד</span></li>
+            <li><span>מוציאים כרטיס SIM וכרטיס זיכרון</span></li>
+            <li><span>מחשב נייד: מביאים גם את המטען</span></li>
+            <li><span>שומרים את הקוד אצלכם. אם צריך אותו לבדיקה, אני מבקש</span></li>
+          </ul>
+          <p class="priv">המידע שלכם נשאר שלכם. בודקים את התקלה, לא את התמונות וההודעות.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה קרה ואיזה דגם, ורואים טווח עוד לפני שכותבים.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap who-grid">
+      <div>
+        <div class="ticket" role="img" aria-label="תעודת תיקון לדוגמה: מסך סדוק בטלפון, גיבוי לפני, מחיר שאושר לפני הפתיחה, ובדיקות אחרי התיקון">
+          <div class="ticket-h"><b>תעודת תיקון</b><span>לדוגמה</span></div>
+          <dl>
+            <div><dt>מכשיר</dt><dd>טלפון, דגם 2022</dd></div>
+            <div><dt>תקלה</dt><dd>מסך סדוק, מגע חלקי</dd></div>
+            <div><dt>גיבוי</dt><dd>נעשה בבית, לפני שהגיע</dd></div>
+            <div><dt>מחיר</dt><dd>690 ₪ <span class="ok">אושר לפני פתיחה</span></dd></div>
+          </dl>
+          <ul>
+            <li><span>מגע בכל המסך</span></li>
+            <li><span>מצלמה קדמית</span></li>
+            <li><span>טעינה</span></li>
+            <li><span>רמקול ומיקרופון</span></li>
+          </ul>
+          <div class="stub"><span>אחריות 6 חודשים</span><span class="ltr">#0418</span></div>
+        </div>
+        <div class="ticket-cap"><b>נועם אוחיון</b><span>טכנאי סלולר ומחשבים · 14 שנה · באר שבע</span></div>
+      </div>
+      <div class="who-copy">
+        <h2>מי מתקן?</h2>
+        <p>אני, במעבדה שלי. ככה נראה יום עם מסך סדוק, לדוגמה:</p>
+        <ol class="day">
+          <li><time class="ltr">09:10</time><div><b>כותבים בצ׳אט: המסך נסדק</b><span>הדגם, ותמונה של המסך.</span></div></li>
+          <li><time class="ltr">09:25</time><div><b>אני חוזר אליכם</b><span>אומר כמה זה יעלה, ומתי להביא.</span></div></li>
+          <li><time class="ltr">12:00</time><div><b>מביאים למעבדה</b><span>אחרי גיבוי בבית, אם המכשיר עוד עובד.</span></div></li>
+          <li><time class="ltr">13:30</time><div><b>המכשיר מוכן</b><span>בודקים יחד: מגע, מצלמה, טעינה ורמקול.</span></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשהטלפון נפל למים או שהסוללה התנפחה, ושאלות שחוזרות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>איזה מכשיר, מה קרה, הדגם, גיבוי, כמה דחוף וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>עם תמונה של התקלה, אם צירפו. יודעים מראש איזה חלק להזמין.</span></div></li>
+          <li><div><b>חוזרים ללקוח עם מחיר</b><span>הצ׳אט עונה גם כשאתם עם מלחם ביד ולא יכולים להרים טלפון.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שירן דהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו מעבדה)
+מכשיר: טלפון
+מה קרה: מסך סדוק
+דגם: דגם 2022
+גיבוי: יש גיבוי
+מתי: היום
+ישוב: באר שבע
+שם: שירן דהן
+טלפון: 052-7654321<time>09:10</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למעבדה</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row-f">
+    <span>מעבדת נועם · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const DEVICES = ["טלפון", "טאבלט", "מחשב נייד", "מחשב נייח"];
+  const MOBILE = (d) => d.device === "טלפון" || d.device === "טאבלט";
+  const ISS_M = ["מסך סדוק", "סוללה", "שקע טעינה", "נפל למים", "מצלמה או רמקול", "שחזור מידע", "משהו אחר"];
+  const ISS_C = ["איטי או נתקע", "לא נדלק", "נשפך עליו נוזל", "מסך או מקלדת", "שחזור מידע", "משהו אחר"];
+  const PRICE = {
+    "מסך סדוק": "בדרך כלל 350 עד 1,250 ₪, לפי הדגם.",
+    "סוללה": "בדרך כלל 200 עד 550 ₪, לפי הדגם.",
+    "שקע טעינה": "בדרך כלל 180 עד 380 ₪.",
+    "מצלמה או רמקול": "בדרך כלל 200 עד 500 ₪, לפי החלק.",
+    "נפל למים": "אבחון 100 עד 200 ₪. את מחיר התיקון אני אומר אחרי שפותחים, לפני שמתקנים.",
+    "נשפך עליו נוזל": "אבחון 150 עד 250 ₪. את מחיר התיקון אני אומר אחרי שפותחים, לפני שמתקנים.",
+    "איטי או נתקע": "בדרך כלל 250 עד 700 ₪, לפי העבודה.",
+    "לא נדלק": "אבחון 150 עד 250 ₪, ואז מחיר לתיקון לפני שמתחילים.",
+    "מסך או מקלדת": "בדרך כלל 350 עד 1,100 ₪, לפי הדגם.",
+    "שחזור מידע": "אבחון 150 עד 300 ₪. אחרי הבדיקה אני אומר מה הסיכוי ומה המחיר. אין הבטחה שהמידע יחזור.",
+  };
+  const WET = (v) => v === "נפל למים" || v === "נשפך עליו נוזל";
+  const SWOLLEN = "כן, נפוחה";
+  const issueTip = { when: (v) => WET(v) || v === "שחזור מידע", id: "water",
+    text: "מכבים עכשיו ולא מטעינים. מוציאים כרטיס SIM ומנגבים מבחוץ. אורז לא מייבש את מה שבפנים: מביאים לבדיקה כמה שיותר מהר." };
+  const dataTip = { when: (v) => v === "שחזור מידע", id: "data", text: "בינתיים לא שומרים קבצים חדשים על המכשיר או הכונן, ולא מנסים תוכנות שחזור. כל כתיבה יכולה לדרוס את מה שנמחק." };
+  const tipFor = (v) => (v === "שחזור מידע" ? dataTip : issueTip);
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "נועם · מעבדה", subtitle: "חוזר אליכם עם מחיר", initial: "נ", launcher: "מה קרה למכשיר?", hint: "נציג AI",
+    greet: "היי, כאן נועם.\nכמה שאלות קצרות, והפרטים אצלי בוואטסאפ.",
+    steps: [
+      { key: "device", label: "מכשיר", ask: "איזה מכשיר?", chips: DEVICES },
+      // one label per key: the summary card lists a key once, whichever of its steps was asked
+      { key: "issue", label: "מה קרה", ask: "מה קרה לו?", chips: ISS_M, show: MOBILE,
+        tip: { when: (v) => WET(v) || v === "שחזור מידע", get id() { return "water"; }, text: issueTip.text } },
+      { key: "issue", ask: "מה קרה לו?", chips: ISS_C, show: (d) => !MOBILE(d),
+        tip: { when: (v) => WET(v), id: "water", text: "מכבים עכשיו, מנתקים מהחשמל ולא מדליקים שוב. הופכים את המחשב פתוח, המקלדת למטה, ומביאים לבדיקה כמה שיותר מהר." } },
+      { key: "swollen", label: "סוללה נפוחה", ask: "הסוללה נפוחה? המסך מתרומם, או שהגב נפתח?", chips: [SWOLLEN, "לא, רק נגמרת מהר", "לא בטוח"], show: (d) => d.issue === "סוללה",
+        tip: { when: (v) => v === SWOLLEN, id: "swollen", text: "מפסיקים לטעון ולא משתמשים. לא לוחצים על המכשיר ולא פותחים אותו. מניחים על משטח לא דליק, רחוק מהמיטה." } },
+      { key: "model", label: "דגם", ask: "איזה דגם? גם בערך זה בסדר.", input: "text", placeholder: "למשל: דגם 2021, 128GB" },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? כך אני יודע איזה חלק להכין.", photo: true, show: (d) => d.issue !== "שחזור מידע" },
+      { key: "backup", label: "גיבוי", ask: "יש גיבוי של המידע?", chips: ["יש גיבוי", "אין גיבוי", "לא יודע"], show: (d) => d.issue !== "שחזור מידע" && !WET(d.issue) && d.swollen !== SWOLLEN,
+        tip: { when: (v) => v !== "יש גיבוי", id: "backup", text: "אם המכשיר עוד עובד, כדאי לגבות לפני שמביאים: תמונות, אנשי קשר והודעות." } },
+      { key: "when", label: "מתי", ask: "מתי צריך אותו?", chips: ["היום", "מחר או מחרתיים", "השבוע", "רק בודק מחיר"] },
+      { key: "city", label: "ישוב", ask: "באיזה ישוב אתם?", input: "text", placeholder: "למשל: באר שבע" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור? אם הטלפון שבור, אפשר מספר של מישהו קרוב.", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const price = PRICE[d.issue] || "את המחיר אני אומר אחרי בדיקה, לפני שמתחילים.";
+      const safe = d.swollen === SWOLLEN ? "\nעד שנדבר: לא מטעינים, לא לוחצים ולא פותחים את המכשיר."
+        : WET(d.issue) ? "\nעד שנדבר: המכשיר כבוי ולא בטעינה." : "";
+      return `תודה ${first}. רשמתי: ${d.device}, ${d.issue}, ${d.model}, ב${d.city}. ${price}${safe}\nלחצו למטה, ואני חוזר אליכם.`;
+    },
+    summary: (d) => `פנייה מהאתר (דמו מעבדה)\nמכשיר: ${d.device}\nמה קרה: ${d.issue}${d.swollen ? `\nסוללה נפוחה: ${d.swollen}` : ""}\nדגם: ${d.model}${d.backup ? `\nגיבוי: ${d.backup}` : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-issue]").forEach((b) => b.addEventListener("click", () => bot.open(b.dataset.dev ? { device: b.dataset.dev, issue: b.dataset.issue } : { issue: b.dataset.issue })));
+
+  // The device map: what to do right now, and the chat with that answer already picked
+  const PARTS = {
+    screen: { hot: false, tag: "אפשר להמשיך, בזהירות", t: "מסך סדוק", x: "מדביקים מגן או סלוטייפ שקוף על הסדק, כדי שזכוכית לא תתפורר. אם המסך מהבהב, יש כתם שחור או שהמגע משתגע, מגבים עכשיו: לפעמים הוא מפסיק לעבוד לגמרי.", issue: "מסך סדוק" },
+    battery: { hot: true, tag: "נפוחה? מפסיקים לטעון", t: "סוללה חלשה או נפוחה", x: "נגמרת מהר, או נכבה ב-20%: הסוללה התעייפה. המסך מתרומם או הגב נפתח: הסוללה נפוחה. מפסיקים לטעון, לא לוחצים ולא פותחים, ומרחיקים מדברים דליקים.", issue: "סוללה" },
+    port: { hot: false, tag: "בודקים קודם בבית", t: "לא נטען, או רק בזווית", x: "לרוב זה אבק וסיבים בתוך השקע. לא מנקים עם סיכה או מחט. מנסים כבל ומטען אחרים. אם עדיין לא נטען, מביאים לבדיקה.", issue: "שקע טעינה" },
+    water: { hot: true, tag: "קודם מכבים", t: "נפל למים", x: "מכבים מיד ולא מטעינים, גם אם הוא עוד עובד. מוציאים כיסוי וכרטיס SIM, מנגבים מבחוץ ומביאים לבדיקה כמה שיותר מהר. אורז לא מייבש את מה שבפנים, והוא לא תחליף לבדיקה.", issue: "נפל למים" },
+    camera: { hot: false, tag: "בודקים קודם בבית", t: "מצלמה מטושטשת או שחורה", x: "מנקים את העדשה בבד רך ומפעילים מחדש. אם הזכוכית של המצלמה סדוקה, אבק ולחות נכנסים פנימה: כדאי לטפל מוקדם.", issue: "מצלמה או רמקול" },
+    speaker: { hot: false, tag: "בודקים קודם בבית", t: "לא שומעים, או לא שומעים אתכם", x: "בודקים שאין אבק ברשת של הרמקול, ושהמכשיר לא מחובר לאוזניות Bluetooth. אחרי מים: לא מייבשים במייבש שיער חם.", issue: "מצלמה או רמקול" },
+  };
+  const pout = { tag: document.querySelector("[data-part-tag]"), title: document.querySelector("[data-part-title]"), text: document.querySelector("[data-part-text]") };
+  let part = "screen";
+  const showPart = (id) => {
+    part = id; const P = PARTS[id];
+    document.querySelectorAll("[data-part]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.part === id)));
+    document.querySelectorAll(".dev [data-p]").forEach((g) => g.classList.toggle("hl", g.dataset.p === id));
+    pout.tag.textContent = P.tag; pout.tag.className = "tag" + (P.hot ? " hot" : ""); pout.title.textContent = P.t; pout.text.textContent = P.x;
+  };
+  document.querySelectorAll("[data-part]").forEach((b) => b.addEventListener("click", () => showPart(b.dataset.part)));
+  document.querySelector("[data-part-ask]").addEventListener("click", () => bot.open({ device: "טלפון", issue: PARTS[part].issue }));
+  showPart(part);
+
+  const MODEL = ["מסך לטלפון", "החלפת סוללה"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה קרה?", items: [
+      { label: "מסך לטלפון", range: [350, 700], prefill: { device: "טלפון", issue: "מסך סדוק" } },
+      { label: "החלפת סוללה", range: [200, 300], prefill: { device: "טלפון", issue: "סוללה" } },
+      { label: "שקע טעינה", range: [180, 380], prefill: { device: "טלפון", issue: "שקע טעינה" } },
+      { label: "נזקי מים", range: [100, 200], prefill: { device: "טלפון", issue: "נפל למים" }, per: "אבחון", note: "זה מחיר האבחון. את מחיר התיקון אומרים אחרי שפותחים, ולפני שמתקנים." },
+      { label: "מחשב איטי", range: [250, 450], prefill: { device: "מחשב נייד", issue: "איטי או נתקע" } },
+      { label: "שחזור מידע", range: null, prefill: { issue: "שחזור מידע" } },
+    ] },
+    factors: [
+      { ask: "איזה דגם?", for: MODEL, options: [
+        { label: "בסיסי, או בן 4 שנים ומעלה" },
+        { label: "חדש או דגל", mul: [1.8, 1.8], note: "בדגמים חדשים המסך והסוללה יקרים יותר, ולפעמים צריך גם להחליף את הדבק והאטמים." },
+      ] },
+      { ask: "מה רוצים?", for: ["מחשב איטי"], options: [
+        { label: "ניקוי, עדכונים והתקנה" },
+        { label: "גם כונן SSD חדש", add: [150, 250], note: "כונן SSD הוא השיפור הגדול ביותר במחשב ישן. מעבירים אליו את הקבצים שלכם." },
+      ] },
+    ],
+    quote: "לפי בדיקה. אבחון 150 עד 300 ₪, ואחריו אומרים מה הסיכוי ומה המחיר. אין הבטחה שהמידע יחזור.",
+    note: "טווח מקובל, לדוגמה. את המחיר הסופי אומרים לפני שפותחים את המכשיר.",
+    cta: "לשלוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/phone-repair.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>
