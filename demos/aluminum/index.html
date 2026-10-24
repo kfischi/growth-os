@@ -311,7 +311,7 @@
 איזה חלון: דלת הזזה למרפסת
 קומה: 1 עד 4
 דחיפות: השבוע
-ישוב: אשדוד
+יישוב: אשדוד
 שם: מיכל אזולאי
 טלפון: 052-7654321<time>19:15</time></div>
               </div>
@@ -356,7 +356,7 @@
         tip: { when: (v) => v === NOLOCK, id: "wont-lock", text: "בינתיים: סוגרים את התריס, ואם יש בו נעילה, נועלים. לא מרימים כנף כבדה לבד ולא נשענים החוצה מהחלון." } },
       { key: "when", label: "מתי", ask: "מתי תרצו?", chips: ["בחודש הקרוב", "לפני החורף", "רק בודקים מחיר"], show: (d) => !FIX(d) },
       { key: "photo", label: "תמונה", ask: "יש תמונה של החלון, של המסילה או של המקום? כך אני מגיע עם החלק הנכון.", photo: true },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: אשדוד" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: אשדוד" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
@@ -364,7 +364,7 @@
       const high = d.floor === "5 ומעלה" ? "\nקומה גבוהה: נבדוק מראש אם אפשר לעבוד מבפנים, או שצריך ציוד לגובה." : "";
       return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.job}${d.kind ? ", " + d.kind : ""}${d.count ? ", " + d.count + " פתחים" : ""}${d.shape ? ", " + d.shape : ""}, ב${d.city}. ${RANGES[d.job] || ""}, והמחיר הסופי אחרי מדידה.${high}\nלחצו למטה, ואחזור אליכם עם זמן הגעה.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו אלומיניום)\nמה צריך: ${d.job}${d.kind ? "\nאיזה חלון: " + d.kind : ""}${d.count ? "\nכמה פתחים: " + d.count : ""}${d.shape ? "\nמקלחון: " + d.shape : ""}${d.floor ? "\nקומה: " + d.floor : ""}\n${d.urgent ? "דחיפות: " + d.urgent : "מתי: " + d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו אלומיניום)\nמה צריך: ${d.job}${d.kind ? "\nאיזה חלון: " + d.kind : ""}${d.count ? "\nכמה פתחים: " + d.count : ""}${d.shape ? "\nמקלחון: " + d.shape : ""}${d.floor ? "\nקומה: " + d.floor : ""}\n${d.urgent ? "דחיפות: " + d.urgent : "מתי: " + d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

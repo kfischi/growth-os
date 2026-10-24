@@ -324,7 +324,7 @@
 אורך: 2 עד 4 מטר
 גימור: צבע (MDF צבוע)
 מתי: בחודש הקרוב
-ישוב: נס ציונה
+יישוב: נס ציונה
 שם: רונית שמעוני
 טלפון: 052-7654321<time>21:40</time></div>
               </div>
@@ -369,12 +369,12 @@
       { key: "when", label: "מתי", ask: "מתי תרצו להתחיל?", chips: ["בחודש הקרוב", "בעוד חודשיים או שלושה", "רק בודקים מחיר"], show: (d) => !FIX(d) },
       { key: "soon", label: "מתי", ask: "מתי נוח לכם שאגיע?", chips: ["השבוע", "בשבועיים הקרובים", "לא דחוף"], show: FIX },
       { key: "photo", label: "תמונה", ask: "יש תמונה של הקיר, של שרטוט או של מה שנשבר? כך אני מגיע מוכן.", photo: true },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רחובות" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: רחובות" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.job}${d.size ? ", " + d.size : ""}${d.finish ? ", " + d.finish : ""}${d.issue ? ", " + d.issue : ""}, ב${d.city}. ${RANGES[d.job] || ""}, והמחיר הסופי בכתב אחרי מדידה.\nלחצו למטה, ואחזור אליכם עם זמן ${FIX(d) ? "הגעה" : "למדידה"}.`,
-    summary: (d) => `פנייה מהאתר (דמו נגרות)\nמה צריך: ${d.job}${d.size ? "\nאורך: " + d.size : ""}${d.finish ? "\nגימור: " + d.finish : ""}${d.issue ? "\nמה קורה: " + d.issue : ""}\nמתי: ${d.when || d.soon}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו נגרות)\nמה צריך: ${d.job}${d.size ? "\nאורך: " + d.size : ""}${d.finish ? "\nגימור: " + d.finish : ""}${d.issue ? "\nמה קורה: " + d.issue : ""}\nמתי: ${d.when || d.soon}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

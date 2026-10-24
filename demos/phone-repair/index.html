@@ -488,7 +488,7 @@
 דגם: דגם 2022
 גיבוי: יש גיבוי
 מתי: היום
-ישוב: באר שבע
+יישוב: באר שבע
 שם: שירן דהן
 טלפון: 052-7654321<time>09:10</time></div>
               </div>
@@ -548,7 +548,7 @@
       { key: "backup", label: "גיבוי", ask: "יש גיבוי של המידע?", chips: ["יש גיבוי", "אין גיבוי", "לא יודע"], show: (d) => d.issue !== "שחזור מידע" && !WET(d.issue) && d.swollen !== SWOLLEN,
         tip: { when: (v) => v !== "יש גיבוי", id: "backup", text: "אם המכשיר עוד עובד, כדאי לגבות לפני שמביאים: תמונות, אנשי קשר והודעות." } },
       { key: "when", label: "מתי", ask: "מתי צריך אותו?", chips: ["היום", "מחר או מחרתיים", "השבוע", "רק בודק מחיר"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב אתם?", input: "text", placeholder: "למשל: באר שבע" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב אתם?", input: "text", placeholder: "למשל: באר שבע" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור? אם הטלפון שבור, אפשר מספר של מישהו קרוב.", input: "tel", placeholder: "050-1234567" },
     ],
@@ -560,7 +560,7 @@
         : d.issue === "שחזור מידע" ? "\nעד שנדבר: לא שומרים קבצים חדשים על המכשיר, ולא מנסים תוכנות שחזור." : "";
       return `תודה ${first}. רשמתי: ${d.device}, ${d.issue}, ${d.model}, ב${d.city}. ${price}${safe}\nלחצו למטה, ואני חוזר אליכם.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו מעבדה)\nמכשיר: ${d.device}\nמה קרה: ${d.issue}${d.swollen ? `\nסוללה נפוחה: ${d.swollen}` : ""}\nדגם: ${d.model}${d.backup ? `\nגיבוי: ${d.backup}` : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו מעבדה)\nמכשיר: ${d.device}\nמה קרה: ${d.issue}${d.swollen ? `\nסוללה נפוחה: ${d.swollen}` : ""}\nדגם: ${d.model}${d.backup ? `\nגיבוי: ${d.backup}` : ""}\nמתי: ${d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

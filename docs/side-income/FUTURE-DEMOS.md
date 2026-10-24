@@ -17,8 +17,8 @@ To launch one:
 | אלומיניום | `demos/aluminum/` | רז אלומיניום (אשדוד) |
 | דוד שמש וחימום מים | `demos/water-heater/` | גלעד דודי שמש (פתח תקווה) |
 | ריצוף וחיפוי | `demos/tiling/` | יניב ריצוף וחיפוי (מודיעין) |
-| מוסך | `demos/garage/` | |
-| תיקון סלולר ומחשבים | `demos/phone-repair/` | |
+| מוסך | `demos/garage/` | מוסך דודי (ראשון לציון) |
+| תיקון סלולר ומחשבים | `demos/phone-repair/` | מעבדת נועם (באר שבע) |
 | עיצוב שיער לנשים | `demos/hair/` | שירה לוי · עיצוב שיער (כפר סבא) |
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
 | קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
@@ -67,3 +67,13 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: A DJ controller with two jog wheels and a laptop on a stand at an outdoor Israeli garden wedding at dusk. String lights and olive trees blurred in the background, a soft red stage wash and cool white light. Only hands on the mixer, cropped at the wrists, no text, no logos, no yellow.
 2. Work, 4:3: The dance floor of an Israeli event hall from behind the DJ booth: speakers on stands, moving-head lights in cool white and deep red beams over a blurred crowd seen only as silhouettes from behind, slight haze, no text, no logos, no yellow.
 3. Work, 4:3: A close up of hands on a DJ mixer's faders and colourful pads, with over-ear headphones resting on the deck and a wireless microphone beside it, under a dim red and white booth light. Shallow depth of field, no text, no logos, no yellow.
+
+### Garage
+1. Hero, 4:5: A clean small independent car workshop in Israel in soft morning light, a mid-size family car with no badges raised on a two-post lift, a mechanic's gloved hands holding a brake disc near the wheel hub, grey epoxy floor, tool wall in graphite and red, light coming through a roll-up door with a glimpse of a Mediterranean street and a palm, realistic photo, shallow depth of field, no faces, no text, no logos, no car brand marks, no yellow.
+2. Work: Close-up of a car's front wheel with the tyre removed, new brake pads and a shiny brake disc on a clean workbench beside it, a torque wrench and a red shop rag, graphite and steel tones, realistic photo, no text, no logos, no brand marks, no yellow.
+3. Work: Open engine bay of an unbadged car seen from above, a mechanic's gloved hand checking the oil dipstick, a diagnostic tablet with a soft screen glow on the fender cover, warm workshop light, realistic photo, no faces, no text, no logos, no yellow.
+
+### Phone and computer repair
+1. Hero, 4:5: A small phone repair bench in an Israeli shop, a blue anti-static mat with a printed grid, an opened smartphone with its cracked screen lifted on a flex cable, precision screwdrivers, a suction cup and tiny screws laid out in order, a magnifier lamp's cool white light, a window with soft Negev daylight in the background, realistic macro photo, no faces, no text, no logos, no yellow.
+2. Work: A technician's gloved hands replacing a smartphone battery with plastic tweezers on a blue anti-static mat, the phone's back panel off, clean and orderly, realistic close-up photo, no faces, no visible text or logos, no yellow.
+3. Work: An opened laptop on a repair bench with its bottom panel removed, a new SSD drive being fitted, a small brush and compressed air can nearby, neutral grey and blue tones, realistic photo, no faces, no text, no logos, no brand marks, no yellow.
