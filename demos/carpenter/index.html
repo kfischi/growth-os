@@ -44,7 +44,6 @@
   :focus-visible { outline: 3px solid var(--walnut); outline-offset: 2px; }
   .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
   h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
-  .mono { font-family: var(--mono); font-weight: 500; letter-spacing: 0; }
 
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
     font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
@@ -101,7 +100,7 @@
   .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
   .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
   .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--walnut); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .g-step { top: 64%; inset-inline-start: -18px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; animation-delay: .45s; }
+  .g-step { top: 48%; inset-inline-start: -18px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; animation-delay: .45s; }
   .g-step i { width: 30px; height: 30px; border-radius: 9px; flex: none; background: var(--pine); position: relative; }
   .g-step i::before { content: ""; position: absolute; inset: 9px 6px; border-top: 2px solid #fff; border-bottom: 2px solid #fff; }
   .g-step b { display: block; font-size: 14.5px; }
@@ -113,7 +112,7 @@
 
   /* The cut list: one board per job, its plywood edge on the start side, the measure in mono */
   .cut { display: grid; gap: 10px; }
-  .cut-h { display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px auto; gap: 18px; padding: 0 22px 4px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); }
+  .cut-h { display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px auto; gap: 18px; padding: 0 22px 4px; font-size: 13px; font-weight: 500; color: var(--ink-soft); }
   .bd { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px auto; gap: 6px 18px; align-items: center; width: 100%;
     padding: 18px 22px; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--line), 0 18px 30px -26px rgba(42,36,31,.5); transition: box-shadow .15s, transform .15s; }
   .bd::before { content: ""; align-self: stretch; min-height: 44px; border-radius: 3px; background: repeating-linear-gradient(180deg, #d8c7ab 0 4px, #9b7a59 4px 5px); box-shadow: inset 0 0 0 1px rgba(82,44,26,.35); }
@@ -121,7 +120,7 @@
   .bd:focus-visible { outline: 3px solid var(--walnut); outline-offset: 2px; }
   .bd b { display: block; font-size: 18.5px; line-height: 1.3; }
   .bd > span > span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; }
-  .bd .ms { font-family: var(--mono); font-size: 13.5px; color: var(--pine); }
+  .bd .ms { font-weight: 500; font-size: 14px; color: var(--pine); }
   .bd .pr { text-align: left; font-weight: 700; font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--walnut); }
   .bd .pr small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-soft); }
   .how { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 22px 4px 0; font-size: 15.5px; color: var(--ink-soft); }
