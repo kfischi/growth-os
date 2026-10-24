@@ -21,8 +21,8 @@ To launch one:
 | תיקון סלולר ומחשבים | `demos/phone-repair/` | |
 | עיצוב שיער לנשים | `demos/hair/` | שירה לוי · עיצוב שיער (כפר סבא) |
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
-| קייטרינג | `demos/catering/` | |
-| DJ לאירועים | `demos/dj/` | |
+| קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
+| DJ לאירועים | `demos/dj/` | DJ עומר לוי (חיפה והצפון) |
 
 ## Image prompts
 
@@ -57,3 +57,13 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: Realistic photo of a living room floor in an Israeli apartment halfway through tiling. Large light-grey porcelain tiles 60 by 60 already laid with thin grey grout lines, the next row bare grey adhesive with notched trowel ridges, a spirit level and small plastic tile spacers on the tiles, a stack of tile boxes by a white wall. Soft daylight from a window, no people, no text, no logos, no yellow.
 2. Work, 4:5: Close-up of a tiler's gloved hand, no face, pressing a large porcelain tile into adhesive with a rubber mallet beside it, red cross spacers in the joints, a notched trowel resting on the bucket edge. Clean modern bathroom walls behind in matte deep green tiles, natural light, shallow depth of field, no text, no logos, no yellow.
 3. Work, 4:5: Realistic before-and-after detail of a shower wall in an Israeli bathroom. Left half with old dark stained grout lines, right half freshly renewed with clean light-grey grout between white rectangular wall tiles, a grout float and a damp sponge on the shower floor. Bright even light, no people, no text, no logos, no yellow.
+
+### Catering
+1. Hero, 4:5: An overhead view of a long home dining table set for a family brit in an Israeli apartment. A white linen cloth, aluminium foil trays of herbed rice, roast chicken pieces, a green salad with cherry tomatoes, roasted eggplant and red peppers, a braided challah on a wooden board, small bowls of tahini and olives. Soft daylight from a window, herb green accents, cool neutral tones, no people, no text, no logos, no yellow.
+2. Work, 4:3: Hands in an apron arranging foil catering trays on a home kitchen counter, with a white marble-look surface and fresh parsley and coriander nearby. Only the hands and forearms show. Natural window light, Israeli home kitchen, no text, no logos, no yellow.
+3. Work, 4:3: Shabbat trays ready for pickup, close up. Covered foil trays stacked neatly on a kitchen table beside a hot plate, a challah wrapped in a cloth, and a cooler bag on a chair. Late Friday afternoon light, Israeli apartment, no people, no text, no logos, no yellow.
+
+### DJ
+1. Hero, 4:5: A DJ controller with two jog wheels and a laptop on a stand at an outdoor Israeli garden wedding at dusk. String lights and olive trees blurred in the background, a soft red stage wash and cool white light. Only hands on the mixer, cropped at the wrists, no text, no logos, no yellow.
+2. Work, 4:3: The dance floor of an Israeli event hall from behind the DJ booth: speakers on stands, moving-head lights in cool white and deep red beams over a blurred crowd seen only as silhouettes from behind, slight haze, no text, no logos, no yellow.
+3. Work, 4:3: A close up of hands on a DJ mixer's faders and colourful pads, with over-ear headphones resting on the deck and a wireless microphone beside it, under a dim red and white booth light. Shallow depth of field, no text, no logos, no yellow.
