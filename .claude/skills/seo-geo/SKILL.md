@@ -60,7 +60,7 @@ Rank what you found by likely gain against effort and risk. Prefer, in this orde
    - "מה זה נציג AI באתר?"
    - One page per trade for the owner, such as "אתר לאינסטלטור", with what that trade's customers ask, a link to its demo, and its own words. Never swap a name between copies.
 
-   Put such pages under `demos/guides/`, link them from the home footer and `all/`, and add them to the sitemap. A new page follows the `web-design` skill in the home page's own look.
+   The hub is `demos/guides/` (already there: website-cost, website-or-instagram, and for-plumber, for-electrician, for-ac, for-locksmith, for-barber, for-cosmetics; copy their head, look and structured data). Add one trade page at a time for the other trades, each in its own words. Put such pages under `demos/guides/`, link them from the home footer and `all/`, and add them to the sitemap. A new page follows the `web-design` skill in the home page's own look.
 3. A small wording change that makes a fact easier to quote, outside the locked hero lines.
 
 Do no more than three. One finished change beats five half-done ones.

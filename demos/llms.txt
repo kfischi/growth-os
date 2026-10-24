@@ -29,6 +29,12 @@ Multi Landing מיועד לבעלי מקצוע ולעסקים קטנים שהפ�
 - [מדריכים לבעלי עסקים](https://service-pro-web.netlify.app/guides/): תשובות ישרות לשאלות לפני שבונים אתר.
 - [כמה עולה אתר לעסק קטן?](https://service-pro-web.netlify.app/guides/website-cost/): טווחים נפוצים בשוק, מה כלול בכל דרך, והמחיר שלנו.
 - [אתר או אינסטגרם לעסק?](https://service-pro-web.netlify.app/guides/website-or-instagram/): למה כדאי את שניהם, ואיך הם עובדים יחד.
+- [אתר לאינסטלטור](https://service-pro-web.netlify.app/guides/for-plumber/): הברז הראשי, תמונה מתחת לכיור, ומחיר לסתימה ולנזילה.
+- [אתר לחשמלאי](https://service-pro-web.netlify.app/guides/for-electrician/): בטיחות קודם, הרישיון בגלוי, ומחיר לנקודה, ללוח ולעמדת טעינה.
+- [אתר לטכנאי מזגנים](https://service-pro-web.netlify.app/guides/for-ac/): איזה מזגן, מדבקת הדגם, ואיך עוברים את אוגוסט.
+- [אתר למנעולן](https://service-pro-web.netlify.app/guides/for-locksmith/): מענה גם בלילה, תוספת לילה כתובה מראש, ושורת בטיחות.
+- [אתר לספר](https://service-pro-web.netlify.app/guides/for-barber/): מחירון בטווחים, שעות כולל שישי, ובקשת תור שהספר מאשר.
+- [אתר לקוסמטיקאית](https://service-pro-web.netlify.app/guides/for-cosmetics/): טיפולים עם משך ומחיר, מה לדעת לפני, ובקשת תור בוואטסאפ.
 - [לבנות אתר](https://service-pro-web.netlify.app/build/): הבונה בצ׳אט.
 - [תנאים וביטולים](https://service-pro-web.netlify.app/terms/)
 - [פרטיות](https://service-pro-web.netlify.app/privacy/)
