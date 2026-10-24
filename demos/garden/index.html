@@ -377,7 +377,7 @@
           </div>
           <div class="facts">
             <div><b data-edit="f-years">11 שנים</b><span>בגינות של האזור</span></div>
-            <div><b data-edit="f-day">יום קבוע</b><span>באחזקה, כל שבועיים או חודש</span></div>
+            <div><b data-edit="f-day">יום קבוע</b><span>באחזקה, כל שבועיים או פעם בחודש</span></div>
             <div><b data-edit="f-tour">סיור</b><span>ומחיר סגור לפני שמתחילים</span></div>
           </div>
         </div>
@@ -587,7 +587,7 @@
       { key: "city", label: "יישוב", ask: "באיזה יישוב הגינה?", input: "text", placeholder: "למשל: אביחיל" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
-      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.service}, גינה ${d.size}, ${d.freq}, ב${d.city}.\n${RANGES[d.service]}. קובעים סיור קצר בגינה ונותנים מחיר סגור.`,
     summary: (d) => `פנייה מהאתר (דמו גינון)\nשירות: ${d.service}\nגינה: ${d.size}\nתדירות: ${d.freq}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,

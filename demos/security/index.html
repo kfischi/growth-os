@@ -308,7 +308,7 @@
       <div class="frame-l m-home"><figure class="ps" data-slot="hero" data-src="../shared/photos/security-work.webp" data-alt="כניסה לבית עם מצלמה על הקיר, לוח אזעקה, אינטרקום ונתב" data-pos="50 45" data-icon="home" data-label="תמונה שלכם"></figure><span class="rec" aria-hidden="true"><i></i>CAM 01</span></div>
       <div class="frame-l m-biz"><figure class="ps" data-slot="hero-biz" data-src="../shared/photos/security-office.webp" data-alt="משרד עם מצלמות בתקרה, קורא תגים ליד הדלת, מסך עם ארבע מצלמות וארון תקשורת" data-pos="60 45" data-icon="box" data-label="תמונה שלכם"></figure><span class="rec" aria-hidden="true"><i></i>CAM 04</span></div>
       <div class="glass g-note m-home" aria-hidden="true"><p class="q">המצלמה בכניסה לא מקליטה מאתמול</p><p class="a">שלחו תמונה של המקליט. חוזרים עם זמן הגעה ומחיר.</p></div>
-      <div class="glass g-note m-biz" aria-hidden="true"><p class="q">בניין של 40 דירות, יש כתב כמויות</p><p class="a">שלחו בוואטסאפ, ונקבע סיור באתר.</p></div>
+      <div class="glass g-note m-biz" aria-hidden="true"><p class="q">בניין של 40 דירות, יש כתב כמויות</p><p class="a">שלחו בוואטסאפ, ונקבע סיור בשטח.</p></div>
       <div class="glass g-jobs m-home" aria-hidden="true"><span class="h">מחירון לדוגמה · לבית</span><div><b>4 מצלמות ומקליט</b><span>2,500 עד 4,000 ₪</span></div><div><b>אזעקה</b><span>1,800 עד 3,500 ₪</span></div><div><b>אינטרקום וידאו</b><span>1,200 עד 2,800 ₪</span></div></div>
       <div class="glass g-jobs m-biz" aria-hidden="true"><span class="h">לעסקים ולפרויקטים</span><div><b>מצלמות ובקרת כניסה</b><span>אחרי סיור</span></div><div><b>חדר תקשורת וכבילה</b><span>לפי כתב כמויות</span></div><div><b>חוזה שירות</b><span>לפי היקף</span></div></div>
     </div>
@@ -377,7 +377,7 @@
       </div>
       <div class="who-copy">
         <h2>מי מגיע?</h2>
-        <p>טכנאים שלנו, עם הציוד. ככה נראה בוקר עם פנייה, לדוגמה:</p>
+        <p>הטכנאים שלנו, עם הציוד. ככה נראה בוקר עם פנייה, לדוגמה:</p>
         <ol class="day">
           <li><time class="ltr">08:05</time><div><b>כותבים בצ׳אט: המצלמות כבויות</b><span>מה המערכת, כמה מצלמות, ותמונה של המקליט.</span></div></li>
           <li><time class="ltr">08:20</time><div><b>חוזרים אליכם</b><span>אומרים מתי מגיעים וכמה זה יעלה, לפני שיוצאים.</span></div></li>
@@ -419,7 +419,7 @@
 כמה מצלמות: 2 עד 4
 איזה בית: בית פרטי
 מתי: השבוע
-ישוב: רעננה
+יישוב: רעננה
 שם: רונית כהן
 טלפון: 052-7654321<time>08:05</time></div>
               </div>
@@ -475,19 +475,19 @@
       { key: "scope", label: "היקף", ask: "מה ההיקף, בערך?", chips: ["עד 8 מצלמות או נקודות", "8 עד 32", "יותר מ־32", "כמה אתרים"], show: B },
       { key: "timeline", label: "מתי", ask: "מתי צריך שזה יעבוד?", chips: ["החודש", "בעוד חודש עד שלושה", "לפי לוח הזמנים של הפרויקט", "מכרז, עוד לא נסגר"], show: B },
       { key: "plans", label: "תוכניות", ask: "יש תוכניות, כתב כמויות או מסמכי מכרז? שולחים אותם בוואטסאפ, אחרי הסיכום.", chips: ["כן, אשלח בוואטסאפ", "אין עדיין, צריך סיור"], show: B },
-      { key: "city", label: "ישוב", ask: (d) => B(d) ? "איפה המקום?" : "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "city", label: "יישוב", ask: (d) => B(d) ? "איפה המקום?" : "באיזה יישוב?", input: "text", placeholder: "למשל: רעננה" },
       { key: "name", label: "שם", ask: (d) => B(d) ? "ושם איש הקשר?" : "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => {
       const first = d.name.split(" ")[0];
-      if (B(d)) return `תודה ${first}. רשמתי: ${d.company}, ${d.site}, ${d.need}, ${d.scope}.${d.plans === "כן, אשלח בוואטסאפ" ? "\nאחרי השליחה, צרפו בוואטסאפ את התוכניות." : ""}\nלחצו למטה, וחוזרים אליכם לקבוע סיור.`;
+      if (B(d)) return `תודה ${first}. רשמנו: ${d.company}, ${d.site}, ${d.need}, ${d.scope}.${d.plans === "כן, אשלח בוואטסאפ" ? "\nאחרי השליחה, צרפו בוואטסאפ את התוכניות." : ""}\nלחצו למטה, וחוזרים אליכם לקבוע סיור.`;
       const price = RANGES[d.issue] ? `בדרך כלל ${RANGES[d.issue]}, ומחיר סגור לפני העבודה.` : "";
-      return `תודה ${first}. רשמתי: ${d.issue}, ${d.place}, ב${d.city}. ${price}\nלחצו למטה, וחוזרים אליכם עם מחיר ומועד.`;
+      return `תודה ${first}. רשמנו: ${d.issue}, ${d.place}, ב${d.city}. ${price}\nלחצו למטה, וחוזרים אליכם עם מחיר ומועד.`;
     },
     summary: (d) => B(d)
       ? `פנייה מהאתר (דמו אבטחה) · עסקים\nחברה: ${d.company}\nמקום: ${d.site}\nמה צריך: ${d.need}\nהיקף: ${d.scope}\nמתי: ${d.timeline}\nתוכניות: ${d.plans}\nאיפה: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.plans === "כן, אשלח בוואטסאפ" ? "\nאשלח את התוכניות כאן." : ""}`
-      : `פנייה מהאתר (דמו אבטחה) · לבית\nמה צריך: ${d.issue}${d.count ? "\nכמה מצלמות: " + d.count : ""}\nאיזה בית: ${d.place}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+      : `פנייה מהאתר (דמו אבטחה) · לבית\nמה צריך: ${d.issue}${d.count ? "\nכמה מצלמות: " + d.count : ""}\nאיזה בית: ${d.place}\nמתי: ${d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: (d, text, photo) => { done = true; LeadPhone("#ph-msg")(d, text, photo); },
   });

@@ -484,7 +484,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
     <div class="wrap owner-grid">
       <div>
         <h2>מה שקד מקבלת</h2>
-        <p>סוג הבית, הגודל, התדירות והישוב, בהודעה אחת. כך אפשר לשבץ את הלקוח ביומן בלי שיחה של עשר דקות.</p>
+        <p>סוג הבית, הגודל, התדירות והיישוב, בהודעה אחת. כך אפשר לשבץ את הלקוח ביומן בלי שיחה של עשר דקות.</p>
         <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
       </div>
       <div>
@@ -497,7 +497,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 סוג: דירה
 גודל: 4 עד 5 חדרים
 תדירות: כל שבועיים
-ישוב: פרדס חנה
+יישוב: פרדס חנה
 שם: נועה פרץ
 טלפון: 050-1122334<time>08:15</time></div>
             </div>
@@ -539,7 +539,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { key: "type", label: "סוג", ask: "מה מנקים?", chips: Object.keys(RATE) },
       { key: "size", label: "גודל", ask: "מה הגודל?", chips: Object.keys(HOURS) },
       { key: "freq", label: "תדירות", ask: "כל כמה זמן?", chips: ["פעם אחת", "כל שבוע", "כל שבועיים"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
@@ -549,7 +549,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       const rate = d.freq === "פעם אחת" ? RATE[d.type] : Math.min(RATE[d.type], 80);
       return `תודה ${d.name.split(" ")[0]}! ${d.type}, ${d.size}: בערך ${lo} עד ${hi} שעות, כלומר ${fmt(lo * rate)} עד ${fmt(hi * rate)} ₪.\nלחצו למטה, ונקבע מועד בוואטסאפ.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    summary: (d) => `פנייה מהאתר (דמו ניקיון)\nסוג: ${d.type}\nגודל: ${d.size}\nתדירות: ${d.freq}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

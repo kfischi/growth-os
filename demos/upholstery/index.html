@@ -377,7 +377,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div class="ba-copy">
         <h2>אותו בד, שעה אחרי</h2>
         <p>כתם יין, עקבות של הכלב ושנה של שימוש. גררו את הפס וראו את הצבע האמיתי של הספה.</p>
-        <p class="honest">לא כל כתם יורד עד הסוף. כתם ישן, או כתם שעבר חום, אני אומר לכם מראש, אחרי שאראה תמונה.</p>
+        <p class="honest">לא כל כתם יורד עד הסוף. על כתם ישן, או כתם שעבר חום, אני אומר לכם מראש, אחרי שאראה תמונה.</p>
         <p class="hint">בכפתור "לנסות עם התמונות שלכם" מחליפים את הציור בתמונות לפני ואחרי מהעבודות שלכם.</p>
       </div>
     </div>
@@ -429,7 +429,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
     <div class="wrap owner-grid">
       <div>
         <h2>מה ניר מקבל</h2>
-        <p>מה לנקות, הגודל, הבד, הכתמים, הישוב והימים, בהודעה אחת, ותמונה אם צירפתם. בהפסקה בין עבודה לעבודה אני חוזר עם מחיר ומועד.</p>
+        <p>מה לנקות, הגודל, הבד, הכתמים, היישוב והימים, בהודעה אחת, ותמונה אם צירפתם. בהפסקה בין עבודה לעבודה אני חוזר עם מחיר ומועד.</p>
         <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
       </div>
       <div>
@@ -443,7 +443,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 גודל: 3 מושבים
 בד: בד
 כתמים: שתן או ריח של חיות
-ישוב: כפר סבא
+יישוב: כפר סבא
 ימים: א׳ עד ה׳
 שם: שירה לוי
 טלפון: 052-3344556<time>13:05</time></div>
@@ -515,7 +515,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         tip: { when: (v) => { stain = v; return v !== "רק רענון"; },
           get text() { return stain === "שתן או ריח של חיות" ? "עד שאגיע: סופגים חזק עם נייר. בלי אקונומיקה, ובלי פן." : "עד שאגיע: סופגים במגבת לבנה, לא משפשפים, ולא מייבשים בפן."; },
           get id() { return stain === "שתן או ריח של חיות" ? "pet-accident" : "fresh-stain"; }, link: "מה עושים עכשיו, צעד אחרי צעד" } },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: רעננה" },
       { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
@@ -526,7 +526,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       const price = r ? `${d.item}, ${d.size}${d.stains && d.stains !== "רק רענון" ? ", עם הטיפול בכתמים" : ""}: בדרך כלל ${fmt(r[0])} עד ${fmt(r[1])} ₪.` : "";
       return `תודה ${d.name.split(" ")[0]}! ${price}\nהמחיר הסופי אחרי שאראה את הבד. לחצו למטה, ונקבע מועד בוואטסאפ.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו ניקוי ספות)\nמה: ${d.item}\nגודל: ${d.size}${d.fabric ? "\nבד: " + d.fabric : ""}\nכתמים: ${d.stains}\nישוב: ${d.city}\nימים: ${d.days}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    summary: (d) => `פנייה מהאתר (דמו ניקוי ספות)\nמה: ${d.item}\nגודל: ${d.size}${d.fabric ? "\nבד: " + d.fabric : ""}\nכתמים: ${d.stains}\nיישוב: ${d.city}\nימים: ${d.days}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

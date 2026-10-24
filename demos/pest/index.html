@@ -473,7 +473,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       </div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על כמה שאלות</b><span>איזה מזיק, איפה, אם יש ילדים או חיות בבית, ישוב וטלפון.</span></div></li>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>איזה מזיק, איפה, אם יש ילדים או חיות בבית, יישוב וטלפון.</span></div></li>
           <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש איזה טיפול זה ומה לקחת, בלי להתקשר ולשאול שוב.</span></div></li>
           <li><div><b>חוזרים ללקוח וקובעים</b><span>הצ׳אט עובד גם בלילה ובשבת, כשאין מי שיענה לטלפון.</span></div></li>
         </ol>
@@ -487,7 +487,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 מזיק: ג׳וקים
 מקום: דירה
 ילדים או חיות: כן
-ישוב: פרדס חנה
+יישוב: פרדס חנה
 שם: יעל מזרחי
 טלפון: 052-7654321<time>20:15</time></div>
               </div>
@@ -538,7 +538,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { key: "photo", label: "תמונה", ask: "יש תמונה של מה שראיתם? זה עוזר לזהות את המזיק.", photo: true },
       { key: "place", label: "מקום", ask: "איפה צריך לטפל?", chips: ["דירה", "בית פרטי", "עסק או מסעדה"] },
       { key: "kids", label: "ילדים או חיות", ask: "יש בבית ילדים קטנים או חיות?", chips: ["כן", "לא"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
@@ -547,9 +547,9 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       const price = RANGES[d.pest] ? `בדרך כלל זה ${RANGES[d.pest]}, ואת המחיר הסופי נותנים אחרי בדיקה.` : "את המחיר נותנים אחרי בדיקה במקום.";
       const back = SPRAY.includes(d.pest) ? " בריסוס חוזרים הביתה אחרי 4 שעות." : "";
       const kids = d.kids === "כן" ? "\nלפני הטיפול אסביר לכם מתי יוצאים, מתי חוזרים ומה לשים בצד." : "";
-      return `תודה ${first}! קיבלתי: ${d.pest}, ${d.place}, ב${d.city}. ${price}${back}${kids}\nלחצו למטה, ונחזור אליכם לקבוע.`;
+      return `תודה ${first}! קיבלתי: ${d.pest}, ${d.place}, ב${d.city}. ${price}${back}${kids}\nלחצו למטה, ואחזור אליכם לקבוע.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו הדברה)\nמזיק: ${d.pest}\nמקום: ${d.place}\nילדים או חיות: ${d.kids}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו הדברה)\nמזיק: ${d.pest}\nמקום: ${d.place}\nילדים או חיות: ${d.kids}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
