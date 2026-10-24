@@ -18,6 +18,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | `outreach-message` | Writing a first message, a follow-up or an offer to a business |
 | `web-design` | Before designing or restyling any page. Bans the AI-default looks and finds the identity in the subject |
 | `hebrew-copy` | Before writing or reviewing any Hebrew a client or prospect reads. Israeli voice, AI-tell ban list, correct Hebrew |
+| `hebrew-review` | Proofreading Hebrew already written (a page, the demos, the chats, the guides): splits the work between `hebrew-editor` agents, fixes plain mistakes, brings Kfir only the choices |
 | `israeli-local-marketing` | Bringing leads for a client or for Kfir: Google Business Profile, WhatsApp, local groups, reviews, seasons, the spam law |
 | `qa-page` | Before sending any page to anyone |
 | `monthly-report` | End of month. Turn a client's leads export into a short report |
