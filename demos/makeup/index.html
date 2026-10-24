@@ -236,7 +236,7 @@
       <div class="hero-copy">
         <p class="kicker">איפור כלה, ערב, בת מצווה וצילומים. בסטודיו או אצלכם בבית</p>
         <h1><span data-edit="h1a">יש לכם אירוע?</span> <em data-edit="h1b">בוחרים לוק, ואני חוזרת לתאם.</em></h1>
-        <p class="lead">כשאני מאפרת כלה, הטלפון נשאר בתיק. כאן בוחרים לוק, רואים טווח מחיר וכותבים את התאריך. את התאריך אני בודקת ביומן וחוזרת אליכם בעצמי.</p>
+        <p class="lead">כשאני מאפרת כלה, הטלפון נשאר בתיק. כאן בוחרים לוק, רואים טווח מחיר וכותבים מתי האירוע. את התאריך אני בודקת ביומן וחוזרת אליכם בעצמי.</p>
         <div class="ctas">
           <button class="btn btn-plum" type="button" data-open-bot>לבדוק תאריך</button>
           <a class="btn btn-line" href="#" data-wa="היי נוי, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
@@ -288,7 +288,7 @@
             </g>
           </svg>
         </div>
-        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה עובדת</span><b>בסטודיו ברחובות</b><small>ולכלות ולאירועים גם אצלכם בבית</small></div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה מתאפרים</span><b>בסטודיו ברחובות</b><small>לכלות ולאירועים גם אצלכם בבית</small></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">חתונה ביוני. הכלה, אמא ועוד שתי חברות.</p><p class="a">כלה ועוד שלוש: 2,300 עד 3,550 ₪, לדוגמה. את התאריך אני בודקת ביומן.</p></div>
         <div class="glass g-price" aria-hidden="true">
           <span class="tag">מחירים לדוגמה</span>
@@ -326,7 +326,7 @@
             <button type="button" data-v="צילומים" aria-pressed="false">צילומים</button>
           </div></div>
           <div class="result" id="result" aria-live="polite"></div>
-          <p class="note" role="note">עור רגיש או אלרגיה לחומר? כתבו לי לפני, ונבדוק בניסיון. פריחה או נפיחות אחרי איפור: שוטפים ופונים לרופא. קושי לנשום: מד״א <a href="tel:101">101</a>. <a href="#g-reaction">מה עושים בתגובה לאיפור</a></p>
+          <p class="note" role="note">עור רגיש או אלרגיה לחומר? כתבו לי מראש, ונבדוק בניסיון. פריחה או נפיחות אחרי איפור: שוטפים ופונים לרופא. קושי לנשום: מד״א <a href="tel:101">101</a>. <a href="#g-reaction">מה עושים בתגובה לאיפור</a></p>
         </div>
       </div>
     </div>
@@ -349,7 +349,7 @@
       <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה. המחיר לפי הלוק ומספר המתאפרות. את המחיר סוגרים איתי לפני האירוע.</p></div>
       <div class="prices-grid">
         <div>
-          <div class="pr"><b>איפור ערב ואירוע</b><span class="p">350 עד 550 ₪</span><small>מייקאפ עמיד, צלליות, וריסים אם רוצים</small><button class="ask" type="button" data-occasion="אירוע או ערב">לבדוק תאריך</button></div>
+          <div class="pr"><b>איפור ערב ואירוע</b><span class="p">350 עד 550 ₪</span><small>מייקאפ עמיד וצלליות. ריסים, אם רוצים</small><button class="ask" type="button" data-occasion="אירוע או ערב">לבדוק תאריך</button></div>
           <div class="pr"><b>איפור טבעי</b><span class="p">250 עד 380 ₪</span><small>עור נקי וקליל, לאירוע ביום</small></div>
           <div class="pr"><b>בת מצווה</b><span class="p">250 עד 400 ₪</span><small>איפור עדין שמתאים לגיל</small><button class="ask" type="button" data-occasion="בת מצווה">לבדוק תאריך לבת מצווה</button></div>
           <div class="pr"><b>איפור לצילומים</b><span class="p">350 עד 600 ₪</span><small>מט שלא מבריק בפלאש, לצילומי חוץ או סטודיו</small><button class="ask" type="button" data-occasion="צילומים">לבדוק תאריך לצילומים</button></div>
@@ -450,7 +450,7 @@
         tip: { when: (v) => v === "כן", text: "ניסיון עושים בסטודיו, בדרך כלל חודש עד חודשיים לפני. את המועד קובעים יחד.", id: "trial", link: "ניסיון איפור: איך מתכוננים" } },
       { key: "photo", label: "תמונה", ask: "יש תמונת השראה? לוק שאהבתם, או צילום של השמלה.", photo: true, skip: "בלי תמונה" },
       { key: "skin", label: "רגישויות", ask: "יש עור רגיש, אלרגיה לחומר או עדשות מגע?", chips: ["אין", "עור רגיש", "אלרגיה לחומר מסוים", "עדשות מגע"],
-        tip: { when: (v) => SENSITIVE.includes(v), text: "ספרו לי בשיחה על מה הייתה התגובה. בניסיון אפשר לבדוק את החומרים על העור.", id: "reaction", link: "תגובה לאיפור: מה עושים" } },
+        tip: { when: (v) => SENSITIVE.includes(v), text: "ספרו לי בשיחה מה העור לא סובל. בניסיון אפשר לבדוק את החומרים על העור.", id: "reaction", link: "תגובה לאיפור: מה עושים" } },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
