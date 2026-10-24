@@ -511,10 +511,11 @@
       { key: "car", label: "רכב", ask: "איזה רכב? שנה, נפח מנוע, ואם יש, הדגם.", input: "text", placeholder: "למשל: 2018, 1.6 בנזין" },
       { key: "km", label: "ק״מ", ask: "כמה קילומטרים בערך?", chips: ["עד 60 אלף", "60 עד 150 אלף", "מעל 150 אלף", "לא יודע"], show: PLANNED },
       { key: "photo", label: "תמונה", ask: "יש תמונה של לוח השעונים, או של מה שקרה? כך אני יודע מה להכין.", photo: true, show: (d) => !PLANNED(d) },
+      // one label per key: the summary card lists a key once, whichever of its steps was asked
       { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: [URGENT, "היום או מחר", "השבוע", "רק בודק מחיר"], show: (d) => !PLANNED(d) && !RED(d),
         tip: { when: (v) => v === URGENT, id: "stop-driving", text: "לא נוסעים ברכב לא בטוח. אורות חירום, אפוד, ויוצאים מהרכב אל מאחורי המעקה. אחר כך מזמינים שירותי דרך." } },
-      { key: "when", label: "מתי", ask: "איפה הרכב עכשיו?", chips: ["עצרתי בצד", "בבית או בחניה", "עדיין נוסע"], show: RED },
-      { key: "when", label: "מתי", ask: "מתי נוח לכם להביא את הרכב?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
+      { key: "when", ask: "איפה הרכב עכשיו?", chips: ["עצרתי בצד", "בבית או בחניה", "עדיין נוסע"], show: RED },
+      { key: "when", ask: "מתי נוח לכם להביא את הרכב?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
       { key: "city", label: "ישוב", ask: "באיזה ישוב אתם?", input: "text", placeholder: "למשל: ראשון לציון" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
