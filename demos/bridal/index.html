@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/bridal-work.webp" fetchpriority="high">
 <title>אטלייה נוגה · שמלות כלה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="שמלות כלה בהשכרה ובעיצוב אישי ברמת גן. בוחרים גזרה, רואים טווח מחיר לדוגמה, ומתאמים מדידה בתיאום מראש.">
@@ -229,6 +230,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -258,36 +260,7 @@
 
       <div class="visual">
         <div class="hframe">
-          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: בובת תדמית בסטודיו עם שמלת כלה בגזרת A, סרט מדידה, כרית סיכות ומתלה שמלות מאחור">
-            <rect class="wall" width="400" height="470"/>
-            <rect class="floor" y="412" width="400" height="58"/>
-            <!-- the fitting room curtain -->
-            <path class="curtain" d="M0 0 H70 C64 120 76 260 62 412 H0 Z"/>
-            <path class="fold" d="M20 10 C16 140 26 280 18 410 M44 10 C40 140 50 280 40 410"/>
-            <!-- the rail with dresses behind -->
-            <line class="rail" x1="248" y1="56" x2="396" y2="56"/>
-            <path class="hanger" d="M290 56 V66 M276 78 L290 66 L304 78 M346 56 V66 M332 78 L346 66 L360 78"/>
-            <path class="back-dress" d="M278 78 H302 L306 120 C330 200 336 300 330 400 H250 C244 300 252 200 274 120 Z"/>
-            <path class="back-dress" d="M334 78 H358 L360 120 C380 220 392 320 396 400 H312 C312 300 318 210 330 120 Z"/>
-            <!-- the dress form and its stand -->
-            <line class="stand" x1="170" y1="390" x2="170" y2="430"/>
-            <path class="stand" d="M136 440 H204"/>
-            <circle class="form" cx="170" cy="62" r="11"/>
-            <rect class="form" x="164" y="70" width="12" height="20" rx="3"/>
-            <!-- the A-line dress, pinned on the form -->
-            <path class="dress" d="M138 98 C150 92 190 92 202 98 L198 150 C194 168 190 178 188 190 L254 392 C200 404 140 404 86 392 L152 190 C150 178 146 168 142 150 Z"/>
-            <path class="seam" d="M150 190 C162 196 178 196 190 190"/>
-            <path class="seam" d="M160 200 C150 270 130 330 116 392 M180 200 C190 270 210 330 226 392 M170 200 V398"/>
-            <path class="lace" d="M144 112 C158 120 182 120 196 112 M146 130 C160 138 180 138 194 130"/>
-            <path class="lace" d="M96 380 C150 392 192 392 246 380"/>
-            <!-- the tape measure around the neck -->
-            <path class="tape" d="M156 84 C150 120 144 160 150 210 M184 84 C192 130 198 170 192 236"/>
-            <g class="tick"><line x1="146" y1="150" x2="153" y2="150"/><line x1="145" y1="170" x2="152" y2="170"/><line x1="146" y1="190" x2="153" y2="190"/><line x1="192" y1="170" x2="199" y2="170"/><line x1="193" y1="190" x2="200" y2="190"/><line x1="193" y1="210" x2="200" y2="210"/></g>
-            <!-- the pin cushion -->
-            <ellipse class="cushion" cx="300" cy="432" rx="30" ry="14"/>
-            <path class="pin" d="M290 428 L284 410 M302 426 L304 406 M312 428 L320 412"/>
-            <circle class="pinhead" cx="284" cy="410" r="3"/><circle class="pinhead" cx="304" cy="406" r="3"/><circle class="pinhead" cx="320" cy="412" r="3"/>
-          </svg>
+          <img class="hero-photo" src="../shared/photos/bridal-work.webp" alt="שמלת כלה על בובה בסטודיו, עם סרט מידה ושמלות נוספות על המתלה" width="900" height="999" fetchpriority="high" decoding="async">
         </div>
         <div class="glass g-day" aria-hidden="true"><span><i></i>מדידות בתיאום מראש</span><b>בסטודיו ברמת גן</b><small>את השעה אנחנו מאשרים בהודעה</small></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">חתונה במאי. מחפשים בתולת ים בהשכרה.</p><p class="a">בתולת ים בהשכרה: 3,500 עד 5,500 ₪, לדוגמה. נחזור לתאם מדידה.</p></div>

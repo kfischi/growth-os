@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/physio-work.webp" fetchpriority="high">
 <title>מיכל אורן · פיזיותרפיה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="פיזיותרפיה במודיעין: גב ועורף, אחרי פציעה או ניתוח, פציעות ספורט, ובביקור בית. מספרים מה כואב ומאז מתי, ומיכל חוזרת לתאם.">
@@ -222,6 +223,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -251,31 +253,7 @@
 
       <div class="visual">
         <div class="hframe">
-          <svg class="scene" viewBox="0 0 400 380" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור מדף תרגילים: דמות מרימה יד קדימה, קשת עם מעלות, ומדבקת קינזיו על הכתף">
-            <rect class="paper" width="400" height="380"/>
-            <g class="gridl">
-              <path d="M0 38H400M0 76H400M0 114H400M0 152H400M0 190H400M0 228H400M0 266H400M0 304H400M0 342H400"/>
-              <path d="M40 0V380M80 0V380M120 0V380M160 0V380M200 0V380M240 0V380M280 0V380M320 0V380M360 0V380"/>
-            </g>
-            <text class="label" x="346" y="28">תרגיל 3</text>
-            <rect class="mat" x="150" y="330" width="200" height="12" rx="6"/>
-            <!-- where the arm started, hanging down -->
-            <path class="arm-ghost" d="M262 158 L262 248"/>
-            <!-- the arc of the movement around the shoulder, 0° down to 150° forward and up -->
-            <path class="arc" d="M262 240 A82 82 0 0 1 221 87"/>
-            <path class="arrow" d="M214 78 l17 2 l-10 14 z"/>
-            <text class="deg" x="222" y="268">0°</text>
-            <text class="deg" x="150" y="76">150°</text>
-            <!-- the body: a pictogram from the sheet, seen from the side -->
-            <circle class="head" cx="286" cy="110" r="22"/>
-            <path class="body" d="M274 142 L270 250 M270 250 L252 326 M270 250 L290 326"/>
-            <path class="body" d="M266 158 L262 158 L217 80"/>
-            <!-- the kinesio tape over the shoulder, along the arm -->
-            <g transform="rotate(60 250 136)">
-              <rect class="tape" x="214" y="127" width="72" height="18" rx="8"/>
-              <path class="tape-cut" d="M222 136 H278"/>
-            </g>
-          </svg>
+          <img class="hero-photo" src="../shared/photos/physio-work.webp" alt="טיפול פיזיותרפיה: יישור זרוע של מטופלת, עם טייפ על הכתף" width="900" height="999" fetchpriority="high" decoding="async">
         </div>
         <div class="glass g-day" aria-hidden="true"><span><i></i>איפה מטפלת</span><b>בקליניקה במודיעין</b><small>או ביקור בית, עם ציוד</small></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">נקעתי קרסול בכדורגל. מתי אפשר להגיע?</p><p class="a">ספרו מתי זה קרה. אם אי אפשר לדרוך בכלל, קודם לרופא.</p></div>

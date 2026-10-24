@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/water-heater-work.webp" fetchpriority="high">
 <title>גלעד דודי שמש · פתח תקווה והסביבה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="אין מים חמים, דוד שנוזל, גוף חימום, תרמוסטט, טיימר וקולטים על הגג. מתארים בצ׳אט, שולחים תמונה, והפרטים מגיעים לוואטסאפ.">
@@ -189,6 +190,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .row { transition: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -222,47 +224,7 @@
     </dl>
     <div class="win">
       <div class="frame-l">
-        <svg viewBox="0 0 480 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="דוד שמש על גג: שני קולטים, הדוד על המעמד, ובתוכו המים מתחממים מלמטה למעלה">
-          <defs>
-            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dde7ee"/><stop offset="1" stop-color="#f3ece8"/></linearGradient>
-            <linearGradient id="water" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#2f6f9f"/><stop offset=".45" stop-color="#6c7f93"/><stop offset="1" stop-color="#b4532d"/></linearGradient>
-            <linearGradient id="tank" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb0bd"/><stop offset=".35" stop-color="#e9eef2"/><stop offset="1" stop-color="#8496a5"/></linearGradient>
-            <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d5577"/><stop offset="1" stop-color="#1b3349"/></linearGradient>
-          </defs>
-          <rect width="480" height="400" fill="url(#sky)"/>
-          <circle cx="404" cy="64" r="64" fill="#c4683f" opacity=".12"/>
-          <circle cx="404" cy="64" r="30" fill="#c4683f" opacity=".85"/>
-          <path d="M0 252 L60 236 L60 300 L0 300Z M70 248 h50 v52 h-50Z M380 240 h46 v60 h-46Z M432 250 h48 v50 h-48Z" fill="#c9d3db"/>
-          <rect x="0" y="300" width="480" height="100" fill="#b7c2cb"/>
-          <rect x="0" y="296" width="480" height="8" fill="#97a5b1"/>
-          <path d="M0 330 H480 M0 362 H480" stroke="#a7b3bd" stroke-width="1.5"/>
-          <g stroke="#6d7d8b" stroke-width="5" stroke-linecap="round">
-            <path d="M58 300 L80 238 M190 300 L214 238 M232 300 V214"/>
-          </g>
-          <g>
-            <polygon points="34,300 150,300 190,196 74,196" fill="#8496a5"/>
-            <polygon points="40,294 145,294 182,202 78,202" fill="url(#glass)"/>
-            <path d="M66 294 L104 202 M92 294 L130 202 M118 294 L156 202" stroke="#4d7598" stroke-width="2"/>
-            <polygon points="150,300 266,300 306,196 190,196" fill="#8496a5"/>
-            <polygon points="156,294 261,294 298,202 194,202" fill="url(#glass)"/>
-            <path d="M182 294 L220 202 M208 294 L246 202 M234 294 L272 202" stroke="#4d7598" stroke-width="2"/>
-            <path d="M84 214 L120 214 M204 214 L240 214" stroke="#fff" stroke-width="3" opacity=".35" stroke-linecap="round"/>
-          </g>
-          <path d="M300 214 C318 214 322 196 336 190 M180 296 C230 312 300 300 352 286" fill="none" stroke="#a64b28" stroke-width="7" stroke-linecap="round"/>
-          <path d="M440 300 V250 C440 240 432 236 424 236" fill="none" stroke="#2f6f9f" stroke-width="7" stroke-linecap="round"/>
-          <rect x="336" y="248" width="72" height="52" fill="#6d7d8b"/>
-          <rect x="340" y="250" width="8" height="50" fill="#566573"/><rect x="396" y="250" width="8" height="50" fill="#566573"/>
-          <rect x="328" y="96" width="88" height="160" rx="44" fill="url(#tank)"/>
-          <rect x="344" y="118" width="56" height="118" rx="28" fill="url(#water)"/>
-          <path d="M352 222 h40 l-6 -8 l-6 8 l-6 -8 l-6 8 l-6 -8 l-6 8" fill="none" stroke="#f0c9b6" stroke-width="2.5" stroke-linejoin="round"/>
-          <g fill="#fff" opacity=".55"><circle cx="360" cy="196" r="3"/><circle cx="380" cy="176" r="2.5"/><circle cx="368" cy="152" r="2"/></g>
-          <circle cx="372" cy="270" r="18" fill="#fff" stroke="#1e3142" stroke-width="3"/>
-          <path d="M360 278 A14 14 0 1 1 384 278" fill="none" stroke="#d3dbe1" stroke-width="3"/>
-          <path d="M360 278 A14 14 0 0 1 380 258" fill="none" stroke="#9c4325" stroke-width="3"/>
-          <path d="M372 270 L381 261" stroke="#1e3142" stroke-width="2.5" stroke-linecap="round"/>
-          <rect x="350" y="102" width="44" height="12" rx="2" fill="#fff" opacity=".9"/>
-          <path d="M355 108 h18 M377 108 h12" stroke="#4b5d6c" stroke-width="2"/>
-        </svg>
+        <img class="hero-photo" src="../shared/photos/water-heater-work.webp" alt="דוד שמש על גג: שני קולטים, הדוד על המעמד וארגז כלים" width="900" height="999" fetchpriority="high" decoding="async">
       </div>
       <div class="glass g-note" aria-hidden="true"><p class="q">המים פושרים, והמפסק קופץ</p><p class="a">אל תחזירו את המפסק. שלחו תמונה של הדוד, וחוזרים אליכם.</p></div>
       <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה</span><div><b>גוף חימום</b><span>350 עד 550 ₪</span></div><div><b>תרמוסטט</b><span>250 עד 400 ₪</span></div><div><b>טיימר לדוד</b><span>300 עד 550 ₪</span></div></div>

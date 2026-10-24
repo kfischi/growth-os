@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/dj-work.webp" fetchpriority="high">
 <title>DJ עומר לוי · DJ לאירועים</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="DJ לחתונות, בר ובת מצווה, ימי הולדת ואירועי חברה בחיפה, בקריות ובצפון. כותבים בצ׳אט תאריך, אזור וסגנון, ומקבלים פלייליסט לדוגמה בוואטסאפ.">
@@ -224,6 +225,7 @@
   @media (max-width: 640px) { .g-area { display: none; } .frame { inset: 14% 0 20% 0; border-radius: 28px; } .g-set { inset-inline-start: 3%; width: 84%; } .g-chat { width: 70%; top: 0; } }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -256,49 +258,7 @@
     </dl>
     <div class="win">
       <div class="frame">
-        <svg viewBox="0 0 400 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="עמדת DJ מלמעלה: שני פטיפונים, מיקסר באמצע, פדים צבעוניים ומסך עם גל הקול">
-          <defs>
-            <radialGradient id="vin" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2b2d36"/><stop offset="1" stop-color="#15161b"/></radialGradient>
-            <linearGradient id="body" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2c35"/><stop offset="1" stop-color="#1b1c22"/></linearGradient>
-          </defs>
-          <rect width="400" height="440" fill="#ece6ec"/>
-          <path d="M0 330 Q200 300 400 336 V440 H0z" fill="#e3dbe3"/>
-          <!-- laptop screen with the waveform -->
-          <rect x="96" y="18" width="208" height="70" rx="10" fill="#1b1c22"/>
-          <rect x="104" y="26" width="192" height="54" rx="5" fill="#24262e"/>
-          <g fill="#c2264b"><rect x="110" y="46" width="3" height="14"/><rect x="116" y="40" width="3" height="26"/><rect x="122" y="44" width="3" height="18"/><rect x="128" y="36" width="3" height="34"/><rect x="134" y="42" width="3" height="22"/><rect x="140" y="38" width="3" height="30"/><rect x="146" y="45" width="3" height="16"/><rect x="152" y="34" width="3" height="38"/><rect x="158" y="40" width="3" height="26"/><rect x="164" y="46" width="3" height="14"/><rect x="170" y="38" width="3" height="30"/><rect x="176" y="42" width="3" height="22"/><rect x="182" y="36" width="3" height="34"/><rect x="188" y="44" width="3" height="18"/><rect x="194" y="40" width="3" height="26"/></g>
-          <g fill="#6b6878"><rect x="200" y="44" width="3" height="18"/><rect x="206" y="38" width="3" height="30"/><rect x="212" y="42" width="3" height="22"/><rect x="218" y="36" width="3" height="34"/><rect x="224" y="46" width="3" height="14"/><rect x="230" y="40" width="3" height="26"/><rect x="236" y="38" width="3" height="30"/><rect x="242" y="44" width="3" height="18"/><rect x="248" y="34" width="3" height="38"/><rect x="254" y="42" width="3" height="22"/><rect x="260" y="40" width="3" height="26"/><rect x="266" y="45" width="3" height="16"/><rect x="272" y="38" width="3" height="30"/><rect x="278" y="42" width="3" height="22"/><rect x="284" y="46" width="3" height="14"/></g>
-          <rect x="197" y="28" width="2" height="50" fill="#fff"/>
-          <rect x="150" y="88" width="100" height="10" rx="3" fill="#2a2c35"/>
-          <!-- the controller -->
-          <rect x="18" y="112" width="364" height="232" rx="22" fill="url(#body)"/>
-          <rect x="18" y="112" width="364" height="232" rx="22" fill="none" stroke="#3a3d48" stroke-width="2"/>
-          <!-- platters -->
-          <g><circle cx="98" cy="196" r="64" fill="#101115"/><circle cx="98" cy="196" r="58" fill="url(#vin)"/>
-            <g fill="none" stroke="#33353f" stroke-width="1"><circle cx="98" cy="196" r="50"/><circle cx="98" cy="196" r="44"/><circle cx="98" cy="196" r="38"/><circle cx="98" cy="196" r="32"/></g>
-            <path d="M98 140a56 56 0 0 1 48 28" stroke="rgba(255,255,255,.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
-            <circle cx="98" cy="196" r="18" fill="#c2264b"/><circle cx="98" cy="196" r="3" fill="#ece6ec"/></g>
-          <g><circle cx="302" cy="196" r="64" fill="#101115"/><circle cx="302" cy="196" r="58" fill="url(#vin)"/>
-            <g fill="none" stroke="#33353f" stroke-width="1"><circle cx="302" cy="196" r="50"/><circle cx="302" cy="196" r="44"/><circle cx="302" cy="196" r="38"/><circle cx="302" cy="196" r="32"/></g>
-            <path d="M302 140a56 56 0 0 1 48 28" stroke="rgba(255,255,255,.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
-            <circle cx="302" cy="196" r="18" fill="#e9e4ea"/><circle cx="302" cy="196" r="3" fill="#18191f"/></g>
-          <!-- mixer -->
-          <rect x="172" y="128" width="56" height="200" rx="10" fill="#15161b" stroke="#33353f" stroke-width="1.5"/>
-          <g fill="#3a3d48"><circle cx="187" cy="146" r="6"/><circle cx="213" cy="146" r="6"/><circle cx="187" cy="166" r="6"/><circle cx="213" cy="166" r="6"/><circle cx="187" cy="186" r="6"/><circle cx="213" cy="186" r="6"/></g>
-          <g stroke="#e9e4ea" stroke-width="2" stroke-linecap="round"><path d="M187 146v-5M213 146l4-3M187 166l-4-3M213 166v-5M187 186l4-3M213 186v-5"/></g>
-          <g><rect x="185" y="202" width="4" height="70" rx="2" fill="#2a2c35"/><rect x="211" y="202" width="4" height="70" rx="2" fill="#2a2c35"/><rect x="179" y="226" width="16" height="10" rx="2" fill="#e9e4ea"/><rect x="205" y="214" width="16" height="10" rx="2" fill="#e9e4ea"/></g>
-          <g fill="#1f8a63"><rect x="196" y="250" width="8" height="4" rx="1"/><rect x="196" y="244" width="8" height="4" rx="1"/><rect x="196" y="238" width="8" height="4" rx="1"/><rect x="196" y="232" width="8" height="4" rx="1" fill="#c2264b"/></g>
-          <rect x="182" y="296" width="36" height="4" rx="2" fill="#2a2c35"/><rect x="196" y="290" width="10" height="16" rx="2" fill="#e9e4ea"/>
-          <!-- pads -->
-          <g><rect x="40" y="276" width="26" height="22" rx="5" fill="#c2264b"/><rect x="72" y="276" width="26" height="22" rx="5" fill="#c2264b"/><rect x="104" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="136" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/>
-             <rect x="40" y="304" width="26" height="22" rx="5" fill="#1f8a63"/><rect x="72" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="104" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="136" y="304" width="26" height="22" rx="5" fill="#e9e4ea"/></g>
-          <g><rect x="238" y="276" width="26" height="22" rx="5" fill="#e9e4ea"/><rect x="270" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="302" y="276" width="26" height="22" rx="5" fill="#2f7fa8"/><rect x="334" y="276" width="26" height="22" rx="5" fill="#c2264b"/>
-             <rect x="238" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="270" y="304" width="26" height="22" rx="5" fill="#3a3d48"/><rect x="302" y="304" width="26" height="22" rx="5" fill="#1f8a63"/><rect x="334" y="304" width="26" height="22" rx="5" fill="#c2264b"/></g>
-          <!-- headphones -->
-          <g transform="translate(250 368) rotate(-12)"><path d="M0 40 A44 44 0 0 1 88 40" fill="none" stroke="#18191f" stroke-width="9" stroke-linecap="round"/><rect x="-10" y="30" width="24" height="36" rx="10" fill="#18191f"/><rect x="74" y="30" width="24" height="36" rx="10" fill="#18191f"/><rect x="-4" y="38" width="12" height="20" rx="5" fill="#c2264b"/><rect x="80" y="38" width="12" height="20" rx="5" fill="#c2264b"/></g>
-          <!-- a set list card -->
-          <g transform="rotate(5 90 392)"><rect x="34" y="360" width="128" height="70" rx="6" fill="#fff" stroke="#dcd6dd"/><g fill="#4f505c"><rect x="46" y="374" width="70" height="5" rx="2.5"/><rect x="46" y="388" width="96" height="5" rx="2.5"/><rect x="46" y="402" width="58" height="5" rx="2.5"/><rect x="46" y="416" width="82" height="5" rx="2.5"/></g><circle cx="146" cy="376" r="5" fill="#c2264b"/></g>
-        </svg>
+        <img class="hero-photo" src="../shared/photos/dj-work.webp" alt="ידיים על קונטרולר DJ ליד מחשב נייד, באירוע בחוץ בערב" width="900" height="999" fetchpriority="high" decoding="async">
       </div>
       <div class="glass g-area" aria-hidden="true"><span><i></i>DJ עומר לוי</span><b>חיפה, הקריות והצפון</b></div>
       <div class="glass g-chat" aria-hidden="true"><p class="q">היי, אתה פנוי ב-14.8? חתונה, 300 איש</p><p class="a">אבדוק ביומן ואשלח לכם פלייליסט לדוגמה בוואטסאפ.</p></div>

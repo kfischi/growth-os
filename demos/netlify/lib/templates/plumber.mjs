@@ -295,7 +295,24 @@ const SAMPLE_WORKS = Object.fromEntries([
 const SAMPLE_PORTRAITS = Object.fromEntries(["plumber", "ac", "appliance", "cleaning", "electrician", "garden", "handyman", "locksmith", "music", "pest", "psychologist", "social-worker", "tutor"]
   .map((t) => [t, `/shared/photos/${t}-portrait.webp`]));
 
-export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, clips = [], sizes = {}, url = "", credit = null, now = new Date() } = {}) {
+const greetOf = (T, ownerFirst) => T.greet ? T.greet.replace("{name}", ownerFirst) + (T.crisis ? "\n" + T.crisis : "") : `היי, כאן ${ownerFirst} 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ואני חוזר אליכם.`;
+const CALLBACKS = ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"];
+// Every Hebrew line the site's chat (leadbot.js) shows, so the publish can translate them once for the language row
+// (lib/builder.mjs chatLangs). The crisis trades keep Hebrew only: their chat collects the minimum, said carefully.
+export function chatLines(c) {
+  const T = tradeFor(c);
+  if (T.crisis) return [];
+  const services = (c.services || []).slice(0, SERVICES.max), towns = (c.towns || []).slice(0, TOWNS.max);
+  const ch = T.chat, lines = [greetOf(T, firstName(c.owner_name) || "אנחנו"), T.words.subtitle, ch.issue.label, ch.issue.ask, ...services.map((x) => x.name), "משהו אחר"];
+  if (ch.photo) lines.push("תמונה", ch.photo);
+  for (const x of ch.extra || []) lines.push(x.label, x.ask, ...x.chips);
+  if (ch.urgency) lines.push(ch.urgency.label, ch.urgency.ask, ...ch.urgency.chips, ...(ch.urgency.tip ? [ch.urgency.tip.text] : []));
+  if (!ch.noCity) lines.push("יישוב", "באיזה יישוב?", towns[0] ? "למשל: " + towns[0] : "יישוב");
+  lines.push("שם", "איך קוראים לכם?", "טלפון", "לאיזה מספר לחזור?", "מתי לחזור", "ומתי נוח שנחזור אליכם?", ...CALLBACKS);
+  return [...new Set(lines.map((x) => String(x || "").trim()).filter(Boolean))];
+}
+
+export function render(c, { mode = "draft", assets = "assets/", photos = {}, leads = null, video = null, clips = [], sizes = {}, url = "", credit = null, now = new Date(), langs = null } = {}) {
   const draft = mode === "draft";
   // The top: the owner's pick of a photo or the video (heroKind); the other one isn't shown or published.
   const hero = heroKind(c, { photo: Boolean(photos.hero), video: Boolean(video) });
@@ -425,7 +442,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const bot = {
     whatsapp: waIntl || "972500000000",
     name: `${ownerFirst} · ${trade}`, subtitle: W.subtitle, initial: ownerFirst.slice(0, 1), launcher: W.open,
-    greet: T.greet ? T.greet.replace("{name}", ownerFirst) + (T.crisis ? "\n" + T.crisis : "") : `היי, כאן ${ownerFirst} 👋\nאני כנראה באמצע עבודה, אבל בצ׳אט הזה עונים מיד. כמה שאלות קצרות ואני חוזר אליכם.`,
+    greet: greetOf(T, ownerFirst),
     to: T.plural ? "אלינו" : "אליי", at: T.plural ? "אצלנו" : "אצלי",
   };
 
@@ -433,6 +450,16 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   // customer's language. On a live site with the lead system, and in a draft (where it shows its offline line).
   // Not for the crisis trades: their chat collects only the minimum for a first call.
   const askAI = !T.crisis && (draft || Boolean(leads));
+  // The chat's translations, made at publish (lib/builder.mjs chatLangs): kept only for lines the chat still shows.
+  const chatI18n = (() => {
+    if (draft || !leads || !langs || T.crisis) return null;
+    const want = new Set(chatLines(c)), out = {};
+    for (const l of ["ru", "ar", "en"]) {
+      const m = Object.fromEntries(Object.entries((langs && langs[l]) || {}).filter(([he, x]) => want.has(he) && typeof x === "string" && x.trim() && x.length <= 400));
+      if (Object.keys(m).length) out[l] = m;
+    }
+    return Object.keys(out).length ? out : null;
+  })();
   const priced = services.find((s) => /\d/.test(String(s.price || "")));
   const asks = [
     priced ? `כמה עולה ${priced.name}?` : services[0] ? `כמה עולה ${services[0].name}?` : "",
@@ -611,10 +638,11 @@ document.addEventListener("DOMContentLoaded", () => {
     { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "יישוב")} },`}
     { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
     { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
-    { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !URG || d.urgency !== URG },
+    { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ${js(CALLBACKS)}, show: (d) => !URG || d.urgency !== URG },
   ];
   const bot = LeadBot.init({
-    whatsapp: SITE.whatsapp, name: BOT.name, subtitle: BOT.subtitle, initial: BOT.initial, launcher: BOT.launcher, greet: BOT.greet,
+    whatsapp: SITE.whatsapp, name: BOT.name, subtitle: BOT.subtitle, initial: BOT.initial, launcher: BOT.launcher, greet: BOT.greet,${chatI18n ? `
+    i18n: ${js(chatI18n)}, // the language row: the publish translated this chat's lines (chatLines) once` : ""}
     // נציג AI: a first look at the customer's photo, matched to this business's own price list (/api/estimate).
     estimate: SITE.leads ? { endpoint: SITE.leads.split("/api/lead/")[0] + "/api/estimate", slug: SITE.leads.split("/").pop() } : undefined,
     steps: STEPS,

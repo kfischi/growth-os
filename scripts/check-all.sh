@@ -57,6 +57,7 @@ node scripts/tests/social.test.mjs 2>/dev/null || { node scripts/tests/social.te
 node scripts/tests/search.test.mjs 2>/dev/null || { node scripts/tests/search.test.mjs; fail=1; }
 node scripts/tests/photo-estimate.test.mjs 2>/dev/null || { node scripts/tests/photo-estimate.test.mjs; fail=1; }
 node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-chat.test.mjs; fail=1; }
+node scripts/tests/chat-langs.test.mjs 2>/dev/null || { node scripts/tests/chat-langs.test.mjs; fail=1; }
 node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }
 
 step "site builder page, in the browser (phone and desktop)"
