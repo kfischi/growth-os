@@ -150,6 +150,20 @@ footer a { color: var(--ink-2); white-space: nowrap; }
   .opt dd { margin-bottom: 6px; }
 }
 .prose > h2:first-child { margin-top: 0; }
+/* the numbers, each with its source */
+.nums { margin-top: 18px; max-width: 76ch; }
+.nums h2 { font: 700 .95rem/1.4 var(--body); color: var(--ink); margin-bottom: 8px; }
+.nums dl { display: grid; gap: 0; border-top: 1px solid var(--silver); }
+.nums dl > div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 4px 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--silver); }
+.nums dt { font: 800 clamp(1.25rem, 2.4vw, 1.5rem)/1.2 var(--body); letter-spacing: -.02em; color: var(--violet-deep); }
+.nums dd { margin: 0; color: var(--ink-2); font-size: .98rem; line-height: 1.55; min-width: 0; }
+.nums dd small { display: block; color: var(--silver-ink); font-size: .86rem; }
+.nums .note { margin-top: 10px; }
+.src { margin-top: clamp(30px, 4vw, 44px); font-size: .92rem; color: var(--ink-2); }
+.src h2 { font: 700 1.05rem/1.4 var(--body); color: var(--ink-2); margin-bottom: 8px; }
+.src ol { padding-inline-start: 1.3em; display: grid; gap: 6px; }
+.src a { overflow-wrap: anywhere; }
+@media (max-width: 520px) { .nums dl > div { grid-template-columns: minmax(0, 1fr); } }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
@@ -173,6 +187,17 @@ footer a { color: var(--ink-2); white-space: nowrap; }
     <p>היום לקוחות מחפשים עסק מקומי בגוגל, בגוגל מפות ובעוזרי בינה מלאכותית כמו ChatGPT, Gemini ו-Copilot. הם מחפשים לפי צורך ואזור, למשל ״אינסטלטור בפתח תקווה עכשיו״. עסק שנמצא רק באינסטגרם ובפייסבוק כמעט לא מופיע בחיפושים האלה.</p>
     <p>עוזרי הבינה המלאכותית קוראים דפים באינטרנט. אתר ברור, עם מה אתם עושים, איפה, בערך כמה זה עולה ואיך פונים, הוא מה שהם יכולים לקרוא ולצטט. אי אפשר לשלם להם כדי שימליצו עליכם, ואף אחד לא יכול להבטיח שיזכירו אתכם. מה שכן אפשר: אתר שבנוי כך שיוכלו לקרוא אותו.</p>
   </section>
+  <section class="nums" aria-labelledby="t-nums">
+    <h2 id="t-nums">המספרים</h2>
+    <dl>
+      <div><dt>98.38%</dt><dd>מהחיפושים בישראל נעשים בגוגל, בכל המכשירים. Bing: 1.13%.<small>StatCounter, ספטמבר 2026 <a href="#s1">[1]</a></small></dd></div>
+      <div><dt>900 מיליון</dt><dd>משתמשים בשבוע ב-ChatGPT.<small>הודעה של OpenAI, פברואר 2026, לפי TechCrunch <a href="#s2">[2]</a></small></dd></div>
+      <div><dt>950 מיליון</dt><dd>משתמשים בחודש באפליקציית Gemini של גוגל.<small>מנכ״ל גוגל, דוחות הרבעון השני, יולי 2026 <a href="#s3">[3]</a></small></dd></div>
+      <div><dt>מעל 2 מיליארד</dt><dd>משתמשים בחודש ב-AI Overviews, התשובות של הבינה המלאכותית בתוך החיפוש בגוגל.<small>מנכ״ל גוגל, דוחות הרבעון השני, יולי 2025 <a href="#s4">[4]</a></small></dd></div>
+      <div><dt>45%</dt><dd>מהצרכנים בארה״ב השתמשו ב-ChatGPT או בכלי AI אחר כדי לקבל המלצה על עסק מקומי ב-12 החודשים האחרונים. שנה קודם: 6%.<small>BrightLocal, סקר צרכנים 2026, 1,002 מבוגרים בארה״ב <a href="#s5">[5]</a></small></dd></div>
+    </dl>
+    <p class="note">הסקר האחרון נעשה בארה״ב. הוא מראה כיוון, לא מספר לישראל.</p>
+  </section>
 </div>
 
 <div class="wrap doc">
@@ -194,9 +219,9 @@ footer a { color: var(--ink-2); white-space: nowrap; }
     <h2 id="where">איפה לקוחות מחפשים היום</h2>
     <p>אין מקום אחד. אותו לקוח יכול לחפש בשלוש דרכים באותו יום:</p>
     <ul>
-      <li><b>גוגל, גוגל מפות ו-Waze.</b> ״חשמלאי בחולון״, ״מנעולן קרוב אליי״. בגוגל מפות מופיעים עסקים עם פרופיל עסק בגוגל, ומי שכבר בדרך מחפש גם בוויז.</li>
-      <li><b>התשובות שבתוך החיפוש בגוגל.</b> AI Overviews היא סקירה שכתובה בידי בינה מלאכותית ומופיעה מעל התוצאות. AI Mode הוא מצב שבו שואלים את גוגל כמו בצ׳אט. שתיהן כותבות תשובה מתוך דפים באינטרנט, ומקשרות אליהם.</li>
-      <li><b>עוזרי בינה מלאכותית.</b> יותר אנשים שואלים את ChatGPT או את Gemini ״מי עושה תיקון מזגנים באשדוד?״, ומקבלים תשובה עם שמות וקישורים.</li>
+      <li><b>גוגל, גוגל מפות ו-Waze.</b> ״חשמלאי בחולון״, ״מנעולן קרוב אליי״. בישראל 98.38% מהחיפושים נעשים בגוגל (StatCounter, ספטמבר 2026). בגוגל מפות מופיעים עסקים עם פרופיל עסק בגוגל, ומי שכבר בדרך מחפש גם בוויז.</li>
+      <li><b>התשובות שבתוך החיפוש בגוגל.</b> AI Overviews היא סקירה שכתובה בידי בינה מלאכותית ומופיעה מעל התוצאות. AI Mode הוא מצב שבו שואלים את גוגל כמו בצ׳אט. שתיהן כותבות תשובה מתוך דפים באינטרנט, ומקשרות אליהם. ב-AI Overviews משתמשים מעל 2 מיליארד איש בחודש, לפי גוגל ביולי 2025.</li>
+      <li><b>עוזרי בינה מלאכותית.</b> יותר אנשים שואלים את ChatGPT או את Gemini ״מי עושה תיקון מזגנים באשדוד?״, ומקבלים תשובה עם שמות וקישורים. בסקר של BrightLocal בארה״ב, 45% אמרו שעשו את זה בשנה האחרונה, לעומת 6% שנה קודם. זה סקר מארה״ב, והוא מראה כיוון בלבד.</li>
       <li><b>המלצה בוואטסאפ.</b> חבר שולח שם או קישור. לפני שמתקשרים, בודקים בגוגל מי זה ומה הוא עושה.</li>
       <li><b>אינסטגרם ופייסבוק.</b> שם רואים עבודות, עוקבים, ולפעמים שואלים בקבוצה של השכונה.</li>
     </ul>
@@ -229,7 +254,7 @@ footer a { color: var(--ink-2); white-space: nowrap; }
         <h3 id="m-chatgpt">ChatGPT</h3>
         <dl>
           <dt>מי</dt><dd>OpenAI</dd>
-          <dt>איפה</dt><dd>אפליקציה ואתר, וגם בתוך מוצרים אחרים.</dd>
+          <dt>איפה</dt><dd>אפליקציה ואתר, וגם בתוך מוצרים אחרים. 900 מיליון משתמשים בשבוע, לפי OpenAI בפברואר 2026.</dd>
           <dt>איך מוצא</dt><dd>יש בו חיפוש מובנה: הוא מחפש ברשת, קורא דפים ומציין מקורות.</dd>
         </dl>
       </section>
@@ -237,7 +262,7 @@ footer a { color: var(--ink-2); white-space: nowrap; }
         <h3 id="m-gemini">Google Gemini, AI Overviews ו-AI Mode</h3>
         <dl>
           <dt>מי</dt><dd>Google</dd>
-          <dt>איפה</dt><dd>אפליקציית Gemini, טלפוני אנדרואיד, ובתוך החיפוש בגוגל.</dd>
+          <dt>איפה</dt><dd>אפליקציית Gemini, טלפוני אנדרואיד, ובתוך החיפוש בגוגל. לאפליקציה 950 מיליון משתמשים בחודש, לפי גוגל ביולי 2026.</dd>
           <dt>איך מוצא</dt><dd>נשען על האינדקס של גוגל ועל המידע של גוגל מפות.</dd>
         </dl>
       </section>
@@ -355,6 +380,17 @@ footer a { color: var(--ink-2); white-space: nowrap; }
         <a class="card" href="../../guides/website-or-instagram/"><span class="k">אתר ורשתות</span><h3>אתר או אינסטגרם לעסק?</h3><p>למה כדאי את שניהם, ואיך הם עובדים יחד.</p><span class="more">לקרוא</span></a>
         <a class="card" href="../../guides/website-cost/"><span class="k">מחירים</span><h3>כמה עולה אתר לעסק קטן?</h3><p>טווחים נפוצים בשוק, מה כלול בכל דרך, ומה לשאול לפני שמשלמים.</p><span class="more">לקרוא</span></a>
       </div>
+    </section>
+
+    <section class="src" aria-labelledby="t-src">
+      <h2 id="t-src">מקורות</h2>
+      <ol>
+        <li id="s1">StatCounter Global Stats, נתח מנועי החיפוש בישראל, כל הפלטפורמות, ספטמבר 2026: <a href="https://gs.statcounter.com/search-engine-market-share/all/israel" rel="noopener" target="_blank">gs.statcounter.com</a></li>
+        <li id="s2">TechCrunch, על ההודעה של OpenAI, פברואר 2026: <a href="https://techcrunch.com/2026/02/27/chatgpt-reaches-900m-weekly-active-users" rel="noopener" target="_blank">techcrunch.com</a></li>
+        <li id="s3">Google, דברי המנכ״ל בדוחות הרבעון השני של 2026, יולי 2026: <a href="https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q2-2026/" rel="noopener" target="_blank">blog.google</a></li>
+        <li id="s4">Google, דברי המנכ״ל בדוחות הרבעון השני של 2025, יולי 2025: <a href="https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q2-2025/" rel="noopener" target="_blank">blog.google</a></li>
+        <li id="s5">BrightLocal, Local Consumer Review Survey 2026, סקר של 1,002 מבוגרים בארה״ב: <a href="https://www.brightlocal.com/research/local-consumer-review-survey/" rel="noopener" target="_blank">brightlocal.com</a></li>
+      </ol>
     </section>
   </article>
 </div>
