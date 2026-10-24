@@ -156,13 +156,14 @@ async function estimates(b) {
     // A chat that opens with a typed question (movers: "from where?") uses the prefilled answers later on.
     const typing = await p.$('.lb-panel.open form.on input:visible');
     // A chat that opens with a question the calculator doesn't answer (catering and cakes: "which event?") must
-    // still skip the prefilled ones: driven to the handoff, it asks fewer questions than a chat opened from the corner.
+    // still answer the prefilled ones by itself: driven to the handoff, it takes fewer taps than a chat opened from the corner.
     let asked = '';
     if (first.length <= 1 && !typing) {
-      const drive = async () => { for (let i = 0; i < 18; i++) { if (await p.$('.lb-panel .lb-wa')) break; await p.waitForTimeout(1500);
+      const drive = async () => { let taps = 0; for (let i = 0; i < 18; i++) { if (await p.$('.lb-panel .lb-wa')) break; await p.waitForTimeout(1500);
+        if (await p.$('.lb-panel .lb-wa')) break;
         const chip = await p.$('.lb-panel .lb-chips button:visible'), input = await p.$('.lb-panel form input:visible');
-        if (chip) await chip.click(); else if (input) { const t = await input.getAttribute('type'); await input.fill(t === 'tel' ? '0501234567' : 'בדיקה כהן'); await input.press('Enter'); } }
-        return (await p.$('.lb-panel .lb-wa')) ? p.$$eval('.lb-panel .lb-msg:not(.me)', (x) => x.length) : -1; };
+        if (chip) { await chip.click(); taps++; } else if (input) { const t = await input.getAttribute('type'); await input.fill(t === 'tel' ? '0501234567' : 'בדיקה כהן'); await input.press('Enter'); taps++; } }
+        return (await p.$('.lb-panel .lb-wa')) ? taps : -1; };
       const withPrefill = await drive();
       await p.goto(`http://localhost:8790/${d}/index.html`); await p.waitForTimeout(600); await p.click('.lb-launch');
       const plain = await drive();
