@@ -317,7 +317,7 @@
           <div class="pads" role="group" aria-label="סגנונות">
             <button class="pad" type="button" aria-pressed="false" data-beat="mizrahi"><b>מזרחית</b><span>מקצב מקסום · <span class="num">96</span> BPM</span></button>
             <button class="pad" type="button" aria-pressed="false" data-beat="hits"><b>להיטים ישראלים</b><span>פופ לרחבה · <span class="num">118</span> BPM</span></button>
-            <button class="pad" type="button" aria-pressed="false" data-beat="intl"><b>לועזי</b><span>היפ הופ ו-R&amp;B · <span class="num">96</span> BPM</span></button>
+            <button class="pad" type="button" aria-pressed="false" data-beat="intl"><b>לועזי</b><span>היפ הופ ו-R&amp;B · <span class="num">92</span> BPM</span></button>
             <button class="pad" type="button" aria-pressed="false" data-beat="house"><b>האוס</b><span>ארבע על הרצפה · <span class="num">124</span> BPM</span></button>
           </div>
           <div class="steps16" id="steps16" aria-hidden="true"></div>
@@ -469,7 +469,7 @@
     const BEATS = {
       mizrahi: { name: "מזרחית", style: "מזרחית וים תיכוני", bpm: 96, d: [0, 8], t: [4, 6, 12], ka: [2, 10, 14, 15], h: [] },
       hits: { name: "להיטים ישראלים", style: "להיטים ישראלים", bpm: 118, k: [0, 6, 8], s: [4, 12], h: [0, 2, 4, 6, 8, 10, 12, 14], b: { 0: 73.4, 6: 73.4, 8: 98, 14: 87.3 } },
-      intl: { name: "לועזי", style: "לועזי ומיינסטרים", bpm: 96, k: [0, 3, 8, 11], s: [4, 12], h: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], b: { 0: 55, 3: 55, 8: 65.4, 11: 61.7 } },
+      intl: { name: "לועזי", style: "לועזי ומיינסטרים", bpm: 92, k: [0, 3, 8, 11], s: [4, 12], h: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], b: { 0: 55, 3: 55, 8: 65.4, 11: 61.7 } },
       house: { name: "האוס", style: "האוס ודאנס", bpm: 124, k: [0, 4, 8, 12], s: [4, 12], o: [2, 6, 10, 14], b: { 2: 55, 6: 55, 10: 65.4, 14: 61.7 } },
     };
     let ctx = null, out = null, noise = null, cur = null, step = 0, next = 0, timer = 0, raf = 0, endAt = 0;
