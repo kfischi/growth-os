@@ -31,7 +31,7 @@ export function guideFor(T) {
       { id: "style", type: "style", ask: "קודם כול, איך האתר ייראה? בוחרים תבנית וצבעים, ורואים את זה מיד באתר. אפשר להחליף בכל רגע." },
       { id: "business_name", type: "text", field: "business_name", ask: "איך קוראים לעסק? כמו שהלקוחות מכירים אתכם.", placeholder: (T.fields && T.fields.business_hint) || "למשל: אורן מים" },
       { id: "region", type: "region", ask: "באיזה אזור אתם עובדים?" },
-      { id: "towns", type: "towns", ask: g.townsAsk || "לאילו ישובים אתם מגיעים? סמנו, ומה שחסר תוסיפו." },
+      { id: "towns", type: "towns", ask: g.townsAsk || "לאילו יישובים אתם מגיעים? סמנו, ומה שחסר תוסיפו." },
       { id: "services", type: "services", ask: g.servicesAsk || "מה אתם עושים הכי הרבה? סמנו עד 6, ומה שחסר תוסיפו." },
       { id: "prices", type: "prices", ask: "להציג מחירים? אלה טווחים מקובלים, לדוגמה בלבד. השאירו רק מה שנכון אצלכם, שנו או הורידו." },
       { id: "response_time", type: "pick", field: "response_time", ask: "תוך כמה זמן אתם באמת חוזרים ללקוח?", options: g.response },

@@ -453,7 +453,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, איפה, כמה דחוף, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, איפה, כמה דחוף, יישוב וטלפון. בלי טופס ארוך.</span></div></li>
           <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם זו פתיחה דחופה או החלפת צילינדר, ומה לקחת לרכב.</span></div></li>
           <li><div><b>חוזרים ללקוח עם זמן הגעה</b><span>הצ׳אט עונה גם כשאתם באמצע עבודה ולא יכולים להרים טלפון.</span></div></li>
         </ol>
@@ -467,7 +467,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 מה קרה: ננעלתי בחוץ
 איפה: דירה
 מתי: עכשיו
-ישוב: פרדס חנה
+יישוב: פרדס חנה
 שם: רוני שמש
 טלפון: 052-7654321<time>22:15</time></div>
               </div>
@@ -506,7 +506,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { key: "photo", label: "תמונה", ask: "יש תמונה של המנעול או של הדלת? ככה אני מגיע עם הצילינדר הנכון.", photo: true },
       { key: "place", label: "איפה", ask: "איזו דלת?", chips: ["דירה", "בית פרטי", "עסק"] },
       { key: "when", label: "מתי", ask: (d) => (d.issue === "ננעלתי בחוץ" ? "אתם בחוץ עכשיו?" : "מתי צריך?"), chips: ["עכשיו", "היום", "השבוע"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
@@ -516,7 +516,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       const safe = d.issue === "ננעלתי בחוץ" && d.when === "עכשיו" ? "\nאם נשאר בפנים ילד, או שמשהו דולק על הגז, התקשרו עכשיו גם ל־102." : "";
       return `תודה ${first}. רשמתי: ${d.issue}, ${d.place} ב${d.city}. ${price}${safe}\nלחצו למטה, ועידו חוזר עם זמן הגעה.`;
     },
-    summary: (d) => `קריאה מהאתר (דמו מנעולן)\nמה קרה: ${d.issue}\nאיפה: ${d.place}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה מהאתר (דמו מנעולן)\nמה קרה: ${d.issue}\nאיפה: ${d.place}\nמתי: ${d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

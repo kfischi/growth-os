@@ -286,7 +286,7 @@
       <div class="towns"><span>חדרה</span><span>עמק חפר</span><span>נתניה</span><span>פרדס חנה כרכור</span><span>אור עקיבא</span><span>קיסריה</span><span>בנימינה</span><span>כפר יונה</span></div>
     </div>
     <div>
-      <p>לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט ותקבלו תשובה מיד.</p>
+      <p>לא בטוחים אם אני מגיע אליכם? כתבו את היישוב בצ׳אט ותקבלו תשובה מיד.</p>
       <button class="btn btn-signal" type="button" data-open-bot>לבדוק בצ׳אט</button>
       <a class="save-contact" href="contact.vcf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את אורן מים באנשי הקשר</a>
     </div>
@@ -311,16 +311,16 @@
       { key: "issue", label: "תקלה", ask: "מה התקלה?", chips: ["סתימה", "נזילה", "דוד ומים חמים", "איתור נזילה", "התקנה או החלפה"] },
       { key: "photo", label: "תמונה", ask: "יש תמונה של התקלה? זה עוזר לתת מחיר מדויק יותר.", photo: true },
       { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["עכשיו, יש מים על הרצפה", "היום", "השבוע"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור? לשם יישלח גם אישור בוואטסאפ.", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !d.urgency.startsWith("עכשיו") },
     ],
     closing: (d) => [`תודה ${d.name.split(" ")[0]}! ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}. המחיר הסופי אחרי אבחון.`, d.urgency.startsWith("עכשיו") ? "עד שאגיע: סגרו את הברז הראשי." : "", "לחצו למטה, והפרטים יגיעו אליי בוואטסאפ."].filter(Boolean).join("\n"),
-    summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    summary: (d) => `קריאה חדשה מהאתר\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     capture: {
       endpoint: SITE.leads,
-      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, callback: d.callback, message: `דחיפות: ${d.urgency}. ישוב: ${d.city}.` }),
+      lead: (d) => ({ name: d.name, phone: d.phone, service: d.issue, callback: d.callback, message: `דחיפות: ${d.urgency}. יישוב: ${d.city}.` }),
       saved: (d) => `תודה ${d.name.split(" ")[0]}! הקריאה אצלי, ואישור בדרך אליכם בוואטסאפ. ${d.issue} עולה בדרך כלל ${RANGES[d.issue]}, והמחיר הסופי אחרי אבחון.${d.urgency.startsWith("עכשיו") ? "\nעד שאגיע: סגרו את הברז הראשי." : ""}`,
     },
   });

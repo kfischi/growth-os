@@ -270,7 +270,7 @@
 בניין: דירה מתחת לגג
 גג: בטון
 דחיפות: מטפטף עכשיו
-ישוב: קריית ביאליק
+יישוב: קריית ביאליק
 שם: יוסי מזרחי
 טלפון: 052-7654321<time>06:50</time></div>
               </div>
@@ -314,7 +314,7 @@
         tip: { when: (v) => v === NOW, id: "leak-now", text: "בינתיים: מרחיקים מכשירי חשמל מהמים. מים ליד שקעים? מורידים את המפסק של החדר וקוראים לחשמלאי. לא עולים לגג רטוב." } },
       { key: "urgency", label: "מתי", ask: "מתי תרצו לאטום?", chips: ["לפני הגשם הבא", "בחודש הקרוב", "רק בודקים מחיר"], show: PLANNED },
       { key: "photo", label: "תמונה", ask: "יש תמונה של הכתם, של הנזילה או של הגג? כך מגיעים מוכנים.", photo: true },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חיפה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חיפה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
@@ -322,7 +322,7 @@
       const shared = d.building === "גג משותף בבניין" ? "\nגג משותף: את העבודה מתאמים עם הנציגות של הבניין." : "";
       return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.need}${d.spot ? ", " + d.spot : ""}, ${d.building}, גג ${d.roof}, ב${d.city}. ${RANGES[d.need] || ""}, והמחיר הסופי אחרי בדיקה.${shared}\nלחצו למטה, ונחזור אליכם עם זמן בדיקה.`;
     },
-    summary: (d) => `קריאה מהאתר (דמו איטום)\nמה צריך: ${d.need}${d.spot ? "\nאיפה דולף: " + d.spot : ""}\nבניין: ${d.building}\nגג: ${d.roof}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה מהאתר (דמו איטום)\nמה צריך: ${d.need}${d.spot ? "\nאיפה דולף: " + d.spot : ""}\nבניין: ${d.building}\nגג: ${d.roof}\nדחיפות: ${d.urgency}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
