@@ -107,3 +107,25 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: Realistic photo inside a small bridal atelier in Ramat Gan, an ivory A-line wedding dress with a lace bodice on a dress form, a pink tape measure around the form's neck, a deep wine velvet curtain to one side, a rail of white dresses in garment bags behind, soft daylight, blush and ivory palette, no people, no text, no logos, no yellow, gold or champagne tones.
 2. Work, 4:5: Close-up realistic photo of a seamstress's hands pinning the hem of a white tulle skirt on a bride standing on a low round platform, cropped below the waist so no face shows, a pin cushion on the wrist, a wine-coloured carpet, cool daylight, no text, no logos, no yellow or gold.
 3. Work, 4:3: Realistic photo of a dressmaker's table in an Israeli studio, ivory crepe and lace fabric swatches, a pencil sketch of a dress silhouette without any writing, tailor's chalk, scissors and a tape measure, a blush wall behind, soft natural light, no people, no text or letters, no logos, no yellow.
+
+## Hero photos made in Canva (2026-10-24)
+
+One hero photo per demo, generated in Canva at 4:5. Each is in the Canva account's uploads. Download it at full size, crop it to WebP and save it as `demos/shared/photos/<demo>-hero.webp`.
+
+| Demo | Canva image |
+| --- | --- |
+| carpenter | https://www.canva.com/M/MAHY69DtMhg |
+| aluminum | https://www.canva.com/M/MAHY6xaFsHg |
+| hair | https://www.canva.com/M/MAHY663gioI |
+| physio | https://www.canva.com/M/MAHY68X2A2Y |
+| water-heater | https://www.canva.com/M/MAHY64xy4E0 |
+| tiling | https://www.canva.com/M/MAHY64QulvA |
+| catering | https://www.canva.com/M/MAHY69hYW1s |
+| dj | https://www.canva.com/M/MAHY62iJ098 |
+| garage | https://www.canva.com/M/MAHY63snXM4 |
+| phone-repair | https://www.canva.com/M/MAHY62ix9j8 |
+| cakes | https://www.canva.com/M/MAHY66_vdC4 |
+| lashes-brows | https://www.canva.com/M/MAHY6zykUGU |
+| hair-removal | https://www.canva.com/M/MAHY61dwUf0 |
+| makeup | https://www.canva.com/M/MAHY68hUN88 |
+| bridal | https://www.canva.com/M/MAHY6-oGtAg |
