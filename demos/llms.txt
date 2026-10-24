@@ -26,6 +26,9 @@ Multi Landing מיועד לבעלי מקצוע ולעסקים קטנים שהפ�
 - [דף הבית](https://service-pro-web.netlify.app/): מה זה, איך זה עובד, מחיר ושאלות נפוצות.
 - [כל הדוגמאות](https://service-pro-web.netlify.app/all/): 30 אתרים לדוגמה, אחד לכל תחום.
 - [סרטון הסבר](https://service-pro-web.netlify.app/film/): כל שלבי הבנייה בשלוש וחצי דקות.
+- [מדריכים לבעלי עסקים](https://service-pro-web.netlify.app/guides/): תשובות ישרות לשאלות לפני שבונים אתר.
+- [כמה עולה אתר לעסק קטן?](https://service-pro-web.netlify.app/guides/website-cost/): טווחים נפוצים בשוק, מה כלול בכל דרך, והמחיר שלנו.
+- [אתר או אינסטגרם לעסק?](https://service-pro-web.netlify.app/guides/website-or-instagram/): למה כדאי את שניהם, ואיך הם עובדים יחד.
 - [לבנות אתר](https://service-pro-web.netlify.app/build/): הבונה בצ׳אט.
 - [תנאים וביטולים](https://service-pro-web.netlify.app/terms/)
 - [פרטיות](https://service-pro-web.netlify.app/privacy/)
