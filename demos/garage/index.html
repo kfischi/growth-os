@@ -514,7 +514,8 @@
       // one label per key: the summary card lists a key once, whichever of its steps was asked
       { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: [URGENT, "היום או מחר", "השבוע", "רק בודק מחיר"], show: (d) => !PLANNED(d) && !RED(d),
         tip: { when: (v) => v === URGENT, id: "stop-driving", text: "לא נוסעים ברכב לא בטוח. אורות חירום, אפוד, ויוצאים מהרכב אל מאחורי המעקה. אחר כך מזמינים שירותי דרך." } },
-      { key: "when", ask: "איפה הרכב עכשיו?", chips: ["עצרתי בצד", "בבית או בחניה", "עדיין נוסע"], show: RED },
+      { key: "where", label: "איפה הרכב", ask: "איפה הרכב עכשיו?", chips: ["עצרתי בצד", "בבית או בחניה", "עדיין נוסע"], show: RED,
+        tip: { when: (v) => v === "עדיין נוסע", id: "red-light", text: "עצרו עכשיו בצד, במקום בטוח, וכבו את המנוע. נמשיך מהשוליים." } },
       { key: "when", ask: "מתי נוח לכם להביא את הרכב?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
       { key: "city", label: "ישוב", ask: "באיזה ישוב אתם?", input: "text", placeholder: "למשל: ראשון לציון" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
@@ -529,7 +530,7 @@
       const test = d.issue === "הכנה לטסט" ? "\nאת הטסט עצמו מחליט מכון הרישוי. אני בודק ומתקן מראש את מה שאפשר." : "";
       return `תודה ${first}. רשמתי: ${what}, ${d.car}, ב${d.city}. ${price}${safe}${test}\nלחצו למטה, ואני חוזר אליכם עם תור.`;
     },
-    summary: (d) => `פנייה מהאתר (דמו מוסך)\nמה צריך: ${d.issue}${d.light ? `\nנורה: ${d.light}` : ""}\nרכב: ${d.car}${d.km ? `\nק״מ: ${d.km}` : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `פנייה מהאתר (דמו מוסך)\nמה צריך: ${d.issue}${d.light ? `\nנורה: ${d.light}` : ""}\nרכב: ${d.car}${d.km ? `\nק״מ: ${d.km}` : ""}${d.when ? `\nמתי: ${d.when}` : ""}${d.where ? `\nאיפה הרכב: ${d.where}` : ""}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
