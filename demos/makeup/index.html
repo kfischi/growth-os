@@ -100,7 +100,7 @@
   .palette .pan { stroke: rgba(0,0,0,.2); stroke-width: 1.5; transition: fill .35s; }
   .palette .press { fill: none; stroke: rgba(255,255,255,.3); stroke-width: 1.5; }
   .palette .lip { transition: fill .35s; }
-  .palette text { font: 600 11px var(--mono); fill: #e6d6e7; }
+  .palette text { font: 500 13px var(--body); fill: #e6d6e7; }
   .controls { min-width: 0; display: grid; gap: 16px; }
   .ctl b { display: block; font-size: 15px; margin-bottom: 8px; }
   .ctl-row { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -187,8 +187,8 @@
   .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin-bottom: 20px; color: var(--ink); }
   .hero h1 em { display: block; font-style: normal; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--plum); margin-top: 12px; }
   .hero .btn-plum { box-shadow: 0 16px 32px -14px rgba(45,13,48,.78), 0 2px 6px -2px rgba(45,13,48,.35); }
-  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
-  .hframe { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #eadde6;
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 540px; aspect-ratio: 10 / 11; justify-self: center; }
+  .hframe { position: absolute; inset: 5% 2% 5% 16%; border-radius: 34px; overflow: hidden; background: #eadde6;
     box-shadow: 0 0 0 1px rgba(45,13,48,.08), 0 50px 90px -46px rgba(45,13,48,.62), 0 18px 34px -26px rgba(45,13,48,.35); }
   .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
@@ -196,11 +196,11 @@
     font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
   @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
   .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
-  .g-day { display: grid; gap: 2px; top: 2%; inset-inline-end: 0; }
+  .g-day { display: grid; gap: 2px; top: 0; inset-inline-end: 0; }
   .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--berry); box-shadow: 0 0 0 4px rgba(173,39,86,.16); }
   .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
   .g-day small { font-size: 13px; color: var(--ink-soft); }
-  .g-price { display: grid; gap: 5px; bottom: 2%; inset-inline-start: 0; width: min(300px, 68%); animation-delay: .15s; }
+  .g-price { display: grid; gap: 5px; bottom: 0; inset-inline-start: 0; width: min(300px, 68%); animation-delay: .15s; }
   .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
   .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
   .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--plum-deep); white-space: nowrap; }
@@ -213,7 +213,7 @@
   @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
   @media (max-width: 560px) {
     .g-chat { display: none; }
-    .hframe { inset: 10% 0 16% 8%; border-radius: 28px; }
+    .hframe { inset: 5% 0 5% 8%; border-radius: 28px; }
     .glass { padding: 10px 12px; border-radius: 16px; }
     .g-day b { font-size: 15px; }
     .g-price { width: 82%; }
@@ -255,6 +255,7 @@
               <linearGradient id="mir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbf7fa"/><stop offset=".55" stop-color="#e8dde6"/><stop offset="1" stop-color="#d6c6d4"/></linearGradient>
             </defs>
             <rect class="table" width="400" height="470"/>
+            <g transform="translate(16 18) scale(.92)">
             <!-- the lid with its round mirror -->
             <circle class="shell" cx="182" cy="140" r="112"/>
             <circle class="rim" cx="182" cy="140" r="100"/>
@@ -284,6 +285,7 @@
             <rect class="lip-case" x="330" y="360" width="34" height="74" rx="5"/>
             <rect x="334" y="346" width="26" height="18" rx="2" fill="#8a6a8c"/>
             <path class="lip" d="M337 346 V318 L357 306 V346 Z"/>
+            </g>
           </svg>
         </div>
         <div class="glass g-day" aria-hidden="true"><span><i></i>איפה עובדת</span><b>בסטודיו ברחובות</b><small>ולכלות ולאירועים גם אצלכם בבית</small></div>
@@ -312,7 +314,7 @@
           <circle class="pan" data-pan="2" cx="56" cy="168" r="26"/><circle class="press" cx="56" cy="168" r="16"/>
           <circle class="pan" data-pan="3" cx="120" cy="168" r="26"/><circle class="press" cx="120" cy="168" r="16"/>
           <circle class="pan" data-pan="4" cx="184" cy="168" r="26"/><circle class="press" cx="184" cy="168" r="16"/>
-          <text x="72" y="122" text-anchor="middle">BASE</text><text x="168" y="122" text-anchor="middle">BLUSH</text>
+          <text x="72" y="124" text-anchor="middle">בסיס</text><text x="168" y="124" text-anchor="middle">סומק</text>
           <rect x="40" y="236" width="160" height="38" rx="19" fill="#3d1740"/>
           <path class="lip" id="lipSwatch" d="M58 255 C80 240 120 240 182 255 C120 270 80 270 58 255 Z"/>
         </svg>
