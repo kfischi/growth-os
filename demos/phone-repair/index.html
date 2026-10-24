@@ -91,6 +91,7 @@
   .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: var(--mat);
     box-shadow: 0 0 0 1px #c4cee0, 0 50px 90px -46px rgba(15,26,51,.75), 0 12px 24px -16px rgba(29,78,216,.35); }
   .frame-l svg { display: block; width: 100%; height: 100%; }
+  .bench text { direction: ltr; }
   .bench .mm { font: 500 11px var(--mono); fill: #8fa6dc; }
   .bench .lab { font: 600 12px var(--mono); fill: #c8d5f2; text-anchor: middle; }
   .bench .lid { transform-box: view-box; animation: lid 1.6s .5s cubic-bezier(.3,.6,.25,1) both; }
@@ -348,7 +349,7 @@
             <g fill="#c8d5f2"><circle cx="58" cy="447" r="5"/><circle cx="76" cy="447" r="5"/><circle cx="128" cy="447" r="5"/><circle cx="190" cy="447" r="5"/><circle cx="251" cy="447" r="4"/></g>
             <g stroke="#16307a" stroke-width="1.6"><path d="M55 447h6M58 444v6M73 447h6M76 444v6M125 447h6M128 444v6M187 447h6M190 444v6M248.5 447h5M251 444.5v5"/></g>
           </g>
-          <text class="mm" x="300" y="452">1.2 · 1.2 · 1.5 · 1.5 · 2.0 mm</text>
+          <g class="mm" text-anchor="middle"><text x="67" y="420">1.2</text><text x="128" y="420">1.5</text><text x="190" y="420">1.5</text><text x="251" y="420">2.0</text></g>
         </svg>
       </div>
       <div class="glass note" aria-hidden="true"><p class="q">המסך נסדק, והמגע עובד רק בחלק. כמה זה?</p><p class="a">שלחו את הדגם ותמונה. אני אומר מחיר לפני שפותחים.</p></div>
