@@ -638,7 +638,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
             <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>במחיר השקה</b> – נהנים מהנחה קבועה במחיר החודשי, לתמיד.</span></p>
             <p class="amount"><b><bdi>1,590 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
-            <p class="per" data-m="290" data-was="390"></p>
+            <p class="per" data-m="290" data-was="390"><s><bdi>390 ₪</bdi></s> <bdi>290 ₪</bdi> לחודש<small>מחיר השקה, נעול לתמיד. מבטלים מתי שרוצים</small></p>
             <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
             <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
             <p class="inc-n"><b>16</b> דברים כלולים</p>
@@ -807,7 +807,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   screen.appendChild(siteFor(cur)); stage.style.backgroundColor = tint(cur);
   $('#nowName').textContent = `${cur.name} · ${cur.trade}`;
 
-  /* ---- 3 · the prices: the monthly line, with the launch price over the struck-through regular one ---- */
+  /* ---- 3 · the prices: the monthly line, with the launch price over the struck-through regular one.
+     The same line is written in the HTML too, so crawlers that don't run scripts read the monthly price. ---- */
   (() => {
     const nis = (n) => `<bdi>${n.toLocaleString('he-IL')} ₪</bdi>`;
     $$('.plan .per').forEach((el) => { const m = +el.dataset.m, was = +el.dataset.was;
