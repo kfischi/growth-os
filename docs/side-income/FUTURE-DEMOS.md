@@ -15,8 +15,8 @@ To launch one:
 | --- | --- | --- |
 | נגר | `demos/carpenter/` | נגריית אלון · מטבחים וארונות (רחובות) |
 | אלומיניום | `demos/aluminum/` | רז אלומיניום (אשדוד) |
-| דוד שמש וחימום מים | `demos/water-heater/` | |
-| ריצוף וחיפוי | `demos/tiling/` | |
+| דוד שמש וחימום מים | `demos/water-heater/` | גלעד דודי שמש (פתח תקווה) |
+| ריצוף וחיפוי | `demos/tiling/` | יניב ריצוף וחיפוי (מודיעין) |
 | מוסך | `demos/garage/` | |
 | תיקון סלולר ומחשבים | `demos/phone-repair/` | |
 | עיצוב שיער לנשים | `demos/hair/` | שירה לוי · עיצוב שיער (כפר סבא) |
@@ -47,3 +47,13 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: Realistic photo of a bright, modern physiotherapy clinic room in Israel, a treatment bed with navy vinyl, a rolled exercise mat, resistance bands and a foam roller on a shelf, a patient's shoulder with coral kinesiology tape and a therapist's hands guiding the arm upward, cropped at the shoulders so no faces show, cool daylight, white and navy palette, no text, no logos, no yellow.
 2. Work: Close-up realistic photo of a physiotherapist's hands measuring knee bend with a goniometer on a patient lying on a treatment bed, shorts and bare knee, clinical but warm daylight, navy and white tones, no faces, no text, no logos, no yellow.
 3. Work: Realistic photo of a home-visit physiotherapy session in an Israeli apartment living room, an older person's legs and hands holding a light resistance band while seated on a chair, the therapist's hands supporting the ankle, a tiled floor and a window with soft light, no faces, no text, no logos, no yellow.
+
+### Water heater
+1. Hero, 4:5: Realistic photo of a flat concrete rooftop in an Israeli city at soft late-afternoon light. A white cylindrical solar water heater tank on a galvanized steel stand, two dark-blue glass solar collectors tilted beside it, copper and insulated pipes connecting them, an open technician's toolbox and a multimeter on the roof. Other rooftops with water tanks behind, pale blue sky, muted steel and copper tones, no people, no text, no logos, no yellow.
+2. Work, 4:5: Close-up of a technician's gloved hands, no face, replacing the electric heating element at the bottom of an opened white solar water tank on a roof. A new coiled copper element, the old one crusted with white limescale lying on a cloth, a wrench and screwdriver nearby. Natural daylight, shallow depth of field, no text, no logos, no yellow.
+3. Work, 4:5: Realistic photo of a newly installed white water heater tank on a stand on an Israeli apartment building roof, fresh insulated pipes and a neatly mounted grey thermostat cover. The old rusty tank lies disconnected beside it, ready to be taken away. Overcast winter light, concrete and steel palette, no people, no text, no logos, no yellow.
+
+### Tiling
+1. Hero, 4:5: Realistic photo of a living room floor in an Israeli apartment halfway through tiling. Large light-grey porcelain tiles 60 by 60 already laid with thin grey grout lines, the next row bare grey adhesive with notched trowel ridges, a spirit level and small plastic tile spacers on the tiles, a stack of tile boxes by a white wall. Soft daylight from a window, no people, no text, no logos, no yellow.
+2. Work, 4:5: Close-up of a tiler's gloved hand, no face, pressing a large porcelain tile into adhesive with a rubber mallet beside it, red cross spacers in the joints, a notched trowel resting on the bucket edge. Clean modern bathroom walls behind in matte deep green tiles, natural light, shallow depth of field, no text, no logos, no yellow.
+3. Work, 4:5: Realistic before-and-after detail of a shower wall in an Israeli bathroom. Left half with old dark stained grout lines, right half freshly renewed with clean light-grey grout between white rectangular wall tiles, a grout float and a damp sponge on the shower floor. Bright even light, no people, no text, no logos, no yellow.
