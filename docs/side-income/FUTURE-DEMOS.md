@@ -23,6 +23,8 @@ To launch one:
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
 | קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
 | DJ לאירועים | `demos/dj/` | DJ עומר לוי (חיפה והצפון) |
+| ריסים וגבות | `demos/lashes-brows/` | עדי שגיא · ריסים וגבות (רמת גן) |
+| הסרת שיער (לייזר ושעווה) | `demos/hair-removal/` | קליניקת אלמה · הסרת שיער (חולון) |
 | עוגות מעוצבות (קונדיטורית ביתית) | `demos/cakes/` | המתוקים של נוי · עוגות מעוצבות (הוד השרון) |
 
 ## Image prompts
@@ -83,3 +85,13 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: A two-tier designed cake on a white cake stand on the counter of a bright Israeli home kitchen. Soft blush-pink buttercream, a dark chocolate drip on the top tier, fresh raspberries and blackberries on top, a ring of chopped pistachio around the base. Pale tiled backsplash, a piping bag and an offset spatula on the counter, soft window daylight, photorealistic, no people, no text or lettering on the cake, no logos, no yellow, cream or caramel tones.
 2. Work, 4:3: Hands in a dark apron piping small rosettes of pale pink cream on the edge of a cake on a turntable, only the hands and forearms show. A home kitchen counter with bowls of berries and pistachios, natural window light, shallow depth of field, photorealistic, no faces, no text, no logos, no yellow.
 3. Work, 4:3: A tray of individual desserts ready for pickup on an Israeli kitchen table: small glass cups of berry mousse, mini tartlets with raspberries, pistachio cubes, beside a closed white cake box. Late afternoon daylight, blush and cocoa palette, photorealistic, no people, no text or labels, no logos, no yellow.
+
+### Lashes and brows
+1. Hero, 4:5: Realistic macro photo of one closed eye with fresh classic lash extensions, a pink gel pad under the lower lashes, a lash artist's gloved hand holding fine tweezers at the lash line, the face cropped to the eye and brow only, natural brow above, cool white ring-light reflection, soft rose and navy tones, a small home studio in an Israeli apartment blurred behind, no full face, no text, no logos, no yellow.
+2. Work: Close-up realistic photo of a freshly laminated, brushed-up natural brow with clean edges, the face cropped to the brow and closed eye, a small spoolie brush beside it on a white towel, soft daylight, neutral skin tones, no full face, no text, no logos, no yellow.
+3. Work: Realistic flat-lay on a white treatment trolley in a small Israeli studio: black lash trays with rows of curled lashes, two pairs of fine tweezers, a glass glue stone, pink gel pads and a few spoolie brushes, cool daylight, navy and rose accents, no people, no text, no logos, no brand names, no yellow.
+
+### Hair removal
+1. Hero, 4:5: Realistic photo of a calm, bright hair removal clinic room in Israel: a treatment bed with teal vinyl and a fresh paper sheet, a rolled white towel, a modern laser device on a cart with its handpiece on a hook and a blank dark screen, a pair of protective goggles on the bed, a small green plant on a shelf, cool daylight, teal and white palette, no people, no text, no logos, no yellow.
+2. Work: Close-up realistic photo of a therapist's gloved hands holding a laser handpiece over a lower leg (shin only) resting on a teal treatment bed, a white towel covering the leg above the knee, the rest of the body out of frame, soft cool light, no faces, no text, no logos, no yellow.
+3. Work: Realistic photo of a wax station in a clean Israeli clinic: a wax warmer, wooden spatulas in a glass jar, a roll of paper strips, a bottle of soothing lotion without a label and folded white towels on a steel trolley, soft daylight, teal and white tones, no people, no text, no logos, no yellow.

@@ -295,7 +295,7 @@
 <main>
   <section class="toolsec" id="map">
     <div class="wrap">
-      <div class="head"><h2>בוחרים אזורים במפה</h2><p>בוחרים שיטה, ולוחצים על אזור אחד או יותר. בצד רואים מחיר לדוגמה לטיפול, ובלייזר גם לסדרה של 6.</p></div>
+      <div class="head"><h2>בוחרים אזורים במפה</h2><p>בוחרים שיטה, ולוחצים על אזור אחד או יותר. רואים מחיר לדוגמה לטיפול, ובלייזר גם לסדרה של 6.</p></div>
       <div class="map-grid">
         <div class="board">
           <div class="ctl"><b id="lblMethod">שיטה</b><div class="ctl-row" role="group" aria-labelledby="lblMethod" id="method">
@@ -355,7 +355,7 @@
 
   <section id="prices">
     <div class="wrap">
-      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה, לאזור. סדרה של 6 בלייזר היא מחיר חבילה, לא הבטחה למספר הטיפולים: כמה טיפולים צריך, משתנה מאדם לאדם.</p></div>
+      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה, לאזור. סדרה של 6 בלייזר היא מחיר חבילה, לא הבטחה למספר הטיפולים. מספר הטיפולים שצריך משתנה מאדם לאדם.</p></div>
       <table class="ptable" id="ptable">
         <thead><tr><th scope="col">אזור</th><th scope="col">לייזר, טיפול</th><th scope="col">לייזר, סדרה של 6</th><th scope="col">שעווה</th></tr></thead>
         <tbody></tbody>
@@ -510,7 +510,7 @@
       if (picked.length > 1) (laser ? ["ביחד", rng(sum("laser")), rng(sum("series"))] : ["ביחד", rng(sum("wax"))]).forEach((x) => { const td = document.createElement("td"); td.textContent = x; t.tFoot.rows[0].appendChild(td); });
       card.appendChild(t);
       const p = document.createElement("p"); p.className = "small";
-      p.textContent = laser ? "בדרך כלל 4 עד 8 שבועות בין טיפול לטיפול. כמה טיפולים צריך, ואם בכלל, משתנה מאדם לאדם." : "בשעווה חוזרים בדרך כלל אחרי 3 עד 5 שבועות, כשהשיער באורך של כחצי סנטימטר.";
+      p.textContent = laser ? "בדרך כלל 4 עד 8 שבועות בין טיפול לטיפול. מספר הטיפולים שצריך משתנה מאדם לאדם." : "בשעווה חוזרים בדרך כלל אחרי 3 עד 5 שבועות, כשהשיער באורך של כחצי סנטימטר.";
       card.appendChild(p);
       const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-mineral"; b.textContent = "להמשיך בצ׳אט";
       b.addEventListener("click", () => bot.open({ method: st.method, areas: AREAS.filter((a) => st.on.has(a.id)).map((a) => a.n).join(", ") }));
