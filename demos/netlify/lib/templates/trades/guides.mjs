@@ -35,4 +35,19 @@ import socialWorker from "../../../../shared/guides/social-worker.json" with { t
 import trainer from "../../../../shared/guides/trainer.json" with { type: "json" };
 import tutor from "../../../../shared/guides/tutor.json" with { type: "json" };
 
-export const GUIDE_FILES = { "ac": ac, "shutters": shutters, "security": security, "yoga": yoga, "dog-trainer": dogTrainer, "pergolas": pergolas, "roofing": roofing, "nails": nails, "driving": driving, "upholstery": upholstery, "barber": barber, "massage": massage, "cosmetics": cosmetics, "photographer": photographer, "towing": towing, "appliance": appliance, "cleaning": cleaning, "electrician": electrician, "garden": garden, "handyman": handyman, "locksmith": locksmith, "movers": movers, "music-bass": musicBass, "music-drums": musicDrums, "music-guitar": musicGuitar, "music-keys": musicKeys, "music-piano": musicPiano, "pest": pest, "plumber": plumber, "psychologist": psychologist, "renovation": renovation, "social-worker": socialWorker, "trainer": trainer, "tutor": tutor, };
+import carpenter from "../../../../shared/guides/carpenter.json" with { type: "json" };
+import aluminum from "../../../../shared/guides/aluminum.json" with { type: "json" };
+import waterHeater from "../../../../shared/guides/water-heater.json" with { type: "json" };
+import tiling from "../../../../shared/guides/tiling.json" with { type: "json" };
+import garage from "../../../../shared/guides/garage.json" with { type: "json" };
+import phoneRepair from "../../../../shared/guides/phone-repair.json" with { type: "json" };
+import hair from "../../../../shared/guides/hair.json" with { type: "json" };
+import physio from "../../../../shared/guides/physio.json" with { type: "json" };
+import catering from "../../../../shared/guides/catering.json" with { type: "json" };
+import dj from "../../../../shared/guides/dj.json" with { type: "json" };
+import cakes from "../../../../shared/guides/cakes.json" with { type: "json" };
+import lashesBrows from "../../../../shared/guides/lashes-brows.json" with { type: "json" };
+import hairRemoval from "../../../../shared/guides/hair-removal.json" with { type: "json" };
+import makeup from "../../../../shared/guides/makeup.json" with { type: "json" };
+import bridal from "../../../../shared/guides/bridal.json" with { type: "json" };
+export const GUIDE_FILES = { "ac": ac, "shutters": shutters, "security": security, "yoga": yoga, "dog-trainer": dogTrainer, "pergolas": pergolas, "roofing": roofing, "nails": nails, "driving": driving, "upholstery": upholstery, "barber": barber, "massage": massage, "cosmetics": cosmetics, "photographer": photographer, "towing": towing, "appliance": appliance, "cleaning": cleaning, "electrician": electrician, "garden": garden, "handyman": handyman, "locksmith": locksmith, "movers": movers, "music-bass": musicBass, "music-drums": musicDrums, "music-guitar": musicGuitar, "music-keys": musicKeys, "music-piano": musicPiano, "pest": pest, "plumber": plumber, "psychologist": psychologist, "renovation": renovation, "social-worker": socialWorker, "trainer": trainer, "tutor": tutor, "carpenter": carpenter, "aluminum": aluminum, "water-heater": waterHeater, "tiling": tiling, "garage": garage, "phone-repair": phoneRepair, "hair": hair, "physio": physio, "catering": catering, "dj": dj, "cakes": cakes, "lashes-brows": lashesBrows, "hair-removal": hairRemoval, "makeup": makeup, "bridal": bridal, };
