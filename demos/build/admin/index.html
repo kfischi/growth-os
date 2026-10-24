@@ -95,7 +95,7 @@
   $('#logout').addEventListener('click', () => logout());
   $('#login').addEventListener('submit', (e) => { e.preventDefault(); auth = 'admin:' + $('#key').value.trim(); store.set(auth); load(); });
 
-  const FILTERS = { todo: 'לטיפול', all: 'הכל', draft: 'בשיחה', published: 'פורסמו' };
+  const FILTERS = { todo: 'לטיפול', all: 'הכול', draft: 'בשיחה', published: 'פורסמו' };
   function paintFilters() {
     const box = $('#filters'); box.textContent = '';
     for (const [k, label] of Object.entries(FILTERS)) {

@@ -523,7 +523,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         tip: { when: (v) => v === "ריח שרוף או ניצוצות", id: "burning", text: "הורידו עכשיו את המפסק הראשי, ואל תגעו בשקע או במכשיר." } },
       { key: "photo", label: "תמונה", ask: "יש תמונה של הלוח או של מה שקרה? זה עוזר להבין לפני שמגיעים.", photo: true },
       { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"],
-        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם קופץ מיד, עצרו." } },
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם הוא קופץ מיד, עצרו." } },
       { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },

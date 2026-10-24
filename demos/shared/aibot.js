@@ -101,12 +101,12 @@
     if (/איך|זמן|שבוע/.test(t))
       return "בונים בעצמכם, בצ׳אט של בונה האתרים, מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. אחר כך מחברים את הוואטסאפ העסקי, עד שבועיים: חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. [[build]]";
     if (/התחייב|לבטל|דומיין|על שם/.test(t))
-      return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם גם אם תעזבו, והמענה האוטומטי והנציג פועלים כל עוד יש תשלום חודשי.";
+      return "אין התחייבות. התשלום מתחדש כל חודש ואפשר להפסיק מתי שרוצים. הדומיין על שמכם, והקבצים של האתר שלכם גם אם תעזבו. המענה האוטומטי והנציג פועלים כל עוד יש תשלום חודשי.";
     if (/להתחיל|לבנות|רוצה|מעוניין|מעוניינת|יאללה/.test(t))
-      return "מעולה. בונה האתרים שואל אתכם שאלה אחרי שאלה, ואתם רואים את האתר נבנה ליד. [[build]]";
+      return "מעולה. בונה האתרים שואל אתכם שאלה אחרי שאלה, ואתם רואים את האתר נבנה ליד הצ׳אט. [[build]]";
     if (/בן אדם|לדבר|שיחה|כפיר|וואטסאפ|טלפון/.test(t))
-      return "בשמחה. לחצו כאן, וההודעה תגיע אלינו בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
-    return "אני יכול להסביר איך זה עובד, לספר על המחירים, להראות דוגמה מהתחום שלכם, או לפתוח לכם את בונה האתרים. מה מעניין אתכם? [[go:how]] [[build]]";
+      return "בשמחה. הכפתור למטה שולח לנו הודעה בוואטסאפ עם מה שכבר סיפרתם. [[whatsapp:" + summary(history) + "]]";
+    return "נשמח להסביר איך זה עובד, לספר על המחירים, להראות דוגמה מהתחום שלכם, או לפתוח לכם את בונה האתרים. מה מעניין אתכם? [[go:how]] [[build]]";
   }
   // Visitor text inside a [[whatsapp:...]] marker: a "[" or "]" would break the marker.
   const clean = (t) => String(t || "").replace(/[[\]]/g, "");
@@ -188,7 +188,7 @@
         }
         if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + (cfg.offlineWa === false ? "" : " [[whatsapp:" + clean(text) + "]]")
           // A business's own chat (endpoint set) must never fall back to the sales script above.
-          : cfg.endpoint ? "כרגע אני לא זמין. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + clean(text) + "]]"
+          : cfg.endpoint ? "הצ׳אט לא זמין כרגע. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + clean(text) + "]]"
           : scripted(text, history); }
         typing.classList.remove("on");
         history.push({ role: "assistant", content: reply });
@@ -205,7 +205,7 @@
         panel.classList.add("open"); launch.setAttribute("aria-expanded", "true");
         if (hint) { hint.remove(); hint = null; launch.classList.remove("ab-call"); }
         if (window.LeadForm && window.LeadForm.act) window.LeadForm.act("chat");
-        if (!started) { started = true; render(cfg.greet || "היי, אני הנציג החכם של Multi Landing. אפשר לשאול אותי כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
+        if (!started) { started = true; render(cfg.greet || "היי, כאן הנציג החכם של Multi Landing. אפשר לשאול כל דבר על דפי נחיתה, וואטסאפ אוטומטי ונציג AI לעסק שלכם. ככה בדיוק ייראה נציג באתר שלכם."); }
         input.focus();
       }
       function close() { panel.classList.remove("open"); launch.setAttribute("aria-expanded", "false"); }

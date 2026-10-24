@@ -201,7 +201,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
         <span class="worth-in"><input id="w-val" type="number" inputmode="numeric" min="0" max="1000000" step="10" placeholder="למשל 450"><span>₪</span></span>
         <button class="ghost" type="submit">לשמור</button>
       </form>
-      <p class="hint">זו הערכה: הפניות שסימנתם "נסגר" החודש, כפול הסכום שכתבתם. רק אתם רואים אותה.</p>
+      <p class="hint">זו הערכה: הפניות שסימנתם ״נסגר״ החודש, כפול הסכום שכתבתם. רק אתם רואים אותה.</p>
       <p class="err" id="w-err" role="alert"></p>
     </div>
 
@@ -213,7 +213,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
         <button class="ghost" type="button" data-av="urgent">חירום</button>
         <button class="ghost" type="button" data-av="auto">לפי שעות הפעילות</button>
       </div>
-      <p class="hint">אפשר גם לכתוב "עסוק", "פנוי" או "חירום" בוואטסאפ למספר של העסק. "עסוק 2" זה לשעתיים. בחירום האתר כותב שאתם זמינים לקריאות דחופות, ופניות שנכנסות מסומנות כדחופות (6 שעות, או "חירום 3").</p>
+      <p class="hint">אפשר גם לכתוב ״עסוק״, ״פנוי״ או ״חירום״ בוואטסאפ למספר של העסק. ״עסוק 2״ זה לשעתיים. בחירום (6 שעות, או ״חירום 3״) האתר כותב שאתם זמינים לקריאות דחופות, ופניות שנכנסות מסומנות כדחופות.</p>
     </div>
 
     <details class="sx" id="sx" hidden>
@@ -250,7 +250,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
     <details class="links tst" id="tst" hidden>
       <summary>המלצות באתר <small id="tst-n"></small></summary>
-      <p class="hint">לקוח שסימנתם "טיפלתי" ואישרתם לו בקשה כותב המלצה, והיא עולה לאתר מיד. כאן אפשר להסתיר או להחזיר כל אחת.</p>
+      <p class="hint">לקוח שסימנתם ״טיפלתי״ ואישרתם לו בקשה כותב המלצה, והיא עולה לאתר מיד. כאן אפשר להסתיר או להחזיר כל אחת.</p>
       <ul id="tst-list"></ul>
       <p class="err" id="tst-err" role="alert"></p>
     </details>
@@ -462,7 +462,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
       });
       const del = el('button', 'ghost', 'למחוק'); del.type = 'button'; del.setAttribute('aria-label', 'למחוק את הקישור ' + k.label);
       del.addEventListener('click', async () => {
-        if (!confirm('למחוק את "' + k.label + '"? מי שילחץ עליו עדיין יגיע לאתר, אבל לא נדע שהגיע ממנו.')) return;
+        if (!confirm('למחוק את ״' + k.label + '״? מי שילחץ עליו עדיין יגיע לאתר, אבל לא נדע שהגיע ממנו.')) return;
         try { await call('POST', { unlink: k.code }, adminQuery()); data.links = links.filter((x) => x !== k); renderLinks(); }
         catch (e) { if (e.message !== 'unauthorised') $('#link-err').textContent = 'לא הצלחנו למחוק. נסו שוב.'; }
       });
@@ -504,7 +504,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (!m) return;
     const line = $('#w-line'); line.textContent = '';
     if (v) {
-      line.append('החודש סימנתם ' + m.won + ' עבודות כ"נסגר". שווי משוער: ', el('b', null, shekel(m.won * v)), '.');
+      line.append('החודש סימנתם ' + m.won + ' עבודות כ״נסגר״. שווי משוער: ', el('b', null, shekel(m.won * v)), '.');
       if (m.open) line.append(' ועוד ' + m.open + ' פניות מחכות לטיפול.');
     } else line.textContent = 'כתבו כמה שווה עבודה ממוצעת, ונראה כאן כמה שוות העבודות שהאתר הביא החודש.';
     if (document.activeElement !== $('#w-val')) $('#w-val').value = v || '';

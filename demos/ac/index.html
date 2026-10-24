@@ -357,7 +357,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div class="season-side">
         <span class="kicker">מתי לנקות</span>
         <h2>באפריל, לא ביולי.</h2>
-        <p>ביולי כולם מתקשרים באותו שבוע. ניקוי באפריל או באוקטובר תופס את המזגן לפני העומס, ותור קל יותר לקבוע.</p>
+        <p>ביולי כולם מתקשרים באותו שבוע. ניקוי באפריל או באוקטובר תופס את המזגן לפני העומס, וקל יותר לקבוע תור.</p>
         <button class="btn btn-night" data-issue="ניקוי תקופתי">לקבוע ניקוי</button>
       </div>
     </div>
@@ -455,7 +455,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
   const bot = LeadBot.init({
     estimate: { endpoint: "/api/estimate", trade: "מיזוג אוויר", prices: RANGES }, // a first look at the photo the customer attaches
     whatsapp: "972526359513",
-    name: "אלון · מיזוג אוויר", subtitle: "חוזרים אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?", hint: "נציג AI",
+    name: "אלון · מיזוג אוויר", subtitle: "חוזר אליכם לקבוע", initial: "א", launcher: "תקלה במזגן?", hint: "נציג AI",
     greet: "היי, כאן אלון.\nכמה שאלות קצרות, והפרטים יגיעו אליי לוואטסאפ.",
     steps: [
       { key: "issue", label: "תקלה", ask: "מה קורה עם המזגן?", chips: Object.keys(RANGES),
@@ -466,7 +466,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
-    closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.issue}, מזגן ${d.unit}, ב${d.city}. בדרך כלל זה עולה ${RANGES[d.issue]} ₪, ואת המחיר הסופי נותנים במקום.\nלחצו למטה, ונחזור אליכם לקבוע.`,
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! קיבלתי: ${d.issue}, מזגן ${d.unit}, ב${d.city}. בדרך כלל זה עולה ${RANGES[d.issue]} ₪, ואת המחיר הסופי נותנים במקום.\nלחצו למטה, ואחזור אליכם לקבוע.`,
     summary: (d) => `פנייה מהאתר (דמו מזגנים)\nמזגן: ${d.unit}\nתקלה: ${d.issue}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),

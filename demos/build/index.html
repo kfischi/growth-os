@@ -274,7 +274,7 @@
       <input id="fOwn" type="text" maxlength="24" placeholder="למשל: וטרינר, סטודיו ליוגה, קבלן גבס">
       <label for="fNear">איזה דמו הכי קרוב לעסק שלכם?</label>
       <select id="fNear"></select>
-      <p class="own-note">ממנו לוקחים את העיצוב, ואת התוכן משנים בבונה לפי העסק שלכם. <a href="../all/" target="_blank" rel="noopener">לראות את כל הדמואים</a></p>
+      <p class="own-note">ממנו לוקחים את העיצוב, ואת התוכן משנים בבונה לפי העסק שלכם. <a href="../all/" target="_blank" rel="noopener">לראות את כל הדוגמאות</a></p>
     </div>
     <label for="fName">איך קוראים לכם?</label>
     <input id="fName" type="text" autocomplete="name" maxlength="40" required>
@@ -866,7 +866,7 @@
     if (!confirm('לבטל את המנוי? הוא יישאר פעיל עד סוף התקופה ששולמה, ואחר כך לא נחייב יותר. האתר והדומיין נשארים שלכם. בנציג AI, המענה האוטומטי והצ׳אט ייכבו.')) return;
     b.disabled = true; const r = await call('cancel', { body: {} }); b.disabled = false;
     if (!r.ok) { bubble('fail', say(r.data.error)); return; }
-    setBilling(r.data); bubble('sys', 'המנוי בוטל. אפשר לחזור בכם עד סוף התקופה.');
+    setBilling(r.data); bubble('sys', 'המנוי בוטל. עד סוף התקופה אפשר להמשיך אותו.');
   }
   async function resumeSub(b) {
     b.disabled = true; const r = await call('resume', { body: {} }); b.disabled = false;
@@ -1041,11 +1041,11 @@
       const save = el('button', 'btn', 'שמירה'); save.type = 'button';
       save.addEventListener('click', () => {
         const list = all.filter((t) => picked.has(t));
-        if (!list.length) { bubble('fail', 'סמנו לפחות ישוב אחד.'); return; }
-        if (list.length > 12) { bubble('fail', 'עד 12 ישובים. הורידו כמה.'); return; }
+        if (!list.length) { bubble('fail', 'סמנו לפחות יישוב אחד.'); return; }
+        if (list.length > 12) { bubble('fail', 'עד 12 יישובים. הורידו כמה.'); return; }
         answer(st, { towns: list }, list.join(', '));
       });
-      guideBox.append(chips, otherField('ישוב נוסף', (v, input) => { all.push(v); picked.add(v); input.value = ''; draw(); }), save);
+      guideBox.append(chips, otherField('יישוב נוסף', (v, input) => { all.push(v); picked.add(v); input.value = ''; draw(); }), save);
     } else if (st.type === 'services') {
       const have = new Map((c.services || []).map((x) => [x.name, x]));
       const picked = new Set(have.keys());
@@ -1118,7 +1118,7 @@
           const cnt = el('small', 'count'); const upd = () => { cnt.textContent = ta.value.trim().length < MIN ? 'עוד ' + (MIN - ta.value.trim().length) + ' תווים לפחות' : ta.value.trim().length + '/500'; };
           ta.addEventListener('input', () => { r.note = ta.value; upd(); }); upd();
           const rm = el('button', 'linkish', 'להוריד את האזור'); rm.type = 'button'; rm.addEventListener('click', () => { cards.splice(n, 1); draw(); });
-          card.append(nm, el('p', 'design-q', 'הישובים באזור'), tc, ta, cnt, rm);
+          card.append(nm, el('p', 'design-q', 'היישובים באזור'), tc, ta, cnt, rm);
           list.append(card);
         });
       };
@@ -1130,7 +1130,7 @@
         const out = cards.filter((r) => r.name.trim()).map((r) => ({ name: r.name.trim(), towns: towns.filter((t) => r.towns.has(t)), note: r.note.trim(), response: '' }));
         const short = out.find((r) => r.note.length < MIN), empty = out.find((r) => !r.towns.length);
         if (!out.length) { bubble('fail', 'כתבו לפחות אזור אחד, או דלגו.'); return; }
-        if (empty) { bubble('fail', 'סמנו ישוב אחד לפחות ב' + empty.name + '.'); return; }
+        if (empty) { bubble('fail', 'סמנו יישוב אחד לפחות ב' + empty.name + '.'); return; }
         if (short) { bubble('fail', 'על ' + short.name + ' כתבו לפחות ' + MIN + ' תווים, או הורידו את האזור.'); return; }
         if (await answer(st, { regions: out }, out.map((r) => r.name).join(', '))) { markDone('regions'); paint(); }
       });
@@ -1372,7 +1372,7 @@
     if (!('VideoEncoder' in window)) { bubble('fail', say('video_unsupported')); return; }
     if (file.size > 1_500_000_000) { bubble('fail', 'הסרטון גדול מדי. צלמו קטע קצר יותר.'); return; }
     vFile = file; vDur = 0; vTarget = target;
-    $('#vWhere').textContent = target === 'clip' ? 'באתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ, באזור "סרטונים מהעבודה".' : 'בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.';
+    $('#vWhere').textContent = target === 'clip' ? 'באתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ, באזור ״סרטונים מהעבודה״.' : 'בראש האתר יופיעו 10 שניות מהסרטון, בלי קול ובלופ.';
     $('#vTitleBox').hidden = target !== 'clip'; $('#vTitle').value = '';
     if (vUrl) URL.revokeObjectURL(vUrl);
     vUrl = URL.createObjectURL(file);
