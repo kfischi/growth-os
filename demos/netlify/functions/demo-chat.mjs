@@ -6,6 +6,7 @@
 // a per-IP limit and a daily cap per instance (DEMO_CHAT_DAILY, default 400 answers).
 import Anthropic from "@anthropic-ai/sdk";
 import { json, rateLimiter, clientIp } from "../lib/leads.mjs";
+import { LANG_RULE, langOfTurns, line } from "../lib/lang.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 11, MAX_CHARS = 300; // the model sees the last 11 messages; older ones are dropped
@@ -38,7 +39,9 @@ const system = (d) => `You are the website assistant of "${d.name}", a small loc
 Your job: answer visitors' questions briefly from the facts below, and when they want to be contacted, take their name and phone.
 
 How to write:
-- Hebrew only, short and plain, like a good professional on WhatsApp: at most 3 short sentences. Address the visitor in plural (אתם). Speak for the business ("אורן יחזור אליכם"), never as ${d.owner} himself.
+- Short and plain, like a good professional on WhatsApp: at most 3 short sentences.
+${LANG_RULE}
+- Speak for the business ("אורן יחזור אליכם"), never as ${d.owner} himself.
 - No marketing clichés, no emoji.
 - Only state facts written below. Never invent prices, times, availability or promises. When the answer isn't in the facts, say plainly that you don't know and that ${d.owner} will answer when he calls back, and offer to take their name and phone.
 - Never give safety instructions beyond the facts below. In an emergency, tell them to call 101 (מד״א), 100 (משטרה) or 102 (כיבוי).
@@ -48,7 +51,7 @@ Taking a lead:
 - When the visitor wants a call back, a price for their case or a visit, ask for their name and phone in one short question, if you don't have them yet.
 - Once you have a name and a phone, thank them, and say in one sentence that this is a demo so the details were not sent anywhere, and on a real site ${d.owner} would get them on WhatsApp with a summary. Then add at the very end, once:
   [[lead:NAME|PHONE|SERVICE|SUMMARY]]
-  SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence. No "|" or "]" inside the fields. Never explain the marker.
+  SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence. Both always in Hebrew, for the owner. No "|" or "]" inside the fields. Never explain the marker.
 
 Facts about the business:
 ${d.facts}`;
@@ -104,7 +107,7 @@ export default async (req, context) => {
       system: [{ type: "text", text: system(d), cache_control: { type: "ephemeral" } }],
       messages,
     });
-    if (response.stop_reason === "refusal") return json({ reply: "על זה אני לא יכול לענות כאן. אפשר לשאול על השירותים, המחירים והאזורים." });
+    if (response.stop_reason === "refusal") return json({ reply: line("demoRefusal", langOfTurns(messages)) });
     reply = response.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return json({ error: "busy" }, 429);

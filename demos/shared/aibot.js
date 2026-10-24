@@ -157,7 +157,7 @@
       const typing = el("div", "ab-typing"); typing.append(el("i"), el("i"), el("i")); body.appendChild(typing);
       const chips = el("div", "ab-chips");
       const form = el("form", "ab-form");
-      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); const maxLen = Number(cfg.maxLength) || 600; input.maxLength = maxLen; input.autocomplete = "off";
+      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); const maxLen = Number(cfg.maxLength) || 600; input.maxLength = maxLen; input.autocomplete = "off"; input.dir = "auto";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
       const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, ועל כל השאר עונים בוואטסאפ.");
@@ -169,7 +169,9 @@
         const b = el("button", null, q); b.type = "button"; b.addEventListener("click", () => ask(q)); chips.appendChild(b);
       });
 
-      function bubble(text, who) { const m = el("div", "ab-msg" + (who === "me" ? " me" : ""), text); body.insertBefore(m, typing); body.scrollTop = body.scrollHeight; }
+      // A message in Russian or English reads left to right; Hebrew and Arabic stay right to left.
+      function ltr(text) { const n = (re) => (String(text).match(re) || []).length; return n(/[A-Za-z\u0400-\u04FF]/g) > n(/[\u0590-\u05FF\u0600-\u06FF]/g); }
+      function bubble(text, who) { const m = el("div", "ab-msg" + (who === "me" ? " me" : ""), text); if (ltr(text)) m.dir = "ltr"; body.insertBefore(m, typing); body.scrollTop = body.scrollHeight; }
       function render(reply) {
         const acts = []; const re = /\[\[(demo|pricing|whatsapp|build|go)(?::([^\]]*))?\]\]/g;
         const text = reply.replace(re, (_, kind, arg) => { acts.push([kind, (arg || "").trim()]); return ""; }).trim();

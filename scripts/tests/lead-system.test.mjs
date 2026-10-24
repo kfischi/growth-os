@@ -171,6 +171,13 @@ const C = T.ls_leads.at(-1); assert.equal(C.channel, "chat"); assert.equal(C.pho
 aiReply = "תודה. [[lead:רונית|12|נזילה|x]]";
 r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "רונית 12" }] }, { origin: "https://oren.co.il" }), ctx("oren")); out = await r.json(); assert.match(out.reply, /לא נראה תקין/);
 r = await chat(post("/api/chat/off", { messages: [{ role: "user", content: "היי" }] }), ctx("off")); assert.equal(r.status, 503);
+// a visitor who writes in Russian: the reply is theirs, the lead reaches the owner in Hebrew with the language
+aiReply = "Спасибо, Ирина, мы перезвоним. [[lead:אירינה|0546666666|פתיחת סתימה|סתימה בכיור המטבח בנתניה]]";
+r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "Засор на кухне, Ирина 0546666666" }] }, { origin: "https://oren.co.il" }), ctx("oren"));
+out = await r.json(); assert.ok(out.lead, JSON.stringify(out)); assert.match(out.reply, /Спасибо/);
+assert.match(T.ls_leads.at(-1).message, /\(הפנייה ברוסית\)$/);
+aiReply = "Спасибо. [[lead:Ирина|12|засор|x]]";
+r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "Ирина 12" }] }, { origin: "https://oren.co.il" }), ctx("oren")); out = await r.json(); assert.match(out.reply, /Номер/, "the fixed line in the visitor's language");
 
 // --- the owner alert fails: lead stored, but the page is told to fall back to WhatsApp
 graphDown = true;
@@ -606,6 +613,12 @@ assert.ok(out.month && out.month.visits >= 3 && typeof out.month.afterHours === 
   before = sent.length;
   await hook(wh(val({ messages: [{ from: "972501111111", id: "ag2", type: "text", text: { body: "מה קורה" } }] })));
   assert.ok(!sent.slice(before).some((x) => x.type === "text" && /העוזר הדיגיטלי/.test(x.text.body)));
+  // a customer who writes in Arabic: the owner's update says so
+  aiReply = JSON.stringify({ reply: "شكرًا، سيتصل بكم صاحب العمل.", notify_owner: true, owner_note: "הלקוח מבקש שיחזרו אליו אחרי 17:00." });
+  before = sent.length;
+  await hook(wh(val({ messages: [{ from: "972502222222", id: "ag3", type: "text", text: { body: "أرجو الاتصال بي بعد الساعة الخامسة" } }] })));
+  const ar = sent.slice(before).find((x) => x.to === "972501111111" && x.type === "template");
+  assert.ok(ar && JSON.stringify(ar).includes("עדכון בוואטסאפ (הפנייה בערבית)"), JSON.stringify(sent.slice(before)));
   oren.wa_agent = false;
 }
 
