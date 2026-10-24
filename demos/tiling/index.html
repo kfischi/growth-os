@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/tiling-work.webp" fetchpriority="high">
 <title>יניב ריצוף וחיפוי · מודיעין והסביבה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="ריצוף, חיפוי קירות באמבטיה, החלפת אריחים סדוקים, חידוש רובה, מדרגות ומרפסות במודיעין והסביבה. מתארים בצ׳אט, שולחים תמונה, והפרטים מגיעים לוואטסאפ.">
@@ -180,6 +181,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .tile { transition: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -213,46 +215,7 @@
     </dl>
     <div class="win">
       <div class="frame-l">
-        <svg viewBox="0 0 480 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="רצפה באמצע עבודה: אריחים גדולים עם רובה, שורה אחרונה של דבק עם פסים של מסרק, פלס על האריחים ופלסים בין האריחים">
-          <defs>
-            <linearGradient id="t1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f6f4"/><stop offset="1" stop-color="#e6e6e2"/></linearGradient>
-            <linearGradient id="t2" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1f1ee"/><stop offset="1" stop-color="#dfe0dc"/></linearGradient>
-            <pattern id="glue" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)"><rect width="12" height="12" fill="#b4b9b5"/><rect width="12" height="5" fill="#c6cac6"/></pattern>
-            <linearGradient id="lvl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a8a84"/><stop offset="1" stop-color="#174f4c"/></linearGradient>
-          </defs>
-          <rect width="480" height="400" fill="#a3aaa8"/>
-          <path d="M0 196 H100 V292 H196 V388 H292 V400 H0Z" fill="url(#glue)"/>
-          <g id="tiles">
-            <rect x="388" y="4" width="92" height="92" fill="url(#t1)"/><rect x="292" y="4" width="92" height="92" fill="url(#t2)"/><rect x="196" y="4" width="92" height="92" fill="url(#t1)"/><rect x="100" y="4" width="92" height="92" fill="url(#t2)"/><rect x="4" y="4" width="92" height="92" fill="url(#t1)"/>
-            <rect x="388" y="100" width="92" height="92" fill="url(#t2)"/><rect x="292" y="100" width="92" height="92" fill="url(#t1)"/><rect x="196" y="100" width="92" height="92" fill="url(#t2)"/><rect x="100" y="100" width="92" height="92" fill="url(#t1)"/><rect x="4" y="100" width="92" height="92" fill="url(#t2)"/>
-            <rect x="388" y="196" width="92" height="92" fill="url(#t1)"/><rect x="292" y="196" width="92" height="92" fill="url(#t2)"/><rect x="196" y="196" width="92" height="92" fill="url(#t1)"/><rect x="100" y="196" width="92" height="92" fill="url(#t2)"/>
-            <rect x="388" y="292" width="92" height="92" fill="url(#t2)"/><rect x="292" y="292" width="92" height="92" fill="url(#t1)"/><rect x="196" y="292" width="92" height="92" fill="url(#t2)"/>
-            <rect x="388" y="388" width="92" height="12" fill="url(#t1)"/><rect x="292" y="388" width="92" height="12" fill="url(#t2)"/>
-          </g>
-          <g fill="none" stroke="#cfcfca" stroke-width="1.2" stroke-linecap="round">
-            <path d="M300 30 C330 40 350 70 380 76"/><path d="M110 120 C140 150 150 170 186 180"/><path d="M400 210 C420 240 450 250 476 270"/><path d="M206 300 C236 320 250 350 282 370"/>
-          </g>
-          <path d="M398 16 L424 44 L418 58 L446 88" fill="none" stroke="#7d8583" stroke-width="1.6" stroke-linejoin="round"/>
-          <g fill="#b3284a">
-            <rect x="190" y="290" width="12" height="4"/><rect x="194" y="286" width="4" height="12"/>
-            <rect x="94" y="192" width="12" height="4"/><rect x="98" y="188" width="4" height="12"/>
-            <rect x="286" y="386" width="12" height="4"/><rect x="290" y="382" width="4" height="12"/>
-            <rect x="190" y="194" width="12" height="4" opacity=".8"/><rect x="194" y="190" width="4" height="12" opacity=".8"/>
-          </g>
-          <g transform="rotate(-8 250 150)">
-            <rect x="120" y="130" width="300" height="40" rx="8" fill="url(#lvl)"/>
-            <rect x="120" y="130" width="300" height="6" rx="3" fill="#fff" opacity=".2"/>
-            <rect x="244" y="138" width="52" height="24" rx="12" fill="#dff1ee"/>
-            <path d="M262 138 V162 M278 138 V162" stroke="#174f4c" stroke-width="1.5"/>
-            <ellipse cx="270" cy="150" rx="7" ry="6" fill="#fff"/>
-            <rect x="150" y="144" width="16" height="12" rx="6" fill="#dff1ee"/><rect x="374" y="144" width="16" height="12" rx="6" fill="#dff1ee"/>
-          </g>
-          <g transform="rotate(18 90 320)">
-            <path d="M30 300 H150 V330 L144 336 L138 330 L132 336 L126 330 L120 336 L114 330 L108 336 L102 330 L96 336 L90 330 L84 336 L78 330 L72 336 L66 330 L60 336 L54 330 L48 336 L42 330 L36 336 L30 330Z" fill="#c9ced2" stroke="#8b9399" stroke-width="2"/>
-            <path d="M80 300 V286 H100 V300" fill="none" stroke="#8b9399" stroke-width="5"/>
-            <rect x="60" y="266" width="60" height="22" rx="11" fill="#2a3235"/>
-          </g>
-        </svg>
+        <img class="hero-photo" src="../shared/photos/tiling-work.webp" alt="רצפה באמצע עבודה: אריחים גדולים, שורת דבק עם מסרק ופלס" width="900" height="999" fetchpriority="high" decoding="async">
       </div>
       <div class="glass g-note" aria-hidden="true"><p class="q">אריח קם בסלון ונסדק</p><p class="a">שלחו תמונה. נשארו אריחים מהקופסה? צלמו גם אותה.</p></div>
       <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה · עבודה</span><div><b>ריצוף</b><span>130 עד 200 ₪ למ״ר</span></div><div><b>חיפוי באמבטיה</b><span>150 עד 230 ₪ למ״ר</span></div><div><b>חידוש רובה</b><span>600 עד 1,400 ₪</span></div></div>

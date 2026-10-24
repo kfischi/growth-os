@@ -2,14 +2,11 @@
 
 The fifteen newer demo pages (listed in the table below). Since 2026-10-24 they are full builder trades like the first 30.
 
-**Listed on 2026-10-24.** All 15 are on the home picker (`T` in `demos/index.html`) and on `/all/`, each in its group, and in `DEMOS` in `scripts/tests/demo-chats.cjs`; the counts say 45. They are `noindex` like every other demo and stay out of the sitemap. **In the builder since 2026-10-24.** Each has `templates/trades/<id>.mjs`, its line in `trades/index.mjs`, its guide file in `trades/guides.mjs` and its option in `#fTrade`, and every "לבנות אתר כזה" (the demo, the picker, `/all/`) goes to `build/?t=<id>`. A draft starts from the interim cover as its sample picture (`SAMPLE_HEROES`). The AI chat (`chat.mjs`, `aibot.js`) knows their slugs.
+**Listed on 2026-10-24.** All 15 are on the home picker (`T` in `demos/index.html`) and on `/all/`, each in its group, and in `DEMOS` in `scripts/tests/demo-chats.cjs`; the counts say 45. They are `noindex` like every other demo and stay out of the sitemap. **In the builder since 2026-10-24.** Each has `templates/trades/<id>.mjs`, its line in `trades/index.mjs`, its guide file in `trades/guides.mjs` and its option in `#fTrade`, and every "לבנות אתר כזה" (the demo, the picker, `/all/`) goes to `build/?t=<id>`. A draft starts from the cover photo as its sample picture (`SAMPLE_HEROES`). The AI chat (`chat.mjs`, `aibot.js`) knows their slugs.
 
-**Interim covers.** `demos/shared/photos/<id>-cover.webp` (960x720, 4:3 like the picker's phone and the `/all/` cards) is a screenshot of the page's own drawn hero, without the glass cards. Replace each with the Canva hero photo below once it can be downloaded (same file name, 4:3 crop, WebP about 78), and put the photo in the page's frame too.
+**Photos (2026-10-24).** Each page's hero frame shows its Canva photo, `demos/shared/photos/<id>-work.webp` (900x999, preloaded), in place of the drawing it had before; `<id>-cover.webp` (960x720, 4:3 like the picker's phone and the `/all/` cards) is a crop of the same photo and is also the builder's sample picture. The photos were taken from Canva at about 1078x1200, two small marks blurred (the DJ laptop, the makeup brushes) and yellow toned down.
 
-Still to do, per demo:
-
-1. Make its two work photos from the prompts below (Figma `generate_image`, Canva, or any licensed image tool), and the hero from Canva.
-2. Crop them to WebP in `demos/shared/photos/`, replace the interim cover, and put the hero in the page's frame.
+Still to do, when wanted: the two extra work photos per demo from the prompts below (Figma `generate_image`, Canva, or any licensed image tool), cropped to WebP in `demos/shared/photos/`.
 
 | Trade | Page | Fictional business |
 | --- | --- | --- |

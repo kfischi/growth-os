@@ -15,4 +15,4 @@ towing-work, yoga-work, dog-trainer-work, driving-work, upholstery-work, roofing
 
 security-work, security-office, yoga-reformer: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these demos.
 
-carpenter-cover, aluminum-cover, water-heater-cover, tiling-cover, garage-cover, phone-repair-cover, hair-cover, physio-cover, catering-cover, dj-cover, cakes-cover, lashes-brows-cover, hair-removal-cover, makeup-cover, bridal-cover: interim covers for the home picker and /all/, screenshots of each page's own drawn hero (glass cards hidden), 960x720 WebP. To be replaced by the Canva hero photos listed in docs/side-income/FUTURE-DEMOS.md.
+carpenter, aluminum, water-heater, tiling, garage, phone-repair, hair, physio, catering, dj, cakes, lashes-brows, hair-removal, makeup, bridal (-cover 960x720 for the home picker and /all/, -work 900x999 for the page's hero frame): AI-generated photos made in Canva, taken at about 1078x1200; a small mark on the DJ laptop and the lettering on the makeup brushes blurred, yellow toned down (the DJ's string lights, warm food in catering).

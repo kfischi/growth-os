@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/hair-removal-work.webp" fetchpriority="high">
 <title>קליניקת אלמה · הסרת שיער</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="הסרת שיער בלייזר ובשעווה בחולון. בוחרים אזורים במפת הגוף, רואים מחירים לדוגמה לטיפול ולסדרה, והקליניקה חוזרת לתאם. בפגישה הראשונה בודקים על אזור קטן.">
@@ -220,6 +221,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -249,35 +251,7 @@
 
       <div class="visual">
         <div class="hframe">
-          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: חדר טיפולים נקי, מיטת טיפולים עם מגבת מגולגלת, מכשיר לייזר עם ידית, ומשקפי מגן">
-            <rect class="wall" width="400" height="470"/>
-            <rect class="floor" y="390" width="400" height="80"/>
-            <!-- a ceiling lamp arm -->
-            <path class="lamp" d="M60 0 V40 Q60 60 90 64 L150 70"/><ellipse cx="160" cy="72" rx="20" ry="8" fill="#c9d9d8"/>
-            <!-- the laser device on its cart, the handpiece on its hook -->
-            <rect class="device" x="262" y="150" width="96" height="190" rx="16"/>
-            <rect class="screen" x="276" y="166" width="68" height="46" rx="6"/>
-            <rect class="screen-glow" x="284" y="176" width="34" height="5" rx="2.5"/><rect class="screen-glow" x="284" y="188" width="50" height="5" rx="2.5"/><rect class="screen-glow" x="284" y="200" width="24" height="5" rx="2.5"/>
-            <circle cx="292" cy="232" r="7" fill="#c9d9d8"/><circle cx="314" cy="232" r="7" fill="#c9d9d8"/><circle cx="336" cy="232" r="7" fill="#9b2c4a" opacity=".85"/>
-            <path class="cable" d="M352 250 C390 270 384 330 352 330 C326 330 330 290 344 278"/>
-            <rect class="hand" x="336" y="262" width="18" height="44" rx="8" transform="rotate(-24 345 284)"/>
-            <path class="steel" d="M276 340 V392 M344 340 V392"/>
-            <circle cx="276" cy="398" r="7" fill="#5d7275"/><circle cx="344" cy="398" r="7" fill="#5d7275"/>
-            <!-- the treatment bed with its paper sheet, a rolled towel and the goggles -->
-            <rect class="bed" x="24" y="282" width="240" height="30" rx="12"/>
-            <path class="bed-dark" d="M24 300 H264 V306 Q264 312 252 312 H36 Q24 312 24 300 Z"/>
-            <rect class="paper" x="60" y="276" width="196" height="10" rx="4"/>
-            <path class="steel" d="M54 312 V392 M234 312 V392 M54 360 H234"/>
-            <rect class="towel" x="30" y="254" width="62" height="30" rx="15"/>
-            <path d="M46 256 V282 M61 255 V284" stroke="#dbe6e5" stroke-width="2"/>
-            <ellipse class="goggle" cx="168" cy="268" rx="13" ry="9"/><ellipse class="goggle" cx="196" cy="268" rx="13" ry="9"/>
-            <path class="goggle-band" d="M155 268 Q140 262 136 274 M209 268 Q224 262 228 274"/>
-            <!-- a small plant on the shelf -->
-            <rect x="40" y="160" width="120" height="8" rx="4" fill="#c9d9d8"/>
-            <path class="pot" d="M66 130 H96 L92 160 H70 Z"/>
-            <path class="leaf" d="M81 130 C70 112 60 104 50 104 C56 116 66 126 81 130 Z M81 130 C84 108 94 96 104 92 C102 108 94 122 81 130 Z M81 130 C80 114 78 100 72 88 C66 102 72 120 81 130 Z"/>
-            <rect x="112" y="138" width="34" height="22" rx="5" fill="#f7fafa" stroke="#b8cbca" stroke-width="2"/>
-          </svg>
+          <img class="hero-photo" src="../shared/photos/hair-removal-work.webp" alt="חדר טיפולים נקי: מיטה עם מגבת מגולגלת, משקפי מגן ומכשיר להסרת שיער" width="900" height="999" fetchpriority="high" decoding="async">
         </div>
         <div class="glass g-day" aria-hidden="true"><span><i></i>בפגישה הראשונה</span><b>בדיקה על אזור קטן</b><small>ורק אחריה מתחילים</small></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">כמה עולה לייזר לבית השחי?</p><p class="a">לדוגמה 150 עד 220 ₪ לטיפול. נחזור לתאם פגישה ראשונה.</p></div>

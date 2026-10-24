@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/carpenter-work.webp" fetchpriority="high">
 <title>נגריית אלון · רחובות והסביבה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="מטבחים, ארונות קיר ורהיטים בהתאמה, ותיקון דלתות, צירים ומגירות ברחובות והסביבה. שולחים בצ׳אט מה צריך ותמונה, והפרטים מגיעים לוואטסאפ.">
@@ -185,6 +186,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .bd { transition: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -217,54 +219,7 @@
     </dl>
     <div class="win">
       <div class="frame-l">
-        <svg viewBox="0 0 400 400" role="img" aria-label="שרטוט של מטבח: ארונות עליונים ותחתונים עם מגירות, וקווי מידה">
-          <defs>
-            <pattern id="grain" width="400" height="14" patternUnits="userSpaceOnUse"><path d="M0 7 Q100 3 200 7 T400 7" stroke="#ddd3c3" stroke-width="1" fill="none"/></pattern>
-          </defs>
-          <rect x="-200" y="-200" width="800" height="800" fill="#ebe5db"/>
-          <rect x="-200" y="-200" width="800" height="800" fill="url(#grain)"/>
-          <!-- the wall line and the floor -->
-          <path d="M40 330 H372" stroke="#2a241f" stroke-width="2.5"/>
-          <!-- upper cabinets -->
-          <g fill="#f8f5f0" stroke="#2a241f" stroke-width="2">
-            <rect x="60" y="70" width="96" height="92" rx="2"/><rect x="156" y="70" width="96" height="92" rx="2"/><rect x="252" y="70" width="96" height="92" rx="2"/>
-          </g>
-          <g stroke="#6a3b24" stroke-width="3" stroke-linecap="round"><path d="M146 140 v14"/><path d="M166 140 v14"/><path d="M338 140 v14"/></g>
-          <!-- the hood gap and backsplash -->
-          <rect x="60" y="162" width="288" height="66" fill="#e2dacd"/>
-          <!-- countertop -->
-          <rect x="54" y="228" width="300" height="10" fill="#6a3b24"/>
-          <!-- lower cabinets: a door, a stack of drawers, a door -->
-          <g fill="#f8f5f0" stroke="#2a241f" stroke-width="2">
-            <rect x="60" y="238" width="96" height="84" rx="2"/>
-            <rect x="156" y="238" width="96" height="26" rx="2"/><rect x="156" y="264" width="96" height="29" rx="2"/><rect x="156" y="293" width="96" height="29" rx="2"/>
-            <rect x="252" y="238" width="96" height="84" rx="2"/>
-          </g>
-          <rect x="60" y="322" width="288" height="8" fill="#2a241f"/>
-          <g stroke="#6a3b24" stroke-width="3" stroke-linecap="round"><path d="M188 251 h32"/><path d="M188 278 h32"/><path d="M188 307 h32"/><path d="M146 250 v14"/><path d="M262 250 v14"/></g>
-          <!-- a drawer pulled out a little, the telescopic slide -->
-          <path d="M156 293 l-10 8 h96 l10 -8" fill="none" stroke="#2f5d50" stroke-width="1.6" stroke-dasharray="4 3"/>
-          <!-- dimension lines -->
-          <g stroke="#2f5d50" stroke-width="1.4" fill="none">
-            <path d="M60 46 H348"/><path d="M60 40 v12"/><path d="M348 40 v12"/>
-            <path d="M376 238 V330"/><path d="M370 238 h12"/><path d="M370 330 h12"/>
-            <path d="M24 70 V162"/><path d="M18 70 h12"/><path d="M18 162 h12"/>
-          </g>
-          <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#2f5d50" text-anchor="middle">
-            <rect x="174" y="37" width="52" height="18" fill="#ebe5db"/><text x="200" y="50">3000</text>
-            <rect x="364" y="274" width="24" height="20" fill="#ebe5db"/><text x="376" y="289" font-size="12">900</text>
-            <rect x="12" y="106" width="24" height="20" fill="#ebe5db"/><text x="24" y="121" font-size="12">720</text>
-          </g>
-          <!-- the hinge callout -->
-          <circle cx="252" cy="116" r="15" fill="none" stroke="#2f5d50" stroke-width="1.6"/>
-          <path d="M262 104 L292 186" stroke="#2f5d50" stroke-width="1.2"/>
-          <!-- the board's edge, a corner sample of plywood layers -->
-          <g transform="translate(300 352)">
-            <rect width="72" height="22" rx="2" fill="#d8c7ab" stroke="#522c1a" stroke-width="1"/>
-            <g stroke="#9b7a59" stroke-width="1"><path d="M0 4.5 H72"/><path d="M0 8.5 H72"/><path d="M0 12.5 H72"/><path d="M0 16.5 H72"/></g>
-          </g>
-          <text x="292" y="368" font-family="IBM Plex Mono, monospace" font-size="12" fill="#5a5149" text-anchor="end">18 מ״מ</text>
-        </svg>
+        <img class="hero-photo" src="../shared/photos/carpenter-work.webp" alt="מטבח בגוונים בהירים עם מגירה פתוחה ומשטח עץ" width="900" height="999" fetchpriority="high" decoding="async">
       </div>
       <div class="glass g-note" aria-hidden="true"><p class="q">ארון קיר לחדר שינה, 2.5 מטר</p><p class="a">שלחו תמונה של הקיר. אני חוזר עם זמן למדידה.</p></div>
       <div class="glass g-step" aria-hidden="true"><i></i><span><b>מדידה בבית</b>שרטוט ומחיר בכתב</span></div>

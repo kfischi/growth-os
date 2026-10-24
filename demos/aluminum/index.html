@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/aluminum-work.webp" fetchpriority="high">
 <title>רז אלומיניום · אשדוד והסביבה</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="חלונות ודלתות הזזה, רשתות, מקלחונים, והחלפת גלגלות וידיות באשדוד והסביבה. שולחים בצ׳אט מה צריך ותמונה, והפרטים מגיעים לוואטסאפ.">
@@ -181,6 +182,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .pn { transition: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -213,46 +215,7 @@
     </dl>
     <div class="win">
       <div class="frame-l">
-        <svg viewBox="0 0 400 400" role="img" aria-label="שרטוט של חלון הזזה עם שתי כנפיים ורשת נגללת, וקווי מידה">
-          <defs>
-            <linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f2f8f8"/><stop offset=".55" stop-color="#d6e8ea"/><stop offset="1" stop-color="#bcd7da"/></linearGradient>
-            <linearGradient id="al" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e8eb"/><stop offset=".5" stop-color="#a7b2b8"/><stop offset="1" stop-color="#c8d0d4"/></linearGradient>
-            <pattern id="mesh" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M0 0 H5 M0 0 V5" stroke="#4b5a62" stroke-width=".6" opacity=".55"/></pattern>
-          </defs>
-          <rect x="-200" y="-200" width="800" height="800" fill="#e6eaec"/>
-          <!-- the wall opening and the sill -->
-          <rect x="62" y="80" width="276" height="236" fill="#d5dcdf"/>
-          <rect x="48" y="316" width="304" height="14" rx="2" fill="#c3ccd1"/>
-          <!-- the outer frame -->
-          <rect x="70" y="88" width="260" height="222" rx="3" fill="url(#al)" stroke="#7d8a92" stroke-width="1.5"/>
-          <rect x="82" y="100" width="236" height="198" fill="#9aa6ad"/>
-          <!-- the back sash (left) and the front sash (right), overlapping in the middle -->
-          <rect x="84" y="102" width="126" height="194" fill="url(#al)" stroke="#7d8a92"/>
-          <rect x="94" y="112" width="106" height="174" fill="url(#gl)"/>
-          <rect x="190" y="102" width="126" height="194" fill="url(#al)" stroke="#7d8a92"/>
-          <rect x="200" y="112" width="106" height="174" fill="url(#gl)"/>
-          <!-- reflections -->
-          <g fill="#fff" opacity=".55"><path d="M108 112 h22 l-36 70 v-28z"/><path d="M226 112 h34 l-60 118 v-48z"/><path d="M280 112 h10 l-58 174 h-10z" opacity=".5"/></g>
-          <!-- the net, half drawn over the back sash -->
-          <rect x="94" y="112" width="64" height="174" fill="url(#mesh)"/>
-          <rect x="155" y="108" width="6" height="182" rx="2" fill="#16232a"/>
-          <!-- handles -->
-          <rect x="300" y="182" width="6" height="34" rx="3" fill="#16232a"/>
-          <rect x="196" y="186" width="5" height="26" rx="2.5" fill="#16232a"/>
-          <!-- the track and a roller, magnified -->
-          <path d="M82 298 H318" stroke="#4b5a62" stroke-width="3"/>
-          <circle cx="250" cy="296" r="9" fill="none" stroke="#0d5c63" stroke-width="1.6"/>
-          <path d="M256 303 L286 352" stroke="#0d5c63" stroke-width="1.2"/>
-          <!-- dimension lines, in mm -->
-          <g stroke="#0d5c63" stroke-width="1.4" fill="none">
-            <path d="M70 60 H330"/><path d="M70 54 v12"/><path d="M330 54 v12"/>
-            <path d="M362 88 V310"/><path d="M356 88 h12"/><path d="M356 310 h12"/>
-          </g>
-          <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#0d5c63" text-anchor="middle">
-            <rect x="174" y="51" width="52" height="18" fill="#e6eaec"/><text x="200" y="64">1500</text>
-            <rect x="346" y="188" width="32" height="20" fill="#e6eaec"/><text x="362" y="203" font-size="12">1200</text>
-          </g>
-        </svg>
+        <img class="hero-photo" src="../shared/photos/aluminum-work.webp" alt="דלת הזזה גדולה מאלומיניום שחור, פתוחה לכיוון המרפסת" width="900" height="999" fetchpriority="high" decoding="async">
       </div>
       <div class="glass g-note" aria-hidden="true"><p class="q">חלון הזזה בסלון, ממש קשה להזיז</p><p class="a">שלחו תמונה של המסילה. אני חוזר עם זמן הגעה.</p></div>
       <div class="glass g-step" aria-hidden="true"><i></i><span><b>גלגלות ברכב</b>מחליפים באותו ביקור</span></div>

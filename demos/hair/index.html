@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preload" as="image" href="../shared/photos/hair-work.webp" fetchpriority="high">
 <title>שירה לוי · עיצוב שיער</title>
 <script src="../shared/a11y.js" data-statement="../accessibility/"></script>
 <meta name="description" content="עיצוב שיער בכפר סבא: תספורת ופן, צבע וגוונים, החלקה ותסרוקת לכלה ולאירוע. בוחרים טיפול ואורך, רואים טווח מחיר, ושירה חוזרת לתאם.">
@@ -221,6 +222,7 @@
   }
   @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
   html.a11y-still .glass { animation: none; }
+  .hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 </style>
 </head>
 <body>
@@ -250,33 +252,7 @@
 
       <div class="visual">
         <div class="hframe">
-          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: לקוחה בכיסא, מבט מאחור מול המראה, שיער ארוך בגוונים">
-            <rect class="wall" width="400" height="470"/>
-            <!-- the arched mirror -->
-            <path class="glass-m" d="M90 470 V150 C90 76 142 34 200 34 C258 34 310 76 310 150 V470 Z"/>
-            <path class="frame-m" d="M90 470 V150 C90 76 142 34 200 34 C258 34 310 76 310 150 V470"/>
-            <!-- the swatch ring on the wall -->
-            <circle class="ring" cx="352" cy="74" r="10"/>
-            <g class="tress">
-              <path d="M344 82 L334 176 C334 184 344 186 346 178 L352 84 Z" fill="#1f1714"/>
-              <path d="M348 84 L346 182 C347 190 356 190 356 182 L354 84 Z" fill="#4a2a1f"/>
-              <path d="M352 84 L358 182 C360 190 368 188 367 180 L356 82 Z" fill="#9a4424"/>
-              <path d="M356 82 L370 176 C372 183 381 180 379 172 L360 80 Z" fill="#b58f7a"/>
-              <path d="M359 79 L382 166 C385 173 393 168 390 161 L362 77 Z" fill="#c8ccc9"/>
-            </g>
-            <!-- the cape and the shoulders -->
-            <path class="cape" d="M48 470 C56 396 104 362 158 352 L242 352 C296 362 344 396 352 470 Z"/>
-            <path class="cape-fold" d="M128 470 C130 430 140 400 156 380 M272 470 C270 430 260 400 244 380 M200 470 V392"/>
-            <path class="neck" d="M178 300 H222 V360 C210 366 190 366 178 360 Z"/>
-            <!-- the hair, from behind: darker at the roots, lighter at the ends (balayage), waves at the ends -->
-            <defs><linearGradient id="bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f1b15"/><stop offset=".45" stop-color="#53301f"/><stop offset="1" stop-color="#a0603d"/></linearGradient></defs>
-            <path fill="url(#bal)" d="M200 100 C152 100 128 136 126 184 C124 232 124 270 120 310 C116 350 102 380 106 410 C110 432 124 442 140 436 C150 450 166 454 178 444 C190 458 210 458 222 444 C234 454 250 450 260 436 C276 442 290 432 294 410 C298 380 284 350 280 310 C276 270 276 232 274 184 C272 136 248 100 200 100 Z"/>
-            <path class="lite" d="M168 126 C150 200 162 260 150 330 C142 380 152 410 144 432 M232 126 C250 200 238 260 250 330 C258 380 248 410 256 432 M200 150 C192 230 210 300 198 370 C192 410 204 430 200 450"/>
-            <path class="strand" d="M184 108 C170 190 182 270 170 340 C164 390 172 420 166 442 M216 108 C230 190 218 270 230 340 C236 390 228 420 234 442 M146 150 C136 230 142 300 128 370 C124 400 128 420 124 430 M254 150 C264 230 258 300 272 370 C276 400 272 420 276 430"/>
-            <path d="M200 101 V148" stroke="#6d4030" stroke-width="2" stroke-linecap="round"/>
-            <rect class="clip" x="152" y="176" width="30" height="8" rx="4" transform="rotate(-20 167 180)"/>
-            <rect class="clip" x="218" y="176" width="30" height="8" rx="4" transform="rotate(20 233 180)"/>
-          </svg>
+          <img class="hero-photo" src="../shared/photos/hair-work.webp" alt="לקוחה בכיסא מול המראה, שיער ארוך בגוונים חומים" width="900" height="999" fetchpriority="high" decoding="async">
         </div>
         <div class="glass g-day" aria-hidden="true"><span><i></i>איפה עובדים</span><b>בסטודיו בכפר סבא</b><small>וכלות גם אצלן בבית</small></div>
         <div class="glass g-chat" aria-hidden="true"><p class="q">רוצה גוונים, השיער עד הכתפיים. כמה זה?</p><p class="a">גוונים בשיער עד הכתפיים: 520 עד 650 ₪. אחזור לתאם.</p></div>
