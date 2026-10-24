@@ -172,8 +172,10 @@
     .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
     .clock li { padding: 0 34px 0 0; }
     .clock li::before { top: 6px; }
-    .ptable { font-size: 15px; }
-    .ptable td + td, .ptable th + th { padding-inline-start: 8px; }
+    .ptable { font-size: 14px; }
+    .ptable th { font-size: 12.5px; }
+    .ptable td + td, .ptable th + th { padding-inline-start: 8px; white-space: normal; }
+    .card td + td, .card th + th { white-space: normal; padding-inline-start: 8px; }
   }
   @media (prefers-reduced-motion: reduce) { .btn, .figs .zone { transition: none; } html { scroll-behavior: auto; } }
 
