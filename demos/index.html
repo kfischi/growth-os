@@ -523,6 +523,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .lock .clock { font-size: 2rem; }
   .split b { font-size: 1.4rem; }
 }
+/* Words for screen readers and crawlers that the eye reads from the strike-through (the regular price). */
+.vh{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 </style>
 <script type="application/ld+json" id="faq-ld">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"צריך להבין בטכנולוגיה?","acceptedAnswer":{"@type":"Answer","text":"לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים."}},{"@type":"Question","name":"יש לי אינסטגרם ופייסבוק. למה צריך אתר?","acceptedAnswer":{"@type":"Answer","text":"מי שלא מכיר אתכם מחפש בגוגל. אתר אפשר למצוא שם, קבוצה בפייסבוק לא. והאתר עונה גם כשאתם לא זמינים."}},{"@type":"Question","name":"הנציג ימציא מחירים?","acceptedAnswer":{"@type":"Answer","text":"לא. הוא עונה רק ממה שכתבתם: שירותים, טווחי מחירים ואזורים. מה שהוא לא יודע, הוא מעביר אליכם."}},{"@type":"Question","name":"משלמים לפני שרואים?","acceptedAnswer":{"@type":"Answer","text":"לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים."}},{"@type":"Question","name":"כמה זמן לוקח?","acceptedAnswer":{"@type":"Answer","text":"את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. אחר כך מחברים את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ."}},{"@type":"Question","name":"יש התחייבות?","acceptedAnswer":{"@type":"Answer","text":"לא. מבטלים מתי שרוצים, מהבונה, בלחיצה. מה ששולם פעיל עד סוף התקופה, ואחר כך לא מחייבים יותר."}},{"@type":"Question","name":"על שם מי הדומיין?","acceptedAnswer":{"@type":"Answer","text":"על שמכם. האתר מאוחסן אצלנו, וכל הקבצים שלו שלכם: אם תעזבו, נעביר אותם אליכם."}},{"@type":"Question","name":"החיבור לוואטסאפ בטוח למספר של העסק?","acceptedAnswer":{"@type":"Answer","text":"כן. באתר בתשלום החיבור נעשה דרך הממשק הרשמי של Meta ‏(WhatsApp Cloud API), לא דרך תוכנה לא רשמית שעלולה לגרום לחסימת המספר. אנחנו לא מקבלים גישה לשיחות הפרטיות שלכם."}},{"@type":"Question","name":"ההודעות יוצאות מהמספר שלי?","acceptedAnswer":{"@type":"Answer","text":"כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אתם מאשרים."}}]}</script>
 </head>
@@ -553,7 +555,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <h1 id="t-hero"><span>באמצע עבודה ולא פנוי לענות?</span><span class="two">האתר שלך עונה ללקוחות בוואטסאפ תוך&nbsp;שניות<span class="dot">.</span></span></h1>
         <p class="hero-sub"><b>בונים אתר לעסק. מקבלים פניות לוואטסאפ. סוגרים עבודות.</b>אתר מודרני מותאם לנייד, עם נציג AI שעונה מהמחירון שלך ושומר כל פנייה – גם כשאתה על הסולם או בנהיגה. 0&nbsp;₪ מקדמה, משלמים רק כשהאתר מוכן.</p>
         <div class="ctas"><a class="btn" href="build/">לבנות את האתר שלי</a><a class="btn line" href="film/">סרטון הסבר</a></div>
-        <ul class="ticks"><li>מענה אוטומטי בוואטסאפ</li><li>אתר מודרני מותאם לנייד</li><li>אפס סיכון – משלמים רק כשהאתר מוכן</li></ul>
+        <ul class="ticks"><li>מענה אוטומטי בוואטסאפ</li><li>אתר מודרני מותאם לנייד</li><li>0 ₪ מקדמה – רואים את האתר לפני שמשלמים</li></ul>
       </div>
       <div class="stage hero-stage" id="stage">
         <p class="pick-ask" id="demos">בחר את התחום שלך, ותראה את האתר שלך:</p>
@@ -638,7 +640,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="plan-for">לעסק שמקבל פניות ורוצה שכל אחת תקבל מענה.</p>
             <p class="pricelock"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2.2" fill="currentColor"/><path d="M6.8 9V6.6a3.2 3.2 0 0 1 6.4 0V9" fill="none" stroke="currentColor" stroke-width="2"/></svg><span><b>במחיר השקה</b> – נהנים מהנחה קבועה במחיר החודשי, לתמיד.</span></p>
             <p class="amount"><b><bdi>1,590 ₪</bdi></b><span>הקמה, פעם אחת</span></p>
-            <p class="per" data-m="290" data-was="390"><s><bdi>390 ₪</bdi></s> <bdi>290 ₪</bdi> לחודש<small>מחיר השקה, נעול לתמיד. מבטלים מתי שרוצים</small></p>
+            <p class="per" data-m="290" data-was="390"><s><span class="vh">המחיר הרגיל: </span><bdi>390 ₪</bdi></s> <span class="vh">מחיר ההשקה: </span><bdi>290 ₪</bdi> לחודש<small>מחיר השקה, נעול כל עוד המנוי פעיל. מבטלים מתי שרוצים</small></p>
             <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
             <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
             <p class="inc-n"><b>16</b> דברים כלולים</p>
@@ -812,7 +814,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   (() => {
     const nis = (n) => `<bdi>${n.toLocaleString('he-IL')} ₪</bdi>`;
     $$('.plan .per').forEach((el) => { const m = +el.dataset.m, was = +el.dataset.was;
-      el.innerHTML = (was ? `<s>${nis(was)}</s> ` : '') + `${nis(m)} לחודש<small>${was ? 'מחיר השקה, נעול לתמיד. ' : ''}מבטלים מתי שרוצים</small>`; });
+      el.innerHTML = (was ? `<s><span class="vh">המחיר הרגיל: </span>${nis(was)}</s> <span class="vh">מחיר ההשקה: </span>` : '') + `${nis(m)} לחודש<small>${was ? 'מחיר השקה, נעול כל עוד המנוי פעיל. ' : ''}מבטלים מתי שרוצים</small>`; });
   })();
 
   const reduce = still();
