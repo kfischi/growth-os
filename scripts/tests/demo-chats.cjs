@@ -167,7 +167,7 @@ async function estimates(b) {
       const withPrefill = await drive();
       await p.goto(`http://localhost:8790/${d}/index.html`); await p.waitForTimeout(600); await p.click('.lb-launch');
       const plain = await drive();
-      asked = ` asked=${withPrefill}/${plain}`;
+      asked = ` taps=${withPrefill}/${plain}`;
       if (withPrefill > 0 && plain > withPrefill) first = '(skipped)';
     }
     const ok = !badSum && (first.length > 1 || !!typing) && !errs.length;
