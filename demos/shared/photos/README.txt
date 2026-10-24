@@ -13,6 +13,6 @@ music-work, music-portrait, music-studio, music-lesson: generated with Figma AI;
 
 towing-work, yoga-work, dog-trainer-work, driving-work, upholstery-work, roofing-work, cosmetics-work, shutters-work, barber-work, massage-work, pergolas-work, nails-work, photographer-work: AI-generated photos Kfir sent (1280x720 WebP); no lettering. The warm lights in photographer-work and the sunset in pergolas-work had their yellow desaturated.
 
-security-work, security-office, yoga-reformer: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these demos.
+security-work, security-office, yoga-reformer: AI-generated photos made in Canva (1080x675); two small brand marks on the monitor and the recorder in security-office blurred; no people's faces, no lettering, no yellow.
 
 carpenter, aluminum, water-heater, tiling, garage, phone-repair, hair, physio, catering, dj, cakes, lashes-brows, hair-removal, makeup, bridal (-cover 960x720 for the home picker and /all/, -work 900x999 for the page's hero frame): AI-generated photos made in Canva, taken at about 1078x1200; a small mark on the DJ laptop and the lettering on the makeup brushes blurred, yellow toned down (the DJ's string lights, warm food in catering).
