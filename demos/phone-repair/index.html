@@ -528,10 +528,6 @@
   };
   const WET = (v) => v === "נפל למים" || v === "נשפך עליו נוזל";
   const SWOLLEN = "כן, נפוחה";
-  const issueTip = { when: (v) => WET(v) || v === "שחזור מידע", id: "water",
-    text: "מכבים עכשיו ולא מטעינים. מוציאים כרטיס SIM ומנגבים מבחוץ. אורז לא מייבש את מה שבפנים: מביאים לבדיקה כמה שיותר מהר." };
-  const dataTip = { when: (v) => v === "שחזור מידע", id: "data", text: "בינתיים לא שומרים קבצים חדשים על המכשיר או הכונן, ולא מנסים תוכנות שחזור. כל כתיבה יכולה לדרוס את מה שנמחק." };
-  const tipFor = (v) => (v === "שחזור מידע" ? dataTip : issueTip);
   const bot = LeadBot.init({
     whatsapp: "972526359513",
     name: "נועם · מעבדה", subtitle: "חוזר אליכם עם מחיר", initial: "נ", launcher: "מה קרה למכשיר?", hint: "נציג AI",
@@ -540,9 +536,9 @@
       { key: "device", label: "מכשיר", ask: "איזה מכשיר?", chips: DEVICES },
       // one label per key: the summary card lists a key once, whichever of its steps was asked
       { key: "issue", label: "מה קרה", ask: "מה קרה לו?", chips: ISS_M, show: MOBILE,
-        tip: { when: (v) => WET(v) || v === "שחזור מידע", get id() { return "water"; }, text: issueTip.text } },
+        tip: { when: WET, id: "water", text: "מכבים עכשיו ולא מטעינים. מוציאים כרטיס SIM ומנגבים מבחוץ. אורז לא מייבש את מה שבפנים: מביאים לבדיקה כמה שיותר מהר." } },
       { key: "issue", ask: "מה קרה לו?", chips: ISS_C, show: (d) => !MOBILE(d),
-        tip: { when: (v) => WET(v), id: "water", text: "מכבים עכשיו, מנתקים מהחשמל ולא מדליקים שוב. הופכים את המחשב פתוח, המקלדת למטה, ומביאים לבדיקה כמה שיותר מהר." } },
+        tip: { when: (v) => WET(v), id: "spill", text: "מכבים עכשיו, מנתקים מהחשמל ולא מדליקים שוב. הופכים את המחשב פתוח, המקלדת למטה, ומביאים לבדיקה כמה שיותר מהר." } },
       { key: "swollen", label: "סוללה נפוחה", ask: "הסוללה נפוחה? המסך מתרומם, או שהגב נפתח?", chips: [SWOLLEN, "לא, רק נגמרת מהר", "לא בטוח"], show: (d) => d.issue === "סוללה",
         tip: { when: (v) => v === SWOLLEN, id: "swollen", text: "מפסיקים לטעון ולא משתמשים. לא לוחצים על המכשיר ולא פותחים אותו. מניחים על משטח לא דליק, רחוק מהמיטה." } },
       { key: "model", label: "דגם", ask: "איזה דגם? גם בערך זה בסדר.", input: "text", placeholder: "למשל: דגם 2021, 128GB" },
@@ -558,7 +554,8 @@
       const first = d.name.split(" ")[0];
       const price = PRICE[d.issue] || "את המחיר אני אומר אחרי בדיקה, לפני שמתחילים.";
       const safe = d.swollen === SWOLLEN ? "\nעד שנדבר: לא מטעינים, לא לוחצים ולא פותחים את המכשיר."
-        : WET(d.issue) ? "\nעד שנדבר: המכשיר כבוי ולא בטעינה." : "";
+        : WET(d.issue) ? "\nעד שנדבר: המכשיר כבוי ולא בטעינה."
+        : d.issue === "שחזור מידע" ? "\nעד שנדבר: לא שומרים קבצים חדשים על המכשיר, ולא מנסים תוכנות שחזור." : "";
       return `תודה ${first}. רשמתי: ${d.device}, ${d.issue}, ${d.model}, ב${d.city}. ${price}${safe}\nלחצו למטה, ואני חוזר אליכם.`;
     },
     summary: (d) => `פנייה מהאתר (דמו מעבדה)\nמכשיר: ${d.device}\nמה קרה: ${d.issue}${d.swollen ? `\nסוללה נפוחה: ${d.swollen}` : ""}\nדגם: ${d.model}${d.backup ? `\nגיבוי: ${d.backup}` : ""}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
