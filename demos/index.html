@@ -28,7 +28,7 @@
 /* 1. The object: a concierge's desk card. Quiet paper, one precise ink, and a small fuchsia mark wherever something
       was answered. The phone on the page is the business's front desk.
    2. The detail only this subject has: the enquiry and its clock. Real times ("21:47"), "✓✓", "טיפלתי",
-      the 30 businesses in four groups, in their own colours, and the two real prices.
+      the 45 businesses in four groups, in their own colours, and the two real prices.
    3. The one bold move: very large, tightly set Rubik 800 headlines on near-white, with the fuchsia full stop as the
       only ornament. Everything else is hairlines, lilac fields and whitespace. Motion lives only where it explains
       something: the phone that turns into your trade, the enquiry that gets answered, the numbers that count.
@@ -561,7 +561,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
         <div class="phone"><div class="screen" id="screen" aria-live="off"></div></div>
         <p class="now">לדוגמה: <b id="nowName">אורן מים</b></p>
         <div class="stage-links"><a class="btn line" id="toDemo" data-act="demo" href="plumber/">לראות את הדמו המלא</a><a class="btn" id="toBuild" href="build/?t=plumber">לבנות אתר כזה</a></div>
-        <p class="pick-more"><a href="all/">כל 30 התחומים</a> · <a href="build/?t=other">התחום שלי לא ברשימה</a></p>
+        <p class="pick-more"><a href="all/">כל 45 התחומים</a> · <a href="build/?t=other">התחום שלי לא ברשימה</a></p>
       </div>
     </div>
   </section>
@@ -717,6 +717,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['ac', 'טכנאי מזגנים', 'אלון קור', 'המזגן לא מקרר? מתארים, וטכנאי חוזר אליכם.', 'ac-work', '50% 40%', '#e6f1f6', '#0d2235', '#0d2235', '#e6f1f6', '#0d2235', 'urgent'],
     ['appliance', 'מכשירי חשמל', 'רועי שטרן', 'לתקן או להחליף? אגיד לכם בכנות.', 'appliance-work', '50% 40%', '#eef1f8', '#1d3bb3', '#1d3bb3', '#fff', '#1d3bb3', 'urgent'],
     ['roofing', 'איטום וגגות', 'שחר איטום וגגות', 'דולף מהתקרה? שולחים תמונה, והפרטים אצלנו.', 'roofing-work', '50% 60%', '#eef1f3', '#1f262c', '#8c2f39', '#fff', '#2a6f97', 'urgent'],
+    ['garage', 'מוסך', 'מוסך דודי', 'נדלקה נורה בלוח? כתבו מה רואים, ואני חוזר עם תור.', 'garage-cover', '50% 50%', '#f3f5f6', '#1b2127', '#b3261e', '#fff', '#1b2127', 'urgent'],
+    ['phone-repair', 'תיקון סלולר ומחשבים', 'מעבדת נועם', 'המסך נסדק? שלחו תמונה, ואני אומר כמה ומתי.', 'phone-repair-cover', '50% 50%', '#eef2f8', '#111a2e', '#1d4ed8', '#fff', '#16307a', 'urgent'],
     ['pest', 'הדברה', 'שקט', 'מזיקים בבית? מטפלים, ואתם חוזרים לבית שקט.', 'pest-work', '50% 40%', '#e6efe8', '#1d4a35', '#1d4a35', '#fff', '#1d4a35', 'home'],
     ['movers', 'הובלות', 'דרור הובלות', 'עוברים דירה? מחיר סגור לפני שמעמיסים.', 'movers-truck', '45% 50%', '#f6efe6', '#181512', '#c69c6d', '#181512', '#181512', 'home'],
     ['cleaning', 'ניקיון', 'שקד', 'אין זמן לנקות? אותה מנקה, כל שבוע.', 'cleaning-portrait', '60% 40%', '#dceeec', '#0f3b3a', '#0f3b3a', '#fff', '#0f3b3a', 'home'],
@@ -726,6 +728,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['garden', 'גינון', 'עומר גנים', 'הגינה יצאה משליטה? עומר חוזר לקבוע סיור.', 'garden-work', '50% 40%', '#1f4d36', '#f3efe6', '#f3efe6', '#1f4d36', '#f3efe6', 'home'],
     ['pergolas', 'פרגולות וסוככים', 'אופק פרגולות', 'על הפיגום בהתקנה? הצ׳אט אוסף את המידות והמיקום.', 'pergolas-work', '50% 45%', '#eef2f5', '#20252b', '#7a4b2a', '#fff', '#2b3138', 'home'],
     ['security', 'אבטחה ותקשורת', 'דקל מערכות', 'מצלמות לבית, מערכות לעסקים. הצ׳אט שואל מה צריך.', 'security-work', '50% 45%', '#eef2f6', '#0f1b2d', '#1d63b8', '#fff', '#0f1b2d', 'home'],
+    ['carpenter', 'נגר', 'נגריית אלון', 'מטבח, ארון או מגירה שנתקעה? שולחים תמונה.', 'carpenter-cover', '50% 50%', '#f3f1ec', '#2a241f', '#6a3b24', '#fff', '#2f5d50', 'home'],
+    ['aluminum', 'אלומיניום', 'רז אלומיניום', 'החלון לא זז? הרשת קרועה? שולחים תמונה.', 'aluminum-cover', '50% 50%', '#eef1f2', '#16232a', '#0d5c63', '#fff', '#7d8a92', 'home'],
+    ['water-heater', 'דודי שמש', 'גלעד דודי שמש', 'אין מים חמים? מתארים בצ׳אט, ואנחנו חוזרים עם זמן הגעה.', 'water-heater-cover', '50% 50%', '#eef2f5', '#1e3142', '#9c4325', '#fff', '#2f6f9f', 'home'],
+    ['tiling', 'ריצוף וחיפוי', 'יניב ריצוף וחיפוי', 'ריצוף חדש או אריח שנסדק? שולחים תמונה.', 'tiling-cover', '50% 50%', '#f2f3f1', '#2a3235', '#1b6460', '#fff', '#b3284a', 'home'],
     ['cosmetics', 'קוסמטיקה ויופי', 'מיה קליניקת יופי', 'הידיים בטיפול. הצ׳אט עונה בינתיים.', 'cosmetics-work', '45% 55%', '#f6f0f2', '#2f1f27', '#5b2140', '#fff', '#a8446b', 'care'],
     ['nails', 'בניית ציפורניים', 'ליה נייל סטודיו', 'ציפורן נשברה? מבקשים תור בצ׳אט.', 'nails-work', '40% 55%', '#f8f4f6', '#25131c', '#a3124d', '#fff', '#6e0b33', 'care'],
     ['barber', 'ספרות', 'המספרה של שי', 'יש תור היום? שאלו כאן, ושי חוזר עם שעה.', 'barber-work', '45% 60%', '#f2f5f7', '#121a26', '#16223a', '#fff', '#b4182d', 'care'],
@@ -734,12 +740,23 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['yoga', 'יוגה ופילאטיס', 'סטודיו אלה', 'יוגה או פילאטיס? הצ׳אט אוסף את השעה שנוחה לכם.', 'yoga-work', '62% 60%', '#f1f4ef', '#24182a', '#5b2a5e', '#fff', '#7c9a82', 'care'],
     ['psychologist', 'פסיכולוגית', 'תמר גלעד', 'מקום שקט לדבר על מה שקשה.', 'psychologist-work', '50% 40%', '#e3ebe6', '#1f3d36', '#1f3d36', '#fff', '#b9cbc2', 'care'],
     ['social-worker', 'עובדת סוציאלית', 'יעל שחר', 'משהו בבית לא מסתדר? מתחילים בשיחת היכרות.', 'social-worker-work', '50% 40%', '#f3f5f2', '#134e4a', '#134e4a', '#fff', '#d99a96', 'care'],
+    ['hair', 'עיצוב שיער', 'שירה לוי', 'מה עושים לשיער הפעם? בוחרים טיפול, ושירה חוזרת לתאם.', 'hair-cover', '50% 40%', '#f1f4f2', '#13221d', '#17463a', '#fff', '#9a4424', 'care'],
+    ['lashes-brows', 'ריסים וגבות', 'עדי שגיא', 'ריסים או גבות? בוחרים טיפול, ועדי חוזרת לתאם.', 'lashes-brows-cover', '50% 50%', '#f5f3f7', '#171d2c', '#1f2a44', '#fff', '#a8325a', 'care'],
+    ['hair-removal', 'הסרת שיער', 'קליניקת אלמה', 'לייזר או שעווה? בוחרים אזורים, והקליניקה חוזרת לתאם.', 'hair-removal-cover', '50% 50%', '#f1f6f6', '#10282b', '#0d5c63', '#fff', '#9b2c4a', 'care'],
+    ['makeup', 'מאפרת', 'מעיין אלמוג', 'יש לכם אירוע? בוחרים לוק, ומעיין חוזרת לתאם.', 'makeup-cover', '50% 50%', '#f7f2f6', '#241426', '#5a1d5f', '#fff', '#ad2756', 'care'],
+    ['physio', 'פיזיותרפיה', 'מיכל אורן', 'כואב לזוז? ספרו מה קרה, ומיכל חוזרת לתאם.', 'physio-cover', '50% 40%', '#f3f6fa', '#121c33', '#173a7a', '#fff', '#c2384f', 'care'],
     ['photographer', 'צלם אירועים', 'יונתן צילום', 'בודקים תאריך ומקבלים תיק עבודות בוואטסאפ.', 'photographer-work', '50% 60%', '#eef1f4', '#1d1820', '#1d1820', '#fff', '#c0183c', 'learn'],
     ['driving', 'מורה לנהיגה', 'גיל לימודי נהיגה', 'מתחילים ללמוד נהיגה? גיל חוזר עם שעה.', 'driving-work', '40% 55%', '#f5f6f3', '#151a1f', '#c4122f', '#fff', '#1d4f91', 'learn'],
     ['tutor', 'מורה פרטית', 'נועה שגיא', 'המבחן מתקרב? מתמטיקה ואנגלית, עד הבגרות.', 'tutor-portrait', '50% 35%', '#fbfcff', '#1b2a55', '#1b2a55', '#fff', '#d93a3a', 'learn'],
     ['music', 'מורה לנגינה', 'מאיה לב', 'תמיד רציתם לנגן? מתחילים מהשיר שאתם אוהבים.', 'music-work', '50% 35%', '#f3f4f6', '#8e2236', '#8e2236', '#fff', '#15161a', 'learn'],
     ['dog-trainer', 'אילוף כלבים', 'נועם אילוף כלבים', 'באמצע שיעור במגרש? הצ׳אט עונה לבעלי הכלבים.', 'dog-trainer-work', '53% 45%', '#eef3ee', '#1b2433', '#c2410c', '#fff', '#3f6b3a', 'learn'],
+    ['catering', 'קייטרינג', 'המטבח של רונית', 'אירוע קטן בבית? אני מבשלת, אתם מארחים.', 'catering-cover', '50% 50%', '#f4f7f2', '#1f2a22', '#2e5e3e', '#fff', '#a8263d', 'learn'],
+    ['dj', 'DJ לאירועים', 'DJ עומר לוי', 'מה רוקדים אצלכם? ספרו, ואשלח פלייליסט לדוגמה.', 'dj-cover', '50% 55%', '#f6f3f6', '#1c1d24', '#c2264b', '#fff', '#18191f', 'learn'],
+    ['cakes', 'עוגות מעוצבות', 'המתוקים של נוי', 'יום הולדת בשבוע הבא? העוגה עליי.', 'cakes-cover', '50% 40%', '#fbf3f4', '#3d2422', '#9c2352', '#fff', '#4f6b2e', 'learn'],
+    ['bridal', 'שמלות כלה', 'אטלייה נוגה', 'שמלת כלה? בוחרים גזרה, ומתאמים מדידה.', 'bridal-cover', '50% 35%', '#fbf5f4', '#2a1419', '#6b1631', '#fff', '#a23a57', 'learn'],
   ].map(([id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat]) => ({ id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat }));
+  // demos whose trade is not in the builder yet: their build link starts from "תחום אחר"
+  const SOON = new Set(['garage', 'phone-repair', 'carpenter', 'aluminum', 'water-heater', 'tiling', 'hair', 'lashes-brows', 'hair-removal', 'makeup', 'physio', 'catering', 'dj', 'cakes', 'bridal']);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   /* the plans: each card's ticks come in line by line, once */
   if (!still() && 'IntersectionObserver' in window) {
@@ -772,7 +789,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       setTimeout(() => old.forEach((o) => o.remove()), 700); }
     stage.style.backgroundColor = tint(t);
     $('#nowName').textContent = `${t.name} · ${t.trade}`;
-    $('#toDemo').href = `${t.id}/`; $('#toBuild').href = `build/?t=${t.id}`;
+    $('#toDemo').href = `${t.id}/`; $('#toBuild').href = `build/?t=${SOON.has(t.id) ? 'other' : t.id}`;
   };
   // Until the visitor picks, the phone walks through the trades by itself (never for reduced motion, never off screen)
   let auto = !still(), timer = null, onScreen = false, held = false;

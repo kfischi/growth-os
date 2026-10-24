@@ -14,3 +14,5 @@ music-work, music-portrait, music-studio, music-lesson: generated with Figma AI;
 towing-work, yoga-work, dog-trainer-work, driving-work, upholstery-work, roofing-work, cosmetics-work, shutters-work, barber-work, massage-work, pergolas-work, nails-work, photographer-work: AI-generated photos Kfir sent (1280x720 WebP); no lettering. The warm lights in photographer-work and the sunset in pergolas-work had their yellow desaturated.
 
 security-work, security-office, yoga-reformer: flat drawings, not photos (an HTML/SVG scene screenshotted and saved as WebP), until real photos are made for these demos.
+
+carpenter-cover, aluminum-cover, water-heater-cover, tiling-cover, garage-cover, phone-repair-cover, hair-cover, physio-cover, catering-cover, dj-cover, cakes-cover, lashes-brows-cover, hair-removal-cover, makeup-cover, bridal-cover: interim covers for the home picker and /all/, screenshots of each page's own drawn hero (glass cards hidden), 960x720 WebP. To be replaced by the Canva hero photos listed in docs/side-income/FUTURE-DEMOS.md.

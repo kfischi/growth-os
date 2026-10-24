@@ -196,7 +196,7 @@ async function switches(b) {
   }
   return bad;
 }
-const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters','security','yoga','dog-trainer','pergolas','roofing'];
+const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters','security','yoga','dog-trainer','pergolas','roofing','carpenter','aluminum','water-heater','tiling','garage','phone-repair','hair','physio','catering','dj','cakes','lashes-brows','hair-removal','makeup','bridal'];
 (async () => {
   const b = await chromium.launch(); let bad = 0;
   for (const d of DEMOS) {

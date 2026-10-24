@@ -1,15 +1,16 @@
 # Future demos
 
-Demo pages for trades not yet in the builder (15 so far, listed in the table below). Each is `noindex, nofollow`, is not linked from the home page, `/all/`, the sitemap or the builder, and sends "לבנות אתר כזה" to `build/?t=other`. Each one shows a drawing until real sample photos exist.
+Demo pages for trades not yet in the builder (15, listed in the table below).
 
-To launch one:
+**Listed on 2026-10-24.** All 15 are on the home picker (`T` in `demos/index.html`) and on `/all/`, each in its group, and in `DEMOS` in `scripts/tests/demo-chats.cjs`; the counts say 45. They are `noindex` like every other demo and stay out of the sitemap. Their "לבנות אתר כזה" goes to `build/?t=other` (the `SOON` set in `demos/index.html`, and the cards on `/all/`) until each gets a builder trade. The AI chat (`chat.mjs`, `aibot.js`) knows their slugs.
 
-1. Make its three photos from the prompts below (Figma `generate_image`, or any licensed image tool).
-2. Crop them to WebP in `demos/shared/photos/` and put the hero in the page's frame.
-3. Remove `noindex`.
-4. Add the trade to the home picker (`T` in `demos/index.html`), to `/all/`, to the sitemap and to the builder: `templates/trades/<id>.mjs`, `trades/index.mjs` and `#fTrade`.
-5. Add the page to `DEMOS` in `scripts/tests/demo-chats.cjs`.
-6. Update the trade counts (30).
+**Interim covers.** `demos/shared/photos/<id>-cover.webp` (960x720, 4:3 like the picker's phone and the `/all/` cards) is a screenshot of the page's own drawn hero, without the glass cards. Replace each with the Canva hero photo below once it can be downloaded (same file name, 4:3 crop, WebP about 78), and put the photo in the page's frame too.
+
+Still to do, per demo:
+
+1. Make its two work photos from the prompts below (Figma `generate_image`, Canva, or any licensed image tool), and the hero from Canva.
+2. Crop them to WebP in `demos/shared/photos/`, replace the interim cover, and put the hero in the page's frame.
+3. Add the trade to the builder: `templates/trades/<id>.mjs`, `trades/index.mjs` and `#fTrade`; then take its id out of `SOON` in `demos/index.html` and point its `/all/` card at `build/?t=<id>`.
 
 | Trade | Page | Fictional business |
 | --- | --- | --- |
