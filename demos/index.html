@@ -83,7 +83,11 @@ button { font: inherit; color: inherit; }
 .brand small { color: var(--silver-ink); font-size: .9rem; white-space: nowrap; }
 .brand small::before { content: "·"; margin-inline: 6px 6px; }
 .nav { display: flex; gap: 24px; margin-inline-start: auto; }
-.nav a { color: var(--ink-2); text-decoration: none; font-size: .95rem; }
+.nav a { color: var(--ink-2); text-decoration: none; font-size: .95rem; white-space: nowrap; }
+.bar .btn { white-space: nowrap; }
+/* seven links: the slogan steps aside first, then the gaps tighten, before the menu folds at 1000px */
+@media (max-width: 1280px) { .brand small { display: none; } }
+@media (max-width: 1160px) { .bar .wrap { gap: 18px; } .nav { gap: 16px; } }
 .nav a:hover { color: var(--ink); }
 
 /* section scaffolding */
@@ -530,7 +534,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <b>Multi Landing</b><small>אתרים שבונים עסקים</small>
     </a>
     <nav class="nav" id="nav" aria-label="ניווט">
-      <a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="all/">כל הדוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
+      <a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="all/">כל הדוגמאות</a><a href="guides/">מדריכים</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
     <a class="btn sm" href="build/">לבנות את האתר</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu-word">תפריט</span></button>
