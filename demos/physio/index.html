@@ -86,7 +86,7 @@
   .scene .tape-cut { fill: none; stroke: rgba(255,255,255,.5); stroke-width: 1.5; stroke-dasharray: 3 5; }
   .scene .band { fill: none; stroke: #4f7bd0; stroke-width: 7; stroke-linecap: round; }
   .scene .mat { fill: #dfe6f3; }
-  .scene .label { font: 600 13px var(--mono); fill: var(--ink-soft); }
+  .scene .label { font: 700 14px var(--body); fill: var(--ink-soft); }
 
   /* ---------- Where and what: the joint map and the red flags ---------- */
   .tool-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 22px; align-items: stretch; }
@@ -260,20 +260,20 @@
             <text class="label" x="346" y="28">תרגיל 3</text>
             <rect class="mat" x="150" y="330" width="200" height="12" rx="6"/>
             <!-- where the arm started, hanging down -->
-            <path class="arm-ghost" d="M258 156 L258 246"/>
+            <path class="arm-ghost" d="M262 158 L262 248"/>
             <!-- the arc of the movement around the shoulder, 0° down to 150° forward and up -->
-            <path class="arc" d="M258 238 A82 82 0 0 1 217 85"/>
-            <path class="arrow" d="M211 76 l17 2 l-10 14 z"/>
-            <text class="deg" x="270" y="252">0°</text>
+            <path class="arc" d="M262 240 A82 82 0 0 1 221 87"/>
+            <path class="arrow" d="M214 78 l17 2 l-10 14 z"/>
+            <text class="deg" x="222" y="268">0°</text>
             <text class="deg" x="150" y="76">150°</text>
             <!-- the body: a pictogram from the sheet, seen from the side -->
-            <circle class="head" cx="266" cy="104" r="22"/>
-            <path class="body" d="M260 142 L266 250 M266 250 L248 326 M266 250 L286 326"/>
-            <path class="body" d="M258 156 L213 78"/>
+            <circle class="head" cx="286" cy="110" r="22"/>
+            <path class="body" d="M274 142 L270 250 M270 250 L252 326 M270 250 L290 326"/>
+            <path class="body" d="M266 158 L262 158 L217 80"/>
             <!-- the kinesio tape over the shoulder, along the arm -->
-            <g transform="rotate(-60 246 136)">
-              <rect class="tape" x="206" y="127" width="80" height="18" rx="8"/>
-              <path class="tape-cut" d="M214 136 H278"/>
+            <g transform="rotate(60 250 136)">
+              <rect class="tape" x="214" y="127" width="72" height="18" rx="8"/>
+              <path class="tape-cut" d="M222 136 H278"/>
             </g>
           </svg>
         </div>
