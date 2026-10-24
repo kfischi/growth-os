@@ -279,6 +279,9 @@ const SAMPLE_HEROES = Object.fromEntries(Object.entries({
   nails: "nails-work", pergolas: "pergolas-work", pest: "pest-work", photographer: "photographer-work", psychologist: "psychologist-work",
   renovation: "renovation-drywall", roofing: "roofing-work", security: "security-work", shutters: "shutters-work", "social-worker": "social-worker-work", towing: "towing-work",
   trainer: "trainer-squat", tutor: "tutor-lesson", upholstery: "upholstery-work", yoga: "yoga-work",
+  // The fifteen newer trades: the demo's interim cover (its own drawn top) until their real photos replace it.
+  ...Object.fromEntries(["carpenter", "aluminum", "water-heater", "tiling", "garage", "phone-repair", "hair", "physio", "catering", "dj", "cakes",
+    "lashes-brows", "hair-removal", "makeup", "bridal"].map((t) => [t, t + "-cover"])),
 }).map(([k, f]) => [k, `/shared/photos/${f}.webp`]));
 export const sampleHeroOf = (tradeId) => SAMPLE_HEROES[tradeId] || "";
 // Sample work photos and a portrait for a draft's empty frames, where the demos have real photos of that trade.

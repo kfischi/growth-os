@@ -331,7 +331,8 @@ export const LOOKS = {
 
 // Which looks a trade sees. The technicians' looks (a blueprint, a van, a job card, a dispatch board) don't suit
 // a beauty clinic or a lesson; the studio, the price list and the appointment card don't suit a plumber.
-const CARE = new Set(["cosmetics", "nails", "barber", "massage", "trainer", "yoga", "dog-trainer", "psychologist", "social-worker", "photographer", "driving", "tutor", "music"]);
+const CARE = new Set(["cosmetics", "nails", "barber", "massage", "trainer", "yoga", "dog-trainer", "psychologist", "social-worker", "photographer", "driving", "tutor", "music",
+  "hair", "lashes-brows", "hair-removal", "makeup", "bridal", "physio", "catering", "dj", "cakes"]);
 const GROUPS = {
   work: ["luxe", "blueprint", "certificate", "van", "ticket", "dispatch", "mosaic"],
   care: ["luxe", "studio", "menu", "appointment", "mosaic", "certificate"],

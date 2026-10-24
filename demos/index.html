@@ -758,7 +758,6 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['bridal', 'שמלות כלה', 'אטלייה נוגה', 'שמלת כלה? בוחרים גזרה, ומתאמים מדידה.', 'bridal-cover', '50% 35%', '#fbf5f4', '#2a1419', '#6b1631', '#fff', '#a23a57', 'learn'],
   ].map(([id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat]) => ({ id, trade, name, line, photo, pos, bg, ink, acc, on, mark, cat }));
   // demos whose trade is not in the builder yet: their build link starts from "תחום אחר"
-  const SOON = new Set(['garage', 'phone-repair', 'carpenter', 'aluminum', 'water-heater', 'tiling', 'hair', 'lashes-brows', 'hair-removal', 'makeup', 'physio', 'catering', 'dj', 'cakes', 'bridal']);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   /* the plans: each card's ticks come in line by line, once */
   if (!still() && 'IntersectionObserver' in window) {
@@ -791,7 +790,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       setTimeout(() => old.forEach((o) => o.remove()), 700); }
     stage.style.backgroundColor = tint(t);
     $('#nowName').textContent = `${t.name} · ${t.trade}`;
-    $('#toDemo').href = `${t.id}/`; $('#toBuild').href = `build/?t=${SOON.has(t.id) ? 'other' : t.id}`;
+    $('#toDemo').href = `${t.id}/`; $('#toBuild').href = `build/?t=${t.id}`;
   };
   // Until the visitor picks, the phone walks through the trades by itself (never for reduced motion, never off screen)
   let auto = !still(), timer = null, onScreen = false, held = false;
