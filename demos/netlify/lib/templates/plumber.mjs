@@ -4,7 +4,7 @@
 import { israeliPhone } from "../leads.mjs";
 import { localBusiness } from "./schema.mjs";
 import { socialList, SOCIAL_KEYS } from "../social.mjs";
-import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog, defaultLook } from "./looks.mjs";
+import { LOOKS, LOOK_CSS, lookOf, cssVars, themeColor, catalog, defaultLook, isCare } from "./looks.mjs";
 export { LOOKS, lookOf, catalog };
 // The trades (trades/<id>.mjs): words, chat, questionnaire. The site is the same for all of them.
 import { tradeOf } from "./trades/index.mjs";
@@ -426,6 +426,28 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
     to: T.plural ? "אלינו" : "אליי", at: T.plural ? "אצלנו" : "אצלי",
   };
 
+  // The AI chat (נציג AI, /api/chat/<slug>, functions/client-chat.mjs): answers from the owner's own facts, in the
+  // customer's language. On a live site with the lead system, and in a draft (where it shows its offline line).
+  // Not for the crisis trades: their chat collects only the minimum for a first call.
+  const askAI = !T.crisis && (draft || Boolean(leads));
+  const priced = services.find((s) => /\d/.test(String(s.price || "")));
+  const asks = [
+    priced ? `כמה עולה ${priced.name}?` : services[0] ? `כמה עולה ${services[0].name}?` : "",
+    towns.length && !isCare(T.id) ? `מגיעים גם ל${towns[Math.min(1, towns.length - 1)]}?` : "",
+    has("warranty") ? "יש אחריות על העבודה?" : "",
+    has("hours") ? "מה שעות הפעילות?" : "",
+  ].filter(Boolean).slice(0, 3);
+  const askSection = askAI ? `
+<section class="ask-sec" id="ask">
+  <div class="wrap">
+    <div class="head"><h2>יש שאלה? הנציג עונה עכשיו</h2><span class="mono">נציג AI</span></div>
+    <p class="ask-lede">הנציג הדיגיטלי עונה מיד, מתוך המחירים, האזורים והשעות ${T.plural ? "שלנו" : "שלי"}. כשהוא לא יודע, הוא אומר את זה, ו${T.plural ? "נחזור" : "אחזור"} אליכם. אפשר לכתוב גם ברוסית, בערבית או באנגלית.</p>
+    <div class="ask-chips">${asks.map((q) => `<button type="button" data-ask="${h(q)}">${h(q)}</button>`).join("")}<button type="button" class="ask-open" data-ask="">לשאול שאלה אחרת</button></div>
+    <p class="ask-note">זה נציג AI, והוא יכול לטעות. מחיר סופי ומועד נקבעים רק מול ${T.plural || !owner ? "העסק" : h(ownerFirst)}.</p>
+  </div>
+</section>
+` : "";
+
   const index = `<!doctype html>
 <html lang="he" dir="rtl">
 <head>
@@ -446,7 +468,7 @@ ${robots}${site ? `<link rel="canonical" href="${h(site)}">
 <link rel="icon" href="${draft ? "data:image/svg+xml," + encodeURIComponent(FAVICON) : "assets/favicon.svg"}" type="image/svg+xml">
 ${fontHead}
 <script src="${h(assets)}a11y.js" data-statement="${draft ? "" : "accessibility.html"}"></script>
-<style>${CSS}${LOOK_CSS[L.id]}:root { ${cssVars(L.look, L.p)} }${GUIDE_CSS}${draft ? DRAFT_CSS : ""}</style>
+<style>${CSS}${LOOK_CSS[L.id]}:root { ${cssVars(L.look, L.p)} }${GUIDE_CSS}${askAI ? ASK_CSS : ""}${draft ? DRAFT_CSS : ""}</style>
 </head>
 <body class="look-${L.id}">
 ${draft ? '<div class="ribbon" role="note">טיוטה לאישור · האתר עוד לא באוויר</div>\n' : ""}
@@ -541,7 +563,7 @@ ${GUIDES.items.length ? `<section class="guides-sec" id="guides">
     <p class="gd-more"><a href="${draft ? "#" : "guides.html"}">לכל הטיפים והשאלות (${GUIDES.items.length})</a></p>
   </div>
 </section>` : ""}
-
+${askSection}
 <section class="area">
   <div class="wrap row">
     <div>
@@ -566,7 +588,8 @@ ${GUIDES.items.length ? `<section class="guides-sec" id="guides">
 ${heroVideo ? `<script>${REEL_JS}</script>
 ` : ""}${clips.length ? `<script>${CLIPS_JS}</script>
 ` : ""}<script src="${h(assets)}leadform.js" defer></script>
-<script src="${h(assets)}leadbot.js" defer></script>
+<script src="${h(assets)}leadbot.js" defer></script>${askAI ? `
+<script src="${h(assets)}aibot.js" defer></script>` : ""}
 <script>
 // The chat's scripts load without holding up the page (defer); this runs once they are in.
 document.addEventListener("DOMContentLoaded", () => {
@@ -605,7 +628,17 @@ document.addEventListener("DOMContentLoaded", () => {
   // From a service's own page (?q=<service>): the chat opens with that service already picked.
   const ASKED = new URLSearchParams(location.search).get("q");
   if (ASKED && ${js(services.map((x) => x.name))}.includes(ASKED)) bot.open({ issue: ASKED });
-  if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
+${askAI ? `  // The AI chat opens from the "יש שאלה?" section; the corner keeps the chat with the questions.
+  const ai = AiBot.init({ corner: false, whatsapp: SITE.whatsapp,
+    endpoint: SITE.leads ? SITE.leads.replace("/api/lead/", "/api/chat/") : false,
+    name: ${js(name + " · נציג AI")}, subtitle: "עונה מתוך המידע של העסק",
+    greet: ${js(`היי, כאן הנציג הדיגיטלי של ${name}. אפשר לשאול על מחירים, אזורים ושעות. אפשר לכתוב גם ברוסית, בערבית או באנגלית.`)},
+    chips: ${js(asks.slice(0, 3))}, placeholder: "כתבו שאלה", waLabel: ${js(T.plural ? "לשלוח לנו בוואטסאפ" : "לשלוח לי בוואטסאפ")},
+    note: "נציג AI. הוא יכול לטעות, ועל כל השאר עונים בוואטסאפ.",
+    offline: ${js(draft ? "בטיוטה הנציג עוד לא מחובר. אחרי הפרסום הוא עונה מתוך המחירים והאזורים שלכם." : "הנציג לא זמין כרגע. אפשר לשלוח את השאלה בוואטסאפ.")}${draft ? ", offlineWa: false" : ""},
+  });
+  document.querySelectorAll("[data-ask]").forEach((b) => b.addEventListener("click", () => { ai.open(); if (b.dataset.ask) ai.ask(b.dataset.ask); }));
+` : ""}  if (SITE.leads) LeadForm.visit(SITE.leads.replace("/api/lead/", "/api/visit/")); // a number for the monthly report, no cookie
   if (SITE.leads) LeadForm.status(SITE.leads.replace("/api/lead/", "/api/status/")); // "available now": what the owner wrote in WhatsApp
   if (SITE.leads && LeadForm.testimonials) LeadForm.testimonials(SITE.leads.replace("/api/lead/", "/api/testimonials/")); // what customers wrote, shown at once
 });
@@ -638,7 +671,7 @@ ${body}
 
   const privacy = legal("פרטיות", `
 <h2>מה אנחנו אוספים</h2>
-<p>כשפונים בצ׳אט: ${h(T.privacyWhat)}. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>${leads ? "\n<p>תמונה שצירפתם עוברת גם לבדיקה ראשונה אוטומטית (שירות הבינה המלאכותית של Anthropic), כדי לתת לכם הערכה מהמחירון של העסק. היא לא נשמרת שם.</p>" : ""}${leads ? "\n<p>אנחנו סופרים כמה פעמים נכנסו לאתר, מאיפה, מאיזה סוג מכשיר ובאיזו שעה, וכמה לחצו על וואטסאפ, חיוג או הצ׳אט. כמספרים בלבד: בלי עוגיות, בלי כתובת IP ובלי שום פרט שמזהה אתכם.</p>" : ""}
+<p>כשפונים בצ׳אט: ${h(T.privacyWhat)}. בנוסף נשמרים מאיזה עמוד הגעתם (למשל מגוגל או מפייסבוק) ומתי.</p>${leads ? "\n<p>תמונה שצירפתם עוברת גם לבדיקה ראשונה אוטומטית (שירות הבינה המלאכותית של Anthropic), כדי לתת לכם הערכה מהמחירון של העסק. היא לא נשמרת שם.</p>" : ""}${askAI && leads ? "\n<p>מה שכותבים לנציג ה-AI באתר (״יש שאלה?״) עובר לשירות הבינה המלאכותית של Anthropic, כדי שיענה מתוך המידע של העסק. השיחה לא נשמרת אצלנו, אלא אם השארתם בה שם וטלפון: אז נשמרים השם, הטלפון וסיכום קצר של הפנייה, כמו בכל פנייה בצ׳אט.</p>" : ""}${leads ? "\n<p>אנחנו סופרים כמה פעמים נכנסו לאתר, מאיפה, מאיזה סוג מכשיר ובאיזו שעה, וכמה לחצו על וואטסאפ, חיוג או הצ׳אט. כמספרים בלבד: בלי עוגיות, בלי כתובת IP ובלי שום פרט שמזהה אתכם.</p>" : ""}
 
 <h2>למה</h2>
 <p>רק כדי לחזור אליכם בעניין ה${h(W.lead)}${leads ? ", לשלוח לכם אישור בוואטסאפ" : ""} ולתאם את העבודה. לא שולחים לכם פרסומות, ולא מוכרים או מעבירים את הפרטים לאף אחד לצורך שיווק.</p>
@@ -818,6 +851,9 @@ export const HEADERS = `# Netlify headers for this site. Applied however the sit
   Cache-Control: public, max-age=300, must-revalidate
 
 /assets/a11y.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/assets/aibot.js
   Cache-Control: public, max-age=300, must-revalidate
 
 /assets/favicon.svg
@@ -1133,6 +1169,18 @@ const DRAFT_CSS = `
   .ba .ps.ph { color: var(--ink-soft); border-color: var(--rule); background: var(--tint); border-radius: 0; }
   .ba.half > .ps.ph { padding-left: 50%; }
   .ba.half .ba-before > .ps.ph { padding-right: 50%; }
+`;
+
+// The "יש שאלה?" section and the AI chat's panel, in the look's own colours and font.
+const ASK_CSS = `
+  :root { --ab-accent: var(--accent); --ab-font: var(--body); }
+  .ask-lede { max-width: 62ch; color: var(--ink-soft); margin: 0 0 18px; }
+  .ask-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ask-chips button { font: 600 15px/1.35 var(--body); color: var(--ink); background: var(--surface, #fff); border: 1.5px solid var(--rule); border-radius: var(--bot-radius-pill, 999px); padding: 11px 16px; cursor: pointer; text-align: start; }
+  .ask-chips button:hover { border-color: var(--accent); }
+  .ask-chips button:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  .ask-chips .ask-open { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ask-note { margin: 14px 0 0; font-size: 14px; color: var(--ink-soft); }
 `;
 
 // The guide items, on the main page and on guides.html. Fallbacks for the plainer legal pages.
