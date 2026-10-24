@@ -9,6 +9,8 @@
      placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"), offlineWa (false: no WhatsApp button then).
    A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>".
    maxLength: the longest question the visitor can type (default 600; the demo chat takes 300).
+   corner: false hides the corner button (the page opens the chat from its own buttons, data-open-ai or the returned open()).
+   endpoint: false means no live chat behind it (a draft): every question gets the offline line at once.
    hint: true puts an arrow bobbing above the button and a soft pulse around it, until the chat is first opened
    (none with reduced motion or html.a11y-still). */
 (function () {
@@ -18,6 +20,9 @@
     handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית", music: "מורה לנגינה",
     towing: "גרר ושירותי דרך", cosmetics: "קוסמטיקה ויופי", photographer: "צלם אירועים", barber: "ספרות", massage: "עיסוי ומסאז׳", nails: "בניית ציפורניים", driving: "מורה לנהיגה", upholstery: "ניקוי ספות ושטיחים", shutters: "תריסים",
     security: "מערכות אבטחה ותקשורת", yoga: "יוגה ופילאטיס", "dog-trainer": "אילוף כלבים", pergolas: "פרגולות וסוככים", roofing: "איטום וגגות",
+    carpenter: "נגר", aluminum: "אלומיניום", "water-heater": "דודי שמש", tiling: "ריצוף וחיפוי", garage: "מוסך", "phone-repair": "תיקון סלולר ומחשבים",
+    hair: "עיצוב שיער", physio: "פיזיותרפיה", catering: "קייטרינג", dj: "DJ לאירועים", cakes: "עוגות מעוצבות", "lashes-brows": "ריסים וגבות",
+    "hair-removal": "הסרת שיער", makeup: "מאפרת", bridal: "שמלות כלה",
     "leads-demo": "דמו מערכת לידים", "ai-agent": "דמו נציג AI",
   };
   const GO = { how: "איך זה עובד", what: "מה יש באתר", demos: "לדוגמאות", plans: "למחירון", faq: "לשאלות" };
@@ -66,6 +71,21 @@
 
   // ---------- scripted fallback: same output format as the model ----------
   const NICHES = [
+    [/דוד שמש|דודי שמש|אין מים חמים|גוף חימום|תרמוסטט|קולט/, "water-heater"],
+    [/מוסך|מכונאי|טיפול לרכב|בלמים|נורה בלוח|נורת מנוע/, "garage"],
+    [/סלולר|טלפון נייד|מסך סדוק|מסך שבור|החלפת סוללה|שקע טעינה|מעבדה|מחשב נייד|לפטופ|שחזור מידע/, "phone-repair"],
+    [/נגר|נגריי?ה|ארון קיר|ארונות מטבח|רהיט בהתאמה/, "carpenter"],
+    [/אלומיניום|חלון הזזה|חלונות|מקלחון|רשת יתושים|רשת לחלון/, "aluminum"],
+    [/ריצוף|רצפה|אריח|חיפוי|רובה|קרמיקה|פורצלן/, "tiling"],
+    [/פיזיותרפ|פיזיו|כאבי גב|שיקום אחרי|פציעת ספורט/, "physio"],
+    [/קייטרינג|מגשי אירוח|מגשי שבת|אוכל לאירוע|בר מצווה אוכל/, "catering"],
+    [/\bdj\b|די.?ג.?יי|תקליטן/i, "dj"],
+    [/עוגה|עוגות|קונדיטור|מתוקים|קינוחים/, "cakes"],
+    [/שמלת כלה|שמלות כלה|אטלייה|אטליה/, "bridal"],
+    [/איפור|מאפרת|מאפר/, "makeup"],
+    [/ריסים|גבות|למינציה/, "lashes-brows"],
+    [/הסרת שיער|לייזר|שעווה/, "hair-removal"],
+    [/עיצוב שיער|מעצבת שיער|צבע לשיער|גוונים|החלקה|תסרוקת/, "hair"],
     [/גרר|גרירה|מצבר|פנצ.?ר|שירותי דרך|נתקעתי בדרך|הרכב לא מניע/, "towing"],
     [/איטום|גגות|רעפים|רטיבות|דולף|נזילה מהתקרה|נזילה מהגג|יריעות|פוליאוריאה/, "roofing"],
     [/מצלמ|אזעקה|אינטרקום|קודן|בקרת כניסה|אבטחה|מערכות תקשורת|ארון תקשורת|נקודות רשת|ראוטר|נתב|וויי.?פיי|wi.?fi/i, "security"],
@@ -118,6 +138,7 @@
   const AiBot = {
     init(cfg) {
       const endpoint = cfg.endpoint || "/api/chat";
+      const live = cfg.endpoint !== false;
       const style = el("style"); style.textContent = CSS; document.head.appendChild(style);
 
       const launch = el("button", "ab-launch"); launch.type = "button"; launch.setAttribute("aria-expanded", "false");
@@ -139,19 +160,22 @@
       const typing = el("div", "ab-typing"); typing.append(el("i"), el("i"), el("i")); body.appendChild(typing);
       const chips = el("div", "ab-chips");
       const form = el("form", "ab-form");
-      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); const maxLen = Number(cfg.maxLength) || 600; input.maxLength = maxLen; input.autocomplete = "off";
+      const input = el("input"); input.placeholder = cfg.placeholder || "כתבו שאלה, למשל: יש לי עסק להובלות"; input.setAttribute("aria-label", "השאלה שלכם"); const maxLen = Number(cfg.maxLength) || 600; input.maxLength = maxLen; input.autocomplete = "off"; input.dir = "auto";
       const send = el("button", null, "שליחה"); send.type = "submit";
       form.append(input, send);
       const note = el("div", "ab-note", cfg.note || "זה נציג AI. הוא יכול לטעות, ועל כל השאר עונים בוואטסאפ.");
       panel.append(head, body, chips, form, note);
+      if (cfg.corner === false) launch.style.display = "none";
       document.body.append(launch, panel);
 
-      const history = []; let busy = false, started = false, offline = false;
+      const history = []; let busy = false, started = false, offline = !live;
       (cfg.chips || ["איך בונים את האתר?", "כמה זה עולה?", "יש לי עסק לשיפוצים", "מה נציג AI עושה?", "להתחיל לבנות"]).forEach((q) => {
         const b = el("button", null, q); b.type = "button"; b.addEventListener("click", () => ask(q)); chips.appendChild(b);
       });
 
-      function bubble(text, who) { const m = el("div", "ab-msg" + (who === "me" ? " me" : ""), text); body.insertBefore(m, typing); body.scrollTop = body.scrollHeight; }
+      // A message in Russian or English reads left to right; Hebrew and Arabic stay right to left.
+      function ltr(text) { const n = (re) => (String(text).match(re) || []).length; return n(/[A-Za-z\u0400-\u04FF]/g) > n(/[\u0590-\u05FF\u0600-\u06FF]/g); }
+      function bubble(text, who) { const m = el("div", "ab-msg" + (who === "me" ? " me" : ""), text); if (ltr(text)) m.dir = "ltr"; body.insertBefore(m, typing); body.scrollTop = body.scrollHeight; }
       function render(reply) {
         const acts = []; const re = /\[\[(demo|pricing|whatsapp|build|go)(?::([^\]]*))?\]\]/g;
         const text = reply.replace(re, (_, kind, arg) => { acts.push([kind, (arg || "").trim()]); return ""; }).trim();
@@ -168,7 +192,7 @@
         });
         if (row.children.length) { body.insertBefore(row, typing); body.scrollTop = body.scrollHeight; }
       }
-      function goOffline() { offline = true; mode.textContent = "מצב הדגמה"; }
+      function goOffline() { offline = true; mode.textContent = cfg.endpoint ? "לא זמין" : "מצב הדגמה"; } // a business's own chat is never a "demo"
 
       async function ask(text) {
         text = String(text || "").trim().slice(0, maxLen);
@@ -188,7 +212,7 @@
         }
         if (!reply) { await new Promise((res) => setTimeout(res, 500)); reply = cfg.offline ? cfg.offline + (cfg.offlineWa === false ? "" : " [[whatsapp:" + clean(text) + "]]")
           // A business's own chat (endpoint set) must never fall back to the sales script above.
-          : cfg.endpoint ? "הצ׳אט לא זמין כרגע. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + clean(text) + "]]"
+          : cfg.endpoint || !live ? "הצ׳אט לא זמין כרגע. אפשר לשלוח את השאלה בוואטסאפ, ונחזור אליכם. [[whatsapp:" + clean(text) + "]]"
           : scripted(text, history); }
         typing.classList.remove("on");
         history.push({ role: "assistant", content: reply });

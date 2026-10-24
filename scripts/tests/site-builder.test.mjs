@@ -343,12 +343,16 @@ assert.deepEqual(r.hosting, { state: "off" }, "without NETLIFY_TOKEN the site wa
 const tree = gh.trees.at(-1); assert.equal(tree.base_tree, "tree-c-other", "rebuilt on the new head");
 const paths = tree.tree.map((e) => e.path).filter((x) => !/\/service-[a-z0-9]+\.html$/.test(x)).sort();
 assert.equal(tree.tree.filter((e) => /\/service-[a-z0-9]+\.html$/.test(e.path)).length, D.content.services.length, "a page per service in the repo too");
-assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "assets/photos/work5.webp",
+assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/a11y.js", "assets/aibot.js", "assets/favicon.svg", "assets/leadbot.js", "assets/leadform.js", "assets/hero-poster.jpg", "assets/hero.mp4", "assets/photos/portrait.jpg", "assets/photos/work1.webp", "assets/photos/work5.webp",
   ...D.videos.flatMap((x) => [`assets/videos/${x.id}.mp4`, `assets/videos/${x.id}-poster.jpg`]), "contact.vcf", "guides.html", "index.html", "privacy.html"].map((p) => "clients/oren-mayim/" + p).sort());
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
-assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
+assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.equal(file("assets/aibot.js").sha, "sha-ai", "the AI chat's script is published too"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
 assert.ok(!/noindex|טיוטה|class="todo"/.test(index), "no draft marks on the real site"); assert.match(index, /"leads":"https:\/\/service-pro-web.netlify.app\/api\/lead\/oren-mayim"/);
+// the AI chat: a section of questions from the owner's facts, opening the chat on the business's own /api/chat/<slug>
+assert.match(index, /id="ask"/); assert.match(index, /src="assets\/aibot.js" defer/); assert.match(index, /corner: false/);
+assert.match(index, /SITE\.leads\.replace\("\/api\/lead\/", "\/api\/chat\/"\)/);
+assert.match(index, /data-ask="כמה עולה [^"]+\?"/, "a price question from the owner's own services");
 assert.match(index, /src="assets\/photos\/portrait.jpg"/); assert.match(index, /src="assets\/leadbot.js"/); assert.match(index, /<source src="assets\/hero.mp4" type="video\/mp4">/); assert.match(index, /poster="assets\/hero-poster.jpg"/);
 assert.ok(!paths.some((x) => /photos\/hero\./.test(x)), "the top shows the video: its photo isn't published");
 assert.equal((index.match(/<figure class="vclip"/g) || []).length, 2); assert.match(index, new RegExp(`data-src="assets/videos/${D.videos[0].id}.mp4" width="720" height="1280"`));

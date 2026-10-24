@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>המתוקים של נוי · עוגות מעוצבות</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="עוגות מעוצבות, עוגות יום הולדת, קינוחים אישיים ומגשי מתוקים מהמטבח הביתי בהוד השרון. כשר חלבי, בהשגחת הרבנות. איסוף או משלוח.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#9c2352">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the cake on its stand on the kitchen counter, and the baker's order card beside it
+     ("יום הולדת · 20 אורחים · שתי קומות · פיסטוק").
+     Detail: קומות וקוטר בס״מ, מספר אורחים ופרוסות, טעם וציפוי (קרם, בצק סוכר, נייקד), כשר חלבי, פרווה, אלרגיות, איסוף או משלוח.
+     Bold move: the cake builder. The visitor picks the guests, and the drawn cake stacks one to three tiers,
+     takes the flavour and the finish, and shows its size and a sample range. Blush paper, cocoa ink, berry for the
+     buttons and prices, pistachio as the only green. No cream or caramel tones. */
+  :root {
+    --blush: #fbf3f4;
+    --blush-deep: #f3e2e6;
+    --berry: #9c2352;          /* buttons and prices */
+    --berry-deep: #7a1a40;
+    --cocoa: #3d2422;          /* ink */
+    --cocoa-soft: #6b4a46;
+    --pistachio: #4f6b2e;
+    --line: #ecd6da;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--cocoa);
+    --bot-bg: #fff; --bot-fg: var(--cocoa); --bot-line: var(--line); --bot-muted: var(--cocoa-soft);
+    --bot-accent: var(--berry); --bot-accent-fg: #fff; --bot-them: #f8ecef; --bot-me: var(--berry-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --bot-focus: var(--berry-deep);
+    --guide-alert: var(--berry);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--blush); color: var(--cocoa); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--berry); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--berry); color: #fff; box-shadow: 0 16px 32px -14px rgba(156,35,82,.85), 0 2px 6px -2px rgba(156,35,82,.4); }
+  .btn-main:hover { background: var(--berry-deep); }
+  .btn-main:focus-visible { outline-color: var(--cocoa); }
+  .btn-ghost { background: #fff; color: var(--cocoa); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--berry); }
+
+  .demo { background: var(--cocoa); color: #f0dfe2; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(251,243,244,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--cocoa-soft); font-weight: 500; font-size: .72em; }
+  .logo svg { width: 28px; height: 28px; flex: none; }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; box-shadow: none; white-space: nowrap; }
+
+  .hero { position: relative; overflow: hidden; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--cocoa-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--pistachio); font-weight: 700; }
+  .kicker .now i { width: 10px; height: 10px; border-radius: 50%; background: var(--pistachio); box-shadow: 0 0 0 4px rgba(79,107,46,.15); }
+  .hero h1 { grid-area: h1; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; color: var(--berry); }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--cocoa-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-weight: 800; font-size: 21px; line-height: 1.15; letter-spacing: -.02em; color: var(--berry); }
+  .facts dd { margin: 4px 0 0; color: var(--cocoa-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; width: 100%; max-width: 520px; justify-self: center; aspect-ratio: 1 / 1.06; }
+  .frame { position: absolute; inset: 6% 0 14% 9%; border-radius: 34px; overflow: hidden; background: #fff; }
+  .frame svg { display: block; width: 100%; height: 100%; }
+  .glass { position: absolute; z-index: 5; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--cocoa-soft); max-width: 48ch; font-size: 16px; }
+
+  /* The cake builder: the drawn cake on the stand, the choices beside it */
+  .builder { background: var(--cocoa); color: #fff; padding-top: 72px;
+    --bot-bg: #4c2f2c; --bot-fg: #fff; --bot-line: #7a5853; --bot-muted: #ead6d3; --bot-accent: #fff; --bot-accent-fg: var(--berry-deep); --bot-focus: #fff; }
+  .builder .head p { color: #ead6d3; }
+  .bgrid { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 32px; align-items: start; }
+  .stage { background: var(--blush); color: var(--cocoa); border-radius: 28px; padding: 14px 14px 18px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); min-width: 0; }
+  .stage svg { display: block; width: 100%; height: auto; border-radius: 18px; }
+  .size { margin: 12px 6px 0; display: grid; gap: 2px; }
+  .size b { font-size: 19px; line-height: 1.3; }
+  .size span { color: var(--cocoa-soft); font-size: 15px; }
+  .builder .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.55); }
+
+  /* The price list: a baker's card with dotted leaders */
+  .menu { background: #fff; border-radius: 28px; padding: 34px clamp(18px, 4vw, 48px) 26px; box-shadow: 0 0 0 1px var(--line), 0 40px 70px -50px rgba(61,36,34,.5); position: relative; }
+  .menu::before { content: ""; position: absolute; inset: 10px; border: 1px solid var(--line); border-radius: 20px; pointer-events: none; }
+  .menu-top { display: flex; justify-content: space-between; gap: 8px 20px; flex-wrap: wrap; align-items: baseline; padding-bottom: 14px; margin-bottom: 4px; border-bottom: 2px solid var(--cocoa); position: relative; }
+  .menu-top b { font-size: 22px; }
+  .menu-top span { color: var(--cocoa-soft); font-size: 14px; }
+  .dish { all: unset; box-sizing: border-box; cursor: pointer; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; padding: 18px 8px; border-bottom: 1px dashed var(--line); position: relative; border-radius: 10px; }
+  .dish:hover { background: #fcf6f7; }
+  .dish:focus-visible { outline: 3px solid var(--berry); outline-offset: 2px; }
+  .dish .nm { display: flex; align-items: baseline; gap: 10px; min-width: 0; font-weight: 700; font-size: 20px; line-height: 1.3; }
+  .dish .nm::after { content: ""; flex: 1; min-width: 20px; border-bottom: 2px dotted #d9bcc2; transform: translateY(-5px); }
+  .dish .pr { font-weight: 800; font-size: 19px; color: var(--berry); white-space: nowrap; font-variant-numeric: tabular-nums; align-self: baseline; }
+  .dish .pr small { font-weight: 500; font-size: 13px; color: var(--cocoa-soft); }
+  .dish .d { grid-column: 1 / -1; color: var(--cocoa-soft); font-size: 15px; max-width: 70ch; }
+  .menu-foot { display: flex; flex-wrap: wrap; gap: 8px 28px; padding-top: 16px; font-size: 15px; color: var(--cocoa-soft); position: relative; }
+  .menu-foot b { color: var(--cocoa); }
+
+  /* Kashrut, allergies and the date: three plain notes */
+  .notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .note { background: #fff; border-radius: 22px; padding: 24px; box-shadow: 0 0 0 1px var(--line); display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px; align-items: start; min-width: 0; }
+  .note svg { width: 48px; height: 48px; }
+  .note b { display: block; font-size: 19px; margin-bottom: 4px; }
+  .note p { margin: 0; color: var(--cocoa-soft); font-size: 15.5px; }
+  .note a { color: var(--berry); font-weight: 700; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .steps li { padding: 22px; border-radius: 22px; background: #fff; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+  .steps .lbl { display: block; color: var(--berry); font-size: 13.5px; font-weight: 700; margin-bottom: 8px; }
+  .steps b { display: block; font-size: 18px; } .steps span:not(.lbl) { color: var(--cocoa-soft); font-size: 15px; }
+
+  .guides { background: var(--blush-deep); }
+  .owner { background: var(--cocoa); color: #f3e4e2; }
+  .owner .head h2 { color: #fff; }
+  .owner .head p { color: #ead6d3; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 14px; background: #fff; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: var(--berry-deep); }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: #ead6d3; font-size: 15.5px; }
+  .owner .ph-cap { color: #ead6d3; }
+
+  footer { padding-block: 34px 160px; color: var(--cocoa-soft); font-size: 14px; }
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 380px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .bgrid { grid-template-columns: minmax(0, 1fr); }
+    .stage { max-width: 460px; width: 100%; justify-self: center; }
+    .notes { grid-template-columns: minmax(0, 1fr); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 19px; }
+    .logo .n2 { display: none; }
+    .top-a .btn { padding: 8px 13px; font-size: 14.5px; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 26px; max-width: 400px; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 18px; }
+    main > section { padding-block: 64px; }
+    .builder { padding-top: 56px; }
+    .stage { padding: 10px 10px 14px; border-radius: 22px; }
+    .menu { padding: 26px 14px 20px; border-radius: 22px; }
+    .menu::before { inset: 6px; border-radius: 17px; }
+    .dish { padding: 16px 6px; grid-template-columns: minmax(0, 1fr); }
+    .dish .nm { font-size: 17.5px; flex-wrap: wrap; }
+    .dish .nm::after { display: none; }
+    .dish .pr { font-size: 16.5px; }
+    .dish .d { font-size: 14px; }
+    .steps { grid-template-columns: minmax(0, 1fr); }
+    .note { grid-template-columns: 40px minmax(0, 1fr); padding: 20px; }
+    .note svg { width: 40px; height: 40px; }
+  }
+  @media (max-width: 420px) { .top-a .btn-ghost { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     The top is light: blush paper with a breath of berry and pistachio, big tight Rubik, the cake on its stand drawn
+     in a large rounded frame, glass cards built from the page's own facts (the kashrut, the sample prices, the chat),
+     a glowing button. */
+  .hero { background: var(--blush);
+    background-image: radial-gradient(55% 65% at 6% 12%, rgba(156,35,82,.10), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(79,107,46,.09), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(40px, 4.7vw, 64px); line-height: 1.02; }
+  .frame { box-shadow: 0 0 0 1px rgba(61,36,34,.08), 0 50px 90px -46px rgba(61,36,34,.6), 0 12px 24px -16px rgba(156,35,82,.3); }
+  .glass { background: rgba(255,255,255,.86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(61,36,34,.55), 0 4px 12px -6px rgba(156,35,82,.2); padding: 14px 16px; color: var(--cocoa);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-kosher { top: 0; inset-inline-end: 0; display: grid; gap: 2px; animation-delay: .3s; }
+  .g-kosher span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--cocoa-soft); }
+  .g-kosher span i { width: 8px; height: 8px; border-radius: 50%; background: var(--pistachio); }
+  .g-kosher b { font-size: 17px; line-height: 1.25; }
+  .g-chat { top: 34%; inset-inline-start: 0; width: min(46%, 220px); display: grid; gap: 6px; animation-delay: .45s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #f8ecef; justify-self: end; border-end-end-radius: 4px; }
+  .g-chat .a { background: var(--berry); color: #fff; border-end-start-radius: 4px; }
+  .g-menu { bottom: 0; inset-inline-end: 4%; width: min(310px, 66%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-menu .h { font-size: 12.5px; color: var(--cocoa-soft); margin-bottom: 4px; }
+  .g-menu div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-menu div b { font-weight: 700; } .g-menu div span { font-weight: 700; color: var(--berry); white-space: nowrap; }
+  @media (max-width: 640px) { .g-chat { display: none; } .win { aspect-ratio: 1 / 1.2; } .frame { inset: 9% 0 27% 0; border-radius: 28px; }
+    .g-menu { inset-inline-end: 3%; width: 82%; padding: 10px 14px; } .g-menu div { padding: 5px 0; font-size: 14px; } .g-kosher { inset-inline-end: 4%; top: 0; } }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><svg viewBox="0 0 28 28" aria-hidden="true"><rect x="5" y="13" width="18" height="10" rx="3" fill="#9c2352"/><rect x="8" y="6" width="12" height="8" rx="3" fill="#f3e2e6" stroke="#9c2352" stroke-width="1.6"/><circle cx="14" cy="4" r="2.2" fill="#4f6b2e"/></svg><span>המתוקים של נוי</span><span class="n2">עוגות מעוצבות</span></div>
+    <div class="top-a">
+      <a class="btn btn-ghost" href="#" data-wa="היי נוי, הגעתי מהאתר ויש לי שאלה על עוגה">וואטסאפ</a>
+      <button class="btn btn-main" type="button" data-open-bot>להזמין עוגה</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>כשר חלבי, בהשגחת הרבנות</span><span>ימי הולדת · בר ובת מצווה · אירועים קטנים</span></div>
+    <h1>יום הולדת בשבוע הבא? <em>העוגה עליי.</em></h1>
+    <p class="lede">עוגות מעוצבות, קינוחים אישיים ומגשי מתוקים, מהמטבח שלי בהוד השרון. כתבו בצ׳אט מה חוגגים, מתי וכמה אורחים, ואחזור אליכם עם רעיון ומחיר.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>להזמין עוגה</button>
+      <a class="btn btn-ghost" href="#builder">להרכיב עוגה</a>
+    </div>
+    <dl class="facts">
+      <div><dt>8 שנים</dt><dd>אופה עוגות מהמטבח בבית</dd></div>
+      <div><dt>כשר חלבי</dt><dd>בהשגחת הרבנות</dd></div>
+      <div><dt>10 עד 50</dt><dd>אורחים לעוגה</dd></div>
+      <div><dt>איסוף או משלוח</dt><dd>הוד השרון והסביבה</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame">
+        <svg viewBox="0 0 400 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="עוגה בשתי קומות על מעמד במטבח: ציפוי קרם ורוד בהיר, זילוף שוקולד, פירות יער ופירורי פיסטוק, ושקית זילוף על השיש">
+          <defs>
+            <pattern id="tiles" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#f7eef0"/><path d="M0 0h40v40" fill="none" stroke="#ecdde1" stroke-width="2"/></pattern>
+            <linearGradient id="cream" x1="0" x2="1"><stop offset="0" stop-color="#f6e4e9"/><stop offset=".45" stop-color="#fdf6f8"/><stop offset="1" stop-color="#efd6dd"/></linearGradient>
+          </defs>
+          <rect width="400" height="440" fill="url(#tiles)"/>
+          <rect y="330" width="400" height="110" fill="#e9dcdf"/>
+          <rect y="330" width="400" height="6" fill="#dccbd0"/>
+          <!-- the stand -->
+          <ellipse cx="200" cy="330" rx="130" ry="16" fill="#fff" stroke="#e3cfd4" stroke-width="2"/>
+          <rect x="188" y="330" width="24" height="44" fill="#fff" stroke="#e3cfd4" stroke-width="2"/>
+          <ellipse cx="200" cy="376" rx="54" ry="10" fill="#fff" stroke="#e3cfd4" stroke-width="2"/>
+          <!-- bottom tier -->
+          <rect x="94" y="224" width="212" height="102" rx="10" fill="url(#cream)"/>
+          <ellipse cx="200" cy="224" rx="106" ry="14" fill="#fbeff2"/>
+          <g fill="#4f6b2e"><circle cx="104" cy="318" r="3"/><circle cx="116" cy="322" r="2.6"/><circle cx="130" cy="319" r="3"/><circle cx="146" cy="323" r="2.6"/><circle cx="162" cy="320" r="3"/><circle cx="178" cy="323" r="2.6"/><circle cx="194" cy="320" r="3"/><circle cx="210" cy="323" r="2.6"/><circle cx="226" cy="320" r="3"/><circle cx="242" cy="323" r="2.6"/><circle cx="258" cy="320" r="3"/><circle cx="274" cy="323" r="2.6"/><circle cx="290" cy="319" r="3"/></g>
+          <g fill="#a9c27e"><circle cx="110" cy="312" r="2.4"/><circle cx="138" cy="314" r="2.4"/><circle cx="170" cy="313" r="2.4"/><circle cx="202" cy="314" r="2.4"/><circle cx="234" cy="313" r="2.4"/><circle cx="266" cy="314" r="2.4"/><circle cx="296" cy="312" r="2.4"/></g>
+          <!-- top tier with a chocolate drip -->
+          <rect x="132" y="138" width="136" height="92" rx="10" fill="url(#cream)"/>
+          <path d="M132 146q0-10 10-10h116q10 0 10 10v8q-6 0-6 10q0 8-6 8t-6-10q0-10-8-8q-6 2-6 22q0 8-6 8t-6-10q0-14-8-14t-8 8q0 16-7 16t-7-14q0-10-8-10t-8 18q0 8-6 8t-6-12q0-16-8-14t-8 6q0 8-6 8t-6-10z" fill="#5a3328"/>
+          <ellipse cx="200" cy="138" rx="68" ry="11" fill="#5a3328"/>
+          <!-- berries and pistachio on top -->
+          <g><circle cx="176" cy="130" r="9" fill="#7a1a40"/><circle cx="194" cy="124" r="10" fill="#9c2352"/><circle cx="214" cy="130" r="9" fill="#5b2a5e"/><circle cx="230" cy="124" r="7" fill="#9c2352"/><circle cx="186" cy="118" r="6" fill="#5b2a5e"/></g>
+          <g fill="#fff" opacity=".55"><circle cx="191" cy="120" r="2.4"/><circle cx="173" cy="127" r="2"/><circle cx="227" cy="121" r="1.8"/></g>
+          <path d="M206 116q8-14 20-12q-6 10-20 12z" fill="#4f6b2e"/>
+          <g fill="#a9c27e"><circle cx="160" cy="134" r="2.4"/><circle cx="244" cy="134" r="2.4"/><circle cx="204" cy="140" r="2.2"/></g>
+          <!-- rosettes on the bottom tier -->
+          <g fill="#f3d3dc" stroke="#e6b9c6" stroke-width="1.5"><circle cx="112" cy="228" r="7"/><circle cx="132" cy="232" r="7"/><circle cx="268" cy="232" r="7"/><circle cx="288" cy="228" r="7"/></g>
+          <!-- a piping bag and a spatula on the counter -->
+          <g transform="rotate(-18 70 390)"><path d="M30 380l70-16 4 18-70 16z" fill="#fff" stroke="#e3cfd4" stroke-width="2"/><path d="M100 364l18 6-14 12z" fill="#b3a3a7"/><path d="M30 380q-10 8 4 18" fill="none" stroke="#e6b9c6" stroke-width="4" stroke-linecap="round"/></g>
+          <g transform="rotate(12 320 400)"><rect x="270" y="394" width="70" height="10" rx="5" fill="#5a3328"/><rect x="336" y="392" width="44" height="14" rx="6" fill="#d9c7cb"/></g>
+          <!-- the order card -->
+          <g transform="rotate(5 340 360)"><rect x="300" y="348" width="88" height="62" rx="6" fill="#fff" stroke="#e3cfd4" stroke-width="1.5"/><rect x="300" y="348" width="88" height="10" rx="5" fill="#9c2352"/>
+            <g fill="#6b4a46"><rect x="310" y="366" width="52" height="4.5" rx="2"/><rect x="310" y="378" width="66" height="4.5" rx="2"/><rect x="310" y="390" width="40" height="4.5" rx="2"/></g></g>
+        </svg>
+      </div>
+      <div class="glass g-kosher" aria-hidden="true"><span><i></i>המתוקים של נוי</span><b>כשר חלבי, בהשגחת הרבנות</b></div>
+      <div class="glass g-chat" aria-hidden="true"><p class="q">יום הולדת בשבת, בערך 20 אורחים</p><p class="a">רשמתי. אבדוק את התאריך ואחזור אליכם.</p></div>
+      <div class="glass g-menu" aria-hidden="true"><span class="h">מחירים לדוגמה · עוגה ל-10 אורחים</span><div><b>עוגה בקרם</b><span>280 עד 360 ₪</span></div><div><b>בצק סוכר</b><span>340 עד 440 ₪</span></div><div><b>נייקד</b><span>250 עד 330 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="builder" id="builder">
+    <div class="wrap">
+      <div class="head"><h2>הרכיבו את העוגה</h2><p>בוחרים ציפוי, טעם וכמה אורחים, ורואים את העוגה, את הגודל ואת טווח המחיר. המחירים לדוגמה, ואת המחיר הסופי סוגרים אחרי שבוחרים עיצוב.</p></div>
+      <div class="bgrid">
+        <figure class="stage" style="margin:0">
+          <svg id="cake" viewBox="0 0 400 400" role="img" aria-label="העוגה שבחרתם"></svg>
+          <figcaption class="size" aria-live="polite"><b id="size-t"></b><span id="size-d"></span></figcaption>
+        </figure>
+        <div data-estimate></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu">
+    <div class="wrap">
+      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה. לוחצים על שורה, והצ׳אט נפתח איתה.</p></div>
+      <div class="menu">
+        <div class="menu-top"><b>המתוקים של נוי</b><span>כשר חלבי, בהשגחת הרבנות · מחירים לדוגמה</span></div>
+        <button class="dish" type="button" data-pre='{"item":"עוגה מעוצבת","finish":"קרם"}'><span class="nm">עוגה בקרם</span><span class="pr">280 עד 360 ₪ <small>ל-10 אורחים</small></span><span class="d">קרם חלק, פרחים בזילוף ופירות טריים. עד 50 אורחים ועד שלוש קומות.</span></button>
+        <button class="dish" type="button" data-pre='{"item":"עוגה מעוצבת","finish":"בצק סוכר"}'><span class="nm">עוגה בבצק סוכר</span><span class="pr">340 עד 440 ₪ <small>ל-10 אורחים</small></span><span class="d">ציפוי חלק ודמות או נושא לפי בחירתכם, בעבודת יד.</span></button>
+        <button class="dish" type="button" data-pre='{"item":"עוגה מעוצבת","finish":"נייקד"}'><span class="nm">עוגת נייקד</span><span class="pr">250 עד 330 ₪ <small>ל-10 אורחים</small></span><span class="d">השכבות נראות מבחוץ, עם פירות ופרחים. יפה במיוחד לאירוע בגינה.</span></button>
+        <button class="dish" type="button" data-pre='{"item":"קינוחים אישיים"}'><span class="nm">קינוחים אישיים</span><span class="pr">12 עד 18 ₪ <small>ליחידה, מ-20 יחידות</small></span><span class="d">כוסות מוס, טארטלטים ועוגות גבינה קטנות.</span></button>
+        <button class="dish" type="button" data-pre='{"item":"מגש מתוקים"}'><span class="nm">מגש מתוקים</span><span class="pr">220 עד 300 ₪ <small>ל-40 יחידות</small></span><span class="d">עוגיות, כדורי שוקולד ומיני טארטים, מסודרים על מגש.</span></button>
+        <div class="menu-foot"><span><b>פיסטוק:</b> תוספת של 2 עד 3 ₪ לאורח</span><span><b>משלוח</b> בהוד השרון והסביבה: 40 עד 80 ₪</span><span><b>כדאי להזמין</b> שבוע מראש</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="care" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>כשרות, אלרגיות ותאריך</h2><p>שלושה דברים שכדאי לסגור לפני שמזמינים.</p></div>
+      <div class="notes">
+        <div class="note"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="24" fill="#eef2e6" stroke="#4f6b2e" stroke-width="2.5"/><circle cx="27" cy="27" r="17" fill="none" stroke="#4f6b2e" stroke-width="1.5" stroke-dasharray="3 3"/><path d="M19 27l6 6 11-12" fill="none" stroke="#4f6b2e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div><b>כשר חלבי, בהשגחת הרבנות</b><p>את התעודה אפשר לראות לפני שמזמינים. צריכים מהדרין או פרווה? כתבו בצ׳אט, ואגיד לכם מה אפשר. <a href="#g-kosher">כשר, פרווה ומהדרין</a></p></div></div>
+        <div class="note"><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="24" fill="#f8e9ee" stroke="#9c2352" stroke-width="2.5"/><path d="M27 14v16" stroke="#9c2352" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="38" r="2.8" fill="#9c2352"/></svg>
+          <div><b>אלרגיות</b><p>אגוזים, בוטנים, גלוטן, חלב או ביצים: כתבו בצ׳אט, ואבדוק מה אפשר להכין. אני אופה במטבח ביתי שיש בו גם אגוזים, גלוטן וחלב, ולכן אני לא מבטיחה עוגה נקייה לגמרי מאלרגן. <a href="#g-allergy">מה לשאול לפני שמזמינים</a></p></div></div>
+        <div class="note"><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="6" y="10" width="42" height="38" rx="7" fill="#fff" stroke="#3d2422" stroke-width="2.5"/><path d="M6 21h42" stroke="#3d2422" stroke-width="2.5"/><path d="M17 6v8M37 6v8" stroke="#3d2422" stroke-width="3" stroke-linecap="round"/><circle cx="27" cy="34" r="5" fill="#9c2352"/></svg>
+          <div><b>התאריך</b><p>כתבו בצ׳אט את התאריך, ואני בודקת ביומן ומאשרת לכם בשיחה. הזמנה מאושרת רק אחרי שדיברנו.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><h2>ככה מזמינים</h2><p>מהשאלה בצ׳אט ועד העוגה על השולחן.</p></div>
+      <ol class="steps">
+        <li><span class="lbl">פנייה</span><b>כמה שאלות קצרות בצ׳אט</b><span>מה חוגגים, תאריך, אורחים, טעם, כשרות ואלרגיות. ותמונה של עוגה שאהבתם, אם יש.</span></li>
+        <li><span class="lbl">רעיון ומחיר</span><b>אני חוזרת אליכם</b><span>בודקת את התאריך, ויחד סוגרים עיצוב, גודל ומחיר.</span></li>
+        <li><span class="lbl">ביום החגיגה</span><b>איסוף או משלוח</b><span>העוגה ארוזה בקופסה, עם הוראות איך לשמור אותה עד ההגשה.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>כמה עוגה צריך, איך מביאים אותה הביתה בשלום, כשרות ואלרגיות.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעלת העסק מקבלת</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוחות עונים על כמה שאלות</b><span>מה חוגגים, תאריך, אורחים, טעם, ציפוי, כשרות ואלרגיות. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הפנייה מגיעה עם תמונה וטווח מחיר</b><span>כשהלקוחות מצרפים תמונה של עוגה שאהבו, רואים מראש את הסגנון.</span></div></li>
+          <li><div><b>חוזרים כשהידיים פנויות</b><span>גם באמצע אפייה, אף לקוח לא נשאר בלי תשובה.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ש</span><div><b>שירן כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו עוגות)
+חוגגים: יום הולדת
+מזמינים: עוגה מעוצבת
+תאריך: שבת 14.11
+אורחים: 20
+טעם: פיסטוק
+ציפוי: קרם
+כשרות: כשר רגיל מספיק
+אלרגיות: אין
+איך מגיע: משלוח
+יישוב: כפר סבא
+שם: שירן כהן
+טלפון: 052-7654321<time>10:20</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לבעלת העסק</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>המתוקים של נוי · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  // Sample prices, the same as the price list above: a price per guest by finish, a flavour extra per guest,
+  // and the design work. The range is (per guest + flavour) × guests + design, rounded like estimate.js.
+  const FINISH = { "קרם": [16, 20], "בצק סוכר": [22, 28], "נייקד": [13, 17] };
+  const FLAVOUR = { "שוקולד": [0, 0], "פירות יער": [0, 0], "פיסטוק": [2, 3], "רד ולווט": [0, 0] };
+  const DESIGN = [120, 160];
+  const SIZES = {
+    10: { tiers: [180], t: "קומה אחת", d: "קוטר 18 ס״מ · בערך 10 פרוסות" },
+    20: { tiers: [220, 150], t: "שתי קומות", d: "קוטר 20 ו-14 ס״מ · בערך 20 פרוסות" },
+    30: { tiers: [250, 170], t: "שתי קומות", d: "קוטר 24 ו-16 ס״מ · בערך 30 פרוסות" },
+    50: { tiers: [270, 200, 130], t: "שלוש קומות", d: "קוטר 26, 20 ו-14 ס״מ · בערך 50 פרוסות" },
+  };
+  const round = (x) => (x >= 1000 ? Math.round(x / 50) * 50 : Math.round(x / 10) * 10);
+  const money = (x) => round(x).toLocaleString("en-US");
+  function range(finish, flavour, g) {
+    const f = FINISH[finish], a = FLAVOUR[flavour] || [0, 0];
+    if (!f || !g) return null;
+    return [(f[0] + a[0]) * g + DESIGN[0], (f[1] + a[1]) * g + DESIGN[1]];
+  }
+  const guestsOf = (s) => { const m = String(s || "").match(/\d+/); const n = m ? +m[0] : 0; return n >= 5 && n <= 80 ? n : null; };
+  const isCake = (d) => d.item === "עוגה מעוצבת" || d.item === "עוגה וקינוחים";
+  const allergyText = (d) => (d.allergy === "אין" ? "אין" : d.allergyval || d.allergy || "");
+  const when = (d) => d.dateval || (d.date === "עוד לא סגרנו" ? "" : d.date);
+
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "נוי · עוגות מעוצבות", subtitle: "עונה מיד, גם כשאני ליד התנור", initial: "נ", launcher: "להזמין עוגה", hint: "נציג AI",
+    greet: "היי, כאן נוי.\nכמה שאלות קצרות על החגיגה, ואחזור אליכם עם רעיון ומחיר.",
+    steps: [
+      { key: "event", label: "חוגגים", ask: "מה חוגגים?", chips: ["יום הולדת", "בר / בת מצווה", "ברית / בריתה", "חינה או חתונה", "אירוע אחר"] },
+      { key: "item", label: "מזמינים", ask: "מה תרצו להזמין?", chips: ["עוגה מעוצבת", "קינוחים אישיים", "מגש מתוקים", "עוגה וקינוחים"] },
+      { key: "date", label: "תאריך", ask: "יש כבר תאריך? אפשר גם לכתוב אותו כאן.", chips: ["יש תאריך", "עוד לא סגרנו"], input: "text", placeholder: "למשל: 14.11" },
+      { key: "dateval", label: "תאריך", ask: "מה התאריך? אבדוק אותו ביומן ואאשר לכם בשיחה.", input: "text", placeholder: "למשל: שבת 14.11", show: (d) => d.date === "יש תאריך" },
+      { key: "guests", label: "אורחים", ask: "בערך כמה אורחים?", chips: ["10", "20", "30", "50", "יותר מ-50"], input: "text", placeholder: "למשל: 25" },
+      { key: "flavour", label: "טעם", ask: "איזה טעם?", chips: ["שוקולד", "פירות יער", "פיסטוק", "רד ולווט", "עוד לא יודעים"], show: isCake },
+      { key: "finish", label: "ציפוי", ask: "ואיזה ציפוי?", chips: ["קרם", "בצק סוכר", "נייקד", "עוד לא יודעים"], show: isCake },
+      { key: "kosher", label: "כשרות", ask: "כשרות: מה חשוב לכם? המטבח כשר חלבי, בהשגחת הרבנות.", chips: ["כשר רגיל מספיק", "צריך מהדרין", "צריך פרווה", "לא משנה לנו"],
+        tip: { when: (v) => v === "צריך מהדרין" || v === "צריך פרווה", id: "kosher", text: "רשמתי. בשיחה אגיד לכם מה אפשר ומה לא.", link: "כשר, פרווה ומהדרין" } },
+      { key: "allergy", label: "אלרגיות", ask: "יש אלרגיות בין האורחים? אגוזים, בוטנים, גלוטן, חלב, ביצים.", chips: ["אין", "יש, אכתוב"] },
+      { key: "allergyval", label: "אלרגיות", ask: "מה צריך לדעת? אבדוק ואגיד לכם מה אפשר להכין.", input: "text", placeholder: "למשל: ילדה אלרגית לאגוזים", show: (d) => d.allergy === "יש, אכתוב",
+        tip: { when: () => true, id: "allergy", text: "חשוב לדעת: אני אופה במטבח ביתי שיש בו גם אגוזים, גלוטן וחלב, ולכן לא אבטיח עוגה נקייה לגמרי מאלרגן.", link: "מה לשאול לפני שמזמינים" } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של עוגה שאהבתם? ככה אבין את הסגנון.", photo: true, skip: "בלי תמונה" },
+      { key: "delivery", label: "איך מגיע", ask: "איך העוגה מגיעה אליכם?", chips: ["איסוף עצמי מהוד השרון", "משלוח"] },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב החגיגה?", chips: ["הוד השרון", "כפר סבא", "רעננה", "רמת השרון"], input: "text", placeholder: "למשל: הרצליה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0], g = guestsOf(d.guests), r = isCake(d) ? range(d.finish, d.flavour, g) : null;
+      const price = r ? `לדוגמה, ${d.finish === "נייקד" ? "עוגת נייקד" : "עוגה ב" + d.finish} ל-${g} אורחים: בערך ${money(r[0])} עד ${money(r[1])} ₪, בלי משלוח.`
+        : d.item === "קינוחים אישיים" ? "לדוגמה, קינוחים אישיים: 12 עד 18 ₪ ליחידה, מ-20 יחידות."
+        : d.item === "מגש מתוקים" ? "לדוגמה, מגש של 40 יחידות: 220 עד 300 ₪." : "את העיצוב והמחיר נסגור יחד בשיחה.";
+      const allergy = d.allergy === "יש, אכתוב" ? "\nאת האלרגיות אני בודקת, ואגיד לכם מה אפשר להכין." : "";
+      return `תודה ${first}. ${price}${allergy}\nאת התאריך אני בודקת ומאשרת בשיחה. לחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`;
+    },
+    summary: (d) => [
+      "פנייה מהאתר (דמו עוגות)",
+      "חוגגים: " + d.event,
+      "מזמינים: " + d.item,
+      "תאריך: " + (when(d) || "עוד לא סגרו"),
+      "אורחים: " + d.guests,
+      d.flavour ? "טעם: " + d.flavour : "",
+      d.finish ? "ציפוי: " + d.finish : "",
+      "כשרות: " + d.kosher,
+      "אלרגיות: " + allergyText(d),
+      "איך מגיע: " + d.delivery,
+      "יישוב: " + d.city,
+      "שם: " + d.name,
+      "טלפון: " + d.phone,
+      d.callback ? "מתי לחזור: " + d.callback : "",
+    ].filter(Boolean).join("\n"),
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+
+  // The calculator: finish (a price per guest), flavour (an extra per guest), guests (× guests, plus the design work).
+  const estRoot = document.querySelector("[data-estimate]");
+  const FIN_NOTE = { "בצק סוכר": "בצק סוכר: דמות או נושא בעבודת יד.", "נייקד": "נייקד: השכבות נראות מבחוץ, והעוגה פחות מתוקה." };
+  Estimate.init(estRoot, {
+    pick: { ask: "איזה ציפוי?", items: Object.entries(FINISH).map(([label, r]) => ({ label, range: r, note: FIN_NOTE[label], prefill: { item: "עוגה מעוצבת", finish: label } })) },
+    factors: [
+      { ask: "איזה טעם?", options: Object.entries(FLAVOUR).map(([label, a]) => ({ label, add: a, prefill: { flavour: label }, note: a[1] ? "פיסטוק: תוספת של 2 עד 3 ₪ לאורח." : undefined })) },
+      { ask: "כמה אורחים?", options: Object.keys(SIZES).map((g) => ({ label: g + " אורחים", mul: +g, add: DESIGN, prefill: { guests: g },
+        note: g === "50" ? "יותר מ-50 אורחים? כתבו בצ׳אט, ונמצא יחד גודל מתאים." : undefined })) },
+    ],
+    note: "טווח לדוגמה: מחיר לאורח כפול מספר האורחים, ועוד עבודת העיצוב. בלי משלוח. המחיר הסופי אחרי שבוחרים עיצוב.",
+    cta: "לשאול על עוגה כזו",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+
+  // The drawn cake: tiers from the guests, the coat from the finish, the decoration from the flavour.
+  const SPONGE = { "שוקולד": "#5a3328", "פירות יער": "#f2d4dc", "פיסטוק": "#cddbb0", "רד ולווט": "#a3263a" };
+  const COAT = { "קרם": "#fdf3f6", "בצק סוכר": "#f1d9e1" };
+  function cakeSvg(finish, flavour, g) {
+    const tiers = SIZES[g].tiers, H = tiers.length === 3 ? 78 : tiers.length === 2 ? 92 : 112, base = 328;
+    let s = `<rect width="400" height="400" fill="#f7eef0"/><path d="M0 40h400M0 80h400M0 120h400M0 160h400M0 200h400M0 240h400M0 280h400M40 0v330M80 0v330M120 0v330M160 0v330M200 0v330M240 0v330M280 0v330M320 0v330M360 0v330" stroke="#efe2e6" stroke-width="2"/>`;
+    s += `<rect y="330" width="400" height="70" fill="#e9dcdf"/><ellipse cx="200" cy="334" rx="${tiers[0] / 2 + 28}" ry="12" fill="#fff" stroke="#e3cfd4" stroke-width="2"/><rect x="190" y="336" width="20" height="30" fill="#fff" stroke="#e3cfd4" stroke-width="2"/><ellipse cx="200" cy="368" rx="44" ry="8" fill="#fff" stroke="#e3cfd4" stroke-width="2"/>`;
+    let y = base;
+    tiers.forEach((w, i) => {
+      const x = 200 - w / 2, top = y - H, rx = w / 2, ry = Math.max(7, w / 18);
+      if (finish === "נייקד") {
+        s += `<rect x="${x}" y="${top}" width="${w}" height="${H}" rx="6" fill="${SPONGE[flavour]}"/>`;
+        for (let k = 1; k <= 2; k++) s += `<rect x="${x}" y="${top + (H * k) / 3 - 4}" width="${w}" height="8" fill="#fbf1f4"/>`;
+        s += `<rect x="${x}" y="${top}" width="${w}" height="${H}" rx="6" fill="#fff" opacity=".22"/>`;
+        s += `<ellipse cx="200" cy="${top}" rx="${rx}" ry="${ry}" fill="#fbf1f4"/>`;
+      } else {
+        const c = COAT[finish];
+        s += `<rect x="${x}" y="${top}" width="${w}" height="${H}" rx="8" fill="${c}" stroke="#e8c9d2" stroke-width="1.5"/>`;
+        s += `<ellipse cx="200" cy="${top}" rx="${rx}" ry="${ry}" fill="${c}" stroke="#e8c9d2" stroke-width="1.5"/>`;
+        if (finish === "קרם") {
+          for (let px = x + 10; px <= x + w - 10; px += 16) s += `<circle cx="${px}" cy="${y - 4}" r="6" fill="#f3d3dc" stroke="#e6b9c6" stroke-width="1.2"/>`;
+        } else {
+          s += `<rect x="${x}" y="${y - 20}" width="${w}" height="10" fill="#9c2352"/>`;
+          for (let px = x + 8; px <= x + w - 8; px += 12) s += `<circle cx="${px}" cy="${y - 4}" r="3.6" fill="#fff" stroke="#e3cfd4"/>`;
+        }
+      }
+      y = top;
+    });
+    // The decoration on the top tier
+    const tw = tiers[tiers.length - 1], tx = 200 - tw / 2;
+    if (flavour === "שוקולד") {
+      const n = Math.round(tw / 20), h = tw / n / 2;
+      let d = `M${tx} ${y + 4}`;
+      for (let k = 0; k < n; k++) d += ` q${h / 2} ${12 + (k % 3) * 8} ${h} 0 q${h / 2} -6 ${h} 0`;
+      s += `<path d="${d} V${y} H${tx}z" fill="#5a3328"/><ellipse cx="200" cy="${y}" rx="${tw / 2}" ry="${Math.max(7, tw / 18)}" fill="#5a3328"/>`;
+    } else if (flavour === "פירות יער") {
+      s += `<g><circle cx="182" cy="${y - 8}" r="9" fill="#7a1a40"/><circle cx="200" cy="${y - 14}" r="10" fill="#9c2352"/><circle cx="218" cy="${y - 8}" r="9" fill="#5b2a5e"/><circle cx="192" cy="${y - 22}" r="6" fill="#5b2a5e"/></g><path d="M206 ${y - 22}q8-14 20-12q-6 10-20 12z" fill="#4f6b2e"/>`;
+    } else if (flavour === "פיסטוק") {
+      for (let k = 0; k < 14; k++) s += `<circle cx="${200 - tw / 2 + 12 + ((k * 37) % (tw - 24))}" cy="${y - 2 + ((k * 7) % 6) - 3}" r="3" fill="${k % 2 ? "#4f6b2e" : "#a9c27e"}"/>`;
+    } else {
+      for (let k = 0; k < 12; k++) s += `<circle cx="${200 - tw / 2 + 14 + ((k * 41) % (tw - 28))}" cy="${y - 2 + ((k * 5) % 6) - 3}" r="3.2" fill="#a3263a"/>`;
+      s += `<circle cx="200" cy="${y - 10}" r="8" fill="#fdf3f6" stroke="#e6b9c6"/>`;
+    }
+    return s;
+  }
+  const cake = document.getElementById("cake"), sizeT = document.getElementById("size-t"), sizeD = document.getElementById("size-d");
+  function drawCake() {
+    const sets = estRoot.querySelectorAll("fieldset");
+    const at = (i) => +sets[i].querySelector("input:checked").value;
+    const finish = Object.keys(FINISH)[at(0)], flavour = Object.keys(FLAVOUR)[at(1)], g = Object.keys(SIZES)[at(2)];
+    cake.innerHTML = cakeSvg(finish, flavour, g);
+    cake.setAttribute("aria-label", `${finish === "נייקד" ? "עוגת נייקד" : "עוגה ב" + finish}, בטעם ${flavour}, ${SIZES[g].t}`);
+    sizeT.textContent = `${SIZES[g].t} · ${g} אורחים`;
+    sizeD.textContent = SIZES[g].d;
+  }
+  estRoot.addEventListener("change", drawCake);
+  drawCake();
+  Guides.load("../shared/guides/cakes.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

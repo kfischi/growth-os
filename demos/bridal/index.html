@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>אטלייה נוגה · שמלות כלה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="שמלות כלה בהשכרה ובעיצוב אישי ברמת גן. בוחרים גזרה, רואים טווח מחיר לדוגמה, ומתאמים מדידה בתיאום מראש.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the dress form in the atelier, a dress pinned on it, a tape measure around its neck, a rail of dresses behind,
+             and the silhouette sheet a seamstress sketches on: A, mermaid, straight, ball gown.
+     Detail: the silhouette decides the fabric, the weight and the price; rental takes 2 to 3 fittings and a custom design 4 to 6;
+             measurements are taken at the first fitting, and the delivery date is set only after them.
+     Bold move: the silhouette chart itself: four ivory dresses drawn large in wine line, one tap opens what suits it and its ranges.
+     Motion: the glass cards rise once in the top. Nothing else moves; never with reduced motion or html.a11y-still. */
+  :root {
+    --blush-paper: #fbf5f4;    /* the page: blush tissue paper, not cream or champagne */
+    --sheet: #ffffff;
+    --wine: #6b1631;           /* deep wine velvet of the fitting room curtain: brand and buttons */
+    --wine-deep: #3b0d1c;      /* ink and the one dark band */
+    --rose: #a23a57;           /* a dusty rose ribbon: accent, readable on white */
+    --blush: #f4e1e2;          /* quiet fills */
+    --ivory: #fffcfa;          /* the dress */
+    --ink: #2a1419;
+    --ink-soft: #5e4a4f;
+    --line: #ead8da;
+    --display: "Bellefair", "Rubik", "Arial Hebrew", serif;
+    --body: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--wine-deep);
+    --bot-bg: var(--sheet); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--wine); --bot-accent-fg: #fff; --bot-them: #f6eaeb; --bot-me: var(--wine-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --guide-alert: var(--rose);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--blush-paper); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--rose); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { margin: 0; line-height: 1.12; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.4vw, 54px); letter-spacing: -.01em; }
+  h3 { font-family: var(--display); font-weight: 400; }
+  .mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 54ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .2s; }
+  .btn-wine { background: var(--wine); color: #fff; }
+  .btn-wine:hover { background: var(--wine-deep); }
+  .btn-line { background: #fff; color: var(--wine-deep); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--wine); }
+
+  .demo { background: var(--wine-deep); color: #f0dadd; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- The top ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; border-bottom: 1px solid rgba(107,22,49,.14); }
+  .logo { font-family: var(--display); font-size: 32px; line-height: 1; }
+  .logo small { display: block; font: 500 14px/1.3 var(--body); color: var(--ink-soft); margin-top: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--rose); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 30px 0 88px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--ink-soft); font-weight: 500; font-size: 16px; }
+  .lead { font-size: 19px; max-width: 38ch; margin: 0 0 28px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 36px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 800 23px/1.2 var(--body); letter-spacing: -.02em; color: var(--wine-deep); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+
+  /* the atelier drawing */
+  .scene { width: 100%; height: 100%; display: block; }
+  .scene .wall { fill: #f1e2e3; }
+  .scene .floor { fill: #e6d2d4; }
+  .scene .curtain { fill: var(--wine); }
+  .scene .fold { fill: none; stroke: #521024; stroke-width: 3; stroke-linecap: round; }
+  .scene .rail { stroke: #9b8287; stroke-width: 4; stroke-linecap: round; }
+  .scene .hanger { fill: none; stroke: #9b8287; stroke-width: 2.5; }
+  .scene .back-dress { fill: #fbf1f1; stroke: #d9bfc3; stroke-width: 1.5; }
+  .scene .form { fill: #5e4a4f; }
+  .scene .stand { stroke: #5e4a4f; stroke-width: 6; stroke-linecap: round; }
+  .scene .dress { fill: var(--ivory); stroke: #c9a9ae; stroke-width: 2; }
+  .scene .seam { fill: none; stroke: #d9bfc3; stroke-width: 1.6; stroke-linecap: round; }
+  .scene .lace { fill: none; stroke: #e2cdd0; stroke-width: 1.4; stroke-dasharray: 2 4; }
+  .scene .tape { fill: none; stroke: #e7a8b4; stroke-width: 7; stroke-linecap: round; }
+  .scene .tick { stroke: #8f3a50; stroke-width: 1.2; }
+  .scene .cushion { fill: var(--rose); }
+  .scene .pin { stroke: #9b8287; stroke-width: 1.6; }
+  .scene .pinhead { fill: #fff; }
+
+  /* ---------- The silhouette chart ---------- */
+  .chart-wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 24px 40px; align-items: start; }
+  .sils { min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .sil { min-width: 0; display: grid; gap: 8px; justify-items: center; padding: 16px 8px 14px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--sheet); cursor: pointer; font: 700 17px/1.2 var(--body); color: var(--ink); }
+  .sil:hover { border-color: var(--rose); }
+  .sil[aria-pressed="true"] { border-color: var(--wine); box-shadow: 0 0 0 2px var(--wine), 0 24px 44px -30px rgba(59,13,28,.6); }
+  .sil svg { width: 100%; max-width: 130px; height: auto; display: block; }
+  .sil .gown { fill: var(--ivory); stroke: var(--wine); stroke-width: 2; stroke-linejoin: round; }
+  .sil[aria-pressed="true"] .gown { fill: #fdeeee; }
+  .sil .waist { stroke: var(--rose); stroke-width: 1.6; }
+  .sil .flow { fill: none; stroke: #d9bfc3; stroke-width: 1.4; stroke-linecap: round; }
+  .sil .knob { fill: #5e4a4f; }
+  .sil small { font: 500 13px/1.3 var(--body); color: var(--ink-soft); }
+  .card { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: 0 30px 60px -44px rgba(59,13,28,.5); }
+  .card h3 { font-size: 30px; margin-bottom: 6px; }
+  .card .suits { margin: 0 0 14px; color: var(--ink-soft); font-size: 16px; }
+  .card dl { margin: 0; display: grid; gap: 0; }
+  .card dl div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--line); align-items: baseline; }
+  .card dt { font-size: 15.5px; }
+  .card dd { margin: 0; font-weight: 800; color: var(--wine-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .card .tag { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .card .btn { margin-top: 14px; width: 100%; }
+  .measure { margin: 16px 0 0; font-size: 14.5px; line-height: 1.5; background: var(--blush); border-inline-start: 3px solid var(--rose); padding: 10px 12px; border-radius: 0 10px 10px 0; }
+  .measure a { font-weight: 700; color: var(--wine); }
+
+  /* ---------- A fitting, seen from the phone ---------- */
+  .hour { background: var(--wine-deep); color: #fff; }
+  .hour .head p { color: #f0dadd; }
+  .clock { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .clock::before { content: ""; position: absolute; top: 15px; inset-inline: 0; height: 2px; background: rgba(255,255,255,.35); }
+  .clock li { position: relative; min-width: 0; padding: 40px 16px 0 0; }
+  .clock li::before { content: ""; position: absolute; top: 9px; inset-inline-start: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--wine-deep); border: 2px solid #f0dadd; }
+  .clock li.miss::before { border-color: #f1a7b6; background: #f1a7b6; }
+  .clock li.ok::before { border-color: #fff; background: #fff; }
+  .clock time { display: block; font: 600 22px/1.2 var(--mono); }
+  .clock span { display: block; color: #f0dadd; font-size: 16px; margin-top: 4px; }
+  .clock .ok span { color: #fff; font-weight: 500; }
+
+  /* ---------- The way to the dress ---------- */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+  .steps li { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+  .steps li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--rose); color: var(--rose); font: 600 16px/1 var(--mono); margin-bottom: 10px; }
+  .steps b { display: block; font-size: 18px; margin-bottom: 4px; }
+  .steps span { color: var(--ink-soft); font-size: 15.5px; }
+
+  /* ---------- The price list ---------- */
+  .prices-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+  .prices-grid h3 { font-size: 28px; margin-bottom: 6px; }
+  .pr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 14px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .pr b { font-weight: 700; font-size: 18px; }
+  .pr .p { font-weight: 700; color: var(--wine-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pr small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 15px; }
+  .pr .ask { grid-column: 1 / -1; justify-self: start; margin-top: 4px; padding: 0; border: 0; background: none; font: 700 15px var(--body); color: var(--wine); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .when { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; border: 1.5px dashed var(--wine); padding: 14px 18px; background: var(--sheet); border-radius: 14px; }
+  .when b { font-size: 18px; }
+  .fine { margin: 18px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Owner ---------- */
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--rose); color: var(--rose); font: 600 17px/1 var(--mono); background: var(--sheet); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--ink-soft); font-size: 16px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+
+  @media (max-width: 1020px) {
+    .hero-grid, .chart-wrap, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .hero-grid { padding-top: 22px; }
+    .owner .phone { margin-inline: auto; }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    section { padding-block: 60px; }
+    body { font-size: 17px; }
+    .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 18px; }
+    .facts li { font-size: 13px; }
+    .sils { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .sil svg { max-width: 100px; }
+    .card { padding: 18px 16px; }
+    .clock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
+    .clock li { padding: 0 34px 0 0; }
+    .clock li::before { top: 6px; }
+    .steps { grid-template-columns: minmax(0, 1fr); }
+    .prices-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .pr b { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } html { scroll-behavior: auto; } }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     A breath of blush and wine on tissue-paper light, big tight Rubik, the atelier drawing large in a rounded frame
+     with glass cards over it (fittings by appointment, two sample ranges, the chat), the main button glowing in wine. */
+  .hero { background: var(--blush-paper);
+    background-image: radial-gradient(50% 60% at 10% 24%, rgba(244,225,226,.95), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(107,22,49,.08), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin-bottom: 20px; color: var(--ink); }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--wine); margin-top: 12px; }
+  .hero .btn-wine { box-shadow: 0 16px 32px -14px rgba(59,13,28,.78), 0 2px 6px -2px rgba(59,13,28,.35); }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 540px; aspect-ratio: 10 / 11; justify-self: center; }
+  .hframe { position: absolute; inset: 5% 2% 5% 16%; border-radius: 34px; overflow: hidden; background: #f1e2e3;
+    box-shadow: 0 0 0 1px rgba(59,13,28,.08), 0 50px 90px -46px rgba(59,13,28,.62), 0 18px 34px -26px rgba(59,13,28,.35); }
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(59,13,28,.6), 0 4px 12px -6px rgba(59,13,28,.18);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; top: 0; inset-inline-end: 0; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--rose); box-shadow: 0 0 0 4px rgba(162,58,87,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { display: grid; gap: 5px; bottom: 0; inset-inline-start: 0; width: min(300px, 70%); animation-delay: .15s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--wine-deep); white-space: nowrap; }
+  .g-price .tag { font-size: 12px; color: var(--ink-soft); }
+  .g-chat { display: grid; gap: 6px; padding: 11px; top: 38%; inset-inline-end: -1%; width: min(50%, 226px); animation-delay: .26s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #f6eaeb; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--wine-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .toolsec { padding-top: 24px; }
+  @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .g-chat { display: none; }
+    .hframe { inset: 5% 0 5% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 84%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">אטלייה נוגה</span><small>שמלות כלה, השכרה ועיצוב אישי · רמת גן</small></div>
+      <a href="#" data-wa="היי, הגעתי מהאתר ואשמח לתאם מדידה">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">השכרת שמלות כלה ועיצוב אישי. מדידות בתיאום מראש</p>
+        <h1><span data-edit="h1a">שמלת כלה?</span> <em data-edit="h1b">בוחרים גזרה, ומתאמים מדידה.</em></h1>
+        <p class="lead">בזמן מדידה אנחנו עם הכלה, לא עם הטלפון. כאן בוחרים גזרה, רואים טווח מחיר להשכרה ולעיצוב ומשאירים את תאריך החתונה. את שעת המדידה אנחנו מאשרים בהודעה.</p>
+        <div class="ctas">
+          <button class="btn btn-wine" type="button" data-open-bot>לתאם מדידה</button>
+          <a class="btn btn-line" href="#" data-wa="היי, יש לי שאלה על שמלת כלה">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b>בתיאום</b>כל מדידה בסטודיו נקבעת מראש</li>
+          <li><b>2 עד 3</b>מדידות בהשכרה</li>
+          <li><b>4 עד 6</b>מדידות בעיצוב אישי</li>
+        </ul>
+      </div>
+
+      <div class="visual">
+        <div class="hframe">
+          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: בובת תדמית בסטודיו עם שמלת כלה בגזרת A, סרט מדידה, כרית סיכות ומתלה שמלות מאחור">
+            <rect class="wall" width="400" height="470"/>
+            <rect class="floor" y="412" width="400" height="58"/>
+            <!-- the fitting room curtain -->
+            <path class="curtain" d="M0 0 H70 C64 120 76 260 62 412 H0 Z"/>
+            <path class="fold" d="M20 10 C16 140 26 280 18 410 M44 10 C40 140 50 280 40 410"/>
+            <!-- the rail with dresses behind -->
+            <line class="rail" x1="248" y1="56" x2="396" y2="56"/>
+            <path class="hanger" d="M290 56 V66 M276 78 L290 66 L304 78 M346 56 V66 M332 78 L346 66 L360 78"/>
+            <path class="back-dress" d="M278 78 H302 L306 120 C330 200 336 300 330 400 H250 C244 300 252 200 274 120 Z"/>
+            <path class="back-dress" d="M334 78 H358 L360 120 C380 220 392 320 396 400 H312 C312 300 318 210 330 120 Z"/>
+            <!-- the dress form and its stand -->
+            <line class="stand" x1="170" y1="390" x2="170" y2="430"/>
+            <path class="stand" d="M136 440 H204"/>
+            <circle class="form" cx="170" cy="62" r="11"/>
+            <rect class="form" x="164" y="70" width="12" height="20" rx="3"/>
+            <!-- the A-line dress, pinned on the form -->
+            <path class="dress" d="M138 98 C150 92 190 92 202 98 L198 150 C194 168 190 178 188 190 L254 392 C200 404 140 404 86 392 L152 190 C150 178 146 168 142 150 Z"/>
+            <path class="seam" d="M150 190 C162 196 178 196 190 190"/>
+            <path class="seam" d="M160 200 C150 270 130 330 116 392 M180 200 C190 270 210 330 226 392 M170 200 V398"/>
+            <path class="lace" d="M144 112 C158 120 182 120 196 112 M146 130 C160 138 180 138 194 130"/>
+            <path class="lace" d="M96 380 C150 392 192 392 246 380"/>
+            <!-- the tape measure around the neck -->
+            <path class="tape" d="M156 84 C150 120 144 160 150 210 M184 84 C192 130 198 170 192 236"/>
+            <g class="tick"><line x1="146" y1="150" x2="153" y2="150"/><line x1="145" y1="170" x2="152" y2="170"/><line x1="146" y1="190" x2="153" y2="190"/><line x1="192" y1="170" x2="199" y2="170"/><line x1="193" y1="190" x2="200" y2="190"/><line x1="193" y1="210" x2="200" y2="210"/></g>
+            <!-- the pin cushion -->
+            <ellipse class="cushion" cx="300" cy="432" rx="30" ry="14"/>
+            <path class="pin" d="M290 428 L284 410 M302 426 L304 406 M312 428 L320 412"/>
+            <circle class="pinhead" cx="284" cy="410" r="3"/><circle class="pinhead" cx="304" cy="406" r="3"/><circle class="pinhead" cx="320" cy="412" r="3"/>
+          </svg>
+        </div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>מדידות בתיאום מראש</span><b>בסטודיו ברמת גן</b><small>את השעה אנחנו מאשרים בהודעה</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">חתונה במאי. מחפשים בתולת ים בהשכרה.</p><p class="a">בתולת ים בהשכרה: 3,500 עד 5,500 ₪, לדוגמה. נחזור לתאם מדידה.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <span class="tag">מחירים לדוגמה</span>
+          <p><b>השכרה</b><em>2,500 עד 6,500 ₪</em></p>
+          <p><b>עיצוב אישי</b><em>6,000 עד 16,000 ₪</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="toolsec" id="silhouettes">
+    <div class="wrap">
+      <div class="head"><h2>איזו גזרה?</h2><p>לוחצים על גזרה ורואים למה היא מתאימה, כמה מדידות היא צריכה וטווח מחיר לדוגמה, בהשכרה ובעיצוב אישי.</p></div>
+      <div class="chart-wrap">
+        <div class="sils" role="group" aria-label="גזרות שמלה">
+          <button class="sil" type="button" data-sil="A" aria-pressed="true">
+            <svg viewBox="0 0 120 220" aria-hidden="true" focusable="false"><circle class="knob" cx="60" cy="10" r="6"/>
+              <path class="gown" d="M42 22 C50 18 70 18 78 22 L74 54 C72 64 70 70 70 76 L104 210 C76 216 44 216 16 210 L50 76 C50 70 48 64 46 54 Z"/>
+              <path class="waist" d="M50 76 C56 79 64 79 70 76"/><path class="flow" d="M56 82 C48 130 38 170 32 208 M64 82 C72 130 82 170 88 208"/></svg>
+            <span>A</span><small>נפתחת מהמותן</small>
+          </button>
+          <button class="sil" type="button" data-sil="בתולת ים" aria-pressed="false">
+            <svg viewBox="0 0 120 220" aria-hidden="true" focusable="false"><circle class="knob" cx="60" cy="10" r="6"/>
+              <path class="gown" d="M42 22 C50 18 70 18 78 22 L74 54 C72 64 70 70 72 80 C76 104 76 130 72 152 C82 176 98 196 110 210 C78 216 42 216 10 210 C22 196 38 176 48 152 C44 130 44 104 48 80 C50 70 48 64 46 54 Z"/>
+              <path class="waist" d="M49 78 C56 81 64 81 71 78"/><path class="flow" d="M48 154 C56 158 64 158 72 154 M52 160 C42 180 30 196 22 208 M68 160 C78 180 90 196 98 208 M60 160 V212"/></svg>
+            <span>בתולת ים</span><small>צמודה עד הברך</small>
+          </button>
+          <button class="sil" type="button" data-sil="ישרה" aria-pressed="false">
+            <svg viewBox="0 0 120 220" aria-hidden="true" focusable="false"><circle class="knob" cx="60" cy="10" r="6"/>
+              <path class="gown" d="M42 22 C50 18 70 18 78 22 L74 54 C72 64 70 70 72 80 C76 120 80 170 82 210 C68 214 52 214 38 210 C40 170 44 120 48 80 C50 70 48 64 46 54 Z"/>
+              <path class="waist" d="M49 78 C56 81 64 81 71 78"/><path class="flow" d="M56 86 C54 130 52 170 50 208 M64 86 C66 130 68 170 70 208"/></svg>
+            <span>ישרה</span><small>קלה, בלי שכבות</small>
+          </button>
+          <button class="sil" type="button" data-sil="נסיכה" aria-pressed="false">
+            <svg viewBox="0 0 120 220" aria-hidden="true" focusable="false"><circle class="knob" cx="60" cy="10" r="6"/>
+              <path class="gown" d="M42 22 C50 18 70 18 78 22 L74 54 C72 64 70 70 70 76 C94 96 114 150 116 210 C80 218 40 218 4 210 C6 150 26 96 50 76 C50 70 48 64 46 54 Z"/>
+              <path class="waist" d="M50 76 C56 79 64 79 70 76"/><path class="flow" d="M54 82 C38 120 24 170 18 208 M66 82 C82 120 96 170 102 208 M60 84 V214 M40 100 C30 140 24 180 22 206"/></svg>
+            <span>נסיכה</span><small>חצאית מלאה</small>
+          </button>
+        </div>
+        <div class="card" id="silCard" aria-live="polite"></div>
+      </div>
+      <p class="measure" role="note">את מועד המסירה קובעים רק אחרי מדידה ומידות, לא לפני. בעיצוב אישי כדאי להתחיל כמה חודשים לפני החתונה. <a href="#g-how-early">כמה זמן מראש להתחיל</a></p>
+    </div>
+  </section>
+
+  <section class="hour" id="hour">
+    <div class="wrap">
+      <div class="head"><h2>סיכות ביד, טלפון בצד.</h2><p>מי שמתקשרת באמצע מדידה שומעת צלצול, ולפעמים קובעת במקום אחר. לכן יש כאן צ׳אט: הוא שואל, נותן טווח מחיר, והפרטים מחכים לנו כשהמדידה נגמרת.</p></div>
+      <ol class="clock" aria-label="שעה אחת של מדידה">
+        <li><time class="mono">11:00</time><span>מדידה שנייה לכלה. מסמנים את המכפלת.</span></li>
+        <li class="miss"><time class="mono">11:20</time><span>שיחה שלא נענתה. חתונה בעוד חצי שנה.</span></li>
+        <li class="miss"><time class="mono">11:45</time><span>עוד שיחה. שואלת על השכרה בגזרת A.</span></li>
+        <li class="ok"><time class="mono">12:00</time><span>המדידה נגמרה. שתי פניות מסודרות בוואטסאפ, עם תאריך וגזרה.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="way">
+    <div class="wrap">
+      <div class="head"><h2>מהמדידה הראשונה עד החתונה</h2><p>כל מדידה בתיאום מראש. את השעה אנחנו מאשרים בהודעה.</p></div>
+      <ol class="steps">
+        <li><b>פגישת היכרות</b><span>מודדים כמה שמלות. אפשר להגיע עם מלווה אחת או שתיים.</span></li>
+        <li><b>מידות</b><span>לוקחים מידות. בעיצוב אישי בוחרים בד ומשרטטים סקיצה.</span></li>
+        <li><b>מדידות ביניים</b><span>2 עד 3 בהשכרה, 4 עד 6 בעיצוב אישי.</span></li>
+        <li><b>מדידה אחרונה</b><span>שבוע או שבועיים לפני החתונה, עם הנעליים של היום.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה, לפי הגזרה והבד. את המחיר סוגרים איתנו בכתב, אחרי המדידה הראשונה.</p></div>
+      <div class="prices-grid">
+        <div>
+          <h3>השכרה</h3>
+          <div class="pr"><b>גזרת A</b><span class="p">2,800 עד 4,500 ₪</span><small>כולל התאמות מידה וניקוי אחרי החתונה</small><button class="ask" type="button" data-kind="השכרה" data-sil="A">לתאם מדידה</button></div>
+          <div class="pr"><b>בתולת ים</b><span class="p">3,500 עד 5,500 ₪</span><small>כולל התאמות מידה וניקוי אחרי החתונה</small></div>
+          <div class="pr"><b>ישרה</b><span class="p">2,500 עד 4,000 ₪</span><small>כולל התאמות מידה וניקוי אחרי החתונה</small></div>
+          <div class="pr"><b>נסיכה</b><span class="p">4,000 עד 6,500 ₪</span><small>כולל התאמות מידה, תחתונית וניקוי</small></div>
+        </div>
+        <div>
+          <h3>עיצוב אישי</h3>
+          <div class="pr"><b>גזרת A</b><span class="p">7,000 עד 12,000 ₪</span><small>סקיצה, בד לבחירה ו-4 עד 6 מדידות</small><button class="ask" type="button" data-kind="עיצוב אישי" data-sil="A">לתאם פגישת היכרות</button></div>
+          <div class="pr"><b>בתולת ים</b><span class="p">8,500 עד 14,000 ₪</span><small>סקיצה, בד לבחירה ו-4 עד 6 מדידות</small></div>
+          <div class="pr"><b>ישרה</b><span class="p">6,000 עד 10,000 ₪</span><small>סקיצה, בד לבחירה ו-4 עד 6 מדידות</small></div>
+          <div class="pr"><b>נסיכה</b><span class="p">10,000 עד 16,000 ₪</span><small>שכבות טול, סקיצה ו-4 עד 6 מדידות</small></div>
+        </div>
+      </div>
+      <p class="when"><b>מתי השמלה מוכנה?</b><span>את מועד המסירה אנחנו קובעים רק אחרי המדידה הראשונה והמידות. לפני זה לא מבטיחים תאריך.</span></p>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו השירותים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה להביא למדידה, איך בוחרים בין השכרה לעיצוב ואיך שומרים על השמלה עד החתונה. ידע כללי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה הסטודיו רואה</h2><p>לא כל כלה מוצאת את הסטודיו באינסטגרם. חלק מחפשות בגוגל או מקבלות קישור מחברה, ומגיעות לכאן. נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הכלה בוחרת גזרה, השכרה או עיצוב</b><span>רואה טווח מחיר ומצרפת תמונת השראה, בלי לחכות שהמדידה תיגמר.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>תאריך החתונה, הגזרה, התקציב וכמה מדידות.</span></div></li>
+          <li><div><b>בין מדידה למדידה מתאמים</b><span>הודעה אחת, ואת השעה אנחנו מאשרים בעצמנו.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ה</span><div><b>הדר שגיא</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לשמלת כלה מהאתר (דמו)
+חתונה: 6 עד 12 חודשים
+דרך: השכרה
+גזרה: בתולת ים
+מידה: 38 עד 40
+תקציב: 4,000 עד 7,000 ₪
+מדידות: 2 עד 3
+שם: הדר שגיא
+טלפון: 052-7654321<time>12:04</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לסטודיו</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>אטלייה נוגה שמלות כלה · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script>
+  // The sample ranges, the same as the price list above. A range, never a promised price, and never a delivery date before measuring.
+  const SILS = {
+    "A": { suits: "נפתחת בעדינות מהמותן. נוחה בהליכה, בישיבה ובריקודים, ומתאימה כמעט לכל בד.", rent: "2,800 עד 4,500 ₪", design: "7,000 עד 12,000 ₪" },
+    "בתולת ים": { suits: "צמודה עד הברך ונפתחת למטה. יפה בהליכה ובצילומים, פחות חופשית בריקודים.", rent: "3,500 עד 5,500 ₪", design: "8,500 עד 14,000 ₪" },
+    "ישרה": { suits: "קלה ופשוטה, בלי שכבות. נוחה לחתונה בחוץ ולמי שרוצה לזוז בחופשיות.", rent: "2,500 עד 4,000 ₪", design: "6,000 עד 10,000 ₪" },
+    "נסיכה": { suits: "חצאית מלאה בשכבות טול. מרשימה בכניסה, כבדה יותר וצריכה מקום סביבה.", rent: "4,000 עד 6,500 ₪", design: "10,000 עד 16,000 ₪" },
+  };
+  const RENT = "השכרה", DESIGN = "עיצוב אישי", NOT_SET = "עוד לא סגרנו", SOON = "פחות מ-3 חודשים";
+  const cur = {}; // the answers so far, for the tips
+  const rangeText = (sil, kind) => {
+    const s = SILS[sil]; if (!s) return "";
+    if (kind === RENT) return `${sil} בהשכרה: ${s.rent}, לדוגמה.`;
+    if (kind === DESIGN) return `${sil} בעיצוב אישי: ${s.design}, לדוגמה.`;
+    return `${sil}: בהשכרה ${s.rent}, בעיצוב אישי ${s.design}. מחירים לדוגמה.`;
+  };
+
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "אטלייה נוגה · שמלות כלה", subtitle: "מתאמים מדידה, גם כשאנחנו באמצע מדידה", initial: "נ", launcher: "לתאם מדידה", hint: "נציג AI",
+    greet: "היי, כאן אטלייה נוגה.\nכמה שאלות קצרות על החתונה ועל השמלה, ונחזור אליכם לתאם מדידה.",
+    steps: [
+      { key: "date", label: "חתונה", ask: "מזל טוב! מתי החתונה? אפשר לבחור, או לכתוב תאריך.", chips: [SOON, "3 עד 6 חודשים", "6 עד 12 חודשים", "יותר משנה", NOT_SET], input: "text", placeholder: "למשל: 14.6.2027",
+        tip: { when: (v) => v === SOON, text: "בזמן קצר בדרך כלל מתאימה השכרה. את מועד המסירה קובעים רק אחרי מדידה.", id: "how-early", link: "כמה זמן מראש להתחיל" } },
+      { key: "kind", label: "דרך", ask: "השכרה או עיצוב אישי?", chips: [RENT, DESIGN, "עוד לא החלטנו"],
+        tip: { when: (v) => { cur.kind = v; return v === "עוד לא החלטנו"; }, text: "אפשר להחליט בפגישת ההיכרות. נראה לכם את שתי הדרכים.", id: "rent-or-design", link: "השכרה או עיצוב אישי" } },
+      { key: "sil", label: "גזרה", ask: "איזו גזרה אתם אוהבים?", chips: ["A", "בתולת ים", "ישרה", "נסיכה", "עוד לא יודעים"],
+        tip: { when: (v) => { cur.sil = v; return Boolean(SILS[v]); }, get text() { return rangeText(cur.sil, cur.kind) + "\nאת המחיר סוגרים בכתב אחרי המדידה הראשונה."; } } },
+      { key: "size", label: "מידה", ask: "באיזו מידה בערך? אפשר לדלג. את המידות לוקחים במדידה.", chips: ["34 עד 36", "38 עד 40", "42 עד 44", "46 ומעלה", "מעדיפים לדלג"] },
+      { key: "budget", label: "תקציב", ask: "מה התקציב בערך?", chips: ["עד 4,000 ₪", "4,000 עד 7,000 ₪", "7,000 עד 12,000 ₪", "מעל 12,000 ₪", "עוד לא יודעים"] },
+      { key: "photo", label: "תמונה", ask: "יש תמונת השראה? שמלה שאהבתם, או פרט מסוים.", photo: true, skip: "בלי תמונה" },
+      { key: "fittings", label: "מדידות", ask: "לכמה מדידות אתם מצפים? בהשכרה בדרך כלל 2 עד 3, בעיצוב אישי 4 עד 6.", chips: ["2 עד 3", "4 עד 6", "עוד לא יודעים"],
+        tip: { when: (v) => v === "עוד לא יודעים", text: "נסביר בפגישת ההיכרות. כל מדידה נקבעת מראש, בשעה שנתאם יחד.", id: "fittings", link: "כמה מדידות ולמה" } },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלנו.\nנחזור לתאם מדידה, ואת השעה נאשר בהודעה. מועד מסירה קובעים רק אחרי מדידה.\nלחצו למטה, והפרטים יגיעו אלינו בוואטסאפ.`,
+    summary: (d) => [
+      "פנייה לשמלת כלה מהאתר (דמו)",
+      "חתונה: " + (d.date === NOT_SET ? "עוד לא סגרו" : d.date),
+      "דרך: " + d.kind,
+      "גזרה: " + d.sil,
+      "מידה: " + (d.size === "מעדיפים לדלג" ? "לא ציינו" : d.size),
+      "תקציב: " + d.budget,
+      "מדידות: " + d.fittings,
+      "שם: " + d.name,
+      "טלפון: " + d.phone,
+      d.callback ? "מתי לחזור: " + d.callback : "",
+    ].filter(Boolean).join("\n"),
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים לשירותים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+
+  // The silhouette chart: a tap shows what suits it, its fittings and its sample ranges, and opens the chat from there.
+  const card = document.getElementById("silCard");
+  let sil = "A";
+  function show() {
+    const s = SILS[sil];
+    card.replaceChildren();
+    const h = document.createElement("h3"); h.textContent = sil === "A" ? "גזרת A" : sil;
+    const p = document.createElement("p"); p.className = "suits"; p.textContent = s.suits;
+    const dl = document.createElement("dl");
+    [["השכרה, 2 עד 3 מדידות", s.rent], ["עיצוב אישי, 4 עד 6 מדידות", s.design]].forEach(([t, v]) => {
+      const row = document.createElement("div"); const dt = document.createElement("dt"); dt.textContent = t; const dd = document.createElement("dd"); dd.textContent = v; row.append(dt, dd); dl.append(row);
+    });
+    const tag = document.createElement("p"); tag.className = "tag"; tag.textContent = "מחירים לדוגמה. המחיר לפי הבד והפרטים, ונסגר בכתב אחרי המדידה הראשונה.";
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-wine"; b.textContent = "להמשיך בצ׳אט";
+    b.addEventListener("click", () => bot.open({ sil }));
+    card.append(h, p, dl, tag, b);
+  }
+  document.querySelectorAll(".sil").forEach((btn) => btn.addEventListener("click", () => {
+    document.querySelectorAll(".sil").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
+    sil = btn.dataset.sil; show();
+    if (matchMedia("(max-width: 1020px)").matches) card.scrollIntoView({ block: "nearest" });
+  }));
+  show();
+  document.querySelectorAll(".ask[data-kind]").forEach((b) => b.addEventListener("click", () => bot.open({ kind: b.dataset.kind, sil: b.dataset.sil })));
+  Guides.load("../shared/guides/bridal.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

@@ -1,15 +1,16 @@
 # Future demos
 
-Ten demo pages for trades not yet in the builder. Each is `noindex, nofollow`, is not linked from the home page, `/all/`, the sitemap or the builder, and sends "לבנות אתר כזה" to `build/?t=other`. Each one shows a drawing until real sample photos exist.
+Demo pages for trades not yet in the builder (15, listed in the table below).
 
-To launch one:
+**Listed on 2026-10-24.** All 15 are on the home picker (`T` in `demos/index.html`) and on `/all/`, each in its group, and in `DEMOS` in `scripts/tests/demo-chats.cjs`; the counts say 45. They are `noindex` like every other demo and stay out of the sitemap. Their "לבנות אתר כזה" goes to `build/?t=other` (the `SOON` set in `demos/index.html`, and the cards on `/all/`) until each gets a builder trade. The AI chat (`chat.mjs`, `aibot.js`) knows their slugs.
 
-1. Make its three photos from the prompts below (Figma `generate_image`, or any licensed image tool).
-2. Crop them to WebP in `demos/shared/photos/` and put the hero in the page's frame.
-3. Remove `noindex`.
-4. Add the trade to the home picker (`T` in `demos/index.html`), to `/all/`, to the sitemap and to the builder: `templates/trades/<id>.mjs`, `trades/index.mjs` and `#fTrade`.
-5. Add the page to `DEMOS` in `scripts/tests/demo-chats.cjs`.
-6. Update the trade counts (30).
+**Interim covers.** `demos/shared/photos/<id>-cover.webp` (960x720, 4:3 like the picker's phone and the `/all/` cards) is a screenshot of the page's own drawn hero, without the glass cards. Replace each with the Canva hero photo below once it can be downloaded (same file name, 4:3 crop, WebP about 78), and put the photo in the page's frame too.
+
+Still to do, per demo:
+
+1. Make its two work photos from the prompts below (Figma `generate_image`, Canva, or any licensed image tool), and the hero from Canva.
+2. Crop them to WebP in `demos/shared/photos/`, replace the interim cover, and put the hero in the page's frame.
+3. Add the trade to the builder: `templates/trades/<id>.mjs`, `trades/index.mjs` and `#fTrade`; then take its id out of `SOON` in `demos/index.html` and point its `/all/` card at `build/?t=<id>`.
 
 | Trade | Page | Fictional business |
 | --- | --- | --- |
@@ -23,6 +24,11 @@ To launch one:
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
 | קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
 | DJ לאירועים | `demos/dj/` | DJ עומר לוי (חיפה והצפון) |
+| מאפרת | `demos/makeup/` | מעיין אלמוג · איפור כלות ואירועים (רחובות) |
+| סטודיו לשמלות כלה | `demos/bridal/` | אטלייה נוגה · שמלות כלה, השכרה ועיצוב אישי (רמת גן) |
+| ריסים וגבות | `demos/lashes-brows/` | עדי שגיא · ריסים וגבות (רמת גן) |
+| הסרת שיער (לייזר ושעווה) | `demos/hair-removal/` | קליניקת אלמה · הסרת שיער (חולון) |
+| עוגות מעוצבות (קונדיטורית ביתית) | `demos/cakes/` | המתוקים של נוי · עוגות מעוצבות (הוד השרון) |
 
 ## Image prompts
 
@@ -77,3 +83,50 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: A small phone repair bench in an Israeli shop, a blue anti-static mat with a printed grid, an opened smartphone with its cracked screen lifted on a flex cable, precision screwdrivers, a suction cup and tiny screws laid out in order, a magnifier lamp's cool white light, a window with soft Negev daylight in the background, realistic macro photo, no faces, no text, no logos, no yellow.
 2. Work: A technician's gloved hands replacing a smartphone battery with plastic tweezers on a blue anti-static mat, the phone's back panel off, clean and orderly, realistic close-up photo, no faces, no visible text or logos, no yellow.
 3. Work: An opened laptop on a repair bench with its bottom panel removed, a new SSD drive being fitted, a small brush and compressed air can nearby, neutral grey and blue tones, realistic photo, no faces, no text, no logos, no brand marks, no yellow.
+
+### Cakes
+1. Hero, 4:5: A two-tier designed cake on a white cake stand on the counter of a bright Israeli home kitchen. Soft blush-pink buttercream, a dark chocolate drip on the top tier, fresh raspberries and blackberries on top, a ring of chopped pistachio around the base. Pale tiled backsplash, a piping bag and an offset spatula on the counter, soft window daylight, photorealistic, no people, no text or lettering on the cake, no logos, no yellow, cream or caramel tones.
+2. Work, 4:3: Hands in a dark apron piping small rosettes of pale pink cream on the edge of a cake on a turntable, only the hands and forearms show. A home kitchen counter with bowls of berries and pistachios, natural window light, shallow depth of field, photorealistic, no faces, no text, no logos, no yellow.
+3. Work, 4:3: A tray of individual desserts ready for pickup on an Israeli kitchen table: small glass cups of berry mousse, mini tartlets with raspberries, pistachio cubes, beside a closed white cake box. Late afternoon daylight, blush and cocoa palette, photorealistic, no people, no text or labels, no logos, no yellow.
+
+### Lashes and brows
+1. Hero, 4:5: Realistic macro photo of one closed eye with fresh classic lash extensions, a pink gel pad under the lower lashes, a lash artist's gloved hand holding fine tweezers at the lash line, the face cropped to the eye and brow only, natural brow above, cool white ring-light reflection, soft rose and navy tones, a small home studio in an Israeli apartment blurred behind, no full face, no text, no logos, no yellow.
+2. Work: Close-up realistic photo of a freshly laminated, brushed-up natural brow with clean edges, the face cropped to the brow and closed eye, a small spoolie brush beside it on a white towel, soft daylight, neutral skin tones, no full face, no text, no logos, no yellow.
+3. Work: Realistic flat-lay on a white treatment trolley in a small Israeli studio: black lash trays with rows of curled lashes, two pairs of fine tweezers, a glass glue stone, pink gel pads and a few spoolie brushes, cool daylight, navy and rose accents, no people, no text, no logos, no brand names, no yellow.
+
+### Hair removal
+1. Hero, 4:5: Realistic photo of a calm, bright hair removal clinic room in Israel: a treatment bed with teal vinyl and a fresh paper sheet, a rolled white towel, a modern laser device on a cart with its handpiece on a hook and a blank dark screen, a pair of protective goggles on the bed, a small green plant on a shelf, cool daylight, teal and white palette, no people, no text, no logos, no yellow.
+2. Work: Close-up realistic photo of a therapist's gloved hands holding a laser handpiece over a lower leg (shin only) resting on a teal treatment bed, a white towel covering the leg above the knee, the rest of the body out of frame, soft cool light, no faces, no text, no logos, no yellow.
+3. Work: Realistic photo of a wax station in a clean Israeli clinic: a wax warmer, wooden spatulas in a glass jar, a roll of paper strips, a bottle of soothing lotion without a label and folded white towels on a steel trolley, soft daylight, teal and white tones, no people, no text, no logos, no yellow.
+
+### Makeup artist
+1. Hero, 4:5: Realistic photo of a makeup artist's table by a window in a bright Israeli apartment, an open round compact with a mirror and six pans in nude, rose and plum, brushes standing in a cup, a berry lipstick and a small lash case, a bride in a white robe seen only from behind and cropped at the shoulders, soft morning daylight, blush and plum tones, no face, no text, no logos, no yellow or gold tones.
+2. Work, 4:5: Close-up realistic photo of a makeup artist's hand blending blush with a soft brush on a cheek, cropped tightly so only the cheek, jawline and the brush show, no eyes and no full face, a palette held in the other hand, natural window light, rose and mauve tones, no text, no logos, no yellow.
+3. Work, 4:3: Realistic photo of a home makeup station set up for a bride and her family in an Israeli living room, a folding chair facing a window, a ring light switched off, open cases of foundations and lipsticks arranged in rows, two robes hanging on a door, no people, no text, no logos, no yellow or gold tones.
+
+### Bridal dress studio
+1. Hero, 4:5: Realistic photo inside a small bridal atelier in Ramat Gan, an ivory A-line wedding dress with a lace bodice on a dress form, a pink tape measure around the form's neck, a deep wine velvet curtain to one side, a rail of white dresses in garment bags behind, soft daylight, blush and ivory palette, no people, no text, no logos, no yellow, gold or champagne tones.
+2. Work, 4:5: Close-up realistic photo of a seamstress's hands pinning the hem of a white tulle skirt on a bride standing on a low round platform, cropped below the waist so no face shows, a pin cushion on the wrist, a wine-coloured carpet, cool daylight, no text, no logos, no yellow or gold.
+3. Work, 4:3: Realistic photo of a dressmaker's table in an Israeli studio, ivory crepe and lace fabric swatches, a pencil sketch of a dress silhouette without any writing, tailor's chalk, scissors and a tape measure, a blush wall behind, soft natural light, no people, no text or letters, no logos, no yellow.
+
+## Hero photos made in Canva (2026-10-24)
+
+One hero photo per demo, generated in Canva at 4:5. Each is in the Canva account's uploads. Download it at full size, crop it to WebP and save it as `demos/shared/photos/<demo>-hero.webp`.
+
+| Demo | Canva image |
+| --- | --- |
+| carpenter | https://www.canva.com/M/MAHY69DtMhg |
+| aluminum | https://www.canva.com/M/MAHY6xaFsHg |
+| hair | https://www.canva.com/M/MAHY663gioI |
+| physio | https://www.canva.com/M/MAHY68X2A2Y |
+| water-heater | https://www.canva.com/M/MAHY64xy4E0 |
+| tiling | https://www.canva.com/M/MAHY64QulvA |
+| catering | https://www.canva.com/M/MAHY69hYW1s |
+| dj | https://www.canva.com/M/MAHY62iJ098 |
+| garage | https://www.canva.com/M/MAHY63snXM4 |
+| phone-repair | https://www.canva.com/M/MAHY62ix9j8 |
+| cakes | https://www.canva.com/M/MAHY66_vdC4 |
+| lashes-brows | https://www.canva.com/M/MAHY6zykUGU |
+| hair-removal | https://www.canva.com/M/MAHY61dwUf0 |
+| makeup | https://www.canva.com/M/MAHY68hUN88 |
+| bridal | https://www.canva.com/M/MAHY6-oGtAg |

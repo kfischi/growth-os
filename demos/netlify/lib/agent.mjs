@@ -5,6 +5,7 @@
 // gets the update through the owner alert template. Off unless כפיר turned it on (wa_agent), נציג AI only.
 import Anthropic from "@anthropic-ai/sdk";
 import { db, q, sendText, sendTemplate, firstName, clip, factsOf } from "./leads.mjs";
+import { LANG_RULE, langOfTurns, langNote } from "./lang.mjs";
 
 const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
 const DAILY = 8; // replies to one customer in 24 hours; after that the owner takes it from there
@@ -16,9 +17,9 @@ export const agentOn = (c) => c.active !== false && c.package === "ai" && c.wa_a
 const SCHEMA = {
   type: "object", additionalProperties: false, required: ["reply", "notify_owner", "owner_note"],
   properties: {
-    reply: { type: "string", description: "The WhatsApp answer to the customer, in Hebrew, at most 3 short sentences." },
+    reply: { type: "string", description: "The WhatsApp answer to the customer, in the language they write in (Hebrew by default), at most 3 short sentences." },
     notify_owner: { type: "boolean", description: "True when the customer gave something new the owner should know now (address, a time, a detail, urgency, a request to be called), or when you can't answer." },
-    owner_note: { type: "string", description: "One Hebrew sentence for the owner with the new information, or an empty string." },
+    owner_note: { type: "string", description: "One Hebrew sentence for the owner with the new information, always in Hebrew, or an empty string." },
   },
 };
 
@@ -26,7 +27,8 @@ const system = (c, name) => `You answer customers on WhatsApp for "${c.name}", a
 The customer's name: ${name || "unknown"}.
 
 How to write:
-- Hebrew only, short and warm, like a good professional on WhatsApp: at most 3 short sentences. Plural (אתם). No emoji in a row, no marketing words.
+- Short and warm, like a good professional on WhatsApp: at most 3 short sentences. No emoji in a row, no marketing words.
+${LANG_RULE}
 - Only facts written below. Never invent a price, a time, an arrival, availability or a promise. For "when will you come" or "how much exactly": the owner will confirm when he calls back.
 - Your job: answer from the facts, and gather what the owner needs to come prepared: what exactly, where (town and street), how urgent, when is convenient. Ask one thing at a time, only what is still missing.
 - Safety: if there is danger (water near electricity, sparks, burning smell, gas), tell them to keep away and, for fire or gas, call 102; for a medical emergency 101. Never tell them to repair anything themselves.
@@ -80,7 +82,7 @@ export async function agentReply(c, lead) {
   const r = await sendText(c, lead.phone_intl, reply, { kind: "agent", leadId: lead.id });
   if (out.notify_owner && String(out.owner_note || "").trim() && c.owner_alerts) {
     await sendTemplate(c, c.owner_phone, c.tpl_owner_alert,
-      [lead.name || "-", lead.phone || lead.phone_intl || "-", lead.service || "-", "עדכון בוואטסאפ: " + clip(String(out.owner_note), 300), "וואטסאפ"],
+      [lead.name || "-", lead.phone || lead.phone_intl || "-", lead.service || "-", "עדכון בוואטסאפ" + langNote(langOfTurns(messages)) + ": " + clip(String(out.owner_note), 300), "וואטסאפ"],
       { kind: "owner_alert", leadId: lead.id, buttonPayload: "done:" + lead.id });
   }
   return r;

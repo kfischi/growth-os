@@ -337,6 +337,8 @@ const GROUPS = {
   care: ["luxe", "studio", "menu", "appointment", "mosaic", "certificate"],
 };
 export const looksFor = (tradeId) => GROUPS[CARE.has(tradeId) ? "care" : "work"];
+// Beauty, care and lessons: mostly the customer comes to the business (or books a time), not a visit to a fault.
+export const isCare = (tradeId) => CARE.has(tradeId);
 export const defaultLook = (tradeId) => looksFor(tradeId)[0];
 
 export const DEFAULT_LOOK = "blueprint";

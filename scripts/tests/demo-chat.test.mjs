@@ -26,6 +26,16 @@ ai.queue.push("תודה דנה. זו הדגמה, אז הפרטים לא נשלח
 r = await call("plumber", { messages: [{ role: "user", content: "סתימה" }, { role: "assistant", content: "מה השם והטלפון?" }, { role: "user", content: "דנה 0501234567" }] }, { ip: "8.8.8.2" });
 assert.equal(r.lead, "demo"); assert.doesNotMatch(r.reply, /\[\[lead/);
 
+// the customer's language: the prompt says to answer in it, and the fixed lines follow it
+const L = await import(new URL("../../demos/netlify/lib/lang.mjs", import.meta.url).href);
+assert.equal(L.langOf("כמה עולה סתימה?"), "he"); assert.equal(L.langOf("Сколько стоит засор?"), "ru");
+assert.equal(L.langOf("كم يكلف؟"), "ar"); assert.equal(L.langOf("How much is a leak?"), "en"); assert.equal(L.langOf("0501234567"), null);
+assert.equal(L.langOf("נציג AI באתר"), "he", "a Latin word inside Hebrew stays Hebrew");
+assert.equal(L.langOfTurns([{ role: "user", content: "У меня течёт кран на кухне" }, { role: "assistant", content: "Как вас зовут?" }, { role: "user", content: "Ivan 0501234567" }]), "ru", "a name in Latin letters keeps Russian");
+assert.equal(L.langOfTurns([{ role: "user", content: "0501234567" }]), "he");
+assert.equal(L.langNote("he"), ""); assert.equal(L.langNote("ru"), " (הפנייה ברוסית)");
+assert.match(sys, /language the customer writes in/); assert.match(sys, /Both always in Hebrew/, "the lead's fields stay Hebrew for the owner");
+
 // only from our own pages, only known demos, short messages
 r = await call("plumber", ask("היי"), { origin: "https://evil.example", ip: "8.8.8.3" }); assert.equal(r.status, 403);
 r = await call("plumber", ask("היי"), { origin: null, ip: "8.8.8.4" }); assert.equal(r.status, 403, "no Origin, no answer");

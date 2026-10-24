@@ -11,7 +11,7 @@ const out = process.argv[2];
 if (!out) { console.error("usage: node scripts/tests/builder-render.mjs <dir>"); process.exit(1); }
 const repo = path.resolve(new URL("../..", import.meta.url).pathname);
 fs.mkdirSync(path.join(out, "assets/photos"), { recursive: true });
-for (const f of ["leadbot.js", "leadform.js", "a11y.js"]) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets", f), path.join(out, "assets", f));
+for (const f of ["leadbot.js", "leadform.js", "a11y.js", "aibot.js"]) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets", f), path.join(out, "assets", f));
 fs.cpSync(path.join(repo, "demos/shared/fonts"), path.join(out, "assets/fonts"), { recursive: true }); // the drafts load their fonts from here
 const photos = { portrait: "plumber-portrait.webp", work1: "plumber-siphon.webp", work2: "plumber-leak.webp", work3: "plumber-drain.webp", before: "plumber-leak.webp", after: "plumber-siphon.webp" };
 for (const f of Object.values(photos)) fs.copyFileSync(path.join(repo, "clients/sample-plumber/assets/photos", f), path.join(out, "assets/photos", f));

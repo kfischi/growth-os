@@ -739,7 +739,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
   }
 
   const assets = ghOk(await gh("GET", `/contents/clients/sample-plumber/assets?ref=${q(BRANCH())}`), "assets");
-  const shared = ["leadbot.js", "leadform.js", "a11y.js"].map((name) => {
+  const shared = ["leadbot.js", "leadform.js", "a11y.js", "aibot.js"].map((name) => {
     const f = assets.find((x) => x.name === name && x.type === "file");
     if (!f) throw new Error("missing template asset " + name);
     return { path: `${dir}/assets/${name}`, mode: "100644", type: "blob", sha: f.sha };
@@ -786,7 +786,7 @@ export async function publishToRepo(d, slug, message = `Publish clients/${slug} 
 // Every file of the live site, as bytes: the pages, the shared scripts (the same files the home site serves) and the media.
 export async function siteBundle(d, slug, url = "") {
   const { "CLIENT.md": _card, ...files } = siteFiles(d, slug, url); // the repo's card for כפיר, not a page of the site
-  await Promise.all(["leadbot.js", "leadform.js", "a11y.js"].map(async (name) => {
+  await Promise.all(["leadbot.js", "leadform.js", "a11y.js", "aibot.js"].map(async (name) => {
     const r = await fetch(`${SITE_ORIGIN}/shared/${name}`, { signal: AbortSignal.timeout(15000) });
     if (!r.ok) throw new Error(`shared ${name} ${r.status}`);
     files[`assets/${name}`] = Buffer.from(await r.arrayBuffer());

@@ -40,7 +40,7 @@ step "SEO: structured data matches the page"
 node scripts/seo/faq-jsonld.cjs demos/index.html --check || fail=1
 
 step "Hebrew copy"
-node scripts/hebrew-copy-lint.cjs demos/index.html demos/all/index.html demos/build clients docs/side-income "$built" | tail -1
+node scripts/hebrew-copy-lint.cjs demos/index.html demos/all/index.html demos/guides demos/build demos/shared/guides demos/shared/aibot.js demos/shared/leadbot.js demos/llms.txt clients docs/side-income "$built" | tail -1
 rm -rf "$built"
 
 step "every demo chat, to the WhatsApp handoff (phone and desktop)"

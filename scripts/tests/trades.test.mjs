@@ -86,6 +86,9 @@ for (const [id, T] of Object.entries(TRADES)) {
   for (const x of (ch.extra || []).filter((y) => y.only)) assert.ok(html.includes(`show: (d) => ${JSON.stringify(x.only.is)}.includes(d[${JSON.stringify(x.only.key)}])`), at("the chat asks " + x.key + " only when it applies"));
   assert.ok(Object.keys(site).filter((f) => f.startsWith("service-")).length === 4, at("a page per service"));
   if (T.crisis) assert.ok(html.includes(T.crisis), at("the crisis line shows"));
+  // The AI chat: on every live site with the lead system, said on its privacy page; never on the crisis trades
+  if (T.crisis) assert.ok(!html.includes('id="ask"') && !html.includes("aibot.js"), at("no AI chat on a crisis trade"));
+  else assert.ok(html.includes('id="ask"') && html.includes('src="assets/aibot.js" defer') && /Anthropic[^<]*נציג|נציג ה-AI[^<]*Anthropic/.test(site["privacy.html"]), at("the AI chat and its privacy line"));
   // The review's fixes: "תוך" built once, "ב" + a region without its ה, only real ranges in the chat's price line,
   // and the response time on step 3 only where step 3 is the call back.
   {

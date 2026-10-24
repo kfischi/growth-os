@@ -5,6 +5,7 @@
 // here, the lead goes through the same flow as a form (stored, WhatsApp reply, owner alert with the summary).
 import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp, factsOf } from "../lib/leads.mjs";
+import { LANG_RULE, langOfTurns, langNote, line } from "../lib/lang.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
 const MAX_TURNS = 20, MAX_CHARS = 600;
@@ -28,7 +29,8 @@ const system = (c) => `You are the website assistant of "${c.name}", a small loc
 Your job: answer visitors' questions briefly from the facts below, and when they want to be contacted, take their name and phone so the business calls them back.
 
 How to write:
-- Hebrew only, short and plain, like a good professional on WhatsApp: at most 3 short sentences. Address the visitor in plural (אתם).
+- Short and plain, like a good professional on WhatsApp: at most 3 short sentences.
+${LANG_RULE}
 - No marketing clichés, no emoji, no exclamation marks in a row.
 - Only state facts written below. Never invent prices, times, availability or promises. If you don't know, say the business will answer when they call back.
 - Never give medical, legal or safety instructions beyond the facts below. In an emergency, tell them to call 101 (מד״א), 100 (משטרה) or 102 (כיבוי).
@@ -38,7 +40,7 @@ Taking a lead:
 - When the visitor wants a call back, a price for their case or a visit, ask for their name and phone in one short question, if you don't have them yet.
 - Once you have a name and a phone, thank them in one sentence, say the business got the details and will get back to them, and add at the very end, once:
   [[lead:NAME|PHONE|SERVICE|SUMMARY]]
-  SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence with what they need, where and when. No "|" or "]" inside the fields. Never explain the marker.
+  SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence with what they need, where and when. Both always in Hebrew, for the owner, whatever language the visitor wrote in. No "|" or "]" inside the fields. Never explain the marker.
 
 Facts about the business:
 ${factsOf(c) || "(none yet: say the business will answer every question when they call back)"}`;
@@ -69,6 +71,7 @@ export default async (req, context) => {
   if (!validMessages(body && body.messages)) return json({ error: "bad_messages" }, 400, cors);
   if (overDailyCap(c.slug)) return json({ error: "busy" }, 429, cors);
   // Earlier replies came back from the browser; a marker in them is never acted on twice.
+  const lang = langOfTurns(body.messages);
   const messages = body.messages.map((x) => ({ role: x.role, content: x.content.replace(/\[\[lead:[^\]]*\]\]/g, "") || "…" }));
 
   let reply;
@@ -79,7 +82,7 @@ export default async (req, context) => {
       system: [{ type: "text", text: system(c), cache_control: { type: "ephemeral" } }],
       messages,
     });
-    if (response.stop_reason === "refusal") return json({ reply: "על זה אני לא יכול לענות כאן. השאירו שם וטלפון, ונחזור אליכם." }, 200, cors);
+    if (response.stop_reason === "refusal") return json({ reply: line("refusal", lang) }, 200, cors);
     reply = response.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return json({ error: "busy" }, 429, cors);
@@ -93,15 +96,15 @@ export default async (req, context) => {
   reply = reply.replace(LEAD, "").trim();
   const [, name, phone, service, summary] = m.map((s) => (s || "").trim());
   try {
-    const result = await processLead(c, { name, phone, service, message: summary, source: body.source, campaign: body.campaign, page: body.page, referrer: body.referrer }, "chat");
-    if (!result.ok && result.error === "bad_phone") return json({ reply: "המספר לא נראה תקין. אפשר לכתוב אותו שוב?" }, 200, cors);
+    const result = await processLead(c, { name, phone, service, message: summary + langNote(lang), source: body.source, campaign: body.campaign, page: body.page, referrer: body.referrer }, "chat");
+    if (!result.ok && result.error === "bad_phone") return json({ reply: line("badPhone", lang) }, 200, cors);
     if (result.ok) return json({ reply, lead: true }, 200, cors);
   } catch (e) {
     console.error("client-chat lead", e.message);
   }
   // Not confirmed (not stored, or the owner wasn't alerted): hand the visitor a WhatsApp button with the
   // summary, so the enquiry reaches the business anyway.
-  return json({ reply: `כדי לוודא שהפרטים מגיעים, שלחו אותם גם בוואטסאפ בלחיצה כאן. [[whatsapp:היי, אני ${name}. ${summary}]]`, lead: false }, 200, cors);
+  return json({ reply: `${line("viaWhatsapp", lang)} [[whatsapp:היי, אני ${name}. ${summary}${langNote(lang)}]]`, lead: false }, 200, cors);
 };
 
 export const config = { path: "/api/chat/:client" };

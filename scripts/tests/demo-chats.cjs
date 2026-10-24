@@ -152,12 +152,27 @@ async function estimates(b) {
     const badSum = sums.find((t) => !t.trim() || /NaN|undefined|Infinity/.test(t) || !(/\d.*₪/.test(t) || /הצעת מחיר/.test(t)));
     await p.click('[data-estimate] .est-go');
     await p.waitForTimeout(3500);
-    const first = await p.$eval('.lb-panel', (x) => { const m = x.querySelector('.lb-msg.me'); return m ? m.textContent : ''; }).catch(() => '');
+    let first = await p.$eval('.lb-panel', (x) => { const m = x.querySelector('.lb-msg.me'); return m ? m.textContent : ''; }).catch(() => '');
     // A chat that opens with a typed question (movers: "from where?") uses the prefilled answers later on.
     const typing = await p.$('.lb-panel.open form.on input:visible');
+    // A chat that opens with a question the calculator doesn't answer (catering and cakes: "which event?") must
+    // still answer the prefilled ones by itself: driven to the handoff, it takes fewer taps than a chat opened from the corner.
+    let asked = '';
+    if (first.length <= 1 && !typing) {
+      const drive = async () => { let taps = 0; for (let i = 0; i < 18; i++) { if (await p.$('.lb-panel .lb-wa')) break; await p.waitForTimeout(1500);
+        if (await p.$('.lb-panel .lb-wa')) break;
+        const chip = await p.$('.lb-panel .lb-chips button:visible'), input = await p.$('.lb-panel form input:visible');
+        if (chip) { await chip.click(); taps++; } else if (input) { const t = await input.getAttribute('type'); await input.fill(t === 'tel' ? '0501234567' : 'בדיקה כהן'); await input.press('Enter'); taps++; } }
+        return (await p.$('.lb-panel .lb-wa')) ? taps : -1; };
+      const withPrefill = await drive();
+      await p.goto(`http://localhost:8790/${d}/index.html`); await p.waitForTimeout(600); await p.click('.lb-launch');
+      const plain = await drive();
+      asked = ` taps=${withPrefill}/${plain}`;
+      if (withPrefill > 0 && plain > withPrefill) first = '(skipped)';
+    }
     const ok = !badSum && (first.length > 1 || !!typing) && !errs.length;
     if (!ok) bad++;
-    console.log(`${ok ? 'OK ' : 'BAD'} estimate ${d.padEnd(12)} sums=${sums.length} prefilled="${first}"${badSum ? ' bad sum: ' + badSum : ''}${errs.length ? ' ' + errs[0] : ''}`);
+    console.log(`${ok ? 'OK ' : 'BAD'} estimate ${d.padEnd(12)} sums=${sums.length} prefilled="${first}"${asked}${badSum ? ' bad sum: ' + badSum : ''}${errs.length ? ' ' + errs[0] : ''}`);
     await p.close();
   }
   return bad;
@@ -196,7 +211,7 @@ async function switches(b) {
   }
   return bad;
 }
-const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters','security','yoga','dog-trainer','pergolas','roofing'];
+const DEMOS = ['plumber','movers','trainer','ac','electrician','cleaning','renovation','locksmith','pest','appliance','handyman','garden','tutor','psychologist','social-worker','music','towing','cosmetics','photographer','barber','massage','nails','driving','upholstery','shutters','security','yoga','dog-trainer','pergolas','roofing','carpenter','aluminum','water-heater','tiling','garage','phone-repair','hair','physio','catering','dj','cakes','lashes-brows','hair-removal','makeup','bridal'];
 (async () => {
   const b = await chromium.launch(); let bad = 0;
   for (const d of DEMOS) {

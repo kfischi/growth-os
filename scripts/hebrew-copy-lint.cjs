@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Flags AI-sounding and bureaucratic Hebrew in pages and docs. See .claude/skills/hebrew-copy/SKILL.md.
 // Usage: node scripts/hebrew-copy-lint.cjs <file-or-dir> [...more] [--strict]
-// Scans .html, .md and .txt files. Prints file:line, the phrase, and a suggestion. --strict exits 1 on any hit.
+// Scans .html, .md and .txt files, and the Hebrew lines of .js, .mjs and .json (chat lines and guides live there). Prints file:line, the phrase, and a suggestion. --strict exits 1 on any hit.
 const fs = require("fs");
 const path = require("path");
 
@@ -33,6 +33,18 @@ const RULES = [
   [/את\/ה|לקוח\/ה|\b\/ה\b/, "בלי לוכסן מגדרי. רבים: אתם"],
   [/—/, "קו מפריד ארוך הוא סימן ל-AI. פסיק או נקודה"],
   [/!{2,}/, "סימן קריאה אחד לכל היותר"],
+  // Spelling: the Academy's full spelling, the way the site writes it everywhere.
+  [/(^|[^\u0590-\u05FF])[הובמלשכ]{0,2}ישוב(ים|י)?(?![\u0590-\u05FF])/, "כתיב מלא: יישוב"],
+  [/(^|[^\u0590-\u05FF])[ובלשכ]?הכל(?![\u0590-\u05FF])/, "כתיב מלא: הכול"],
+  [/(^|[^\u0590-\u05FF])[ובלשכ]?תכנית/, "כתיב מלא: תוכנית"],
+  // Common mistakes in plain Hebrew.
+  [/(^|\s)שני (שעות|דקות|פעמים|שנים|אפשרויות|תמונות|שאלות)/, "התאמה: \"שתי\" (נקבה)"],
+  [/(^|\s)שתי (חודשים|ימים|שבועות|טכנאים|שירותים|כפתורים)/, "התאמה: \"שני\" (זכר)"],
+  [/(^|\s)(ה)?יותר (טוב|גרוע) ביותר/, "כפל: \"הכי טוב\" או \"הטוב ביותר\""],
+  [/(^|\s)ביחד עם/, "כפל: \"יחד עם\" או \"עם\""],
+  [/(^|\s)לפרטים נוספים/, "סתמי. לכתוב מה יקרה: \"לבדוק מחיר\""],
+  [/(^|\s)נותן מענה/, "\"עונה\""],
+  [/(^|\s)מבצעים (את )?ה/, "פועל ביורוקרטי. הפועל עצמו"],
   [/[\u{2728}\u{1F680}\u{1F4AF}\u{1F525}\u{1F449}\u{2705}\u{1F31F}\u{1F4AA}\u{1F64C}]/u, "אמוג׳י כקישוט. למחוק"],
 ];
 
@@ -40,7 +52,7 @@ function walk(p, out) {
   const st = fs.statSync(p);
   if (st.isDirectory()) {
     for (const f of fs.readdirSync(p)) if (!["node_modules", ".git", ".next"].includes(f)) walk(path.join(p, f), out);
-  } else if (/\.(html?|md|txt)$/i.test(p)) out.push(p);
+  } else if (/\.(html?|md|txt|m?js|json)$/i.test(p) && !/\.min\.js$|vendor|package(-lock)?\.json$/.test(p)) out.push(p);
   return out;
 }
 
@@ -65,7 +77,8 @@ for (const t of targets) {
     const src = fs.readFileSync(file, "utf8");
     const lines = textLines(src, file);
     lines.forEach((line, i) => {
-      if (!/[֐-׿]/.test(line) && !/—|!!/.test(line)) return;
+      const code = /\.(m?js|json)$/i.test(file);
+      if (!/[֐-׿]/.test(line) && (code || !/—|!!/.test(line))) return;
       for (const [re, tip] of RULES) {
         const m = line.match(re);
         if (m) { hits++; console.log(`${file}:${i + 1}  "${m[0].trim()}"  →  ${tip}`); }

@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מעיין אלמוג · איפור כלות ואירועים</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="איפור כלות ואירועים ברחובות: איפור ערב, כלה, בת מצווה וצילומים, בסטודיו או אצלכם בבית. בוחרים לוק, רואים טווח מחיר, ומעיין בודקת את התאריך וחוזרת.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@600;700&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the open compact on the makeup artist's table: a round mirror in the lid, six pans below, a brush and a lipstick beside it.
+     Detail: the look decides the time and the price (natural 45 minutes, a bride about an hour and a half), a trial a month or two
+             before the wedding, how many people sit in the chair that morning, studio or home, sensitive skin and contact lenses.
+     Bold move: the palette itself. The visitor picks a look and the six pans and the lip swatch repaint to that look's shades.
+     Motion: the glass cards rise once in the top. Nothing else moves; never with reduced motion or html.a11y-still. */
+  :root {
+    --powder: #f7f2f6;         /* the page: pressed powder in cool daylight, not cream */
+    --sheet: #ffffff;
+    --plum: #5a1d5f;           /* the plum eyeshadow pan: brand and buttons */
+    --plum-deep: #2d0d30;      /* ink and the one dark band */
+    --berry: #ad2756;          /* the berry lipstick: accent, readable on white */
+    --berry-wash: #f8e3ea;
+    --nude: #ecd6cf;           /* the nude pan, quiet fills */
+    --ink: #241426;
+    --ink-soft: #5a4a5c;
+    --line: #e6d9e5;
+    --display: "Noto Serif Hebrew", "Rubik", "Arial Hebrew", serif;
+    --body: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--plum-deep);
+    --bot-bg: var(--sheet); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--plum); --bot-accent-fg: #fff; --bot-them: #f1e8f0; --bot-me: var(--plum-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --guide-alert: var(--berry);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--powder); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--berry); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { margin: 0; line-height: 1.15; }
+  h2 { font-family: var(--display); font-weight: 700; font-size: clamp(32px, 4vw, 48px); letter-spacing: -.01em; }
+  h3 { font-family: var(--display); font-weight: 700; }
+  .mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 54ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .2s; }
+  .btn-plum { background: var(--plum); color: #fff; }
+  .btn-plum:hover { background: var(--plum-deep); }
+  .btn-line { background: #fff; color: var(--plum-deep); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--plum); }
+
+  .demo { background: var(--plum-deep); color: #e6d6e7; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- The top ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; border-bottom: 1px solid rgba(90,29,95,.14); }
+  .logo { font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1; }
+  .logo small { display: block; font: 500 14px/1.3 var(--body); color: var(--ink-soft); margin-top: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--berry); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 30px 0 88px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--ink-soft); font-weight: 500; font-size: 16px; }
+  .lead { font-size: 19px; max-width: 38ch; margin: 0 0 28px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 36px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 800 23px/1.2 var(--body); letter-spacing: -.02em; color: var(--plum-deep); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+
+  /* the compact drawing */
+  .scene { width: 100%; height: 100%; display: block; }
+  .scene .table { fill: #eadde6; }
+  .scene .shell { fill: #2d0d30; }
+  .scene .rim { fill: none; stroke: #8a6a8c; stroke-width: 2; }
+  .scene .mirror { fill: url(#mir); }
+  .scene .streak { fill: #fff; opacity: .5; }
+  .scene .tray { fill: #3d1740; }
+  .scene .pan { stroke: rgba(0,0,0,.18); stroke-width: 1.5; }
+  .scene .press { fill: none; stroke: rgba(255,255,255,.28); stroke-width: 1.5; }
+  .scene .hinge { fill: #8a6a8c; }
+  .scene .handle { fill: #2d0d30; }
+  .scene .ferrule { fill: #b9a5ba; }
+  .scene .bristle { fill: #c7a49a; }
+  .scene .lip-case { fill: #2d0d30; }
+  .scene .lip { fill: #ad2756; }
+
+  /* ---------- The look chooser ---------- */
+  .tool-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 28px 56px; align-items: center; }
+  .tool-grid > .head { display: block; margin: 0; }
+  .tool-grid > .head p { margin-top: 14px; max-width: 34ch; }
+  .board { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: 0 30px 60px -44px rgba(45,13,48,.5);
+    display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .palette { width: 100%; height: auto; display: block; background: var(--powder); border-radius: 16px; }
+  .palette .case { fill: var(--plum-deep); }
+  .palette .well { fill: #3d1740; }
+  .palette .pan { stroke: rgba(0,0,0,.2); stroke-width: 1.5; transition: fill .35s; }
+  .palette .press { fill: none; stroke: rgba(255,255,255,.3); stroke-width: 1.5; }
+  .palette .lip { transition: fill .35s; }
+  .palette text { font: 500 13px var(--body); fill: #e6d6e7; }
+  .controls { min-width: 0; display: grid; gap: 16px; }
+  .ctl b { display: block; font-size: 15px; margin-bottom: 8px; }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ctl-row button { min-height: 44px; padding: 8px 16px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--sheet); color: var(--ink); font: 500 15px/1.2 var(--body); cursor: pointer; }
+  .ctl-row button:hover { border-color: var(--plum); }
+  .ctl-row button[aria-pressed="true"] { background: var(--plum); border-color: var(--plum); color: #fff; }
+  .result { border-top: 1px dashed var(--line); padding-top: 14px; }
+  .result h3 { font-size: 24px; margin-bottom: 4px; }
+  .result .rng { margin: 0; font: 800 24px/1.3 var(--body); color: var(--plum-deep); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .result .rng small { font: 500 14px var(--body); color: var(--ink-soft); margin-inline-start: 6px; }
+  .result .time { margin: 2px 0 8px; font-size: 15.5px; color: var(--ink-soft); }
+  .result ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 15.5px; }
+  .result li { display: flex; gap: 8px; align-items: baseline; }
+  .result li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--berry); transform: translateY(-2px); }
+  .result .btn { margin-top: 12px; min-height: 46px; font-size: 16px; }
+  .note { margin: 14px 0 0; font-size: 14.5px; line-height: 1.5; background: var(--berry-wash); border-inline-start: 3px solid var(--berry); padding: 10px 12px; border-radius: 0 10px 10px 0; }
+  .note a { font-weight: 700; color: var(--berry); }
+
+  /* ---------- A bride's morning, seen from the phone ---------- */
+  .hour { background: var(--plum-deep); color: #fff; }
+  .hour .head p { color: #e6d6e7; }
+  .clock { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .clock::before { content: ""; position: absolute; top: 15px; inset-inline: 0; height: 2px; background: rgba(255,255,255,.35); }
+  .clock li { position: relative; min-width: 0; padding: 40px 16px 0 0; }
+  .clock li::before { content: ""; position: absolute; top: 9px; inset-inline-start: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--plum-deep); border: 2px solid #e6d6e7; }
+  .clock li.miss::before { border-color: #f2a3bd; background: #f2a3bd; }
+  .clock li.ok::before { border-color: #fff; background: #fff; }
+  .clock time { display: block; font: 600 22px/1.2 var(--mono); }
+  .clock span { display: block; color: #e6d6e7; font-size: 16px; margin-top: 4px; }
+  .clock .ok span { color: #fff; font-weight: 500; }
+
+  /* ---------- The price list ---------- */
+  .prices-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+  .pr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 14px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .pr b { font-weight: 700; font-size: 18px; }
+  .pr .p { font-weight: 700; color: var(--plum-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pr small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 15px; }
+  .pr .ask { grid-column: 1 / -1; justify-self: start; margin-top: 4px; padding: 0; border: 0; background: none; font: 700 15px var(--body); color: var(--plum); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .home { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; border: 1.5px dashed var(--plum); padding: 14px 18px; background: var(--sheet); border-radius: 14px; }
+  .home b { font-size: 18px; }
+  .fine { margin: 18px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Owner ---------- */
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--berry); color: var(--berry); font: 600 17px/1 var(--mono); background: var(--sheet); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--ink-soft); font-size: 16px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+
+  @media (max-width: 1020px) {
+    .hero-grid, .tool-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .hero-grid { padding-top: 22px; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    section { padding-block: 60px; }
+    body { font-size: 17px; }
+    .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 18px; }
+    .facts li { font-size: 13px; }
+    .board { grid-template-columns: minmax(0, 1fr); padding: 16px 14px; }
+    .palette { max-width: 240px; margin-inline: auto; }
+    .clock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
+    .clock li { padding: 0 34px 0 0; }
+    .clock li::before { top: 6px; }
+    .prices-grid { grid-template-columns: minmax(0, 1fr); }
+    .pr b { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } html { scroll-behavior: auto; } .palette .pan, .palette .lip { transition: none; } }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     A breath of plum and berry on the powder light, big tight Rubik, the compact drawing large in a rounded frame
+     with glass cards over it (where Maayan works, three prices, the chat), the main button glowing in plum. */
+  .hero { background: var(--powder);
+    background-image: radial-gradient(50% 60% at 10% 24%, rgba(236,214,207,.85), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(173,39,86,.08), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin-bottom: 20px; color: var(--ink); }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--plum); margin-top: 12px; }
+  .hero .btn-plum { box-shadow: 0 16px 32px -14px rgba(45,13,48,.78), 0 2px 6px -2px rgba(45,13,48,.35); }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 540px; aspect-ratio: 10 / 11; justify-self: center; }
+  .hframe { position: absolute; inset: 5% 2% 5% 16%; border-radius: 34px; overflow: hidden; background: #eadde6;
+    box-shadow: 0 0 0 1px rgba(45,13,48,.08), 0 50px 90px -46px rgba(45,13,48,.62), 0 18px 34px -26px rgba(45,13,48,.35); }
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(45,13,48,.6), 0 4px 12px -6px rgba(45,13,48,.18);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; top: 0; inset-inline-end: 0; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--berry); box-shadow: 0 0 0 4px rgba(173,39,86,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { display: grid; gap: 5px; bottom: 0; inset-inline-start: 0; width: min(300px, 68%); animation-delay: .15s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--plum-deep); white-space: nowrap; }
+  .g-price .tag { font-size: 12px; color: var(--ink-soft); }
+  .g-chat { display: grid; gap: 6px; padding: 11px; top: 38%; inset-inline-end: -1%; width: min(50%, 226px); animation-delay: .26s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #f1e8f0; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--plum-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .toolsec { padding-top: 24px; }
+  @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .g-chat { display: none; }
+    .hframe { inset: 5% 0 5% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 82%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+  html.a11y-still .palette .pan, html.a11y-still .palette .lip { transition: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">מעיין אלמוג</span><small>איפור כלות ואירועים · רחובות</small></div>
+      <a href="#" data-wa="היי מעיין, הגעתי מהאתר ואשמח לבדוק תאריך">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">איפור כלה, ערב, בת מצווה וצילומים. בסטודיו או אצלכם בבית</p>
+        <h1><span data-edit="h1a">יש לכם אירוע?</span> <em data-edit="h1b">בוחרים לוק, ואני חוזרת לתאם.</em></h1>
+        <p class="lead">כשאני מאפרת כלה, הטלפון נשאר בתיק. כאן בוחרים לוק, רואים טווח מחיר וכותבים מתי האירוע. את התאריך אני בודקת ביומן וחוזרת אליכם בעצמי.</p>
+        <div class="ctas">
+          <button class="btn btn-plum" type="button" data-open-bot>לבדוק תאריך</button>
+          <a class="btn btn-line" href="#" data-wa="היי מעיין, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">9 שנים</b>באיפור לאירועים</li>
+          <li><b>ניסיון</b>חודש עד חודשיים לפני החתונה</li>
+          <li><b>עד הבית</b>ברחובות והסביבה</li>
+        </ul>
+      </div>
+
+      <div class="visual">
+        <div class="hframe">
+          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: קופסת איפור פתוחה עם מראה עגולה ושש פלטות צבע, מכחול ושפתון">
+            <defs>
+              <linearGradient id="mir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbf7fa"/><stop offset=".55" stop-color="#e8dde6"/><stop offset="1" stop-color="#d6c6d4"/></linearGradient>
+            </defs>
+            <rect class="table" width="400" height="470"/>
+            <g transform="translate(16 18) scale(.92)">
+            <!-- the lid with its round mirror -->
+            <circle class="shell" cx="182" cy="140" r="112"/>
+            <circle class="rim" cx="182" cy="140" r="100"/>
+            <circle class="mirror" cx="182" cy="140" r="94"/>
+            <path class="streak" d="M120 104 C140 78 168 66 196 64 L188 76 C164 80 144 92 130 112 Z"/>
+            <path class="streak" d="M226 210 C238 200 248 188 254 174 L262 180 C256 196 244 210 232 218 Z" opacity=".3"/>
+            <!-- the hinge -->
+            <rect class="hinge" x="162" y="246" width="40" height="14" rx="6"/>
+            <!-- the base with six pans -->
+            <circle class="shell" cx="182" cy="362" r="112"/>
+            <circle class="tray" cx="182" cy="362" r="100"/>
+            <g>
+              <circle class="pan" cx="140" cy="318" r="27" fill="#ecd0c6"/><circle class="press" cx="140" cy="318" r="17"/>
+              <circle class="pan" cx="224" cy="318" r="27" fill="#e7a2a8"/><circle class="press" cx="224" cy="318" r="17"/>
+              <circle class="pan" cx="118" cy="378" r="27" fill="#d7b2b9"/><circle class="press" cx="118" cy="378" r="17"/>
+              <circle class="pan" cx="182" cy="370" r="27" fill="#93606f"/><circle class="press" cx="182" cy="370" r="17"/>
+              <circle class="pan" cx="246" cy="378" r="27" fill="#5a1d5f"/><circle class="press" cx="246" cy="378" r="17"/>
+              <circle class="pan" cx="182" cy="428" r="22" fill="#c4566f"/><circle class="press" cx="182" cy="428" r="13"/>
+            </g>
+            <!-- a brush lying across the table -->
+            <g transform="rotate(-62 336 300)">
+              <rect class="handle" x="326" y="250" width="14" height="150" rx="7"/>
+              <rect class="ferrule" x="324" y="218" width="18" height="36" rx="3"/>
+              <path class="bristle" d="M324 222 C318 190 326 166 333 158 C340 166 348 190 342 222 Z"/>
+            </g>
+            <!-- a lipstick -->
+            <rect class="lip-case" x="330" y="360" width="34" height="74" rx="5"/>
+            <rect x="334" y="346" width="26" height="18" rx="2" fill="#8a6a8c"/>
+            <path class="lip" d="M337 346 V318 L357 306 V346 Z"/>
+            </g>
+          </svg>
+        </div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה מתאפרים</span><b>בסטודיו ברחובות</b><small>לכלות ולאירועים גם אצלכם בבית</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">חתונה ביוני. הכלה, אמא ועוד שתי חברות.</p><p class="a">כלה ועוד שלוש: 2,300 עד 3,550 ₪, לדוגמה. את התאריך אני בודקת ביומן.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <span class="tag">מחירים לדוגמה</span>
+          <p><b>איפור ערב</b><em>350 עד 550 ₪</em></p>
+          <p><b>כלה, כולל ניסיון</b><em>1,400 עד 2,200 ₪</em></p>
+          <p><b>בת מצווה</b><em>250 עד 400 ₪</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="toolsec" id="looks">
+    <div class="wrap tool-grid">
+      <div class="head"><h2>בוחרים לוק</h2><p>בוחרים לוק ורואים מה הוא כולל, כמה זמן הוא לוקח וטווח מחיר לדוגמה. הצ׳אט ממשיך משם.</p></div>
+      <div class="board">
+        <svg class="palette" id="palette" viewBox="0 0 240 300" aria-hidden="true" focusable="false">
+          <rect class="case" x="10" y="10" width="220" height="280" rx="26"/>
+          <rect class="well" x="24" y="24" width="192" height="196" rx="16"/>
+          <circle class="pan" data-pan="0" cx="72" cy="72" r="34"/><circle class="press" cx="72" cy="72" r="22"/>
+          <circle class="pan" data-pan="1" cx="168" cy="72" r="34"/><circle class="press" cx="168" cy="72" r="22"/>
+          <circle class="pan" data-pan="2" cx="56" cy="168" r="26"/><circle class="press" cx="56" cy="168" r="16"/>
+          <circle class="pan" data-pan="3" cx="120" cy="168" r="26"/><circle class="press" cx="120" cy="168" r="16"/>
+          <circle class="pan" data-pan="4" cx="184" cy="168" r="26"/><circle class="press" cx="184" cy="168" r="16"/>
+          <text x="72" y="124" text-anchor="middle">בסיס</text><text x="168" y="124" text-anchor="middle">סומק</text>
+          <rect x="40" y="236" width="160" height="38" rx="19" fill="#3d1740"/>
+          <path class="lip" id="lipSwatch" d="M58 255 C80 240 120 240 182 255 C120 270 80 270 58 255 Z"/>
+        </svg>
+        <div class="controls">
+          <div class="ctl"><b id="lblLook">לוק</b><div class="ctl-row" role="group" aria-labelledby="lblLook" data-group="look">
+            <button type="button" data-v="טבעי" aria-pressed="false">טבעי</button>
+            <button type="button" data-v="ערב" aria-pressed="true">ערב</button>
+            <button type="button" data-v="כלה" aria-pressed="false">כלה</button>
+            <button type="button" data-v="צילומים" aria-pressed="false">צילומים</button>
+          </div></div>
+          <div class="result" id="result" aria-live="polite"></div>
+          <p class="note" role="note">עור רגיש או אלרגיה לחומר? כתבו לי מראש, ונבדוק בניסיון. פריחה או נפיחות אחרי איפור: שוטפים ופונים לרופא. קושי לנשום: מד״א <a href="tel:101">101</a>. <a href="#g-reaction">מה עושים בתגובה לאיפור</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hour" id="hour">
+    <div class="wrap">
+      <div class="head"><h2>בוקר של כלה, הטלפון בתיק.</h2><p>מי שמתקשרת באמצע איפור שומעת צלצול, ולפעמים סוגרת עם מאפרת אחרת. לכן יש כאן צ׳אט: הוא שואל, נותן טווח מחיר, והפרטים מחכים לי כשאני מסיימת.</p></div>
+      <ol class="clock" aria-label="בוקר אחד של איפור כלה">
+        <li><time class="mono">07:30</time><span>מתחילה לאפר כלה בנס ציונה. הטלפון בתיק.</span></li>
+        <li class="miss"><time class="mono">08:05</time><span>שיחה שלא נענתה. בת מצווה בעוד חודש.</span></li>
+        <li class="miss"><time class="mono">08:40</time><span>עוד שיחה. שואלת על איפור לצילומים.</span></li>
+        <li class="ok"><time class="mono">09:15</time><span>הכלה מוכנה. שתי פניות מסודרות בוואטסאפ, עם תאריך.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה. המחיר לפי הלוק ומספר המתאפרים. את המחיר סוגרים איתי לפני האירוע.</p></div>
+      <div class="prices-grid">
+        <div>
+          <div class="pr"><b>איפור ערב ואירוע</b><span class="p">350 עד 550 ₪</span><small>מייקאפ עמיד וצלליות. ריסים, אם רוצים</small><button class="ask" type="button" data-occasion="אירוע או ערב">לבדוק תאריך</button></div>
+          <div class="pr"><b>איפור טבעי</b><span class="p">250 עד 380 ₪</span><small>עור נקי וקליל, לאירוע ביום</small></div>
+          <div class="pr"><b>בת מצווה</b><span class="p">250 עד 400 ₪</span><small>איפור עדין שמתאים לגיל</small><button class="ask" type="button" data-occasion="בת מצווה">לבדוק תאריך לבת מצווה</button></div>
+          <div class="pr"><b>איפור לצילומים</b><span class="p">350 עד 600 ₪</span><small>מט שלא מבריק בפלאש, לצילומי חוץ או סטודיו</small><button class="ask" type="button" data-occasion="צילומים">לבדוק תאריך לצילומים</button></div>
+        </div>
+        <div>
+          <div class="pr"><b>כלה: ניסיון ויום החתונה</b><span class="p">1,400 עד 2,200 ₪</span><small>ניסיון חודש עד חודשיים לפני, ואיפור ביום עצמו</small><button class="ask" type="button" data-occasion="חתונה (כלה)">לבדוק תאריך לחתונה</button></div>
+          <div class="pr"><b>ניסיון איפור</b><span class="p">300 עד 450 ₪</span><small>לכל אירוע, לא רק לכלות. בסטודיו</small><button class="ask" type="button" data-occasion="ניסיון איפור">לקבוע ניסיון</button></div>
+          <div class="pr"><b>אמא, אחות וחברות</b><span class="p">300 עד 450 ₪</span><small>לכל אחת, באותו בוקר עם הכלה</small></div>
+        </div>
+      </div>
+      <p class="home"><b>אצלכם בבית</b><span>מגיעה לרחובות, נס ציונה, ראשון לציון, יבנה וגדרה. תוספת הגעה לפי המרחק. כשיש כמה מתאפרים, קובעים יחד את סדר הבוקר.</span></p>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לעשות לפני יום האיפור, איך להתכונן לניסיון ואיך האיפור מחזיק כל הערב. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה מעיין רואה</h2><p>לא כל כלה מוצאת מאפרת באינסטגרם. חלק מחפשות בגוגל או מקבלות קישור מחברה, ומגיעות לכאן. נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוחה בוחרת לוק ותאריך</b><span>רואה טווח מחיר ומצרפת תמונת השראה, בלי לחכות שאסיים לאפר.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>האירוע, התאריך, כמה אנשים מתאפרים, איפה ורגישויות.</span></div></li>
+          <li><div><b>בין כלה לכלה בודקים ביומן</b><span>את התאריך אני בודקת ומאשרת בעצמי, בהודעה.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רוני אביטל</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לאיפור מהאתר (דמו)
+אירוע: חתונה (כלה)
+לוק: כלה
+תאריך: 14.6.2027
+מתאפרים: 4 עד 6
+מקום: אצלנו בבית, נס ציונה
+ניסיון: כן
+רגישויות: עדשות מגע
+שם: רוני אביטל
+טלפון: 052-7654321<time>09:20</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למאפרת</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>מעיין אלמוג איפור כלות ואירועים · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script>
+  // The sample looks, the same as the price list above. A range, never a promised price.
+  const LOOKS = {
+    "טבעי": { time: "כ-45 דקות", range: "250 עד 380 ₪", per: "לאחת", inc: ["הכנת עור ולחות", "מייקאפ קליל בגוון העור", "מסקרה וגבות מסודרות", "שפתיים בגוון טבעי"],
+      pans: ["#ecd0c6", "#e3a3a0", "#dcbcb4", "#a98278", "#6b4a44"], lip: "#c98a86" },
+    "ערב": { time: "שעה עד שעה ורבע", range: "350 עד 550 ₪", per: "לאחת", inc: ["מייקאפ עמיד וקונטור", "צלליות בגוונים עמוקים", "ריסים מודבקים, אם רוצים", "שפתון עמיד"],
+      pans: ["#dcb6a8", "#c86b7a", "#8a5272", "#4a2242", "#1f1418"], lip: "#8c1d3c" },
+    "כלה": { time: "כשעה וחצי ביום החתונה", range: "1,400 עד 2,200 ₪", per: "כולל ניסיון", inc: ["ניסיון איפור, חודש עד חודשיים לפני", "איפור עמיד לכל הערב", "ריסים לפי בחירה", "ערכת תיקונים קטנה לערב"],
+      pans: ["#ecd0c6", "#e7a2a8", "#d7b2b9", "#93606f", "#3b2a2c"], lip: "#c4566f" },
+    "צילומים": { time: "כשעה", range: "350 עד 600 ₪", per: "לאחת", inc: ["מייקאפ מט שלא מבריק בפלאש", "קונטור עדין שנראה במצלמה", "גבות וריסים מודגשים", "פודרה לתיקונים בין הצילומים"],
+      pans: ["#d9b3a6", "#c97f7f", "#a37b74", "#5c3c3a", "#2a1d1c"], lip: "#a64a55" },
+  };
+  const OCCASION_OF = { "כלה": "חתונה (כלה)", "צילומים": "צילומים" };
+  const NOT_SET = "עוד לא סגרנו", SENSITIVE = ["עור רגיש", "אלרגיה לחומר מסוים"];
+  const cur = {}; // the answers so far, for the tips
+
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "מעיין · איפור כלות ואירועים", subtitle: "בודקים תאריך, גם כשאני באמצע איפור", initial: "מ", launcher: "לבדוק תאריך", hint: "נציג AI",
+    greet: "היי, כאן מעיין.\nכמה שאלות קצרות על האירוע, ואני בודקת ביומן וחוזרת אליכם.",
+    steps: [
+      { key: "occasion", label: "אירוע", ask: "לאיזה אירוע?", chips: ["חתונה (כלה)", "אירוע או ערב", "בת מצווה", "צילומים", "ניסיון איפור"] },
+      { key: "look", label: "לוק", ask: "איזה לוק אתם רוצים?", chips: ["טבעי", "ערב", "כלה", "צילומים", "עוד לא יודעים"],
+        tip: { when: (v) => { cur.look = v; return Boolean(LOOKS[v]); }, get text() { const L = LOOKS[cur.look]; return `לוק ${cur.look}: ${L.range} ${L.per}, לדוגמה.\nאת המחיר סוגרים איתי לפני האירוע.`; } } },
+      { key: "date", label: "תאריך", ask: "מתי האירוע? אפשר לכתוב תאריך.", chips: [NOT_SET], input: "text", placeholder: "למשל: 14.6.2027",
+        tip: { when: (v) => v === NOT_SET, text: "אין בעיה. כשיהיו לכם תאריכים אפשריים, אבדוק את כולם ביומן.", id: "book-ahead", link: "כמה זמן מראש לסגור מאפרת" } },
+      { key: "people", label: "כמה מתאפרים", ask: "כמה אנשים מתאפרים? למשל הכלה, אמא וחברות.", chips: ["1", "2 עד 3", "4 עד 6", "יותר מ-6"] },
+      { key: "place", label: "מקום", ask: "בסטודיו ברחובות, או אצלכם בבית?", chips: ["בסטודיו", "אצלנו בבית"],
+        tip: { when: (v) => v === "אצלנו בבית", text: "אני מגיעה הביתה עם כל הציוד. תוספת הגעה לפי המרחק." } },
+      { key: "town", label: "יישוב", ask: "באיזה יישוב?", chips: ["רחובות", "נס ציונה", "ראשון לציון", "יבנה", "גדרה"], input: "text", placeholder: "יישוב אחר", show: (d) => d.place === "אצלנו בבית" },
+      { key: "trial", label: "ניסיון", ask: "רוצים ניסיון איפור לפני?", chips: ["כן", "לא", "עוד לא יודעים"], show: (d) => d.occasion !== "ניסיון איפור",
+        tip: { when: (v) => v === "כן", text: "ניסיון עושים בסטודיו, בדרך כלל חודש עד חודשיים לפני. את המועד קובעים יחד.", id: "trial", link: "ניסיון איפור: איך מתכוננים" } },
+      { key: "photo", label: "תמונה", ask: "יש תמונת השראה? לוק שאהבתם, או צילום של השמלה.", photo: true, skip: "בלי תמונה" },
+      { key: "skin", label: "רגישויות", ask: "יש עור רגיש, אלרגיה לחומר או עדשות מגע?", chips: ["אין", "עור רגיש", "אלרגיה לחומר מסוים", "עדשות מגע"],
+        tip: { when: (v) => SENSITIVE.includes(v), text: "ספרו לי בשיחה מה העור לא סובל. בניסיון אפשר לבדוק את החומרים על העור.", id: "reaction", link: "תגובה לאיפור: מה עושים" } },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => {
+      const first = d.name.split(" ")[0];
+      const check = d.date && d.date !== NOT_SET ? `את ${d.date} אני בודקת ביומן וחוזרת אליכם` : "כשיהיו לכם תאריכים, אבדוק אותם ביומן ואחזור אליכם";
+      return `תודה ${first}! ${check}.\nלחצו למטה, והפרטים יגיעו אליי בוואטסאפ.`;
+    },
+    summary: (d) => [
+      "פנייה לאיפור מהאתר (דמו)",
+      "אירוע: " + d.occasion,
+      "לוק: " + d.look,
+      "תאריך: " + (d.date === NOT_SET ? "עוד לא סגרו" : d.date),
+      "מתאפרים: " + d.people,
+      "מקום: " + d.place + (d.town ? ", " + d.town : ""),
+      d.trial ? "ניסיון: " + d.trial : "",
+      "רגישויות: " + d.skin,
+      "שם: " + d.name,
+      "טלפון: " + d.phone,
+      d.callback ? "מתי לחזור: " + d.callback : "",
+    ].filter(Boolean).join("\n"),
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  // The look chooser: a look repaints the palette and shows what it includes, its time and its sample range.
+  const result = document.getElementById("result"), lip = document.getElementById("lipSwatch");
+  const pans = [...document.querySelectorAll("#palette [data-pan]")];
+  let look = "ערב";
+  function draw() {
+    const L = LOOKS[look];
+    pans.forEach((p, i) => p.setAttribute("fill", L.pans[i]));
+    lip.setAttribute("fill", L.lip);
+    result.replaceChildren();
+    const h = document.createElement("h3"); h.textContent = `לוק ${look}`;
+    const r = document.createElement("p"); r.className = "rng"; r.textContent = L.range;
+    const s = document.createElement("small"); s.textContent = L.per + ", לדוגמה"; r.append(s);
+    const tm = document.createElement("p"); tm.className = "time"; tm.textContent = "זמן איפור: " + L.time;
+    const ul = document.createElement("ul"); L.inc.forEach((x) => { const li = document.createElement("li"); li.textContent = x; ul.append(li); });
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-plum"; b.textContent = "להמשיך בצ׳אט";
+    b.addEventListener("click", () => bot.open(Object.assign({ look }, OCCASION_OF[look] ? { occasion: OCCASION_OF[look] } : {})));
+    result.append(h, r, tm, ul, b);
+  }
+  document.querySelector("[data-group=look]").addEventListener("click", (e) => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    btn.parentNode.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
+    look = btn.dataset.v; draw();
+  });
+  draw();
+  document.querySelectorAll("[data-occasion]").forEach((b) => b.addEventListener("click", () => bot.open({ occasion: b.dataset.occasion })));
+  Guides.load("../shared/guides/makeup.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>
