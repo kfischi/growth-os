@@ -63,7 +63,7 @@ export default {
     warranty: ["3 חודשים", "6 חודשים", "12 חודשים"],
     headlines: [
       { headline_1: "נדלקה נורה בלוח?", headline_2: "כתבו, ואני חוזר." },
-      { headline_1: "מוסך שעונה.", headline_2: "חוזר {when} עם תור." },
+      { headline_1: "מוסך שעונה.", headline_2: "חוזרים {when}." },
       { headline_1: "טיפול, בלמים, טסט?", headline_2: "מחיר לפני שמתחילים." },
       { headline_1: "בלי הפתעות בחשבון", headline_2: "מתקנים רק באישורכם." },
     ],

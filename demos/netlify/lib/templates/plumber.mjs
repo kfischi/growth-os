@@ -436,7 +436,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   const priced = services.find((s) => /\d/.test(String(s.price || "")));
   const asks = [
     priced ? `כמה עולה ${priced.name}?` : services[0] ? `כמה עולה ${services[0].name}?` : "",
-    towns.length && !isCare(T.id) ? `מגיעים גם ל${towns[Math.min(1, towns.length - 1)]}?` : "",
+    towns.length && !isCare(T.id) && !W.areaNote ? `מגיעים גם ל${towns[Math.min(1, towns.length - 1)]}?` : "",
     has("warranty") ? "יש אחריות על העבודה?" : "",
     has("hours") ? "מה שעות הפעילות?" : "",
   ].filter(Boolean).slice(0, 3);
