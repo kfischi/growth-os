@@ -476,7 +476,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div>
         <span class="tape">מה החשמלאי מקבל</span>
         <h2>פנייה אחת, כל הפרטים.</h2>
-        <p>בלי "תתקשר אליי" ובלי לשאול שוב. התקלה, הדחיפות והישוב כבר בהודעה, ואפשר לתכנן את הסבב.</p>
+        <p>בלי "תתקשר אליי" ובלי לשאול שוב. התקלה, הדחיפות והיישוב כבר בהודעה, ואפשר לתכנן את הסבב.</p>
         <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
       </div>
       <div>
@@ -488,7 +488,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
               <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו חשמלאי)
 תקלה: החשמל קפץ
 דחיפות: עכשיו, אין חשמל במטבח
-ישוב: חדרה
+יישוב: חדרה
 שם: עמית דהן
 טלפון: 054-3210987<time>19:12</time></div>
             </div>
@@ -523,13 +523,13 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         tip: { when: (v) => v === "ריח שרוף או ניצוצות", id: "burning", text: "הורידו עכשיו את המפסק הראשי, ואל תגעו בשקע או במכשיר." } },
       { key: "photo", label: "תמונה", ask: "יש תמונה של הלוח או של מה שקרה? זה עוזר להבין לפני שמגיעים.", photo: true },
       { key: "urgency", label: "דחיפות", ask: (d) => d.issue === "ריח שרוף או ניצוצות" ? "הורדתם את המפסק הראשי? כמה זה דחוף?" : "כמה זה דחוף?", chips: ["עכשיו, אין חשמל", "היום", "השבוע", "לא דחוף"],
-        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם קופץ מיד, עצרו." } },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+        tip: { when: (v) => v.startsWith("עכשיו"), id: "tripped", text: "בינתיים: נתקו מכשירים בחדר ונסו להעלות את המפסק פעם אחת. אם הוא קופץ מיד, עצרו." } },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.issue}, ב${d.city}.` + (d.issue === "ריח שרוף או ניצוצות" ? "\nעד שאני חוזר: המפסק הראשי למטה, ולא נוגעים בלוח." : "") + "\nלחצו למטה, והקריאה תגיע אליי בוואטסאפ.",
-    summary: (d) => `קריאה מהאתר (דמו חשמלאי)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה מהאתר (דמו חשמלאי)\nתקלה: ${d.issue}\nדחיפות: ${d.urgency}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

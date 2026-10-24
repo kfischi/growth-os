@@ -376,7 +376,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 26px; font-size: .9rem; color: var(--ink-2); }
 .foot a { color: var(--ink-2); }
 
-.menu-btn { display: none; inline-size: 44px; block-size: 44px; border: 1px solid var(--silver); border-radius: 12px; background: #fff; cursor: pointer; padding: 0; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+.menu-btn { display: none; min-inline-size: 52px; block-size: 50px; border: 1px solid var(--silver); border-radius: 12px; background: #fff; color: var(--ink); cursor: pointer; padding: 0 6px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: 600 .72rem/1 var(--body); }
+.menu-btn .burger { display: flex; flex-direction: column; gap: 5px; }
 .menu-btn i { display: block; inline-size: 18px; block-size: 2px; border-radius: 2px; background: var(--ink); transition: transform .2s, opacity .2s; }
 .bar.open .menu-btn i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .bar.open .menu-btn i:nth-child(2) { opacity: 0; }
@@ -519,6 +520,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   .split b { font-size: 1.4rem; }
 }
 </style>
+<script type="application/ld+json" id="faq-ld">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"צריך להבין בטכנולוגיה?","acceptedAnswer":{"@type":"Answer","text":"לא. הצ׳אט שואל, ואתם בוחרים מתשובות מוכנות. את החיבורים לוואטסאפ ולדומיין אנחנו עושים."}},{"@type":"Question","name":"יש לי אינסטגרם ופייסבוק. למה צריך אתר?","acceptedAnswer":{"@type":"Answer","text":"מי שלא מכיר אתכם מחפש בגוגל. אתר אפשר למצוא שם, קבוצה בפייסבוק לא. והאתר עונה גם כשאתם לא זמינים."}},{"@type":"Question","name":"הנציג ימציא מחירים?","acceptedAnswer":{"@type":"Answer","text":"לא. הוא עונה רק ממה שכתבתם: שירותים, טווחי מחירים ואזורים. מה שהוא לא יודע, הוא מעביר אליכם."}},{"@type":"Question","name":"משלמים לפני שרואים?","acceptedAnswer":{"@type":"Answer","text":"לא. בונים, רואים את האתר המלא עם הטקסטים והתמונות שלכם, ורק אז מאשרים ומשלמים."}},{"@type":"Question","name":"כמה זמן לוקח?","acceptedAnswer":{"@type":"Answer","text":"את התוכן ממלאים בצ׳אט מתי שנוח לכם. אחרי האישור והתשלום האתר עולה לאוויר לבד, תוך דקות. אחר כך מחברים את הוואטסאפ העסקי, וזה לוקח עד שבועיים: זה חיבור רשמי דרך Meta, שמגן על המספר שלכם מחסימה. בינתיים האתר כבר עובד, והפניות מגיעות אליכם לוואטסאפ."}},{"@type":"Question","name":"יש התחייבות?","acceptedAnswer":{"@type":"Answer","text":"לא. מבטלים מתי שרוצים, מהבונה, בלחיצה. מה ששולם פעיל עד סוף התקופה, ואחר כך לא מחייבים יותר."}},{"@type":"Question","name":"על שם מי הדומיין?","acceptedAnswer":{"@type":"Answer","text":"על שמכם. האתר מאוחסן אצלנו, וכל הקבצים שלו שלכם: אם תעזבו, נעביר אותם אליכם."}},{"@type":"Question","name":"החיבור לוואטסאפ בטוח למספר של העסק?","acceptedAnswer":{"@type":"Answer","text":"כן. באתר בתשלום החיבור נעשה דרך הממשק הרשמי של Meta ‏(WhatsApp Cloud API), לא דרך תוכנה לא רשמית שעלולה לגרום לחסימת המספר. אנחנו לא מקבלים גישה לשיחות הפרטיות שלכם."}},{"@type":"Question","name":"ההודעות יוצאות מהמספר שלי?","acceptedAnswer":{"@type":"Answer","text":"כן. מהמספר העסקי שלכם, דרך החיבור הרשמי של WhatsApp. את נוסח ההודעה אתם מאשרים."}}]}</script>
 </head>
 <body>
 <header class="bar">
@@ -528,10 +530,10 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
       <b>Multi Landing</b><small>אתרים שבונים עסקים</small>
     </a>
     <nav class="nav" id="nav" aria-label="ניווט">
-      <a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
+      <a href="#how">איך זה עובד</a><a class="nav-film" href="film/">סרטון הסבר</a><a href="#demos">דוגמאות</a><a href="all/">כל הדוגמאות</a><a href="#plans">מחירים</a><a href="#faq">שאלות</a>
     </nav>
     <a class="btn sm" href="build/">לבנות את האתר</a>
-    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="תפריט"><i></i><i></i><i></i></button>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu-word">תפריט</span></button>
   </div>
 </header>
 
@@ -636,7 +638,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
             <p class="roi">פנייה אחת שנשמרה בחודש, והמערכת כיסתה את עצמה.</p>
             <p class="zero"><b>0&nbsp;₪ מקדמה</b> · משלמים רק כשהאתר מוכן</p>
             <p class="inc-n"><b>16</b> דברים כלולים</p>
-            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>משנים לבד בצ׳אט, כלול בחודשי</li></ul>
+            <ul class="inc"><li>צ׳אט AI באתר שעונה מהמחירון שלכם, בכל שעה</li><li>מענה אוטומטי בוואטסאפ, מהמספר שלכם, תוך שניות</li><li>התראה על כל פנייה, עם כפתור ״טיפלתי״ ותזכורת</li><li>לוח פניות, סטטיסטיקות ודוח חודשי</li><li>אתר מעוצב לנייד, בתבנית ובצבעים שבחרתם</li><li>משנים לבד בצ׳אט, כלול בתשלום החודשי</li></ul>
             <details class="inc-more"><summary>ועוד 10 דברים כלולים</summary><ul class="inc"><li>כפתורי וואטסאפ וחיוג בכל מסך</li><li>מחירון בטווחים ומחשבון ״כמה זה יעלה?״</li><li>דף לכל שירות ולכל אזור, כדי שימצאו אתכם בגוגל</li><li>מדריכים מהתחום, לפני ואחרי וסרטון קצר</li><li>כתובת משלכם, אחסון ותחזוקה</li><li>ערכת השקה: פרופיל בגוגל, סטטוס וקבוצות</li><li>הלקוח מצרף תמונה ומקבל הערכה ראשונית</li><li>הלקוח בוחר מתי לחזור אליו, ואתם מקבלים תזכורת</li><li>אייקונים לאינסטגרם, לפייסבוק, לטיקטוק וליוטיוב, וקישור מתויג לכל רשת: רואים מה הביא פניות</li><li>כותבים ״עסוק״ או ״חירום״ בוואטסאפ, והאתר מתעדכן</li></ul></details>
             <a class="btn" href="build/">לבנות את האתר שלי</a>
           </article>
@@ -686,7 +688,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
   </section>
 
 </main>
-<footer class="wrap foot"><span>Multi Landing · אתרים שבונים עסקים</span><span><a href="all/">כל הדוגמאות</a> · <a href="film/">סרטון הסבר</a> · <a href="privacy/">פרטיות ועוגיות</a> · <a href="terms/">תנאים וביטולים</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
+<footer class="wrap foot"><span>Multi Landing · אתרים שבונים עסקים</span><span><a href="all/">כל הדוגמאות</a> · <a href="film/">סרטון הסבר</a> · <a href="guides/">מדריכים</a> · <a href="privacy/">פרטיות ועוגיות</a> · <a href="terms/">תנאים וביטולים</a> · <a href="accessibility/">הצהרת נגישות</a></span></footer>
 <div class="dock"><div class="dock-row"><a class="btn" href="build/">לבנות את האתר שלי</a></div><p class="dock-note">0&nbsp;₪&nbsp;מקדמה · משלמים רק כשהאתר מוכן</p></div>
 
 <script>
@@ -716,7 +718,7 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
     ['cleaning', 'ניקיון', 'שקד', 'אין זמן לנקות? אותה מנקה, כל שבוע.', 'cleaning-portrait', '60% 40%', '#dceeec', '#0f3b3a', '#0f3b3a', '#fff', '#0f3b3a', 'home'],
     ['upholstery', 'ניקוי ספות ושטיחים', 'ניר ניקוי ספות', 'כתם על הספה? רואים מחיר עכשיו, בצ׳אט.', 'upholstery-work', '45% 55%', '#eef0ef', '#1a2326', '#0b4f6c', '#fff', '#8c1f3c', 'home'],
     ['handyman', 'הנדימן', 'דורון', 'כל הרשימה. ביקור אחד.', 'handyman-work', '50% 40%', '#f3ebe2', '#1f2225', '#b98d63', '#1f2225', '#1f2225', 'home'],
-    ['renovation', 'שיפוצים וגבס', 'נתן אדלר', 'באמצע עבודת גבס או צבע? הצ׳אט מסנן את היקף השיפוץ.', 'renovation-drywall', '50% 35%', '#2f5d4e', '#fff', '#fff', '#2f5d4e', '#fff', 'home'],
+    ['renovation', 'שיפוצים וגבס', 'נתן אדלר', 'באמצע עבודת גבס או צבע? הצ׳אט שואל על היקף השיפוץ.', 'renovation-drywall', '50% 35%', '#2f5d4e', '#fff', '#fff', '#2f5d4e', '#fff', 'home'],
     ['garden', 'גינון', 'עומר גנים', 'הגינה יצאה משליטה? עומר חוזר לקבוע סיור.', 'garden-work', '50% 40%', '#1f4d36', '#f3efe6', '#f3efe6', '#1f4d36', '#f3efe6', 'home'],
     ['pergolas', 'פרגולות וסוככים', 'אופק פרגולות', 'על הפיגום בהתקנה? הצ׳אט אוסף את המידות והמיקום.', 'pergolas-work', '50% 45%', '#eef2f5', '#20252b', '#7a4b2a', '#fff', '#2b3138', 'home'],
     ['security', 'אבטחה ותקשורת', 'דקל מערכות', 'מצלמות לבית, מערכות לעסקים. הצ׳אט שואל מה צריך.', 'security-work', '50% 45%', '#eef2f6', '#0f1b2d', '#1d63b8', '#fff', '#0f1b2d', 'home'],

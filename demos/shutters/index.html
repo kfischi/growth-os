@@ -436,7 +436,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, כמה תריסים, קומה, דחיפות, ישוב וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, כמה תריסים, קומה, דחיפות, יישוב וטלפון. בלי טופס ארוך.</span></div></li>
           <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>עם התמונה, אם צירפו. יודעים מראש אם לקחת רצועה, שלבים או מנוע.</span></div></li>
           <li><div><b>חוזרים ללקוח עם זמן הגעה</b><span>הצ׳אט עונה גם כשאתם על סולם ולא יכולים להרים טלפון.</span></div></li>
         </ol>
@@ -451,7 +451,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 כמה תריסים: תריס אחד
 קומה: קומה 1 עד 3
 מתי: היום או מחר
-ישוב: נתניה
+יישוב: נתניה
 שם: שרה לוי
 טלפון: 052-7654321<time>07:40</time></div>
               </div>
@@ -497,7 +497,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         tip: { when: (v) => v === URGENT, id: "stuck", text: "בינתיים: לא מושכים בכוח ולא פותחים את הקופסה. תריס חשמלי: מורידים את המפסק. נתקע פתוח בקרקע? נועלים את החלון." } },
       { key: "when", label: "מתי", ask: "מתי נוח לכם?", chips: ["השבוע", "בשבועיים הקרובים", "רק בודק מחיר"], show: PLANNED },
       { key: "when", label: "מתי", ask: "כמה זה דחוף?", chips: ["לא נסגר, צריך היום", "השבוע", "לא דחוף"], show: MAMAD },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: נתניה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: נתניה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
@@ -508,7 +508,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         : d.issue === "תריס חשמלי לא עובד" ? "\nעד שאני מגיע: לא פותחים את קופסת התריס ולא את המתג." : "";
       return `תודה ${first}. רשמתי: ${d.issue}, ${d.count}, ${d.floor}, ב${d.city}. ${price}${safe}\nלחצו למטה, ואני חוזר אליכם עם זמן הגעה.`;
     },
-    summary: (d) => `קריאה מהאתר (דמו תריסים)\nמה קרה: ${d.issue}\nכמה תריסים: ${d.count}\nקומה: ${d.floor}\nמתי: ${d.when}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה מהאתר (דמו תריסים)\nמה קרה: ${d.issue}\nכמה תריסים: ${d.count}\nקומה: ${d.floor}\nמתי: ${d.when}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

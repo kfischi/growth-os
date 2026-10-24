@@ -36,6 +36,9 @@ done
 node scripts/tests/trade-chats.cjs "$built" | tail -1 || fail=1
 echo "done"
 
+step "SEO: structured data matches the page"
+node scripts/seo/faq-jsonld.cjs demos/index.html --check || fail=1
+
 step "Hebrew copy"
 node scripts/hebrew-copy-lint.cjs demos/index.html demos/all/index.html demos/build clients docs/side-income "$built" | tail -1
 rm -rf "$built"

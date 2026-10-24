@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>גלעד דודי שמש · פתח תקווה והסביבה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="אין מים חמים, דוד שנוזל, גוף חימום, תרמוסטט, טיימר וקולטים על הגג. מתארים בצ׳אט, שולחים תמונה, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1e3142">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the solar water heater on the roof, cut open. Two collectors facing south, the tank on its stand,
+     the water inside going from cold blue at the bottom to hot copper at the top, the element and the thermostat.
+     Detail: the tank's data plate (ליטר, קילוואט, שנת ייצור), גוף חימום, תרמוסטט, טיימר, שעון שבת, אבנית, קולטים, ברז כניסה.
+     Bold move: the price list is the tank's riveted data plate, set in mono. Steel blue and copper only; the sun is a
+     copper disc, never yellow. */
+  :root {
+    --sky: #eef2f5;
+    --steel: #1e3142;          /* the tank and the ink */
+    --steel-soft: #4b5d6c;
+    --panel: #23435f;          /* the collectors' glass */
+    --copper: #9c4325;         /* hot water, the pipes, the buttons */
+    --copper-deep: #7c3419;
+    --cold: #2f6f9f;
+    --plate: #e3e8ec;
+    --line: #cfd8df;
+    --ink: var(--steel);
+    --ink-soft: var(--steel-soft);
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "IBM Plex Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--steel);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--copper); --bot-accent-fg: #fff; --bot-them: #eef2f5; --bot-me: var(--steel); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 12px; --bot-radius-msg: 12px; --bot-focus: var(--steel);
+    --guide-alert: var(--copper);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--sky); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--copper); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--copper); color: #fff; box-shadow: 0 16px 32px -14px rgba(156,67,37,.85), 0 2px 6px -2px rgba(156,67,37,.4); }
+  .btn-main:hover { background: var(--copper-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--copper); }
+
+  .demo { background: var(--steel); color: #c9d4dc; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(30,49,66,.96); color: #fff; backdrop-filter: blur(8px); border-bottom: 4px solid var(--copper); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: #c9d4dc; font-weight: 700; font-size: .74em; }
+  .logo .k { width: 16px; height: 26px; border-radius: 8px; background: linear-gradient(#c8643c, #9c4325 45%, #2f6f9f 55%, #23435f); box-shadow: 0 0 0 2px rgba(255,255,255,.25); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+  .top-a .btn-main:focus-visible { outline-color: #fff; }
+  .top-a .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.35); }
+
+  .safety { background: #fff; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .safety .wrap { display: flex; gap: 10px; align-items: center; min-height: 44px; padding-block: 6px; }
+  .safety span { min-width: 0; }
+  .safety b { color: var(--copper); }
+  .safety i { flex: none; width: 14px; height: 14px; border-radius: 3px; background: var(--copper); clip-path: polygon(55% 0, 15% 55%, 45% 55%, 35% 100%, 85% 40%, 55% 40%); }
+  .safety a { color: var(--copper); font-weight: 700; }
+
+  .hero { position: relative; overflow: hidden; background: var(--sky);
+    background-image: radial-gradient(50% 60% at 4% 8%, rgba(47,111,159,.16), transparent 70%), radial-gradient(45% 55% at 98% 0%, rgba(156,67,37,.12), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--copper); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--copper); box-shadow: 0 0 0 3px rgba(156,67,37,.18); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--copper); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--copper); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #dfe6eb;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(30,49,66,.6), 0 12px 24px -16px rgba(156,67,37,.25); }
+  .frame-l svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(30,49,66,.55), 0 4px 12px -6px rgba(156,67,37,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #eef2f5; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--copper); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 62%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--copper); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The data plate: a riveted steel label, one line per job */
+  .plate { position: relative; background: linear-gradient(160deg, #f4f6f8, var(--plate)); border-radius: 14px; padding: 30px 34px 26px;
+    box-shadow: inset 0 0 0 1px #fff, 0 0 0 1px var(--line), 0 40px 70px -46px rgba(30,49,66,.55); }
+  .plate::before, .plate::after { content: ""; position: absolute; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff, #9aa8b3 70%); box-shadow: 0 0 0 1px #9aa8b3; }
+  .plate::before { inset-inline-start: 12px; } .plate::after { inset-inline-end: 12px; }
+  .plate-h { display: flex; justify-content: space-between; gap: 6px 18px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-soft); padding-bottom: 12px; border-bottom: 2px solid var(--steel); margin-bottom: 4px; }
+  .plate-h b { color: var(--ink); font-weight: 700; }
+  .plate-h .spec { font-family: var(--mono); font-weight: 500; letter-spacing: .04em; direction: ltr; }
+  .row { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 3.4em minmax(0, 1fr) auto; gap: 4px 16px; align-items: center; width: 100%; padding: 15px 4px; border-bottom: 1px dashed #b7c3cc; transition: background .15s; }
+  .row:last-of-type { border-bottom: 0; }
+  .row:hover { background: rgba(255,255,255,.7); }
+  .row:focus-visible { outline: 3px solid var(--copper); outline-offset: 0; }
+  .row .code { font-family: var(--mono); font-weight: 600; font-size: 13px; color: var(--copper); }
+  .row b { display: block; font-size: 18px; line-height: 1.3; }
+  .row span span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; }
+  .row .pr { text-align: left; font-weight: 700; font-size: 16.5px; white-space: nowrap; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .row .pr small { display: block; font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+  .plate-f { margin: 14px 0 0; padding-top: 12px; border-top: 2px solid var(--steel); font-size: 14.5px; color: var(--ink-soft); }
+  .roof-note { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; }
+  .roof-note::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 2px; background: var(--copper); transform: translateY(-1px); }
+  .roof-note a { color: var(--copper); font-weight: 700; }
+
+  .calc { background: var(--steel); color: #fff;
+    --bot-bg: #283f53; --bot-fg: #fff; --bot-line: #4a6074; --bot-muted: #c9d4dc; --bot-accent: #fff; --bot-accent-fg: var(--steel); --bot-focus: #fff; }
+  .calc .head p { color: #c9d4dc; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+  .calc .est-sum { color: #fff; }
+
+  .guides { background: #e1e7ec; }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 50%; background: var(--steel); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .frow { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .safety { font-size: 14px; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.02; }
+    .frame-l { inset: 0 0 24% 0; border-radius: 28px; }
+    .g-note { display: none; }
+    .g-jobs { bottom: 0; inset-inline-start: 5%; width: 86%; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+    .plate { padding: 28px 18px 20px; }
+    .row { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 14px 2px; }
+    .row .code { display: none; }
+    .row .pr { text-align: right; font-size: 15px; }
+    .row .pr small { display: inline; margin-inline-start: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .row { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span>גלעד</span><span class="n2">דודי שמש</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>מה קרה לדוד?</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על הדוד">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+<div class="safety"><div class="wrap"><i aria-hidden="true"></i><span><b>מים ליד הדוד?</b> קודם מורידים את המפסק של הדוד וסוגרים את ברז המים. <a href="#g-leak">מה עושים עכשיו</a></span></div></div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>מקבלים קריאות</span><span>פתח תקווה · ראש העין · גבעת שמואל · אלעד</span></div>
+    <h1>אין מים חמים? <em>מתארים בצ׳אט, ו<b>חוזרים עם זמן הגעה.</b></em></h1>
+    <p class="lede">מקלחת קרה, דוד שמטפטף, מפסק שקופץ. כמה שאלות ותמונה של הדוד, והפרטים מגיעים אלינו גם כשאנחנו על גג אחר.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>מה קרה לדוד?</button>
+      <a class="btn btn-ghost" href="#calc">כמה זה עולה?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>14 שנה</dt><dd>דודי שמש וחשמל במרכז</dd></div>
+      <div><dt>אבחון קודם</dt><dd>מחיר סגור לפני שמתחילים</dd></div>
+      <div><dt>12 חודשים</dt><dd>אחריות על חלקים שהחלפנו</dd></div>
+      <div><dt>גם גג משותף</dt><dd>עולים עם סולם ורתמה</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l">
+        <svg viewBox="0 0 480 400" preserveAspectRatio="xMidYMid slice" role="img" aria-label="דוד שמש על גג: שני קולטים, הדוד על המעמד, ובתוכו המים מתחממים מלמטה למעלה">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dde7ee"/><stop offset="1" stop-color="#f3ece8"/></linearGradient>
+            <linearGradient id="water" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#2f6f9f"/><stop offset=".45" stop-color="#6c7f93"/><stop offset="1" stop-color="#b4532d"/></linearGradient>
+            <linearGradient id="tank" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fb0bd"/><stop offset=".35" stop-color="#e9eef2"/><stop offset="1" stop-color="#8496a5"/></linearGradient>
+            <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2d5577"/><stop offset="1" stop-color="#1b3349"/></linearGradient>
+          </defs>
+          <rect width="480" height="400" fill="url(#sky)"/>
+          <circle cx="404" cy="64" r="64" fill="#c4683f" opacity=".12"/>
+          <circle cx="404" cy="64" r="30" fill="#c4683f" opacity=".85"/>
+          <path d="M0 252 L60 236 L60 300 L0 300Z M70 248 h50 v52 h-50Z M380 240 h46 v60 h-46Z M432 250 h48 v50 h-48Z" fill="#c9d3db"/>
+          <rect x="0" y="300" width="480" height="100" fill="#b7c2cb"/>
+          <rect x="0" y="296" width="480" height="8" fill="#97a5b1"/>
+          <path d="M0 330 H480 M0 362 H480" stroke="#a7b3bd" stroke-width="1.5"/>
+          <g stroke="#6d7d8b" stroke-width="5" stroke-linecap="round">
+            <path d="M58 300 L80 238 M190 300 L214 238 M232 300 V214"/>
+          </g>
+          <g>
+            <polygon points="34,300 150,300 190,196 74,196" fill="#8496a5"/>
+            <polygon points="40,294 145,294 182,202 78,202" fill="url(#glass)"/>
+            <path d="M66 294 L104 202 M92 294 L130 202 M118 294 L156 202" stroke="#4d7598" stroke-width="2"/>
+            <polygon points="150,300 266,300 306,196 190,196" fill="#8496a5"/>
+            <polygon points="156,294 261,294 298,202 194,202" fill="url(#glass)"/>
+            <path d="M182 294 L220 202 M208 294 L246 202 M234 294 L272 202" stroke="#4d7598" stroke-width="2"/>
+            <path d="M84 214 L120 214 M204 214 L240 214" stroke="#fff" stroke-width="3" opacity=".35" stroke-linecap="round"/>
+          </g>
+          <path d="M300 214 C318 214 322 196 336 190 M180 296 C230 312 300 300 352 286" fill="none" stroke="#a64b28" stroke-width="7" stroke-linecap="round"/>
+          <path d="M440 300 V250 C440 240 432 236 424 236" fill="none" stroke="#2f6f9f" stroke-width="7" stroke-linecap="round"/>
+          <rect x="336" y="248" width="72" height="52" fill="#6d7d8b"/>
+          <rect x="340" y="250" width="8" height="50" fill="#566573"/><rect x="396" y="250" width="8" height="50" fill="#566573"/>
+          <rect x="328" y="96" width="88" height="160" rx="44" fill="url(#tank)"/>
+          <rect x="344" y="118" width="56" height="118" rx="28" fill="url(#water)"/>
+          <path d="M352 222 h40 l-6 -8 l-6 8 l-6 -8 l-6 8 l-6 -8 l-6 8" fill="none" stroke="#f0c9b6" stroke-width="2.5" stroke-linejoin="round"/>
+          <g fill="#fff" opacity=".55"><circle cx="360" cy="196" r="3"/><circle cx="380" cy="176" r="2.5"/><circle cx="368" cy="152" r="2"/></g>
+          <circle cx="372" cy="270" r="18" fill="#fff" stroke="#1e3142" stroke-width="3"/>
+          <path d="M360 278 A14 14 0 1 1 384 278" fill="none" stroke="#d3dbe1" stroke-width="3"/>
+          <path d="M360 278 A14 14 0 0 1 380 258" fill="none" stroke="#9c4325" stroke-width="3"/>
+          <path d="M372 270 L381 261" stroke="#1e3142" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="350" y="102" width="44" height="12" rx="2" fill="#fff" opacity=".9"/>
+          <path d="M355 108 h18 M377 108 h12" stroke="#4b5d6c" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">המים פושרים, והמפסק קופץ</p><p class="a">אל תחזירו את המפסק. שלחו תמונה של הדוד, וחוזרים אליכם.</p></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה</span><div><b>גוף חימום</b><span>350 עד 550 ₪</span></div><div><b>תרמוסטט</b><span>250 עד 400 ₪</span></div><div><b>טיימר לדוד</b><span>300 עד 550 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="services">
+    <div class="wrap">
+      <div class="head"><h2>מה צריך?</h2><p>מחירים לדוגמה, כולל עבודה וחלק רגיל. לוחצים על שורה, והצ׳אט נפתח איתה.</p></div>
+      <div class="plate">
+        <div class="plate-h"><span><b>גלעד דודי שמש</b> · מחירון לדוגמה</span><span class="spec">220V · 2.5kW · 150L</span></div>
+        <button class="row" type="button" data-pre='{"need":"גוף חימום"}'><span class="code">GH-1</span><span><b>החלפת גוף חימום</b><span>הדוד לא מחמם בחשמל, או שהמפסק קופץ. כולל ניקוי אבנית</span></span><span class="pr">350 עד 550 ₪<small>כולל חלק</small></span></button>
+        <button class="row" type="button" data-pre='{"need":"תרמוסטט"}'><span class="code">TH-2</span><span><b>החלפת תרמוסטט</b><span>המים רותחים מדי, או שהדוד לא נכבה</span></span><span class="pr">250 עד 400 ₪<small>כולל חלק</small></span></button>
+        <button class="row" type="button" data-pre='{"need":"טיימר לדוד"}'><span class="code">TM-3</span><span><b>טיימר או שעון שבת</b><span>מדליקים מהטלפון או לפי שעות, ולא שוכחים את הדוד דולק</span></span><span class="pr">300 עד 550 ₪<small>כולל התקנה</small></span></button>
+        <button class="row" type="button" data-pre='{"need":"הדוד נוזל"}'><span class="code">LK-4</span><span><b>נזילה בדוד או בצנרת</b><span>טפטוף מהדוד, מהברזים או מהחיבורים על הגג</span></span><span class="pr">300 עד 700 ₪<small>לפי מה שנמצא</small></span></button>
+        <button class="row" type="button" data-pre='{"need":"קולטים"}'><span class="code">SC-5</span><span><b>החלפת קולטים</b><span>זכוכית שבורה, קולט שנוזל, או קולטים ישנים שלא מחממים</span></span><span class="pr">1,800 עד 3,200 ₪<small>לזוג קולטים</small></span></button>
+        <button class="row" type="button" data-pre='{"need":"דוד חדש"}'><span class="code">NW-6</span><span><b>דוד חדש עם התקנה</b><span>הדוד חלוד או נוזל מהגוף עצמו. כולל פירוק הישן</span></span><span class="pr">2,800 עד 4,500 ₪<small>דוד 150 ליטר</small></span></button>
+        <p class="plate-f">המחיר הסופי אחרי אבחון במקום. אם מחליפים חלק, אומרים לכם את המחיר לפני.</p>
+      </div>
+      <p class="roof-note"><span>הדוד על גג משותף? עולים רק עם סולם תקין ורתמה, ובתיאום עם הבניין. <a href="#g-roof">למה זה חשוב</a></span></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים מה צריך ואיפה הדוד, ורואים טווח. את המחיר הסופי סוגרים אחרי אבחון.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשהדוד נוזל או המפסק קופץ, ואיך חוסכים בחשמל בחורף.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה קרה, איפה הדוד, אם המפסק קופץ, בן כמה הדוד, ותמונה. בלי טופס.</span></div></li>
+          <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם צריך גוף חימום, תרמוסטט או דוד חדש, ומה להעלות לגג.</span></div></li>
+          <li><div><b>חוזרים עם זמן הגעה</b><span>בחורף כולם מתקשרים באותו בוקר. הצ׳אט אוסף את הפרטים בינתיים.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">מ</span><div><b>מיכל אברהם</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">קריאה מהאתר (דמו דודי שמש)
+מה צריך: אין מים חמים
+המפסק קופץ: כן
+איפה הדוד: גג משותף
+גיל הדוד: 5 עד 10 שנים
+דחיפות: היום
+יישוב: פתח תקווה
+שם: מיכל אברהם
+טלפון: 052-7654321<time>07:15</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הקריאה מגיעה לטכנאי</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>גלעד דודי שמש · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const NOHOT = "אין מים חמים";
+  const LEAK = "הדוד נוזל";
+  const RANGES = { "אין מים חמים": "אבחון ותיקון עולים בדרך כלל 250 עד 550 ₪, לפי החלק", "גוף חימום": "החלפת גוף חימום עולה בדרך כלל 350 עד 550 ₪",
+    "תרמוסטט": "החלפת תרמוסטט עולה בדרך כלל 250 עד 400 ₪", "טיימר לדוד": "טיימר לדוד עולה בדרך כלל 300 עד 550 ₪",
+    "הדוד נוזל": "תיקון נזילה עולה בדרך כלל 300 עד 700 ₪", "קולטים": "זוג קולטים עולה בדרך כלל 1,800 עד 3,200 ₪", "דוד חדש": "דוד 150 ליטר עם התקנה עולה בדרך כלל 2,800 עד 4,500 ₪" };
+  const ELEC = (d) => [NOHOT, "גוף חימום", "תרמוסטט"].includes(d.need);
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "גלעד · דודי שמש", subtitle: "חוזרים עם זמן הגעה", initial: "ג", launcher: "מה קרה לדוד?", hint: "נציג AI",
+    greet: "היי, כאן גלעד, דודי שמש.\nכמה שאלות קצרות, והפרטים מגיעים אלינו לוואטסאפ.",
+    steps: [
+      { key: "need", label: "מה צריך", ask: "מה קרה?", chips: [NOHOT, LEAK, "גוף חימום", "תרמוסטט", "טיימר לדוד", "קולטים", "דוד חדש"] },
+      { key: "breaker", label: "המפסק קופץ", ask: "המפסק של הדוד קופץ?", chips: ["כן", "לא", "לא בדקנו"], show: ELEC,
+        tip: { when: (v) => v === "כן", id: "breaker", text: "בינתיים: משאירים את המפסק של הדוד למטה ולא מחזירים אותו שוב ושוב. לא פותחים את המכסה של הדוד." } },
+      { key: "spot", label: "איפה הדוד", ask: "איפה הדוד?", chips: ["על הגג שלנו", "גג משותף", "בתוך הבית"] },
+      { key: "age", label: "גיל הדוד", ask: "בן כמה הדוד, בערך?", chips: ["עד 5 שנים", "5 עד 10 שנים", "יותר מ-10 שנים", "לא יודעים"], show: (d) => d.need !== "דוד חדש" && d.need !== "טיימר לדוד" },
+      { key: "urgency", label: "דחיפות", ask: "כמה זה דחוף?", chips: ["נוזל עכשיו", "היום", "השבוע", "רק בודקים מחיר"],
+        tip: { when: (v) => v === "נוזל עכשיו", id: "leak", text: "בינתיים: מורידים את המפסק של הדוד, וסוגרים את ברז הכניסה של המים לדוד. לא נוגעים בדוד רטוב ובחוטים." } },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הדוד, של המדבקה שלו או של הנזילה? כך מגיעים עם החלק הנכון.", photo: true },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: פתח תקווה" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => {
+      const roof = d.spot === "גג משותף" ? "\nגג משותף: נצטרך גישה לגג. כדאי לבדוק שיש מפתח." : "";
+      return `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.need}, ${d.spot}, ב${d.city}. ${RANGES[d.need] || ""}, והמחיר הסופי אחרי אבחון.${roof}\nלחצו למטה, ונחזור אליכם עם זמן הגעה.`;
+    },
+    summary: (d) => `קריאה מהאתר (דמו דודי שמש)\nמה צריך: ${d.need}${d.breaker ? "\nהמפסק קופץ: " + d.breaker : ""}\nאיפה הדוד: ${d.spot}${d.age ? "\nגיל הדוד: " + d.age : ""}\nדחיפות: ${d.urgency}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה צריך?", items: [
+      { label: "גוף חימום", range: [350, 550], prefill: { need: "גוף חימום" } },
+      { label: "תרמוסטט", range: [250, 400], prefill: { need: "תרמוסטט" } },
+      { label: "טיימר או שעון שבת", range: [300, 550], prefill: { need: "טיימר לדוד" } },
+      { label: "נזילה בדוד או בצנרת", range: [300, 700], prefill: { need: "הדוד נוזל" } },
+      { label: "זוג קולטים", range: [1800, 3200], prefill: { need: "קולטים" } },
+      { label: "דוד חדש", range: [2800, 4500], prefill: { need: "דוד חדש" } },
+    ] },
+    factors: [
+      { ask: "איזה דוד?", for: ["דוד חדש"], options: [
+        { label: "120 ליטר", mul: [0.92, 0.9] },
+        { label: "150 ליטר" },
+        { label: "200 ליטר", mul: [1.18, 1.16], note: "דוד גדול כבד יותר, ולפעמים צריך עוד איש לגג." },
+      ] },
+      { ask: "איפה הדוד?", for: ["גוף חימום", "תרמוסטט", "טיימר או שעון שבת", "נזילה בדוד או בצנרת", "דוד חדש"], options: [
+        { label: "על הגג שלנו, עם גישה נוחה", prefill: { spot: "על הגג שלנו" } },
+        { label: "גג משותף, עולים בסולם", add: [80, 200], prefill: { spot: "גג משותף" }, note: "עלייה בסולם לגג משותף מוסיפה זמן וציוד בטיחות." },
+        { label: "בתוך הבית, בבוידם או בארון", add: [50, 150], prefill: { spot: "בתוך הבית" }, note: "דוד בבוידם או בארון צר לוקח יותר זמן לפרק ולהרכיב." },
+      ] },
+      { ask: "איזה גג?", for: ["זוג קולטים"], options: [
+        { label: "הגג שלנו", prefill: { spot: "על הגג שלנו" } },
+        { label: "גג משותף", add: [80, 200], prefill: { spot: "גג משותף" }, note: "עלייה בסולם לגג משותף מוסיפה זמן וציוד בטיחות." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. את המחיר הסופי סוגרים אחרי אבחון במקום, ואם מחליפים חלק, אומרים לכם לפני.",
+    cta: "לפתוח קריאה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/water-heater.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

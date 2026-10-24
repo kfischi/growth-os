@@ -60,7 +60,7 @@ export const SERVICES = {
   item: { name: { max: 46, required: true }, detail: { max: 60 }, time: { max: 18 }, price: { max: 24 } },
   label: "שירותים ומחירים",
 };
-export const TOWNS = { min: 1, max: 12, itemMax: 22, label: "ישובים" };
+export const TOWNS = { min: 1, max: 12, itemMax: 22, label: "יישובים" };
 // A page per area the business really works in (published sites only): only from the owner's own words about it.
 // An area without a note of its own gets no page: a page per town with the name swapped is doorway spam to Google.
 export const REGIONS = { max: 5, nameMax: 30, townsMax: 12, noteMin: 60, noteMax: 500, responseMax: 14, label: "דפי אזורים" };
@@ -550,8 +550,8 @@ ${GUIDES.items.length ? `<section class="guides-sec" id="guides">
       ${areas.length ? `<p class="area-links">${areas.map((r) => `<a href="${draft ? "#" : areaPage(r.name)}">${h(trade)} ${h(inArea(r.name))}</a>`).join("")}</p>` : ""}
     </div>
     <div>
-      <p>${h(W.areaNote || (T.plural ? (T.urgent ? "לא בטוחים אם אנחנו מגיעים אליכם? כתבו את הישוב בצ׳אט, ונחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ונחזור אליכם עם תשובה.")
-        : T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את הישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
+      <p>${h(W.areaNote || (T.plural ? (T.urgent ? "לא בטוחים אם אנחנו מגיעים אליכם? כתבו את היישוב בצ׳אט, ונחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ונחזור אליכם עם תשובה.")
+        : T.urgent ? "לא בטוחים אם אני מגיע אליכם? כתבו את היישוב בצ׳אט, ואחזור אליכם עם תשובה." : "לא בטוחים אם זה באזור שלכם? כתבו בצ׳אט, ואחזור אליכם עם תשובה."))}</p>
       <button class="btn btn-signal" type="button" data-open-bot>לכתוב בצ׳אט</button>
       <a class="save-contact" href="${draft ? "#" : "contact.vcf"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 4v6M16 7h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>לשמור את ${h(name)} באנשי הקשר</a>
       ${social.length ? `<div class="social"><p>עקבו אחרינו</p><div class="social-links">${socialLinks(social)}</div></div>` : ""}
@@ -582,7 +582,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { key: ${js(x.key)}, label: ${js(x.label)}, ask: ${js(x.ask)}, chips: ${js(x.chips)}${x.only ? `, show: (d) => ${js(x.only.is)}.includes(d[${js(x.only.key)}])` : ""} },`).join("")}${T.chat.urgency ? `
     { key: "urgency", label: ${js(T.chat.urgency.label)}, ask: ${js(T.chat.urgency.ask)}, chips: ${js(T.chat.urgency.chips)}${T.chat.urgency.tip && GUIDES.items.some((it) => it.id === T.chat.urgency.tip.id) ? `,
       tip: { when: (v) => v === URG, id: ${js(T.chat.urgency.tip.id)}, text: ${js(T.chat.urgency.tip.text)} }` : ""} },` : ""}${T.chat.noCity ? "" : `
-    { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "ישוב")} },`}
+    { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: ${js(towns[0] ? "למשל: " + towns[0] : "יישוב")} },`}
     { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
     { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"], show: (d) => !URG || d.urgency !== URG },
@@ -746,7 +746,7 @@ ${others.length ? `<h2>עוד שירותים</h2>\n<ul class="svc-more">${others
     const adesc = `${title}: ${rtowns.slice(0, 4).join(", ")}${rtowns.length > 4 ? " ועוד" : ""}. ${name}${resp ? `, חוזרים ${whenText(resp)}` : ""}. פותחים קריאה בצ׳אט או בוואטסאפ.`;
     const wa = waIntl ? `https://wa.me/${waIntl}?text=${encodeURIComponent(`היי ${ownerFirst}, אני מ${rtowns[0] || rname}, אשמח לפרטים.`)}` : "";
     const rows = [
-      `<tr><th>ישובים</th><td>${rtowns.map(h).join(" · ")}</td></tr>`,
+      `<tr><th>יישובים</th><td>${rtowns.map(h).join(" · ")}</td></tr>`,
       resp ? `<tr><th>זמן חזרה</th><td>${h(resp)}</td></tr>` : "",
       has("hours") ? `<tr><th>שעות פעילות</th><td>${h(c.hours)}</td></tr>` : "",
       has("warranty") ? `<tr><th>אחריות</th><td>${h(c.warranty)}</td></tr>` : "",
@@ -838,7 +838,7 @@ export function chatFacts(c) {
     `זמן חזרה ללקוח: ${c.response_time}.`,
     c.years && `${yearsHe(c.years)} בתחום.`,
     c.warranty && `אחריות: ${c.warranty}.`,
-    `ישובים: ${(c.towns || []).join(", ")}.${c.radius_note ? " " + c.radius_note + "." : ""}`,
+    `יישובים: ${(c.towns || []).join(", ")}.${c.radius_note ? " " + c.radius_note + "." : ""}`,
     ...regionsReady(c).map((r) => `אזור ${r.name}: ${r.towns.join(", ")}${r.response ? `, חוזרים ${whenText(r.response)}` : ""}. ${String(r.note).replace(/\s+/g, " ").trim()}`),
     "שירותים:",
     ...(c.services || []).map((s) => `- ${s.name}${s.detail ? ` (${s.detail})` : ""}${s.price ? `: ${s.price}` : ""}${s.time ? `, ${s.time}` : ""}`),

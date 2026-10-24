@@ -53,6 +53,12 @@
   [headers.values]
     Content-Type = "text/vcard; charset=utf-8"
 
+# The site's summary for AI assistants (llmstxt.org), in Hebrew, so it needs its charset.
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
 [[headers]]
   for = "/leads-demo/*"
   [headers.values]

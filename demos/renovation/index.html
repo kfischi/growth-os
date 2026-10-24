@@ -489,7 +489,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         <div class="doc" role="table" aria-label="לוח זמנים לדוגמה לשיפוץ מטבח">
           <div class="doc-top" role="row">
             <div role="cell"><span class="mono">פרויקט</span>מטבח</div>
-            <div role="cell"><span class="mono">ישוב</span>כפר סבא</div>
+            <div role="cell"><span class="mono">יישוב</span>כפר סבא</div>
             <div role="cell"><span class="mono">שטח</span>12 מ״ר</div>
             <div role="cell"><span class="mono">משך</span>שבעה שבועות</div>
           </div>
@@ -625,7 +625,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div>
         <span class="mono">מה נתן מקבל</span>
         <h2 style="margin-top:10px">הפנייה מגיעה מסודרת, עוד לפני הטלפון</h2>
-        <p>סוג הפרויקט, הגודל, מתי רוצים להתחיל והישוב. כך יודעים כבר לפני השיחה אם זה מתאים, ומה להביא לסיור.</p>
+        <p>סוג הפרויקט, הגודל, מתי רוצים להתחיל והיישוב. כך יודעים כבר לפני השיחה אם זה מתאים, ומה להביא לסיור.</p>
         <p>נסו את הצ׳אט, והטלפון כאן יתעדכן בפנייה שלכם.</p>
         <hr class="laser" style="max-width:280px; margin-top:26px">
       </div>
@@ -640,7 +640,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 גודל: 60 עד 100 מ״ר
 מתי: בעוד חודש עד שלושה
 גבס: כן, נישה או קיר גבס
-ישוב: רעננה
+יישוב: רעננה
 שם: רותם בן דוד
 טלפון: 052-9988776<time>13:05</time></div>
             </div>
@@ -723,13 +723,13 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { key: "size", label: "גודל", ask: "מה גודל הדירה?", chips: ["עד 60 מ״ר", "60 עד 100 מ״ר", "מעל 100 מ״ר"] },
       { key: "when", label: "מתי", ask: "מתי מתכננים את העבודה?", chips: ["בחודש הקרוב", "בעוד חודש עד שלושה", "רק בודקים בינתיים"] },
       { key: "gypsum", label: "גבס", ask: "יש גם עבודות גבס או תקרה מונמכת?", chips: ["כן, תקרה מונמכת", "כן, נישה או קיר גבס", "לא", "עוד לא יודעים"] },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: רעננה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: רעננה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
       { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שנחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.project} ב${d.city}. השלב הבא הוא סיור בבית, בלי עלות, ואחריו הצעת מחיר מפורטת בכתב.\nלחצו למטה, ונתאם את הסיור בוואטסאפ.`,
-    summary: (d) => `פנייה מהאתר (דמו שיפוצים)\nפרויקט: ${d.project}\nגודל: ${d.size}\nמתי: ${d.when}\nגבס: ${d.gypsum}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    summary: (d) => `פנייה מהאתר (דמו שיפוצים)\nפרויקט: ${d.project}\nגודל: ${d.size}\nמתי: ${d.when}\nגבס: ${d.gypsum}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
     note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לשירות שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });

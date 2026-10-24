@@ -465,7 +465,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
         <div class="ticket">
           <div class="ticket-top"><h3>כרטיס עבודה</h3><span data-edit="t-no">מס׳ 2417 · יום שלישי</span></div>
           <dl>
-            <div><dt>ישוב</dt><dd data-edit="t-city">פרדס חנה</dd></div>
+            <div><dt>יישוב</dt><dd data-edit="t-city">פרדס חנה</dd></div>
             <div><dt>מכשיר</dt><dd data-edit="t-unit">מכונת כביסה, בוש, בת 7</dd></div>
             <div><dt>על הצג</dt><dd><span class="code" data-edit="t-code">E21</span></dd></div>
             <div><dt>אבחון</dt><dd data-edit="t-diag">משאבת ניקוז תקועה</dd></div>
@@ -495,7 +495,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       <div class="head"><h2>מה הטכנאי רואה</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
       <div class="owner-grid">
         <ol>
-          <li><div><b>הלקוח עונה על שש שאלות קצרות</b><span>מכשיר, תקלה, קוד על הצג, ישוב, שם וטלפון. בלי טופס ארוך.</span></div></li>
+          <li><div><b>הלקוח עונה על שש שאלות קצרות</b><span>מכשיר, תקלה, קוד על הצג, יישוב, שם וטלפון. בלי טופס ארוך.</span></div></li>
           <li><div><b>הקריאה מגיעה מסודרת לוואטסאפ</b><span>עם הקוד כבר יודעים איזה חלק לקחת לרכב.</span></div></li>
           <li><div><b>חוזרים ללקוח וקובעים ביקור</b><span>הצ׳אט עונה גם בלילה ובשבת, כשאין מי שירים טלפון.</span></div></li>
         </ol>
@@ -509,7 +509,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
 מכשיר: מקרר
 תקלה: לא מקרר או לא מחמם
 קוד שגיאה: אין
-ישוב: אור עקיבא
+יישוב: אור עקיבא
 שם: נועה פרץ
 טלפון: 054-7654321<time>20:15</time></div>
               </div>
@@ -546,15 +546,15 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
     steps: [
       { key: "appliance", label: "מכשיר", ask: "איזה מכשיר עושה בעיות?", chips: Object.keys(RANGES) },
       { key: "photo", label: "תמונה", ask: "יש תמונה של המכשיר או של מדבקת הדגם? ככה אני מגיע עם החלק הנכון.", photo: true },
-      { key: "fault", label: "תקלה", ask: (d) => `מה קורה עם ה${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"],
+      { key: "fault", label: "תקלה", ask: (d) => `מה התקלה ב${d.appliance}?`, chips: ["לא נדלק", "דולף", "רועש", "לא מקרר או לא מחמם", "מציג קוד שגיאה"],
         tip: { when: (v) => v === "דולף", id: "washer-flood", text: "בינתיים: כבו את המכשיר, נתקו אותו בידיים יבשות וסגרו את ברז המים שלו." } },
       { key: "code", label: "קוד שגיאה", ask: "יש קוד על הצג? כתבו אותו, למשל E21.\nאם אין, כתבו ״אין״.", input: "text", placeholder: "E21 או אין" },
-      { key: "city", label: "ישוב", ask: "באיזה ישוב?", input: "text", placeholder: "למשל: חדרה" },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: חדרה" },
       { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
       { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
     ],
     closing: (d) => `תודה ${d.name.split(" ")[0]}! ${d.appliance}, ${d.fault}${d.code && d.code !== "אין" ? ", קוד " + d.code : ""}, ב${d.city}. תיקון כזה עולה בדרך כלל ${RANGES[d.appliance]} ₪. המחיר הסופי אחרי אבחון.\nלחצו למטה, ואחזור אליכם לקבוע.`,
-    summary: (d) => `קריאה מהאתר (דמו טכנאי מכשירי חשמל)\nמכשיר: ${d.appliance}\nתקלה: ${d.fault}\nקוד שגיאה: ${d.code}\nישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    summary: (d) => `קריאה מהאתר (דמו טכנאי מכשירי חשמל)\nמכשיר: ${d.appliance}\nתקלה: ${d.fault}\nקוד שגיאה: ${d.code}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
     note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
     onDone: LeadPhone("#ph-msg"),
   });
@@ -565,7 +565,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
   const SAY = [
     ["לתקן, בלי לחשוב.", "מכשיר צעיר. רוב התקלות הן חלק אחד, ושווה להחליף אותו."],
     ["לתקן.", "ברוב התקלות התיקון זול בהרבה ממכשיר חדש, והמכשיר ימשיך עוד שנים."],
-    ["תלוי בתקלה.", "משאבה, גומייה או חיישן: שווה לתקן. מנוע, תוף או כרטיס: נשווה למחיר של חדש."],
+    ["תלוי בתקלה.", "משאבה, גומייה או חיישן: שווה לתקן. מנוע, תוף או כרטיס: משווים למחיר של חדש."],
     ["להשוות למחיר של חדש.", "אם התיקון עולה יותר מחצי ממחיר מכשיר חדש, אגיד לכם לפני שמתחילים."],
     ["כנראה עדיף חדש.", "במקרר ותיק, תקלה במדחס או בגז עולה כמעט כמו חדש. אגיד בכנות אחרי האבחון."],
   ];
@@ -594,7 +594,7 @@ footer { padding-bottom: 160px; } /* clear the floating chat, photo and accessib
       { ask: "בן כמה המכשיר?", options: [
         { label: "עד 5 שנים" },
         { label: "5 עד 10 שנים" },
-        { label: "מעל 10 שנים", note: "במכשיר ותיק נגיד לכם בכנות אם שווה לתקן, לפני שמתחילים." },
+        { label: "מעל 10 שנים", note: "במכשיר ותיק אגיד לכם בכנות אם שווה לתקן, לפני שמתחילים." },
       ] },
     ],
     note: "כולל ביקור, אבחון ועבודה. חלקים לפי הצורך, ותמיד אחרי שאתם מאשרים.",

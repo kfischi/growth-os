@@ -215,7 +215,7 @@ export function applyUpdate(t, content, update) {
     const list = [...new Set(update.towns.map(clean).filter(Boolean))];
     const long = list.find((x) => x.length > T.itemMax);
     if (long) errors.push(`${T.label}: "${long.slice(0, 20)}…" ארוך מדי.`);
-    else if (list.length > T.max) errors.push(`${T.label}: עד ${T.max} ישובים.`);
+    else if (list.length > T.max) errors.push(`${T.label}: עד ${T.max} יישובים.`);
     else { next.towns = list; changed.push("towns"); }
   }
   // The areas, each a page on the live site: only with the owner's own words about working there.
@@ -230,7 +230,7 @@ export function applyUpdate(t, content, update) {
       if (name.length > R.nameMax) bad = bad || `${R.label}: שם אזור עד ${R.nameMax} תווים.`;
       else if (note.length > R.noteMax) bad = bad || `${R.label}: על ${name} עד ${R.noteMax} תווים.`;
       else if (response.length > R.responseMax) bad = bad || `${R.label}: זמן חזרה עד ${R.responseMax} תווים.`;
-      else if (towns.some((x) => x.length > t.TOWNS.itemMax)) bad = bad || `${R.label}: שם ישוב ארוך מדי.`;
+      else if (towns.some((x) => x.length > t.TOWNS.itemMax)) bad = bad || `${R.label}: שם יישוב ארוך מדי.`;
       list.push({ name, towns, note, response });
     }
     if (update.regions.length > R.max) bad = bad || `${R.label}: עד ${R.max} אזורים.`;

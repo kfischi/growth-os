@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>שירה לוי · עיצוב שיער</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="עיצוב שיער בכפר סבא: תספורת ופן, צבע וגוונים, החלקה ותסרוקת לכלה ולאירוע. בוחרים טיפול ואורך, רואים טווח מחיר, ושירה חוזרת לתאם.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&family=Rubik:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the colour swatch ring on the stylist's trolley: a fan of numbered hair tresses, from black to silver,
+             held on one ring, and the client in the chair seen from behind, in the mirror.
+     Detail: colour levels (1 is black, 10 is the lightest), the length decides the price (short, shoulders, long,
+             very long), a patch test 48 hours before a first colour, a trial before the wedding.
+     Bold move: one big head of hair, drawn from behind, that the visitor repaints with the swatches and cuts to length.
+     Motion: the glass cards rise once in the top. Nothing else moves; never with reduced motion or html.a11y-still. */
+  :root {
+    --mirror: #f1f4f2;         /* the page: the mirror's cool light, not cream */
+    --sheet: #ffffff;
+    --velvet: #17463a;         /* the bottle-green velvet of the salon chair: brand and buttons */
+    --velvet-deep: #0f2f27;    /* ink and the one dark band */
+    --copper: #9a4424;         /* the copper tress: accent, readable on white */
+    --copper-wash: #f6e4dc;
+    --ash: #d9e1dd;            /* the ash tress, quiet fills */
+    --ink: #13221d;
+    --ink-soft: #4c5d57;
+    --line: #d3ddd8;
+    --display: "Bellefair", "Rubik", "Arial Hebrew", serif;
+    --body: "Rubik", "Arial Hebrew", Arial, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Courier New", monospace;
+    --phone-frame: var(--velvet-deep);
+    --bot-bg: var(--sheet); --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--velvet); --bot-accent-fg: #fff; --bot-them: #e7eeea; --bot-me: var(--velvet-deep); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 16px; --bot-radius-msg: 14px; --guide-alert: var(--copper);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--mirror); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--copper); outline-offset: 3px; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { margin: 0; line-height: 1.12; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 4.4vw, 54px); letter-spacing: -.01em; }
+  h3 { font-family: var(--display); font-weight: 400; }
+  .mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+  section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 40px; flex-wrap: wrap; margin-bottom: 34px; }
+  .head p { margin: 0; max-width: 54ch; color: var(--ink-soft); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 12px 26px; font: 700 17px/1.2 var(--body); text-decoration: none; border: 0; cursor: pointer; border-radius: 999px; transition: background .2s; }
+  .btn-velvet { background: var(--velvet); color: #fff; }
+  .btn-velvet:hover { background: var(--velvet-deep); }
+  .btn-line { background: #fff; color: var(--velvet-deep); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-line:hover { box-shadow: inset 0 0 0 1.5px var(--velvet); }
+
+  .demo { background: var(--velvet-deep); color: #d3e3dc; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+
+  /* ---------- The top ---------- */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-block: 22px; border-bottom: 1px solid rgba(23,70,58,.14); }
+  .logo { font-family: var(--display); font-size: 32px; line-height: 1; }
+  .logo small { display: block; font: 500 14px/1.3 var(--body); color: var(--ink-soft); margin-top: 6px; }
+  .bar a { font-weight: 700; text-decoration: none; border-bottom: 2px solid var(--copper); padding-bottom: 2px; }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 30px 0 88px; }
+  .hero-copy { min-width: 0; }
+  .kicker { margin: 0 0 18px; color: var(--ink-soft); font-weight: 500; font-size: 16px; }
+  .lead { font-size: 19px; max-width: 38ch; margin: 0 0 28px; color: var(--ink-soft); }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { list-style: none; margin: 36px 0 0; padding: 18px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .facts li { min-width: 0; font-size: 14.5px; line-height: 1.4; color: var(--ink-soft); }
+  .facts b { display: block; font: 800 23px/1.2 var(--body); letter-spacing: -.02em; color: var(--velvet-deep); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+
+  /* the mirror drawing */
+  .scene { width: 100%; height: 100%; display: block; }
+  .scene .wall { fill: #dfe7e3; }
+  .scene .glass-m { fill: #f3f6f4; stroke: #b9c8c1; stroke-width: 2; }
+  .scene .frame-m { fill: none; stroke: var(--velvet); stroke-width: 6; }
+  .scene .cape { fill: var(--velvet); }
+  .scene .cape-fold { fill: none; stroke: #2b5d50; stroke-width: 2; stroke-linecap: round; }
+  .scene .neck { fill: #d9b9a5; }
+  .scene .hair { fill: #4a2a1f; }
+  .scene .strand { fill: none; stroke: #6d3a26; stroke-width: 2; stroke-linecap: round; opacity: .7; }
+  .scene .lite { fill: none; stroke: #b0623d; stroke-width: 6; stroke-linecap: round; opacity: .55; }
+  .scene .clip { fill: var(--velvet-deep); }
+  .scene .ring { fill: none; stroke: #8a9a93; stroke-width: 3; }
+  .scene .tress { stroke: rgba(0,0,0,.12); stroke-width: 1; }
+
+  /* ---------- The swatch tool ---------- */
+  .tool-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 28px 56px; align-items: center; }
+  .tool-grid > .head { display: block; margin: 0; }
+  .tool-grid > .head p { margin-top: 14px; max-width: 34ch; }
+  .board { min-width: 0; background: var(--sheet); border: 1px solid var(--line); border-radius: 22px; padding: 22px; box-shadow: 0 30px 60px -44px rgba(15,47,39,.5);
+    display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .head-view { width: 100%; height: auto; display: block; background: var(--mirror); border-radius: 16px; }
+  .head-view .cape { fill: var(--velvet); }
+  .head-view .neck { fill: #d9b9a5; }
+  .head-view .hair { fill: var(--hair, #4a2a1f); }
+  .head-view .strand { fill: none; stroke: rgba(0,0,0,.18); stroke-width: 1.6; stroke-linecap: round; }
+  .head-view .hl { fill: none; stroke: var(--hl, #c99a7c); stroke-width: 5; stroke-linecap: round; opacity: 0; }
+  .head-view.highlights .hl { opacity: .8; }
+  .head-view .sheen { fill: #fff; opacity: .12; }
+  .controls { min-width: 0; display: grid; gap: 16px; }
+  .ctl b { display: block; font-size: 15px; margin-bottom: 8px; }
+  .ctl-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ctl-row button { min-height: 44px; padding: 8px 14px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--sheet); color: var(--ink); font: 500 15px/1.2 var(--body); cursor: pointer; }
+  .ctl-row button:hover { border-color: var(--velvet); }
+  .ctl-row button[aria-pressed="true"] { background: var(--velvet); border-color: var(--velvet); color: #fff; }
+  .tresses { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tresses button { width: 48px; min-height: 64px; padding: 0 0 4px; border: 1.5px solid var(--line); border-radius: 10px 10px 18px 18px; background: var(--sheet); cursor: pointer; display: grid; grid-template-rows: 1fr auto; overflow: hidden; }
+  .tresses button i { display: block; margin: 4px 4px 2px; border-radius: 6px 6px 14px 14px; background: var(--c); min-height: 40px; }
+  .tresses button span { font: 600 11px/1 var(--mono); color: var(--ink-soft); }
+  .tresses button[aria-pressed="true"] { border-color: var(--velvet); box-shadow: 0 0 0 2px var(--velvet); }
+  .result { border-top: 1px dashed var(--line); padding-top: 14px; }
+  .result h3 { font-size: 26px; margin-bottom: 2px; }
+  .result .rng { margin: 0; font: 800 24px/1.3 var(--body); color: var(--velvet-deep); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .result p { margin: 4px 0 0; font-size: 15.5px; color: var(--ink-soft); }
+  .result .btn { margin-top: 12px; min-height: 46px; font-size: 16px; }
+  .patch { margin: 14px 0 0; font-size: 14.5px; line-height: 1.5; background: var(--copper-wash); border-inline-start: 3px solid var(--copper); padding: 10px 12px; border-radius: 0 10px 10px 0; }
+  .patch a { font-weight: 700; color: var(--copper); }
+
+  /* ---------- One colour, seen from the phone ---------- */
+  .hour { background: var(--velvet-deep); color: #fff; }
+  .hour .head p { color: #cfe2da; }
+  .clock { list-style: none; margin: 0; padding: 0; position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .clock::before { content: ""; position: absolute; top: 15px; inset-inline: 0; height: 2px; background: rgba(255,255,255,.35); }
+  .clock li { position: relative; min-width: 0; padding: 40px 16px 0 0; }
+  .clock li::before { content: ""; position: absolute; top: 9px; inset-inline-start: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--velvet-deep); border: 2px solid #cfe2da; }
+  .clock li.miss::before { border-color: #f2a98d; background: #f2a98d; }
+  .clock li.ok::before { border-color: #fff; background: #fff; }
+  .clock time { display: block; font: 600 22px/1.2 var(--mono); }
+  .clock span { display: block; color: #cfe2da; font-size: 16px; margin-top: 4px; }
+  .clock .ok span { color: #fff; font-weight: 500; }
+
+  /* ---------- The price board ---------- */
+  .prices-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 56px; }
+  .pr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 14px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .pr b { font-weight: 700; font-size: 18px; }
+  .pr .p { font-weight: 700; color: var(--velvet-deep); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pr small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 15px; }
+  .pr .ask { grid-column: 1 / -1; justify-self: start; margin-top: 4px; padding: 0; border: 0; background: none; font: 700 15px var(--body); color: var(--velvet); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+  .bride { margin: 26px 0 0; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; border: 1.5px dashed var(--velvet); padding: 14px 18px; background: var(--sheet); border-radius: 14px; }
+  .bride b { font-size: 18px; }
+  .fine { margin: 18px 0 0; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Owner ---------- */
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: o; }
+  .owner li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .owner li::before { counter-increment: o; content: counter(o); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--copper); color: var(--copper); font: 600 17px/1 var(--mono); background: var(--sheet); }
+  .owner li b { display: block; font-size: 20px; }
+  .owner li span { color: var(--ink-soft); font-size: 16px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 150px; color: var(--ink-soft); font-size: 15px; }
+  footer .row2 { display: flex; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+
+  @media (max-width: 1020px) {
+    .hero-grid, .tool-grid, .owner-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .hero-grid { padding-top: 22px; }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 640px) {
+    section { padding-block: 60px; }
+    body { font-size: 17px; }
+    .lead { font-size: 17.5px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .facts { gap: 10px; }
+    .facts b { font-size: 18px; }
+    .facts li { font-size: 13px; }
+    .board { grid-template-columns: minmax(0, 1fr); padding: 16px 14px; }
+    .head-view { max-width: 220px; margin-inline: auto; }
+    .tresses button { width: 44px; }
+    .clock { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .clock::before { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: 6px; inset-inline-end: auto; }
+    .clock li { padding: 0 34px 0 0; }
+    .clock li::before { top: 6px; }
+    .prices-grid { grid-template-columns: minmax(0, 1fr); }
+    .pr b { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } html { scroll-behavior: auto; } }
+
+  /* ---------- Smart luxury (the owner's direction, the same as the builder's first look) ----------
+     A breath of sage and copper on the mirror light, big tight Rubik, the mirror drawing large in a rounded frame
+     with glass cards over it (where Shira works, three prices, the chat), the main button glowing in velvet green. */
+  .hero { background: var(--mirror);
+    background-image: radial-gradient(50% 60% at 10% 24%, rgba(217,225,221,.95), transparent 70%), radial-gradient(40% 50% at 96% 0%, rgba(154,68,36,.08), transparent 70%); }
+  .hero h1 { font-family: "Rubik", var(--body); font-weight: 800; letter-spacing: -.03em; font-size: clamp(42px, 5.2vw, 70px); line-height: 1.02; margin-bottom: 20px; color: var(--ink); }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; font-size: .5em; color: var(--velvet); margin-top: 12px; }
+  .hero .btn-velvet { box-shadow: 0 16px 32px -14px rgba(15,47,39,.78), 0 2px 6px -2px rgba(15,47,39,.35); }
+  .visual { position: relative; min-width: 0; width: 100%; max-width: 560px; aspect-ratio: 1 / 1; justify-self: center; }
+  .hframe { position: absolute; inset: 8% 2% 14% 16%; border-radius: 34px; overflow: hidden; background: #dfe7e3;
+    box-shadow: 0 0 0 1px rgba(15,47,39,.08), 0 50px 90px -46px rgba(15,47,39,.62), 0 18px 34px -26px rgba(15,47,39,.35); }
+  .glass { position: absolute; z-index: 2; background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 20px; padding: 13px 16px; color: var(--ink);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(15,47,39,.6), 0 4px 12px -6px rgba(15,47,39,.18);
+    font-variant-numeric: tabular-nums; animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .glass > span { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; line-height: 1.3; color: var(--ink-soft); }
+  .g-day { display: grid; gap: 2px; top: 2%; inset-inline-end: 0; }
+  .g-day > span i { width: 8px; height: 8px; border-radius: 50%; background: var(--velvet); box-shadow: 0 0 0 4px rgba(23,70,58,.16); }
+  .g-day b { font: 800 17px/1.25 "Rubik", var(--body); letter-spacing: -.01em; }
+  .g-day small { font-size: 13px; color: var(--ink-soft); }
+  .g-price { display: grid; gap: 5px; bottom: 2%; inset-inline-start: 0; width: min(300px, 68%); animation-delay: .15s; }
+  .g-price p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14.5px; line-height: 1.35; }
+  .g-price p + p { border-top: 1px dashed var(--line); padding-top: 5px; }
+  .g-price b { font-weight: 500; } .g-price em { font-style: normal; font-weight: 700; color: var(--velvet-deep); white-space: nowrap; }
+  .g-chat { display: grid; gap: 6px; padding: 11px; top: 38%; inset-inline-end: -1%; width: min(50%, 226px); animation-delay: .26s; }
+  .g-chat p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-chat .q { background: #e7eeea; justify-self: start; border-end-start-radius: 4px; }
+  .g-chat .a { background: var(--velvet-deep); color: #fff; justify-self: end; border-end-end-radius: 4px; }
+  .toolsec { padding-top: 24px; }
+  @media (max-width: 1020px) { .visual { max-width: 460px; } .g-chat { inset-inline-end: 0; } }
+  @media (max-width: 560px) {
+    .g-chat { display: none; }
+    .hframe { inset: 10% 0 16% 8%; border-radius: 28px; }
+    .glass { padding: 10px 12px; border-radius: 16px; }
+    .g-day b { font-size: 15px; }
+    .g-price { width: 82%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../">לכל הדמואים</a></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="bar">
+      <div class="logo"><span data-edit="name">שירה לוי</span><small>עיצוב שיער · כפר סבא</small></div>
+      <a href="#" data-wa="היי שירה, הגעתי מהאתר ואשמח לקבוע תור">וואטסאפ</a>
+    </div>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">תספורת ופן, צבע וגוונים, החלקה ותסרוקת לכלה ולאירוע</p>
+        <h1><span data-edit="h1a">מה עושים לשיער הפעם?</span> <em data-edit="h1b">בוחרים כאן, ואני חוזרת לתאם.</em></h1>
+        <p class="lead">באמצע צבע הידיים שלי בכפפות, והטלפון בצד. כאן בוחרים טיפול ואורך שיער, רואים טווח מחיר ומשאירים מתי נוח לכם. את התור אני מאשרת בעצמי, בהודעה.</p>
+        <div class="ctas">
+          <button class="btn btn-velvet" type="button" data-open-bot>לבקש תור</button>
+          <a class="btn btn-line" href="#" data-wa="היי שירה, יש לי שאלה לפני שקובעים">לשאול בוואטסאפ</a>
+        </div>
+        <ul class="facts">
+          <li><b data-edit="f1">14 שנה</b>במספרה</li>
+          <li><b>48 שעות</b>בדיקת רגישות לפני צבע ראשון</li>
+          <li><b>ניסיון</b>לפני תסרוקת כלה</li>
+        </ul>
+      </div>
+
+      <div class="visual">
+        <div class="hframe">
+          <svg class="scene" viewBox="0 0 400 470" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ציור: לקוחה בכיסא, מבט מאחור מול המראה, שיער ארוך בגוונים">
+            <rect class="wall" width="400" height="470"/>
+            <!-- the arched mirror -->
+            <path class="glass-m" d="M90 470 V150 C90 76 142 34 200 34 C258 34 310 76 310 150 V470 Z"/>
+            <path class="frame-m" d="M90 470 V150 C90 76 142 34 200 34 C258 34 310 76 310 150 V470"/>
+            <!-- the swatch ring on the wall -->
+            <circle class="ring" cx="352" cy="74" r="10"/>
+            <g class="tress">
+              <path d="M344 82 L334 176 C334 184 344 186 346 178 L352 84 Z" fill="#1f1714"/>
+              <path d="M348 84 L346 182 C347 190 356 190 356 182 L354 84 Z" fill="#4a2a1f"/>
+              <path d="M352 84 L358 182 C360 190 368 188 367 180 L356 82 Z" fill="#9a4424"/>
+              <path d="M356 82 L370 176 C372 183 381 180 379 172 L360 80 Z" fill="#b58f7a"/>
+              <path d="M359 79 L382 166 C385 173 393 168 390 161 L362 77 Z" fill="#c8ccc9"/>
+            </g>
+            <!-- the cape and the shoulders -->
+            <path class="cape" d="M48 470 C56 396 104 362 158 352 L242 352 C296 362 344 396 352 470 Z"/>
+            <path class="cape-fold" d="M128 470 C130 430 140 400 156 380 M272 470 C270 430 260 400 244 380 M200 470 V392"/>
+            <path class="neck" d="M178 300 H222 V360 C210 366 190 366 178 360 Z"/>
+            <!-- the hair, from behind: darker at the roots, lighter at the ends (balayage), waves at the ends -->
+            <defs><linearGradient id="bal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f1b15"/><stop offset=".45" stop-color="#53301f"/><stop offset="1" stop-color="#a0603d"/></linearGradient></defs>
+            <path fill="url(#bal)" d="M200 100 C152 100 128 136 126 184 C124 232 124 270 120 310 C116 350 102 380 106 410 C110 432 124 442 140 436 C150 450 166 454 178 444 C190 458 210 458 222 444 C234 454 250 450 260 436 C276 442 290 432 294 410 C298 380 284 350 280 310 C276 270 276 232 274 184 C272 136 248 100 200 100 Z"/>
+            <path class="lite" d="M168 126 C150 200 162 260 150 330 C142 380 152 410 144 432 M232 126 C250 200 238 260 250 330 C258 380 248 410 256 432 M200 150 C192 230 210 300 198 370 C192 410 204 430 200 450"/>
+            <path class="strand" d="M184 108 C170 190 182 270 170 340 C164 390 172 420 166 442 M216 108 C230 190 218 270 230 340 C236 390 228 420 234 442 M146 150 C136 230 142 300 128 370 C124 400 128 420 124 430 M254 150 C264 230 258 300 272 370 C276 400 272 420 276 430"/>
+            <path d="M200 101 V148" stroke="#6d4030" stroke-width="2" stroke-linecap="round"/>
+            <rect class="clip" x="152" y="176" width="30" height="8" rx="4" transform="rotate(-20 167 180)"/>
+            <rect class="clip" x="218" y="176" width="30" height="8" rx="4" transform="rotate(20 233 180)"/>
+          </svg>
+        </div>
+        <div class="glass g-day" aria-hidden="true"><span><i></i>איפה עובדים</span><b>בסטודיו בכפר סבא</b><small>וכלות גם אצלן בבית</small></div>
+        <div class="glass g-chat" aria-hidden="true"><p class="q">רוצה גוונים, השיער עד הכתפיים. כמה זה?</p><p class="a">גוונים בשיער עד הכתפיים: 520 עד 650 ₪. אחזור לתאם.</p></div>
+        <div class="glass g-price" aria-hidden="true">
+          <p><b>תספורת ופן</b><em>180 עד 280 ₪</em></p>
+          <p><b>צבע שורש</b><em>250 עד 320 ₪</em></p>
+          <p><b>גוונים</b><em>450 עד 850 ₪</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="toolsec" id="swatch">
+    <div class="wrap tool-grid">
+      <div class="head"><h2>בוחרים גוון ואורך</h2><p>בוחרים טיפול, אורך שיער וגוון, ורואים את טווח המחיר. אחר כך הצ׳אט ממשיך משם.</p></div>
+      <div class="board">
+        <svg class="head-view" id="headView" viewBox="0 0 300 480" aria-hidden="true" focusable="false">
+          <defs><clipPath id="cut"><path id="cutPath" d="M0 0 H300 V378 Q150 402 0 378 Z"/></clipPath></defs>
+          <path class="cape" d="M18 480 C22 380 62 330 112 318 L188 318 C238 330 278 380 282 480 Z"/>
+          <path class="neck" d="M130 200 H170 V326 C160 332 140 332 130 326 Z"/>
+          <g clip-path="url(#cut)">
+            <path class="hair" d="M150 40 C102 40 78 76 76 124 C74 180 72 240 66 300 C60 360 52 420 48 480 H252 C248 420 240 360 234 300 C228 240 226 180 224 124 C222 76 198 40 150 40 Z"/>
+            <path class="sheen" d="M118 70 C104 110 102 180 106 240 C112 180 118 120 132 74 Z"/>
+            <path class="hl" d="M112 70 C98 160 96 300 100 480 M150 48 C146 170 146 320 150 480 M188 70 C202 160 204 300 200 480 M131 56 C120 170 120 320 124 480 M169 56 C180 170 180 320 176 480"/>
+            <path class="strand" d="M104 90 C92 180 100 260 86 340 C78 400 84 440 74 480 M196 90 C208 180 200 260 214 340 C222 400 216 440 226 480 M138 46 C128 150 140 240 128 330 C122 400 130 440 124 480 M162 46 C172 150 160 240 172 330 C178 400 170 440 176 480"/><path d="M150 41 V86" stroke="rgba(255,255,255,.22)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </svg>
+        <div class="controls">
+          <div class="ctl"><b id="lblKind">טיפול</b><div class="ctl-row" role="group" aria-labelledby="lblKind" data-group="kind">
+            <button type="button" data-v="תספורת ופן" aria-pressed="false">תספורת ופן</button>
+            <button type="button" data-v="צבע" aria-pressed="true">צבע</button>
+            <button type="button" data-v="גוונים" aria-pressed="false">גוונים</button>
+            <button type="button" data-v="החלקה" aria-pressed="false">החלקה</button>
+          </div></div>
+          <div class="ctl"><b id="lblLen">אורך השיער היום</b><div class="ctl-row" role="group" aria-labelledby="lblLen" data-group="length">
+            <button type="button" data-v="קצר" aria-pressed="false">קצר</button>
+            <button type="button" data-v="עד הכתפיים" aria-pressed="true">עד הכתפיים</button>
+            <button type="button" data-v="ארוך" aria-pressed="false">ארוך</button>
+            <button type="button" data-v="ארוך מאוד" aria-pressed="false">ארוך מאוד</button>
+          </div></div>
+          <div class="ctl"><b id="lblShade">גוון, לפי מניפת הצבעים</b><div class="tresses" role="group" aria-labelledby="lblShade">
+            <button type="button" data-shade="1" style="--c:#1f1714" aria-pressed="false" aria-label="גוון 1, שחור"><i></i><span>1</span></button>
+            <button type="button" data-shade="4" style="--c:#4a2a1f" aria-pressed="true" aria-label="גוון 4, חום"><i></i><span>4</span></button>
+            <button type="button" data-shade="5.4" style="--c:#7a3a22" aria-pressed="false" aria-label="גוון 5.4, ערמוני"><i></i><span>5.4</span></button>
+            <button type="button" data-shade="7.4" style="--c:#9a4424" aria-pressed="false" aria-label="גוון 7.4, נחושת"><i></i><span>7.4</span></button>
+            <button type="button" data-shade="8.1" style="--c:#a8907f" aria-pressed="false" aria-label="גוון 8.1, בלונד אפרפר"><i></i><span>8.1</span></button>
+            <button type="button" data-shade="10.1" style="--c:#c8ccc9" aria-pressed="false" aria-label="גוון 10.1, כסוף"><i></i><span>10.1</span></button>
+          </div></div>
+          <div class="result" id="result" aria-live="polite"></div>
+          <p class="patch" role="note">צבע ראשון אצלי? עושים בדיקת רגישות 48 שעות לפני. גרד, נפיחות או קושי לנשום אחרי צבע: מד״א <a href="tel:101">101</a>. <a href="#g-patch-test">מה זו בדיקת רגישות</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="hour" id="hour">
+    <div class="wrap">
+      <div class="head"><h2>צבע על הידיים, טלפון בצד.</h2><p>מי שמתקשרת באמצע צבע שומעת צלצול, ולפעמים קובעת במקום אחר. לכן יש כאן צ׳אט: הוא שואל, נותן טווח מחיר, והפרטים מחכים לי כשאני מורידה כפפות.</p></div>
+      <ol class="clock" aria-label="שעה אחת של צבע">
+        <li><time class="mono">10:00</time><span>מורחת צבע שורש. הטלפון בשקט.</span></li>
+        <li class="miss"><time class="mono">10:18</time><span>שיחה שלא נענתה. רוצה גוונים לפני חתונה.</span></li>
+        <li class="miss"><time class="mono">10:41</time><span>עוד שיחה. שואלת על החלקה לשיער ארוך.</span></li>
+        <li class="ok"><time class="mono">11:00</time><span>שוטפת ומורידה כפפות. שתי פניות מסודרות בוואטסאפ.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>המחירון</h2><p>מחירים לדוגמה. בצבע ובהחלקה המחיר לפי אורך השיער ועוביו. את המחיר סוגרים איתי לפני שמתחילים.</p></div>
+      <div class="prices-grid">
+        <div>
+          <div class="pr"><b>תספורת ופן</b><span class="p">180 עד 280 ₪</span><small>חפיפה, תספורת וייבוש</small><button class="ask" type="button" data-kind="תספורת ופן">לבקש תור</button></div>
+          <div class="pr"><b>פן</b><span class="p">90 עד 140 ₪</span><small>חפיפה וייבוש, חלק או גלי</small></div>
+          <div class="pr"><b>צבע שורש</b><span class="p">250 עד 320 ₪</span><small>עד 3 סנטימטרים של צמיחה, עם פן</small><button class="ask" type="button" data-kind="צבע">לבקש תור לצבע</button></div>
+          <div class="pr"><b>צבע מלא</b><span class="p">300 עד 600 ₪</span><small>לפי אורך השיער</small></div>
+        </div>
+        <div>
+          <div class="pr"><b>גוונים</b><span class="p">450 עד 850 ₪</span><small>גוונים עדינים או בלונד מעבר, לפי אורך</small><button class="ask" type="button" data-kind="גוונים">לבקש תור לגוונים</button></div>
+          <div class="pr"><b>החלקה</b><span class="p">700 עד 1,600 ₪</span><small>לפי אורך ועובי. שואלים אותי מה יש בחומר</small><button class="ask" type="button" data-kind="החלקה">לבקש תור להחלקה</button></div>
+          <div class="pr"><b>תסרוקת ערב</b><span class="p">250 עד 400 ₪</span><small>לאירוע, בסטודיו</small></div>
+          <div class="pr"><b>כלה: ניסיון ויום החתונה</b><span class="p">1,400 עד 2,200 ₪</span><small>ניסיון כחודש לפני, ותסרוקת ביום עצמו</small><button class="ask" type="button" data-kind="כלה או אירוע">לשאול על תאריך</button></div>
+        </div>
+      </div>
+      <p class="bride"><b>כלות ואירועים</b><span>מגיעה אליכן הביתה בכפר סבא, רעננה, הוד השרון ונתניה. תוספת הגעה לפי המרחק.</span></p>
+      <p class="fine">המחירים כאן לדוגמה. אצלכם יופיעו הטיפולים והמחירים שלכם.</p>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה לדעת לפני צבע, אחרי החלקה ולפני החתונה. ידע כללי, לא ייעוץ רפואי.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה שירה רואה</h2><p>לא כל לקוחה מוצאת את המספרה באינסטגרם. חלק מחפשות בגוגל או מקבלות קישור מחברה, ומגיעות לכאן. נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוחה בוחרת טיפול ואורך</b><span>רואה טווח מחיר ומצרפת תמונה של השיער, בלי לחכות שאסיים צבע.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>מה עושים, אורך, בדיקת רגישות, תמונה ומתי נוח.</span></div></li>
+          <li><div><b>בין לקוחה ללקוחה מתאמים</b><span>הודעה אחת, ואת השעה אני מאשרת בעצמי.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">נ</span><div><b>נועה כהן</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה לעיצוב שיער מהאתר (דמו)
+טיפול: גוונים
+אורך: עד הכתפיים
+צבע בעבר: צבעתי בעבר בלי בעיה
+ימים: א׳ עד ה׳
+שעות: בוקר
+שם: נועה כהן
+טלפון: 052-7654321<time>10:52</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה למעצבת השיער</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row2">
+    <span>שירה לוי עיצוב שיער · דף לדוגמה, העסק בדוי</span>
+    <span><a href="../privacy/">פרטיות</a> · <a href="../accessibility/">נגישות</a> · <a href="../">רוצים דף כזה לעסק שלכם?</a></span>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script>
+  // The sample ranges, the same as the price list above. A range, never a promised price.
+  const LENGTHS = ["קצר", "עד הכתפיים", "ארוך", "ארוך מאוד"];
+  const PRICES = {
+    "תספורת ופן": ["180 עד 220", "200 עד 240", "220 עד 260", "240 עד 280"],
+    "צבע": ["300 עד 380", "360 עד 440", "420 עד 520", "480 עד 600"],
+    "גוונים": ["450 עד 550", "520 עד 650", "600 עד 750", "680 עד 850"],
+    "החלקה": ["700 עד 900", "900 עד 1,100", "1,100 עד 1,400", "1,300 עד 1,600"],
+  };
+  const range = (kind, length) => { const r = PRICES[kind]; const i = LENGTHS.indexOf(length); return r && i >= 0 ? r[i] + " ₪" : ""; };
+  const COLOUR = (k) => k === "צבע" || k === "גוונים";
+  const EVENT = "כלה או אירוע", UNSURE = "עוד לא יודעים";
+  const cur = {}; // the answers so far, for the tips
+
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "שירה · עיצוב שיער", subtitle: "מבקשים תור, גם כשאני באמצע צבע", initial: "ש", launcher: "לבקש תור", hint: "נציג AI",
+    greet: "היי, כאן שירה.\nכמה שאלות קצרות, ואחזור אליכם לתאם.",
+    steps: [
+      { key: "kind", label: "טיפול", ask: "מה עושים לשיער?", chips: ["תספורת ופן", "צבע", "גוונים", "החלקה", EVENT, UNSURE],
+        tip: { when: (v) => { cur.kind = v; return false; }, text: "" } },
+      { key: "date", label: "מתי האירוע", ask: "מזל טוב! מתי האירוע?", chips: ["בחודש הקרוב", "בעוד חודש עד שלושה", "בעוד יותר משלושה חודשים"],
+        show: (d) => d.kind === EVENT,
+        tip: { when: (v) => v !== "בחודש הקרוב", text: "לכלה כדאי לקבוע ניסיון כחודש לפני. את התאריך אני בודקת ומאשרת בהודעה.", id: "bride", link: "תסרוקת כלה: לוח זמנים" } },
+      { key: "length", label: "אורך", ask: "מה אורך השיער היום?", chips: LENGTHS,
+        tip: { when: (v) => { cur.length = v; return Boolean(range(cur.kind, v)); }, get text() { const d = cur; return `${d.kind}, שיער ${d.length}: ${range(d.kind, d.length)}.\nזה טווח מהמחירון. את המחיר סוגרים איתי לפני שמתחילים.`; } } },
+      { key: "patch", label: "צבע בעבר", ask: "צבעתם בעבר, או שזה צבע ראשון?", chips: ["צבעתי בעבר בלי בעיה", "צבע ראשון", "הייתה לי פעם תגובה לצבע"],
+        show: (d) => COLOUR(d.kind),
+        tip: { when: (v) => { cur.patch = v; return v !== "צבעתי בעבר בלי בעיה"; }, get text() { return cur.patch === "צבע ראשון"
+          ? "לפני צבע ראשון עושים בדיקת רגישות: טיפה קטנה על העור, 48 שעות לפני. קובעים אותה יחד."
+          : "אחרי תגובה לצבע, קודם לרופא עור, ורק אחרי זה צבע. נדבר על זה בשיחה."; }, id: "patch-test", link: "מה זו בדיקת רגישות" } },
+      { key: "recent", label: "בחצי שנה", ask: "צבעתם או החלקתם בחצי השנה האחרונה?", chips: ["לא", "צבע", "החלקה", "גם וגם"],
+        show: (d) => d.kind === "החלקה" },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של השיער היום, או תמונת השראה? ככה אוכל לתת טווח מדויק יותר.", photo: true, skip: "בלי תמונה" },
+      { key: "place", label: "מקום", ask: "בסטודיו בכפר סבא, או אצלכם בבית?", chips: ["בסטודיו", "אצלי בבית"],
+        show: (d) => d.kind === EVENT,
+        tip: { when: (v) => v === "אצלי בבית", text: "לכלות ולאירועים אני מגיעה הביתה. תוספת הגעה לפי המרחק." } },
+      { key: "town", label: "יישוב", ask: "באיזה יישוב?", chips: ["כפר סבא", "רעננה", "הוד השרון", "נתניה", "יישוב אחר"], show: (d) => d.place === "אצלי בבית" },
+      { key: "days", label: "ימים", ask: "באילו ימים נוח לכם?", chips: ["א׳ עד ה׳", "שישי בבוקר", "לא משנה"] },
+      { key: "slot", label: "שעות", ask: "ובאיזה זמן ביום?", chips: ["בוקר", "צהריים", "אחר הצהריים"] },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+      { key: "callback", label: "מתי לחזור", ask: "ומתי נוח שאחזור אליכם?", chips: ["עכשיו", "בעוד שעה", "היום אחרי 16:00", "היום אחרי 18:00", "מחר בבוקר"] },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}! הפרטים אצלי.\nלחצו למטה, ואחזור לתאם. את השעה אני מאשרת בעצמי.`,
+    summary: (d) => `פנייה לעיצוב שיער מהאתר (דמו)\nטיפול: ${d.kind}${d.date ? "\nאירוע: " + d.date : ""}\nאורך: ${d.length}`
+      + (d.patch ? `\nצבע בעבר: ${d.patch}` : "") + (d.recent ? `\nבחצי השנה האחרונה: ${d.recent}` : "")
+      + (d.place ? `\nמקום: ${d.place}${d.town ? ", " + d.town : ""}` : "")
+      + `\nימים: ${d.days}\nשעות: ${d.slot}\nשם: ${d.name}\nטלפון: ${d.phone}${d.callback ? "\nמתי לחזור: " + d.callback : ""}`,
+    note: "הדגמה: השאלות קבועות מראש. אצלכם הן מותאמות לטיפולים שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+
+  // The swatch board: a treatment, a length and a shade repaint the head of hair and show the range.
+  const view = document.getElementById("headView"), cut = document.getElementById("cutPath"), result = document.getElementById("result");
+  const BOTTOM = { "קצר": 226, "עד הכתפיים": 328, "ארוך": 404, "ארוך מאוד": 476 };
+  const state = { kind: "צבע", length: "עד הכתפיים", shade: "4", colour: "#4a2a1f" };
+  function lighter(hex) { // the highlight tress: the shade mixed toward ash
+    const n = parseInt(hex.slice(1), 16), mix = (c) => Math.round(c + (214 - c) * .55);
+    return `rgb(${mix(n >> 16)}, ${mix((n >> 8) & 255)}, ${mix(n & 255)})`;
+  }
+  function draw() {
+    const y = BOTTOM[state.length];
+    cut.setAttribute("d", `M0 0 H300 V${y - 8} C250 ${y + 12} 200 ${y - 12} 150 ${y + 6} C100 ${y - 12} 50 ${y + 12} 0 ${y - 8} Z`);
+    view.style.setProperty("--hair", state.colour);
+    view.style.setProperty("--hl", lighter(state.colour));
+    view.classList.toggle("highlights", state.kind === "גוונים");
+    result.replaceChildren();
+    const h = document.createElement("h3"); h.textContent = `${state.kind}, שיער ${state.length}`;
+    const r = document.createElement("p"); r.className = "rng"; r.textContent = range(state.kind, state.length);
+    const p = document.createElement("p");
+    p.textContent = COLOUR(state.kind) ? `גוון ${state.shade} מהמניפה. את הגוון הסופי בוחרים יחד, מול השיער שלכם.` : "המחיר הסופי לפי עובי השיער, ונסגר איתי לפני שמתחילים.";
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn btn-velvet"; b.textContent = "להמשיך בצ׳אט";
+    b.addEventListener("click", () => bot.open({ kind: state.kind, length: state.length }));
+    result.append(h, r, p, b);
+  }
+  document.querySelectorAll("[data-group]").forEach((g) => g.addEventListener("click", (e) => {
+    const btn = e.target.closest("button"); if (!btn) return;
+    g.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
+    state[g.dataset.group] = btn.dataset.v; draw();
+  }));
+  document.querySelectorAll("[data-shade]").forEach((btn) => btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-shade]").forEach((x) => x.setAttribute("aria-pressed", String(x === btn)));
+    state.shade = btn.dataset.shade; state.colour = getComputedStyle(btn).getPropertyValue("--c").trim(); draw();
+  }));
+  draw();
+  document.querySelectorAll("[data-kind]").forEach((b) => b.addEventListener("click", () => bot.open({ kind: b.dataset.kind })));
+  Guides.load("../shared/guides/hair.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

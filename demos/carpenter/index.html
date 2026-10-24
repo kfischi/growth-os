@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>נגריית אלון · רחובות והסביבה</title>
+<script src="../shared/a11y.js" data-statement="../accessibility/"></script>
+<meta name="description" content="מטבחים, ארונות קיר ורהיטים בהתאמה, ותיקון דלתות, צירים ומגירות ברחובות והסביבה. שולחים בצ׳אט מה צריך ותמונה, והפרטים מגיעים לוואטסאפ.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2a241f">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Noto+Sans+Hebrew:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/phone.css">
+<style>
+  /* Object: the carpenter's shop drawing. A front elevation of a kitchen pencilled on birch plywood, with the
+     dimension lines in millimetres, and the cut list beside it: every board, its size, its edge.
+     Detail: מטר רץ, סנדוויץ׳ 18 מ״מ, פורמייקה, MDF צבוע, פורניר, ציר בולם, מסילה טלסקופית, קנט, מדידה בבית.
+     Bold move: the price list is the cut list. Each row is a board with its plywood edge showing (the layers),
+     and the measurements in mono. Birch and graphite, a walnut brown for the buttons, a pine green only on the
+     dimension lines. */
+  :root {
+    --birch: #f3f1ec;
+    --ply: #e6e0d6;
+    --graphite: #2a241f;
+    --walnut: #6a3b24;         /* the buttons and the one strong colour */
+    --walnut-deep: #522c1a;
+    --pine: #2f5d50;           /* the dimension lines */
+    --ink: #2a241f;
+    --ink-soft: #5a5149;
+    --line: #d9d2c7;
+    --display: "Rubik", "Arial Hebrew", system-ui, sans-serif;
+    --body: "Noto Sans Hebrew", "Arial Hebrew", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --phone-frame: var(--graphite);
+    --bot-bg: #fff; --bot-fg: var(--ink); --bot-line: var(--line); --bot-muted: var(--ink-soft);
+    --bot-accent: var(--walnut); --bot-accent-fg: #fff; --bot-them: #f1ede6; --bot-me: var(--graphite); --bot-me-fg: #fff;
+    --bot-font: var(--body); --bot-radius: 10px; --bot-radius-msg: 12px; --bot-focus: var(--graphite);
+    --guide-alert: var(--walnut);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 70px; }
+  body { margin: 0; background: var(--birch); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--walnut); outline-offset: 2px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 0; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 24px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer;
+    font-family: var(--body); font-size: 16.5px; border-radius: 999px; transition: transform .15s, background .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-main { background: var(--walnut); color: #fff; box-shadow: 0 16px 32px -14px rgba(106,59,36,.85), 0 2px 6px -2px rgba(106,59,36,.4); }
+  .btn-main:hover { background: var(--walnut-deep); }
+  .btn-main:focus-visible { outline-color: var(--ink); }
+  .btn-ghost { background: #fff; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn-ghost:hover { box-shadow: inset 0 0 0 1.5px var(--walnut); }
+
+  .demo { background: var(--graphite); color: #d6cfc6; font-size: 13px; text-align: center; padding: 7px 16px; }
+  .demo a { color: #fff; }
+  .top { position: sticky; top: 0; z-index: 40; background: rgba(243,241,236,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; }
+  .logo { font-family: var(--display); font-weight: 800; font-size: 23px; line-height: 1; display: flex; align-items: center; gap: 10px; white-space: nowrap; letter-spacing: -.02em; }
+  .logo .n2 { color: var(--ink-soft); font-weight: 700; font-size: .74em; }
+  /* the logo mark: a board end, its plywood layers */
+  .logo .k { width: 26px; height: 22px; border-radius: 3px; background: repeating-linear-gradient(180deg, #c9b79c 0 3px, #8a6a4c 3px 4px); box-shadow: inset 0 0 0 1.5px var(--walnut); }
+  .top-a { display: flex; gap: 8px; align-items: center; }
+  .top-a .btn { min-height: 40px; padding: 8px 16px; font-size: 15px; }
+  .top-a .btn-main { box-shadow: none; }
+
+  /* ---------- Smart luxury (the owner's direction): light birch top, big tight type, the shop drawing large in a
+     rounded frame with glass cards built from the page's own facts, the main button glowing, one entrance motion. */
+  .hero { position: relative; overflow: hidden; background: var(--birch);
+    background-image: radial-gradient(55% 65% at 6% 10%, rgba(47,93,80,.12), transparent 70%), radial-gradient(45% 55% at 96% 0%, rgba(106,59,36,.10), transparent 70%); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); grid-template-areas: "kick win" "h1 win" "lede win" "cta win" "facts win"; column-gap: 56px; align-items: center; padding: 48px 0 0; }
+  .kicker { grid-area: kick; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; color: var(--ink-soft); font-size: 15px; margin-bottom: 16px; }
+  .kicker .now { display: inline-flex; align-items: center; gap: 8px; color: var(--pine); font-weight: 700; }
+  .kicker .now i { width: 9px; height: 9px; border-radius: 50%; background: var(--pine); box-shadow: 0 0 0 3px rgba(47,93,80,.18); }
+  .hero h1 { grid-area: h1; font-size: clamp(40px, 5vw, 66px); line-height: 1.02; letter-spacing: -.03em; margin-bottom: 20px; }
+  .hero h1 em { display: block; font-style: normal; font-weight: 700; font-size: .44em; letter-spacing: -.02em; line-height: 1.25; color: var(--ink-soft); margin-top: 16px; }
+  .hero h1 em b { color: var(--walnut); font-weight: 800; }
+  .lede { grid-area: lede; font-size: 18.5px; max-width: 44ch; margin: 0 0 26px; color: var(--ink-soft); }
+  .ctas { grid-area: cta; display: flex; gap: 10px; flex-wrap: wrap; }
+  .facts { grid-area: facts; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 40px 0 0; padding: 22px 0 54px; border-top: 1px solid var(--line); }
+  .facts > div { border-inline-start: 1px solid var(--line); padding: 2px 16px 0; min-width: 0; }
+  .facts > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .facts dt { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.15; letter-spacing: -.02em; color: var(--walnut); }
+  .facts dd { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.4; }
+  .win { grid-area: win; position: relative; align-self: center; aspect-ratio: 1 / 1; width: 100%; max-width: 520px; justify-self: center; }
+  .frame-l { position: absolute; inset: 6% 0 16% 8%; border-radius: 34px; overflow: hidden; background: #ebe5db;
+    box-shadow: 0 0 0 1px var(--line), 0 50px 90px -46px rgba(42,36,31,.6), 0 12px 24px -16px rgba(106,59,36,.25); }
+  .frame-l svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .glass { position: absolute; z-index: 5; background: rgba(255,255,255,.84); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.7);
+    border-radius: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 26px 50px -28px rgba(42,36,31,.55), 0 4px 12px -6px rgba(106,59,36,.18); padding: 14px 16px; color: var(--ink);
+    animation: lift .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes lift { from { opacity: 0; transform: translateY(18px) scale(.98); } }
+  .g-note { top: 0; inset-inline-end: 0; width: min(52%, 250px); display: grid; gap: 6px; animation-delay: .3s; }
+  .g-note p { margin: 0; padding: 8px 11px; border-radius: 14px; font-size: 13.5px; line-height: 1.4; }
+  .g-note .q { background: #f1ede6; justify-self: end; border-end-end-radius: 4px; }
+  .g-note .a { background: var(--walnut); color: #fff; border-end-start-radius: 4px; }
+  .g-jobs { bottom: 0; inset-inline-start: 6%; width: min(300px, 60%); display: grid; gap: 2px; animation-delay: .15s; }
+  .g-jobs .h { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .g-jobs div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 14.5px; }
+  .g-jobs div b { font-weight: 700; } .g-jobs div span { font-weight: 700; color: var(--walnut); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .g-step { top: 48%; inset-inline-start: -18px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; font-size: 14px; animation-delay: .45s; }
+  .g-step i { width: 30px; height: 30px; border-radius: 9px; flex: none; background: var(--pine); position: relative; }
+  .g-step i::before { content: ""; position: absolute; inset: 9px 6px; border-top: 2px solid #fff; border-bottom: 2px solid #fff; }
+  .g-step b { display: block; font-size: 14.5px; }
+
+  main > section { padding-block: 88px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 12px 24px; flex-wrap: wrap; margin-bottom: 30px; }
+  .head h2 { font-size: clamp(34px, 4.6vw, 56px); }
+  .head p { margin: 0; color: var(--ink-soft); max-width: 44ch; font-size: 16px; }
+
+  /* The cut list: one board per job, its plywood edge on the start side, the measure in mono */
+  .cut { display: grid; gap: 10px; }
+  .cut-h { display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px auto; gap: 18px; padding: 0 22px 4px; font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .bd { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 22px minmax(0, 1fr) 130px auto; gap: 6px 18px; align-items: center; width: 100%;
+    padding: 18px 22px; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--line), 0 18px 30px -26px rgba(42,36,31,.5); transition: box-shadow .15s, transform .15s; }
+  .bd::before { content: ""; align-self: stretch; min-height: 44px; border-radius: 3px; background: repeating-linear-gradient(180deg, #d8c7ab 0 4px, #9b7a59 4px 5px); box-shadow: inset 0 0 0 1px rgba(82,44,26,.35); }
+  .bd:hover { box-shadow: 0 0 0 1.5px var(--walnut), 0 18px 30px -22px rgba(42,36,31,.5); }
+  .bd:focus-visible { outline: 3px solid var(--walnut); outline-offset: 2px; }
+  .bd b { display: block; font-size: 18.5px; line-height: 1.3; }
+  .bd > span > span { display: block; color: var(--ink-soft); font-size: 15px; line-height: 1.45; }
+  .bd .ms { font-weight: 500; font-size: 14px; color: var(--pine); }
+  .bd .pr { text-align: left; font-weight: 700; font-size: 17px; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--walnut); }
+  .bd .pr small { display: block; font-weight: 400; font-size: 13px; color: var(--ink-soft); }
+  .how { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 22px 4px 0; font-size: 15.5px; color: var(--ink-soft); }
+  .how span { display: inline-flex; align-items: center; gap: 8px; }
+  .how span::before { content: ""; width: 14px; height: 2px; background: var(--pine); }
+
+  .calc { background: var(--graphite); color: #fff;
+    --bot-bg: #362f29; --bot-fg: #fff; --bot-line: #564c43; --bot-muted: #d6cfc6; --bot-accent: #fff; --bot-accent-fg: var(--graphite); --bot-focus: #fff; }
+  .calc .head p { color: #d6cfc6; }
+  .calc .est-out { box-shadow: 0 30px 60px -30px rgba(0,0,0,.6); }
+
+  .guides { background: var(--ply); }
+  .owner { background: #fff; }
+  .owner-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 56px; align-items: center; }
+  .owner ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 24px; counter-reset: s; }
+  .owner li { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 16px; }
+  .owner li::before { counter-increment: s; content: counter(s); width: 48px; height: 48px; border-radius: 10px; background: var(--graphite); display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 20px; color: #fff; }
+  .owner li b { display: block; font-size: 19px; }
+  .owner li span { color: var(--ink-soft); font-size: 15.5px; }
+  .owner .ph-cap { color: var(--ink-soft); }
+
+  footer { padding-block: 34px 160px; color: var(--ink-soft); font-size: 14px; } /* clear the floating chat and accessibility buttons */
+  footer .row { display: flex; justify-content: space-between; gap: 10px 16px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+  footer nav { display: flex; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); column-gap: 28px; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+    .facts > div:nth-child(3) { border-inline-start: 0; padding-inline-start: 0; }
+    .g-note { width: min(62%, 220px); }
+    .g-step { display: none; }
+    .owner-grid { grid-template-columns: minmax(0, 1fr); }
+    .owner .phone { margin-inline: auto; }
+  }
+  @media (max-width: 760px) {
+    .cut-h { display: none; }
+    .bd { grid-template-columns: 12px minmax(0, 1fr); padding: 16px; }
+    .bd .ms, .bd .pr { grid-column: 2; text-align: right; }
+    .bd .pr { font-size: 16px; }
+    .bd .pr small { display: inline; margin-inline-start: 6px; }
+  }
+  @media (max-width: 640px) {
+    .top .wrap { min-height: 56px; }
+    .logo { font-size: 20px; }
+    .top-a .btn-main { display: none; }
+    .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kick" "h1" "lede" "cta" "win" "facts"; padding-top: 26px; }
+    .kicker { font-size: 13.5px; }
+    .hero h1 { font-size: clamp(38px, 10.5vw, 48px); margin-bottom: 14px; }
+    .hero h1 em { font-size: 20px; margin-top: 12px; }
+    .lede { font-size: 16.5px; margin-bottom: 22px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .win { margin-top: 30px; max-width: 390px; aspect-ratio: 1 / 1.08; }
+    .frame-l { inset: 0 0 26% 0; border-radius: 28px; }
+    .g-note { top: auto; bottom: 0; inset-inline-end: 0; width: 46%; }
+    .g-jobs { bottom: 0; inset-inline-start: 0; width: 56%; padding: 12px; }
+    .g-jobs div { font-size: 13px; }
+    .g-note p { font-size: 12.5px; }
+    .g-note .q { display: none; }
+    .facts { margin-top: 26px; padding-bottom: 40px; }
+    .facts dt { font-size: 19px; }
+    main > section { padding-block: 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass { animation: none; } .btn, .bd { transition: none; } }
+  html.a11y-still .glass { animation: none; }
+</style>
+</head>
+<body>
+<div class="demo">דמו · העסק בדוי. כאן ההודעה בוואטסאפ מגיעה אלינו. אצלכם היא תגיע אליכם. <a href="../build/?t=other">לבנות אתר כזה</a> · <a href="../all/">לכל הדמואים</a></div>
+
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><span class="k" aria-hidden="true"></span><span data-edit="name1">נגריית אלון</span><span class="n2" data-edit="name2">מטבחים וארונות</span></div>
+    <div class="top-a">
+      <button class="btn btn-main" type="button" data-open-bot>מה צריך?</button>
+      <a class="btn btn-ghost" href="#" data-wa="היי, הגעתי מהאתר ויש לי שאלה על עבודת נגרות">וואטסאפ</a>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="kicker"><span class="now"><i aria-hidden="true"></i>קובעים מדידות לחודש הקרוב</span><span>רחובות · נס ציונה · ראשון לציון · יבנה</span></div>
+    <h1><span data-edit="h1a">מטבח, ארון או מגירה שנתקעה?</span> <em data-edit="h1b">שולחים תמונה, ו<b>אני חוזר עם זמן למדידה.</b></em></h1>
+    <p class="lede">כמה שאלות ותמונה של הקיר או של מה שנשבר. הפרטים מגיעים אליי גם כשאני בנגרייה, ואת המחיר אני נותן בכתב אחרי מדידה.</p>
+    <div class="ctas">
+      <button class="btn btn-main" type="button" data-open-bot>לתאר מה צריך</button>
+      <a class="btn btn-ghost" href="#calc">כמה עולה מטבח?</a>
+    </div>
+    <dl class="facts">
+      <div><dt>22 שנה</dt><dd>נגר ברחובות והסביבה</dd></div>
+      <div><dt>מדידה בבית</dt><dd>שרטוט ומחיר בכתב</dd></div>
+      <div><dt>נגרייה משלי</dt><dd>מייצר ומרכיב בעצמי</dd></div>
+      <div><dt>גם תיקונים</dt><dd>צירים, מגירות ודלתות</dd></div>
+    </dl>
+    <div class="win">
+      <div class="frame-l">
+        <svg viewBox="0 0 400 400" role="img" aria-label="שרטוט של מטבח: ארונות עליונים ותחתונים עם מגירות, וקווי מידה">
+          <defs>
+            <pattern id="grain" width="400" height="14" patternUnits="userSpaceOnUse"><path d="M0 7 Q100 3 200 7 T400 7" stroke="#ddd3c3" stroke-width="1" fill="none"/></pattern>
+          </defs>
+          <rect x="-200" y="-200" width="800" height="800" fill="#ebe5db"/>
+          <rect x="-200" y="-200" width="800" height="800" fill="url(#grain)"/>
+          <!-- the wall line and the floor -->
+          <path d="M40 330 H372" stroke="#2a241f" stroke-width="2.5"/>
+          <!-- upper cabinets -->
+          <g fill="#f8f5f0" stroke="#2a241f" stroke-width="2">
+            <rect x="60" y="70" width="96" height="92" rx="2"/><rect x="156" y="70" width="96" height="92" rx="2"/><rect x="252" y="70" width="96" height="92" rx="2"/>
+          </g>
+          <g stroke="#6a3b24" stroke-width="3" stroke-linecap="round"><path d="M146 140 v14"/><path d="M166 140 v14"/><path d="M338 140 v14"/></g>
+          <!-- the hood gap and backsplash -->
+          <rect x="60" y="162" width="288" height="66" fill="#e2dacd"/>
+          <!-- countertop -->
+          <rect x="54" y="228" width="300" height="10" fill="#6a3b24"/>
+          <!-- lower cabinets: a door, a stack of drawers, a door -->
+          <g fill="#f8f5f0" stroke="#2a241f" stroke-width="2">
+            <rect x="60" y="238" width="96" height="84" rx="2"/>
+            <rect x="156" y="238" width="96" height="26" rx="2"/><rect x="156" y="264" width="96" height="29" rx="2"/><rect x="156" y="293" width="96" height="29" rx="2"/>
+            <rect x="252" y="238" width="96" height="84" rx="2"/>
+          </g>
+          <rect x="60" y="322" width="288" height="8" fill="#2a241f"/>
+          <g stroke="#6a3b24" stroke-width="3" stroke-linecap="round"><path d="M188 251 h32"/><path d="M188 278 h32"/><path d="M188 307 h32"/><path d="M146 250 v14"/><path d="M262 250 v14"/></g>
+          <!-- a drawer pulled out a little, the telescopic slide -->
+          <path d="M156 293 l-10 8 h96 l10 -8" fill="none" stroke="#2f5d50" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <!-- dimension lines -->
+          <g stroke="#2f5d50" stroke-width="1.4" fill="none">
+            <path d="M60 46 H348"/><path d="M60 40 v12"/><path d="M348 40 v12"/>
+            <path d="M376 238 V330"/><path d="M370 238 h12"/><path d="M370 330 h12"/>
+            <path d="M24 70 V162"/><path d="M18 70 h12"/><path d="M18 162 h12"/>
+          </g>
+          <g font-family="IBM Plex Mono, monospace" font-size="13" fill="#2f5d50" text-anchor="middle">
+            <rect x="174" y="37" width="52" height="18" fill="#ebe5db"/><text x="200" y="50">3000</text>
+            <rect x="364" y="274" width="24" height="20" fill="#ebe5db"/><text x="376" y="289" font-size="12">900</text>
+            <rect x="12" y="106" width="24" height="20" fill="#ebe5db"/><text x="24" y="121" font-size="12">720</text>
+          </g>
+          <!-- the hinge callout -->
+          <circle cx="252" cy="116" r="15" fill="none" stroke="#2f5d50" stroke-width="1.6"/>
+          <path d="M262 104 L292 186" stroke="#2f5d50" stroke-width="1.2"/>
+          <!-- the board's edge, a corner sample of plywood layers -->
+          <g transform="translate(300 352)">
+            <rect width="72" height="22" rx="2" fill="#d8c7ab" stroke="#522c1a" stroke-width="1"/>
+            <g stroke="#9b7a59" stroke-width="1"><path d="M0 4.5 H72"/><path d="M0 8.5 H72"/><path d="M0 12.5 H72"/><path d="M0 16.5 H72"/></g>
+          </g>
+          <text x="292" y="368" font-family="IBM Plex Mono, monospace" font-size="12" fill="#5a5149" text-anchor="end">18 מ״מ</text>
+        </svg>
+      </div>
+      <div class="glass g-note" aria-hidden="true"><p class="q">ארון קיר לחדר שינה, 2.5 מטר</p><p class="a">שלחו תמונה של הקיר. אני חוזר עם זמן למדידה.</p></div>
+      <div class="glass g-step" aria-hidden="true"><i></i><span><b>מדידה בבית</b>שרטוט ומחיר בכתב</span></div>
+      <div class="glass g-jobs" aria-hidden="true"><span class="h">מחירים לדוגמה · למטר רץ</span><div><b>מטבח</b><span>3,500 עד 6,500 ₪</span></div><div><b>ארון קיר</b><span>1,800 עד 3,200 ₪</span></div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="prices">
+    <div class="wrap">
+      <div class="head"><h2>מה בונים?</h2><p>מחירים לדוגמה. לוחצים על שורה, והצ׳אט נפתח איתה. המחיר הסופי בכתב, אחרי מדידה.</p></div>
+      <div class="cut">
+        <div class="cut-h" aria-hidden="true"><span></span><span>עבודה</span><span>יחידה</span><span>מחיר</span></div>
+        <button class="bd" type="button" data-pre='{"job":"מטבח"}'><span><b>מטבח</b><span>ארונות תחתונים ועליונים, בלי משטח. פורמייקה, צבע או פורניר</span></span><span class="ms">למטר רץ</span><span class="pr">3,500 עד 6,500 ₪<small>לפי הגימור</small></span></button>
+        <button class="bd" type="button" data-pre='{"job":"ארון קיר"}'><span><b>ארון קיר</b><span>עד התקרה, דלתות ציר או הזזה, והפנים לפי מה ששומרים בו</span></span><span class="ms">למטר רץ</span><span class="pr">1,800 עד 3,200 ₪<small>לפי הדלתות</small></span></button>
+        <button class="bd" type="button" data-pre='{"job":"רהיט בהתאמה"}'><span><b>רהיט בהתאמה</b><span>ספרייה, מזנון, נישה או שולחן עבודה, לפי המידה של הקיר</span></span><span class="ms">לפי שרטוט</span><span class="pr">2,500 עד 9,000 ₪<small>לרהיט</small></span></button>
+        <button class="bd" type="button" data-pre='{"job":"צירים בולמים"}'><span><b>צירים בולמים</b><span>מחליפים את הצירים במטבח קיים, והדלתות נסגרות בשקט</span></span><span class="ms">למטבח</span><span class="pr">600 עד 1,200 ₪<small>לפי הכמות</small></span></button>
+        <button class="bd" type="button" data-pre='{"job":"תיקון מגירה או ציר"}'><span><b>מגירה או ציר</b><span>מגירה שיצאה מהמסילה, מסילה שבורה, ציר שנתלש מהדלת</span></span><span class="ms">לביקור</span><span class="pr">250 עד 450 ₪<small>כולל חלקים נפוצים</small></span></button>
+        <button class="bd" type="button" data-pre='{"job":"תיקון דלת פנים"}'><span><b>דלת פנים</b><span>דלת שלא נסגרת, משפשפת ברצפה, או ידית רופפת</span></span><span class="ms">לדלת</span><span class="pr">250 עד 500 ₪<small>לפי התקלה</small></span></button>
+      </div>
+      <p class="how"><span>מדידה בבית</span><span>שרטוט ומחיר בכתב</span><span>ייצור בנגרייה</span><span>הרכבה וניקיון בסוף</span></p>
+    </div>
+  </section>
+
+  <section class="calc" id="calc">
+    <div class="wrap">
+      <div class="head"><h2>כמה זה יעלה?</h2><p>בוחרים עבודה ומידה, ורואים טווח. את המחיר הסופי נותנים בכתב אחרי מדידה בבית.</p></div>
+      <div data-estimate></div>
+    </div>
+  </section>
+
+  <section class="guides" id="guides">
+    <div class="wrap">
+      <div class="head"><h2>טיפים ומדריכים</h2><p>מה עושים כשמגירה או דלת נתקעו, ומה כדאי לדעת לפני שמזמינים מטבח.</p></div>
+      <div data-guides></div>
+    </div>
+  </section>
+
+  <section class="owner">
+    <div class="wrap">
+      <div class="head"><h2>מה בעל העסק מקבל</h2><p>נסו את הצ׳אט, והטלפון כאן יתעדכן.</p></div>
+      <div class="owner-grid">
+        <ol>
+          <li><div><b>הלקוח עונה על כמה שאלות</b><span>מה צריך, באיזה אורך, איזה גימור, מתי, ותמונה של הקיר. בלי טופס.</span></div></li>
+          <li><div><b>הפנייה מגיעה מסודרת לוואטסאפ</b><span>יודעים מראש אם זה מטבח שלם או ציר אחד, ומגיעים עם מה שצריך.</span></div></li>
+          <li><div><b>קובעים מדידה</b><span>באמצע חיתוך אי אפשר לענות לטלפון. הצ׳אט אוסף את הפרטים בינתיים.</span></div></li>
+        </ol>
+        <div>
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-top"><span class="ph-av">ר</span><div><b>רונית שמעוני</b><small>מהאתר</small></div></div>
+              <div class="ph-chat">
+                <span class="ph-day">היום</span>
+                <div class="ph-msg" id="ph-msg">פנייה מהאתר (דמו נגרות)
+מה צריך: ארון קיר
+אורך: 2 עד 4 מטר
+גימור: צבע (MDF צבוע)
+מתי: בחודש הקרוב
+יישוב: נס ציונה
+שם: רונית שמעוני
+טלפון: 052-7654321<time>21:40</time></div>
+              </div>
+            </div>
+          </div>
+          <div class="ph-cap">ככה הפנייה מגיעה לנגר</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap row">
+    <span>נגריית אלון · דף לדוגמה, העסק בדוי</span>
+    <nav><a href="../privacy/">פרטיות</a><a href="../accessibility/">נגישות</a><a href="../">רוצים דף כזה לעסק שלכם?</a></nav>
+  </div>
+</footer>
+
+<script src="../shared/leadbot.js"></script>
+<script src="../shared/guides.js"></script>
+<script src="../shared/estimate.js"></script>
+<script>
+  const REPAIR = ["תיקון מגירה או ציר", "תיקון דלת פנים"];
+  const SIZED = (d) => d.job === "מטבח" || d.job === "ארון קיר";
+  const BUILT = (d) => SIZED(d) || d.job === "רהיט בהתאמה";
+  const FIX = (d) => REPAIR.includes(d.job);
+  const FALLING = "ארון עליון זז מהקיר";
+  const RANGES = { "מטבח": "מטבח עולה בדרך כלל 3,500 עד 6,500 ₪ למטר רץ, לפי הגימור", "ארון קיר": "ארון קיר עולה בדרך כלל 1,800 עד 3,200 ₪ למטר רץ",
+    "רהיט בהתאמה": "רהיט בהתאמה עולה בדרך כלל 2,500 עד 9,000 ₪, לפי השרטוט", "צירים בולמים": "החלפת צירים במטבח עולה בדרך כלל 600 עד 1,200 ₪",
+    "תיקון מגירה או ציר": "תיקון מגירה או ציר עולה בדרך כלל 250 עד 450 ₪", "תיקון דלת פנים": "תיקון דלת פנים עולה בדרך כלל 250 עד 500 ₪" };
+  const bot = LeadBot.init({
+    whatsapp: "972526359513",
+    name: "אלון · נגרות", subtitle: "חוזר אליכם עם זמן למדידה", initial: "א", launcher: "מה צריך?", hint: "נציג AI",
+    greet: "היי, כאן אלון מהנגרייה.\nכמה שאלות קצרות, והפרטים מגיעים אליי בוואטסאפ.",
+    steps: [
+      { key: "job", label: "מה צריך", ask: "מה צריך?", chips: ["מטבח", "ארון קיר", "רהיט בהתאמה", "צירים בולמים", ...REPAIR] },
+      { key: "size", label: "אורך", ask: "כמה מטר בערך, לאורך הקיר?", chips: ["עד 2 מטר", "2 עד 4 מטר", "יותר מ-4 מטר", "עוד לא מדדנו"], show: SIZED },
+      { key: "finish", label: "גימור", ask: "איזה גימור אתם רואים?", chips: ["פורמייקה", "צבע (MDF צבוע)", "פורניר עץ", "עוד לא יודעים"], show: BUILT },
+      { key: "issue", label: "מה קורה", ask: "מה בדיוק קורה?", chips: ["לא נסגר עד הסוף", "נתלש מהמקום", "משפשף או נתקע", FALLING], show: FIX,
+        tip: { when: (v) => v === FALLING, id: "loose-cabinet", text: "בינתיים: מוציאים מהארון את הכלים, לא נשענים עליו ולא מנסים להבריג אותו לבד. אם הוא זז, מתרחקים ממנו." } },
+      { key: "when", label: "מתי", ask: "מתי תרצו להתחיל?", chips: ["בחודש הקרוב", "בעוד חודשיים או שלושה", "רק בודקים מחיר"], show: (d) => !FIX(d) },
+      { key: "soon", label: "מתי", ask: "מתי נוח לכם שאגיע?", chips: ["השבוע", "בשבועיים הקרובים", "לא דחוף"], show: FIX },
+      { key: "photo", label: "תמונה", ask: "יש תמונה של הקיר, של שרטוט או של מה שנשבר? כך אני מגיע מוכן.", photo: true },
+      { key: "city", label: "יישוב", ask: "באיזה יישוב?", input: "text", placeholder: "למשל: רחובות" },
+      { key: "name", label: "שם", ask: "איך קוראים לכם?", input: "text", placeholder: "שם" },
+      { key: "phone", label: "טלפון", ask: "לאיזה מספר לחזור?", input: "tel", placeholder: "050-1234567" },
+    ],
+    closing: (d) => `תודה ${d.name.split(" ")[0]}. רשמתי: ${d.job}${d.size ? ", " + d.size : ""}${d.finish ? ", " + d.finish : ""}${d.issue ? ", " + d.issue : ""}, ב${d.city}. ${RANGES[d.job] || ""}, והמחיר הסופי בכתב אחרי מדידה.\nלחצו למטה, ואחזור אליכם עם זמן ${FIX(d) ? "הגעה" : "למדידה"}.`,
+    summary: (d) => `פנייה מהאתר (דמו נגרות)\nמה צריך: ${d.job}${d.size ? "\nאורך: " + d.size : ""}${d.finish ? "\nגימור: " + d.finish : ""}${d.issue ? "\nמה קורה: " + d.issue : ""}\nמתי: ${d.when || d.soon}\nיישוב: ${d.city}\nשם: ${d.name}\nטלפון: ${d.phone}`,
+    note: "הדגמה: השאלות והמחירים קבועים מראש. אצלכם הם מותאמים למחירון שלכם.",
+    onDone: LeadPhone("#ph-msg"),
+  });
+  document.querySelectorAll("[data-pre]").forEach((b) => b.addEventListener("click", () => bot.open(JSON.parse(b.dataset.pre))));
+  const KITCHEN = ["מטבח בפורמייקה", "מטבח בצבע או פורניר"], CLOSET = ["ארון קיר, דלתות ציר", "ארון קיר, דלתות הזזה"], FIXES = ["מגירה או ציר", "דלת פנים"];
+  Estimate.init(document.querySelector("[data-estimate]"), {
+    pick: { ask: "מה בונים?", items: [
+      { label: "מטבח בפורמייקה", range: [3500, 4800], prefill: { job: "מטבח", finish: "פורמייקה" } },
+      { label: "מטבח בצבע או פורניר", range: [4500, 6500], prefill: { job: "מטבח" } },
+      { label: "ארון קיר, דלתות ציר", range: [1800, 2600], prefill: { job: "ארון קיר" } },
+      { label: "ארון קיר, דלתות הזזה", range: [2200, 3200], prefill: { job: "ארון קיר" } },
+      { label: "צירים בולמים למטבח", range: [600, 1200], prefill: { job: "צירים בולמים" } },
+      { label: "מגירה או ציר", range: [250, 450], prefill: { job: "תיקון מגירה או ציר" } },
+      { label: "דלת פנים", range: [250, 500], prefill: { job: "תיקון דלת פנים" } },
+    ] },
+    factors: [
+      { ask: "מה אורך הקיר, בערך?", for: KITCHEN, options: [
+        { label: "בערך 3 מטר", mul: 3, prefill: { size: "2 עד 4 מטר" } },
+        { label: "בערך 4.5 מטר", mul: 4.5, prefill: { size: "יותר מ-4 מטר" } },
+        { label: "מטבח פינתי, בערך 6 מטר", mul: 6, prefill: { size: "יותר מ-4 מטר" }, note: "במטבח פינתי סופרים את שני הקירות." },
+      ] },
+      { ask: "מה אורך הארון, בערך?", for: CLOSET, options: [
+        { label: "בערך 2 מטר", mul: 2, prefill: { size: "עד 2 מטר" } },
+        { label: "בערך 3 מטר", mul: 3, prefill: { size: "2 עד 4 מטר" } },
+        { label: "בערך 4 מטר", mul: 4, prefill: { size: "2 עד 4 מטר" } },
+      ] },
+      { ask: "כמה לתקן?", for: FIXES, options: [
+        { label: "אחד" },
+        { label: "שניים או שלושה", mul: [1.6, 2.2], note: "כמה תיקונים באותו ביקור יוצאים זולים יותר לכל אחד." },
+      ] },
+    ],
+    note: "טווח מקובל, לדוגמה. בלי משטח, כיור ומכשירי חשמל. המחיר הסופי בכתב, אחרי מדידה בבית.",
+    cta: "לפתוח פנייה עם זה",
+    onAsk: (prefill) => bot.open(prefill),
+  });
+  Guides.load("../shared/guides/carpenter.json", document.querySelector("[data-guides]"), { onAsk: () => bot.open() });
+</script>
+</body>
+</html>

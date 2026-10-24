@@ -106,7 +106,7 @@ for (const [w, h] of [[390, 844], [1280, 900]]) {
     await p.fill("#guide .other input", "אורן מים"); await p.click("#guide .other button");
     await nextQ(/באיזה אזור/);
     await p.click("#guide .chip >> nth=0"); // the first region
-    await nextQ(/לאילו ישובים/);
+    await nextQ(/לאילו יישובים/);
     assert.ok(await p.$eval("#guide .chip[aria-pressed=true]", (e) => Boolean(e)), "the region's towns come ticked");
     await p.screenshot({ path: `/tmp/qa-page/builder-guide-${w}.png` }).catch(() => {});
     await p.fill("#guide .other input", "גבעת חיים"); await p.click("#guide .other button");

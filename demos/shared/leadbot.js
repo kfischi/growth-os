@@ -307,8 +307,12 @@
         const closing = cfg.closing ? cfg.closing(data) : "תודה! הנה סיכום הפנייה.";
         botSay(closing, () => {
           const card = el("div", "lb-card"); const dl = el("dl");
+          // One row per key, from a step that was actually asked.
+          const shown = new Set();
           cfg.steps.forEach((s) => {
-            if (!s.label || data[s.key] == null) return;
+            if (!s.label || data[s.key] == null || shown.has(s.key)) return;
+            if (s.show && !s.show(data)) return;
+            shown.add(s.key);
             const row = el("div"); row.append(el("dt", null, s.label), el("dd", null, data[s.key])); dl.appendChild(row);
           });
           card.appendChild(dl);

@@ -93,7 +93,7 @@ export default async (req) => {
     });
 
     if (response.stop_reason === "refusal") {
-      return json({ reply: "על זה אני לא יכול לענות כאן. נשמח לעזור בוואטסאפ. [[whatsapp:היי, יש לי שאלה מהאתר]]" });
+      return json({ reply: "על זה לא נוכל לענות כאן. נשמח לעזור בוואטסאפ. [[whatsapp:היי, יש לי שאלה מהאתר]]" });
     }
     const reply = response.content.filter((b) => b.type === "text").map((b) => b.text).join("").trim();
     if (!reply) return json({ error: "empty_reply" }, 502);
