@@ -23,6 +23,7 @@ To launch one:
 | פיזיותרפיה | `demos/physio/` | מיכל אורן · פיזיותרפיה (מודיעין) |
 | קייטרינג | `demos/catering/` | המטבח של רונית · קייטרינג ביתי (פתח תקווה) |
 | DJ לאירועים | `demos/dj/` | DJ עומר לוי (חיפה והצפון) |
+| עוגות מעוצבות (קונדיטורית ביתית) | `demos/cakes/` | המתוקים של נוי · עוגות מעוצבות (הוד השרון) |
 
 ## Image prompts
 
@@ -77,3 +78,8 @@ Every prompt is realistic, in an Israeli setting, with no faces, no text or logo
 1. Hero, 4:5: A small phone repair bench in an Israeli shop, a blue anti-static mat with a printed grid, an opened smartphone with its cracked screen lifted on a flex cable, precision screwdrivers, a suction cup and tiny screws laid out in order, a magnifier lamp's cool white light, a window with soft Negev daylight in the background, realistic macro photo, no faces, no text, no logos, no yellow.
 2. Work: A technician's gloved hands replacing a smartphone battery with plastic tweezers on a blue anti-static mat, the phone's back panel off, clean and orderly, realistic close-up photo, no faces, no visible text or logos, no yellow.
 3. Work: An opened laptop on a repair bench with its bottom panel removed, a new SSD drive being fitted, a small brush and compressed air can nearby, neutral grey and blue tones, realistic photo, no faces, no text, no logos, no brand marks, no yellow.
+
+### Cakes
+1. Hero, 4:5: A two-tier designed cake on a white cake stand on the counter of a bright Israeli home kitchen. Soft blush-pink buttercream, a dark chocolate drip on the top tier, fresh raspberries and blackberries on top, a ring of chopped pistachio around the base. Pale tiled backsplash, a piping bag and an offset spatula on the counter, soft window daylight, photorealistic, no people, no text or lettering on the cake, no logos, no yellow, cream or caramel tones.
+2. Work, 4:3: Hands in a dark apron piping small rosettes of pale pink cream on the edge of a cake on a turntable, only the hands and forearms show. A home kitchen counter with bowls of berries and pistachios, natural window light, shallow depth of field, photorealistic, no faces, no text, no logos, no yellow.
+3. Work, 4:3: A tray of individual desserts ready for pickup on an Israeli kitchen table: small glass cups of berry mousse, mini tartlets with raspberries, pistachio cubes, beside a closed white cake box. Late afternoon daylight, blush and cocoa palette, photorealistic, no people, no text or labels, no logos, no yellow.
