@@ -35,3 +35,7 @@ yarn-error.log*
 
 # supabase
 /supabase/.temp
+
+# Python caches (the ui-ux-pro-max skill's search script)
+__pycache__/
+*.pyc
