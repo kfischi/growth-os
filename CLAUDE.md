@@ -26,6 +26,7 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 | `seo-geo` | Weekly, by a scheduled run, or when asked about Google or AI assistants: audit, make 1 to 3 changes, open a draft PR. White hat only; the demos stay `noindex` |
 | `ai-view` | Monthly, or when asked how ChatGPT or another assistant sees the site: what a crawler without scripts reads (`scripts/seo/ai-view.cjs`), a cold reader that answers owners' questions from that alone, the real ChatGPT's answers when Kfir pastes them, then safe fixes. It simulates; it never claims what ChatGPT said |
 | `site-doctor` | Daily, by a scheduled run, or when something breaks: every check and contract between the parts, root-cause fixes with a test, a draft PR. Never touches real data or secrets |
+| `ui-ux-pro-max` | A second opinion on UX and accessibility (contrast, touch targets, focus, forms, motion, layout): a local search over 119 UX rules (MIT, installed 2026-10-25). Our rules come first: the locked home design, `web-design` for identity, no yellow, our own fonts, no GSAP; never its generic palettes or `--persist` |
 
 The **Hebrew editor** (`.claude/agents/hebrew-editor.md`, a subagent) proofreads any Hebrew before it ships: clarity first, then grammar and agreement, full spelling (יישוב, הכול, תוכנית), Hebrew punctuation (״ ׳), one voice per page or chat, an Israeli 2026 register and right-to-left mixing. It fixes plain language mistakes, never prices, facts, legal lines or the owner's locked lines, and reports the rest. Run it after any agent writes Hebrew.
 
