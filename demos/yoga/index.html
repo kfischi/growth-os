@@ -128,7 +128,7 @@
   .cls b { display: block; font-size: 15px; line-height: 1.3; margin-top: 3px; }
   .cls small { display: block; font-size: 12.5px; color: var(--ink-soft); }
   .cls[data-k="pilates"] { background: #f3eef4; }
-  html:not([data-c="pilates"]) .cls[data-k="pilates"], html[data-c="pilates"] .cls[data-k="yoga"] { opacity: .45; }
+  html:not([data-c="pilates"]) .cls[data-k="pilates"], html[data-c="pilates"] .cls[data-k="yoga"] { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
   html:not([data-c="pilates"]) .cls[data-k="yoga"], html[data-c="pilates"] .cls[data-k="pilates"] { box-shadow: inset 0 0 0 1.5px var(--sage); }
   .health { display: flex; gap: 12px; align-items: baseline; margin: 18px 4px 0; font-size: 15.5px; color: var(--ink); }
   .health::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--clay); transform: translateY(-1px); }
@@ -136,20 +136,20 @@
 
   /* The price board */
   .prices { background: var(--sage-deep); color: #fff; }
-  .prices .head p { color: #d6e2d8; }
+  .prices .head p { color: #e4ede6; }
   .board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
   .pc { all: unset; box-sizing: border-box; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 22px 20px; border-radius: 22px; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); transition: background .15s; }
   .pc:hover { background: rgba(255,255,255,.14); }
   .pc:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-  .pc small { font-size: 13.5px; color: #d6e2d8; }
+  .pc small { font-size: 13.5px; color: #e4ede6; }
   .pc b { font-size: 21px; line-height: 1.2; }
   .pc .pr { margin-top: auto; padding-top: 12px; font-weight: 800; font-size: 30px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-  .pc .pr span { font-size: 15px; font-weight: 500; color: #d6e2d8; margin-inline-start: 6px; }
+  .pc .pr span { font-size: 15px; font-weight: 500; color: #e4ede6; margin-inline-start: 6px; }
   .pc.hot { background: #fff; color: var(--ink); box-shadow: 0 30px 50px -30px rgba(0,0,0,.5); }
   .pc.hot small, .pc.hot .pr span { color: var(--ink-soft); }
   .pc.hot .pr { color: var(--plum); }
   .pc.hot:focus-visible { outline-color: var(--plum); }
-  .board-note { margin: 16px 4px 0; font-size: 15px; color: #d6e2d8; }
+  .board-note { margin: 16px 4px 0; font-size: 15px; color: #e4ede6; }
 
   /* Who teaches */
   .who-grid { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 60px; align-items: center; }

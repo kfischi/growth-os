@@ -28,7 +28,7 @@
   .ps>.ps-img{object-fit:cover;display:none;transform-origin:50% 50%;user-select:none;-webkit-user-drag:none;touch-action:none}
   .ps.has-img>.ps-img{display:block}
   .ps.has-img>.ps-ph,.ps.has-img>.ps-chip{visibility:hidden}
-  .ps-chip{position:absolute;bottom:8px;inset-inline-start:8px;z-index:2;font:500 11.5px/1.3 system-ui,sans-serif;background:rgba(0,0,0,.42);color:#fff;padding:3px 9px;border-radius:999px;max-width:calc(100% - 16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;backdrop-filter:blur(4px)}
+  .ps-chip{position:absolute;bottom:8px;inset-inline-start:8px;z-index:2;font:500 12.5px/1.3 system-ui,sans-serif;background:rgba(0,0,0,.55);color:#fff;padding:3px 9px;border-radius:999px;max-width:calc(100% - 16px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;backdrop-filter:blur(4px)}
   .ps-tools{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:none;gap:6px;align-items:center;background:rgba(17,17,17,.82);padding:5px;border-radius:999px;backdrop-filter:blur(6px);max-width:calc(100% - 12px)}
   .ps-tools button{border:0;background:#fff;color:#111;font:600 12.5px/1 system-ui,sans-serif;padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
   .ps-tools button.ps-reset{background:transparent;color:#fff}
