@@ -11,12 +11,14 @@
 //   - the owner taps "להסתיר" on a new testimonial: it comes off the site
 //   - the owner sends a voice note: it is written down and turned into the same commands (lib/voice.mjs), shown back
 //     with "לאשר" / "ביטול", and only "לאשר" (within 30 minutes, once) changes the site
+//   - the owner sends a photo of a finished job: "להוסיף לאתר?", and one tap puts it first in the site's work photos,
+//     its caption as the title (builder.mjs ownerPhoto)
 import { agentOn, agentReply } from "../lib/agent.mjs";
 import { voiceOn, fetchMedia, serviceNames, transcribe, checkLines, describe, VOICE_TTL_MIN } from "../lib/voice.mjs";
-import { ownerPrice, pricesText } from "../lib/builder.mjs";
+import { ownerPrice, pricesText, ownerPhotoPlan, ownerPhoto, MAX_PHOTO_BYTES } from "../lib/builder.mjs";
 import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
   sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink,
-  ownerCommand, addNote, forgetNote, notesText } from "../lib/leads.mjs";
+  ownerCommand, addNote, forgetNote, notesText, waMedia } from "../lib/leads.mjs";
 
 // What the site shows now, and how to change it.
 const availTip = (now) => now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
@@ -63,6 +65,39 @@ async function voiceConfirm(client, from, row) {
     catch (e) { console.error("voice command", e.message); answers.push(`לא הצלחנו לעדכן: ${describe(line)}. נסו שוב בעוד כמה דקות.`); }
   }
   await sendText(client, from, answers.filter(Boolean).join("\n\n") || "לא היה מה לעדכן.", { kind: "owner_reply" });
+}
+
+// A photo from the owner: ask before it goes on the site. Nothing is uploaded until "להוסיף לאתר".
+async function photoNote(client, from, m) {
+  const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
+  try {
+    const plan = await ownerPhotoPlan(client);
+    if (plan.reply) return void (await reply(plan.reply));
+    const title = clip(String(m.image.caption || "").replace(/\s+/g, " ").trim(), 120);
+    await db("PATCH", `ls_messages?wa_id=eq.${q(m.id)}&direction=eq.in`, { status: "pending", body: { type: "image", media: m.image.id, title } });
+    const lines = ["להוסיף את התמונה לאתר? היא תהיה ראשונה בעבודות האחרונות.",
+      title ? `הכותרת: "${title}"` : "בלי כותרת. כדי להוסיף כותרת, שלחו את התמונה שוב עם כיתוב.",
+      plan.full ? `באתר כבר יש 6 תמונות, אז האחרונה${plan.leaving ? ` ("${plan.leaving}")` : ""} תרד ממנו.` : "",
+      "רק תמונה שצילמתם או שמותר לכם לפרסם, בלי פנים של לקוחות ובלי מספר בית או רכב."];
+    await sendButtons(client, from, lines.filter(Boolean).join("\n"),
+      [{ id: "wphoto:" + m.id, title: "להוסיף לאתר" }, { id: "nophoto:" + m.id, title: "ביטול" }], { kind: "owner_reply" });
+  } catch (e) {
+    console.error("owner photo", e.message);
+    await reply("לא הצלחנו לקבל את התמונה. שלחו אותה שוב.");
+  }
+}
+
+// "להוסיף לאתר": the photo again from Meta (it keeps it for 30 days), then up on the site.
+async function photoConfirm(client, from, row) {
+  const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
+  try {
+    const got = await waMedia(client, row.body.media, MAX_PHOTO_BYTES * 5);
+    if (got.tooBig) return void (await reply("התמונה גדולה מדי. שלחו אותה שוב כתמונה רגילה (לא כקובץ)."));
+    await reply(await ownerPhoto(client, { buf: got.buf, title: row.body.title }));
+  } catch (e) {
+    console.error("owner photo confirm", e.message);
+    await reply("לא הצלחנו להעלות את התמונה עכשיו. שלחו אותה שוב בעוד כמה דקות.");
+  }
 }
 
 async function clientByPhoneId(id) {
@@ -194,22 +229,33 @@ async function onMessage(client, m) {
     return;
   }
 
-  // "לאשר" or "ביטול" on a voice note. The note's row moves from "pending" once, so a second tap does nothing.
-  const vc = from === client.owner_phone && /^(voice|novoice):([\w.+/=-]{4,200})$/.exec(payload || "");
+  // A photo of a finished job (builder.mjs ownerPhoto). Nothing goes up until "להוסיף לאתר".
+  if (from === client.owner_phone && m.type === "image" && m.image && m.image.id && client.active !== false) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { type: "image" } });
+    if (!fresh) return;
+    later.push(photoNote(client, from, m));
+    return;
+  }
+
+  // "לאשר" or "ביטול" on a voice note, "להוסיף לאתר" or "ביטול" on a photo. The note's row moves from "pending"
+  // once, so a second tap does nothing.
+  const vc = from === client.owner_phone && /^(voice|novoice|wphoto|nophoto):([\w.+/=-]{4,200})$/.exec(payload || "");
   if (vc) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload: clip(payload, 220) } });
     if (!fresh) return;
     const at = `ls_messages?wa_id=eq.${q(vc[2])}&client_slug=eq.${q(client.slug)}&direction=eq.in&from_phone=eq.${q(from)}`;
     const row = (await db("GET", `${at}&select=*`))[0];
+    if (row && (vc[1] === "wphoto" || vc[1] === "nophoto") !== ((row.body || {}).type === "image")) return; // not this kind's button
     if (!row || row.status !== "pending") return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
     if (Date.now() - new Date(row.created_at).getTime() > VOICE_TTL_MIN * 60_000) {
       await db("PATCH", `${at}&status=eq.pending`, { status: "expired" });
-      return void (await sendText(client, from, "עבר יותר מחצי שעה מההודעה הקולית, אז לא עדכנו כלום. שלחו אותה שוב.", { kind: "owner_reply" }));
+      return void (await sendText(client, from, `עבר יותר מחצי שעה מ${row.body && row.body.type === "image" ? "התמונה" : "ההודעה הקולית"}, אז לא עדכנו כלום. שלחו אותה שוב.`, { kind: "owner_reply" }));
     }
-    const [claimed] = await db("PATCH", `${at}&status=eq.pending`, { status: vc[1] === "voice" ? "confirmed" : "cancelled" }, "return=representation");
+    const yes = vc[1] === "voice" || vc[1] === "wphoto";
+    const [claimed] = await db("PATCH", `${at}&status=eq.pending`, { status: yes ? "confirmed" : "cancelled" }, "return=representation");
     if (!claimed) return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
-    if (vc[1] === "novoice") return void (await sendText(client, from, "בוטל. לא שינינו כלום.", { kind: "owner_reply" }));
-    later.push(voiceConfirm(client, from, claimed).catch((e) => console.error("voice confirm", e.message)));
+    if (!yes) return void (await sendText(client, from, "בוטל. לא שינינו כלום.", { kind: "owner_reply" }));
+    later.push((vc[1] === "wphoto" ? photoConfirm : voiceConfirm)(client, from, claimed).catch((e) => console.error("owner confirm", e.message)));
     return;
   }
 

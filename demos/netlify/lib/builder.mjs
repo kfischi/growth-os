@@ -1040,7 +1040,7 @@ export async function ownerPrice(client, { service, value }, { addNote } = {}) {
   if (!hits.length) hits = list.filter((x) => norm(x.name).includes(want) || want.includes(norm(x.name)));
   if (hits.length > 1) return `איזה מהם? ${hits.map((x) => x.name).join(" / ")}. כתבו שוב עם השם המלא.`;
   if (!hits.length) return `לא מצאנו את "${service}" באתר. השירותים באתר: ${list.map((x) => x.name).join(", ")}. כתבו שוב עם אחד מהשמות.`;
-  if (editing(d) && isDirty(d)) return "יש באתר שינויים מהבונה שעוד לא פורסמו. פרסמו אותם קודם (או בטלו), ואז שלחו שוב את המחיר.";
+  if (editing(d) && isDirty(d)) return "יש באתר שינויים מהבונה שעוד לא פורסמו. פרסמו אותם קודם (או בטלו אותם), ואז שלחו שוב את המחיר.";
   const t = templateOf(d);
   const next = list.map((x) => (x === hits[0] ? { ...x, price: value } : x));
   const { content, errors } = applyUpdate(t, d.content, { services: next });
@@ -1051,6 +1051,97 @@ export async function ownerPrice(client, { service, value }, { addNote } = {}) {
   try { const h = await hostSite(saved, saved.published_slug); if (!h.off) saved = await saveDraft(saved, h); } catch (e) { console.error("price hosting", e.message); }
   if (saved.package === "ai") await ensureLeadClient(saved, saved.published_slug).catch((e) => console.error("price lead client", e.message));
   return `עודכן: ${hits[0].name}, ${value}. האתר והצ׳אט מתעדכנים תוך דקה.`;
+}
+
+/**
+ * The owner sent a photo of a finished job on WhatsApp ("האתר מתעדכן מהרכב"). It becomes the first work photo on the
+ * live site; the others move one place down, and with all six full the last one leaves the site. The caption, cut
+ * to 34 characters, is its title. Only on a site built in the builder, and never while self edits wait unpublished.
+ */
+const workSlots = (t) => Object.keys(t.PHOTOS).filter((k) => /^work\d$/.test(k)).sort();
+async function liveDraft(client) {
+  return (await db("GET", `ls_drafts?published_slug=eq.${q(client.slug)}&status=eq.published&select=*&limit=1`))[0] || null;
+}
+// Before asking "להוסיף לאתר?": can it go up, and which photo would leave. { reply } when it can't.
+export async function ownerPhotoPlan(client) {
+  const d = await liveDraft(client);
+  if (!d) return { reply: "תמונות מהוואטסאפ נכנסות לאתר רק באתר שנבנה בבונה שלנו. כתבו לנו, ונוסיף את התמונה בשבילכם." };
+  if (editing(d) && isDirty(d)) return { reply: "יש באתר שינויים מהבונה שעוד לא פורסמו. פרסמו אותם קודם (או בטלו אותם), ואז שלחו שוב את התמונה." };
+  const slots = workSlots(templateOf(d)), last = slots[slots.length - 1];
+  const full = slots.every((k) => d.photos && d.photos[k]);
+  return { full, leaving: full ? clean(d.content[last + "_title"]) : "" };
+}
+
+// A photo keeps where and when it was taken: a JPEG in its APP1 (EXIF, XMP) and APP13 (IPTC) segments, a WebP in its
+// EXIF and XMP chunks. They never reach the site.
+export function stripJpegMeta(buf) {
+  if (photoType(buf) === "webp") {
+    const parts = [];
+    for (let i = 12; i + 8 <= buf.length;) {
+      const id = buf.toString("ascii", i, i + 4), end = Math.min(i + 8 + buf.readUInt32LE(i + 4) + (buf.readUInt32LE(i + 4) & 1), buf.length);
+      if (id !== "EXIF" && id !== "XMP ") {
+        const c = Buffer.from(buf.subarray(i, end));
+        if (id === "VP8X") c[8] &= ~0x0c; // no EXIF or XMP flag any more
+        parts.push(c);
+      }
+      i = end;
+    }
+    const body = Buffer.concat(parts), head = Buffer.from(buf.subarray(0, 12));
+    head.writeUInt32LE(body.length + 4, 4);
+    return Buffer.concat([head, body]);
+  }
+  if (photoType(buf) !== "jpg") return buf;
+  const parts = [buf.subarray(0, 2)];
+  let i = 2;
+  while (i + 4 <= buf.length && buf[i] === 0xff) {
+    const m = buf[i + 1];
+    if (m === 0xda) break; // the image data starts here
+    const len = buf.readUInt16BE(i + 2);
+    if (m !== 0xe1 && m !== 0xed) parts.push(buf.subarray(i, i + 2 + len));
+    i += 2 + len;
+  }
+  parts.push(buf.subarray(i));
+  return Buffer.concat(parts);
+}
+
+export async function ownerPhoto(client, { buf, title }) {
+  const plan = await ownerPhotoPlan(client);
+  if (plan.reply) return plan.reply;
+  const d = await liveDraft(client);
+  const ext = photoType(buf);
+  if (!ext) return "התמונה הזאת לא בפורמט שאנחנו מעלים. שלחו אותה שוב כתמונה רגילה (לא כקובץ).";
+  const clean1 = stripJpegMeta(buf);
+  if (clean1.length > MAX_PHOTO_BYTES) return "התמונה גדולה מדי. שלחו אותה שוב כתמונה רגילה (לא כקובץ).";
+  const t = templateOf(d), slots = workSlots(t);
+  const size = imageSize(clean1);
+  const photo = { ...await uploadPhoto(d.id, slots[0], clean1, ext), ...(size ? { w: size[0], h: size[1] } : {}) };
+  const photos = { ...(d.photos || {}) }, gone = photos[slots[slots.length - 1]];
+  const set = [];
+  for (let n = slots.length - 1; n > 0; n--) {
+    if (photos[slots[n - 1]]) photos[slots[n]] = photos[slots[n - 1]]; else delete photos[slots[n]];
+    set.push({ field: slots[n] + "_title", value: d.content[slots[n - 1] + "_title"] || "" });
+  }
+  photos[slots[0]] = photo;
+  set.push({ field: slots[0] + "_title", value: cutWords(clean(title), t.FIELDS[slots[0] + "_title"].max) });
+  const { content, errors } = applyUpdate(t, d.content, { set });
+  if (errors.length) { await deletePhotos([photo.path]); return "לא הצלחנו להוסיף את התמונה: " + errors.join(" "); }
+  let saved;
+  try {
+    saved = await saveDraft(d, { content, photos, photo_rev: d.photo_rev + 1, photo_rights_at: d.photo_rights_at || new Date().toISOString(),
+      live: snapshot({ ...d, content, photos }) });
+  } catch (e) { await deletePhotos([photo.path]); throw e; }
+  const sha = await publishToRepo(saved, saved.published_slug, `Update clients/${saved.published_slug}: a work photo from the owner's WhatsApp\n\nDraft ${saved.id}.`);
+  saved = await saveDraft(saved, { published_sha: sha, published_at: new Date().toISOString() });
+  try { const h = await hostSite(saved, saved.published_slug); if (!h.off) saved = await saveDraft(saved, h); } catch (e) { console.error("photo hosting", e.message); }
+  if (gone) await releaseMedia(saved, [gone.path]);
+  return `התמונה${content[slots[0] + "_title"] ? ` ("${content[slots[0] + "_title"]}")` : ""} נוספה לאתר, ראשונה בעבודות האחרונות, ותופיע בו תוך דקה בערך.`;
+}
+
+// Cut at a word, never in the middle of one.
+function cutWords(s, max) {
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max + 1), sp = cut.lastIndexOf(" ");
+  return (sp > max / 2 ? cut.slice(0, sp) : s.slice(0, max)).trim();
 }
 
 export const pricesText = async (client) => {
