@@ -756,6 +756,47 @@ export async function buildReport(client, month, { send = true, now = new Date()
 }
 
 // The weekly update, for owners who asked for it (ls_clients.weekly_report): the seven days that just ended.
+/* ---------------- questions the chats could not answer (0022_unanswered.sql) ---------------- */
+
+// Only the question: anything that looks like a phone, an e-mail or a link is cut out, and it is kept short.
+export function cleanQuestion(text) {
+  const t = String(text || "").replace(/https?:\/\/\S+|\S+@\S+\.\S+|\+?\d[\d\s-]{6,}\d/g, " ").replace(/[<>[\]|]/g, " ").replace(/\s+/g, " ").trim();
+  return t.length >= 3 ? clip(t, 160) : "";
+}
+const sameQuestion = (s) => s.replace(/[\s?!.,"׳״'-]/g, "");
+
+// A question the facts don't answer. The same question twice in a week is one line, with a count.
+export async function recordUnanswered(client, text, source = "site") {
+  const question = cleanQuestion(text);
+  if (!question) return false;
+  await db("POST", "ls_unanswered", { client_slug: client.slug, question, source });
+  return true;
+}
+
+// Sunday morning: the week's questions to every owner who has the digest on, the most asked first, and the old
+// ones deleted. questions_digest: {{1}} how many, {{2}} the questions joined by " · " (a template parameter can't
+// hold a line break).
+export const DIGEST_MAX = 6;
+export async function runQuestionDigests(now = new Date()) {
+  const since = new Date(now - 7 * 86_400_000).toISOString();
+  await db("DELETE", `ls_unanswered?created_at=lt.${q(new Date(now - 30 * 86_400_000).toISOString())}`).catch((e) => console.error("unanswered cleanup", e.message));
+  const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&questions_digest=eq.true&select=*");
+  const out = [];
+  for (const c of clients) {
+    try {
+      const rows = await db("GET", `ls_unanswered?client_slug=eq.${q(c.slug)}&created_at=gte.${q(since)}&select=question&order=created_at.desc&limit=200`);
+      const seen = new Map();
+      for (const r of rows) { const k = sameQuestion(r.question); const x = seen.get(k); if (x) x.n++; else seen.set(k, { q: r.question, n: 1 }); }
+      const top = [...seen.values()].sort((a, b) => b.n - a.n).slice(0, DIGEST_MAX);
+      if (!top.length) { out.push({ client: c.slug, questions: 0 }); continue; }
+      const list = clip(top.map((x) => x.q.replace(/[?.!]*$/, "?") + (x.n > 1 ? (x.n === 2 ? " (פעמיים)" : ` (${x.n} פעמים)`) : "")).join(" · "), 700);
+      const sent = await sendTemplate(c, c.owner_phone, c.tpl_questions_digest || "questions_digest", [String(seen.size), { text: list, max: 700 }], { kind: "questions" });
+      out.push({ client: c.slug, questions: seen.size, sent });
+    } catch (e) { console.error("questions digest", c.slug, e.message); out.push({ client: c.slug, error: e.message }); }
+  }
+  return out;
+}
+
 export async function runWeeklyReports(now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&weekly_report=eq.true&select=*");
   const end = new Date(`${israelDay(now)}T00:00:00${israelOffset(now)}`), start = new Date(end - 7 * 86_400_000);

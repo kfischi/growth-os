@@ -254,6 +254,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
       <ul id="tst-list"></ul>
       <p class="err" id="tst-err" role="alert"></p>
     </details>
+    <details class="links tst" id="qs" hidden>
+      <summary>שאלות שהנציג לא ידע לענות עליהן <small id="qs-n"></small></summary>
+      <p class="hint">כדי שהנציג יידע מעכשיו, כתבו בוואטסאפ של העסק ״למד:״ ואת התשובה, למשל ״למד: יש חניה בחינם ליד הבית״. אפשר גם בהודעה קולית.</p>
+      <ul id="qs-list"></ul>
+    </details>
 
     <dialog class="qr-dlg" id="qr-dlg" aria-labelledby="qr-title">
       <h2 id="qr-title"></h2>
@@ -388,6 +393,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     renderLinks();
     renderAvail();
     renderTestimonials();
+    renderQuestions();
 
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
@@ -471,6 +477,18 @@ button, input, select, textarea { font: inherit; color: inherit; }
       row.append(copy, qrb, del);
       const code = el('code', null, k.url);
       li.append(row, code);
+      return li;
+    }));
+  }
+  // The last 30 days of questions the chats could not answer, the most asked first (0022_unanswered.sql).
+  function renderQuestions() {
+    const list = data.questions;
+    $('#qs').hidden = !Array.isArray(list) || !list.length;
+    if (!list || !list.length) return;
+    $('#qs-n').textContent = '(' + list.length + ')';
+    $('#qs-list').replaceChildren(...list.map((x) => {
+      const li = el('li');
+      li.append(el('span', 'n', x.question + (x.n > 1 ? ' · ' + (x.n === 2 ? 'פעמיים' : x.n + ' פעמים') : '') + ' · ' + (x.source === 'whatsapp' ? 'בוואטסאפ' : 'באתר') + ' · ' + new Date(x.last).toLocaleDateString('he-IL')));
       return li;
     }));
   }

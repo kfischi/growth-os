@@ -99,7 +99,12 @@ export default async (req) => {
         ? await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=id,name,body,stars,hidden,created_at&order=created_at.desc&limit=100`).catch(() => [])
         : null;
       const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, stats, availability: avail, testimonials });
+      // Questions the chats could not answer, last 30 days, the same question once with a count (0022_unanswered.sql).
+      const qrows = await db("GET", `ls_unanswered?client_slug=eq.${q(client.slug)}&created_at=gte.${q(new Date(Date.now() - 30 * 86_400_000).toISOString())}&select=question,source,created_at&order=created_at.desc&limit=300`).catch(() => []);
+      const qmap = new Map();
+      for (const r of qrows) { const k = r.question.replace(/[\s?!.,"׳״'-]/g, ""); const x = qmap.get(k); if (x) x.n++; else qmap.set(k, { question: r.question, source: r.source, last: r.created_at, n: 1 }); }
+      const questions = [...qmap.values()].sort((a, b) => b.n - a.n).slice(0, 30);
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, stats, availability: avail, testimonials, questions });
     }
 
     if (req.method === "PATCH") {

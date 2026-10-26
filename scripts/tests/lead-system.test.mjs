@@ -5,7 +5,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
+const T = { ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 let geminiReply = { transcript: "", commands: [] }, geminiDown = false; const geminiSeen = []; // the voice note's model (lib/voice.mjs)
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
@@ -14,6 +14,7 @@ const DEF = {
   ls_leads: () => ({ id: randomUUID(), status: "new", channel: "form", reminded_at: null, handled_at: null, last_inbound_at: null, note: null, created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
   ls_testimonials: () => ({ id: randomUUID(), hidden: false, stars: null, created_at: new Date().toISOString() }),
+  ls_unanswered: () => ({ id: Math.random(), source: "site", created_at: new Date().toISOString() }),
 };
 function match(row, filters) {
   return filters.every(([col, op, val]) => {
@@ -548,6 +549,33 @@ assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 400"), { price
   await hook(wh(val({ messages: [tap("wamid.q11", "quote:wamid.q10")] })));
   assert.match(sent.at(-1).text.body, /אינו נייד/);
   C0.quotes = false;
+}
+// questions the chats could not answer (0022_unanswered.sql): kept without personal details, a weekly list to the owner
+{
+  assert.equal(lib.cleanQuestion("יש חניה? תתקשרו 050-123-4567 או a@b.co"), "יש חניה? תתקשרו או");
+  assert.equal(lib.cleanQuestion("  "), "");
+  aiReply = "זה לא כתוב אצלנו, ובעל העסק יענה כשיחזור אליכם. [[unknown:יש חניה ליד הבית? 0501234567]]";
+  r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "יש אצלכם חניה?" }] }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.9.9.1" }), ctx("oren"));
+  out = await r.json(); assert.equal(out.reply, "זה לא כתוב אצלנו, ובעל העסק יענה כשיחזור אליכם.", "the marker never shows");
+  assert.deepEqual(T.ls_unanswered.map((x) => [x.client_slug, x.question, x.source]), [["oren", "יש חניה ליד הבית?", "site"]], "no phone kept");
+  // a marker sent back in the history is not counted again
+  aiReply = "בשמחה.";
+  await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "יש אצלכם חניה?" }, { role: "assistant", content: "לא ידוע. [[unknown:יש חניה?]]" }, { role: "user", content: "תודה" }] }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.9.9.2" }), ctx("oren"));
+  assert.equal(T.ls_unanswered.length, 1);
+  // the weekly list: off by default, then the most asked first, once each with a count; old ones deleted
+  T.ls_unanswered.push({ id: 1, client_slug: "oren", question: "יש חניה ליד הבית", source: "whatsapp", created_at: new Date().toISOString() },
+    { id: 2, client_slug: "oren", question: "עובדים בשישי?", source: "site", created_at: new Date().toISOString() },
+    { id: 3, client_slug: "oren", question: "שאלה ישנה", source: "site", created_at: new Date(Date.now() - 40 * 86_400_000).toISOString() });
+  let res = await lib.runQuestionDigests(); assert.deepEqual(res, [], "off by default");
+  C0.questions_digest = true; C0.tpl_questions_digest = "questions_digest";
+  res = await lib.runQuestionDigests();
+  const dg = sent.at(-1); assert.equal(dg.template.name, "questions_digest"); assert.equal(dg.to, "972501111111");
+  assert.deepEqual(dg.template.components[0].parameters.map((p) => p.text), ["2", "יש חניה ליד הבית? (פעמיים) · עובדים בשישי?"]);
+  assert.ok(!T.ls_unanswered.some((x) => x.question === "שאלה ישנה"), "older than 30 days: deleted");
+  // the panel lists them
+  r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+  assert.deepEqual(out.questions.map((x) => [x.question.replace(/\?$/, ""), x.n]), [["יש חניה ליד הבית", 2], ["עובדים בשישי", 1]], "one line per question, the newest wording");
+  C0.questions_digest = false; T.ls_unanswered.length = 0;
 }
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
