@@ -140,7 +140,7 @@ export function factsOf(c) {
 }
 
 // The owner's WhatsApp words that teach the business or change a price. Anything else: null.
-//   "מחיר <service> 350-550" / "מחיר <service> 350 עד 550" / "מחיר <service> מ-300" / "מחיר <service> בלי מחיר"
+//   "מחיר <service> 350-550" / "מחיר <service> 350 עד 550" / "מחיר <service> 400" / "מחיר <service> מ-300" / "מחיר <service> בלי מחיר"
 //   "מחירים"  ·  "למד: <fact>"  ·  "מה למדת"  ·  "שכח 3"
 export function ownerCommand(text) {
   const t = String(text || "").trim().replace(/\s+/g, " ");
@@ -150,6 +150,7 @@ export function ownerCommand(text) {
     const [a, b] = [m[2], m[3]].map((x) => Number(x.replace(/,/g, "")));
     if (a > 0 && b >= a) return { price: { service: m[1].trim(), value: `${a.toLocaleString("en-US")} עד ${b.toLocaleString("en-US")} ₪` } };
   }
+  if ((m = /^מחיר (.{2,46}?) (\d[\d,]{0,7}) ?(?:₪|ש"ח|ש״ח|שח|שקל|שקלים)?$/.exec(t)) && Number(m[2].replace(/,/g, "")) > 0) return { price: { service: m[1].trim(), value: `${Number(m[2].replace(/,/g, "")).toLocaleString("en-US")} ₪` } };
   if ((m = /^מחיר (.{2,46}?) (?:מ-?|החל מ-?|מ ?)(\d[\d,]{0,7}) ?(?:₪|ש"ח|ש״ח|שח|שקל)?$/.exec(t))) return { price: { service: m[1].trim(), value: `מ-${Number(m[2].replace(/,/g, "")).toLocaleString("en-US")} ₪` } };
   if ((m = /^מחיר (.{2,46}?) (?:בלי מחיר|לפי הצעה|לפי הצעת מחיר|להסיר)$/.exec(t))) return { price: { service: m[1].trim(), value: "לפי הצעת מחיר" } };
   if ((m = /^(?:למד|לידיעה|תזכור|תזכרי)[:\s-]+(.{3,})$/.exec(t))) return { learn: clip(m[1], 200) };
@@ -248,7 +249,7 @@ export function ago(fromIso, now = new Date()) {
 
 /* ---------------- WhatsApp Cloud API ---------------- */
 
-const GRAPH = () => `https://graph.facebook.com/${process.env.WA_GRAPH_VERSION || "v23.0"}`;
+export const GRAPH = () => `https://graph.facebook.com/${process.env.WA_GRAPH_VERSION || "v23.0"}`;
 
 export function waToken(client) {
   return process.env["WA_TOKEN_" + client.slug.toUpperCase().replace(/-/g, "_")] || process.env.WA_TOKEN || "";
