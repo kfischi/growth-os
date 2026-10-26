@@ -28,7 +28,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 **Payments**: see section 3. `GROW_USER_ID`, `GROW_PAGE_CODE` (secret) and optional `GROW_API_KEY` (secret). Never set `GROW_SANDBOX` in production.
 
 **Optional, defaults are fine**
-`BUILDER_MODEL` (claude-sonnet-5-5), `CHAT_MODEL` / `ESTIMATE_MODEL` / `AGENT_MODEL` (claude-opus-5-5), `BUILDER_DAILY_MAX` (40 new drafts a day), `BUILDER_EDIT_MESSAGES` (60) / `BUILDER_EDIT_PUBLISHES` (10), `BUILDER_ALERT_CLIENT` (kfir), `DEMO_CHAT_DAILY` (400), `CHAT_DAILY` (600, the home chat), `BRAND_NAME` / `BRAND_URL`, `WA_GRAPH_VERSION` (v23.0), `GEMINI_API_KEY` (secret) / `GEMINI_IMAGE_MODEL` (for "ליצור תמונת רקע"; without it the button is hidden), `GSC_SERVICE_ACCOUNT` (secret JSON) / `GSC_PROPERTY`, `PAY_URL_PRESENCE` / `PAY_URL_AI` (only without Grow), `BILLING_YEAR` (off) and `VAT_RATE` (0; עוסק פטור).
+`BUILDER_MODEL` (claude-sonnet-5-5), `CHAT_MODEL` / `ESTIMATE_MODEL` / `AGENT_MODEL` (claude-opus-5-5), `BUILDER_DAILY_MAX` (40 new drafts a day), `BUILDER_EDIT_MESSAGES` (60) / `BUILDER_EDIT_PUBLISHES` (10), `BUILDER_ALERT_CLIENT` (kfir), `DEMO_CHAT_DAILY` (400), `CHAT_DAILY` (600, the home chat), `BRAND_NAME` / `BRAND_URL`, `WA_GRAPH_VERSION` (v23.0), `GEMINI_API_KEY` (secret) / `GEMINI_IMAGE_MODEL` / `GEMINI_VOICE_MODEL` (for "ליצור תמונת רקע", hidden without it, and for the owner's voice notes on WhatsApp, which without it get "write it in words"), `GSC_SERVICE_ACCOUNT` (secret JSON) / `GSC_PROPERTY`, `PAY_URL_PRESENCE` / `PAY_URL_AI` (only without Grow), `BILLING_YEAR` (off) and `VAT_RATE` (0; עוסק פטור).
 
 **Missing from the docs**: CLAUDE.md doesn't list `CHAT_MODEL`, `ESTIMATE_MODEL`, `AGENT_MODEL`, `BUILDER_SITE_URL`, `GITHUB_REPO`, `GITHUB_BRANCH`, `WA_TOKEN`, `WA_GRAPH_VERSION`, `BUILDER_AI_TIMEOUT_MS`, `BUILDER_ALERT_CLIENT`, `GROW_SANDBOX` or `PAY_URL_*`. LEAD_SYSTEM.md and SITE_BUILDER.md have now been updated with them.
 
@@ -85,7 +85,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 | `/api/builder-admin` | GitHub, Netlify | Admin key, own Origin. **Added now**: 20 wrong keys per IP lock it out for 10 minutes |
 | `/api/leads` | | Key, 120 per IP per 10 minutes |
 
-All the limits are per function instance (in memory), so they are soft. A hard spending cap belongs in the Anthropic console: **set a monthly limit there before launch.** Do the same in Google AI Studio if `GEMINI_API_KEY` is set.
+All the limits are per function instance (in memory), so they are soft. A hard spending cap belongs in the Anthropic console: **set a monthly limit there before launch.** Do the same in Google AI Studio if `GEMINI_API_KEY` is set. Use a paid (billing-enabled) Gemini key: the privacy page says the owner's voice notes go to Google only to be written down, and on the free tier Google may use what it receives to improve its models.
 
 ## 8. Headers (`demos/netlify.toml`, static files only)
 - [x] **Added now** for `/*`: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-Frame-Options: SAMEORIGIN`, `Content-Security-Policy: frame-ancestors 'self'`, `Permissions-Policy: geolocation=(), microphone=()`. Also `/*.vcf` as `text/vcard`.

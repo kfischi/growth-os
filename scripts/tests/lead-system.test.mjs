@@ -7,6 +7,7 @@ Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SER
 
 const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
+let geminiReply = { transcript: "", commands: [] }, geminiDown = false; const geminiSeen = []; // the voice note's model (lib/voice.mjs)
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
   ls_clients: { package: "ai", active: true, allowed_origins: [], tpl_lang: "he", tpl_lead_ack: "lead_ack", tpl_owner_alert: "owner_new_lead", tpl_owner_reminder: "owner_reminder", tpl_monthly_report: "monthly_report", auto_reply: true, owner_alerts: true, reminders: true, monthly_report: true, remind_after_min: 60, work_start: 8, work_end: 20, work_days: [0,1,2,3,4,5] },
@@ -36,6 +37,15 @@ globalThis.fetch = async (url, opt = {}) => {
   }
   const body = opt.body ? JSON.parse(opt.body) : null;
   const res = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
+  if (u.host === "graph.facebook.com" && method === "GET") { // a voice note's details (lib/voice.mjs)
+    assert.equal(opt.headers.authorization, "Bearer tok"); assert.ok(opt.signal);
+    return res({ url: "https://lookaside.fbsbx.com/whatsapp_business/attachments/?mid=" + u.pathname.split("/").pop(), mime_type: "audio/ogg; codecs=opus", file_size: 1200 }); }
+  if (u.host === "lookaside.fbsbx.com") { assert.equal(opt.headers.authorization, "Bearer tok"); return new Response(Buffer.from("OggS-voice"), { status: 200 }); }
+  if (u.host === "generativelanguage.googleapis.com") {
+    assert.equal(opt.headers["x-goog-api-key"], "gm-test"); const b = JSON.parse(opt.body); geminiSeen.push(b);
+    assert.equal(b.contents[0].parts[1].inline_data.mime_type, "audio/ogg"); assert.equal(Buffer.from(b.contents[0].parts[1].inline_data.data, "base64").toString(), "OggS-voice");
+    if (geminiDown) return res({ error: { message: "down" } }, 503);
+    return res({ candidates: [{ content: { parts: [{ text: JSON.stringify(geminiReply) }] } }] }); }
   if (u.host === "graph.facebook.com") { assert.equal(opt.headers.authorization, "Bearer tok"); assert.ok(opt.signal, "graph call has a timeout"); sent.push({ path: u.pathname, ...body });
     if (graphDown) return res({ error: { message: "Template not approved", code: 132001 } }, 400);
     return res({ messages: [{ id: "wamid." + sent.length }] }); }
@@ -377,6 +387,66 @@ assert.equal(lib.ownerCommand("כמה עולה סתימה?"), null, "a question 
   await hook(wh(val({ messages: [{ from: "972501111111", id: "in-prices", type: "text", text: { body: "מחירים" } }] })));
   assert.match(sent.at(-1).text.body, /כדי לעדכן מחיר/);
   C0.owner_notes = [];
+}
+// the owner speaks instead of typing (lib/voice.mjs): written down, checked by our parsers, applied only after "לאשר"
+assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 400"), { price: { service: "פתיחת סתימה", value: "400 ₪" } });
+{
+  const voice = await import(new URL("../../demos/netlify/lib/voice.mjs", import.meta.url).href);
+  assert.deepEqual(voice.checkLines(["עסוק 2", "עסוק 2", "מחיר סתימה 550-350", "תמחק את האתר", "מחירים", "למד: בחופש עד ראשון", "פנוי", "חירום", "אוטומטי", "למד: עוד"]),
+    ["עסוק 2", "למד: בחופש עד ראשון", "פנוי", "חירום", "אוטומטי"], "only lines our parsers accept, once, at most five, no read-only ones");
+  assert.equal(voice.describe("עסוק 2"), "באתר: באמצע עבודה, ל-2 שעות"); assert.equal(voice.describe("מחיר סתימה 350-550"), "מחיר סתימה: 350 עד 550 ₪");
+  const audio = (id, mid = "MEDIA" + id) => ({ from: "972501111111", id, type: "audio", audio: { id: mid, mime_type: "audio/ogg; codecs=opus", voice: true } });
+  const tap = (id, payload, from = "972501111111") => ({ from, id, type: "interactive", interactive: { type: "button_reply", button_reply: { id: payload, title: "לאשר" } } });
+  const row = (id) => T.ls_messages.find((x) => x.wa_id === id && x.direction === "in");
+  // without a key: a short line, nothing sent to Google
+  delete process.env.GEMINI_API_KEY;
+  await hook(wh(val({ messages: [audio("wamid.v0")] })));
+  assert.match(sent.at(-1).text.body, /^הודעות קוליות עוד לא פעילות/); assert.equal(geminiSeen.length, 0);
+  process.env.GEMINI_API_KEY = "gm-test";
+  // someone else's voice note is not a command
+  let before = sent.length;
+  await hook(wh(val({ messages: [{ ...audio("wamid.vx"), from: "972509999999" }] })));
+  assert.equal(geminiSeen.length, 0, "only the owner's voice goes to the model"); assert.equal(sent.length, before);
+  // the owner: transcript and the checked commands, with "לאשר" / "ביטול"; the model's bad line is dropped
+  geminiReply = { transcript: "אני עסוק שעתיים, ותגיד ללקוחות שאני בחופש עד ראשון. ותמחק את האתר", commands: ["עסוק 2", "למד: בחופש עד יום ראשון", "תמחק את האתר"] };
+  await hook(wh(val({ messages: [audio("wamid.v1")] })));
+  await hook(wh(val({ messages: [audio("wamid.v1")] }))); // Meta retries
+  assert.equal(geminiSeen.length, 1, "once per note"); assert.match(geminiSeen[0].contents[0].parts[0].text, /מחיר <שם השירות>/);
+  assert.equal(geminiSeen[0].generationConfig.responseMimeType, "application/json");
+  const ask = sent.at(-1); assert.equal(ask.type, "interactive");
+  assert.match(ask.interactive.body.text, /^שמענו: "אני עסוק שעתיים[\s\S]*• באתר: באמצע עבודה, ל-2 שעות\n• הצ׳אט יידע: בחופש עד יום ראשון\n\nלאשר\?$/);
+  assert.ok(!/תמחק/.test(ask.interactive.body.text.split("מה שנעדכן")[1]), "the rejected line is not offered");
+  assert.deepEqual(ask.interactive.action.buttons.map((b) => b.reply.id), ["voice:wamid.v1", "novoice:wamid.v1"]);
+  assert.equal(row("wamid.v1").status, "pending"); assert.equal(C0.avail || null, null, "nothing changed yet");
+  // someone else taps the owner's button: nothing
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.t0", "voice:wamid.v1", "972509999999")] })));
+  assert.equal(row("wamid.v1").status, "pending"); assert.equal(C0.avail || null, null);
+  // "לאשר": both applied, one answer; a second tap does nothing
+  await hook(wh(val({ messages: [tap("wamid.t1", "voice:wamid.v1")] })));
+  assert.equal(C0.avail, "busy"); assert.equal(C0.owner_notes.at(-1).text, "בחופש עד יום ראשון"); assert.equal(row("wamid.v1").status, "confirmed");
+  assert.match(sent.at(-1).text.body, /^באתר כתוב עכשיו: באמצע עבודה[\s\S]*\n\nלמדנו \(1\): בחופש עד יום ראשון/);
+  await hook(wh(val({ messages: [tap("wamid.t2", "voice:wamid.v1")] })));
+  assert.equal(sent.at(-1).text.body, "כבר טיפלנו בהודעה הזאת."); assert.equal(C0.owner_notes.length, 1, "applied once");
+  // "ביטול": nothing changes
+  geminiReply = { transcript: "חירום", commands: ["חירום 3"] };
+  await hook(wh(val({ messages: [audio("wamid.v2")] })));
+  await hook(wh(val({ messages: [tap("wamid.t3", "novoice:wamid.v2")] })));
+  assert.equal(C0.avail, "busy"); assert.equal(row("wamid.v2").status, "cancelled"); assert.equal(sent.at(-1).text.body, "בוטל. לא שינינו כלום.");
+  // too late: after 30 minutes "לאשר" changes nothing
+  await hook(wh(val({ messages: [audio("wamid.v3")] })));
+  row("wamid.v3").created_at = new Date(Date.now() - 31 * 60_000).toISOString();
+  await hook(wh(val({ messages: [tap("wamid.t4", "voice:wamid.v3")] })));
+  assert.equal(C0.avail, "busy"); assert.equal(row("wamid.v3").status, "expired"); assert.match(sent.at(-1).text.body, /^עבר יותר מחצי שעה/);
+  // nothing to do, or the model is down: a plain answer, no buttons
+  geminiReply = { transcript: "שלום, מה שלומכם?", commands: [] };
+  await hook(wh(val({ messages: [audio("wamid.v4")] })));
+  assert.match(sent.at(-1).text.body, /^שמענו: "שלום, מה שלומכם\?"\nלא מצאנו בזה שינוי לאתר/); assert.equal(row("wamid.v4").status, "received");
+  geminiDown = true;
+  await hook(wh(val({ messages: [audio("wamid.v5")] })));
+  assert.match(sent.at(-1).text.body, /^לא הצלחנו לשמוע את ההודעה הקולית/); geminiDown = false;
+  delete process.env.GEMINI_API_KEY;
+  await lib.setAvailability(C0, { avail: null }); C0.owner_notes = [];
 }
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);

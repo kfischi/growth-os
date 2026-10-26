@@ -9,11 +9,61 @@
 //   - after "טיפלתי", if the business has review requests or testimonials on: the owner is asked, and one tap sends
 //     the customer one request (a Google review, or a testimonial for the site through a private link)
 //   - the owner taps "להסתיר" on a new testimonial: it comes off the site
+//   - the owner sends a voice note: it is written down and turned into the same commands (lib/voice.mjs), shown back
+//     with "לאשר" / "ביטול", and only "לאשר" (within 30 minutes, once) changes the site
 import { agentOn, agentReply } from "../lib/agent.mjs";
+import { voiceOn, fetchMedia, serviceNames, transcribe, checkLines, describe, VOICE_TTL_MIN } from "../lib/voice.mjs";
 import { ownerPrice, pricesText } from "../lib/builder.mjs";
 import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
   sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink,
   ownerCommand, addNote, forgetNote, notesText } from "../lib/leads.mjs";
+
+// What the site shows now, and how to change it.
+const availTip = (now) => now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
+
+// One owner command, typed or from a confirmed voice note: does it and returns the answer to the owner.
+// A price change publishes the site, so it may take a few seconds.
+async function ownerDo(client, cmd) {
+  if (cmd.status) { const now = availability(client); return `באתר כתוב עכשיו: ${now.text} ${availTip(now)}`; }
+  if ("avail" in cmd) { const now = await setAvailability(client, cmd); return `באתר כתוב עכשיו: ${now.text} ${availTip(now)}`; }
+  if (cmd.learn) { const notes = await addNote(client, cmd.learn); return `למדנו (${notes.length}): ${cmd.learn}\nהצ׳אט באתר ובוואטסאפ יודע מעכשיו. "מה למדת" מראה את הכול.`; }
+  if (cmd.notes) return notesText(client);
+  if (cmd.forget) { const gone = await forgetNote(client, cmd.forget); return gone ? `נמחק: ${gone.text}` : "אין מספר כזה. \"מה למדת\" מראה את הרשימה."; }
+  if (cmd.prices) return pricesText(client);
+  if (cmd.price) return ownerPrice(client, cmd.price, { addNote });
+  return "";
+}
+
+// A voice note from the owner: fetch it from Meta, write it down, check the commands, ask "לאשר?".
+// Runs after Meta got its 200. The commands wait on the note's own ls_messages row (status "pending").
+async function voiceNote(client, from, m) {
+  const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
+  try {
+    const audio = await fetchMedia(client, m.audio.id);
+    const { transcript, lines } = await transcribe(audio, await serviceNames(client));
+    const ok = checkLines(lines);
+    const heard = transcript ? `שמענו: "${transcript}"` : "לא הצלחנו לשמוע מה נאמר.";
+    await db("PATCH", `ls_messages?wa_id=eq.${q(m.id)}&direction=eq.in`, { status: ok.length ? "pending" : "received", body: { type: "audio", transcript, commands: ok } });
+    if (!ok.length) return void (await reply(`${heard}\nלא מצאנו בזה שינוי לאתר. אפשר לומר למשל: "המחיר של פתיחת סתימה 350 עד 550", "אני עסוק שעתיים", או כל דבר שהצ׳אט צריך לדעת, כמו חופשה.`));
+    await sendButtons(client, from, `${heard}\n\nמה שנעדכן:\n${ok.map((l) => "• " + describe(l)).join("\n")}\n\nלאשר?`,
+      [{ id: "voice:" + m.id, title: "לאשר" }, { id: "novoice:" + m.id, title: "ביטול" }], { kind: "owner_reply" });
+  } catch (e) {
+    console.error("voice note", e.message);
+    await reply("לא הצלחנו לשמוע את ההודעה הקולית הפעם. אפשר לשלוח שוב, או לכתוב את זה במילים.");
+  }
+}
+
+// "לאשר" on a voice note: once, within VOICE_TTL_MIN, each command in turn, one answer for all.
+async function voiceConfirm(client, from, row) {
+  const answers = [];
+  for (const line of (row.body && row.body.commands) || []) {
+    const cmd = availabilityCommand(line) || ownerCommand(line);
+    if (!cmd) continue;
+    try { answers.push(await ownerDo(client, cmd)); }
+    catch (e) { console.error("voice command", e.message); answers.push(`לא הצלחנו לעדכן: ${describe(line)}. נסו שוב בעוד כמה דקות.`); }
+  }
+  await sendText(client, from, answers.filter(Boolean).join("\n\n") || "לא היה מה לעדכן.", { kind: "owner_reply" });
+}
 
 async function clientByPhoneId(id) {
   const rows = await db("GET", `ls_clients?wa_phone_number_id=eq.${q(id)}&select=*`);
@@ -123,28 +173,43 @@ async function onMessage(client, m) {
     return;
   }
 
-  // The owner writes "עסוק" or "פנוי": the site shows it (0007_availability.sql).
-  const cmd = from === client.owner_phone && m.type === "text" ? availabilityCommand(text) : null;
+  // The owner writes "עסוק" or "פנוי" (0007_availability.sql), teaches the business, or changes a price (0016_owner_notes.sql).
+  // A price change publishes the site, so it runs after the answer to Meta.
+  const cmd = from === client.owner_phone && m.type === "text" ? availabilityCommand(text) || (client.active !== false ? ownerCommand(text) : null) : null;
   if (cmd) {
-    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 100) } });
-    if (!fresh) return;
-    const now = cmd.status ? availability(client) : await retryable(m.id, () => setAvailability(client, cmd));
-    const tip = now.state === "busy" ? "כשתסיימו, כתבו \"פנוי\"." : now.state === "free" ? "כשתצאו לעבודה, כתבו \"עסוק\"." : now.state === "urgent" ? "פניות שייכנסו עכשיו יסומנו כדחופות. לסיום, כתבו \"אוטומטי\"." : "\"עסוק\", \"פנוי\" או \"חירום\" משנים את זה.";
-    await sendText(client, from, `באתר כתוב עכשיו: ${now.text} ${tip}`, { kind: "owner_reply" });
-    return;
-  }
-
-  // The owner teaches the business or changes a price. A price change publishes the site, so it runs after the answer to Meta.
-  const own = from === client.owner_phone && m.type === "text" && client.active !== false ? ownerCommand(text) : null;
-  if (own) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text: clip(text, 300) } });
     if (!fresh) return;
     const reply = (t) => sendText(client, from, t, { kind: "owner_reply" });
-    if (own.learn) { const notes = await retryable(m.id, () => addNote(client, own.learn)); await reply(`למדנו (${notes.length}): ${own.learn}\nהצ׳אט באתר ובוואטסאפ יודע מעכשיו. "מה למדת" מראה את הכול.`); }
-    else if (own.notes) await reply(notesText(client));
-    else if (own.forget) { const gone = await retryable(m.id, () => forgetNote(client, own.forget)); await reply(gone ? `נמחק: ${gone.text}` : "אין מספר כזה. \"מה למדת\" מראה את הרשימה."); }
-    else if (own.prices) await reply(await pricesText(client));
-    else if (own.price) later.push(ownerPrice(client, own.price, { addNote }).then(reply).catch(async (e) => { console.error("owner price", e.message); await reply("לא הצלחנו לעדכן את המחיר עכשיו. נסו שוב בעוד כמה דקות, או כתבו לנו."); }));
+    if (cmd.price) later.push(ownerDo(client, cmd).then(reply).catch(async (e) => { console.error("owner price", e.message); await reply("לא הצלחנו לעדכן את המחיר עכשיו. נסו שוב בעוד כמה דקות, או כתבו לנו."); }));
+    else await reply(await retryable(m.id, () => ownerDo(client, cmd)));
+    return;
+  }
+
+  // The owner speaks instead of typing (lib/voice.mjs). Nothing changes until "לאשר".
+  if (from === client.owner_phone && m.type === "audio" && m.audio && m.audio.id && client.active !== false) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { type: "audio" } });
+    if (!fresh) return;
+    if (!voiceOn()) return void (await sendText(client, from, "הודעות קוליות עוד לא פעילות אצלנו. כתבו את זה במילים, למשל \"עסוק 2\" או \"מחיר פתיחת סתימה 350-550\".", { kind: "owner_reply" }));
+    later.push(voiceNote(client, from, m));
+    return;
+  }
+
+  // "לאשר" or "ביטול" on a voice note. The note's row moves from "pending" once, so a second tap does nothing.
+  const vc = from === client.owner_phone && /^(voice|novoice):([\w.+/=-]{4,200})$/.exec(payload || "");
+  if (vc) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload: clip(payload, 220) } });
+    if (!fresh) return;
+    const at = `ls_messages?wa_id=eq.${q(vc[2])}&client_slug=eq.${q(client.slug)}&direction=eq.in&from_phone=eq.${q(from)}`;
+    const row = (await db("GET", `${at}&select=*`))[0];
+    if (!row || row.status !== "pending") return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
+    if (Date.now() - new Date(row.created_at).getTime() > VOICE_TTL_MIN * 60_000) {
+      await db("PATCH", `${at}&status=eq.pending`, { status: "expired" });
+      return void (await sendText(client, from, "עבר יותר מחצי שעה מההודעה הקולית, אז לא עדכנו כלום. שלחו אותה שוב.", { kind: "owner_reply" }));
+    }
+    const [claimed] = await db("PATCH", `${at}&status=eq.pending`, { status: vc[1] === "voice" ? "confirmed" : "cancelled" }, "return=representation");
+    if (!claimed) return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
+    if (vc[1] === "novoice") return void (await sendText(client, from, "בוטל. לא שינינו כלום.", { kind: "owner_reply" }));
+    later.push(voiceConfirm(client, from, claimed).catch((e) => console.error("voice confirm", e.message)));
     return;
   }
 
