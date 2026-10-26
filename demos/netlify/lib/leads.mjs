@@ -8,6 +8,7 @@
 //   WA_VERIFY_TOKEN                           any string, typed again in Meta when the webhook is added
 //   LEADS_ADMIN_KEY                           כפיר's key for the panel and the admin actions
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { SCHEMA } from "./schema.mjs";
 
 export const STATUS_HE = { new: "חדש", handled: "טופל", won: "נסגר", lost: "לא רלוונטי" };
 const SOURCE_HE = { direct: "כניסה ישירה", google: "גוגל", facebook: "פייסבוק", instagram: "אינסטגרם", whatsapp: "וואטסאפ", tiktok: "טיקטוק", "m.facebook.com": "פייסבוק", "l.facebook.com": "פייסבוק", "lm.facebook.com": "פייסבוק", "l.instagram.com": "אינסטגרם" };
@@ -303,11 +304,11 @@ async function waSend(client, to, payload, log) {
 }
 
 // A template message: the only kind a business may start a conversation with.
-// buttonPayload fills the template's first quick-reply button (the owner's "טיפלתי").
-export function sendTemplate(client, to, name, params, { buttonPayload, kind, leadId } = {}) {
+// buttonPayload fills the template's first quick-reply button (the owner's "טיפלתי"); buttonPayloads fills them in order.
+export function sendTemplate(client, to, name, params, { buttonPayload, buttonPayloads, kind, leadId } = {}) {
   // A parameter is a string (up to 200 characters) or { text, max } for a longer one; the whole body stays under 1024.
   const components = [{ type: "body", parameters: params.map((p) => ({ type: "text", text: p && typeof p === "object" ? param(p.text, p.max) : param(p) })) }];
-  if (buttonPayload) components.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: buttonPayload }] });
+  (buttonPayloads || (buttonPayload ? [buttonPayload] : [])).forEach((payload, i) => components.push({ type: "button", sub_type: "quick_reply", index: String(i), parameters: [{ type: "payload", payload }] }));
   return waSend(client, to, { type: "template", template: { name, language: { code: client.tpl_lang || "he" }, components } }, { kind, lead_id: leadId || null });
 }
 
@@ -353,22 +354,26 @@ export function testimonialToken(token) {
 }
 // What goes on a site without anyone checking it first: plain words only. No links, no e-mail, no phone numbers
 // (spam, and nobody's details end up on a page), no markup.
-export function checkTestimonial(input) {
+// withVideo: a recorded testimonial may come with a short line or none (0023_testimonial_video.sql).
+export function checkTestimonial(input, { withVideo = false } = {}) {
   const tidy = (v, n) => String(v ?? "").replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n + 1);
   const name = tidy(input && input.name, 30), body = tidy(input && input.text, 400);
   const stars = input && input.stars != null && input.stars !== "" ? Number(input.stars) : null;
+  const recommend = input && typeof input.recommend === "boolean" ? input.recommend : null;
   if (name.length < 2 || name.length > 30) return { error: "name" };
-  if (body.length < 15) return { error: "short" };
+  if (body.length < 15 && !withVideo) return { error: "short" };
   if (body.length > 400) return { error: "long" };
   if (stars !== null && !(Number.isInteger(stars) && stars >= 1 && stars <= 5)) return { error: "stars" };
   const all = name + " " + body;
   if (/https?:|www\.|\.(com|co\.il|net|org|io|ly)\b|@/i.test(all) || /\d[\d\s-]{6,}\d/.test(all)) return { error: "contact" };
-  return { row: { name, body, stars } };
+  return { row: { name, body, stars, ...(recommend !== null ? { recommend } : {}) } };
 }
 // The visible ones for the site, newest first.
 export async function publicTestimonials(slug, limit = 12) {
-  const rows = await db("GET", `ls_testimonials?client_slug=eq.${q(slug)}&hidden=eq.false&select=name,body,stars,created_at&order=created_at.desc&limit=${limit}`);
-  return rows.map((t) => ({ name: t.name, text: t.body, stars: t.stars, at: t.created_at }));
+  const rows = await db("GET", `ls_testimonials?client_slug=eq.${q(slug)}&hidden=eq.false&select=*&order=created_at.desc&limit=${limit}`);
+  const pub = (p) => process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/object/public/builder/" + p;
+  return rows.map((t) => ({ name: t.name, text: t.body, stars: t.stars, at: t.created_at, ...(t.recommend === true ? { recommend: true } : {}),
+    ...(t.video && t.video.path ? { video: { src: pub(t.video.path), poster: pub(t.video.poster), w: t.video.w || null, h: t.video.h || null } } : {}) }));
 }
 
 /* ---------------- the lead flow ---------------- */
@@ -756,6 +761,47 @@ export async function buildReport(client, month, { send = true, now = new Date()
 }
 
 // The weekly update, for owners who asked for it (ls_clients.weekly_report): the seven days that just ended.
+/* ---------------- questions the chats could not answer (0022_unanswered.sql) ---------------- */
+
+// Only the question: anything that looks like a phone, an e-mail or a link is cut out, and it is kept short.
+export function cleanQuestion(text) {
+  const t = String(text || "").replace(/https?:\/\/\S+|\S+@\S+\.\S+|\+?\d[\d\s-]{6,}\d/g, " ").replace(/[<>[\]|]/g, " ").replace(/\s+/g, " ").trim();
+  return t.length >= 3 ? clip(t, 160) : "";
+}
+const sameQuestion = (s) => s.replace(/[\s?!.,"׳״'-]/g, "");
+
+// A question the facts don't answer. The same question twice in a week is one line, with a count.
+export async function recordUnanswered(client, text, source = "site") {
+  const question = cleanQuestion(text);
+  if (!question) return false;
+  await db("POST", "ls_unanswered", { client_slug: client.slug, question, source });
+  return true;
+}
+
+// Sunday morning: the week's questions to every owner who has the digest on, the most asked first, and the old
+// ones deleted. questions_digest: {{1}} how many, {{2}} the questions joined by " · " (a template parameter can't
+// hold a line break).
+export const DIGEST_MAX = 6;
+export async function runQuestionDigests(now = new Date()) {
+  const since = new Date(now - 7 * 86_400_000).toISOString();
+  await db("DELETE", `ls_unanswered?created_at=lt.${q(new Date(now - 30 * 86_400_000).toISOString())}`).catch((e) => console.error("unanswered cleanup", e.message));
+  const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&questions_digest=eq.true&select=*");
+  const out = [];
+  for (const c of clients) {
+    try {
+      const rows = await db("GET", `ls_unanswered?client_slug=eq.${q(c.slug)}&created_at=gte.${q(since)}&select=question&order=created_at.desc&limit=200`);
+      const seen = new Map();
+      for (const r of rows) { const k = sameQuestion(r.question); const x = seen.get(k); if (x) x.n++; else seen.set(k, { q: r.question, n: 1 }); }
+      const top = [...seen.values()].sort((a, b) => b.n - a.n).slice(0, DIGEST_MAX);
+      if (!top.length) { out.push({ client: c.slug, questions: 0 }); continue; }
+      const list = clip(top.map((x) => x.q.replace(/[?.!]*$/, "?") + (x.n > 1 ? (x.n === 2 ? " (פעמיים)" : ` (${x.n} פעמים)`) : "")).join(" · "), 700);
+      const sent = await sendTemplate(c, c.owner_phone, c.tpl_questions_digest || "questions_digest", [String(seen.size), { text: list, max: 700 }], { kind: "questions" });
+      out.push({ client: c.slug, questions: seen.size, sent });
+    } catch (e) { console.error("questions digest", c.slug, e.message); out.push({ client: c.slug, error: e.message }); }
+  }
+  return out;
+}
+
 export async function runWeeklyReports(now = new Date()) {
   const clients = await db("GET", "ls_clients?active=eq.true&package=eq.ai&weekly_report=eq.true&select=*");
   const end = new Date(`${israelDay(now)}T00:00:00${israelOffset(now)}`), start = new Date(end - 7 * 86_400_000);
@@ -796,15 +842,43 @@ export async function deleteOldLeads(now = new Date()) {
 }
 
 // For an uptime monitor: problems in the last 24 hours, counts only, no personal data.
+// Every table and column the migrations make (lib/schema.mjs) is there: a migration not run in Supabase shows up
+// here, by name, before its feature fails for a customer. One request per table; on a failure, one per column.
+export async function schemaCheck() {
+  const missing = [];
+  await Promise.all(Object.entries(SCHEMA).map(async ([table, cols]) => {
+    try { await db("GET", `${table}?select=${cols.join(",")}&limit=0`); return; } catch (e) { if (!/ 4\d\d: /.test(e.message)) throw e; }
+    const one = await Promise.all(cols.map((c) => db("GET", `${table}?select=${c}&limit=0`).then(() => null, (e) => (/ 4\d\d: /.test(e.message) ? c : null))));
+    const gone = one.filter(Boolean);
+    missing.push(...(gone.length === cols.length ? [table] : gone.map((c) => `${table}.${c}`)));
+  }));
+  return missing.sort();
+}
+
+// The storage buckets the sites use answer: "builder" (public photos, videos) and "lead-photos" (private).
+export async function storageCheck() {
+  const key = process.env.SUPABASE_SERVICE_KEY, headers = { apikey: key, ...(key.startsWith("sb_") ? {} : { authorization: "Bearer " + key }) };
+  const bad = [];
+  for (const b of ["builder", "lead-photos"]) {
+    const res = await fetch(process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/bucket/" + b, { headers, signal: AbortSignal.timeout(5000) }).catch(() => null);
+    if (!res || !res.ok) bad.push(b);
+  }
+  return bad;
+}
+
 export async function healthCheck(now = new Date()) {
   const day = new Date(now - 86_400_000).toISOString(), stale = new Date(now - 10 * 60_000).toISOString();
+  const t0 = Date.now();
+  const [schemaMissing, bucketsDown] = await Promise.all([schemaCheck(), storageCheck()]);
+  const dbMs = Date.now() - t0;
   const [alerts, pending, messages] = await Promise.all([
     db("GET", `ls_leads?created_at=gte.${q(day)}&owner_alert=in.(failed,skipped)&select=client_slug`),
     db("GET", `ls_leads?created_at=gte.${q(day)}&created_at=lt.${q(stale)}&owner_alert=eq.pending&select=client_slug`),
     db("GET", `ls_messages?created_at=gte.${q(day)}&direction=eq.out&status=in.(failed,skipped)&select=client_slug,kind`),
   ]);
   const clients = [...new Set([...alerts, ...pending, ...messages].map((r) => r.client_slug))];
-  return { ok: !alerts.length && !pending.length && !messages.length, ownerAlertsFailed: alerts.length, ownerAlertsStuck: pending.length, messagesFailed: messages.length, clients };
+  return { ok: !alerts.length && !pending.length && !messages.length && !schemaMissing.length && !bucketsDown.length,
+    ownerAlertsFailed: alerts.length, ownerAlertsStuck: pending.length, messagesFailed: messages.length, clients, schemaMissing, bucketsDown, dbMs };
 }
 
 /* ---------------- panel access ---------------- */

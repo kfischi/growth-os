@@ -4,7 +4,7 @@
 // (address, when, what exactly) and hands the case to the owner: when something new and useful arrives, the owner
 // gets the update through the owner alert template. Off unless כפיר turned it on (wa_agent), נציג AI only.
 import Anthropic from "@anthropic-ai/sdk";
-import { db, q, sendText, sendTemplate, firstName, clip, factsOf } from "./leads.mjs";
+import { db, q, sendText, sendTemplate, firstName, clip, factsOf, recordUnanswered } from "./leads.mjs";
 import { LANG_RULE, langOfTurns, langNote } from "./lang.mjs";
 
 const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
@@ -15,11 +15,12 @@ let client;
 export const agentOn = (c) => c.active !== false && c.package === "ai" && c.wa_agent === true && Boolean(String(c.chat_facts || "").trim());
 
 const SCHEMA = {
-  type: "object", additionalProperties: false, required: ["reply", "notify_owner", "owner_note"],
+  type: "object", additionalProperties: false, required: ["reply", "notify_owner", "owner_note", "unknown_question"],
   properties: {
     reply: { type: "string", description: "The WhatsApp answer to the customer, in the language they write in (Hebrew by default), at most 3 short sentences." },
     notify_owner: { type: "boolean", description: "True when the customer gave something new the owner should know now (address, a time, a detail, urgency, a request to be called), or when you can't answer." },
     owner_note: { type: "string", description: "One Hebrew sentence for the owner with the new information, always in Hebrew, or an empty string." },
+    unknown_question: { type: "string", description: "When the customer asked something the facts don't answer: their question as a short Hebrew line, with no name, phone or address. Otherwise an empty string." },
   },
 };
 
@@ -80,6 +81,7 @@ export async function agentReply(c, lead) {
   const raced = await db("GET", `ls_messages?client_slug=eq.${q(c.slug)}&lead_id=eq.${q(lead.id)}&kind=eq.agent&created_at=gte.${q(started)}&select=id&limit=1`);
   if (raced.length) return "raced";
   const r = await sendText(c, lead.phone_intl, reply, { kind: "agent", leadId: lead.id });
+  if (String(out.unknown_question || "").trim()) await recordUnanswered(c, out.unknown_question, "whatsapp").catch((e) => console.error("agent unknown", e.message));
   if (out.notify_owner && String(out.owner_note || "").trim() && c.owner_alerts) {
     await sendTemplate(c, c.owner_phone, c.tpl_owner_alert,
       [lead.name || "-", lead.phone || lead.phone_intl || "-", lead.service || "-", "עדכון בוואטסאפ" + langNote(langOfTurns(messages)) + ": " + clip(String(out.owner_note), 300), "וואטסאפ"],

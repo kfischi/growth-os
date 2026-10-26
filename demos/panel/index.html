@@ -254,6 +254,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
       <ul id="tst-list"></ul>
       <p class="err" id="tst-err" role="alert"></p>
     </details>
+    <details class="links tst" id="qs" hidden>
+      <summary>שאלות שהנציג לא ידע לענות עליהן <small id="qs-n"></small></summary>
+      <p class="hint">כדי שהנציג יידע מעכשיו, כתבו בוואטסאפ של העסק ״למד:״ ואת התשובה, למשל ״למד: יש חניה בחינם ליד הבית״. אפשר גם בהודעה קולית.</p>
+      <ul id="qs-list"></ul>
+    </details>
 
     <dialog class="qr-dlg" id="qr-dlg" aria-labelledby="qr-title">
       <h2 id="qr-title"></h2>
@@ -388,6 +393,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     renderLinks();
     renderAvail();
     renderTestimonials();
+    renderQuestions();
 
     const inbound = {}; (messages || []).forEach((x) => { (inbound[x.lead_id] = inbound[x.lead_id] || []).push(x); });
     const shown = leads.filter((l) => filter === 'all' || l.status === filter);
@@ -474,6 +480,18 @@ button, input, select, textarea { font: inherit; color: inherit; }
       return li;
     }));
   }
+  // The last 30 days of questions the chats could not answer, the most asked first (0022_unanswered.sql).
+  function renderQuestions() {
+    const list = data.questions;
+    $('#qs').hidden = !Array.isArray(list) || !list.length;
+    if (!list || !list.length) return;
+    $('#qs-n').textContent = '(' + list.length + ')';
+    $('#qs-list').replaceChildren(...list.map((x) => {
+      const li = el('li');
+      li.append(el('span', 'n', x.question + (x.n > 1 ? ' · ' + (x.n === 2 ? 'פעמיים' : x.n + ' פעמים') : '') + ' · ' + (x.source === 'whatsapp' ? 'בוואטסאפ' : 'באתר') + ' · ' + new Date(x.last).toLocaleDateString('he-IL')));
+      return li;
+    }));
+  }
   function renderTestimonials() {
     const list = data.testimonials;
     $('#tst').hidden = !Array.isArray(list);
@@ -483,7 +501,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (!list.length) { $('#tst-list').replaceChildren(el('li', 'n', 'עוד אין המלצות.')); return; }
     $('#tst-list').replaceChildren(...list.map((t) => {
       const li = el('li', t.hidden ? 'off' : '');
-      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
+      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + (t.recommend === true ? ' · ממליצים' : t.recommend === false ? ' · לא ממליצים' : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
       const btn = el('button', 'ghost', t.hidden ? 'להחזיר לאתר' : 'להסתיר'); btn.type = 'button';
       btn.setAttribute('aria-label', (t.hidden ? 'להחזיר לאתר את ההמלצה של ' : 'להסתיר את ההמלצה של ') + t.name);
       btn.addEventListener('click', async () => {
@@ -492,7 +510,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
         catch (e) { btn.disabled = false; if (e.message !== 'unauthorised') $('#tst-err').textContent = 'לא הצלחנו לשנות. נסו שוב.'; }
       });
       const row = el('span', 'row'); row.append(btn);
-      li.append(head, row, el('p', null, t.body));
+      li.append(head, row);
+      if (t.body) li.append(el('p', null, t.body));
+      if (t.video_url) { const a = el('a', null, 'לצפות בסרטון'); a.href = t.video_url; a.target = '_blank'; a.rel = 'noopener'; li.append(a); }
       return li;
     }));
   }
@@ -580,6 +600,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (l.reminded_at && l.status === 'new') meta.append(el('span', null, 'נשלחה תזכורת'));
     const REVIEW = { sent: 'נשלחה בקשה לביקורת', failed: 'הבקשה לביקורת לא נשלחה', optout: 'ביקשו לא לקבל הודעות' };
     if (REVIEW[l.review]) meta.append(el('span', null, REVIEW[l.review]));
+    const QUOTE = { sent: 'נשלחה הצעת מחיר', failed: 'הצעת המחיר לא נשלחה', accepted: 'הצעת המחיר אושרה', question: 'יש שאלה על הצעת המחיר' };
+    if (QUOTE[l.quote_status]) meta.append(el('span', null, QUOTE[l.quote_status] + (l.quote_price ? ': ' + l.quote_price : '')));
     c.append(meta);
     ins.slice(0, 2).forEach((x) => {
       const b = el('div', 'inbound'); b.append(el('small', null, 'הודעה בוואטסאפ · ' + ago(x.created_at)), document.createTextNode((x.body && x.body.text) || ''));

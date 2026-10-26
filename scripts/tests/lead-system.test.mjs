@@ -5,8 +5,9 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
+const T = { ls_payments: [], ls_billing: [], ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
+const missingCols = new Set(); let bucketDown = false; // /api/health's schema and storage checks
 let geminiReply = { transcript: "", commands: [] }, geminiDown = false; const geminiSeen = []; // the voice note's model (lib/voice.mjs)
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
@@ -14,6 +15,7 @@ const DEF = {
   ls_leads: () => ({ id: randomUUID(), status: "new", channel: "form", reminded_at: null, handled_at: null, last_inbound_at: null, note: null, created_at: new Date().toISOString() }),
   ls_messages: () => ({ id: Math.random(), created_at: new Date().toISOString() }),
   ls_testimonials: () => ({ id: randomUUID(), hidden: false, stars: null, created_at: new Date().toISOString() }),
+  ls_unanswered: () => ({ id: Math.random(), source: "site", created_at: new Date().toISOString() }),
 };
 function match(row, filters) {
   return filters.every(([col, op, val]) => {
@@ -27,11 +29,16 @@ function match(row, filters) {
 }
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
+  if (u.pathname.startsWith("/storage/v1/bucket/")) { assert.equal(opt.headers.apikey, "sb_secret_test"); return new Response(bucketDown ? "{}" : '{"id":"x"}', { status: bucketDown ? 404 : 200 }); }
+  if (u.pathname.startsWith("/rest/v1/ls_") && (opt.method || "GET") === "GET" && u.searchParams.get("limit") === "0") { // a schema probe
+    const table = u.pathname.split("/").pop(), cols = (u.searchParams.get("select") || "").split(",");
+    if (cols.some((c) => missingCols.has(table + "." + c) || missingCols.has(table))) return new Response('{"code":"42703","message":"column does not exist"}', { status: 400 });
+  }
   if (u.pathname.startsWith("/storage/v1/object/")) {
     assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "storage call has a timeout");
     const path = decodeURIComponent(u.pathname.slice("/storage/v1/object/".length));
     if (storageDown) return new Response("down", { status: 503 });
-    if (method === "POST") { assert.match(opt.headers["content-type"], /^image\/(jpeg|webp)$/); store.set(path, Buffer.from(opt.body)); return new Response("{}", { status: 200 }); }
+    if (method === "POST") { assert.match(opt.headers["content-type"], /^(image\/(jpeg|webp)|video\/mp4)$/); store.set(path, Buffer.from(opt.body)); return new Response("{}", { status: 200 }); }
     if (method === "DELETE") { assert.equal(path, "lead-photos"); for (const p of JSON.parse(opt.body).prefixes) store.delete("lead-photos/" + p); return new Response("[]", { status: 200 }); }
     return store.has(path) ? new Response(store.get(path), { status: 200 }) : new Response("{}", { status: 400 });
   }
@@ -194,7 +201,7 @@ graphDown = true;
 r = await lead(post("/api/lead/oren", { name: "יוסי", phone: "0527777777", service: "דוד" }), ctx("oren"));
 out = await r.json(); assert.equal(r.status, 202); assert.equal(out.ok, false); assert.equal(out.error, "alert_failed");
 const Y = T.ls_leads.find((l) => l.phone === "0527777777"); assert.ok(Y); assert.equal(Y.owner_alert, "failed");
-let h = await lib.healthCheck(); assert.equal(h.ok, false); assert.equal(h.ownerAlertsFailed, 2, "Dana (failed delivery reported by Meta earlier) and Yossi"); assert.deepEqual(h.clients, ["oren"]);
+let h = await lib.healthCheck(); assert.deepEqual([h.schemaMissing, h.bucketsDown], [[], []]); assert.equal(typeof h.dbMs, "number"); assert.equal(h.ok, false); assert.equal(h.ownerAlertsFailed, 2, "Dana (failed delivery reported by Meta earlier) and Yossi"); assert.deepEqual(h.clients, ["oren"]);
 // a reminder that fails is retried next run
 Y.created_at = "2026-10-06T05:00:00Z";
 rem = await lib.runReminders(tue10); assert.equal(rem.reminders, 0); assert.equal(rem.failed, 1); assert.equal(Y.reminded_at, null, "failed reminder is retried");
@@ -475,6 +482,107 @@ assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 400"), { price
   assert.equal(sent.at(-1).text.body, "כבר טיפלנו בהודעה הזאת.", "once");
   T.ls_drafts.length = 0;
 }
+// a quote: the owner answers the enquiry's alert with a price (typed or spoken), "לשלוח", the customer's "מאשרים"
+{
+  const Q = await import(new URL("../../demos/netlify/lib/quote.mjs", import.meta.url).href);
+  assert.deepEqual(Q.parseQuoteText("500, מחר בבוקר"), { price: "500 ₪", details: "מחר בבוקר." });
+  assert.deepEqual(Q.parseQuoteText("350 עד 550 ₪ כולל חלקים"), { price: "350 עד 550 ₪", details: "כולל חלקים." });
+  assert.deepEqual(Q.parseQuoteText("1,200"), { price: "1,200 ₪", details: "" });
+  assert.equal(Q.parseQuoteText("תודה"), null); assert.equal(Q.parseQuoteText("550-350"), null); assert.equal(Q.parseQuoteText("12"), null);
+  const own = (id, body, ctx = "wamid.alert-q") => ({ from: "972501111111", id, type: "text", text: { body }, ...(ctx ? { context: { from: "972500000000", id: ctx } } : {}) });
+  const tap = (id, payload, from = "972501111111") => ({ from, id, type: "button", button: { payload, text: "x" } });
+  const row = (id) => T.ls_messages.find((x) => x.wa_id === id && x.direction === "in");
+  const QL = { ...DEF.ls_leads(), client_slug: "oren", name: "רותם לוי", phone: "0504444444", phone_intl: "972504444444", service: "נזילה במטבח" };
+  T.ls_leads.push(QL);
+  T.ls_messages.push({ id: 9001, client_slug: "oren", lead_id: QL.id, direction: "out", kind: "owner_alert", wa_id: "wamid.alert-q", status: "delivered" });
+  // off: a price in a reply is not a quote
+  let before = sent.length;
+  await hook(wh(val({ messages: [own("wamid.q0", "500, מחר בבוקר")] })));
+  assert.equal(sent.length, before, "quotes off: nothing"); assert.equal(row("wamid.q0").status, "received");
+  C0.quotes = true; C0.tpl_quote = "quote";
+  // a command on the alert stays a command
+  await hook(wh(val({ messages: [own("wamid.q1", "עסוק 2")] })));
+  assert.match(sent.at(-1).text.body, /^באתר כתוב עכשיו: באמצע עבודה/); await lib.setAvailability(C0, { avail: null });
+  // typed: the preview, then "לשלוח"
+  await hook(wh(val({ messages: [own("wamid.q2", "500, מחר בבוקר")] })));
+  await hook(wh(val({ messages: [own("wamid.q2", "500, מחר בבוקר")] }))); // Meta retries
+  const ask = sent.at(-1); assert.equal(ask.type, "interactive");
+  assert.equal(ask.interactive.body.text, "ככה זה יגיע לרותם:\n\nשלום רותם, כאן אורן מים. הצעת המחיר עבור נזילה במטבח: 500 ₪. מחר בבוקר.\nההצעה בתוקף ל-7 ימים. לאישור לחצו \"מאשרים\", ונחזור אליכם לתאם.\n[מאשרים] [יש לי שאלה]\n\nלשלוח?");
+  assert.deepEqual(ask.interactive.action.buttons.map((b) => b.reply.id), ["quote:wamid.q2", "noquote:wamid.q2"]);
+  assert.equal(sent.filter((x) => x.type === "interactive" && /^ככה זה יגיע/.test(x.interactive.body.text)).length, 1, "asked once");
+  assert.equal(QL.quote_status, undefined, "nothing sent yet");
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q3", "voice:wamid.q2")] })));
+  assert.equal(sent.length, before, "another kind's button does nothing");
+  await hook(wh(val({ messages: [tap("wamid.q4", "quote:wamid.q2")] })));
+  const tpl = sent.find((x) => x.template && x.template.name === "quote");
+  assert.equal(tpl.to, "972504444444");
+  assert.deepEqual(tpl.template.components[0].parameters.map((p) => p.text), ["רותם", "אורן מים", "נזילה במטבח", "500 ₪", "מחר בבוקר."]);
+  assert.deepEqual(tpl.template.components.slice(1).map((c) => [c.index, c.parameters[0].payload]), [["0", "qok:" + QL.id], ["1", "qask:" + QL.id]]);
+  assert.equal(QL.quote_status, "sent"); assert.equal(QL.quote_price, "500 ₪"); assert.match(sent.at(-1).text.body, /^נשלח לרותם: 500 ₪/);
+  // someone else's tap on the customer's button: nothing
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q5", "qok:" + QL.id, "972509999999")] })));
+  assert.equal(QL.quote_status, "sent"); assert.equal(sent.length, before);
+  // the customer: "מאשרים" marks it won and tells the owner; a second tap only thanks
+  await hook(wh(val({ messages: [tap("wamid.q6", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "accepted"); assert.equal(QL.status, "won"); assert.ok(QL.handled_at);
+  const told = sent.filter((x) => x.template && x.template.name === "owner_new_lead").at(-1);
+  assert.equal(told.to, "972501111111"); assert.match(told.template.components[0].parameters[3].text, /^הצעת המחיר אושרה: 500 ₪/);
+  assert.equal(sent.at(-1).to, "972504444444"); assert.match(sent.at(-1).text.body, /^תודה!/);
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q7", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(sent.length, before + 1); assert.match(sent.at(-1).text.body, /^קיבלנו/); assert.equal(sent.filter((x) => x.template && /הצעת המחיר אושרה/.test(x.template.components[0].parameters[3]?.text || "")).length, 1, "the owner told once");
+  // "יש לי שאלה", and a late "מאשרים" after 7 days becomes a question
+  QL.quote_status = "sent"; QL.status = "new";
+  await hook(wh(val({ messages: [tap("wamid.q8", "qask:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "question"); assert.equal(QL.status, "new"); assert.match(sent.at(-1).text.body, /אפשר גם לכתוב כאן את השאלה/);
+  QL.quote_status = "sent"; QL.quote_sent_at = new Date(Date.now() - 8 * 86_400_000).toISOString();
+  await hook(wh(val({ messages: [tap("wamid.q9", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "question"); assert.notEqual(QL.status, "won"); assert.match(sent.at(-1).text.body, /^ההצעה הייתה בתוקף ל-7 ימים/);
+  // spoken: written down, then the same preview; spoken without a price: the owner's voice commands
+  process.env.GEMINI_API_KEY = "gm-test";
+  geminiReply = { transcript: "שש מאות, כולל חלקים", price_min: 600, price_max: 600, details: "כולל חלקים", commands: [] };
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "wamid.qv1", type: "audio", audio: { id: "MEDIAqv1" }, context: { id: "wamid.alert-q" } }] })));
+  assert.match(sent.at(-1).interactive.body.text, /^שמענו: "שש מאות, כולל חלקים"\n\nככה זה יגיע לרותם:[\s\S]*600 ₪\. כולל חלקים\./);
+  geminiReply = { transcript: "אני עסוק שעתיים", price_min: 0, price_max: 0, details: "", commands: ["עסוק 2"] };
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "wamid.qv2", type: "audio", audio: { id: "MEDIAqv2" }, context: { id: "wamid.alert-q" } }] })));
+  assert.match(sent.at(-1).interactive.body.text, /• באתר: באמצע עבודה, ל-2 שעות/); assert.deepEqual(sent.at(-1).interactive.action.buttons.map((b) => b.reply.id), ["voice:wamid.qv2", "novoice:wamid.qv2"]);
+  delete process.env.GEMINI_API_KEY;
+  // a landline: no WhatsApp quote
+  QL.phone_intl = "97246222222";
+  await hook(wh(val({ messages: [own("wamid.q10", "700")] })));
+  await hook(wh(val({ messages: [tap("wamid.q11", "quote:wamid.q10")] })));
+  assert.match(sent.at(-1).text.body, /אינו נייד/);
+  C0.quotes = false;
+}
+// questions the chats could not answer (0022_unanswered.sql): kept without personal details, a weekly list to the owner
+{
+  assert.equal(lib.cleanQuestion("יש חניה? תתקשרו 050-123-4567 או a@b.co"), "יש חניה? תתקשרו או");
+  assert.equal(lib.cleanQuestion("  "), "");
+  aiReply = "זה לא כתוב אצלנו, ובעל העסק יענה כשיחזור אליכם. [[unknown:יש חניה ליד הבית? 0501234567]]";
+  r = await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "יש אצלכם חניה?" }] }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.9.9.1" }), ctx("oren"));
+  out = await r.json(); assert.equal(out.reply, "זה לא כתוב אצלנו, ובעל העסק יענה כשיחזור אליכם.", "the marker never shows");
+  assert.deepEqual(T.ls_unanswered.map((x) => [x.client_slug, x.question, x.source]), [["oren", "יש חניה ליד הבית?", "site"]], "no phone kept");
+  // a marker sent back in the history is not counted again
+  aiReply = "בשמחה.";
+  await chat(post("/api/chat/oren", { messages: [{ role: "user", content: "יש אצלכם חניה?" }, { role: "assistant", content: "לא ידוע. [[unknown:יש חניה?]]" }, { role: "user", content: "תודה" }] }, { origin: "https://oren.co.il", "x-nf-client-connection-ip": "10.9.9.2" }), ctx("oren"));
+  assert.equal(T.ls_unanswered.length, 1);
+  // the weekly list: off by default, then the most asked first, once each with a count; old ones deleted
+  T.ls_unanswered.push({ id: 1, client_slug: "oren", question: "יש חניה ליד הבית", source: "whatsapp", created_at: new Date().toISOString() },
+    { id: 2, client_slug: "oren", question: "עובדים בשישי?", source: "site", created_at: new Date().toISOString() },
+    { id: 3, client_slug: "oren", question: "שאלה ישנה", source: "site", created_at: new Date(Date.now() - 40 * 86_400_000).toISOString() });
+  let res = await lib.runQuestionDigests(); assert.deepEqual(res, [], "off by default");
+  C0.questions_digest = true; C0.tpl_questions_digest = "questions_digest";
+  res = await lib.runQuestionDigests();
+  const dg = sent.at(-1); assert.equal(dg.template.name, "questions_digest"); assert.equal(dg.to, "972501111111");
+  assert.deepEqual(dg.template.components[0].parameters.map((p) => p.text), ["2", "יש חניה ליד הבית? (פעמיים) · עובדים בשישי?"]);
+  assert.ok(!T.ls_unanswered.some((x) => x.question === "שאלה ישנה"), "older than 30 days: deleted");
+  // the panel lists them
+  r = await api(get("", "Bearer oren:" + key)); out = await r.json();
+  assert.deepEqual(out.questions.map((x) => [x.question.replace(/\?$/, ""), x.n]), [["יש חניה ליד הבית", 2], ["עובדים בשישי", 1]], "one line per question, the newest wording");
+  C0.questions_digest = false; T.ls_unanswered.length = 0;
+}
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
 r = await api(post("/api/leads", { job_value: -5 }, owner)); assert.equal(r.status, 400);
@@ -573,7 +681,7 @@ assert.equal(p1, "נועה"); assert.equal(p2, "אורן מים"); assert.match(
 assert.equal(TL.testimonial, "sent"); assert.match(sent.at(-1).text.body, /^נשלח לנועה\./);
 const tstToken = link.split("/r/")[1];
 // the form opens only from the real link
-let pg = await tGet(tstToken); let html = await pg.text(); assert.equal(pg.status, 200); assert.match(html, /כמה מילים על אורן מים\?/); assert.match(html, /value="נועה"/); assert.match(html, /noindex/);
+let pg = await tGet(tstToken); let html = await pg.text(); assert.equal(pg.status, 200); assert.match(html, /איך היה עם אורן מים\?/); assert.match(html, /הייתם ממליצים על אורן מים לחברים\?/); assert.match(html, /לצלם המלצה בווידאו/); assert.match(html, /value="נועה"/); assert.match(html, /noindex/);
 html = await (await tGet(TL.id + ".AAAAAAAAAAAAAAAAAAAAAA")).text(); assert.match(html, /הקישור כבר לא פעיל/, "a forged signature");
 // plain words only, and nothing changes on a refusal
 let tres = await tPost({ token: tstToken, name: "נועה", text: "מומלץ מאוד! www.spam.co.il" }); assert.equal(tres.status, 422); assert.equal((await tres.json()).error, "contact");
@@ -615,6 +723,44 @@ await pickReply("ts-7", "review:" + TL3.id); assert.equal(TL3.review, "sent"); a
 const TL4 = await newLead("דור לב", "0503333352", "10.0.0.23");
 await tapDone("ts-8", "done:" + TL4.id); await pickReply("ts-9", "noreview:" + TL4.id);
 assert.equal(TL4.review, "skipped"); assert.equal(TL4.testimonial, "skipped"); assert.equal(sent.at(-1).text.body, "בסדר, לא נשלח.");
+// a video testimonial (0023): recorded on the phone, the customer's OK, up on the site with its first frame
+{
+  const TLv = await newLead("שי כהן", "0503333353", "10.0.0.24");
+  await tapDone("ts-10", "done:" + TLv.id); await pickReply("ts-11", "tst:" + TLv.id);
+  const vlink = sent.filter((m) => m.template && m.template.name === "testimonial_request" && m.to === "972503333353").at(-1).template.components[0].parameters[2].text;
+  const vtok = vlink.split("/r/")[1];
+  const poster = Buffer.concat([Buffer.from("RIFF\0\0\0\0WEBPVP8 ", "latin1"), Buffer.alloc(20)]);
+  const movie = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from("ftypisom", "latin1"), Buffer.alloc(40)]);
+  const vPost = (fields, { mov = movie, size = "720x1280" } = {}) => tstFn(new Request("https://service-pro-web.netlify.app/api/testimonial", { method: "POST", body: Buffer.concat([poster, mov]),
+    headers: { "content-type": "application/octet-stream", "x-poster-length": String(poster.length), "x-video-size": size, "x-fields": encodeURIComponent(JSON.stringify(fields)), "x-nf-client-connection-ip": "10.1.0.9" } }), {});
+  let vr = await vPost({ token: vtok, name: "שי", text: "", stars: 5, recommend: true });
+  assert.equal(vr.status, 422); assert.equal((await vr.json()).error, "consent", "no video on the site without the customer's OK");
+  vr = await vPost({ token: vtok, name: "שי", text: "", consent: true }, { mov: Buffer.from("not a video at all, nope") });
+  assert.equal(vr.status, 415);
+  const before = sent.length, files = store.size;
+  vr = await vPost({ token: vtok, name: "שי", text: "", stars: 5, recommend: true, consent: true });
+  const vj = await vr.json(); assert.equal(vr.status, 200, JSON.stringify(vj));
+  assert.equal(store.size, files + 2, "the video and its first frame");
+  const row = T.ls_testimonials.find((t) => t.lead_id === TLv.id);
+  assert.equal(row.body, ""); assert.equal(row.recommend, true); assert.match(row.video.path, /^testimonials\/oren\/[0-9a-f]{18}\.mp4$/); assert.deepEqual([row.video.w, row.video.h], [720, 1280]);
+  const item = (await listNow()).find((t) => t.name === "שי");
+  assert.equal(item.video.src, "https://x.supabase.co/storage/v1/object/public/builder/" + row.video.path); assert.match(item.video.poster, /\.webp$/); assert.equal(item.recommend, true);
+  assert.match(sent.slice(before).find((m) => m.type === "interactive").interactive.body.text, /^המלצה חדשה עלתה לאתר ★★★★★, עם סרטון, וממליצים עליכם:\n"\(סרטון בלי טקסט\)"/);
+  vr = await vPost({ token: vtok, name: "שי", text: "", consent: true }); assert.equal(vr.status, 410, "once");
+  assert.equal(store.size, files + 2, "nothing left behind by the refused one");
+  // without a video, a few words are still needed
+  assert.equal(lib.checkTestimonial({ name: "שי", text: "" }).error, "short"); assert.ok(lib.checkTestimonial({ name: "שי", text: "" }, { withVideo: true }).row);
+}
+// /api/health finds a migration that wasn't run, by name, and a bucket that doesn't answer
+{
+  const { SCHEMA } = await import(new URL("../../demos/netlify/lib/schema.mjs", import.meta.url).href);
+  assert.ok(SCHEMA.ls_leads.includes("quote_status") && SCHEMA.ls_testimonials.includes("video") && SCHEMA.ls_unanswered, "made from every migration");
+  missingCols.add("ls_leads.quote_status"); missingCols.add("ls_unanswered");
+  let hh = await lib.healthCheck(); assert.deepEqual(hh.schemaMissing, ["ls_leads.quote_status", "ls_unanswered"]); assert.equal(hh.ok, false);
+  missingCols.clear(); bucketDown = true;
+  hh = await lib.healthCheck(); assert.deepEqual(hh.bucketsDown, ["builder", "lead-photos"]); assert.equal(hh.ok, false);
+  bucketDown = false; hh = await lib.healthCheck(); assert.deepEqual([hh.schemaMissing, hh.bucketsDown], [[], []]);
+}
 // a business that turned it off: the site shows nothing, the link stops working
 Object.assign(C0, { review_requests: false, testimonials: false }); lib.forgetClient("oren");
 assert.deepEqual(await listNow(), []);

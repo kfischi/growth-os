@@ -96,10 +96,17 @@ export default async (req) => {
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
       // Testimonials on the site: all of them, hidden ones too, so the owner can bring one back.
       const testimonials = testimonialOn(client)
-        ? await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=id,name,body,stars,hidden,created_at&order=created_at.desc&limit=100`).catch(() => [])
+        ? (await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=*&order=created_at.desc&limit=100`).catch(() => [])).map((t) => ({
+          id: t.id, name: t.name, body: t.body, stars: t.stars, hidden: t.hidden, created_at: t.created_at, recommend: t.recommend ?? null,
+          video_url: t.video && t.video.path ? process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/object/public/builder/" + t.video.path : null }))
         : null;
       const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
-      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, stats, availability: avail, testimonials });
+      // Questions the chats could not answer, last 30 days, the same question once with a count (0022_unanswered.sql).
+      const qrows = await db("GET", `ls_unanswered?client_slug=eq.${q(client.slug)}&created_at=gte.${q(new Date(Date.now() - 30 * 86_400_000).toISOString())}&select=question,source,created_at&order=created_at.desc&limit=300`).catch(() => []);
+      const qmap = new Map();
+      for (const r of qrows) { const k = r.question.replace(/[\s?!.,"׳״'-]/g, ""); const x = qmap.get(k); if (x) x.n++; else qmap.set(k, { question: r.question, source: r.source, last: r.created_at, n: 1 }); }
+      const questions = [...qmap.values()].sort((a, b) => b.n - a.n).slice(0, 30);
+      return json({ client: PUBLIC_CLIENT(client), leads, messages, statuses: STATUS_HE, month, links, stats, availability: avail, testimonials, questions });
     }
 
     if (req.method === "PATCH") {

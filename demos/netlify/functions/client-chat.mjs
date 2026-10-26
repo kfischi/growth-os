@@ -4,7 +4,7 @@
 // When a visitor leaves a name and a phone, the model adds a [[lead:...]] marker. The marker is removed
 // here, the lead goes through the same flow as a form (stored, WhatsApp reply, owner alert with the summary).
 import Anthropic from "@anthropic-ai/sdk";
-import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp, factsOf } from "../lib/leads.mjs";
+import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp, factsOf, recordUnanswered } from "../lib/leads.mjs";
 import { LANG_RULE, langOfTurns, langNote, line } from "../lib/lang.mjs";
 
 const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
@@ -42,6 +42,11 @@ Taking a lead:
   [[lead:NAME|PHONE|SERVICE|SUMMARY]]
   SERVICE is 2 to 4 Hebrew words. SUMMARY is one Hebrew sentence with what they need, where and when. Both always in Hebrew, for the owner, whatever language the visitor wrote in. No "|" or "]" inside the fields. Never explain the marker.
 
+A question the facts don't answer:
+- When the visitor asks something the facts below don't answer (a price that isn't listed, a service, an area, the hours, parking, payment), answer as above, and add at the very end, once:
+  [[unknown:QUESTION]]
+  QUESTION is their question as a short Hebrew line for the owner, whatever language they wrote in, with no name, phone, address or other personal detail. Never explain the marker. Not for greetings, thanks or a request to be called back.
+
 Facts about the business:
 ${factsOf(c) || "(none yet: say the business will answer every question when they call back)"}`;
 
@@ -52,6 +57,7 @@ function validMessages(m) {
 }
 
 const LEAD = /\[\[lead:([^|\]]*)\|([^|\]]*)\|([^|\]]*)\|([^\]]*)\]\]/;
+const UNKNOWN = /\[\[unknown:([^\]]*)\]\]/g;
 
 export default async (req, context) => {
   if (!configured() || !process.env.ANTHROPIC_API_KEY) return json({ error: "not_configured" }, 503, corsHeaders(req, null) || {});
@@ -72,7 +78,7 @@ export default async (req, context) => {
   if (overDailyCap(c.slug)) return json({ error: "busy" }, 429, cors);
   // Earlier replies came back from the browser; a marker in them is never acted on twice.
   const lang = langOfTurns(body.messages);
-  const messages = body.messages.map((x) => ({ role: x.role, content: x.content.replace(/\[\[lead:[^\]]*\]\]/g, "") || "…" }));
+  const messages = body.messages.map((x) => ({ role: x.role, content: x.content.replace(/\[\[(?:lead|unknown):[^\]]*\]\]/g, "") || "…" }));
 
   let reply;
   try {
@@ -89,6 +95,10 @@ export default async (req, context) => {
     if (error instanceof Anthropic.AuthenticationError) return json({ error: "not_configured" }, 503, cors);
     return json({ error: "upstream" }, 502, cors);
   }
+  // A question the facts didn't answer: kept (only the question) for the owner's weekly list, and never shown.
+  const unknown = [...reply.matchAll(UNKNOWN)].map((x) => x[1]);
+  reply = reply.replace(UNKNOWN, "").trim();
+  if (unknown.length) await recordUnanswered(c, unknown[0], "site").catch((e) => console.error("client-chat unknown", e.message));
   if (!reply) return json({ error: "empty_reply" }, 502, cors);
 
   const m = LEAD.exec(reply);
