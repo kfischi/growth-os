@@ -96,7 +96,9 @@ export default async (req) => {
       for (const l of leads) { l.photo_url = l.photo ? photoLink(l.id) : null; delete l.photo; }
       // Testimonials on the site: all of them, hidden ones too, so the owner can bring one back.
       const testimonials = testimonialOn(client)
-        ? await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=id,name,body,stars,hidden,created_at&order=created_at.desc&limit=100`).catch(() => [])
+        ? (await db("GET", `ls_testimonials?client_slug=eq.${q(client.slug)}&select=*&order=created_at.desc&limit=100`).catch(() => [])).map((t) => ({
+          id: t.id, name: t.name, body: t.body, stars: t.stars, hidden: t.hidden, created_at: t.created_at, recommend: t.recommend ?? null,
+          video_url: t.video && t.video.path ? process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/object/public/builder/" + t.video.path : null }))
         : null;
       const avail = { ...availability(client), manual: !!(client.avail && client.avail_until && new Date(client.avail_until) > new Date()) };
       // Questions the chats could not answer, last 30 days, the same question once with a count (0022_unanswered.sql).

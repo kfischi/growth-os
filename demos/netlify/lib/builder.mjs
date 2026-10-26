@@ -353,6 +353,18 @@ export async function uploadPhoto(draftId, slot, buf, ext) {
   return { path, ext };
 }
 
+// A file at a path of its own in the public bucket (a testimonial's video and its first frame).
+export async function uploadMedia(path, buf, ext) {
+  const res = await fetch(storageUrl(`${BUCKET}/${path}`), {
+    method: "POST",
+    headers: storageHeaders({ "content-type": MIME[ext], "cache-control": "max-age=31536000", "x-upsert": "false" }),
+    body: buf,
+    signal: AbortSignal.timeout(ext === "mp4" ? 15000 : 8000),
+  });
+  if (!res.ok) throw new Error(`storage upload ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  return path;
+}
+
 export async function deletePhotos(paths) {
   if (!paths.length) return;
   try {

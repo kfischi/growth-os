@@ -501,7 +501,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (!list.length) { $('#tst-list').replaceChildren(el('li', 'n', 'עוד אין המלצות.')); return; }
     $('#tst-list').replaceChildren(...list.map((t) => {
       const li = el('li', t.hidden ? 'off' : '');
-      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
+      const head = el('span', 'n'); head.append(el('b', null, t.name), document.createTextNode((t.stars ? ' · ' + '★'.repeat(t.stars) : '') + (t.recommend === true ? ' · ממליצים' : t.recommend === false ? ' · לא ממליצים' : '') + ' · ' + new Date(t.created_at).toLocaleDateString('he-IL') + (t.hidden ? ' · מוסתרת' : '')));
       const btn = el('button', 'ghost', t.hidden ? 'להחזיר לאתר' : 'להסתיר'); btn.type = 'button';
       btn.setAttribute('aria-label', (t.hidden ? 'להחזיר לאתר את ההמלצה של ' : 'להסתיר את ההמלצה של ') + t.name);
       btn.addEventListener('click', async () => {
@@ -510,7 +510,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
         catch (e) { btn.disabled = false; if (e.message !== 'unauthorised') $('#tst-err').textContent = 'לא הצלחנו לשנות. נסו שוב.'; }
       });
       const row = el('span', 'row'); row.append(btn);
-      li.append(head, row, el('p', null, t.body));
+      li.append(head, row);
+      if (t.body) li.append(el('p', null, t.body));
+      if (t.video_url) { const a = el('a', null, 'לצפות בסרטון'); a.href = t.video_url; a.target = '_blank'; a.rel = 'noopener'; li.append(a); }
       return li;
     }));
   }

@@ -32,7 +32,7 @@ globalThis.fetch = async (url, opt = {}) => {
     assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "storage call has a timeout");
     const path = decodeURIComponent(u.pathname.slice("/storage/v1/object/".length));
     if (storageDown) return new Response("down", { status: 503 });
-    if (method === "POST") { assert.match(opt.headers["content-type"], /^image\/(jpeg|webp)$/); store.set(path, Buffer.from(opt.body)); return new Response("{}", { status: 200 }); }
+    if (method === "POST") { assert.match(opt.headers["content-type"], /^(image\/(jpeg|webp)|video\/mp4)$/); store.set(path, Buffer.from(opt.body)); return new Response("{}", { status: 200 }); }
     if (method === "DELETE") { assert.equal(path, "lead-photos"); for (const p of JSON.parse(opt.body).prefixes) store.delete("lead-photos/" + p); return new Response("[]", { status: 200 }); }
     return store.has(path) ? new Response(store.get(path), { status: 200 }) : new Response("{}", { status: 400 });
   }
@@ -675,7 +675,7 @@ assert.equal(p1, "נועה"); assert.equal(p2, "אורן מים"); assert.match(
 assert.equal(TL.testimonial, "sent"); assert.match(sent.at(-1).text.body, /^נשלח לנועה\./);
 const tstToken = link.split("/r/")[1];
 // the form opens only from the real link
-let pg = await tGet(tstToken); let html = await pg.text(); assert.equal(pg.status, 200); assert.match(html, /כמה מילים על אורן מים\?/); assert.match(html, /value="נועה"/); assert.match(html, /noindex/);
+let pg = await tGet(tstToken); let html = await pg.text(); assert.equal(pg.status, 200); assert.match(html, /איך היה עם אורן מים\?/); assert.match(html, /הייתם ממליצים על אורן מים לחברים\?/); assert.match(html, /לצלם המלצה בווידאו/); assert.match(html, /value="נועה"/); assert.match(html, /noindex/);
 html = await (await tGet(TL.id + ".AAAAAAAAAAAAAAAAAAAAAA")).text(); assert.match(html, /הקישור כבר לא פעיל/, "a forged signature");
 // plain words only, and nothing changes on a refusal
 let tres = await tPost({ token: tstToken, name: "נועה", text: "מומלץ מאוד! www.spam.co.il" }); assert.equal(tres.status, 422); assert.equal((await tres.json()).error, "contact");
@@ -717,6 +717,34 @@ await pickReply("ts-7", "review:" + TL3.id); assert.equal(TL3.review, "sent"); a
 const TL4 = await newLead("דור לב", "0503333352", "10.0.0.23");
 await tapDone("ts-8", "done:" + TL4.id); await pickReply("ts-9", "noreview:" + TL4.id);
 assert.equal(TL4.review, "skipped"); assert.equal(TL4.testimonial, "skipped"); assert.equal(sent.at(-1).text.body, "בסדר, לא נשלח.");
+// a video testimonial (0023): recorded on the phone, the customer's OK, up on the site with its first frame
+{
+  const TLv = await newLead("שי כהן", "0503333353", "10.0.0.24");
+  await tapDone("ts-10", "done:" + TLv.id); await pickReply("ts-11", "tst:" + TLv.id);
+  const vlink = sent.filter((m) => m.template && m.template.name === "testimonial_request" && m.to === "972503333353").at(-1).template.components[0].parameters[2].text;
+  const vtok = vlink.split("/r/")[1];
+  const poster = Buffer.concat([Buffer.from("RIFF\0\0\0\0WEBPVP8 ", "latin1"), Buffer.alloc(20)]);
+  const movie = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from("ftypisom", "latin1"), Buffer.alloc(40)]);
+  const vPost = (fields, { mov = movie, size = "720x1280" } = {}) => tstFn(new Request("https://service-pro-web.netlify.app/api/testimonial", { method: "POST", body: Buffer.concat([poster, mov]),
+    headers: { "content-type": "application/octet-stream", "x-poster-length": String(poster.length), "x-video-size": size, "x-fields": encodeURIComponent(JSON.stringify(fields)), "x-nf-client-connection-ip": "10.1.0.9" } }), {});
+  let vr = await vPost({ token: vtok, name: "שי", text: "", stars: 5, recommend: true });
+  assert.equal(vr.status, 422); assert.equal((await vr.json()).error, "consent", "no video on the site without the customer's OK");
+  vr = await vPost({ token: vtok, name: "שי", text: "", consent: true }, { mov: Buffer.from("not a video at all, nope") });
+  assert.equal(vr.status, 415);
+  const before = sent.length, files = store.size;
+  vr = await vPost({ token: vtok, name: "שי", text: "", stars: 5, recommend: true, consent: true });
+  const vj = await vr.json(); assert.equal(vr.status, 200, JSON.stringify(vj));
+  assert.equal(store.size, files + 2, "the video and its first frame");
+  const row = T.ls_testimonials.find((t) => t.lead_id === TLv.id);
+  assert.equal(row.body, ""); assert.equal(row.recommend, true); assert.match(row.video.path, /^testimonials\/oren\/[0-9a-f]{18}\.mp4$/); assert.deepEqual([row.video.w, row.video.h], [720, 1280]);
+  const item = (await listNow()).find((t) => t.name === "שי");
+  assert.equal(item.video.src, "https://x.supabase.co/storage/v1/object/public/builder/" + row.video.path); assert.match(item.video.poster, /\.webp$/); assert.equal(item.recommend, true);
+  assert.match(sent.slice(before).find((m) => m.type === "interactive").interactive.body.text, /^המלצה חדשה עלתה לאתר ★★★★★, עם סרטון, וממליצים עליכם:\n"\(סרטון בלי טקסט\)"/);
+  vr = await vPost({ token: vtok, name: "שי", text: "", consent: true }); assert.equal(vr.status, 410, "once");
+  assert.equal(store.size, files + 2, "nothing left behind by the refused one");
+  // without a video, a few words are still needed
+  assert.equal(lib.checkTestimonial({ name: "שי", text: "" }).error, "short"); assert.ok(lib.checkTestimonial({ name: "שי", text: "" }, { withVideo: true }).row);
+}
 // a business that turned it off: the site shows nothing, the link stops working
 Object.assign(C0, { review_requests: false, testimonials: false }); lib.forgetClient("oren");
 assert.deepEqual(await listNow(), []);

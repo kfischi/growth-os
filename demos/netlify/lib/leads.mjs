@@ -353,22 +353,26 @@ export function testimonialToken(token) {
 }
 // What goes on a site without anyone checking it first: plain words only. No links, no e-mail, no phone numbers
 // (spam, and nobody's details end up on a page), no markup.
-export function checkTestimonial(input) {
+// withVideo: a recorded testimonial may come with a short line or none (0023_testimonial_video.sql).
+export function checkTestimonial(input, { withVideo = false } = {}) {
   const tidy = (v, n) => String(v ?? "").replace(/[\u0000-\u001f\u007f\u200b-\u200f\u202a-\u202e<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n + 1);
   const name = tidy(input && input.name, 30), body = tidy(input && input.text, 400);
   const stars = input && input.stars != null && input.stars !== "" ? Number(input.stars) : null;
+  const recommend = input && typeof input.recommend === "boolean" ? input.recommend : null;
   if (name.length < 2 || name.length > 30) return { error: "name" };
-  if (body.length < 15) return { error: "short" };
+  if (body.length < 15 && !withVideo) return { error: "short" };
   if (body.length > 400) return { error: "long" };
   if (stars !== null && !(Number.isInteger(stars) && stars >= 1 && stars <= 5)) return { error: "stars" };
   const all = name + " " + body;
   if (/https?:|www\.|\.(com|co\.il|net|org|io|ly)\b|@/i.test(all) || /\d[\d\s-]{6,}\d/.test(all)) return { error: "contact" };
-  return { row: { name, body, stars } };
+  return { row: { name, body, stars, ...(recommend !== null ? { recommend } : {}) } };
 }
 // The visible ones for the site, newest first.
 export async function publicTestimonials(slug, limit = 12) {
-  const rows = await db("GET", `ls_testimonials?client_slug=eq.${q(slug)}&hidden=eq.false&select=name,body,stars,created_at&order=created_at.desc&limit=${limit}`);
-  return rows.map((t) => ({ name: t.name, text: t.body, stars: t.stars, at: t.created_at }));
+  const rows = await db("GET", `ls_testimonials?client_slug=eq.${q(slug)}&hidden=eq.false&select=*&order=created_at.desc&limit=${limit}`);
+  const pub = (p) => process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/object/public/builder/" + p;
+  return rows.map((t) => ({ name: t.name, text: t.body, stars: t.stars, at: t.created_at, ...(t.recommend === true ? { recommend: true } : {}),
+    ...(t.video && t.video.path ? { video: { src: pub(t.video.path), poster: pub(t.video.poster), w: t.video.w || null, h: t.video.h || null } } : {}) }));
 }
 
 /* ---------------- the lead flow ---------------- */

@@ -716,7 +716,7 @@ ${body}
     : "הפרטים מגיעים ישירות לוואטסאפ של העסק, דרך השירות של WhatsApp (Meta). האתר עצמו לא שומר אותם."}</p>
 
 ${leads ? `<h2>המלצות</h2>
-<p>אחרי עבודה אנחנו יכולים לבקש מכם המלצה, פעם אחת. אם תכתבו, היא מופיעה באתר עם השם שבחרתם והדירוג, בלי טלפון. אפשר לבקש להסיר אותה בכל זמן.</p>
+<p>אחרי עבודה אנחנו יכולים לבקש מכם המלצה, פעם אחת. אם תכתבו, היא מופיעה באתר עם השם שבחרתם, הדירוג והתשובה אם הייתם ממליצים, בלי טלפון. אם תצלמו סרטון ותאשרו שיופיע, גם הוא עולה לאתר, ונשמר אצלנו כל עוד ההמלצה שם. אפשר לבקש להסיר אותה בכל זמן.</p>
 
 ` : ""}<h2>עוגיות</h2>
 <p>האתר לא משתמש בעוגיות (cookies): לא לפרסום, לא למעקב ולא לסטטיסטיקה. בדפדפן שלכם נשמרות רק ההגדרות שבחרתם בתפריט הנגישות${leads ? ", וסימון שהביקור והלחיצות כבר נספרו, עד שסוגרים את הלשונית" : ""}. ${localFonts ? "הגופנים נטענים מהאתר עצמו, בלי שירות חיצוני." : "הגופן של האתר נטען מ-Google Fonts, ולכן גוגל רואה את כתובת ה-IP שלכם."}</p>
@@ -1152,6 +1152,8 @@ const CSS = `
   .tst-card { margin: 0; background: var(--surface); border: 1.5px solid var(--rule); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
   .tst-stars { color: var(--signal); letter-spacing: 3px; font-size: 18px; }
   .tst-text { margin: 0; font-size: 17px; line-height: 1.6; overflow-wrap: anywhere; }
+  .tst-video { width: 100%; height: auto; max-height: 70vh; border-radius: 6px; background: #000; object-fit: contain; }
+  .tst-rec { align-self: flex-start; font-size: 14px; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--signal) 14%, var(--surface)); border-radius: 999px; padding: 3px 10px; }
   .tst-by { margin-top: auto; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); font-size: 14px; }
   .tst-by b { color: var(--ink); font-weight: 600; }
   .gd-more { margin: 16px 0 0; } .gd-more a { font-weight: 700; color: var(--accent); text-underline-offset: 4px; }
