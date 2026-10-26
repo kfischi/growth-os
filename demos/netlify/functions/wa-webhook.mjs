@@ -11,10 +11,13 @@
 //   - the owner taps "להסתיר" on a new testimonial: it comes off the site
 //   - the owner sends a voice note: it is written down and turned into the same commands (lib/voice.mjs), shown back
 //     with "לאשר" / "ביטול", and only "לאשר" (within 30 minutes, once) changes the site
+//   - the owner answers an enquiry's alert with a price, typed or spoken: "לשלוח?", and one tap sends the customer a
+//     quote with "מאשרים" / "יש לי שאלה" (lib/quote.mjs); the customer's tap marks the enquiry and tells the owner
 //   - the owner sends a photo of a finished job: "להוסיף לאתר?", and one tap puts it first in the site's work photos,
 //     its caption as the title (builder.mjs ownerPhoto)
 import { agentOn, agentReply } from "../lib/agent.mjs";
-import { voiceOn, fetchMedia, serviceNames, transcribe, checkLines, describe, VOICE_TTL_MIN } from "../lib/voice.mjs";
+import { voiceOn, fetchMedia, serviceNames, transcribe, transcribeQuote, checkLines, describe, VOICE_TTL_MIN } from "../lib/voice.mjs";
+import { quotesOn, parseQuoteText, checkQuote, leadForReply, quotePreview, sendQuote, quoteAnswer } from "../lib/quote.mjs";
 import { ownerPrice, pricesText, ownerPhotoPlan, ownerPhoto, MAX_PHOTO_BYTES } from "../lib/builder.mjs";
 import { json, configured, db, q, updateLead, sendText, validMetaSignature, safeEqual, clip, availability, availabilityCommand, setAvailability, firstName,
   sendButtons, sendTemplate, reviewOn, reviewBlocked, OPT_OUT, testimonialOn, testimonialBlocked, testimonialLink,
@@ -65,6 +68,34 @@ async function voiceConfirm(client, from, row) {
     catch (e) { console.error("voice command", e.message); answers.push(`לא הצלחנו לעדכן: ${describe(line)}. נסו שוב בעוד כמה דקות.`); }
   }
   await sendText(client, from, answers.filter(Boolean).join("\n\n") || "לא היה מה לעדכן.", { kind: "owner_reply" });
+}
+
+// A price for one enquiry, as a reply to its alert: show the owner the customer's message and ask "לשלוח?".
+// quote: { price, details } from typed text, or null for a voice note (written down here first).
+async function quoteNote(client, from, m, lead, quote) {
+  const reply = (t) => sendText(client, from, t, { kind: "owner_reply", leadId: lead.id });
+  try {
+    let heard = "";
+    if (!quote) {
+      const v = await transcribeQuote(await fetchMedia(client, m.audio.id));
+      heard = v.transcript ? `שמענו: "${v.transcript}"\n\n` : "";
+      quote = checkQuote(v.min, v.max, v.details);
+      if (!quote) return voiceNote(client, from, m); // no price in it: the owner's spoken commands, as anywhere else
+    }
+    await db("PATCH", `ls_messages?wa_id=eq.${q(m.id)}&direction=eq.in`, { status: "pending", lead_id: lead.id, body: { type: "quote", lead: lead.id, ...quote } });
+    await sendButtons(client, from, heard + quotePreview(client, lead, quote),
+      [{ id: "quote:" + m.id, title: "לשלוח" }, { id: "noquote:" + m.id, title: "ביטול" }], { kind: "owner_reply", leadId: lead.id });
+  } catch (e) {
+    console.error("quote note", e.message);
+    await reply("לא הצלחנו להכין את הצעת המחיר הפעם. אפשר לשלוח שוב, או לכתוב את המחיר.");
+  }
+}
+
+// "לשלוח": the quote as it was shown, to the enquiry it answered.
+async function quoteConfirm(client, from, row) {
+  const lead = (await db("GET", `ls_leads?id=eq.${q(row.body.lead)}&client_slug=eq.${q(client.slug)}&select=*`))[0];
+  const answer = lead ? await sendQuote(client, lead, { price: row.body.price, details: row.body.details }) : "הפנייה הזאת כבר לא במערכת.";
+  await sendText(client, from, answer, { kind: "owner_reply", leadId: lead ? lead.id : null });
 }
 
 // A photo from the owner: ask before it goes on the site. Nothing is uploaded until "להוסיף לאתר".
@@ -208,6 +239,25 @@ async function onMessage(client, m) {
     return;
   }
 
+  // The owner answers an enquiry's alert with a price ("500, מחר בבוקר", or a voice note): a quote, once confirmed.
+  const replyTo = from === client.owner_phone && quotesOn(client) && (m.type === "text" || m.type === "audio") && m.context ? await leadForReply(client, m) : null;
+  const typed = replyTo && m.type === "text" && !availabilityCommand(text) && !ownerCommand(text) ? parseQuoteText(text) : null;
+  if (replyTo && (typed || (m.type === "audio" && m.audio && m.audio.id && voiceOn()))) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: replyTo.id, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { type: m.type, text: clip(text, 300) } });
+    if (!fresh) return;
+    later.push(quoteNote(client, from, m, replyTo, typed));
+    return;
+  }
+
+  // The customer answers a quote: "מאשרים" or "יש לי שאלה" (lib/quote.mjs). Only from that enquiry's own number.
+  const qa = from !== client.owner_phone && /^(qok|qask):([0-9a-f-]{36})$/.exec(payload || "");
+  if (qa) {
+    const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "inbound", from_phone: from, wa_id: m.id, body: { text, payload } });
+    if (!fresh) return;
+    await retryable(m.id, () => quoteAnswer(client, from, qa[1] === "qok" ? "ok" : "ask", qa[2]));
+    return;
+  }
+
   // The owner writes "עסוק" or "פנוי" (0007_availability.sql), teaches the business, or changes a price (0016_owner_notes.sql).
   // A price change publishes the site, so it runs after the answer to Meta.
   const cmd = from === client.owner_phone && m.type === "text" ? availabilityCommand(text) || (client.active !== false ? ownerCommand(text) : null) : null;
@@ -239,23 +289,25 @@ async function onMessage(client, m) {
 
   // "לאשר" or "ביטול" on a voice note, "להוסיף לאתר" or "ביטול" on a photo. The note's row moves from "pending"
   // once, so a second tap does nothing.
-  const vc = from === client.owner_phone && /^(voice|novoice|wphoto|nophoto):([\w.+/=-]{4,200})$/.exec(payload || "");
+  const vc = from === client.owner_phone && /^(voice|novoice|wphoto|nophoto|quote|noquote):([\w.+/=-]{4,200})$/.exec(payload || "");
   if (vc) {
     const fresh = await logInbound({ client_slug: client.slug, lead_id: null, kind: "owner_reply", from_phone: from, wa_id: m.id, body: { text, payload: clip(payload, 220) } });
     if (!fresh) return;
     const at = `ls_messages?wa_id=eq.${q(vc[2])}&client_slug=eq.${q(client.slug)}&direction=eq.in&from_phone=eq.${q(from)}`;
     const row = (await db("GET", `${at}&select=*`))[0];
-    if (row && (vc[1] === "wphoto" || vc[1] === "nophoto") !== ((row.body || {}).type === "image")) return; // not this kind's button
+    const KIND = { voice: "audio", novoice: "audio", wphoto: "image", nophoto: "image", quote: "quote", noquote: "quote" };
+    if (row && KIND[vc[1]] !== (((row.body || {}).type) || "audio")) return; // not this kind's button
     if (!row || row.status !== "pending") return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
     if (Date.now() - new Date(row.created_at).getTime() > VOICE_TTL_MIN * 60_000) {
       await db("PATCH", `${at}&status=eq.pending`, { status: "expired" });
-      return void (await sendText(client, from, `עבר יותר מחצי שעה מ${row.body && row.body.type === "image" ? "התמונה" : "ההודעה הקולית"}, אז לא עדכנו כלום. שלחו אותה שוב.`, { kind: "owner_reply" }));
+      const what = { image: "התמונה", quote: "הצעת המחיר" }[(row.body || {}).type] || "ההודעה הקולית";
+      return void (await sendText(client, from, `עבר יותר מחצי שעה מ${what}, אז לא ${row.body && row.body.type === "quote" ? "שלחנו" : "עדכנו"} כלום. שלחו אותה שוב.`, { kind: "owner_reply" }));
     }
-    const yes = vc[1] === "voice" || vc[1] === "wphoto";
+    const yes = !vc[1].startsWith("no");
     const [claimed] = await db("PATCH", `${at}&status=eq.pending`, { status: yes ? "confirmed" : "cancelled" }, "return=representation");
     if (!claimed) return void (await sendText(client, from, "כבר טיפלנו בהודעה הזאת.", { kind: "owner_reply" }));
     if (!yes) return void (await sendText(client, from, "בוטל. לא שינינו כלום.", { kind: "owner_reply" }));
-    later.push((vc[1] === "wphoto" ? photoConfirm : voiceConfirm)(client, from, claimed).catch((e) => console.error("owner confirm", e.message)));
+    later.push(({ wphoto: photoConfirm, quote: quoteConfirm }[vc[1]] || voiceConfirm)(client, from, claimed).catch((e) => console.error("owner confirm", e.message)));
     return;
   }
 

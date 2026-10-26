@@ -40,26 +40,38 @@ ${services.length ? `שמות השירותים באתר (השתמשו בשם ה�
 אל תמציאו שום דבר שלא נאמר. על שאלה, ברכה או משהו לא ברור לא כותבים שורה. אם אין בקשה ברורה, commands ריק.`;
 
 // One call to Gemini with the audio inline and a JSON schema for the answer.
-export async function transcribe({ buf, mime }, services = []) {
+export async function geminiAudio(prompt, { buf, mime }, schema) {
   const model = process.env.GEMINI_VOICE_MODEL || "gemini-2.5-flash";
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
     method: "POST",
     headers: { "content-type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
     body: JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: PROMPT(services) }, { inline_data: { mime_type: mime, data: buf.toString("base64") } }] }],
-      generationConfig: {
-        temperature: 0,
-        responseMimeType: "application/json",
-        responseSchema: { type: "OBJECT", properties: { transcript: { type: "STRING" }, commands: { type: "ARRAY", items: { type: "STRING" } } }, required: ["transcript", "commands"] },
-      },
+      contents: [{ role: "user", parts: [{ text: prompt }, { inline_data: { mime_type: mime, data: buf.toString("base64") } }] }],
+      generationConfig: { temperature: 0, responseMimeType: "application/json", responseSchema: schema },
     }),
     signal: AbortSignal.timeout(25000),
   });
   if (!res.ok) throw new Error("gemini " + res.status);
   const data = await res.json();
-  const text = (((data.candidates || [])[0] || {}).content || { parts: [] }).parts.map((p) => p.text || "").join("");
-  const out = JSON.parse(text);
-  return { transcript: clip(String(out.transcript || "").replace(/\s+/g, " ").trim(), 600), lines: Array.isArray(out.commands) ? out.commands.map(String) : [] };
+  return JSON.parse((((data.candidates || [])[0] || {}).content || { parts: [] }).parts.map((p) => p.text || "").join(""));
+}
+const oneLine = (s, n) => clip(String(s || "").replace(/\s+/g, " ").trim(), n);
+
+export async function transcribe(audio, services = []) {
+  const out = await geminiAudio(PROMPT(services), audio,
+    { type: "OBJECT", properties: { transcript: { type: "STRING" }, commands: { type: "ARRAY", items: { type: "STRING" } } }, required: ["transcript", "commands"] });
+  return { transcript: oneLine(out.transcript, 600), lines: Array.isArray(out.commands) ? out.commands.map(String) : [] };
+}
+
+// A price for one customer, spoken as a reply to the enquiry's alert ("חמש מאות, מחר בבוקר"): the numbers and the rest.
+const QUOTE_PROMPT = `זו הודעה קולית שבעל עסק שלח כתשובה לפנייה של לקוח, כדי לתת לו הצעת מחיר.
+transcript: מילה במילה מה שנאמר. price_min ו-price_max: המחיר בשקלים, בספרות; מחיר אחד: אותו מספר בשניהם; טווח: הנמוך והגבוה.
+details: מה שהלקוח צריך לדעת מעבר למחיר, רק ממה שנאמר (מתי, מה כלול, תנאים), במשפט קצר אחד, בלשון רבים מכובדת, בלי להמציא.
+אם לא נאמר מחיר: price_min ו-price_max הם 0.`;
+export async function transcribeQuote(audio) {
+  const out = await geminiAudio(QUOTE_PROMPT, audio, { type: "OBJECT", properties: {
+    transcript: { type: "STRING" }, price_min: { type: "INTEGER" }, price_max: { type: "INTEGER" }, details: { type: "STRING" } }, required: ["transcript", "price_min", "price_max", "details"] });
+  return { transcript: oneLine(out.transcript, 600), min: Number(out.price_min) || 0, max: Number(out.price_max) || 0, details: oneLine(out.details, 160) };
 }
 
 // Only lines our own parsers accept, once each, at most five, and only the ones that change something.

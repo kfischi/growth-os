@@ -303,11 +303,11 @@ async function waSend(client, to, payload, log) {
 }
 
 // A template message: the only kind a business may start a conversation with.
-// buttonPayload fills the template's first quick-reply button (the owner's "טיפלתי").
-export function sendTemplate(client, to, name, params, { buttonPayload, kind, leadId } = {}) {
+// buttonPayload fills the template's first quick-reply button (the owner's "טיפלתי"); buttonPayloads fills them in order.
+export function sendTemplate(client, to, name, params, { buttonPayload, buttonPayloads, kind, leadId } = {}) {
   // A parameter is a string (up to 200 characters) or { text, max } for a longer one; the whole body stays under 1024.
   const components = [{ type: "body", parameters: params.map((p) => ({ type: "text", text: p && typeof p === "object" ? param(p.text, p.max) : param(p) })) }];
-  if (buttonPayload) components.push({ type: "button", sub_type: "quick_reply", index: "0", parameters: [{ type: "payload", payload: buttonPayload }] });
+  (buttonPayloads || (buttonPayload ? [buttonPayload] : [])).forEach((payload, i) => components.push({ type: "button", sub_type: "quick_reply", index: String(i), parameters: [{ type: "payload", payload }] }));
   return waSend(client, to, { type: "template", template: { name, language: { code: client.tpl_lang || "he" }, components } }, { kind, lead_id: leadId || null });
 }
 

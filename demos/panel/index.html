@@ -580,6 +580,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
     if (l.reminded_at && l.status === 'new') meta.append(el('span', null, 'נשלחה תזכורת'));
     const REVIEW = { sent: 'נשלחה בקשה לביקורת', failed: 'הבקשה לביקורת לא נשלחה', optout: 'ביקשו לא לקבל הודעות' };
     if (REVIEW[l.review]) meta.append(el('span', null, REVIEW[l.review]));
+    const QUOTE = { sent: 'נשלחה הצעת מחיר', failed: 'הצעת המחיר לא נשלחה', accepted: 'הצעת המחיר אושרה', question: 'יש שאלה על הצעת המחיר' };
+    if (QUOTE[l.quote_status]) meta.append(el('span', null, QUOTE[l.quote_status] + (l.quote_price ? ': ' + l.quote_price : '')));
     c.append(meta);
     ins.slice(0, 2).forEach((x) => {
       const b = el('div', 'inbound'); b.append(el('small', null, 'הודעה בוואטסאפ · ' + ago(x.created_at)), document.createTextNode((x.body && x.body.text) || ''));

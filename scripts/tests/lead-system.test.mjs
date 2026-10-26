@@ -475,6 +475,80 @@ assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 400"), { price
   assert.equal(sent.at(-1).text.body, "כבר טיפלנו בהודעה הזאת.", "once");
   T.ls_drafts.length = 0;
 }
+// a quote: the owner answers the enquiry's alert with a price (typed or spoken), "לשלוח", the customer's "מאשרים"
+{
+  const Q = await import(new URL("../../demos/netlify/lib/quote.mjs", import.meta.url).href);
+  assert.deepEqual(Q.parseQuoteText("500, מחר בבוקר"), { price: "500 ₪", details: "מחר בבוקר." });
+  assert.deepEqual(Q.parseQuoteText("350 עד 550 ₪ כולל חלקים"), { price: "350 עד 550 ₪", details: "כולל חלקים." });
+  assert.deepEqual(Q.parseQuoteText("1,200"), { price: "1,200 ₪", details: "" });
+  assert.equal(Q.parseQuoteText("תודה"), null); assert.equal(Q.parseQuoteText("550-350"), null); assert.equal(Q.parseQuoteText("12"), null);
+  const own = (id, body, ctx = "wamid.alert-q") => ({ from: "972501111111", id, type: "text", text: { body }, ...(ctx ? { context: { from: "972500000000", id: ctx } } : {}) });
+  const tap = (id, payload, from = "972501111111") => ({ from, id, type: "button", button: { payload, text: "x" } });
+  const row = (id) => T.ls_messages.find((x) => x.wa_id === id && x.direction === "in");
+  const QL = { ...DEF.ls_leads(), client_slug: "oren", name: "רותם לוי", phone: "0504444444", phone_intl: "972504444444", service: "נזילה במטבח" };
+  T.ls_leads.push(QL);
+  T.ls_messages.push({ id: 9001, client_slug: "oren", lead_id: QL.id, direction: "out", kind: "owner_alert", wa_id: "wamid.alert-q", status: "delivered" });
+  // off: a price in a reply is not a quote
+  let before = sent.length;
+  await hook(wh(val({ messages: [own("wamid.q0", "500, מחר בבוקר")] })));
+  assert.equal(sent.length, before, "quotes off: nothing"); assert.equal(row("wamid.q0").status, "received");
+  C0.quotes = true; C0.tpl_quote = "quote";
+  // a command on the alert stays a command
+  await hook(wh(val({ messages: [own("wamid.q1", "עסוק 2")] })));
+  assert.match(sent.at(-1).text.body, /^באתר כתוב עכשיו: באמצע עבודה/); await lib.setAvailability(C0, { avail: null });
+  // typed: the preview, then "לשלוח"
+  await hook(wh(val({ messages: [own("wamid.q2", "500, מחר בבוקר")] })));
+  await hook(wh(val({ messages: [own("wamid.q2", "500, מחר בבוקר")] }))); // Meta retries
+  const ask = sent.at(-1); assert.equal(ask.type, "interactive");
+  assert.equal(ask.interactive.body.text, "ככה זה יגיע לרותם:\n\nשלום רותם, כאן אורן מים. הצעת המחיר עבור נזילה במטבח: 500 ₪. מחר בבוקר.\nההצעה בתוקף ל-7 ימים. לאישור לחצו \"מאשרים\", ונחזור אליכם לתאם.\n[מאשרים] [יש לי שאלה]\n\nלשלוח?");
+  assert.deepEqual(ask.interactive.action.buttons.map((b) => b.reply.id), ["quote:wamid.q2", "noquote:wamid.q2"]);
+  assert.equal(sent.filter((x) => x.type === "interactive" && /^ככה זה יגיע/.test(x.interactive.body.text)).length, 1, "asked once");
+  assert.equal(QL.quote_status, undefined, "nothing sent yet");
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q3", "voice:wamid.q2")] })));
+  assert.equal(sent.length, before, "another kind's button does nothing");
+  await hook(wh(val({ messages: [tap("wamid.q4", "quote:wamid.q2")] })));
+  const tpl = sent.find((x) => x.template && x.template.name === "quote");
+  assert.equal(tpl.to, "972504444444");
+  assert.deepEqual(tpl.template.components[0].parameters.map((p) => p.text), ["רותם", "אורן מים", "נזילה במטבח", "500 ₪", "מחר בבוקר."]);
+  assert.deepEqual(tpl.template.components.slice(1).map((c) => [c.index, c.parameters[0].payload]), [["0", "qok:" + QL.id], ["1", "qask:" + QL.id]]);
+  assert.equal(QL.quote_status, "sent"); assert.equal(QL.quote_price, "500 ₪"); assert.match(sent.at(-1).text.body, /^נשלח לרותם: 500 ₪/);
+  // someone else's tap on the customer's button: nothing
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q5", "qok:" + QL.id, "972509999999")] })));
+  assert.equal(QL.quote_status, "sent"); assert.equal(sent.length, before);
+  // the customer: "מאשרים" marks it won and tells the owner; a second tap only thanks
+  await hook(wh(val({ messages: [tap("wamid.q6", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "accepted"); assert.equal(QL.status, "won"); assert.ok(QL.handled_at);
+  const told = sent.filter((x) => x.template && x.template.name === "owner_new_lead").at(-1);
+  assert.equal(told.to, "972501111111"); assert.match(told.template.components[0].parameters[3].text, /^הצעת המחיר אושרה: 500 ₪/);
+  assert.equal(sent.at(-1).to, "972504444444"); assert.match(sent.at(-1).text.body, /^תודה!/);
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.q7", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(sent.length, before + 1); assert.match(sent.at(-1).text.body, /^קיבלנו/); assert.equal(sent.filter((x) => x.template && /הצעת המחיר אושרה/.test(x.template.components[0].parameters[3]?.text || "")).length, 1, "the owner told once");
+  // "יש לי שאלה", and a late "מאשרים" after 7 days becomes a question
+  QL.quote_status = "sent"; QL.status = "new";
+  await hook(wh(val({ messages: [tap("wamid.q8", "qask:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "question"); assert.equal(QL.status, "new"); assert.match(sent.at(-1).text.body, /אפשר גם לכתוב כאן את השאלה/);
+  QL.quote_status = "sent"; QL.quote_sent_at = new Date(Date.now() - 8 * 86_400_000).toISOString();
+  await hook(wh(val({ messages: [tap("wamid.q9", "qok:" + QL.id, "972504444444")] })));
+  assert.equal(QL.quote_status, "question"); assert.notEqual(QL.status, "won"); assert.match(sent.at(-1).text.body, /^ההצעה הייתה בתוקף ל-7 ימים/);
+  // spoken: written down, then the same preview; spoken without a price: the owner's voice commands
+  process.env.GEMINI_API_KEY = "gm-test";
+  geminiReply = { transcript: "שש מאות, כולל חלקים", price_min: 600, price_max: 600, details: "כולל חלקים", commands: [] };
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "wamid.qv1", type: "audio", audio: { id: "MEDIAqv1" }, context: { id: "wamid.alert-q" } }] })));
+  assert.match(sent.at(-1).interactive.body.text, /^שמענו: "שש מאות, כולל חלקים"\n\nככה זה יגיע לרותם:[\s\S]*600 ₪\. כולל חלקים\./);
+  geminiReply = { transcript: "אני עסוק שעתיים", price_min: 0, price_max: 0, details: "", commands: ["עסוק 2"] };
+  await hook(wh(val({ messages: [{ from: "972501111111", id: "wamid.qv2", type: "audio", audio: { id: "MEDIAqv2" }, context: { id: "wamid.alert-q" } }] })));
+  assert.match(sent.at(-1).interactive.body.text, /• באתר: באמצע עבודה, ל-2 שעות/); assert.deepEqual(sent.at(-1).interactive.action.buttons.map((b) => b.reply.id), ["voice:wamid.qv2", "novoice:wamid.qv2"]);
+  delete process.env.GEMINI_API_KEY;
+  // a landline: no WhatsApp quote
+  QL.phone_intl = "97246222222";
+  await hook(wh(val({ messages: [own("wamid.q10", "700")] })));
+  await hook(wh(val({ messages: [tap("wamid.q11", "quote:wamid.q10")] })));
+  assert.match(sent.at(-1).text.body, /אינו נייד/);
+  C0.quotes = false;
+}
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
 r = await api(post("/api/leads", { job_value: -5 }, owner)); assert.equal(r.status, 400);
