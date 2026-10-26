@@ -743,6 +743,47 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
     assert.match(msg, /שינויים מהבונה שעוד לא פורסמו/); assert.equal(D.content.services[0].price, "350 עד 550 ₪");
     D.content = D.live.content; D.self_edit = false;
   }
+  // a work photo from the owner's WhatsApp: first in the work photos, the rest one down, the caption its title,
+  // where it was taken stripped, one commit and the deploy
+  {
+    const C2 = { slug: "oren-mayim" }, trees = gh.trees.length;
+    assert.match((await lib.ownerPhotoPlan({ slug: "no-site" })).reply, /^תמונות מהוואטסאפ נכנסות לאתר רק באתר שנבנה בבונה/);
+    const seg = (m, data) => Buffer.concat([Buffer.from([0xff, m]), Buffer.from([(data.length + 2) >> 8, (data.length + 2) & 255]), data]);
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8]), seg(0xe0, Buffer.from("JFIF\0\x01\x01\0\0\x01\0\x01\0\0", "latin1")),
+      seg(0xe1, Buffer.from("Exif\0\0GPS-32.43,34.91", "latin1")), seg(0xc0, Buffer.from([8, 0, 100, 0, 200, 3, 1, 0x22, 0, 2, 0x11, 1, 3, 0x11, 1])),
+      seg(0xda, Buffer.from([3, 1, 0, 2, 0x11, 3, 0x11, 0, 0x3f, 0])), Buffer.from([1, 2, 3, 4, 0xff, 0xd9])]);
+    const before = { ...(D.photos || {}) }, t1 = D.content.work1_title || "";
+    assert.equal((await lib.ownerPhotoPlan(C2)).full, false);
+    const msg = await lib.ownerPhoto(C2, { buf: jpeg, title: "החלפת ברז במטבח בחדרה, עבודה של שעה וחצי" });
+    assert.match(msg, /^התמונה \("החלפת ברז במטבח בחדרה, עבודה של"\) נוספה לאתר, ראשונה בעבודות האחרונות/, msg);
+    // a WebP keeps its picture and loses its EXIF and XMP chunks
+    const ch = (id, data) => { const len = Buffer.alloc(4); len.writeUInt32LE(data.length); return Buffer.concat([Buffer.from(id, "ascii"), len, data, data.length & 1 ? Buffer.alloc(1) : Buffer.alloc(0)]); };
+    const vp8x = Buffer.alloc(10); vp8x[0] = 0x0c; vp8x.writeUIntLE(199, 4, 3); vp8x.writeUIntLE(99, 7, 3);
+    const body = Buffer.concat([ch("VP8X", vp8x), ch("VP8 ", Buffer.from("frame")), ch("EXIF", Buffer.from("GPS-32.4")), ch("XMP ", Buffer.from("<x>gps</x>"))]);
+    const riff = Buffer.alloc(12); riff.write("RIFF", 0, "ascii"); riff.writeUInt32LE(body.length + 4, 4); riff.write("WEBP", 8, "ascii");
+    const w = B.stripJpegMeta(Buffer.concat([riff, body]));
+    assert.equal(B.photoType(w), "webp"); assert.ok(!/GPS|gps/.test(w.toString("latin1")) && w.toString("latin1").includes("frame"));
+    assert.equal(w.readUInt32LE(4), w.length - 8, "the RIFF size fits"); assert.equal(w[20] & 0x0c, 0, "the flags say so"); assert.deepEqual(B.imageSize(w), [200, 100]);
+    assert.equal(D.content.work1_title, "החלפת ברז במטבח בחדרה, עבודה של", "cut at a word, 34 at most");
+    assert.deepEqual([D.photos.work1.w, D.photos.work1.h], [200, 100]);
+    if (before.work1) { assert.equal(D.photos.work2.path, before.work1.path, "the old first moves down"); assert.equal(D.content.work2_title, t1); }
+    const up = storage.get(D.photos.work1.path); assert.ok(up && !up.toString("latin1").includes("GPS"), "no EXIF on the site"); assert.ok(up.toString("latin1").includes("JFIF"));
+    assert.deepEqual(D.live.photos, D.photos, "live too"); assert.equal(gh.trees.length, trees + 1, "one commit");
+    assert.ok(nl.bodies.get("/index.html").includes("החלפת ברז במטבח בחדרה, עבודה של"), "deployed");
+    // all six full: the last one leaves the site, and its file goes
+    for (const k of ["work1", "work2", "work3", "work4", "work5", "work6"]) if (!D.photos[k]) { const path = `drafts/${D.id}/${k}-aaaaaaaaaaaa.jpg`; storage.set(path, jpeg); D.photos[k] = { path, ext: "jpg" }; }
+    { const path = `drafts/${D.id}/work6-bbbbbbbbbbbb.jpg`; storage.set(path, jpeg); D.photos.work6 = { path, ext: "jpg" }; } // one "back" doesn't use
+    D.content = { ...D.content, work6_title: "גג אחרון" }; D.live = B.snapshot(D);
+    const plan = await lib.ownerPhotoPlan(C2); assert.equal(plan.full, true); assert.equal(plan.leaving, "גג אחרון");
+    const last = D.photos.work6.path, fifth = D.photos.work5.path;
+    await lib.ownerPhoto(C2, { buf: jpeg, title: "" });
+    assert.equal(D.photos.work6.path, fifth); assert.ok(!storage.has(last), "the photo that left is deleted (one the version before still uses would stay)"); assert.equal(D.content.work1_title, "");
+    assert.match(await lib.ownerPhoto(C2, { buf: Buffer.from("not an image"), title: "" }), /לא בפורמט/);
+    // unpublished self edits wait
+    D.self_edit = true; D.content = { ...D.content, work2_title: "שינוי שלא פורסם" };
+    assert.match((await lib.ownerPhotoPlan(C2)).reply, /שינויים מהבונה שעוד לא פורסמו/);
+    D.content = D.live.content; D.self_edit = false;
+  }
   // a domain that never points: given up after 30 days, the site stays where it is
   D.domain = "slow.co.il"; D.domain_state = "waiting"; D.domain_since = "2026-01-01T00:00:00Z";
   out = await lib.checkDomains(new Date("2026-03-01T00:00:00Z"), async () => false); assert.equal(D.domain_state, null);

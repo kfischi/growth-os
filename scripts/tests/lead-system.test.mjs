@@ -448,6 +448,33 @@ assert.deepEqual(lib.ownerCommand("מחיר פתיחת סתימה 400"), { price
   delete process.env.GEMINI_API_KEY;
   await lib.setAvailability(C0, { avail: null }); C0.owner_notes = [];
 }
+// a photo of a finished job from the owner (builder.mjs ownerPhoto; the upload itself is in site-builder.test.mjs)
+{
+  const photo = (id, caption, from = "972501111111") => ({ from, id, type: "image", image: { id: "IMG" + id, mime_type: "image/jpeg", ...(caption ? { caption } : {}) } });
+  const tap = (id, payload) => ({ from: "972501111111", id, type: "interactive", interactive: { type: "button_reply", button_reply: { id: payload, title: "x" } } });
+  const row = (id) => T.ls_messages.find((x) => x.wa_id === id && x.direction === "in");
+  await hook(wh(val({ messages: [photo("wamid.p0")] })));
+  assert.match(sent.at(-1).text.body, /^תמונות מהוואטסאפ נכנסות לאתר רק באתר שנבנה בבונה/, "no builder site");
+  let before = sent.length;
+  await hook(wh(val({ messages: [photo("wamid.px", "", "972509999999")] })));
+  assert.equal(sent.length, before, "a customer's photo is not a site photo"); assert.equal(row("wamid.px").kind, "inbound");
+  T.ls_drafts.push({ id: randomUUID(), status: "published", published_slug: "oren", template: "plumber", rev: 1, photo_rev: 0, content: { business_name: "אורן מים" }, photos: {} });
+  await hook(wh(val({ messages: [photo("wamid.p1", "  ניקוי   סתימה בחדרה ")] })));
+  await hook(wh(val({ messages: [photo("wamid.p1", "ניקוי סתימה בחדרה")] }))); // Meta retries
+  const ask = sent.at(-1); assert.equal(ask.type, "interactive");
+  assert.equal(ask.interactive.body.text, "להוסיף את התמונה לאתר? היא תהיה ראשונה בעבודות האחרונות.\nהכותרת: \"ניקוי סתימה בחדרה\"\nרק תמונה שצילמתם או שמותר לכם לפרסם, בלי פנים של לקוחות ובלי מספר בית או רכב.");
+  assert.deepEqual(ask.interactive.action.buttons.map((b) => b.reply.id), ["wphoto:wamid.p1", "nophoto:wamid.p1"]);
+  assert.equal(sent.filter((x) => x.type === "interactive" && /להוסיף את התמונה/.test(x.interactive.body.text)).length, 1, "asked once");
+  assert.equal(row("wamid.p1").status, "pending"); assert.equal(row("wamid.p1").body.media, "IMGwamid.p1");
+  before = sent.length;
+  await hook(wh(val({ messages: [tap("wamid.pt0", "voice:wamid.p1")] })));
+  assert.equal(sent.length, before, "a voice button can't add a photo"); assert.equal(row("wamid.p1").status, "pending");
+  await hook(wh(val({ messages: [tap("wamid.pt1", "nophoto:wamid.p1")] })));
+  assert.equal(row("wamid.p1").status, "cancelled"); assert.equal(sent.at(-1).text.body, "בוטל. לא שינינו כלום.");
+  await hook(wh(val({ messages: [tap("wamid.pt2", "wphoto:wamid.p1")] })));
+  assert.equal(sent.at(-1).text.body, "כבר טיפלנו בהודעה הזאת.", "once");
+  T.ls_drafts.length = 0;
+}
 // the owner's average job value: saved, cleared, checked; the panel gets it with this month's "נסגר" count
 r = await api(post("/api/leads", { job_value: 450 }, owner)); out = await r.json(); assert.equal(out.job_value, 450); assert.equal(C0.job_value, 450);
 r = await api(post("/api/leads", { job_value: -5 }, owner)); assert.equal(r.status, 400);

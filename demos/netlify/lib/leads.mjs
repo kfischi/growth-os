@@ -251,6 +251,22 @@ export function ago(fromIso, now = new Date()) {
 
 export const GRAPH = () => `https://graph.facebook.com/${process.env.WA_GRAPH_VERSION || "v23.0"}`;
 
+// A photo or a voice note someone sent the business: Meta keeps it behind its own URL, so first its details, then
+// the file, both with the token. max: the largest file we take, in bytes.
+export async function waMedia(client, mediaId, max) {
+  const auth = { authorization: "Bearer " + waToken(client) };
+  const meta = await fetch(`${GRAPH()}/${encodeURIComponent(mediaId)}`, { headers: auth, signal: AbortSignal.timeout(8000) });
+  if (!meta.ok) throw new Error("media info " + meta.status);
+  const info = await meta.json();
+  if (!info.url) throw new Error("media missing");
+  if (Number(info.file_size) > max) return { tooBig: true };
+  const file = await fetch(info.url, { headers: auth, signal: AbortSignal.timeout(15000) });
+  if (!file.ok) throw new Error("media file " + file.status);
+  const buf = Buffer.from(await file.arrayBuffer());
+  if (buf.length > max) return { tooBig: true };
+  return { buf, mime: String(info.mime_type || "").split(";")[0].trim() };
+}
+
 export function waToken(client) {
   return process.env["WA_TOKEN_" + client.slug.toUpperCase().replace(/-/g, "_")] || process.env.WA_TOKEN || "";
 }

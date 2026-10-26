@@ -7,25 +7,17 @@
 //   GEMINI_VOICE_MODEL    optional, default gemini-2.5-flash
 // The audio is fetched from Meta and sent to Google once; we never store it, only the transcript (in ls_messages).
 // Use a paid Gemini API key: on the free tier Google may use what it receives to improve its models.
-import { db, q, clip, waToken, GRAPH, ownerCommand, availabilityCommand } from "./leads.mjs";
+import { db, q, clip, waMedia, ownerCommand, availabilityCommand } from "./leads.mjs";
 
 export const voiceOn = () => Boolean(process.env.GEMINI_API_KEY);
 export const VOICE_MAX_BYTES = 4 * 1024 * 1024; // a WhatsApp voice note is about 100 KB a minute
 export const VOICE_MAX_COMMANDS = 5;
 export const VOICE_TTL_MIN = 30; // "לאשר" works for this long after the note
 
-// Meta keeps incoming media behind its own URL: first the media's details, then the file, both with the token.
 export async function fetchMedia(client, mediaId) {
-  const auth = { authorization: "Bearer " + waToken(client) };
-  const meta = await fetch(`${GRAPH()}/${encodeURIComponent(mediaId)}`, { headers: auth, signal: AbortSignal.timeout(8000) });
-  if (!meta.ok) throw new Error("media info " + meta.status);
-  const info = await meta.json();
-  if (!info.url || Number(info.file_size) > VOICE_MAX_BYTES) throw new Error("media too large or missing");
-  const file = await fetch(info.url, { headers: auth, signal: AbortSignal.timeout(15000) });
-  if (!file.ok) throw new Error("media file " + file.status);
-  const buf = Buffer.from(await file.arrayBuffer());
-  if (buf.length > VOICE_MAX_BYTES) throw new Error("media too large");
-  return { buf, mime: String(info.mime_type || "audio/ogg").split(";")[0].trim() };
+  const m = await waMedia(client, mediaId, VOICE_MAX_BYTES);
+  if (m.tooBig) throw new Error("media too large");
+  return { buf: m.buf, mime: m.mime || "audio/ogg" };
 }
 
 // The services on the published site, so the model can name the one the owner meant.
