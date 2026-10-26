@@ -8,6 +8,7 @@
 //   WA_VERIFY_TOKEN                           any string, typed again in Meta when the webhook is added
 //   LEADS_ADMIN_KEY                           כפיר's key for the panel and the admin actions
 import { createHash, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { SCHEMA } from "./schema.mjs";
 
 export const STATUS_HE = { new: "חדש", handled: "טופל", won: "נסגר", lost: "לא רלוונטי" };
 const SOURCE_HE = { direct: "כניסה ישירה", google: "גוגל", facebook: "פייסבוק", instagram: "אינסטגרם", whatsapp: "וואטסאפ", tiktok: "טיקטוק", "m.facebook.com": "פייסבוק", "l.facebook.com": "פייסבוק", "lm.facebook.com": "פייסבוק", "l.instagram.com": "אינסטגרם" };
@@ -841,15 +842,43 @@ export async function deleteOldLeads(now = new Date()) {
 }
 
 // For an uptime monitor: problems in the last 24 hours, counts only, no personal data.
+// Every table and column the migrations make (lib/schema.mjs) is there: a migration not run in Supabase shows up
+// here, by name, before its feature fails for a customer. One request per table; on a failure, one per column.
+export async function schemaCheck() {
+  const missing = [];
+  await Promise.all(Object.entries(SCHEMA).map(async ([table, cols]) => {
+    try { await db("GET", `${table}?select=${cols.join(",")}&limit=0`); return; } catch (e) { if (!/ 4\d\d: /.test(e.message)) throw e; }
+    const one = await Promise.all(cols.map((c) => db("GET", `${table}?select=${c}&limit=0`).then(() => null, (e) => (/ 4\d\d: /.test(e.message) ? c : null))));
+    const gone = one.filter(Boolean);
+    missing.push(...(gone.length === cols.length ? [table] : gone.map((c) => `${table}.${c}`)));
+  }));
+  return missing.sort();
+}
+
+// The storage buckets the sites use answer: "builder" (public photos, videos) and "lead-photos" (private).
+export async function storageCheck() {
+  const key = process.env.SUPABASE_SERVICE_KEY, headers = { apikey: key, ...(key.startsWith("sb_") ? {} : { authorization: "Bearer " + key }) };
+  const bad = [];
+  for (const b of ["builder", "lead-photos"]) {
+    const res = await fetch(process.env.SUPABASE_URL.replace(/\/$/, "") + "/storage/v1/bucket/" + b, { headers, signal: AbortSignal.timeout(5000) }).catch(() => null);
+    if (!res || !res.ok) bad.push(b);
+  }
+  return bad;
+}
+
 export async function healthCheck(now = new Date()) {
   const day = new Date(now - 86_400_000).toISOString(), stale = new Date(now - 10 * 60_000).toISOString();
+  const t0 = Date.now();
+  const [schemaMissing, bucketsDown] = await Promise.all([schemaCheck(), storageCheck()]);
+  const dbMs = Date.now() - t0;
   const [alerts, pending, messages] = await Promise.all([
     db("GET", `ls_leads?created_at=gte.${q(day)}&owner_alert=in.(failed,skipped)&select=client_slug`),
     db("GET", `ls_leads?created_at=gte.${q(day)}&created_at=lt.${q(stale)}&owner_alert=eq.pending&select=client_slug`),
     db("GET", `ls_messages?created_at=gte.${q(day)}&direction=eq.out&status=in.(failed,skipped)&select=client_slug,kind`),
   ]);
   const clients = [...new Set([...alerts, ...pending, ...messages].map((r) => r.client_slug))];
-  return { ok: !alerts.length && !pending.length && !messages.length, ownerAlertsFailed: alerts.length, ownerAlertsStuck: pending.length, messagesFailed: messages.length, clients };
+  return { ok: !alerts.length && !pending.length && !messages.length && !schemaMissing.length && !bucketsDown.length,
+    ownerAlertsFailed: alerts.length, ownerAlertsStuck: pending.length, messagesFailed: messages.length, clients, schemaMissing, bucketsDown, dbMs };
 }
 
 /* ---------------- panel access ---------------- */

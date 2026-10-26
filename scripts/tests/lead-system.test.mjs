@@ -5,8 +5,9 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
+const T = { ls_payments: [], ls_billing: [], ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
+const missingCols = new Set(); let bucketDown = false; // /api/health's schema and storage checks
 let geminiReply = { transcript: "", commands: [] }, geminiDown = false; const geminiSeen = []; // the voice note's model (lib/voice.mjs)
 const store = new Map(); let storageDown = false; // the private "lead-photos" bucket (0005_lead_photos.sql)
 const DEF = {
@@ -28,6 +29,11 @@ function match(row, filters) {
 }
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url); const method = opt.method || "GET";
+  if (u.pathname.startsWith("/storage/v1/bucket/")) { assert.equal(opt.headers.apikey, "sb_secret_test"); return new Response(bucketDown ? "{}" : '{"id":"x"}', { status: bucketDown ? 404 : 200 }); }
+  if (u.pathname.startsWith("/rest/v1/ls_") && (opt.method || "GET") === "GET" && u.searchParams.get("limit") === "0") { // a schema probe
+    const table = u.pathname.split("/").pop(), cols = (u.searchParams.get("select") || "").split(",");
+    if (cols.some((c) => missingCols.has(table + "." + c) || missingCols.has(table))) return new Response('{"code":"42703","message":"column does not exist"}', { status: 400 });
+  }
   if (u.pathname.startsWith("/storage/v1/object/")) {
     assert.equal(opt.headers.apikey, "sb_secret_test"); assert.ok(opt.signal, "storage call has a timeout");
     const path = decodeURIComponent(u.pathname.slice("/storage/v1/object/".length));
@@ -195,7 +201,7 @@ graphDown = true;
 r = await lead(post("/api/lead/oren", { name: "יוסי", phone: "0527777777", service: "דוד" }), ctx("oren"));
 out = await r.json(); assert.equal(r.status, 202); assert.equal(out.ok, false); assert.equal(out.error, "alert_failed");
 const Y = T.ls_leads.find((l) => l.phone === "0527777777"); assert.ok(Y); assert.equal(Y.owner_alert, "failed");
-let h = await lib.healthCheck(); assert.equal(h.ok, false); assert.equal(h.ownerAlertsFailed, 2, "Dana (failed delivery reported by Meta earlier) and Yossi"); assert.deepEqual(h.clients, ["oren"]);
+let h = await lib.healthCheck(); assert.deepEqual([h.schemaMissing, h.bucketsDown], [[], []]); assert.equal(typeof h.dbMs, "number"); assert.equal(h.ok, false); assert.equal(h.ownerAlertsFailed, 2, "Dana (failed delivery reported by Meta earlier) and Yossi"); assert.deepEqual(h.clients, ["oren"]);
 // a reminder that fails is retried next run
 Y.created_at = "2026-10-06T05:00:00Z";
 rem = await lib.runReminders(tue10); assert.equal(rem.reminders, 0); assert.equal(rem.failed, 1); assert.equal(Y.reminded_at, null, "failed reminder is retried");
@@ -744,6 +750,16 @@ assert.equal(TL4.review, "skipped"); assert.equal(TL4.testimonial, "skipped"); a
   assert.equal(store.size, files + 2, "nothing left behind by the refused one");
   // without a video, a few words are still needed
   assert.equal(lib.checkTestimonial({ name: "שי", text: "" }).error, "short"); assert.ok(lib.checkTestimonial({ name: "שי", text: "" }, { withVideo: true }).row);
+}
+// /api/health finds a migration that wasn't run, by name, and a bucket that doesn't answer
+{
+  const { SCHEMA } = await import(new URL("../../demos/netlify/lib/schema.mjs", import.meta.url).href);
+  assert.ok(SCHEMA.ls_leads.includes("quote_status") && SCHEMA.ls_testimonials.includes("video") && SCHEMA.ls_unanswered, "made from every migration");
+  missingCols.add("ls_leads.quote_status"); missingCols.add("ls_unanswered");
+  let hh = await lib.healthCheck(); assert.deepEqual(hh.schemaMissing, ["ls_leads.quote_status", "ls_unanswered"]); assert.equal(hh.ok, false);
+  missingCols.clear(); bucketDown = true;
+  hh = await lib.healthCheck(); assert.deepEqual(hh.bucketsDown, ["builder", "lead-photos"]); assert.equal(hh.ok, false);
+  bucketDown = false; hh = await lib.healthCheck(); assert.deepEqual([hh.schemaMissing, hh.bucketsDown], [[], []]);
 }
 // a business that turned it off: the site shows nothing, the link stops working
 Object.assign(C0, { review_requests: false, testimonials: false }); lib.forgetClient("oren");
