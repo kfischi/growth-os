@@ -73,12 +73,21 @@
       paint(null); load();
       setInterval(() => { if (document.visibilityState === "visible") load(); }, 120000);
     },
-    // Testimonials customers wrote (0010_testimonials.sql). Text only: every value goes in with textContent.
+    // Testimonials customers wrote (0010_testimonials.sql), some with a short video (0023). Every value goes in with
+    // textContent; a video only from our own storage, it loads nothing until the visitor presses play.
     testimonialCard(t) {
       const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
       const card = el("figure", "tst-card");
       if (t.stars) { const st = el("span", "tst-stars", "★".repeat(t.stars) + "☆".repeat(5 - t.stars)); st.setAttribute("aria-label", t.stars + " מתוך 5"); card.append(st); }
-      card.append(el("blockquote", "tst-text", t.text));
+      const ours = (u) => typeof u === "string" && /^https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/builder\/testimonials\//.test(u);
+      if (t.video && ours(t.video.src) && ours(t.video.poster)) {
+        const v = el("video", "tst-video"); v.controls = true; v.preload = "none"; v.playsInline = true; v.poster = t.video.poster;
+        if (t.video.w && t.video.h) { v.width = t.video.w; v.height = t.video.h; }
+        v.setAttribute("aria-label", "סרטון המלצה של " + (t.name || "לקוח"));
+        const src = el("source"); src.src = t.video.src; src.type = "video/mp4"; v.append(src); card.append(v);
+      }
+      if (t.text) card.append(el("blockquote", "tst-text", t.text));
+      if (t.recommend) card.append(el("span", "tst-rec", "✓ ממליצים לחברים"));
       const cap = el("figcaption", "tst-by"); cap.append(el("b", null, t.name));
       if (t.at) { const d = new Date(t.at); if (!isNaN(d)) cap.append(el("span", null, d.toLocaleDateString("he-IL", { month: "long", year: "numeric" }))); }
       card.append(cap);
