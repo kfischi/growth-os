@@ -449,7 +449,7 @@ export function render(c, { mode = "draft", assets = "assets/", photos = {}, lea
   // The AI chat (נציג AI, /api/chat/<slug>, functions/client-chat.mjs): answers from the owner's own facts, in the
   // customer's language. On a live site with the lead system, and in a draft (where it shows its offline line).
   // Not for the crisis trades: their chat collects only the minimum for a first call.
-  const askAI = !T.crisis && (draft || Boolean(leads));
+  const askAI = false; // the "יש שאלה?" section is off (the owner, 2026-10-27); the code stays until it is needed again
   // The chat's translations, made at publish (lib/builder.mjs chatLangs): kept only for lines the chat still shows.
   const chatI18n = (() => {
     if (draft || !leads || !langs || T.crisis) return null;
