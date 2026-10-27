@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "captions": "node scripts/process-voice.mjs --no-voice"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",
