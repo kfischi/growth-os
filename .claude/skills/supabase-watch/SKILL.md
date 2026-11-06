@@ -35,6 +35,9 @@ Supabase project "Easy Landing", id `lhyjxgnspbuolhhcayih` (the lead system's ow
    - `/api/testimonials/plumber` answers 200 with `{ "items": [...] }`.
    A blocked host: say so and go on.
 
+8. **The watchdog's last run** (`functions/watchdog.mjs`, every hour inside Netlify, with the real keys):
+   `select name, at, ok, detail->'failed' from ls_heartbeats` — `watchdog` must be under two hours old and `ok`; its `failed` list names each broken connection (WhatsApp per business, Claude, GitHub, Netlify, ...), and `reminders` and `billing` show when they last ran. This is the only view of the live connections from here, since this sandbox can't call them with the site's keys.
+
 ## Report (Hebrew, short, only when something is wrong)
 
 1. What is wrong, rated: **קריטי** (enquiries, payments or the database down), **גבוה** (a feature fails: a missing column, a bucket), **בינוני** (an advisor warning, a slow query).

@@ -8,10 +8,12 @@
 import { configured, runReminders } from "../lib/leads.mjs";
 import { deleteStaleDrafts, checkDomains } from "../lib/builder.mjs";
 import { runPending } from "../lib/billing.mjs";
+import { heartbeat } from "../lib/watchdog.mjs";
 
 export default async () => {
   if (!configured()) return;
-  try { console.log("reminders", JSON.stringify(await runReminders())); } catch (e) { console.error("reminders", e.message); }
+  let error = null;
+  try { console.log("reminders", JSON.stringify(await runReminders())); } catch (e) { error = e.message; console.error("reminders", e.message); }
   try { console.log("payments", JSON.stringify(await runPending())); } catch (e) { console.error("payments", e.message); }
   const now = new Date();
   if (now.getUTCMinutes() < 15) { // once an hour: client domains whose DNS may point at their site by now
@@ -20,6 +22,7 @@ export default async () => {
   if (now.getUTCHours() === 3 && now.getUTCMinutes() < 15) {
     try { console.log("stale drafts", JSON.stringify(await deleteStaleDrafts(now))); } catch (e) { console.error("stale drafts", e.message); }
   }
+  await heartbeat("reminders", !error, error ? { error } : null); // the watchdog checks this ran in the last 40 minutes
 };
 
 export const config = { schedule: "*/15 * * * *" };

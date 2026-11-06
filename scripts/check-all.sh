@@ -61,6 +61,7 @@ node scripts/tests/demo-chat.test.mjs 2>/dev/null || { node scripts/tests/demo-c
 node scripts/tests/chat-langs.test.mjs 2>/dev/null || { node scripts/tests/chat-langs.test.mjs; fail=1; }
 node scripts/tests/trades.test.mjs 2>/dev/null || { node scripts/tests/trades.test.mjs; fail=1; }
 node scripts/tests/testimonial-video.test.mjs 2>/dev/null || { node scripts/tests/testimonial-video.test.mjs; fail=1; }
+node scripts/tests/watchdog.test.mjs 2>/dev/null || { node scripts/tests/watchdog.test.mjs; fail=1; }
 
 step "site builder page, in the browser (phone and desktop)"
 node scripts/tests/builder-page.test.mjs 2>/dev/null | grep -E "^FAIL|builder page" || fail=1
