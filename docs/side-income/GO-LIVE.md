@@ -69,7 +69,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 
 ## 6. Monitoring
 - [ ] Set up UptimeRobot (free): HTTP(s) every 5 minutes on `https://service-pro-web.netlify.app/api/health?key=<HEALTH_KEY>`, with mail and app alerts. This is documented in LEAD_SYSTEM.md step 4.
-- [ ] What the health check covers: owner alerts that failed or are stuck (24 h), failed outbound WhatsApp messages (24 h), and the database. It does **not** cover failed card charges, failed auto-publishes or scheduled functions that stopped running. Those reach Kfir only through his WhatsApp alerts (so `kfir` must work), or in Netlify > Functions > logs. Suggestion: a second keyword monitor on the home page, and a weekly look at the logs of `reminders`, `billing` and `monthly-report`.
+- [ ] What the health check covers: owner alerts that failed or are stuck (24 h), failed outbound WhatsApp messages (24 h), the database and its schema, and the hourly watchdog (`functions/watchdog.mjs`: WhatsApp per business, Claude, Gemini, GitHub and its token's expiry, Netlify, Grow's settings, and that `reminders` and `billing` still run). Run `0024_heartbeats.sql` for it. It does **not** cover failed card charges or failed auto-publishes one by one. Those reach Kfir only through his WhatsApp alerts (so `kfir` must work), or in Netlify > Functions > logs. Suggestion: a second keyword monitor on the home page, and a weekly look at the logs of `reminders`, `billing` and `monthly-report`.
 - [ ] Netlify > Logs > Functions: check after the first day that `reminders` runs every 15 minutes and `billing` daily.
 
 ## 7. Cost guards (state at launch)

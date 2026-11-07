@@ -5,7 +5,7 @@ import { createHmac, createHash, randomUUID } from "node:crypto";
 const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 Object.assign(process.env, { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_TOKEN: "tok", WA_APP_SECRET: "appsecret", WA_VERIFY_TOKEN: "verify-me", LEADS_ADMIN_KEY: "admin-key-0123456789", ANTHROPIC_API_KEY: "sk-test" });
 
-const T = { ls_payments: [], ls_billing: [], ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
+const T = { ls_heartbeats: [], ls_payments: [], ls_billing: [], ls_unanswered: [], ls_clients: [], ls_leads: [], ls_messages: [], ls_reports: [], ls_visits: [], ls_links: [], ls_testimonials: [], ls_stats: [], ls_drafts: [] };
 const sent = []; let aiReply = ""; let graphDown = false;
 const missingCols = new Set(); let bucketDown = false; // /api/health's schema and storage checks
 let geminiReply = { transcript: "", commands: [] }, geminiDown = false; const geminiSeen = []; // the voice note's model (lib/voice.mjs)
@@ -176,8 +176,9 @@ r = await api(patch({ id: L.id, status: "won", note: "קבענו לשלישי" }
 assert.equal(out.lead.status, "won"); assert.equal(out.lead.handled_at, handledAt, "first handled time kept");
 r = await api(patch({ id: L.id, status: "bogus" }, "Bearer oren:" + key)); assert.equal(r.status, 400);
 r = await api(get("", "Bearer admin:admin-key-0123456789")); out = await r.json(); assert.equal(out.clients.length, 2);
+const lead0At = T.ls_leads[0].created_at; T.ls_leads[0].created_at = "2026-10-07T07:00:00Z"; // the report is for October 2026, whatever today is (the other lead is set to 6 October above)
 r = await api(post("/api/leads", { run: "report", client: "oren", month: "2026-10", send: false }, { authorization: "Bearer admin:admin-key-0123456789" })); out = await r.json();
-assert.equal(out.total, 2); assert.equal(out.handled, 1); assert.equal(T.ls_reports.length, 1);
+assert.equal(out.total, 2); assert.equal(out.handled, 1); assert.equal(T.ls_reports.length, 1); T.ls_leads[0].created_at = lead0At;
 r = await api(post("/api/leads", { run: "reminders" }, { authorization: "Bearer oren:" + key })); assert.equal(r.status, 403);
 
 // --- the client's AI chat

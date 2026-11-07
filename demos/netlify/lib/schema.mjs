@@ -104,6 +104,12 @@ export const SCHEMA = {
     "video",
     "videos"
   ],
+  "ls_heartbeats": [
+    "at",
+    "detail",
+    "name",
+    "ok"
+  ],
   "ls_leads": [
     "auto_reply",
     "callback_at",
