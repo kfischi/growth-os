@@ -41,7 +41,7 @@ const F = new URL("../../demos/netlify/functions/", import.meta.url).href;
 const builder = (await import(F + "builder.mjs")).default;
 const webhook = (await import(F + "grow-webhook.mjs")).default;
 const L = await import(new URL("../../demos/netlify/lib/billing.mjs", import.meta.url).href);
-const ORIGIN = "https://service-pro-web.netlify.app";
+const ORIGIN = "https://multilanding.co.il";
 
 const KEY = "k".repeat(32);
 const draft = (extra = {}) => {

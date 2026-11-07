@@ -9,7 +9,7 @@
 //   BRAND_NAME, BRAND_URL                 the credit line at the bottom of client sites (default "Multi Landing", this site)
 //   NETLIFY_TOKEN, SITES_DOMAIN           hosting: the site is created and deployed through the Netlify API (lib/hosting.mjs)
 //   GITHUB_REPO, GITHUB_BRANCH           default kfischi/growth-os and the branch the client-site workflow deploys
-//   BUILDER_SITE_URL                     this site's public address, for Grow's callback and return links (default service-pro-web.netlify.app)
+//   BUILDER_SITE_URL                     this site's public address, for Grow's callback and return links (default https://multilanding.co.il; the old service-pro-web.netlify.app redirects there)
 //   GEMINI_API_KEY, GEMINI_IMAGE_MODEL   optional: "ליצור תמונת רקע" (default gemini-2.5-flash-image)
 //   BUILDER_DAILY_MAX                    new drafts per day, all visitors together (default 40)
 //   BUILDER_ALERT_CLIENT                 the lead system client that gets "a site is waiting" (default kfir)
@@ -37,7 +37,7 @@ const tradeTemplate = (T) => ({ ...plumber,
   chatLines: (c) => plumber.chatLines({ ...c, trade_id: T.id }),
 });
 export const TEMPLATES = Object.fromEntries(Object.values(TRADES).map((T) => [T.id, T.id === "plumber" ? plumber : tradeTemplate(T)]));
-export const SITE_ORIGIN = "https://service-pro-web.netlify.app";
+export const SITE_ORIGIN = (process.env.BUILDER_SITE_URL || "https://multilanding.co.il").replace(/\/+$/, "");
 export const BUCKET = "builder";
 export const MAX_MESSAGES = 80;       // stored chat messages per draft (40 turns), to cap the cost of one draft
 export const MAX_CHARS = 800;         // per owner message

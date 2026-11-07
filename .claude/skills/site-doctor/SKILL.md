@@ -36,7 +36,7 @@ Also run the unit tests in `scripts/tests/` that check-all.sh does not run. Run 
 - **Lists:** the home trade list `T`, `/all/`, `trades/index.mjs` and `#fTrade` agree with each other.
 
 **C. The live site, when the network allows.**
-- **Pages:** fetch the main pages and a few demos from https://service-pro-web.netlify.app.
+- **Pages:** fetch the main pages and a few demos from https://multilanding.co.il.
 - **Public endpoints:** `/api/status/plumber`, and `/api/health` only if HEALTH_KEY is given to you, never guessed.
 - **Live page check:** run qa-page's checks against the live URLs with Playwright: console errors, broken links and images, and sideways scroll.
 - **If blocked:** if the network blocks the host, say so in the report and go on. Never invent a result.

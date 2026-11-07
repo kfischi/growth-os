@@ -264,7 +264,7 @@
    | `PAY_URL_AI`, `PAY_URL_PRESENCE` | לא חובה, ורק בלי Grow. דפי תשלום קבועים. בלעדיהם הלקוח רואה "נשלח לכם קישור לתשלום בוואטסאפ" |
    | `BUILDER_MODEL` | לא חובה. ברירת מחדל `claude-sonnet-5-5`. `claude-opus-5-5` איטי יותר, `claude-haiku-5-5` הכי מהיר (ניסוח פשוט יותר) |
    | `GITHUB_REPO`, `GITHUB_BRANCH` | לא חובה. לאן הפרסום כותב את `clients/<slug>/`. ברירת מחדל `kfischi/growth-os` והענף שבקוד (`lib/builder.mjs`). לבדוק לפני העלייה שזה הענף ש-Netlify ו-`deploy-clients.yml` עובדים ממנו |
-   | `BUILDER_SITE_URL` | לא חובה. הכתובת הציבורית של האתר הזה, לקריאה החוזרת מ-Grow ולקישורי החזרה (ברירת מחדל `https://service-pro-web.netlify.app`). לשנות אם עוברים לדומיין משלנו |
+   | `BUILDER_SITE_URL` | לא חובה. הכתובת הציבורית של האתר הזה, לקריאה החוזרת מ-Grow ולקישורי החזרה (ברירת מחדל `https://multilanding.co.il`). לשנות אם עוברים לדומיין משלנו |
    | `GEMINI_API_KEY`, `GEMINI_IMAGE_MODEL` | לא חובה. "ליצור תמונת רקע" בבונה (ברירת מחדל `gemini-2.5-flash-image`). בלעדיו הכפתור לא מופיע |
    | `BILLING_YEAR`, `VAT_RATE` | לא חובה, כבויים. `BILLING_YEAR=1` מחזיר את "שנה מראש". `VAT_RATE=0.18` רק אם העסק שמוציא את הקבלות יפסיק להיות פטור |
    | `BUILDER_AI_TIMEOUT_MS` | לא חובה. ברירת מחדל 25000. אם Netlify עוצר פונקציות אחרי 10 שניות, לשים 9000 כדי שהלקוח יקבל "נסו שוב" מסודר |

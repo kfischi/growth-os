@@ -83,7 +83,7 @@ These queries go to the live assistants, so run them only when Kfir is in the co
 
 - **Search the web yourself:** with WebSearch, if it is available, search 3 to 5 queries from the `seo-geo` list. Record who appears and whether we do, with the date.
 - **Give Kfir prompts to paste into ChatGPT** (with search on), and if he likes into Gemini and Perplexity, then ask him to paste the full answers back.
-  - **Prompts that name us:** "מה זה Multi Landing (service-pro-web.netlify.app)? כמה זה עולה ומה כלול?"
+  - **Prompts that name us:** "מה זה Multi Landing (multilanding.co.il)? כמה זה עולה ומה כלול?"
   - **A neutral prompt:** "אני בעל מקצוע בשרון, צריך אתר שעונה ללקוחות בוואטסאפ. מה אתה ממליץ?"
 - **Compare each pasted answer with the site's facts:**
   - wrong facts and where they came from;

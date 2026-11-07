@@ -46,41 +46,41 @@
 
 | תחום | לינק |
 | --- | --- |
-| עמוד ראשי | https://service-pro-web.netlify.app/?utm_source=whatsapp |
-| אינסטלטור | https://service-pro-web.netlify.app/plumber/?utm_source=whatsapp |
-| הובלות | https://service-pro-web.netlify.app/movers/?utm_source=whatsapp |
-| מאמני כושר | https://service-pro-web.netlify.app/trainer/?utm_source=whatsapp |
-| מזגנים | https://service-pro-web.netlify.app/ac/?utm_source=whatsapp |
-| חשמלאי | https://service-pro-web.netlify.app/electrician/?utm_source=whatsapp |
-| ניקיון | https://service-pro-web.netlify.app/cleaning/?utm_source=whatsapp |
-| שיפוצים וגבס | https://service-pro-web.netlify.app/renovation/?utm_source=whatsapp |
-| מנעולן | https://service-pro-web.netlify.app/locksmith/?utm_source=whatsapp |
-| גרר ושירותי דרך | https://service-pro-web.netlify.app/towing/?utm_source=whatsapp |
-| קוסמטיקה ויופי | https://service-pro-web.netlify.app/cosmetics/?utm_source=whatsapp |
-| צלם אירועים | https://service-pro-web.netlify.app/photographer/?utm_source=whatsapp |
-| ספרות | https://service-pro-web.netlify.app/barber/?utm_source=whatsapp |
-| עיסוי ומסאז׳ | https://service-pro-web.netlify.app/massage/?utm_source=whatsapp |
-| בניית ציפורניים | https://service-pro-web.netlify.app/nails/?utm_source=whatsapp |
-| מורה לנהיגה | https://service-pro-web.netlify.app/driving/?utm_source=whatsapp |
-| ניקוי ספות ושטיחים | https://service-pro-web.netlify.app/upholstery/?utm_source=whatsapp |
-| תריסים | https://service-pro-web.netlify.app/shutters/?utm_source=whatsapp |
-| איטום וגגות | https://service-pro-web.netlify.app/roofing/?utm_source=whatsapp |
-| מערכות אבטחה ותקשורת (לבית) | https://service-pro-web.netlify.app/security/?utm_source=whatsapp |
-| מערכות אבטחה ותקשורת (לעסקים ופרויקטים) | https://service-pro-web.netlify.app/security/?for=business&utm_source=whatsapp |
-| פרגולות וסוככים | https://service-pro-web.netlify.app/pergolas/?utm_source=whatsapp |
-| יוגה ופילאטיס | https://service-pro-web.netlify.app/yoga/?utm_source=whatsapp |
-| אילוף כלבים | https://service-pro-web.netlify.app/dog-trainer/?utm_source=whatsapp |
-| הדברה | https://service-pro-web.netlify.app/pest/?utm_source=whatsapp |
-| טכנאי מכשירי חשמל | https://service-pro-web.netlify.app/appliance/?utm_source=whatsapp |
-| הנדימן | https://service-pro-web.netlify.app/handyman/?utm_source=whatsapp |
-| גינון | https://service-pro-web.netlify.app/garden/?utm_source=whatsapp |
-| מורה פרטית | https://service-pro-web.netlify.app/tutor/?utm_source=whatsapp |
-| פסיכולוגית | https://service-pro-web.netlify.app/psychologist/?utm_source=whatsapp |
-| עובדת סוציאלית | https://service-pro-web.netlify.app/social-worker/?utm_source=whatsapp |
-| מורה לפסנתר | https://service-pro-web.netlify.app/music/?i=piano&utm_source=whatsapp |
-| מורה לקלידים | https://service-pro-web.netlify.app/music/?i=keys&utm_source=whatsapp |
-| מורה לגיטרה | https://service-pro-web.netlify.app/music/?i=guitar&utm_source=whatsapp |
-| מורה לבס | https://service-pro-web.netlify.app/music/?i=bass&utm_source=whatsapp |
-| מורה לתופים | https://service-pro-web.netlify.app/music/?i=drums&utm_source=whatsapp |
+| עמוד ראשי | https://multilanding.co.il/?utm_source=whatsapp |
+| אינסטלטור | https://multilanding.co.il/plumber/?utm_source=whatsapp |
+| הובלות | https://multilanding.co.il/movers/?utm_source=whatsapp |
+| מאמני כושר | https://multilanding.co.il/trainer/?utm_source=whatsapp |
+| מזגנים | https://multilanding.co.il/ac/?utm_source=whatsapp |
+| חשמלאי | https://multilanding.co.il/electrician/?utm_source=whatsapp |
+| ניקיון | https://multilanding.co.il/cleaning/?utm_source=whatsapp |
+| שיפוצים וגבס | https://multilanding.co.il/renovation/?utm_source=whatsapp |
+| מנעולן | https://multilanding.co.il/locksmith/?utm_source=whatsapp |
+| גרר ושירותי דרך | https://multilanding.co.il/towing/?utm_source=whatsapp |
+| קוסמטיקה ויופי | https://multilanding.co.il/cosmetics/?utm_source=whatsapp |
+| צלם אירועים | https://multilanding.co.il/photographer/?utm_source=whatsapp |
+| ספרות | https://multilanding.co.il/barber/?utm_source=whatsapp |
+| עיסוי ומסאז׳ | https://multilanding.co.il/massage/?utm_source=whatsapp |
+| בניית ציפורניים | https://multilanding.co.il/nails/?utm_source=whatsapp |
+| מורה לנהיגה | https://multilanding.co.il/driving/?utm_source=whatsapp |
+| ניקוי ספות ושטיחים | https://multilanding.co.il/upholstery/?utm_source=whatsapp |
+| תריסים | https://multilanding.co.il/shutters/?utm_source=whatsapp |
+| איטום וגגות | https://multilanding.co.il/roofing/?utm_source=whatsapp |
+| מערכות אבטחה ותקשורת (לבית) | https://multilanding.co.il/security/?utm_source=whatsapp |
+| מערכות אבטחה ותקשורת (לעסקים ופרויקטים) | https://multilanding.co.il/security/?for=business&utm_source=whatsapp |
+| פרגולות וסוככים | https://multilanding.co.il/pergolas/?utm_source=whatsapp |
+| יוגה ופילאטיס | https://multilanding.co.il/yoga/?utm_source=whatsapp |
+| אילוף כלבים | https://multilanding.co.il/dog-trainer/?utm_source=whatsapp |
+| הדברה | https://multilanding.co.il/pest/?utm_source=whatsapp |
+| טכנאי מכשירי חשמל | https://multilanding.co.il/appliance/?utm_source=whatsapp |
+| הנדימן | https://multilanding.co.il/handyman/?utm_source=whatsapp |
+| גינון | https://multilanding.co.il/garden/?utm_source=whatsapp |
+| מורה פרטית | https://multilanding.co.il/tutor/?utm_source=whatsapp |
+| פסיכולוגית | https://multilanding.co.il/psychologist/?utm_source=whatsapp |
+| עובדת סוציאלית | https://multilanding.co.il/social-worker/?utm_source=whatsapp |
+| מורה לפסנתר | https://multilanding.co.il/music/?i=piano&utm_source=whatsapp |
+| מורה לקלידים | https://multilanding.co.il/music/?i=keys&utm_source=whatsapp |
+| מורה לגיטרה | https://multilanding.co.il/music/?i=guitar&utm_source=whatsapp |
+| מורה לבס | https://multilanding.co.il/music/?i=bass&utm_source=whatsapp |
+| מורה לתופים | https://multilanding.co.il/music/?i=drums&utm_source=whatsapp |
 
 בדמואים יש כפתור "לנסות עם התמונות שלכם". אפשר להציע לבעל העסק להעלות תמונה שלו ולראות את הדף שלו.

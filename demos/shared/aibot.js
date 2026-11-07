@@ -5,7 +5,7 @@
    Usage: AiBot.init({ whatsapp: "9725XXXXXXXX", endpoint: "/api/chat", pricingHref: "#plans", base: "" })
    pricingHref: where [[pricing]] links. base: prefix for demo links, "../" on a page one folder down.
    On a paying business's site (netlify/functions/client-chat.mjs) also pass:
-     endpoint: "https://service-pro-web.netlify.app/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
+     endpoint: "https://multilanding.co.il/api/chat/<slug>", name, subtitle, greet, note, chips: [...],
      placeholder, waLabel ("לשלוח לנו בוואטסאפ"), offline ("text when the chat is down"), offlineWa (false: no WhatsApp button then).
    A demo's live chat (netlify/functions/demo-chat.mjs) uses endpoint "/api/demo-chat/<demo>".
    maxLength: the longest question the visitor can type (default 600; the demo chat takes 300).

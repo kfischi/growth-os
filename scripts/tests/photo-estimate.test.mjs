@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { T, ai, aiCalls, DEF } from "./builder-fakes.mjs";
 
 const fn = (await import(new URL("../../demos/netlify/functions/photo-estimate.mjs", import.meta.url).href)).default;
-const SITE = "https://service-pro-web.netlify.app";
+const SITE = "https://multilanding.co.il";
 const IMG = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2w==";
 const call = async (body, { origin = SITE, ip = "9.9.9.1" } = {}) => {
   const r = await fn(new Request(SITE + "/api/estimate", { method: "POST", headers: { "content-type": "application/json", origin, "x-nf-client-connection-ip": ip }, body: JSON.stringify(body) }), {});

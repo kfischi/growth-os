@@ -47,7 +47,7 @@ globalThis.fetch = async (url, opt = {}) => {
     imageCalls.push(JSON.parse(opt.body));
     return res({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "iVBORw0KGgo=" } }] } }] });
   }
-  if (u.host === "service-pro-web.netlify.app" && u.pathname.startsWith("/shared/")) return new Response("/* " + u.pathname + " */");
+  if (u.host === "multilanding.co.il" && u.pathname.startsWith("/shared/")) return new Response("/* " + u.pathname + " */");
   if (u.host === "api.indexnow.org") { indexNow.push(JSON.parse(opt.body)); return new Response("", { status: 202 }); }
   if (u.host === "api.netlify.com") {
     assert.equal(opt.headers.authorization, "Bearer nf-test"); assert.ok(opt.signal, "netlify call has a timeout");

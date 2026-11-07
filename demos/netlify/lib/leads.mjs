@@ -392,7 +392,7 @@ export function sourceOf(input) {
 
 export const PHOTO_BUCKET = "lead-photos";
 export const MAX_LEAD_PHOTO = 1_048_576;
-const SITE = "https://service-pro-web.netlify.app";
+const SITE = (process.env.BUILDER_SITE_URL || "https://multilanding.co.il").replace(/\/+$/, "");
 
 // A data URL from the chat ("data:image/jpeg;base64,..."): only a real JPEG or WebP, up to 1 MB. Else null.
 export function decodePhoto(dataUrl) {

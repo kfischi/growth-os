@@ -1,6 +1,6 @@
 # Multi Landing: backend go-live checklist
 
-The site is `demos/` on Netlify (https://service-pro-web.netlify.app). The functions are in `demos/netlify/functions/`, bundled with esbuild. Their routes and schedules are set in each file's `export const config`, not in `netlify.toml`.
+The site is `demos/` on Netlify (https://multilanding.co.il). The functions are in `demos/netlify/functions/`, bundled with esbuild. Their routes and schedules are set in each file's `export const config`, not in `netlify.toml`.
 Secrets go into Netlify > Site configuration > Environment variables only. After changing any of them, trigger a deploy.
 
 ## 1. Netlify environment
@@ -19,7 +19,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 **Check these before launch: the defaults may be wrong for production**
 - [ ] `GITHUB_BRANCH`. The default is `claude/multitenant-business-os-9y3vc1` (`lib/builder.mjs`). Publishing commits `clients/<slug>/` to this branch and reads `clients/sample-plumber/assets/` from it. Set it to the branch that Netlify and `.github/workflows/deploy-clients.yml` actually use, or confirm the default is right.
 - [ ] `GITHUB_REPO`. The default is `kfischi/growth-os`.
-- [ ] `BUILDER_SITE_URL`. The default is `https://service-pro-web.netlify.app`. Grow's `notifyUrl` and `invoiceNotifyUrl` are built from it. Change it if the site moves to our own domain.
+- [ ] `BUILDER_SITE_URL`. The default is `https://multilanding.co.il`. Grow's `notifyUrl` and `invoiceNotifyUrl` are built from it. Change it only if the site moves again.
 - [ ] `SITES_DOMAIN`. Optional, but needed for `<slug>.<our domain>` addresses; without it sites get `*.netlify.app`. Its DNS must be on Netlify DNS in the same account as `NETLIFY_TOKEN`.
 - [ ] Function timeout: the builder chat waits up to `BUILDER_AI_TIMEOUT_MS` (25000 ms by default). If the plan stops functions at 10 s, set `BUILDER_AI_TIMEOUT_MS=9000` so owners get a clean "נסו שוב".
 
@@ -34,7 +34,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 
 ## 2. Meta / WhatsApp Cloud API
 - [ ] Set up one Meta app (Business type) with the WhatsApp product. Complete Business Verification and switch the app to **Live**. Check whether App Review is needed for sending from other businesses' WABAs.
-- [ ] Webhook callback URL: `https://service-pro-web.netlify.app/api/wa-webhook`. Verify token: the value of `WA_VERIFY_TOKEN`. Subscribe the field `messages`.
+- [ ] Webhook callback URL: `https://multilanding.co.il/api/wa-webhook`. Verify token: the value of `WA_VERIFY_TOKEN`. Subscribe the field `messages`.
 - [ ] For each business: its phone number ID in `ls_clients`, and a permanent (system user) token in `WA_TOKEN_<SLUG>`.
 - [ ] The owner's phone must not be the number connected to the Cloud API itself, because alerts can't reach that number. This applies to `kfir` too.
 - [ ] Templates, language `he` (`tpl_lang`). Get them approved in **each business's** WABA, with exactly these names (the `tpl_*` columns can override them). The wording is in LEAD_SYSTEM.md section 3.
@@ -62,13 +62,13 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 - [ ] Use the **secret** key (`sb_secret_...`, or the legacy service_role JWT) in Netlify only.
 
 ## 5. Domain
-- [ ] Decide whether the home site stays on `service-pro-web.netlify.app` or moves to our own domain. If it moves, update `BUILDER_SITE_URL`, `BRAND_URL`, the Meta webhook URL and the uptime monitor URL. `SITE_ORIGIN` in `lib/builder.mjs` is hard-coded to the netlify.app address. It is used to fetch the shared scripts for deploys and as the CORS "own" check, and it still works because the netlify.app address stays reachable.
+- [ ] The home site is on our own domain, `multilanding.co.il` (since 2026-11-07). In Netlify: Domain management → add `multilanding.co.il` (and `www`) to the site and make it the primary domain, so `service-pro-web.netlify.app` redirects there; the certificate comes by itself. `BUILDER_SITE_URL` (default `https://multilanding.co.il`) sets the address the code uses (`SITE_ORIGIN`, the panel, photo and testimonial links, Grow's callbacks). Update the Meta webhook URL and the uptime monitor URL to the new address.
 - [ ] `SITES_DOMAIN` on Netlify DNS, so client subdomains and their certificates are created automatically.
 - [ ] A client's own domain must be registered in the client's name. "לחבר דומיין של הלקוח" in `/build/admin/` shows the two DNS records, and the hourly check switches the site over (it gives up after 30 days).
 - [ ] Optional: Search Console as a Domain property for `SITES_DOMAIN`, with the service account as a full user (`GSC_*`).
 
 ## 6. Monitoring
-- [ ] Set up UptimeRobot (free): HTTP(s) every 5 minutes on `https://service-pro-web.netlify.app/api/health?key=<HEALTH_KEY>`, with mail and app alerts. This is documented in LEAD_SYSTEM.md step 4.
+- [ ] Set up UptimeRobot (free): HTTP(s) every 5 minutes on `https://multilanding.co.il/api/health?key=<HEALTH_KEY>`, with mail and app alerts. This is documented in LEAD_SYSTEM.md step 4.
 - [ ] What the health check covers: owner alerts that failed or are stuck (24 h), failed outbound WhatsApp messages (24 h), the database and its schema, and the hourly watchdog (`functions/watchdog.mjs`: WhatsApp per business, Claude, Gemini, GitHub and its token's expiry, Netlify, Grow's settings, and that `reminders` and `billing` still run). Run `0024_heartbeats.sql` for it. It does **not** cover failed card charges or failed auto-publishes one by one. Those reach Kfir only through his WhatsApp alerts (so `kfir` must work), or in Netlify > Functions > logs. Suggestion: a second keyword monitor on the home page, and a weekly look at the logs of `reminders`, `billing` and `monthly-report`.
 - [ ] Netlify > Logs > Functions: check after the first day that `reminders` runs every 15 minutes and `billing` daily.
 

@@ -22,7 +22,7 @@ const regions = [
 ];
 // The owner's profiles: a row of icon links in the contact section and on the service and area pages.
 const social = { instagram: "https://www.instagram.com/oren.mayim/", facebook: "https://www.facebook.com/OrenMayim", tiktok: "https://www.tiktok.com/@oren.mayim", youtube: "https://www.youtube.com/@OrenMayim" };
-const site = P.render({ ...SAMPLE, regions, social, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
+const site = P.render({ ...SAMPLE, regions, social, ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://multilanding.co.il/api/lead/sample-plumber", photos: Object.fromEntries(Object.entries(photos).map(([k, f]) => [k, "assets/photos/" + f])) });
 for (const [name, html] of Object.entries(site)) fs.writeFileSync(path.join(out, name), html);
 fs.writeFileSync(path.join(out, "area.html"), site[P.areaPage("חדרה")]);
 for (const [name, body] of Object.entries(P.STATIC_FILES)) fs.writeFileSync(path.join(out, name), body);
@@ -48,7 +48,7 @@ try {
   const all = { ...photos, ...extra };
   const sizes = Object.fromEntries(Object.keys(all).map((k) => [k, [640, 640]]));
   const titles = { work1_title: "החלפת סיפון", work2_title: "תיקון נזילה", work3_title: "פתיחת ניקוז", work4_title: "צנרת חדשה", work5_title: "ברז למטבח", work6_title: "בדיקת לחץ" };
-  const full = P.render({ ...SAMPLE, ...titles, hero_media: "photo", ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/sample-plumber",
+  const full = P.render({ ...SAMPLE, ...titles, hero_media: "photo", ba_title: "החלפת סיפון מתחת לכיור, חדרה" }, { mode: "site", leads: "https://multilanding.co.il/api/lead/sample-plumber",
     photos: Object.fromEntries(Object.entries(all).map(([k, f]) => [k, "assets/photos/" + f])), sizes, clips });
   fs.writeFileSync(path.join(out, "full.html"), full["index.html"]);
 } catch (e) { console.log("no ffmpeg: skipped the full media page"); }

@@ -30,4 +30,4 @@ values (${lit(slug)}, ${lit(name)}, 'ai', ${lit(owner)}, ${lit("{" + origins.joi
 -- update public.ls_clients set wa_phone_number_id = '<Phone number ID>' where slug = ${lit(slug)};
 -- And in Netlify: WA_TOKEN_${slug.toUpperCase().replace(/-/g, "_")} = <the business's access token>`);
 }
-console.log(`\nPanel link for the owner (send privately, it is the password):\nhttps://service-pro-web.netlify.app/panel/#k=${slug}:${key}`);
+console.log(`\nPanel link for the owner (send privately, it is the password):\nhttps://multilanding.co.il/panel/#k=${slug}:${key}`);
