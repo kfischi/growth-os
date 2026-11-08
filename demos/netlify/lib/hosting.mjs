@@ -1,8 +1,9 @@
 // Hosting for the sites the builder publishes (0012_hosting.sql), through the Netlify API: no step by hand.
 //   NETLIFY_TOKEN   a personal access token of the Netlify account that holds the client sites
-//   SITES_DOMAIN    optional, our own domain for the first address, e.g. "example.co.il". Its DNS must be on Netlify DNS
-//                   in the same account: then every site gets <slug>.<SITES_DOMAIN> and its certificate by itself.
-//                   Without it a site lives at <name>.netlify.app.
+//   SITES_DOMAIN    our own domain for the free addresses, default multilanding.co.il: every site gets
+//                   <slug>.<SITES_DOMAIN> and its certificate by itself. Its DNS is either on Netlify DNS in the same
+//                   account (we add a CNAME per site) or at the registrar with one wildcard record "* CNAME
+//                   service-pro-web.netlify.app" (Netlify routes by the name). "off" gives <name>.netlify.app.
 // The first publish creates the site and deploys the files straight from the builder (no GitHub Action needed);
 // every later publish, by כפיר or by the owner, deploys again. When the client has a domain of their own, כפיר types
 // it in /build/admin/: it is added to the site at once, and the hourly check (reminders.mjs) makes it the main address
@@ -13,7 +14,11 @@ import dns from "node:dns/promises";
 const API = "https://api.netlify.com/api/v1";
 export const NETLIFY_IP = "75.2.60.5"; // Netlify's load balancer: the A record for a root domain
 export const hostingOn = () => Boolean(process.env.NETLIFY_TOKEN);
-const sitesDomain = () => String(process.env.SITES_DOMAIN || "").trim().toLowerCase().replace(/^\.+|\.+$/g, "");
+export const DEFAULT_SITES_DOMAIN = "multilanding.co.il";
+export const sitesDomain = () => {
+  const v = String(process.env.SITES_DOMAIN ?? DEFAULT_SITES_DOMAIN).trim().toLowerCase().replace(/^\.+|\.+$/g, "");
+  return v === "off" ? "" : v;
+};
 
 async function nf(method, path, body, raw) {
   const res = await fetch(API + path, {
@@ -46,7 +51,9 @@ export const dnsSteps = (domain, site) => [
 async function ensureSubRecord(sub, netlifyHost) {
   const zones = must(await nf("GET", "/dns_zones"), "dns zones");
   const zone = (zones || []).find((z) => z.name === sitesDomain());
-  if (!zone) throw new Error(`netlify dns: ${sitesDomain()} is not a DNS zone in this account`);
+  // Not on Netlify DNS: the registrar's wildcard record ("* CNAME ...netlify.app") already sends the name here, and
+  // the watchdog (checkSitesDomain) fails loudly when it doesn't.
+  if (!zone) return;
   const records = must(await nf("GET", `/dns_zones/${zone.id}/dns_records`), "dns records");
   if ((records || []).some((r) => r.hostname === sub)) return;
   const r = await nf("POST", `/dns_zones/${zone.id}/dns_records`, { type: "CNAME", hostname: sub, value: netlifyHost, ttl: 3600 });

@@ -788,7 +788,7 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   D.domain = "slow.co.il"; D.domain_state = "waiting"; D.domain_since = "2026-01-01T00:00:00Z";
   out = await lib.checkDomains(new Date("2026-03-01T00:00:00Z"), async () => false); assert.equal(D.domain_state, null);
   // A site published before we had a domain (on *.netlify.app) moves to <slug>.<SITES_DOMAIN> at its next publish
-  delete process.env.SITES_DOMAIN;
+  process.env.SITES_DOMAIN = "off";
   const early = await H.ensureSite("early-bird");
   assert.equal(early.host, "early-bird.netlify.app"); assert.equal(early.sub, null);
   process.env.SITES_DOMAIN = "sites.example.co.il";
@@ -798,7 +798,7 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.ok(nl.records.some((x) => x.hostname === "early-bird.sites.example.co.il"), "its DNS record is made");
   const again = await H.ensureSite("early-bird", { site_id: early.siteId, site_sub: later.sub });
   assert.equal(again.host, "early-bird.sites.example.co.il", "and it stays there");
-  delete process.env.NETLIFY_TOKEN; delete process.env.SITES_DOMAIN;
+  delete process.env.NETLIFY_TOKEN; process.env.SITES_DOMAIN = "off";
 }
 
 // "תחום אחר": the address suggestions use the owner's own trade, never the demo's (plumber) as a backup

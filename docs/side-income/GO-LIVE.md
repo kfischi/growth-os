@@ -20,7 +20,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 - [ ] `GITHUB_BRANCH`. The default is `claude/multitenant-business-os-9y3vc1` (`lib/builder.mjs`). Publishing commits `clients/<slug>/` to this branch and reads `clients/sample-plumber/assets/` from it. Set it to the branch that Netlify and `.github/workflows/deploy-clients.yml` actually use, or confirm the default is right.
 - [ ] `GITHUB_REPO`. The default is `kfischi/growth-os`.
 - [ ] `BUILDER_SITE_URL`. The default is `https://multilanding.co.il`. Grow's `notifyUrl` and `invoiceNotifyUrl` are built from it. Change it only if the site moves again.
-- [ ] `SITES_DOMAIN`. Optional, but needed for `<slug>.<our domain>` addresses; without it sites get `*.netlify.app`. Its DNS must be on Netlify DNS in the same account as `NETLIFY_TOKEN`.
+- [ ] `SITES_DOMAIN`. The default is `multilanding.co.il`: every site gets a free `<slug>.multilanding.co.il`, picked from up to 5 suggestions in the builder (`off` gives `*.netlify.app`). The name must reach Netlify: either one wildcard record at the registrar, `*` CNAME `service-pro-web.netlify.app` (the existing DNS and e-mail stay as they are), or the whole domain on Netlify DNS in the account of `NETLIFY_TOKEN` (the publish then adds a CNAME per site). The watchdog's `sites-domain` check fails while neither holds.
 - [ ] Function timeout: the builder chat waits up to `BUILDER_AI_TIMEOUT_MS` (25000 ms by default). If the plan stops functions at 10 s, set `BUILDER_AI_TIMEOUT_MS=9000` so owners get a clean "נסו שוב".
 
 **Pilot**: `PILOT_CODES` (comma separated invite codes for `build/?p=<code>`, free, no payment step). See `PILOT.md`.
@@ -63,7 +63,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 
 ## 5. Domain
 - [ ] The home site is on our own domain, `multilanding.co.il` (since 2026-11-07). In Netlify: Domain management → add `multilanding.co.il` (and `www`) to the site and make it the primary domain, so `service-pro-web.netlify.app` redirects there; the certificate comes by itself. `BUILDER_SITE_URL` (default `https://multilanding.co.il`) sets the address the code uses (`SITE_ORIGIN`, the panel, photo and testimonial links, Grow's callbacks). Update the Meta webhook URL and the uptime monitor URL to the new address.
-- [ ] `SITES_DOMAIN` on Netlify DNS, so client subdomains and their certificates are created automatically.
+- [ ] The free client addresses: the wildcard record `*` CNAME `service-pro-web.netlify.app` at the registrar, or Netlify DNS (see `SITES_DOMAIN` above).
 - [ ] A client's own domain must be registered in the client's name. "לחבר דומיין של הלקוח" in `/build/admin/` shows the two DNS records, and the hourly check switches the site over (it gives up after 30 days).
 - [ ] Optional: Search Console as a Domain property for `SITES_DOMAIN`, with the service account as a full user (`GSC_*`).
 

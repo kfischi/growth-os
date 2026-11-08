@@ -10,7 +10,10 @@
 //   schedules     the reminders ran in the last 40 minutes, the billing in the last 26 hours
 // Each check is { name, ok, warn?, detail }. A missing optional key is a note, not a failure. Results are kept in
 // ls_heartbeats (0024_heartbeats.sql) for /api/health, and when something newly breaks כפיר gets one WhatsApp alert.
+import dns from "node:dns/promises";
+import { randomBytes } from "node:crypto";
 import { db, q, clip, waToken, GRAPH, schemaCheck, storageCheck, sendTemplate, getClient } from "./leads.mjs";
+import { sitesDomain } from "./hosting.mjs";
 
 const T = 8000; // each outside call fails fast
 const ok = (name, detail = "") => ({ name, ok: true, detail });
@@ -87,6 +90,21 @@ export async function checkNetlify() {
   } catch (e) { return bad("netlify", "Netlify לא עונה: " + e.message); }
 }
 
+// The free addresses <slug>.<SITES_DOMAIN>: a name nobody made must still reach Netlify (the registrar's wildcard
+// record), or the domain must be a Netlify DNS zone in the account (then the publish adds a record per site).
+export async function checkSitesDomain(resolve = (h) => dns.resolve4(h)) {
+  const domain = sitesDomain();
+  if (!domain) return note("sites-domain", "SITES_DOMAIN=off: אתרי לקוחות מקבלים כתובת netlify.app");
+  try { if ((await resolve(`wd-${randomBytes(4).toString("hex")}.${domain}`)).length) return ok("sites-domain"); } catch { /* not resolved */ }
+  if (process.env.NETLIFY_TOKEN) {
+    try {
+      const r = await get("https://api.netlify.com/api/v1/dns_zones", { authorization: "Bearer " + process.env.NETLIFY_TOKEN });
+      if (r.ok && (await r.json()).some((z) => z.name === domain)) return ok("sites-domain", "Netlify DNS");
+    } catch { /* below */ }
+  }
+  return bad("sites-domain", `כתובות כמו name.${domain} לא עונות: להוסיף אצל רשם הדומיין רשומת CNAME בשם * לכתובת service-pro-web.netlify.app, או להעביר את הדומיין ל-Netlify DNS`);
+}
+
 export function checkGrow() {
   if (process.env.GROW_SANDBOX) return bad("grow", "GROW_SANDBOX מוגדר: תשלומים אמיתיים לא עוברים");
   if (!process.env.GROW_PAGE_CODE || !process.env.GROW_USER_ID) return note("grow", "Grow לא מוגדר: התשלום עובר בקישור, וכפיר מסמן ׳שולם׳");
@@ -108,7 +126,7 @@ export async function checkSchedules(now = new Date()) {
 }
 
 export async function runWatchdog(now = new Date()) {
-  const results = (await Promise.all([checkSupabase(), checkWhatsApp(), checkClaude(), checkGemini(), checkGitHub(now), checkNetlify(), checkGrow(), checkSchedules(now)])).flat();
+  const results = (await Promise.all([checkSupabase(), checkWhatsApp(), checkClaude(), checkGemini(), checkGitHub(now), checkNetlify(), checkSitesDomain(), checkGrow(), checkSchedules(now)])).flat();
   const failed = results.filter((r) => !r.ok);
   const prev = (await db("GET", "ls_heartbeats?name=eq.watchdog&select=detail").catch(() => []))[0];
   const before = new Set(((prev && prev.detail && prev.detail.failed) || []));
