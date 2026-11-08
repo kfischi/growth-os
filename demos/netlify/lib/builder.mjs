@@ -22,7 +22,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { randomBytes, createHmac } from "node:crypto";
 import { db, q, clip, sha256, safeEqual, israeliPhone, getClient, processLead, adminKey, israelDay } from "./leads.mjs";
 import * as plumber from "./templates/plumber.mjs";
-import { hostingOn, ensureSite, deploy, pointsHere, makePrimary } from "./hosting.mjs";
+import { hostingOn, ensureSite, deploy, pointsHere, makePrimary, sitesDomain } from "./hosting.mjs";
 import { indexNowFile, pingIndexNow, submitSitemap } from "./search.mjs";
 import { applySocial } from "./social.mjs";
 
@@ -926,8 +926,8 @@ export async function slugFree(slug, draftId) {
   return !(await db("GET", `ls_clients?slug=eq.${q(slug)}&select=slug`)).length;
 }
 
-// The address a slug gets: <slug>.<SITES_DOMAIN>, or <slug>.netlify.app without our own domain.
-export const hostFor = (slug) => `${slug}.${String(process.env.SITES_DOMAIN || "").trim().toLowerCase() || "netlify.app"}`;
+// The address a slug gets: <slug>.<SITES_DOMAIN> (multilanding.co.il by default), or <slug>.netlify.app with "off".
+export const hostFor = (slug) => `${slug}.${sitesDomain() || "netlify.app"}`;
 
 /**
  * Up to 5 free names for the owner to pick from, in Latin letters from the business's own name (Claude reads the

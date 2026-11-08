@@ -8,9 +8,9 @@
 //     Then every publish submits the site's sitemap, and the owner's panel shows how many times the site appeared in
 //     Google and how many clicks it got (searchImpressions), a few days behind, as Google reports it.
 import { createHash, createSign } from "node:crypto";
+import { sitesDomain } from "./hosting.mjs";
 
 const TIMEOUT = 10000;
-const sitesDomain = () => String(process.env.SITES_DOMAIN || "").trim().toLowerCase();
 
 // A key per site, stable, not guessable from the slug alone (IndexNow keys are public, they only prove ownership).
 export const indexNowKey = (host) => createHash("sha256").update("indexnow:" + host + ":" + String(process.env.LEADS_ADMIN_KEY || "").trim()).digest("hex").slice(0, 32);

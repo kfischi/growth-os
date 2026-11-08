@@ -3,7 +3,7 @@
 // Run: node scripts/tests/watchdog.test.mjs  (from the repo root)
 import assert from "node:assert/strict";
 const ENV = { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_APP_SECRET: "s", WA_VERIFY_TOKEN: "v", WA_TOKEN_KFIR: "tok-kfir", WA_TOKEN_OREN: "tok-oren",
-  ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", NETLIFY_TOKEN: "nf-test", LEADS_ADMIN_KEY: "admin-key-0123456789" };
+  ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", NETLIFY_TOKEN: "nf-test", LEADS_ADMIN_KEY: "admin-key-0123456789", SITES_DOMAIN: "off" };
 Object.assign(process.env, ENV);
 const NOW = new Date("2026-11-06T12:00:00Z");
 const T = { ls_clients: [
@@ -75,6 +75,13 @@ quality = "RED"; r = await W.runWatchdog(NOW); assert.ok(byName(r)["whatsapp:ore
 delete process.env.WA_TOKEN_OREN; r = await W.runWatchdog(NOW); assert.match(byName(r)["whatsapp:oren"].detail, /חסר WA_TOKEN_OREN/); process.env.WA_TOKEN_OREN = "tok-oren";
 delete process.env.WA_APP_SECRET; r = await W.runWatchdog(NOW); assert.equal(byName(r)["whatsapp-webhook"].ok, false); process.env.WA_APP_SECRET = "s";
 process.env.GEMINI_API_KEY = "g"; down.add("gemini"); r = await W.runWatchdog(NOW); assert.equal(byName(r).gemini.ok, false); down.clear(); delete process.env.GEMINI_API_KEY;
+// the free addresses <slug>.<SITES_DOMAIN>: a wildcard record answers, or the domain is a Netlify DNS zone
+assert.ok(byName(await W.runWatchdog(NOW))["sites-domain"].warn, "off is a note");
+process.env.SITES_DOMAIN = "sites.example.co.il"; delete process.env.NETLIFY_TOKEN;
+assert.equal((await W.checkSitesDomain(async () => ["75.2.60.5"])).ok, true);
+let sd = await W.checkSitesDomain(async () => { throw Object.assign(new Error("ENOTFOUND"), { code: "ENOTFOUND" }); });
+assert.equal(sd.ok, false); assert.match(sd.detail, /CNAME בשם \*/);
+process.env.SITES_DOMAIN = "off"; process.env.NETLIFY_TOKEN = "nf-test";
 process.env.GROW_SANDBOX = "1"; r = await W.runWatchdog(NOW); assert.equal(byName(r).grow.ok, false); delete process.env.GROW_SANDBOX;
 // a schedule that stopped, or whose last run failed
 T.ls_heartbeats.find((x) => x.name === "reminders").at = new Date(NOW - 90 * 60_000).toISOString();
