@@ -29,7 +29,7 @@ Supabase project "Easy Landing", id `lhyjxgnspbuolhhcayih` (the lead system's ow
 4. **Storage:** the buckets `builder` (public) and `lead-photos` (private) exist (`select id, public from storage.buckets`).
 5. **Advisors:** `get_advisors` security and performance. `rls_enabled_no_policy` on `ls_*` is expected (only the server, with the service key, reads and writes): ignore it. Anything WARN or ERROR is a finding.
 6. **Logs:** `query_logs` for `api` and `postgres` over the last hours: repeated 4xx/5xx from `/rest/v1/ls_*` or Postgres errors are findings. Quote the error and the path, never a row's data.
-7. **The live site** (https://service-pro-web.netlify.app), with curl, when the network allows:
+7. **The live site** (https://multilanding.co.il), with curl, when the network allows:
    - `/`, `/all/`, `/plumber/`, `/build/` answer 200;
    - `/api/status/plumber` answers 200 with JSON;
    - `/api/testimonials/plumber` answers 200 with `{ "items": [...] }`.

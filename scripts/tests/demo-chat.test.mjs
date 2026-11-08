@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { ai, aiCalls, T, DEF } from "./builder-fakes.mjs";
 
 const fn = (await import(new URL("../../demos/netlify/functions/demo-chat.mjs", import.meta.url).href)).default;
-const SITE = "https://service-pro-web.netlify.app";
+const SITE = "https://multilanding.co.il";
 const call = async (demo, body, { origin = SITE, ip = "8.8.8.1" } = {}) => {
   const headers = { "content-type": "application/json", "x-nf-client-connection-ip": ip };
   if (origin) headers.origin = origin;

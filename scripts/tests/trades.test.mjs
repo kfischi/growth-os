@@ -76,7 +76,7 @@ for (const [id, T] of Object.entries(TRADES)) {
     whatsapp: "0526359513", headline_1: g.headlines[0].headline_1, intro: g.intros[0].intro.replace("{when}", whenText(g.response[1])),
     services: g.services.slice(0, 4), towns: ["חדרה", "נתניה"] };
   assert.equal(c.trade, T.trade); assert.equal(c.trade_id, id);
-  const site = P.render(c, { mode: "site", url: "https://test.example.co.il/", leads: "https://service-pro-web.netlify.app/api/lead/x" });
+  const site = P.render(c, { mode: "site", url: "https://test.example.co.il/", leads: "https://multilanding.co.il/api/lead/x" });
   const html = site["index.html"];
   for (const page of [html, P.render(c, { mode: "draft", assets: "/shared/" })["index.html"]])
     for (const [, code] of page.matchAll(/<script>([\s\S]*?)<\/script>/g)) { try { new Function(code); } catch (e) { assert.fail(at("a page script doesn't parse: " + e.message)); } }
@@ -94,7 +94,7 @@ for (const [id, T] of Object.entries(TRADES)) {
   {
     const c2 = { ...c, area: "השרון", response_time: "באותו יום", services: [...g.services.slice(0, 2), { name: "בלי מחיר", price: "לפי הצעת מחיר" }],
       regions: [{ name: "השפלה", towns: ["רחובות"], note: "עובדים בשפלה כבר כמה שנים, ומכירים את הבניינים ואת הגישה בכל שכונה.", response: "באותו יום" }] };
-    const s2 = P.render(c2, { mode: "site", url: "https://test.example.co.il/", leads: "https://service-pro-web.netlify.app/api/lead/x" });
+    const s2 = P.render(c2, { mode: "site", url: "https://test.example.co.il/", leads: "https://multilanding.co.il/api/lead/x" });
     for (const [f, page] of Object.entries(s2)) {
       assert.ok(!/תוך באותו/.test(page), at(f + ': no "תוך באותו יום"'));
       assert.ok(!/בהשרון|בהשפלה/.test(page), at(f + ': "בשרון", not "בהשרון"'));

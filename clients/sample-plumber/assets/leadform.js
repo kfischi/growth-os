@@ -9,7 +9,7 @@
    and shows the section only when there is at least one. LeadForm.testimonialCard(t) makes one card.
    A tagged link from the owner's panel (?s=k3p9) becomes the source "t-k3p9" for the whole visit.
    Anything but { ok: true } means: open WhatsApp instead, so the enquiry still arrives.
-   On a business's site: endpoint "https://service-pro-web.netlify.app/api/lead/<slug>". */
+   On a business's site: endpoint "https://multilanding.co.il/api/lead/<slug>". */
 (function () {
   const params = new URLSearchParams(location.search);
   // Kept for the session, so a visitor who opened another page and came back still counts for the link.
@@ -58,7 +58,7 @@
     },
     // The "available now" line: what the owner wrote in WhatsApp ("עסוק", "פנוי"), or the working hours.
     // Each [data-avail] gets data-state and the text; with no answer it stays hidden. Refreshed every 2 minutes.
-    // On a business's site: LeadForm.status("https://service-pro-web.netlify.app/api/status/<slug>").
+    // On a business's site: LeadForm.status("https://multilanding.co.il/api/status/<slug>").
     status(endpoint) {
       const paint = (s) => document.querySelectorAll("[data-avail]").forEach((el) => {
         el.hidden = !s || !s.state;
@@ -93,7 +93,7 @@
       card.append(cap);
       return card;
     },
-    // On a business's site: LeadForm.testimonials("https://service-pro-web.netlify.app/api/testimonials/<slug>").
+    // On a business's site: LeadForm.testimonials("https://multilanding.co.il/api/testimonials/<slug>").
     testimonials(endpoint) {
       const boxes = document.querySelectorAll("[data-testimonials]");
       if (!boxes.length) return;
@@ -107,7 +107,7 @@
       }).catch(() => {});
     },
     // Counts this visit once per browser session (functions/visit.mjs): a number only, no cookie.
-    // On a business's site: LeadForm.visit("https://service-pro-web.netlify.app/api/visit/<slug>").
+    // On a business's site: LeadForm.visit("https://multilanding.co.il/api/visit/<slug>").
     visit(endpoint) {
       if (!visitAt) {
         visitAt = endpoint;

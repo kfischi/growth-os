@@ -16,7 +16,7 @@ const draftPage = (await import(F + "draft.mjs")).default;
 const admin = (await import(F + "builder-admin.mjs")).default;
 const B = await import(new URL("../../demos/netlify/lib/builder.mjs", import.meta.url).href);
 const P = await import(new URL("../../demos/netlify/lib/templates/plumber.mjs", import.meta.url).href);
-const ORIGIN = "https://service-pro-web.netlify.app";
+const ORIGIN = "https://multilanding.co.il";
 let cred = "";
 const req = (action, { method = "POST", body, raw, headers = {}, query = "", ip = "1.1.1.1" } = {}) => builder(new Request(`${ORIGIN}/api/builder/${action}${query}`, {
   method, body: raw || (body !== undefined ? JSON.stringify(body) : undefined),
@@ -151,7 +151,7 @@ assert.match(P.render({ ...SAMPLE, look: "nope", palette: "x" }, { mode: "site" 
 }
 // Testimonials: a hidden section the page fills from the lead system, only with נציג AI; never in a draft.
 {
-  const withLeads = P.render(SAMPLE, { mode: "site", leads: "https://service-pro-web.netlify.app/api/lead/oren" });
+  const withLeads = P.render(SAMPLE, { mode: "site", leads: "https://multilanding.co.il/api/lead/oren" });
   assert.match(withLeads["index.html"], /<section class="tst-sec" id="testimonials" data-testimonials hidden>/);
   assert.match(withLeads["index.html"], /LeadForm\.testimonials\(SITE\.leads\.replace\("\/api\/lead\/", "\/api\/testimonials\/"\)\)/);
   assert.match(withLeads["privacy.html"], /<h2>המלצות<\/h2>/);
@@ -348,7 +348,7 @@ assert.deepEqual(paths, ["CLIENT.md", "_headers", "accessibility.html", "assets/
 const file = (p) => tree.tree.find((e) => e.path === "clients/oren-mayim/" + p);
 assert.equal(file("assets/leadbot.js").sha, "sha-bot"); assert.equal(file("assets/aibot.js").sha, "sha-ai", "the AI chat's script is published too"); assert.ok(file("assets/photos/portrait.jpg").sha.startsWith("blob-"));
 const index = file("index.html").content;
-assert.ok(!/noindex|טיוטה|class="todo"/.test(index), "no draft marks on the real site"); assert.match(index, /"leads":"https:\/\/service-pro-web.netlify.app\/api\/lead\/oren-mayim"/);
+assert.ok(!/noindex|טיוטה|class="todo"/.test(index), "no draft marks on the real site"); assert.match(index, /"leads":"https:\/\/multilanding.co.il\/api\/lead\/oren-mayim"/);
 // the AI chat: a section of questions from the owner's facts, opening the chat on the business's own /api/chat/<slug>
 assert.match(index, /id="ask"/); assert.match(index, /src="assets\/aibot.js" defer/); assert.match(index, /corner: false/);
 assert.match(index, /SITE\.leads\.replace\("\/api\/lead\/", "\/api\/chat\/"\)/);
@@ -360,7 +360,7 @@ assert.match(index, /src="assets\/photos\/work5.webp" alt="[^"]*" width="257" he
 assert.ok(!file("_headers").content.includes("noindex")); assert.ok(!/0526359513|972526359513/.test(file("CLIENT.md").content), "no phone in the public repo card");
 const C = T.ls_clients.find((c) => c.slug === "oren-mayim");
 assert.ok(C && C.key_hash && C.owner_phone === "972526359513"); assert.match(C.chat_facts, /סתימה בכיור.*250 עד 450 ₪/);
-assert.match(r.leads.panel, /^https:\/\/service-pro-web.netlify.app\/panel\/#k=oren-mayim:[A-Za-z0-9_-]{32}$/);
+assert.match(r.leads.panel, /^https:\/\/multilanding.co.il\/panel\/#k=oren-mayim:[A-Za-z0-9_-]{32}$/);
 assert.equal(C.key_hash, createHash("sha256").update(r.leads.panel.split(":").pop()).digest("hex"));
 // publishing again with the same slug updates; another slug is refused
 r = await J(await adm("POST", { action: "publish", id: D.id, slug: "oren-mayim" })); assert.equal(r.status, 200); assert.equal(r.leads.row, "updated"); assert.equal(T.ls_clients.filter((c) => c.slug === "oren-mayim").length, 1);
@@ -682,7 +682,7 @@ cred = E.id + ":k"; assert.equal((await req("state", { method: "GET" })).status,
   assert.match(nl.bodies.get("/index.html"), /<a class="svc-link" href="service-[a-z0-9]+\.html">/, "the price list links to them");
   assert.match(nl.bodies.get("/index.html"), /<link rel="canonical" href="https:\/\/oren-mayim.sites.example.co.il\/">/);
   assert.match(nl.bodies.get("/sitemap.xml"), /<loc>https:\/\/oren-mayim.sites.example.co.il\/guides.html<\/loc>/);
-  assert.match(nl.bodies.get("/index.html"), /<p class="credit">האתר נבנה ב-<a href="https:\/\/service-pro-web.netlify.app\/\?utm_source=client&amp;utm_campaign=oren-mayim"/);
+  assert.match(nl.bodies.get("/index.html"), /<p class="credit">האתר נבנה ב-<a href="https:\/\/multilanding.co.il\/\?utm_source=client&amp;utm_campaign=oren-mayim"/);
   assert.match(nl.bodies.get("/privacy.html"), /noindex, follow/, "the legal pages stay out of the results");
   // Straight to the search engines: IndexNow gets every indexable page, with the key file served by the site.
   const ping = indexNow.at(-1);

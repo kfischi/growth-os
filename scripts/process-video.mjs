@@ -746,9 +746,9 @@ try {
   cue("חבילה אחת, בלי התחייבות. נציג AI: 1,590 ₪ הקמה, ועוד 290 ₪ לחודש, מחיר השקה נעול. המחירים סופיים. מבטלים מתי שרוצים.");
   await hold(3200);
   beat("cta", "לבנות את האתר שלי", "big");
-  await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">service-pro-web.netlify.app/build</div><div class="l tagline">Multi Landing · אתרים שבונים עסקים</div>`, true));
+  await p.evaluate(() => window.stage.lines(`<div class="l big">אף פנייה לא הולכת לאיבוד<span class="dot">.</span></div><div class="l cta">לבנות את האתר שלי</div><div class="l addr">multilanding.co.il/build</div><div class="l tagline">Multi Landing · אתרים שבונים עסקים</div>`, true));
   for (let i = 0; i < 4; i++) { await st("showN", ".l", i); await raw(250); }
-  cue("אף פנייה לא הולכת לאיבוד. לבנות את האתר שלי: service-pro-web.netlify.app/build");
+  cue("אף פנייה לא הולכת לאיבוד. לבנות את האתר שלי: multilanding.co.il/build");
   await hold(2600);
   endT = clock();
   await cdp.send("Page.stopScreencast");

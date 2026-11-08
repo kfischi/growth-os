@@ -1,6 +1,6 @@
 # אתר הדמו והמחירון
 
-באוויר: https://service-pro-web.netlify.app (Netlify).
+באוויר: https://multilanding.co.il (Netlify).
 
 אתר אחד ב-Netlify עם העמודים האלה:
 

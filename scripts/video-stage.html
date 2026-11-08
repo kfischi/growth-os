@@ -189,7 +189,7 @@
   // The address bar shows the real address of the page in the window.
   const SHOW = (u) => {
     if (u.pathname.startsWith("/__live")) return "<b>oren-mayim.multilanding.co.il</b>" + u.pathname.replace(/^\/__live\/?/, "/").replace(/^\/$/, "");
-    return "service-pro-web.netlify.app<b>" + u.pathname.replace(/index\.html$/, "") + "</b>";
+    return "multilanding.co.il<b>" + u.pathname.replace(/index\.html$/, "") + "</b>";
   };
   setInterval(() => { try { const u = new URL($("app").contentWindow.location.href); if (u.protocol.startsWith("http")) $("url").innerHTML = SHOW(u); } catch (e) {} }, 100);
 

@@ -74,7 +74,7 @@ Site configuration → Environment variables:
 1. developers.facebook.com → Create app → Business → מוסיפים את המוצר WhatsApp.
 2. App settings → Basic: מעתיקים את ה-App secret ל-`WA_APP_SECRET`.
 3. WhatsApp → Configuration → Webhook:
-   - Callback URL: `https://service-pro-web.netlify.app/api/wa-webhook`
+   - Callback URL: `https://multilanding.co.il/api/wa-webhook`
    - Verify token: הערך של `WA_VERIFY_TOKEN`
    - Webhook fields: מסמנים `messages`.
 
@@ -85,7 +85,7 @@ Site configuration → Environment variables:
 ### 4. בדיקת תקינות שמתריעה לכפיר (חובה)
 
 1. פותחים חשבון חינמי ב-UptimeRobot (uptimerobot.com).
-2. New monitor → HTTP(s) → הכתובת: `https://service-pro-web.netlify.app/api/health?key=<HEALTH_KEY>` → כל 5 דקות → התראה במייל ובאפליקציה.
+2. New monitor → HTTP(s) → הכתובת: `https://multilanding.co.il/api/health?key=<HEALTH_KEY>` → כל 5 דקות → התראה במייל ובאפליקציה.
 3. הבדיקה נכשלת כשב-24 השעות האחרונות התראה לבעל עסק לא יצאה או נתקעה, הודעת וואטסאפ נכשלה, או שבסיס הנתונים לא עונה. היא מחזירה רק מספרים ושמות עסקים, בלי פרטים של לקוחות.
 4. כשמגיעה התראה: נכנסים ללוח, מוצאים את הפניות המסומנות באדום, וחוזרים ללקוחות. אחר כך מתקנים את הסיבה (בדרך כלל תבנית או טוקן) ב-`ls_messages`, בעמודה `error`.
 
@@ -193,7 +193,7 @@ WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. 
 <script>
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const r = await LeadForm.send("https://service-pro-web.netlify.app/api/lead/oren-mayim",
+    const r = await LeadForm.send("https://multilanding.co.il/api/lead/oren-mayim",
       { name, phone, service, message });
     if (r.ok) showThanks();                       // "תודה, דנה! הודעת אישור בדרך אליכם בוואטסאפ."
     else location.href = "https://wa.me/9725XXXXXXXX?text=" + encodeURIComponent(summary); // נפילה לוואטסאפ
@@ -211,7 +211,7 @@ WhatsApp Manager → Message templates → Create. קטגוריה: **Utility**. 
 <script src="assets/aibot.js"></script>
 <script>
   AiBot.init({
-    endpoint: "https://service-pro-web.netlify.app/api/chat/oren-mayim",
+    endpoint: "https://multilanding.co.il/api/chat/oren-mayim",
     whatsapp: "9725XXXXXXXX", name: "אורן מים", subtitle: "עונים על כל שאלה",
     greet: "היי, כאן העוזר של אורן מים. אפשר לשאול על מחירים, אזורי שירות וזמני הגעה.",
     chips: ["כמה עולה ביקור?", "אתם מגיעים לחדרה?", "יש לי נזילה דחופה"],
@@ -234,7 +234,7 @@ update public.ls_clients set chat_facts = 'אינסטלטור בחדרה, פרד
 - [ ] לחיצה על "טיפלתי" בוואטסאפ מסמנת את הפנייה בלוח.
 - [ ] תזכורת: משאירים פנייה בלי לסמן, ומריצים ידנית:
   ```bash
-  curl -X POST https://service-pro-web.netlify.app/api/leads \
+  curl -X POST https://multilanding.co.il/api/leads \
     -H "authorization: Bearer admin:$LEADS_ADMIN_KEY" -d '{"run":"reminders"}'
   ```
   (התזכורת יוצאת רק אחרי `remind_after_min` דקות ובשעות העבודה.)
@@ -448,7 +448,7 @@ update ls_clients set testimonials = true where slug = '<slug>';
 הטופס בדף הבית שולח גם לטבלה, תחת `kfir`, ועדיין פותח וואטסאפ כמו קודם. כדי להפעיל:
 
 ```bash
-node scripts/lead-system/new-client.mjs kfir "Multi Landing" 052-6359513 https://service-pro-web.netlify.app
+node scripts/lead-system/new-client.mjs kfir "Multi Landing" 052-6359513 https://multilanding.co.il
 ```
 
 הדף נשלח מאותו אתר, אז אין צורך ב-allowed_origins. ההתראות לא יכולות להגיע למספר שמחובר ל-Cloud API עצמו: אם 052-6359513 הוא המספר של המערכת, מכניסים לבעל העסק מספר אחר. כדי שלא תצא הודעה אוטומטית לבעל עסק שכבר כתב לכפיר בוואטסאפ: `update ls_clients set auto_reply = false where slug = 'kfir';`. ההתראות והתזכורות נשארות.

@@ -108,11 +108,11 @@ const hook = (await import(F + "wa-webhook.mjs")).default;
 const api = (await import(F + "leads-api.mjs")).default;
 const chat = (await import(F + "client-chat.mjs")).default;
 const lib = await import(new URL("../../demos/netlify/lib/leads.mjs", import.meta.url).href);
-const post = (path, body, headers = {}) => new Request("https://service-pro-web.netlify.app" + path, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
+const post = (path, body, headers = {}) => new Request("https://multilanding.co.il" + path, { method: "POST", headers: { "content-type": "application/json", ...headers }, body: JSON.stringify(body) });
 const ctx = (client) => ({ params: { client } });
 
 // --- lead intake
-let r = await lead(new Request("https://service-pro-web.netlify.app/api/lead/oren", { method: "OPTIONS", headers: { origin: "https://oren.co.il" } }), ctx("oren"));
+let r = await lead(new Request("https://multilanding.co.il/api/lead/oren", { method: "OPTIONS", headers: { origin: "https://oren.co.il" } }), ctx("oren"));
 assert.equal(r.status, 204); assert.equal(r.headers.get("access-control-allow-origin"), "https://oren.co.il");
 r = await lead(post("/api/lead/oren", { name: "דנה", phone: "050-2222222" }, { origin: "https://evil.com" }), ctx("oren")); assert.equal(r.status, 403);
 r = await lead(post("/api/lead/off", { name: "דנה", phone: "0502222222" }), ctx("off")); assert.equal(r.status, 409);
@@ -165,12 +165,12 @@ rem = await lib.runReminders(new Date("2026-10-10T07:00:00Z")); assert.equal(rem
 T.ls_leads[1].reminded_at = "x";
 
 // --- panel API
-const get = (q, auth) => new Request("https://service-pro-web.netlify.app/api/leads" + q, { headers: { authorization: auth } });
+const get = (q, auth) => new Request("https://multilanding.co.il/api/leads" + q, { headers: { authorization: auth } });
 r = await api(get("", "Bearer oren:wrong-key-wrong-key")); assert.equal(r.status, 401);
 r = await api(get("", "Bearer oren:" + key)); out = await r.json(); assert.equal(r.status, 200); assert.equal(out.leads.length, 2); assert.equal(out.client.name, "אורן מים"); assert.ok(!("key_hash" in out.client));
 assert.equal(out.messages.length, 1);
 r = await api(get("?client=off", "Bearer oren:" + key)); out = await r.json(); assert.equal(out.client.slug, "oren", "an owner can't read another business");
-const patch = (b, auth, q = "") => new Request("https://service-pro-web.netlify.app/api/leads" + q, { method: "PATCH", headers: { authorization: auth }, body: JSON.stringify(b) });
+const patch = (b, auth, q = "") => new Request("https://multilanding.co.il/api/leads" + q, { method: "PATCH", headers: { authorization: auth }, body: JSON.stringify(b) });
 const handledAt = L.handled_at;
 r = await api(patch({ id: L.id, status: "won", note: "קבענו לשלישי" }, "Bearer oren:" + key)); out = await r.json();
 assert.equal(out.lead.status, "won"); assert.equal(out.lead.handled_at, handledAt, "first handled time kept");
@@ -236,7 +236,7 @@ T.ls_leads.push({ ...DEF.ls_leads(), client_slug: "oren", name: "ישן", phone:
 const del = await lib.deleteOldLeads(new Date("2026-10-10T00:00:00Z")); assert.equal(del.deleted, 1); assert.ok(!T.ls_leads.some((l) => l.name === "ישן"));
 
 // --- panel API: Origin null doesn't crash
-r = await api(new Request("https://service-pro-web.netlify.app/api/leads", { headers: { authorization: "Bearer oren:" + key, origin: "null" } })); assert.equal(r.status, 403);
+r = await api(new Request("https://multilanding.co.il/api/leads", { headers: { authorization: "Bearer oren:" + key, origin: "null" } })); assert.equal(r.status, 403);
 
 // --- a photo with the enquiry: stored privately, linked in the alert (one line), shown in the panel, deleted with the lead
 const JPEG = "data:image/jpeg;base64," + Buffer.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3, 4, 0xff, 0xd9]).toString("base64");
@@ -246,7 +246,7 @@ const PL = T.ls_leads.find((l) => l.id === out.id); assert.equal(PL.photo, `oren
 const palert = sent.at(-1); assert.equal(palert.template.name, "owner_new_lead");
 const p4 = palert.template.components[0].parameters[3].text;
 assert.ok(!/\n/.test(p4), "a template parameter takes no line break");
-assert.equal(p4, "מתחת לכיור · תמונה: " + lib.photoLink(PL.id)); assert.match(lib.photoLink(PL.id), /^https:\/\/service-pro-web\.netlify\.app\/p\/[0-9a-f-]{36}\.[\w-]{22}$/);
+assert.equal(p4, "מתחת לכיור · תמונה: " + lib.photoLink(PL.id)); assert.match(lib.photoLink(PL.id), /^https:\/\/multilanding\.co\.il\/p\/[0-9a-f-]{36}\.[\w-]{22}$/);
 // not a photo, or too big: the lead goes in without one
 r = await lead(post("/api/lead/oren", { name: "גל", phone: "0503333334", photo: "data:image/jpeg;base64," + Buffer.from("<svg onload=x>").toString("base64") }, { "x-nf-client-connection-ip": "10.0.0.2" }), ctx("oren"));
 out = await r.json(); assert.ok(out.ok); assert.equal(T.ls_leads.find((l) => l.id === out.id).photo, undefined);
@@ -259,7 +259,7 @@ assert.ok(out.ok, JSON.stringify(out)); assert.equal(T.ls_leads.find((l) => l.id
 assert.match(sent.at(-1).template.components[0].parameters[3].text, /^הלקוח צירף תמונה, והיא לא נשמרה$/);
 // the private link
 const pic = (await import(F + "lead-photo.mjs")).default;
-const getPic = (token) => pic(new Request("https://service-pro-web.netlify.app/p/" + token), { params: { token } });
+const getPic = (token) => pic(new Request("https://multilanding.co.il/p/" + token), { params: { token } });
 const token = lib.photoLink(PL.id).split("/p/")[1];
 r = await getPic(token); assert.equal(r.status, 200); assert.equal(r.headers.get("content-type"), "image/jpeg");
 assert.equal(r.headers.get("x-robots-tag"), "noindex, nofollow"); assert.match(r.headers.get("cache-control"), /^private/);
@@ -275,7 +275,7 @@ assert.ok(out.leads.filter((l) => l.id !== PL.id).every((l) => l.photo_url === n
 PL.created_at = "2024-01-01T00:00:00Z";
 await lib.deleteOldLeads(new Date("2026-10-10T00:00:00Z")); assert.ok(!store.has("lead-photos/" + PL.photo), "the photo is deleted too");
 
-const vreqLink = async (code) => (await import(F + "visit.mjs")).default(new Request("https://service-pro-web.netlify.app/api/visit/oren", {
+const vreqLink = async (code) => (await import(F + "visit.mjs")).default(new Request("https://multilanding.co.il/api/visit/oren", {
   method: "POST", body: JSON.stringify({ page: "https://oren.co.il/?s=" + code, referrer: "https://www.facebook.com/", source: "t-" + code }),
   headers: { "content-type": "text/plain", origin: "https://oren.co.il", "user-agent": "Mozilla/5.0 (iPhone)", "x-nf-client-connection-ip": "10.0.2.1" } }), ctx("oren"));
 // --- tagged links: the owner names one per group, and sees the name with its visits and leads
@@ -337,7 +337,7 @@ await hook(wh(val({ messages: [{ from: "972501111111", id: "in-busy", type: "tex
 assert.equal(sent.filter((m) => m.text && /^באתר כתוב/.test(m.text.body)).length, 1, "answered once");
 // the site reads it
 const status = (await import(F + "status.mjs")).default;
-const st = (slug) => status(new Request("https://service-pro-web.netlify.app/api/status/" + slug), ctx(slug));
+const st = (slug) => status(new Request("https://multilanding.co.il/api/status/" + slug), ctx(slug));
 r = await st("oren"); out = await r.json(); assert.equal(out.state, "busy"); assert.equal(r.headers.get("access-control-allow-origin"), "*");
 assert.ok(!JSON.stringify(out).includes("972"), "no phone numbers");
 r = await st("off"); assert.equal((await r.json()).state, null, "a paused business shows nothing");
@@ -678,7 +678,7 @@ await pickReply("ts-2", "tst:" + TL.id);
 const tr = sent.find((m) => m.template && m.template.name === "testimonial_request");
 assert.equal(tr.to, "972503333350");
 const [p1, p2, link] = tr.template.components[0].parameters.map((p) => p.text);
-assert.equal(p1, "נועה"); assert.equal(p2, "אורן מים"); assert.match(link, new RegExp("^https://service-pro-web\\.netlify\\.app/r/" + TL.id + "\\.[A-Za-z0-9_-]{22}$"));
+assert.equal(p1, "נועה"); assert.equal(p2, "אורן מים"); assert.match(link, new RegExp("^https://multilanding\\.co\\.il/r/" + TL.id + "\\.[A-Za-z0-9_-]{22}$"));
 assert.equal(TL.testimonial, "sent"); assert.match(sent.at(-1).text.body, /^נשלח לנועה\./);
 const tstToken = link.split("/r/")[1];
 // the form opens only from the real link
@@ -732,7 +732,7 @@ assert.equal(TL4.review, "skipped"); assert.equal(TL4.testimonial, "skipped"); a
   const vtok = vlink.split("/r/")[1];
   const poster = Buffer.concat([Buffer.from("RIFF\0\0\0\0WEBPVP8 ", "latin1"), Buffer.alloc(20)]);
   const movie = Buffer.concat([Buffer.from([0, 0, 0, 24]), Buffer.from("ftypisom", "latin1"), Buffer.alloc(40)]);
-  const vPost = (fields, { mov = movie, size = "720x1280" } = {}) => tstFn(new Request("https://service-pro-web.netlify.app/api/testimonial", { method: "POST", body: Buffer.concat([poster, mov]),
+  const vPost = (fields, { mov = movie, size = "720x1280" } = {}) => tstFn(new Request("https://multilanding.co.il/api/testimonial", { method: "POST", body: Buffer.concat([poster, mov]),
     headers: { "content-type": "application/octet-stream", "x-poster-length": String(poster.length), "x-video-size": size, "x-fields": encodeURIComponent(JSON.stringify(fields)), "x-nf-client-connection-ip": "10.1.0.9" } }), {});
   let vr = await vPost({ token: vtok, name: "שי", text: "", stars: 5, recommend: true });
   assert.equal(vr.status, 422); assert.equal((await vr.json()).error, "consent", "no video on the site without the customer's OK");
@@ -774,7 +774,7 @@ assert.equal(lib.monthRange("2026-12").end, "2027-01-01T00:00:00+02:00");
 assert.equal(lib.monthRange(null, new Date("2026-10-01T08:00:00Z")).key, "2026-09");
 // --- visits: a number per day and source, only from the business's own site, once per visitor
 const visit = (await import(F + "visit.mjs")).default;
-const vreq = (slug, { origin = "https://oren.co.il", ip = "5.5.5.5", ua = "Mozilla/5.0 (iPhone)", body = {} } = {}) => visit(new Request("https://service-pro-web.netlify.app/api/visit/" + slug, {
+const vreq = (slug, { origin = "https://oren.co.il", ip = "5.5.5.5", ua = "Mozilla/5.0 (iPhone)", body = {} } = {}) => visit(new Request("https://multilanding.co.il/api/visit/" + slug, {
   method: "POST", body: JSON.stringify(body), headers: { "content-type": "text/plain", origin, "user-agent": ua, "x-nf-client-connection-ip": ip } }), ctx(slug));
 const today = lib.israelDay();
 const count = (src) => (T.ls_visits.find((v) => v.client_slug === "oren" && v.day === today && v.source === src) || {}).visits || 0;
@@ -783,10 +783,10 @@ assert.equal(count("google.com"), 1, "a visit from Google");
 await vreq("oren", { body: { page: "https://oren.co.il/", referrer: "https://www.google.com/" } }); assert.equal(count("google.com"), 1, "the same visitor again is not a new visit");
 await vreq("oren", { ip: "6.6.6.6", ua: "Googlebot/2.1", body: {} }); assert.equal(count("direct"), 0, "bots don't count");
 await vreq("oren", { ip: "7.7.7.7", origin: "https://evil.com" }); assert.equal(count("direct"), 0, "another site can't add visits");
-await vreq("off", { ip: "8.8.8.8", origin: "https://service-pro-web.netlify.app" }); assert.ok(!T.ls_visits.some((v) => v.client_slug === "off"), "a paused business isn't counted");
+await vreq("off", { ip: "8.8.8.8", origin: "https://multilanding.co.il" }); assert.ok(!T.ls_visits.some((v) => v.client_slug === "off"), "a paused business isn't counted");
 await vreq("nope", { ip: "8.8.8.9" });
 await vreq("oren", { ip: "9.9.9.9", body: { page: "https://oren.co.il/?utm_source=facebook", referrer: "https://oren.co.il/", source: "facebook" } }); assert.equal(count("facebook"), 1, "utm_source wins over the site's own pages");
-await vreq("oren", { ip: "9.9.9.10", origin: "https://service-pro-web.netlify.app", body: { page: "https://service-pro-web.netlify.app/plumber/", referrer: "" } }); assert.equal(count("direct"), 1);
+await vreq("oren", { ip: "9.9.9.10", origin: "https://multilanding.co.il", body: { page: "https://multilanding.co.il/plumber/", referrer: "" } }); assert.equal(count("direct"), 1);
 assert.ok(!JSON.stringify(T.ls_visits).includes("5.5.5.5"), "no IP is stored");
 // with each visit: the device and the hour; a click that counts, once per visit, only a known one
 const stat = (kind, label) => (T.ls_stats.find((v) => v.client_slug === "oren" && v.day === today && v.kind === kind && v.label === label) || {}).n || 0;

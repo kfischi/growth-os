@@ -57,7 +57,7 @@ export function israelDayStart(t) {
 const retryAt = (now) => israelDayStart(new Date(now).getTime() + RETRY_DAYS * DAY);
 // Grow wants a plain Israeli mobile: 0521234567.
 const localPhone = (d) => { const p = israeliPhone(d.content.whatsapp) || (d.owner_phone && { intl: d.owner_phone }); return p ? "0" + p.intl.slice(3) : undefined; };
-const site = () => process.env.BUILDER_SITE_URL || "https://service-pro-web.netlify.app";
+const site = () => (process.env.BUILDER_SITE_URL || "https://multilanding.co.il").replace(/\/+$/, "");
 
 export const billingOf = async (draftId) => (await db("GET", `ls_billing?draft_id=eq.${q(draftId)}&select=*`))[0] || null;
 const paymentsOf = (draftId) => db("GET", `ls_payments?draft_id=eq.${q(draftId)}&status=eq.paid&select=kind,sum,paid_at,invoice_url,invoice_number&order=paid_at.desc&limit=24`);
