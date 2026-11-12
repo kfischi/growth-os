@@ -464,6 +464,8 @@ html.a11y-still .typing i, html.a11y-still .done-btn.ready { animation: none; }
 .clip figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 12px; padding-inline: 6px; }
 .clip figcaption b { font-weight: 700; }
 .clip figcaption a { color: var(--violet); font-weight: 600; font-size: .95rem; }
+.ads-row { grid-template-columns: repeat(2, minmax(0, 300px)); justify-content: center; }
+.clip.ad .reel-frame { aspect-ratio: 9 / 16; }
 .watch-h { font: 700 1.3rem/1.3 var(--display); }
 /* the AI chat (shared/aibot.js) in the page's colours */
 :root { --ab-accent: var(--violet); --ab-font: var(--body); }
@@ -696,6 +698,21 @@ html.a11y-contrast .he-dial { display: none; }
         <li><span class="n">04</span><h3>רואים ומאשרים</h3><p>האתר נבנה ליד הצ׳אט.</p></li>
         <li><span class="n">05</span><h3>משלמים, והאתר באוויר</h3><p>בוחרים כתובת, משלמים בכרטיס, והאתר עולה לבד.</p></li>
       </ol>
+      <div class="watch reveal" role="group" aria-labelledby="t-ads">
+        <h3 class="watch-h" id="t-ads">ככה זה נראה ב-20 שניות</h3>
+        <div class="watch-row ads-row">
+        <figure class="clip reel ad">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/ads/plumber-poster.webp" aria-label="סרטון קצר: אינסטלטור באמצע עבודה מפספס שיחה, ואז האתר עונה ללקוח והפנייה מגיעה אליו לוואטסאפ"><source src="shared/video/ads/plumber.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>בעל מקצוע</b><a href="plumber/">לדמו המלא</a></figcaption>
+        </figure>
+        <figure class="clip reel ad">
+          <div class="reel-frame"><video muted loop playsinline preload="none" poster="shared/video/ads/nails-poster.webp" aria-label="סרטון קצר: בעלת סטודיו לציפורניים באמצע טיפול, והאתר עונה ללקוחה ושולח את הפנייה לוואטסאפ"><source src="shared/video/ads/nails.mp4" type="video/mp4"></video>
+            <button class="reel-toggle" type="button" aria-label="להפעיל את הסרטון" data-state="play"></button></div>
+          <figcaption><b>סטודיו לציפורניים</b><a href="nails/">לדמו המלא</a></figcaption>
+        </figure>
+        </div>
+      </div>
       <div class="watch reveal" role="group" aria-labelledby="t-watch">
         <h3 class="watch-h" id="t-watch">לראות את זה בעיניים של הלקוח</h3>
         <div class="watch-row">
