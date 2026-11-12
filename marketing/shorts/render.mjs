@@ -18,14 +18,14 @@ const dir = join(here, name), FPS = 30;
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
 await page.goto(pathToFileURL(resolve(dir, "index.html")).href);
-await page.evaluate(() => document.fonts.ready);
+await page.evaluate(async () => { await document.fonts.ready; await window.ready; }); // fonts, and videos where the short has them
 const duration = await page.evaluate(() => window.DURATION);
-const shot = async (t) => { await page.evaluate((x) => window.render(x), t); return page.screenshot({ type: "png" }); };
+const shot = async (t) => { await page.evaluate((x) => window.render(x), t); return page.screenshot({ type: "png" }); }; // render may be async (a video seek)
 
 if (stills) {
   const out = join(dir, "stills"); mkdirSync(out, { recursive: true });
   const { writeFileSync } = await import("node:fs");
-  for (const t of [0.5, 2, 3.9, 4.6, 6, 7.3, 8.8, 9.5, 10.6, duration - 1 / FPS]) writeFileSync(join(out, `t${t.toFixed(2)}.png`), await shot(t));
+  for (const t of [...Array(Math.floor(duration)).keys()].map((i) => i + 0.5).concat(duration - 1 / FPS)) writeFileSync(join(out, `t${t.toFixed(2)}.png`), await shot(t));
   console.log("stills in", out);
 } else {
   const file = join(dir, `${name}.mp4`);
