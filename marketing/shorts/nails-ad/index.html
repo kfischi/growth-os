@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>האתר עונה במקומך: סטודיו לציפורניים</title>
+<!-- The nail studio version of ../answer-ad (same timing and end card): a studio photo in place of the footage,
+     the nails demo on the phone, and the words to a woman who owns the studio.
+     A 20-second vertical ad (1080x1920, 30 fps, no sound), rendered by ../render.mjs. Real footage, then the real
+     plumber demo in use on a phone, then the end card. render(t) seeks each video to its frame for second t, so
+     every render gives the same frames. media/ is made by the commands in ../README.md (not kept in the repo).
+     The words are the home page's own lines; the business in the demo is fictional and the video says so. -->
+<style>
+  @font-face { font-family: Rubik; font-weight: 300 900; src: url(../../../demos/shared/fonts/rubik-hebrew-119f2521.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: Rubik; font-weight: 300 900; src: url(../../../demos/shared/fonts/rubik-latin-ea3f56e3.woff2) format("woff2"); unicode-range: U+0000-00FF, U+2000-206F; }
+  :root { --paper: #f7f5fc; --ink: #1d1733; --soft: #6b6585; --violet: #5428e0; --lilac: #b9a8ff; --fuchsia: #c2136f; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ink); font-family: Rubik, sans-serif; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+
+  /* 1. the work */
+  #s1 { background: radial-gradient(900px 700px at 50% 30%, #3a2350 0%, var(--ink) 70%); }
+  #s1 .frame { position: absolute; left: 60px; right: 60px; top: 300px; height: 1080px; border-radius: 56px; overflow: hidden; box-shadow: 0 50px 100px -30px rgba(0,0,0,.6); }
+  #s1 .frame img { width: 100%; height: 100%; object-fit: cover; object-position: 28% 50%; transform-origin: 40% 55%; }
+  #s1 .shade { display: none; }
+  #s1 .say { position: absolute; right: 80px; left: 80px; bottom: 170px; color: #fff; }
+  #s1 .say b { display: block; font-size: 112px; font-weight: 800; line-height: 1; letter-spacing: -2px; }
+  #s1 .say span { display: block; margin-top: 26px; font-size: 64px; font-weight: 500; color: #e8e3ff; }
+  .call { position: absolute; top: 200px; left: 60px; right: 60px; border-radius: 40px; padding: 30px 34px; display: flex; gap: 28px; align-items: center;
+    background: rgba(255,255,255,.9); box-shadow: 0 30px 60px -20px rgba(0,0,0,.5); }
+  .call .ic { flex: none; width: 92px; height: 92px; border-radius: 24px; background: var(--fuchsia); display: grid; place-items: center; }
+  .call b { display: block; font-size: 44px; font-weight: 700; color: var(--ink); }
+  .call span { display: block; font-size: 36px; color: var(--soft); margin-top: 6px; }
+  .call em { margin-inline-start: auto; align-self: flex-start; font-style: normal; font-size: 32px; color: var(--soft); }
+
+  /* 2. the loss */
+  #s2 { background: var(--ink); display: flex; flex-direction: column; justify-content: center; padding: 0 90px; color: #fff; }
+  #s2 b { font-size: 104px; font-weight: 800; line-height: 1.08; letter-spacing: -2px; }
+  #s2 span { display: block; margin-top: 30px; font-size: 104px; font-weight: 800; line-height: 1.08; letter-spacing: -2px; color: var(--lilac); }
+
+  /* 3. the site answers */
+  #s3 { background: radial-gradient(1200px 900px at 50% 70%, #ebe5ff 0%, var(--paper) 60%); }
+  #s3 .head { position: absolute; top: 130px; left: 70px; right: 70px; text-align: center; }
+  #s3 .head b { display: block; font-size: 96px; font-weight: 800; color: var(--ink); letter-spacing: -2px; line-height: 1.05; }
+  #s3 .head b i { font-style: normal; color: var(--fuchsia); }
+  #s3 .step { position: absolute; left: 0; right: 0; top: 268px; text-align: center; font-size: 52px; font-weight: 500; color: var(--violet); opacity: 0; }
+  .phone { position: absolute; left: 50%; top: 470px; width: 660px; height: 1340px; margin-left: -330px; border-radius: 88px; background: #0f0c1c; padding: 22px;
+    box-shadow: 0 60px 120px -40px rgba(43,20,120,.55), 0 0 0 2px #2a2440 inset; }
+  .phone .screen { width: 100%; height: 100%; border-radius: 68px; overflow: hidden; background: #fff; position: relative; }
+  .phone video { width: 100%; display: block; }
+  .phone .island { position: absolute; top: 40px; left: 50%; width: 170px; height: 46px; margin-left: -85px; border-radius: 30px; background: #0f0c1c; z-index: 2; }
+  .tag { position: absolute; bottom: 52px; left: 0; right: 0; text-align: center; font-size: 30px; color: var(--soft); }
+
+  /* 4. the end card */
+  #s4 { background: var(--paper); display: flex; flex-direction: column; justify-content: center; padding: 0 90px; text-align: center; color: var(--ink); }
+  #s4 .brand { font-size: 46px; font-weight: 700; color: var(--violet); }
+  #s4 .brand em { font-style: normal; color: var(--fuchsia); }
+  #s4 h2 { margin-top: 60px; font-size: 96px; font-weight: 800; line-height: 1.08; letter-spacing: -2px; }
+  #s4 p { margin-top: 40px; font-size: 56px; font-weight: 500; line-height: 1.3; color: var(--soft); }
+  #s4 .facts { margin-top: 70px; font-size: 40px; font-weight: 500; color: var(--ink); }
+  #s4 .url { margin: 70px auto 0; padding: 34px 70px; border-radius: 99px; background: var(--violet); color: #fff; font-size: 54px; font-weight: 700; direction: ltr;
+    box-shadow: 0 24px 60px -18px rgba(84,40,224,.65); }
+</style>
+</head>
+<body>
+<section class="scene" id="s1">
+  <div class="frame"><img id="work" src="media/work.webp" alt=""></div>
+  <div class="shade"></div>
+  <div class="call" id="call">
+    <div class="ic"><svg width="48" height="48" viewBox="0 0 24 24" fill="#fff"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg></div>
+    <div><b>שיחה שלא נענתה</b><span>מספר לא שמור</span></div><em>עכשיו</em>
+  </div>
+  <div class="say"><b id="s1a">באמצע טיפול.</b><span id="s1b">הטלפון מצלצל, והידיים תפוסות.</span></div>
+</section>
+
+<section class="scene" id="s2"><b id="s2a">לקוח שלא<br>קיבל מענה</b><span id="s2b">מתקשר לבא בתור.</span></section>
+
+<section class="scene" id="s3">
+  <div class="head"><b>האתר עונה במקומך<i>.</i></b></div>
+  <div class="step" id="st1">הנציג עונה על טיפול, מחיר וזמנים</div>
+  <div class="step" id="st2">אוסף שם וטלפון</div>
+  <div class="step" id="st3">והפנייה מגיעה אלייך לוואטסאפ</div>
+  <div class="phone" id="phone"><div class="screen"><div class="island"></div><video id="walk" src="media/walk.webm" muted playsinline preload="auto"></video></div></div>
+  <div class="tag">המחשה · סטודיו לדוגמה</div>
+</section>
+
+<section class="scene" id="s4">
+  <div class="brand" id="e1">Multi Landing<em>.</em></div>
+  <h2 id="e2">באמצע טיפול<br>ולא פנויה לענות?</h2>
+  <p id="e3">האתר שלך עונה ללקוחות<br>בוואטסאפ תוך שניות.</p>
+  <div class="facts" id="e4">0 ₪ מקדמה · משלמים רק כשהאתר מוכן</div>
+  <div class="url" id="e5">multilanding.co.il</div>
+</section>
+<script>
+const DURATION = 20, WALK_START = 10; // media/walk.webm starts at second 10 of the nails walkthrough
+// Recording second r for ad second t: the chat at about 4.5x up to the WhatsApp button, then a cut to the message
+// as the owner gets it (the walkthrough's last half second), held for reading.
+const rec = (t) => (t < 14 ? 10.6 + Math.max(0, t - 6.5) * 5.05 : 57.7);
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const span = (t, a, b) => clamp((t - a) / (b - a));
+const win = (t, a, b, f = .3) => Math.min(span(t, a, a + f), 1 - span(t, b - f, b));
+const rise = (el, k, px = 40) => { el.style.opacity = k; el.style.transform = `translateY(${(1 - ease(k)) * px}px)`; };
+const seek = (v, at) => new Promise((done) => {
+  at = Math.min(at, v.duration - .04);
+  if (Math.abs(v.currentTime - at) < .001) return done();
+  v.addEventListener("seeked", () => done(), { once: true }); v.currentTime = at;
+});
+
+async function render(t) {
+  // scenes: 1 the work 0-4.6, 2 the loss 4.5-6.6, 3 the site 6.5-15.9, 4 the end 15.8-20
+  $("s1").style.opacity = 1 - span(t, 4.4, 4.6);
+  $("s2").style.opacity = Math.min(span(t, 4.4, 4.6), 1 - span(t, 6.4, 6.6));
+  $("s3").style.opacity = Math.min(span(t, 6.4, 6.6), 1 - span(t, 15.7, 15.95));
+  $("s4").style.opacity = span(t, 15.7, 15.95);
+
+  $("work").style.transform = `scale(${1 + .07 * ease(span(t, 0, 4.6))})`; // a slow push-in on the still
+  rise($("call"), span(t, 1.3, 1.7), -60);
+  rise($("s1a"), span(t, .25, .65)); rise($("s1b"), span(t, 1.9, 2.3));
+
+  rise($("s2a"), span(t, 4.6, 4.95)); rise($("s2b"), span(t, 5.2, 5.55));
+
+  if (t >= 6.3 && t < 16) await seek($("walk"), rec(t) - WALK_START);
+  const p = span(t, 6.5, 7.1); $("phone").style.transform = `translateY(${(1 - ease(p)) * 120}px) scale(${.96 + .04 * ease(p)})`;
+  // the steps follow the recording: the questions and the price, the name and phone, the summary on WhatsApp
+  for (const [id, a, b] of [["st1", 6.8, 11.0], ["st2", 11.0, 13.95], ["st3", 13.95, 15.9]]) rise($(id), win(t, a, b, .25), 20);
+
+  rise($("e1"), span(t, 15.95, 16.3)); rise($("e2"), span(t, 16.1, 16.5)); rise($("e3"), span(t, 16.5, 16.9));
+  rise($("e4"), span(t, 16.9, 17.3)); rise($("e5"), span(t, 17.2, 17.6));
+}
+window.render = render; window.DURATION = DURATION;
+const meta = (v) => (v.readyState >= 1 ? 0 : new Promise((r) => v.addEventListener("loadedmetadata", r, { once: true })));
+window.ready = Promise.all([...[...document.querySelectorAll("img")].map((i) => i.decode()), ...[...document.querySelectorAll("video")].map(meta)]);
+</script>
+</body>
+</html>
