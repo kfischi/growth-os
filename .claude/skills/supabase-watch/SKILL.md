@@ -17,7 +17,7 @@ For a deep hunt with fixes, use `site-doctor`; this skill only looks.
 
 ## The project
 
-Supabase project "Easy Landing", id `lhyjxgnspbuolhhcayih` (the lead system's own project, tables `ls_*`). Never confuse it with the other projects in the account, which are not this site's.
+Supabase project "Multi Landing", id `igbwbydghlleuvwgtgtc`, Frankfurt (since 2026-11-13; the old "Easy Landing" in Tokyo, `lhyjxgnspbuolhhcayih`, is retired) (the lead system's own project, tables `ls_*`). Never confuse it with the other projects in the account, which are not this site's.
 
 ## Checks, in this order
 

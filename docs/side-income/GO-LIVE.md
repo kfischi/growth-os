@@ -56,7 +56,7 @@ Secrets go into Netlify > Site configuration > Environment variables only. After
 - [ ] The billing run is daily at 03:10 UTC. A refused card is retried every 3 days, and after 4 refusals the lead system pauses.
 
 ## 4. Supabase
-- [ ] Use its own project (`lead-system`, Frankfurt), not Growth OS.
+- [x] Its own project, "Multi Landing" (`igbwbydghlleuvwgtgtc`, Frankfurt, organisation WebMaster Pro), not Growth OS. Migrations 0001–0025 are run. `SUPABASE_URL` is `https://igbwbydghlleuvwgtgtc.supabase.co`.
 - [ ] In the SQL Editor, run **all** migrations in order: `0001_lead_system`, `0002_site_builder` (the private `builder` bucket), `0003_reports` (`ls_visits`, `ls_add_visit`), `0004_self_edit`, `0005_lead_photos` (the private `lead-photos` bucket), `0006_links`, `0007_availability`, `0008_callback`, `0009_reviews`, `0010_testimonials`, `0011_wa_agent`, `0012_hosting`, `0013_stats` (`ls_add_stat`), `0014_urgent`, `0015_job_value`, `0016_owner_notes`, `0017_billing` (`ls_payments`, `ls_billing`), `0018_terms` and `0019_videos`. Each file can be run again safely.
 - [ ] A cross-check found every table, RPC, filtered or selected column and written key in the code in some migration. Nothing is missing.
 - [ ] Use the **secret** key (`sb_secret_...`, or the legacy service_role JWT) in Netlify only.
