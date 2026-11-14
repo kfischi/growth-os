@@ -52,14 +52,14 @@ let sentMsgs = aiCalls.at(-1).messages; assert.equal(sentMsgs.length, 11); asser
 ai.queue.push("תשובה");
 r = await call("plumber", { messages: [{ role: "user", content: "א".repeat(500) }, { role: "assistant", content: "הנציג לא זמין" }, { role: "user", content: "כמה עולה סתימה?" }] }, { ip: "8.8.8.8" });
 assert.equal(r.status, 200, JSON.stringify(r)); assert.equal(aiCalls.at(-1).messages[0].content.length, 300);
-// the server-side fallback goes only with an Opus model (the default here); another model gets none
+// the server-side fallback goes with Sonnet 5.5 (the default here) and Opus; Haiku gets none
 assert.equal(aiCalls.at(-1).fallbacks, "default");
-process.env.CHAT_MODEL = "claude-sonnet-5-5";
-const sonnet = (await import(new URL("../../demos/netlify/functions/demo-chat.mjs?sonnet", import.meta.url).href)).default;
+process.env.CHAT_MODEL = "claude-haiku-5-5";
+const sonnet = (await import(new URL("../../demos/netlify/functions/demo-chat.mjs?haiku", import.meta.url).href)).default;
 delete process.env.CHAT_MODEL;
 ai.queue.push("תשובה");
 let rs = await sonnet(new Request(SITE + "/api/demo-chat/plumber", { method: "POST", headers: { "content-type": "application/json", origin: SITE, "x-nf-client-connection-ip": "8.8.8.10" }, body: JSON.stringify(ask("היי")) }), { params: { demo: "plumber" } });
-assert.equal(rs.status, 200); assert.equal(aiCalls.at(-1).model, "claude-sonnet-5-5"); assert.equal(aiCalls.at(-1).fallbacks, undefined, "no fallback outside Opus");
+assert.equal(rs.status, 200); assert.equal(aiCalls.at(-1).model, "claude-haiku-5-5"); assert.equal(aiCalls.at(-1).fallbacks, undefined, "no server-side fallback on Haiku");
 
 // the per-IP limit
 for (let i = 0; i < 15; i++) { ai.queue.push("תשובה"); await call("plumber", ask("שאלה " + i), { ip: "8.8.8.9" }); }

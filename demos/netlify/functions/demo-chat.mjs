@@ -8,7 +8,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, rateLimiter, clientIp } from "../lib/leads.mjs";
 import { LANG_RULE, langOfTurns, line } from "../lib/lang.mjs";
 
-const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
+const MODEL = process.env.CHAT_MODEL || "claude-sonnet-5-5";
 const MAX_TURNS = 11, MAX_CHARS = 300; // the model sees the last 11 messages; older ones are dropped
 const limited = rateLimiter(15, 10 * 60 * 1000);
 const client = new Anthropic({ timeout: 20000, maxRetries: 0 }); // under the page's own 30 s abort (aibot.js)
@@ -103,7 +103,7 @@ export default async (req, context) => {
   try {
     const response = await client.beta.messages.create({
       model: MODEL, max_tokens: 1000, output_config: { effort: "low" },
-      ...(MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
+      ...(/^claude-(opus|sonnet-5-5)/.test(MODEL) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
       system: [{ type: "text", text: system(d), cache_control: { type: "ephemeral" } }],
       messages,
     });
