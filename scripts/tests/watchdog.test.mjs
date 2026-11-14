@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 const ENV = { SUPABASE_URL: "https://x.supabase.co", SUPABASE_SERVICE_KEY: "sb_secret_test", WA_APP_SECRET: "s", WA_VERIFY_TOKEN: "v", WA_TOKEN_KFIR: "tok-kfir", WA_TOKEN_OREN: "tok-oren",
   ANTHROPIC_API_KEY: "sk-test", GITHUB_TOKEN: "ghp_test", NETLIFY_TOKEN: "nf-test", LEADS_ADMIN_KEY: "admin-key-0123456789", SITES_DOMAIN: "off" };
 Object.assign(process.env, ENV);
+const asked = [];
 const NOW = new Date("2026-11-06T12:00:00Z");
 const T = { ls_clients: [
   { slug: "kfir", name: "כפיר", package: "ai", active: true, owner_phone: "972501111111", wa_phone_number_id: "PN-K", tpl_owner_alert: "owner_new_lead", tpl_lang: "he" },
@@ -15,7 +16,11 @@ const down = new Set(); const sent = []; let tokenExpires = "2027-06-01 00:00:00
 const res = (d, status = 200, headers = {}) => new Response(JSON.stringify(d), { status, headers: { "content-type": "application/json", ...headers } });
 globalThis.fetch = async (url, opt = {}) => {
   const u = new URL(url), m = opt.method || "GET";
-  if (u.host === "api.anthropic.com") { assert.equal(opt.headers["x-api-key"], "sk-test"); return down.has("claude") ? res({}, 401) : res({ data: [] }); }
+  if (u.host === "api.anthropic.com") {
+    assert.equal(opt.headers["x-api-key"], "sk-test");
+    if (u.pathname === "/v1/messages") { asked.push(JSON.parse(opt.body).model); return down.has("claude-answer") ? res({ error: { message: "Your credit balance is too low" } }, 400) : res({ content: [{ type: "text", text: "o" }] }); }
+    return down.has("claude") ? res({}, 401) : res({ data: [] });
+  }
   if (u.host === "generativelanguage.googleapis.com") return down.has("gemini") ? res({}, 403) : res({ models: [] });
   if (u.host === "api.github.com") { assert.equal(opt.headers.authorization, "Bearer ghp_test"); return down.has("github") ? res({}, 404) : res({ name: "x" }, 200, { "github-authentication-token-expiration": tokenExpires }); }
   if (u.host === "api.netlify.com") return down.has("netlify") ? res({}, 401) : res({ id: "u" });
@@ -82,6 +87,9 @@ assert.equal((await W.checkSitesDomain(async () => ["75.2.60.5"])).ok, true);
 let sd = await W.checkSitesDomain(async () => { throw Object.assign(new Error("ENOTFOUND"), { code: "ENOTFOUND" }); });
 assert.equal(sd.ok, false); assert.match(sd.detail, /CNAME בשם \*/);
 process.env.SITES_DOMAIN = "off"; process.env.NETLIFY_TOKEN = "nf-test";
+// a key that is accepted but cannot answer: each model the site uses is asked for one token
+asked.length = 0; r = await W.runWatchdog(NOW); assert.deepEqual(asked.sort(), ["claude-opus-5-5", "claude-sonnet-5-5"]);
+down.add("claude-answer"); r = await W.runWatchdog(NOW); assert.equal(byName(r).claude.ok, false); assert.match(byName(r).claude.detail, /לא עונה \(400\): Your credit balance is too low/); down.clear();
 process.env.GROW_SANDBOX = "1"; r = await W.runWatchdog(NOW); assert.equal(byName(r).grow.ok, false); delete process.env.GROW_SANDBOX;
 // a schedule that stopped, or whose last run failed
 T.ls_heartbeats.find((x) => x.name === "reminders").at = new Date(NOW - 90 * 60_000).toISOString();
