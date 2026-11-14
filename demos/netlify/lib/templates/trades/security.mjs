@@ -6,7 +6,7 @@ export const HOME = "לבית";
 export const BUSINESS = "לעסק או לפרויקט";
 export default {
   id: "security",
-  label: "מערכות אבטחה ותקשורת",
+  label: "אבטחה ותקשורת",
   trade: "מערכות אבטחה ותקשורת",
   guides: ["security"],
   schema: "HomeAndConstructionBusiness",
@@ -22,7 +22,7 @@ export default {
     how: "מה קורה כשפונים",
     status: "מקבלים עבודות",
     subtitle: "חוזרים אליכם עם מחיר ומועד",
-    waHello: "אשמח לשמוע על מערכת אבטחה.",
+    waHello: "אשמח לשמוע על מערכות אבטחה ותקשורת.",
     lead: "פנייה",
   },
   steps: [
@@ -46,7 +46,7 @@ export default {
   },
   privacyWhat: "שם, טלפון, מה צריך, בית או עסק, סוג המקום וההיקף, מתי והיישוב, ותמונה אם בחרתם לצרף",
   fields: {
-    headline_1: "מצלמות, אזעקה, רשת.",
+    headline_1: "מערכות אבטחה ותקשורת.",
     price_note: "לבית: טווחי מחיר · לעסק: מחיר אחרי סיור",
     business_hint: "למשל: דקל מערכות אבטחה",
     ba_hint: "מה רואים ואיפה, למשל: ארון תקשורת לפני הסידור ואחריו",
@@ -69,7 +69,7 @@ export default {
     hours: ["א׳–ה׳ 8:00–18:00", "א׳–ו׳ 8:00–19:00", "א׳–ה׳ 7:30–17:00"],
     warranty: ["12 חודשים", "24 חודשים", "36 חודשים"],
     headlines: [
-      { headline_1: "מצלמות, אזעקה, רשת.", headline_2: "לבית ולעסק." },
+      { headline_1: "מערכות אבטחה ותקשורת.", headline_2: "לבית ולעסק." },
       { headline_1: "המצלמות לא מקליטות?", headline_2: "חוזרים {when}." },
       { headline_1: "רוצים לראות מה בבית?", headline_2: "צפייה מהטלפון." },
       { headline_1: "פרויקט? סיור קודם.", headline_2: "הצעה מסודרת בכתב." },

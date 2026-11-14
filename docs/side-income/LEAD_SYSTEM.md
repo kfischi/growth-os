@@ -62,7 +62,7 @@ Site configuration → Environment variables:
 | `HEALTH_KEY` | מחרוזת אקראית. נכנסת לכתובת של בדיקת התקינות (שלב 4 למטה) |
 | `WA_TOKEN` | לא חובה. טוקן ברירת מחדל לעסק שאין לו `WA_TOKEN_<SLUG>` |
 | `WA_GRAPH_VERSION` | לא חובה. גרסת ה-Graph API של Meta (ברירת מחדל `v23.0`) |
-| `CHAT_MODEL`, `ESTIMATE_MODEL`, `AGENT_MODEL` | לא חובה. המודל של הצ׳אטים, של המבט הראשון בתמונה ושל העוזר בוואטסאפ (ברירת מחדל `claude-opus-5-5`) |
+| `CHAT_MODEL`, `ESTIMATE_MODEL`, `AGENT_MODEL` | לא חובה. המודל של הצ׳אטים, של המבט הראשון בתמונה ושל העוזר בוואטסאפ (ברירת מחדל `claude-sonnet-5-5`, בחצי מחיר; `claude-opus-5-5` חזק ויקר יותר) |
 | `DEMO_CHAT_DAILY` | לא חובה. תקרה יומית לנציג החי בדמו האינסטלטור (ברירת מחדל 400) |
 
 מחרוזת אקראית: `node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`.

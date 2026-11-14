@@ -5,7 +5,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { rateLimiter, clientIp } from "../lib/leads.mjs";
 
-const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
+const MODEL = process.env.CHAT_MODEL || "claude-sonnet-5-5";
 const MAX_TURNS = 20;          // messages per conversation
 const MAX_CHARS = 600;         // per visitor message
 // 30 requests per IP per 10 minutes, per function instance (rateLimiter prunes its map). A shared counter in
@@ -86,8 +86,8 @@ export default async (req) => {
       max_tokens: 2000,
       output_config: { effort: "low" },
       // If the model declines on a safety classifier, the API retries on a fallback model inside the same call
-      // (Opus only).
-      ...(MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
+      // (Opus 5.5 and Sonnet 5.5, routed by the refusal category: "default").
+      ...(/^claude-(opus|sonnet-5-5)/.test(MODEL) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
       system: [{ type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } }],
       messages: messages.map((x) => ({ role: x.role, content: x.content })),
     });

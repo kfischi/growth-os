@@ -7,7 +7,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, getClient, corsHeaders, rateLimiter, clientIp, factsOf } from "../lib/leads.mjs";
 
-const MODEL = process.env.ESTIMATE_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
+const MODEL = process.env.ESTIMATE_MODEL || process.env.CHAT_MODEL || "claude-sonnet-5-5";
 const MAX_IMAGE = 1_400_000; // a data URL of the chat's shrunk JPEG (under 900 KB) fits well under this
 const limited = rateLimiter(8, 10 * 60 * 1000);
 // under the page's own 25 s abort (leadbot.js): one try, no retries
@@ -87,7 +87,7 @@ export default async (req, context) => {
     const res = await client.beta.messages.create({
       model: MODEL, max_tokens: 800,
       output_config: { effort: "low", format: { type: "json_schema", schema: SCHEMA } },
-      ...(MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
+      ...(/^claude-(opus|sonnet-5-5)/.test(MODEL) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
       system: [{ type: "text", text: system(trade, list) }],
       messages: [{ role: "user", content: [
         { type: "image", source: { type: "base64", media_type: "image/" + m[1], data: m[2] } },

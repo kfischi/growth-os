@@ -7,7 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { db, q, sendText, sendTemplate, firstName, clip, factsOf, recordUnanswered } from "./leads.mjs";
 import { LANG_RULE, langOfTurns, langNote } from "./lang.mjs";
 
-const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude-opus-5-5";
+const MODEL = () => process.env.AGENT_MODEL || process.env.CHAT_MODEL || "claude-sonnet-5-5";
 const DAILY = 8; // replies to one customer in 24 hours; after that the owner takes it from there
 let client;
 
@@ -69,7 +69,7 @@ export async function agentReply(c, lead) {
   const res = await client.beta.messages.create({
     model, max_tokens: 1000,
     output_config: { effort: "low", format: { type: "json_schema", schema: SCHEMA } },
-    ...(model.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
+    ...(/^claude-(opus|sonnet-5-5)/.test(model) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {}),
     system: [{ type: "text", text: system(c, firstName(lead.name)), cache_control: { type: "ephemeral" } }],
     messages,
   });

@@ -88,7 +88,7 @@ let sd = await W.checkSitesDomain(async () => { throw Object.assign(new Error("E
 assert.equal(sd.ok, false); assert.match(sd.detail, /CNAME בשם \*/);
 process.env.SITES_DOMAIN = "off"; process.env.NETLIFY_TOKEN = "nf-test";
 // a key that is accepted but cannot answer: each model the site uses is asked for one token
-asked.length = 0; r = await W.runWatchdog(NOW); assert.deepEqual(asked.sort(), ["claude-opus-5-5", "claude-sonnet-5-5"]);
+asked.length = 0; r = await W.runWatchdog(NOW); assert.deepEqual(asked.sort(), ["claude-sonnet-5-5"]);
 down.add("claude-answer"); r = await W.runWatchdog(NOW); assert.equal(byName(r).claude.ok, false); assert.match(byName(r).claude.detail, /לא עונה \(400\): Your credit balance is too low/); down.clear();
 process.env.GROW_SANDBOX = "1"; r = await W.runWatchdog(NOW); assert.equal(byName(r).grow.ok, false); delete process.env.GROW_SANDBOX;
 // a schedule that stopped, or whose last run failed

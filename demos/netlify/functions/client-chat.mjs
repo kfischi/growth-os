@@ -7,11 +7,11 @@ import Anthropic from "@anthropic-ai/sdk";
 import { json, configured, getClient, processLead, corsHeaders, rateLimiter, clientIp, factsOf, recordUnanswered } from "../lib/leads.mjs";
 import { LANG_RULE, langOfTurns, langNote, line } from "../lib/lang.mjs";
 
-const MODEL = process.env.CHAT_MODEL || "claude-opus-5-5";
+const MODEL = process.env.CHAT_MODEL || "claude-sonnet-5-5";
 const MAX_TURNS = 20, MAX_CHARS = 600;
 const limited = rateLimiter(30, 10 * 60 * 1000);
 const client = new Anthropic({ timeout: 20000, maxRetries: 0 }); // under the page's own 30 s abort (aibot.js)
-const OPUS_FALLBACK = MODEL.startsWith("claude-opus") ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {};
+const OPUS_FALLBACK = /^claude-(opus|sonnet-5-5)/.test(MODEL) ? { betas: ["server-side-fallback-2026-07-01"], fallbacks: "default" } : {};
 
 // A daily cap per business per instance (CLIENT_CHAT_DAILY, default 300 answers): past it the page shows its
 // offline line with the WhatsApp button (aibot.js), so a runaway script can't run up the bill.
@@ -84,7 +84,7 @@ export default async (req, context) => {
   try {
     const response = await client.beta.messages.create({
       model: MODEL, max_tokens: 2000, output_config: { effort: "low" },
-      ...OPUS_FALLBACK, // the server-side fallback exists only for Opus
+      ...OPUS_FALLBACK, // the server-side fallback, on Opus and Sonnet 5.5
       system: [{ type: "text", text: system(c), cache_control: { type: "ephemeral" } }],
       messages,
     });
