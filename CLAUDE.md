@@ -32,6 +32,12 @@ Kfir owns and runs the side-income channel. It is **not** Multibrawn. Never put 
 
 The **Hebrew editor** (`.claude/agents/hebrew-editor.md`, a subagent) proofreads any Hebrew before it ships: clarity first, then grammar and agreement, full spelling (יישוב, הכול, תוכנית), Hebrew punctuation (״ ׳), one voice per page or chat, an Israeli 2026 register and right-to-left mixing. It fixes plain language mistakes, never prices, facts, legal lines or the owner's locked lines, and reports the rest. Run it after any agent writes Hebrew.
 
+## How we work (Kfir's iron rule, 2026-11-14)
+
+Never stop at a blocker. When something fails or stands in the way, find the root cause, try the next way round, fix it and check again, until it works, like a loop. Don't hand Kfir a problem you can still solve yourself, and don't stop to ask what you can decide from the code, the docs or a sensible default. When a step truly needs him (a key, a payment, a click in a dashboard only he can reach), say exactly what and where in one or two lines, carry on with everything else meanwhile, and come back to check it once he has done it (a scheduled check-in, the watchdog). Every report says what was tried and what the result was.
+
+The loop has limits that it never crosses: it does not get round a permission refusal, a security control or a safety rule (it reports them instead); it merges only after Kfir writes "מאשר"; it writes to production data only with his OK; it never puts a secret in the repo or the chat; and it never invents a result to look done. A fix that keeps coming back gets a test or a rule here, so it does not come back again.
+
 ## House rules for anything a client or prospect sees
 
 - **Hebrew:** correct, short and plain. No spelling mistakes. Address the reader in plural (`אתם`) unless you know who it is.
