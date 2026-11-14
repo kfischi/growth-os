@@ -19,7 +19,7 @@
     cleaning: "ניקיון", renovation: "שיפוצים וגבס", locksmith: "מנעולן", pest: "הדברה", appliance: "טכנאי מכשירי חשמל",
     handyman: "הנדימן", garden: "גינון", tutor: "מורה פרטית", psychologist: "פסיכולוגית", "social-worker": "עובדת סוציאלית", music: "מורה לנגינה",
     towing: "גרר ושירותי דרך", cosmetics: "קוסמטיקה ויופי", photographer: "צלם אירועים", barber: "ספרות", massage: "עיסוי ומסאז׳", nails: "בניית ציפורניים", driving: "מורה לנהיגה", upholstery: "ניקוי ספות ושטיחים", shutters: "תריסים",
-    security: "מערכות ביטחון ותקשורת", yoga: "יוגה ופילאטיס", "dog-trainer": "אילוף כלבים", pergolas: "פרגולות וסוככים", roofing: "איטום וגגות",
+    security: "מערכות אבטחה ותקשורת", yoga: "יוגה ופילאטיס", "dog-trainer": "אילוף כלבים", pergolas: "פרגולות וסוככים", roofing: "איטום וגגות",
     carpenter: "נגר", aluminum: "אלומיניום", "water-heater": "דודי שמש", tiling: "ריצוף וחיפוי", garage: "מוסך", "phone-repair": "תיקון סלולר ומחשבים",
     hair: "עיצוב שיער", physio: "פיזיותרפיה", catering: "קייטרינג", dj: "DJ לאירועים", cakes: "עוגות מעוצבות", "lashes-brows": "ריסים וגבות",
     "hair-removal": "הסרת שיער", makeup: "מאפרת", bridal: "שמלות כלה",
