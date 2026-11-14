@@ -53,11 +53,27 @@ export async function checkWhatsApp() {
   return out;
 }
 
+// The key alone can pass while every answer fails (a model the account can't use, a spent balance, a rate limit), so
+// after the free model list each model the site uses answers one token: a fraction of a cent an hour.
+export const CLAUDE_MODELS = () => [...new Set([process.env.CHAT_MODEL || "claude-opus-5-5", process.env.BUILDER_MODEL || "claude-sonnet-5-5"])];
 export async function checkClaude() {
-  if (!process.env.ANTHROPIC_API_KEY) return bad("claude", "חסר ANTHROPIC_API_KEY: הבונה לא עובד והצ׳אטים עונים מתסריט");
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return bad("claude", "חסר ANTHROPIC_API_KEY: הבונה לא עובד והצ׳אטים עונים מתסריט");
+  const headers = { "x-api-key": key, "anthropic-version": "2023-06-01" };
   try {
-    const r = await get("https://api.anthropic.com/v1/models?limit=1", { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" });
-    return r.ok ? ok("claude") : bad("claude", `המפתח נדחה (${r.status})`);
+    const r = await get("https://api.anthropic.com/v1/models?limit=1", headers);
+    if (!r.ok) return bad("claude", `המפתח נדחה (${r.status})`);
+    for (const model of CLAUDE_MODELS()) {
+      const a = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST", headers: { ...headers, "content-type": "application/json" },
+        body: JSON.stringify({ model, max_tokens: 1, messages: [{ role: "user", content: "ok" }] }), signal: AbortSignal.timeout(T),
+      });
+      if (!a.ok) {
+        const why = await a.json().then((j) => (j && j.error && j.error.message) || "").catch(() => "");
+        return bad("claude", `${model} לא עונה (${a.status})${why ? ": " + why : ""}`);
+      }
+    }
+    return ok("claude");
   } catch (e) { return bad("claude", "Anthropic לא עונה: " + e.message); }
 }
 
