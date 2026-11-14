@@ -65,8 +65,8 @@
 | ניקוי ספות ושטיחים | https://multilanding.co.il/upholstery/?utm_source=whatsapp |
 | תריסים | https://multilanding.co.il/shutters/?utm_source=whatsapp |
 | איטום וגגות | https://multilanding.co.il/roofing/?utm_source=whatsapp |
-| מערכות אבטחה ותקשורת (לבית) | https://multilanding.co.il/security/?utm_source=whatsapp |
-| מערכות אבטחה ותקשורת (לעסקים ופרויקטים) | https://multilanding.co.il/security/?for=business&utm_source=whatsapp |
+| מערכות ביטחון ותקשורת (לבית) | https://multilanding.co.il/security/?utm_source=whatsapp |
+| מערכות ביטחון ותקשורת (לעסקים ופרויקטים) | https://multilanding.co.il/security/?for=business&utm_source=whatsapp |
 | פרגולות וסוככים | https://multilanding.co.il/pergolas/?utm_source=whatsapp |
 | יוגה ופילאטיס | https://multilanding.co.il/yoga/?utm_source=whatsapp |
 | אילוף כלבים | https://multilanding.co.il/dog-trainer/?utm_source=whatsapp |
